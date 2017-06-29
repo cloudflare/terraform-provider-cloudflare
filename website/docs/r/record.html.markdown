@@ -47,3 +47,4 @@ The following attributes are exported:
 * `priority` - The priority of the record
 * `hostname` - The FQDN of the record
 * `proxied` - (Optional) Whether the record gets Cloudflare's origin protection.
+* `zone_id` - (Computed) the zone id of the record
