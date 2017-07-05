@@ -63,6 +63,14 @@ func validateRecordName(t string, value string) error {
 		if addr == nil || !strings.Contains(value, ":") {
 			return fmt.Errorf("AAAA record must be a valid IPv6 address, got: %q", value)
 		}
+	case "TXT":
+		// Must be printable ASCII
+		for i := 0; i < len(value); i++ {
+			char := value[i]
+			if (char < 0x20) || (0x7F < char) {
+				return fmt.Errorf("TXT record must contain printable ASCII, found: %q", char)
+			}
+		}
 	}
 
 	return nil
