@@ -228,15 +228,15 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 		Status:   d.Get("status").(string),
 	}
 
-	zoneId, err := client.ZoneIDByName(domain)
+	zoneID, err := client.ZoneIDByName(domain)
 	if err != nil {
 		return fmt.Errorf("Error finding zone %q: %s", domain, err)
 	}
 
-	d.Set("zone_id", zoneId)
+	d.Set("zone_id", zoneID)
 	log.Printf("[DEBUG] CloudFlare Page Rule create configuration: %#v", newPageRule)
 
-	err = client.CreatePageRule(zoneId, newPageRule)
+	err = client.CreatePageRule(zoneID, newPageRule)
 	if err != nil {
 		return fmt.Errorf("Failed to create page rule: %s", err)
 	}
@@ -248,12 +248,12 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	client := meta.(*cloudflare.API)
 	domain := d.Get("domain").(string)
 
-	zoneId, err := client.ZoneIDByName(domain)
+	zoneID, err := client.ZoneIDByName(domain)
 	if err != nil {
 		return fmt.Errorf("Error finding zone %q: %s", domain, err)
 	}
 
-	pageRule, err := client.PageRule(zoneId, d.Id())
+	pageRule, err := client.PageRule(zoneID, d.Id())
 	if err != nil {
 		return err
 	}
@@ -326,14 +326,14 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 		updatePageRule.Status = status.(string)
 	}
 
-	zoneId, err := client.ZoneIDByName(domain)
+	zoneID, err := client.ZoneIDByName(domain)
 	if err != nil {
 		return fmt.Errorf("Error finding zone %q: %s", domain, err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
-	if err := client.UpdatePageRule(zoneId, d.Id(), updatePageRule); err != nil {
+	if err := client.UpdatePageRule(zoneID, d.Id(), updatePageRule); err != nil {
 		return fmt.Errorf("Failed to update Cloudflare Page Rule: %s", err)
 	}
 
@@ -344,14 +344,14 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 	client := meta.(*cloudflare.API)
 	domain := d.Get("domain").(string)
 
-	zoneId, err := client.ZoneIDByName(domain)
+	zoneID, err := client.ZoneIDByName(domain)
 	if err != nil {
 		return fmt.Errorf("Error finding zone %q: %s", domain, err)
 	}
 
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", domain, d.Id())
 
-	if err := client.DeletePageRule(zoneId, d.Id()); err != nil {
+	if err := client.DeletePageRule(zoneID, d.Id()); err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Page Rule: %s", err)
 	}
 
@@ -402,7 +402,7 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 
 	default:
 		// User supplied ID is already validated, so this is always an internal error
-		err = fmt.Errorf("Unimplemented action ID %q. This is always an internal error.", pageRuleAction.ID)
+		err = fmt.Errorf("Unimplemented action ID %q - this is always an internal error", pageRuleAction.ID)
 	}
 	return
 }
