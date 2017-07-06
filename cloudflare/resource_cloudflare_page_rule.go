@@ -214,11 +214,15 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	actions := d.Get("actions").(*schema.Set).List()
 	newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(actions))
 	for _, action := range actions {
-		newPageRuleAction, err := transformToCloudFlarePageRuleAction(action.(map[string]interface{}))
-		if err != nil {
-			return err
+		for id, value := range action.(map[string]interface{}) {
+			newPageRuleAction, err := transformToCloudFlarePageRuleAction(id, value)
+			if err != nil {
+				return err
+			} else if newPageRuleAction.Value == nil {
+				continue
+			}
+			newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
 		}
-		newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
 	}
 
 	newPageRule := cloudflare.PageRule{
@@ -308,11 +312,15 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 		newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(actions))
 
 		for _, action := range actions {
-			newPageRuleAction, err := transformToCloudFlarePageRuleAction(action.(map[string]interface{}))
-			if err != nil {
-				return err
+			for id, value := range action.(map[string]interface{}) {
+				newPageRuleAction, err := transformToCloudFlarePageRuleAction(id, value)
+				if err != nil {
+					return err
+				} else if newPageRuleAction.Value == nil {
+					continue
+				}
+				newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
 			}
-			newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
 		}
 
 		updatePageRule.Actions = newPageRuleActions
@@ -407,53 +415,54 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	return
 }
 
-func transformToCloudFlarePageRuleAction(action map[string]interface{}) (pageRuleAction cloudflare.PageRuleAction, err error) {
-	var id string
-	var value interface{}
+func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRuleAction cloudflare.PageRuleAction, err error) {
 
-	for k, v := range action {
-		if strValue, ok := v.(string); ok {
-			if id == "" && strValue != "" {
-				id, value = k, v
-			} else if strValue != "" {
-				err = fmt.Errorf("Must only have one action per element, found %q and %q", id, k)
-			}
-		} else if boolValue, ok := v.(bool); ok {
-			if id == "" && boolValue {
-				id, value = k, boolValue
-			} else if boolValue {
-				err = fmt.Errorf("Must only have one action per element, found %q and %q", id, k)
-			}
-		} else if intValue, ok := v.(int); ok {
-			if id == "" && intValue != 0 {
-				id, value = k, intValue
-			} else if intValue != 0 {
-				err = fmt.Errorf("Must only have one action per element, found %q and %q", id, k)
-			}
-		} else if k == "forwarding_url" {
-			forwardActionSchema := v.(*schema.Set).List()
-			if len(forwardActionSchema) != 0 {
-				// We've already validated the status_code, and enforced 2
-				// elements; so whichever isn't the status_code is the url.
-				fst := forwardActionSchema[0].(map[string]interface{})
-				snd := forwardActionSchema[1].(map[string]interface{})
+	pageRuleAction.ID = id
 
-				if statusCode := fst["status_code"].(int); statusCode != 0 {
-					id, value = k, map[string]interface{}{
-						"url":         snd["url"].(string),
-						"status_code": statusCode,
-					}
-				} else if statusCode := snd["status_code"].(int); statusCode != 0 {
-					id, value = k, map[string]interface{}{
-						"url":         snd["url"].(string),
-						"status_code": statusCode,
-					}
+	if strValue, ok := value.(string); ok {
+		if strValue == "" {
+			// This happens when not set by the user
+			pageRuleAction.Value = nil
+		} else {
+			pageRuleAction.Value = strValue
+		}
+	} else if unitValue, ok := value.(bool); ok {
+		if !unitValue {
+			// This happens when not set by the user
+			pageRuleAction.Value = nil
+		} else {
+			pageRuleAction.Value = true
+		}
+	} else if intValue, ok := value.(int); ok {
+		if intValue == 0 {
+			// This happens when not set by the user
+			pageRuleAction.Value = nil
+		} else {
+			pageRuleAction.Value = intValue
+		}
+	} else if id == "forwarding_url" {
+		forwardActionSchema := value.(*schema.Set).List()
+		if len(forwardActionSchema) != 0 {
+			// We've already validated the status_code, and enforced 2
+			// elements; so whichever isn't the status_code is the url.
+			fst := forwardActionSchema[0].(map[string]interface{})
+			snd := forwardActionSchema[1].(map[string]interface{})
+
+			if statusCode := fst["status_code"].(int); statusCode != 0 {
+				pageRuleAction.Value = map[string]interface{}{
+					"url":         snd["url"].(string),
+					"status_code": statusCode,
+				}
+			} else if statusCode := snd["status_code"].(int); statusCode != 0 {
+				pageRuleAction.Value = map[string]interface{}{
+					"url":         snd["url"].(string),
+					"status_code": statusCode,
 				}
 			}
 		}
+	} else {
+		err = fmt.Errorf("Bad value for %s: %s", id, value)
 	}
 
-	pageRuleAction.ID = id
-	pageRuleAction.Value = value
 	return
 }
