@@ -259,7 +259,7 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 
 	pageRule, err := client.PageRule(zoneID, d.Id())
 	if err != nil {
-		return err
+		return fmt.Errorf("Error finding page rule %q: %s", d.Id(), err)
 	}
 
 	d.SetId(pageRule.ID)
@@ -272,7 +272,7 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	for _, pageRuleAction := range pageRule.Actions {
 		key, value, err := transformFromCloudFlarePageRuleAction(&pageRuleAction)
 		if err != nil {
-			return err
+			return fmt.Errorf("Failed to parse page rule action: %s", err)
 		}
 		actions = append(actions, map[string]interface{}{key: value})
 	}
