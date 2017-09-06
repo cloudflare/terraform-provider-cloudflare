@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"time"
 
@@ -18,6 +19,9 @@ func resourceCloudFlareRecord() *schema.Resource {
 		Read:   resourceCloudFlareRecordRead,
 		Update: resourceCloudFlareRecordUpdate,
 		Delete: resourceCloudFlareRecordDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudFlareRecordImport,
+		},
 
 		SchemaVersion: 1,
 		MigrateState:  resourceCloudFlareRecordMigrateState,
@@ -269,4 +273,45 @@ func expandStringMap(inVal interface{}) map[string]string {
 		outVal[k] = strValue
 	}
 	return outVal
+}
+
+func resourceCloudFlareRecordImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+	id := d.Id()
+
+	// Get list of Zones to check for record in
+	zones, err := client.ListZones()
+	if err != nil {
+		return nil, fmt.Errorf("Unable to fetch list of Zones when importing ID: %s. Error: %s", id, err)
+	}
+	log.Printf("[INFO] Found %d zones to check", len(zones))
+
+	// Itterate through Zones to find zone with record for given id
+	found := false
+	for _, zone := range zones {
+		log.Printf("[INFO] Checking Zone: %s", zone.Name)
+		record, err := client.DNSRecord(zone.ID, id)
+		if err == nil {
+			found = true
+			log.Printf("[INFO] Found record: %s", record.Name)
+			name := strings.TrimSuffix(record.Name, "."+zone.Name)
+			d.Set("domain", zone.Name)
+			d.Set("hostname", record.Name)
+			d.Set("name", name)
+			d.Set("priority", record.Priority)
+			d.Set("proxied", record.Proxied)
+			d.Set("ttl", record.TTL)
+			d.Set("type", record.Type)
+			d.Set("value", record.Content)
+			d.Set("zone_id", zone.ID)
+			break
+		}
+	}
+	if !found {
+		return nil, fmt.Errorf("Unable to find record for ID: %s. Checked %d zones", id, len(zones))
+	}
+
+	results := make([]*schema.ResourceData, 0)
+	results = append(results, d)
+	return results, nil
 }
