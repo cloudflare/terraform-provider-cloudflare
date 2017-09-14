@@ -1,4 +1,9 @@
 ## 0.1.1 (Unreleased)
+
+IMPROVEMENTS:
+
+* resource/cloudflare_record: Validate `TXT` records [GH-14]
+
 ## 0.1.0 (June 20, 2017)
 
 NOTES:
