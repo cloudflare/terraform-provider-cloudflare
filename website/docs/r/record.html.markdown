@@ -31,7 +31,7 @@ The following arguments are supported:
 * `name` - (Required) The name of the record
 * `value` - (Required) The value of the record
 * `type` - (Required) The type of the record
-* `ttl` - (Optional) The TTL of the record
+* `ttl` - (Optional) The TTL of the record ([automatic: '1'](https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record))
 * `priority` - (Optional) The priority of the record
 * `proxied` - (Optional) Whether the record gets Cloudflare's origin protection.
 
