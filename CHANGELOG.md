@@ -1,5 +1,9 @@
 ## 0.1.1 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_ip_ranges` [GH-28]
+
 IMPROVEMENTS:
 
 * resource/cloudflare_record: Validate `TXT` records [GH-14]
