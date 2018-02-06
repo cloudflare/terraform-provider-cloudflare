@@ -6,6 +6,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
+	"time"
 )
 
 func resourceCloudFlareRecord() *schema.Resource {
@@ -21,11 +22,13 @@ func resourceCloudFlareRecord() *schema.Resource {
 			"domain": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"hostname": {
@@ -59,6 +62,31 @@ func resourceCloudFlareRecord() *schema.Resource {
 				Default:  false,
 				Optional: true,
 				Type:     schema.TypeBool,
+			},
+
+			"created_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"data": {
+				Type:     schema.TypeMap,
+				Computed: true,
+			},
+
+			"metadata": {
+				Type:     schema.TypeMap,
+				Computed: true,
+			},
+
+			"modified_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"proxiable": {
+				Type:     schema.TypeBool,
+				Computed: true,
 			},
 
 			"zone_id": {
@@ -116,7 +144,7 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	// In the Event that the API returns an empty DNS Record, we verify that the
 	// ID returned is not the default ""
 	if r.Result.ID == "" {
-		return fmt.Errorf("Failed to find record in Creat response; Record was empty")
+		return fmt.Errorf("Failed to find record in Create response; Record was empty")
 	}
 
 	d.SetId(r.Result.ID)
@@ -147,6 +175,11 @@ func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("ttl", record.TTL)
 	d.Set("priority", record.Priority)
 	d.Set("proxied", record.Proxied)
+	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
+	d.Set("data", mapOfStringValues(record.Data))
+	d.Set("modified_on", record.ModifiedOn.Format(time.RFC3339Nano))
+	d.Set("metadata", mapOfStringValues(record.Meta))
+	d.Set("proxiable", record.Proxiable)
 	d.Set("zone_id", zoneId)
 
 	return nil
@@ -209,4 +242,18 @@ func resourceCloudFlareRecordDelete(d *schema.ResourceData, meta interface{}) er
 	}
 
 	return nil
+}
+
+func mapOfStringValues(inVal interface{}) map[string]string {
+	// although interface could hold anything
+	// we assume that it is either nil or a map of interface values
+	outVal := make(map[string]string)
+	if inVal == nil {
+		return outVal
+	}
+	for k, v := range inVal.(map[string]interface{}) {
+		strValue := fmt.Sprintf("%v", v)
+		outVal[k] = strValue
+	}
+	return outVal
 }

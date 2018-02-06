@@ -47,4 +47,9 @@ The following attributes are exported:
 * `priority` - The priority of the record
 * `hostname` - The FQDN of the record
 * `proxied` - (Optional) Whether the record gets Cloudflare's origin protection; defaults to `false`.
+* `created_on` - (Computed) The RFC3339 timestamp of when the record was created
+* `data` - (Computed) A key-value map of strings showing individual values for SRV and LOC record types
+* `modified_on` - (Computed) The RFC3339 timestamp of when the record was last modified
+* `metadata` - (Computed) A key-value map of string metadata cloudflare associates with the record
+* `proxiable` - (Computed) Shows whether this record can be proxied, must be true if setting `proxied=true`
 * `zone_id` - (Computed) the zone id of the record
