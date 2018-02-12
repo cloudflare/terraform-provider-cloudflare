@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 
+	"time"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
-	"time"
 )
 
 func resourceCloudFlareRecord() *schema.Resource {
@@ -43,8 +44,16 @@ func resourceCloudFlareRecord() *schema.Resource {
 			},
 
 			"value": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"data"},
+			},
+
+			"data": {
+				Type:          schema.TypeMap,
+				Optional:      true,
+				ConflictsWith: []string{"value"},
 			},
 
 			"ttl": {
@@ -66,11 +75,6 @@ func resourceCloudFlareRecord() *schema.Resource {
 
 			"created_on": {
 				Type:     schema.TypeString,
-				Computed: true,
-			},
-
-			"data": {
-				Type:     schema.TypeMap,
 				Computed: true,
 			},
 
@@ -103,9 +107,24 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	newRecord := cloudflare.DNSRecord{
 		Type:     d.Get("type").(string),
 		Name:     d.Get("name").(string),
-		Content:  d.Get("value").(string),
 		Proxied:  d.Get("proxied").(bool),
 		ZoneName: d.Get("domain").(string),
+	}
+
+	value, valueOk := d.GetOk("value")
+	if valueOk {
+		newRecord.Content = value.(string)
+	}
+
+	data, dataOk := d.GetOk("data")
+	if dataOk {
+		newRecord.Data = data
+	}
+
+	if valueOk == dataOk {
+		return fmt.Errorf(
+			"either 'value' (present: %t) or 'data' (present: %t) must be provided",
+			valueOk, dataOk)
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
@@ -176,9 +195,9 @@ func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("priority", record.Priority)
 	d.Set("proxied", record.Proxied)
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
-	d.Set("data", mapOfStringValues(record.Data))
+	d.Set("data", expandStringMap(record.Data))
 	d.Set("modified_on", record.ModifiedOn.Format(time.RFC3339Nano))
-	d.Set("metadata", mapOfStringValues(record.Meta))
+	d.Set("metadata", expandStringMap(record.Meta))
 	d.Set("proxiable", record.Proxiable)
 	d.Set("zone_id", zoneId)
 
@@ -244,7 +263,7 @@ func resourceCloudFlareRecordDelete(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func mapOfStringValues(inVal interface{}) map[string]string {
+func expandStringMap(inVal interface{}) map[string]string {
 	// although interface could hold anything
 	// we assume that it is either nil or a map of interface values
 	outVal := make(map[string]string)

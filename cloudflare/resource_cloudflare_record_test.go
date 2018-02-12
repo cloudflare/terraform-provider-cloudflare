@@ -5,44 +5,51 @@ import (
 	"os"
 	"testing"
 
+	"time"
+
+	"regexp"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"time"
 )
 
 func TestAccCloudFlareRecord_Basic(t *testing.T) {
+	t.Parallel()
 	var record cloudflare.DNSRecord
 	testStartTime := time.Now().UTC()
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigBasic, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigBasic(domain, "tf-acctest-basic"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &record),
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
 					testAccCheckCloudFlareRecordAttributes(&record),
-					testAccCheckCloudFlareRecordDates("cloudflare_record.foobar", &record, testStartTime),
+					testAccCheckCloudFlareRecordDates(resourceName, &record, testStartTime),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "name", "terraform"),
+						resourceName, "name", "tf-acctest-basic"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "domain", domain),
+						resourceName, "domain", domain),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "value", "192.168.0.10"),
+						resourceName, "value", "192.168.0.10"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "proxiable", "false"),
+						resourceName, "data.%", "0"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "data.%", "0"),
+						resourceName, "hostname", fmt.Sprintf("tf-acctest-basic.%s", domain)),
+					resource.TestMatchResourceAttr(
+						resourceName, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "metadata.%", "2"),
+						resourceName, "ttl", "3600"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "metadata.auto_added", "false"),
+						resourceName, "metadata.%", "2"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "metadata.managed_by_apps", "false"),
+						resourceName, "metadata.auto_added", "false"),
 				),
 			},
 		},
@@ -50,25 +57,83 @@ func TestAccCloudFlareRecord_Basic(t *testing.T) {
 }
 
 func TestAccCloudFlareRecord_Apex(t *testing.T) {
+	t.Parallel()
 	var record cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigApex, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigApex(domain),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &record),
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
 					testAccCheckCloudFlareRecordAttributes(&record),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "name", "@"),
+						resourceName, "name", "@"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "domain", domain),
+						resourceName, "domain", domain),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "value", "192.168.0.10"),
+						resourceName, "value", "192.168.0.10"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudFlareRecord_LOC(t *testing.T) {
+	t.Parallel()
+	var record cloudflare.DNSRecord
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlareRecordConfigLOC(domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(
+						resourceName, "value", "37 46 46.000 N 122 23 35.000 W 0m 100m 0m 0m"),
+					resource.TestCheckResourceAttr(
+						resourceName, "proxiable", "false"),
+					resource.TestCheckResourceAttr(
+						resourceName, "data.%", "12"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudFlareRecord_SRV(t *testing.T) {
+	t.Parallel()
+	var record cloudflare.DNSRecord
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlareRecordConfigSRV(domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(
+						resourceName, "hostname", fmt.Sprintf("_xmpp-client._tcp.%s", domain)),
+					resource.TestCheckResourceAttr(
+						resourceName, "value", "0	5222	talk.l.google.com"),
+					resource.TestCheckResourceAttr(
+						resourceName, "proxiable", "false"),
+					resource.TestCheckResourceAttr(
+						resourceName, "data.%", "7"),
 				),
 			},
 		},
@@ -76,32 +141,30 @@ func TestAccCloudFlareRecord_Apex(t *testing.T) {
 }
 
 func TestAccCloudFlareRecord_Proxied(t *testing.T) {
+	t.Parallel()
 	var record cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigProxied, domain, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigProxied(domain, "tf-acctest-proxied"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &record),
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "domain", domain),
+						resourceName, "proxiable", "true"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "name", "terraform"),
+						resourceName, "proxied", "true"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "proxied", "true"),
+						resourceName, "type", "CNAME"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "type", "CNAME"),
+						resourceName, "value", domain),
 					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "value", domain),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "proxiable", "true"),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "data.%", "0"),
+						resourceName, "data.%", "0"),
 				),
 			},
 		},
@@ -109,38 +172,29 @@ func TestAccCloudFlareRecord_Proxied(t *testing.T) {
 }
 
 func TestAccCloudFlareRecord_Updated(t *testing.T) {
+	t.Parallel()
 	var record cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	recordName := "tf-acctest-update"
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigBasic, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigBasic(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &record),
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
 					testAccCheckCloudFlareRecordAttributes(&record),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "name", "terraform"),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "domain", domain),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "value", "192.168.0.10"),
 				),
 			},
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigNewValue, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigNewValue(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &record),
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
 					testAccCheckCloudFlareRecordAttributesUpdated(&record),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "name", "terraform"),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "domain", domain),
-					resource.TestCheckResourceAttr(
-						"cloudflare_record.foobar", "value", "192.168.0.11"),
 				),
 			},
 		},
@@ -148,24 +202,27 @@ func TestAccCloudFlareRecord_Updated(t *testing.T) {
 }
 
 func TestAccCloudFlareRecord_typeForceNewRecord(t *testing.T) {
+	t.Parallel()
 	var afterCreate, afterUpdate cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	recordName := "tf-acctest-type-force-new"
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigBasic, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigBasic(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &afterCreate),
+					testAccCheckCloudFlareRecordExists(resourceName, &afterCreate),
 				),
 			},
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigChangeType, domain, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigChangeType(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &afterUpdate),
+					testAccCheckCloudFlareRecordExists(resourceName, &afterUpdate),
 					testAccCheckCloudFlareRecordRecreated(t, &afterCreate, &afterUpdate),
 				),
 			},
@@ -174,51 +231,27 @@ func TestAccCloudFlareRecord_typeForceNewRecord(t *testing.T) {
 }
 
 func TestAccCloudFlareRecord_hostnameForceNewRecord(t *testing.T) {
+	t.Parallel()
 	var afterCreate, afterUpdate cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	recordName := "tf-acctest-hostname-force-new"
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigBasic, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigBasic(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &afterCreate),
+					testAccCheckCloudFlareRecordExists(resourceName, &afterCreate),
 				),
 			},
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigChangeHostname, domain),
+			{
+				Config: testAccCheckCloudFlareRecordConfigChangeHostname(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &afterUpdate),
-					testAccCheckCloudFlareRecordRecreated(t, &afterCreate, &afterUpdate),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudFlareRecord_domainForceNewRecord(t *testing.T) {
-	var afterCreate, afterUpdate cloudflare.DNSRecord
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	otherDomain := os.Getenv("CLOUDFLARE_DOMAIN_2")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
-		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigBasic, domain),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &afterCreate),
-				),
-			},
-			resource.TestStep{
-				Config: fmt.Sprintf(testAccCheckCloudFlareRecordConfigBasic, otherDomain),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRecordExists("cloudflare_record.foobar", &afterUpdate),
+					testAccCheckCloudFlareRecordExists(resourceName, &afterUpdate),
 					testAccCheckCloudFlareRecordRecreated(t, &afterCreate, &afterUpdate),
 				),
 			},
@@ -330,61 +363,116 @@ func testAccCheckCloudFlareRecordExists(n string, record *cloudflare.DNSRecord) 
 	}
 }
 
-const testAccCheckCloudFlareRecordConfigBasic = `
+func testAccCheckCloudFlareRecordConfigBasic(zone, name string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
 
-	name = "terraform"
+	name = "%s"
 	value = "192.168.0.10"
 	type = "A"
 	ttl = 3600
-}`
+}`, zone, name)
+}
 
-const testAccCheckCloudFlareRecordConfigApex = `
+func testAccCheckCloudFlareRecordConfigApex(zone string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
 	name = "@"
 	value = "192.168.0.10"
 	type = "A"
 	ttl = 3600
-}`
+}`, zone)
+}
 
-const testAccCheckCloudFlareRecordConfigProxied = `
+func testAccCheckCloudFlareRecordConfigLOC(zone string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
-	domain = "%s"
+	domain = "%[1]s"
+	name = "%[1]s"
+	data {
+	  "lat_degrees" =  "37"
+	  "lat_minutes" = "46"
+	  "lat_seconds" = "46"
+	  "lat_direction" = "N"
+	  "long_degrees" = "122"
+	  "long_minutes" = "23"
+	  "long_seconds" = "35"
+	  "long_direction" = "W"
+	  "altitude" = 0
+	  "size" = 100
+	  "precision_horz" = 0
+	  "precision_vert" = 0
+	}
+	type = "LOC"
+	ttl = 3600
+}`, zone)
+}
 
-	name = "terraform"
-	value = "%s"
+func testAccCheckCloudFlareRecordConfigSRV(zone string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "foobar" {
+	domain = "%[1]s"
+	name = "%[1]s"
+	data {
+	  "priority" = 5
+      "weight" = 0
+      "port" = 5222
+      "target" = "talk.l.google.com"
+      "service" = "_xmpp-client"
+      "proto" = "_tcp"
+      "name" = "%[1]s"
+	}
+	type = "SRV"
+	ttl = 3600
+}`, zone)
+}
+
+func testAccCheckCloudFlareRecordConfigProxied(zone, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "foobar" {
+	domain = "%[1]s"
+
+	name = "%[2]s"
+	value = "%[1]s"
 	type = "CNAME"
 	proxied = true
-}`
+}`, zone, name)
+}
 
-const testAccCheckCloudFlareRecordConfigNewValue = `
+func testAccCheckCloudFlareRecordConfigNewValue(zone, name string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
 
-	name = "terraform"
+	name = "%s"
 	value = "192.168.0.11"
 	type = "A"
 	ttl = 3600
-}`
+}`, zone, name)
+}
 
-const testAccCheckCloudFlareRecordConfigChangeType = `
+func testAccCheckCloudFlareRecordConfigChangeType(zone, name string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
-	domain = "%s"
+	domain = "%[1]s"
 
-	name = "terraform"
-	value = "%s"
+	name = "%[2]s"
+	value = "%[1]s"
 	type = "CNAME"
 	ttl = 3600
-}`
+}`, zone, name)
+}
 
-const testAccCheckCloudFlareRecordConfigChangeHostname = `
+func testAccCheckCloudFlareRecordConfigChangeHostname(zone, name string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
 
-	name = "changed"
+	name = "%s-changed"
 	value = "192.168.0.10"
 	type = "A"
 	ttl = 3600
-}`
+}`, zone, name)
+}
