@@ -1,5 +1,7 @@
 package cloudflare
 
+import "github.com/hashicorp/terraform/helper/schema"
+
 func expandInterfaceToStringList(list interface{}) []string {
 	ifaceList := list.([]interface{})
 	vs := make([]string, 0, len(ifaceList))
@@ -15,4 +17,11 @@ func flattenStringList(list []string) []interface{} {
 		vs = append(vs, v)
 	}
 	return vs
+}
+
+func HashByMapKey(key string) func(v interface{}) int {
+	return func(v interface{}) int {
+		m := v.(map[string]interface{})
+		return schema.HashString(m[key])
+	}
 }

@@ -29,8 +29,9 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"cloudflare_record":        resourceCloudFlareRecord(),
-			"cloudflare_load_balancer": resourceCloudFlareLoadBalancer(),
+			"cloudflare_record":             resourceCloudFlareRecord(),
+			"cloudflare_load_balancer":      resourceCloudFlareLoadBalancer(),
+			"cloudflare_load_balancer_pool": resourceCloudFlareLoadBalancerPool(),
 		},
 
 		ConfigureFunc: providerConfigure,

@@ -32,6 +32,11 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 				ForceNew: true,
 			},
 
+			"zone_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
 			"load_balancer_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -61,21 +66,23 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 			},
 
 			"proxied": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Default:       false,
+				ConflictsWith: []string{"ttl"},
+			},
+
+			"ttl": {
+				Type:          schema.TypeInt,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"proxied"}, // this is set to zero regardless of config when proxied=true
 			},
 
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 1024),
-			},
-
-			"ttl": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				// TODO is this computed / does it have a default?
 			},
 
 			// see https://github.com/hashicorp/terraform/issues/6215
@@ -151,6 +158,7 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		FallbackPool: d.Get("fallback_pool_id").(string),
 		DefaultPools: expandInterfaceToStringList(d.Get("default_pool_ids")),
 		Proxied:      d.Get("proxied").(bool),
+		TTL:          d.Get("ttl").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -175,6 +183,7 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
 	}
+	d.Set("zone_id", zoneId)
 
 	log.Printf("[INFO] Creating CloudFlare Load Balancer from struct: %+v", newLoadBalancer)
 
@@ -200,39 +209,32 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 func resourceCloudFlareLoadBalancerUpdate(d *schema.ResourceData, meta interface{}) error {
 	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
+	zoneId := d.Get("zone_id").(string)
 
-	newLoadBalancer := cloudflare.LoadBalancer{
+	loadBalancer := cloudflare.LoadBalancer{
+		ID:           d.Get("load_balancer_id").(string),
 		Name:         d.Get("name").(string),
 		FallbackPool: d.Get("fallback_pool_id").(string),
 		DefaultPools: expandInterfaceToStringList(d.Get("default_pool_ids")),
 		Proxied:      d.Get("proxied").(bool),
+		TTL:          d.Get("ttl").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
-		newLoadBalancer.Description = description.(string)
-	}
-
-	if ttl, ok := d.GetOk("ttl"); ok {
-		newLoadBalancer.TTL = ttl.(int)
+		loadBalancer.Description = description.(string)
 	}
 
 	if regionPools, ok := d.GetOk("region_pools"); ok {
-		newLoadBalancer.RegionPools = expandGeoPools(regionPools, "region")
+		loadBalancer.RegionPools = expandGeoPools(regionPools, "region")
 	}
 
 	if popPools, ok := d.GetOk("pop_pools"); ok {
-		newLoadBalancer.PopPools = expandGeoPools(popPools, "pop")
+		loadBalancer.PopPools = expandGeoPools(popPools, "pop")
 	}
 
-	zoneName := d.Get("zone").(string)
-	zoneId, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
-	}
+	log.Printf("[INFO] Updating CloudFlare Load Balancer from struct: %+v", loadBalancer)
 
-	log.Printf("[INFO] Creating CloudFlare Load Balancer from struct: %+v", newLoadBalancer)
-
-	_, err = client.ModifyLoadBalancer(zoneId, newLoadBalancer)
+	_, err := client.ModifyLoadBalancer(zoneId, loadBalancer)
 	if err != nil {
 		return errors.Wrap(err, "error creating load balancer for zone")
 	}
@@ -351,11 +353,4 @@ func resourceCloudFlareLoadBalancerImport(d *schema.ResourceData, meta interface
 		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
 	}
 	return []*schema.ResourceData{d}, nil
-}
-
-func HashByMapKey(key string) func(v interface{}) int {
-	return func(v interface{}) int {
-		m := v.(map[string]interface{})
-		return schema.HashString(m[key])
-	}
 }
