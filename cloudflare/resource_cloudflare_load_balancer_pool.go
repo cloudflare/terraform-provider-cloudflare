@@ -17,7 +17,6 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudFlareLoadBalancerPoolCreate,
 		Read:   resourceCloudFlareLoadBalancerPoolRead,
-		Update: resourceCloudFlareLoadBalancerPoolUpdate,
 		Delete: resourceCloudFlareLoadBalancerPoolDelete,
 		Exists: resourceCloudFlareLoadBalancerPoolExists,
 		Importer: &schema.ResourceImporter{
@@ -29,12 +28,14 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			// TODO check that order of origins is not significant
 			"origins": {
 				Type:     schema.TypeSet,
 				Required: true,
+				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -65,12 +66,14 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
+				ForceNew: true,
 			},
 
 			"minimum_origins": { // TODO not currently used as not in the API client
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  1,
+				ForceNew: true,
 			},
 
 			"check_regions": { //TODO: set??
@@ -80,32 +83,36 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+				ForceNew: true,
 			},
 
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 1024),
+				ForceNew:     true,
 			},
 
 			"monitor": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 32),
+				ForceNew:     true,
 			},
 
 			"notification_email": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 			},
 
 			"created_on": {
-				Type:     schema.TypeBool,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 
 			"modified_on": {
-				Type:     schema.TypeBool,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
@@ -165,39 +172,6 @@ func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.Load
 	return
 }
 
-func resourceCloudFlareLoadBalancerPoolUpdate(d *schema.ResourceData, meta interface{}) error {
-	// since api only supports replace, update looks a lot like create...
-	client := meta.(*cloudflare.API)
-
-	loadBalancerPool := cloudflare.LoadBalancerPool{
-		Name:         d.Get("name").(string),
-		Origins:      expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
-		Enabled:      d.Get("enabled").(bool),
-		CheckRegions: expandInterfaceToStringList(d.Get("check_regions")),
-	}
-
-	if description, ok := d.GetOk("description"); ok {
-		loadBalancerPool.Description = description.(string)
-	}
-
-	if monitor, ok := d.GetOk("monitor"); ok {
-		loadBalancerPool.Monitor = monitor.(string)
-	}
-
-	if notificationEmail, ok := d.GetOk("notification_email"); ok {
-		loadBalancerPool.NotificationEmail = notificationEmail.(string)
-	}
-
-	log.Printf("[INFO] Replacing CloudFlare Load Balancer Pool from struct: %+v", loadBalancerPool)
-
-	_, err := client.ModifyLoadBalancerPool(loadBalancerPool)
-	if err != nil {
-		return errors.Wrap(err, "error updating load balancer pool")
-	}
-
-	return resourceCloudFlareLoadBalancerPoolRead(d, meta)
-}
-
 func resourceCloudFlareLoadBalancerPoolRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -214,7 +188,7 @@ func resourceCloudFlareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 	d.Set("origins", flattenLoadBalancerOrigins(loadBalancerPool.Origins))
 	d.Set("enabled", loadBalancerPool.Enabled)
 
-	//d.Set("minimum_origins", loadBalancerPool.MinimumOrigins)
+	d.Set("minimum_origins", 1) // TODO
 	d.Set("check_regions", flattenStringList(loadBalancerPool.CheckRegions))
 
 	// ok to set empty optional/ noncomputed values?
