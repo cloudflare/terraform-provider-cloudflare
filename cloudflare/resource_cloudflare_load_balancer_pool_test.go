@@ -58,6 +58,8 @@ func TestAccCloudFlareLoadBalancerPool_FullySpecified(t *testing.T) {
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "enabled", "false"),
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
+					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
+					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
 				),
 			},
 		},
@@ -95,8 +97,8 @@ func TestAccCloudFlareLoadBalancerPool_ForceNew(t *testing.T) {
 					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
 					func(state *terraform.State) error {
 						if initialId == loadBalancerPool.ID {
-							return fmt.Errorf("id should be different after recreation, but is unchanged ",
-								initialId, loadBalancerPool.ID)
+							return fmt.Errorf("id should be different after recreation, but is unchanged: %s ",
+								loadBalancerPool.ID)
 						}
 						return nil
 					},
@@ -177,11 +179,6 @@ func testAccCheckCloudFlareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 			return err
 		}
 
-		// TODO : probably this should never happen??
-		if foundLoadBalancerPool.ID != rs.Primary.ID {
-			return fmt.Errorf("Load balancer not found")
-		}
-
 		*loadBalancerPool = foundLoadBalancerPool
 
 		return nil
@@ -254,11 +251,12 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     name = "example-2"
     address = "192.0.2.2"
   }
+  check_regions = ["WEU"]
   description = "tfacc-fully-specified"
   enabled = false
-  // minimum_origins = 2 TODO: need to upgrade client api
+  minimum_origins = 2
   // monitor = abcd TODO: monitor resource
   notification_email = "someone@example.com"
 }`, id)
-	// TODO add fields to config
+	// TODO add field to config after creating monitor resource
 }

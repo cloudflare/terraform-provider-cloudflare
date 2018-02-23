@@ -313,5 +313,4 @@ resource "cloudflare_load_balancer" "%[2]s" {
     pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
   }
 }`, zone, id)
-	// TODO add fields to config
 }

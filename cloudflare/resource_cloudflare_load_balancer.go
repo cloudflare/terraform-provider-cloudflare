@@ -19,7 +19,6 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 		Read:   resourceCloudFlareLoadBalancerRead,
 		Update: resourceCloudFlareLoadBalancerUpdate,
 		Delete: resourceCloudFlareLoadBalancerDelete,
-		Exists: resourceCloudFlareLoadBalancerExists,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudFlareLoadBalancerImport,
 		},
@@ -42,11 +41,10 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 				Computed: true,
 			},
 
-			"name": { // "dns_name" ??
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: false, // allow reusing same load balancer for different dns names
-				// todo: validate dns name
 			},
 
 			"fallback_pool_id": {
@@ -85,7 +83,6 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(0, 1024),
 			},
 
-			// see https://github.com/hashicorp/terraform/issues/6215
 			// nb enterprise only
 			"pop_pools": {
 				Type:     schema.TypeSet,
@@ -165,7 +162,6 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		newLoadBalancer.Description = description.(string)
 	}
 
-	// TODO in default case, this is sending ttl=0, is this ok??
 	if ttl, ok := d.GetOk("ttl"); ok {
 		newLoadBalancer.TTL = ttl.(int)
 	}
@@ -260,24 +256,25 @@ func resourceCloudFlareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 
 	loadBalancer, err := client.LoadBalancerDetails(zoneId, loadBalancerId)
 	if err != nil {
-		return errors.Wrap(err,
-			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", zoneId, loadBalancerId))
+		if strings.Contains(err.Error(), "HTTP status 404") {
+			log.Printf("[INFO] Load balancer %s in zone %s no longer exists", loadBalancerId, zoneId)
+			d.SetId("")
+			return nil
+		} else {
+			return errors.Wrap(err,
+				fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", zoneId, loadBalancerId))
+		}
 	}
 	log.Printf("[INFO] Read CloudFlare Load Balancer from API as struct: %+v", loadBalancer)
 
-	// api generally tries to populate everything, so just assume all data is present
-	// start by setting required values
 	d.Set("name", loadBalancer.Name)
 	d.Set("fallback_pool_id", loadBalancer.FallbackPool)
-	d.Set("default_pool_ids", loadBalancer.DefaultPools) // ok to pass []string to []interface{}
-
+	d.Set("default_pool_ids", loadBalancer.DefaultPools)
 	d.Set("proxied", loadBalancer.Proxied)
 	d.Set("description", loadBalancer.Description)
-	d.Set("ttl", loadBalancer.TTL) // ok to pass []string to []interface{}
-
+	d.Set("ttl", loadBalancer.TTL)
 	d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop"))
 	d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region"))
-
 	d.Set("created_on", loadBalancer.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancer.ModifiedOn.Format(time.RFC3339Nano))
 
@@ -292,7 +289,6 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 			"pool_ids": flattenStringList(v),
 		}
 		flattened = append(flattened, geoConf)
-		// assume for now that lists are of type interface{} by default
 	}
 	return schema.NewSet(HashByMapKey(geoType), flattened)
 }
@@ -310,26 +306,6 @@ func resourceCloudFlareLoadBalancerDelete(d *schema.ResourceData, meta interface
 	}
 
 	return nil
-}
-
-func resourceCloudFlareLoadBalancerExists(d *schema.ResourceData, meta interface{}) (bool, error) {
-	client := meta.(*cloudflare.API)
-	zoneId := d.Get("zone_id").(string)
-	loadBalancerId := d.Get("load_balancer_id").(string)
-
-	_, err := client.LoadBalancerDetails(zoneId, loadBalancerId)
-	if err != nil {
-		log.Printf("[INFO] Error found when checking if  load balancer exists: %s", err.Error())
-		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Found status 404 looking for resource %s in zone %s", loadBalancerId, zoneId)
-			return false, nil
-		} else {
-			return false, errors.Wrap(err,
-				fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", loadBalancerId, zoneId))
-		}
-	}
-
-	return true, nil
 }
 
 func resourceCloudFlareLoadBalancerImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
