@@ -138,12 +138,12 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 			},
 
 			"created_on": {
-				Type:     schema.TypeBool,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 
 			"modified_on": {
-				Type:     schema.TypeBool,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
