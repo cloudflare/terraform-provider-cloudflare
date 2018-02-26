@@ -39,9 +39,13 @@ func validateRecordType(t string, proxied bool) error {
 		if !proxied {
 			return nil
 		}
+	case "CAA":
+		if !proxied {
+			return nil
+		}
 	default:
 		return fmt.Errorf(
-			`Invalid type %q. Valid types are "A", "AAAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS" or "SPF"`, t)
+			`Invalid type %q. Valid types are "A", "AAAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF" or "CAA"`, t)
 	}
 
 	return fmt.Errorf("Type %q cannot be proxied", t)
