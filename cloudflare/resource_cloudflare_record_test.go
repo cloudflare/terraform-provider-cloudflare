@@ -223,7 +223,7 @@ func TestAccCloudFlareRecord_typeForceNewRecord(t *testing.T) {
 				Config: testAccCheckCloudFlareRecordConfigChangeType(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlareRecordExists(resourceName, &afterUpdate),
-					testAccCheckCloudFlareRecordRecreated(t, &afterCreate, &afterUpdate),
+					testAccCheckCloudFlareRecordRecreated(&afterCreate, &afterUpdate),
 				),
 			},
 		},
@@ -252,18 +252,47 @@ func TestAccCloudFlareRecord_hostnameForceNewRecord(t *testing.T) {
 				Config: testAccCheckCloudFlareRecordConfigChangeHostname(domain, recordName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlareRecordExists(resourceName, &afterUpdate),
-					testAccCheckCloudFlareRecordRecreated(t, &afterCreate, &afterUpdate),
+					testAccCheckCloudFlareRecordRecreated(&afterCreate, &afterUpdate),
 				),
 			},
 		},
 	})
 }
 
-func testAccCheckCloudFlareRecordRecreated(t *testing.T,
-	before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
+func TestAccCloudFlareRecord_CreateAfterManualDestroy(t *testing.T) {
+	t.Parallel()
+	var afterCreate, afterRecreate cloudflare.DNSRecord
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	name := "cloudflare_record.foobar"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlareRecordConfigBasic(zone, name),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareRecordExists(name, &afterCreate),
+					testAccManuallyDeleteRecord(&afterCreate),
+				),
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testAccCheckCloudFlareRecordConfigBasic(zone, name),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareRecordExists(name, &afterRecreate),
+					testAccCheckCloudFlareRecordRecreated(&afterCreate, &afterRecreate),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudFlareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
-			t.Fatalf("Expected change of Record Ids, but both were %v", before.ID)
+			return fmt.Errorf("Expected change of Record Ids, but both were %v", before.ID)
 		}
 		return nil
 	}
@@ -284,6 +313,17 @@ func testAccCheckCloudFlareRecordDestroy(s *terraform.State) error {
 	}
 
 	return nil
+}
+
+func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		client := testAccProvider.Meta().(*cloudflare.API)
+		err := client.DeleteDNSRecord(record.ZoneID, record.ID)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
 }
 
 func testAccCheckCloudFlareRecordAttributes(record *cloudflare.DNSRecord) resource.TestCheckFunc {

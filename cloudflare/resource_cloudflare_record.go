@@ -6,6 +6,8 @@ import (
 
 	"time"
 
+	"strings"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -184,7 +186,14 @@ func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) erro
 
 	record, err := client.DNSRecord(zoneId, d.Id())
 	if err != nil {
-		return err
+		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
+			strings.Contains(err.Error(), "HTTP status 404") {
+			log.Printf("[WARN] Removing record from state because it's not found in API")
+			d.SetId("")
+			return nil
+		} else {
+			return err
+		}
 	}
 
 	d.SetId(record.ID)
