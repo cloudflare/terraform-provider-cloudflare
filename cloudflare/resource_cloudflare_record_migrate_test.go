@@ -325,9 +325,9 @@ const dnsResponse = `
   "result_info": {
     "page": 1,
     "per_page": 20,
-    "total_pages": 2,
-    "count": 20,
-    "total_count": 4
+    "total_pages": 1,
+    "count": 7,
+    "total_count": 7
   },
   "success": true,
   "errors": [],
