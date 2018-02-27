@@ -6,6 +6,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 func resourceCloudFlarePageRule() *schema.Resource {
@@ -14,32 +15,42 @@ func resourceCloudFlarePageRule() *schema.Resource {
 		Read:   resourceCloudFlarePageRuleRead,
 		Update: resourceCloudFlarePageRuleUpdate,
 		Delete: resourceCloudFlarePageRuleDelete,
+		// TODO Importer
 
 		SchemaVersion: 1,
 		Schema: map[string]*schema.Schema{
-			"domain": &schema.Schema{
+			"domain": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 
-			"target": &schema.Schema{
+			"zone_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"target": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 
-			"actions": &schema.Schema{
-				Type:     schema.TypeSet,
+			// TODO see if there's a diff function we can apply instead of having a separate variable
+			"effective_target": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"actions": {
+				Type:     schema.TypeList,
 				Required: true,
 				MinItems: 1,
-				// 18 total, auto_https nor forwarding can be set with others
-				MaxItems: 16,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					SchemaVersion: 1,
 					Schema: map[string]*schema.Schema{
-						/* These are binary options, but in order to tell if
-						 * they've been set to one or the other by a user inside
-						 * a TypeSet, we need TypeString (and Cloudflare expects
-						 * "on" or "off" anyway. */
+						// 18 total, neither auto_https nor forwarding can be set with others
+						// API expects "on" or "off" and not bools for some fields so we align with that
+						// TODO change this to boolean, this api is already different since the api treats 'off' differently to not specified
 						"always_online": {
 							Type:         schema.TypeString,
 							ValidateFunc: validateOnOff,
@@ -87,59 +98,52 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validateOnOff,
 							Optional:     true,
 						},
-						// End binary
 
-						/* These are unitary options; we need TypeBools though
-						 * in order to determine (inside a TypeSet) if they've
-						 * been set *by the user*. */
 						"always_use_https": {
-							Type:         schema.TypeBool,
-							Optional:     true,
-							ValidateFunc: validateIsTrue,
+							Type:     schema.TypeBool,
+							Optional: true,
 						},
 
+						// may not be used with rocket loader
+						// nb ConflictsWith doesnt seem to work on nested schemas
 						"disable_apps": {
-							Type:         schema.TypeBool,
-							Optional:     true,
-							ValidateFunc: validateIsTrue,
+							Type:     schema.TypeBool,
+							Optional: true,
 						},
 
 						"disable_performance": {
-							Type:         schema.TypeBool,
-							Optional:     true,
-							ValidateFunc: validateIsTrue,
+							Type:     schema.TypeBool,
+							Optional: true,
 						},
 
 						"disable_security": {
-							Type:         schema.TypeBool,
-							Optional:     true,
-							ValidateFunc: validateIsTrue,
+							Type:     schema.TypeBool,
+							Optional: true,
 						},
-						// End unitaries
 
 						"browser_cache_ttl": {
 							Type:         schema.TypeInt,
 							Optional:     true,
-							ValidateFunc: validateTTL,
+							ValidateFunc: validation.IntAtMost(31536000),
 						},
 
 						"edge_cache_ttl": {
 							Type:         schema.TypeInt,
 							Optional:     true,
-							ValidateFunc: validateTTL,
+							ValidateFunc: validation.IntAtMost(31536000),
 						},
 
 						"cache_level": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateCacheLevel,
+							ValidateFunc: validation.StringInSlice([]string{"bypass", "basic", "simplified", "aggressive", "cache_everything"}, false),
 						},
 
 						"forwarding_url": {
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							Optional: true,
-							MinItems: 2,
-							MaxItems: 2,
+							MinItems: 1,
+							MaxItems: 1,
 							Elem: &schema.Resource{
 								SchemaVersion: 1,
 								Schema: map[string]*schema.Schema{
@@ -151,7 +155,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 									"status_code": {
 										Type:         schema.TypeInt,
 										Required:     true,
-										ValidateFunc: validateForwardStatusCode,
+										ValidateFunc: validation.IntBetween(301, 302),
 									},
 								},
 							},
@@ -178,13 +182,13 @@ func resourceCloudFlarePageRule() *schema.Resource {
 				},
 			},
 
-			"priority": &schema.Schema{
+			"priority": {
 				Type:     schema.TypeInt,
 				Default:  1,
 				Optional: true,
 			},
 
-			"status": &schema.Schema{
+			"status": {
 				Type:         schema.TypeString,
 				Default:      "active",
 				Optional:     true,
@@ -199,7 +203,7 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	domain := d.Get("domain").(string)
 
 	newPageRuleTargets := []cloudflare.PageRuleTarget{
-		cloudflare.PageRuleTarget{
+		{
 			Target: "url",
 			Constraint: struct {
 				Operator string `json:"operator"`
@@ -211,8 +215,10 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 		},
 	}
 
-	actions := d.Get("actions").(*schema.Set).List()
+	actions := d.Get("actions").([]interface{})
 	newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(actions))
+
+	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
 			newPageRuleAction, err := transformToCloudFlarePageRuleAction(id, value)
@@ -240,43 +246,45 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	d.Set("zone_id", zoneID)
 	log.Printf("[DEBUG] CloudFlare Page Rule create configuration: %#v", newPageRule)
 
-	err = client.CreatePageRule(zoneID, newPageRule)
+	r, err := client.CreatePageRule(zoneID, newPageRule)
 	if err != nil {
 		return fmt.Errorf("Failed to create page rule: %s", err)
 	}
+
+	if r.ID == "" {
+		return fmt.Errorf("Failed to find page rule in Create response; ID was empty")
+	}
+
+	d.SetId(r.ID)
 
 	return resourceCloudFlarePageRuleRead(d, meta)
 }
 
 func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	domain := d.Get("domain").(string)
-
-	zoneID, err := client.ZoneIDByName(domain)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", domain, err)
-	}
+	zoneID := d.Get("zone_id").(string)
 
 	pageRule, err := client.PageRule(zoneID, d.Id())
 	if err != nil {
+		// TODO recreate after manual delete
 		return fmt.Errorf("Error finding page rule %q: %s", d.Id(), err)
 	}
-
-	d.SetId(pageRule.ID)
+	log.Printf("[DEBUG] CloudFlare Page Rule read configuration: %#v", pageRule)
 
 	// Cloudflare presently only has one target type, and its Operator is always
 	// "matches"; so we can just read the first element's Value.
-	d.Set("target", pageRule.Targets[0].Constraint.Value)
+	d.Set("effective_target", pageRule.Targets[0].Constraint.Value)
 
-	actions := make([]map[string]interface{}, 0, len(pageRule.Actions))
+	actions := map[string]interface{}{}
 	for _, pageRuleAction := range pageRule.Actions {
 		key, value, err := transformFromCloudFlarePageRuleAction(&pageRuleAction)
 		if err != nil {
 			return fmt.Errorf("Failed to parse page rule action: %s", err)
 		}
-		actions = append(actions, map[string]interface{}{key: value})
+		actions[key] = value
 	}
-	d.Set("actions", actions)
+	log.Printf("[DEBUG] CloudFlare Page Rule actions configuration: %#v", actions)
+	d.Set("actions", []map[string]interface{}{actions})
 
 	d.Set("priority", pageRule.Priority)
 	d.Set("status", pageRule.Status)
@@ -286,11 +294,9 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 
 func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	domain := d.Get("domain").(string)
+	zoneID := d.Get("zone_id").(string)
 
-	updatePageRule := cloudflare.PageRule{
-		ID: d.Id(),
-	}
+	updatePageRule := cloudflare.PageRule{}
 
 	if target, ok := d.GetOk("target"); ok {
 		updatePageRule.Targets = []cloudflare.PageRuleTarget{
@@ -308,7 +314,7 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	if v, ok := d.GetOk("actions"); ok {
-		actions := v.(*schema.Set).List()
+		actions := v.([]interface{})
 		newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(actions))
 
 		for _, action := range actions {
@@ -334,14 +340,11 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 		updatePageRule.Status = status.(string)
 	}
 
-	zoneID, err := client.ZoneIDByName(domain)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", domain, err)
-	}
-
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
-	if err := client.UpdatePageRule(zoneID, d.Id(), updatePageRule); err != nil {
+	// contrary to docs, change page rule actually does a full replace
+	// this part of the api needs some work, so it may change in future
+	if err := client.ChangePageRule(zoneID, d.Id(), updatePageRule); err != nil {
 		return fmt.Errorf("Failed to update Cloudflare Page Rule: %s", err)
 	}
 
@@ -350,12 +353,8 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	zoneID := d.Get("zone_id").(string)
 	domain := d.Get("domain").(string)
-
-	zoneID, err := client.ZoneIDByName(domain)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", domain, err)
-	}
 
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", domain, d.Id())
 
@@ -370,37 +369,20 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	key = pageRuleAction.ID
 
 	switch pageRuleAction.ID {
-	case "always_online":
-	case "automatic_https_rewrites":
-	case "browser_check":
-	case "email_obfuscation":
-	case "ip_geolocation":
-	case "opportunistic_encryption":
-	case "server_side_exclude":
-	case "smart_errors":
-		if pageRuleAction.Value.(bool) {
-			value = true
-		} else {
-			value = false
-		}
+	case "always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors":
+		value = pageRuleAction.Value.(string)
 		break
 
-	case "always_use_https":
-	case "disable_apps":
-	case "disable_performance":
-	case "disable_security":
+	case "always_use_https", "disable_apps", "disable_performance", "disable_security":
+		// api returns a nil value
 		value = true
 		break
 
-	case "browser_cache_ttl":
-	case "edge_cache_ttl":
-		value = pageRuleAction.Value.(int)
+	case "browser_cache_ttl", "edge_cache_ttl":
+		value = pageRuleAction.Value.(float64)
 		break
 
-	case "cache_level":
-	case "rocket_loader":
-	case "security_level":
-	case "ssl":
+	case "cache_level", "rocket_loader", "security_level", "ssl":
 		value = pageRuleAction.Value.(string)
 		break
 
@@ -420,15 +402,13 @@ func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRule
 	pageRuleAction.ID = id
 
 	if strValue, ok := value.(string); ok {
-		if strValue == "" {
-			// This happens when not set by the user
+		if strValue == "" || strValue == "off" {
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = strValue
 		}
 	} else if unitValue, ok := value.(bool); ok {
 		if !unitValue {
-			// This happens when not set by the user
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = true
@@ -441,23 +421,16 @@ func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRule
 			pageRuleAction.Value = intValue
 		}
 	} else if id == "forwarding_url" {
-		forwardActionSchema := value.(*schema.Set).List()
-		if len(forwardActionSchema) != 0 {
-			// We've already validated the status_code, and enforced 2
-			// elements; so whichever isn't the status_code is the url.
-			fst := forwardActionSchema[0].(map[string]interface{})
-			snd := forwardActionSchema[1].(map[string]interface{})
+		forwardActionSchema := value.([]interface{})
 
-			if statusCode := fst["status_code"].(int); statusCode != 0 {
-				pageRuleAction.Value = map[string]interface{}{
-					"url":         snd["url"].(string),
-					"status_code": statusCode,
-				}
-			} else if statusCode := snd["status_code"].(int); statusCode != 0 {
-				pageRuleAction.Value = map[string]interface{}{
-					"url":         snd["url"].(string),
-					"status_code": statusCode,
-				}
+		log.Printf("[DEBUG] forwarding_url action to be applied: %#v", forwardActionSchema)
+
+		if len(forwardActionSchema) != 0 {
+			fwd := forwardActionSchema[0].(map[string]interface{})
+
+			pageRuleAction.Value = map[string]interface{}{
+				"url":         fwd["url"].(string),
+				"status_code": fwd["status_code"].(int),
 			}
 		}
 	} else {
