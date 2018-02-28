@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"strings"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
@@ -17,7 +19,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 		Delete: resourceCloudFlarePageRuleDelete,
 		// TODO Importer
 
-		SchemaVersion: 1,
+		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
 			"domain": {
 				Type:     schema.TypeString,
@@ -34,10 +36,9 @@ func resourceCloudFlarePageRule() *schema.Resource {
 				Required: true,
 			},
 
-			// TODO see if there's a diff function we can apply instead of having a separate variable
 			"effective_target": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Computed: true, // better to have a diffsuppressfunc on 'api'  but its unclear what changes the api can make
 			},
 
 			"actions": {
@@ -48,76 +49,77 @@ func resourceCloudFlarePageRule() *schema.Resource {
 				Elem: &schema.Resource{
 					SchemaVersion: 1,
 					Schema: map[string]*schema.Schema{
-						// 18 total, neither auto_https nor forwarding can be set with others
-						// API expects "on" or "off" and not bools for some fields so we align with that
-						// TODO change this to boolean, this api is already different since the api treats 'off' differently to not specified
 						"always_online": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"automatic_https_rewrites": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"browser_check": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"email_obfuscation": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"ip_geolocation": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"opportunistic_encryption": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"server_side_exclude": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"smart_errors": {
-							Type:         schema.TypeString,
-							ValidateFunc: validateOnOff,
-							Optional:     true,
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 
 						"always_use_https": {
 							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
+						},
+
+						"disable_apps": {
+							Type:     schema.TypeBool,
+							Default:  false,
 							Optional: true,
 						},
 
 						// may not be used with rocket loader
-						// nb ConflictsWith doesnt seem to work on nested schemas
-						"disable_apps": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-
+						// n.b. ConflictsWith doesn't seem to work on nested schemas
 						"disable_performance": {
 							Type:     schema.TypeBool,
+							Default:  false,
 							Optional: true,
 						},
 
 						"disable_security": {
 							Type:     schema.TypeBool,
+							Default:  false,
 							Optional: true,
 						},
 
@@ -161,22 +163,23 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							},
 						},
 
+						// may not be used with disable_performance
 						"rocket_loader": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateRocketLoader,
+							ValidateFunc: validation.StringInSlice([]string{"off", "manual", "automatic"}, false),
 						},
 
 						"security_level": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateSecurityLevel,
+							ValidateFunc: validation.StringInSlice([]string{"essentially_off", "low", "medium", "high", "under_attack"}, false),
 						},
 
 						"ssl": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validateSSL,
+							ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict"}, false),
 						},
 					},
 				},
@@ -192,7 +195,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Default:      "active",
 				Optional:     true,
-				ValidateFunc: validatePageRuleStatus,
+				ValidateFunc: validation.StringInSlice([]string{"active", "paused"}, false),
 			},
 		},
 	}
@@ -266,8 +269,14 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 
 	pageRule, err := client.PageRule(zoneID, d.Id())
 	if err != nil {
-		// TODO recreate after manual delete
-		return fmt.Errorf("Error finding page rule %q: %s", d.Id(), err)
+		if strings.Contains(err.Error(), "Invalid Page Rule identifier") || // api bug - this indicates non-existing resource
+			strings.Contains(err.Error(), "HTTP status 404") {
+			log.Printf("[INFO] Page Rule %s no longer exists", d.Id())
+			d.SetId("")
+			return nil
+		} else {
+			return fmt.Errorf("Error finding page rule %q: %s", d.Id(), err)
+		}
 	}
 	log.Printf("[DEBUG] CloudFlare Page Rule read configuration: %#v", pageRule)
 
@@ -368,25 +377,29 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
 
-	switch pageRuleAction.ID {
-	case "always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors":
-		value = pageRuleAction.Value.(string)
+	switch {
+	case contains(pageRuleAPIOnOffFields, pageRuleAction.ID):
+		if strings.EqualFold(pageRuleAction.Value.(string), "on") {
+			value = true
+		} else {
+			value = false
+		}
 		break
 
-	case "always_use_https", "disable_apps", "disable_performance", "disable_security":
+	case contains(pageRuleAPINilFields, pageRuleAction.ID):
 		// api returns a nil value
 		value = true
 		break
 
-	case "browser_cache_ttl", "edge_cache_ttl":
+	case contains(pageRuleAPIFloatFields, pageRuleAction.ID):
 		value = pageRuleAction.Value.(float64)
 		break
 
-	case "cache_level", "rocket_loader", "security_level", "ssl":
+	case contains(pageRuleAPIStringFields, pageRuleAction.ID):
 		value = pageRuleAction.Value.(string)
 		break
 
-	case "forwarding_url":
+	case pageRuleAction.ID == "forwarding_url":
 		value = pageRuleAction.Value.(map[string]interface{})
 		break
 
@@ -411,7 +424,11 @@ func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRule
 		if !unitValue {
 			pageRuleAction.Value = nil
 		} else {
-			pageRuleAction.Value = true
+			if contains(pageRuleAPIOnOffFields, id) {
+				pageRuleAction.Value = "on"
+			} else {
+				pageRuleAction.Value = true
+			}
 		}
 	} else if intValue, ok := value.(int); ok {
 		if intValue == 0 {
@@ -438,4 +455,19 @@ func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRule
 	}
 
 	return
+}
+
+var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors"}
+var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
+var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
+var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
+
+func contains(slice []string, item string) bool {
+	set := make(map[string]struct{}, len(slice))
+	for _, s := range slice {
+		set[s] = struct{}{}
+	}
+
+	_, ok := set[item]
+	return ok
 }

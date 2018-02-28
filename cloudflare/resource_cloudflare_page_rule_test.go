@@ -12,17 +12,19 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+// TODO parallel tests run into rate limiting, update after client limiting is merged
+
 func TestAccCloudFlarePageRule_Basic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	target := fmt.Sprintf("test.%s", domain)
+	target := fmt.Sprintf("test-basic.%s", domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccCheckCloudFlarePageRuleConfigBasic(domain, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &pageRule),
@@ -30,9 +32,9 @@ func TestAccCloudFlarePageRule_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.foobar", "domain", domain),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "target", fmt.Sprintf("test.%s", domain)),
+						"cloudflare_page_rule.foobar", "target", target),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "effective_target", fmt.Sprintf("test.%s/", domain)),
+						"cloudflare_page_rule.foobar", "effective_target", fmt.Sprintf("%s/", target)),
 				),
 			},
 		},
@@ -42,14 +44,14 @@ func TestAccCloudFlarePageRule_Basic(t *testing.T) {
 func TestAccCloudFlarePageRule_FullySpecified(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	target := fmt.Sprintf("test.%s", domain)
+	target := fmt.Sprintf("test-fully-specified.%s", domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccCheckCloudFlarePageRuleConfigFullySpecified(domain, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &pageRule),
@@ -57,9 +59,9 @@ func TestAccCloudFlarePageRule_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.foobar", "domain", domain),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "target", fmt.Sprintf("test.%s", domain)),
+						"cloudflare_page_rule.foobar", "target", target),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "effective_target", fmt.Sprintf("test.%s/", domain)),
+						"cloudflare_page_rule.foobar", "effective_target", fmt.Sprintf("%s/", target)),
 				),
 			},
 		},
@@ -69,14 +71,14 @@ func TestAccCloudFlarePageRule_FullySpecified(t *testing.T) {
 func TestAccCloudFlarePageRule_ForwardingOnly(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	target := fmt.Sprintf("test.%s", domain)
+	target := fmt.Sprintf("test-fwd-only.%s", domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccCheckCloudFlarePageRuleConfigForwardingOnly(domain, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &pageRule),
@@ -84,21 +86,19 @@ func TestAccCloudFlarePageRule_ForwardingOnly(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.foobar", "domain", domain),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "target", fmt.Sprintf("test.%s", domain)),
+						"cloudflare_page_rule.foobar", "target", target),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "effective_target", fmt.Sprintf("test.%s/", domain)),
+						"cloudflare_page_rule.foobar", "effective_target", fmt.Sprintf("%s/", target)),
 				),
-
-				ExpectError: regexp.MustCompile("\\\"forwarding_url\\\" may not be used with \\\"any setting\\\""),
 			},
 		},
 	})
 }
 
-func TestAccCloudFlarePageRule_Updated(t *testing.T) {
+func TestAccCloudFlarePageRule_ForwardingAndOthers(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	target := fmt.Sprintf("test.%s", domain)
+	target := fmt.Sprintf("test-fwd-others.%s", domain)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -106,21 +106,87 @@ func TestAccCloudFlarePageRule_Updated(t *testing.T) {
 		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccCheckCloudFlarePageRuleConfigBasic(domain, target),
+				Config: testAccCheckCloudFlarePageRuleConfigForwardingAndOthers(domain, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &pageRule),
 					//testAccCheckCloudFlarePageRuleAttributes(&pageRule),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.foobar", "domain", domain),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.foobar", "target", target),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.foobar", "effective_target", fmt.Sprintf("%s/", target)),
+				),
+
+				ExpectError: regexp.MustCompile("HTTP status 400"),
+			},
+		},
+	})
+}
+
+func TestAccCloudFlarePageRule_Updated(t *testing.T) {
+	var before, after cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	target := fmt.Sprintf("test-updated.%s", domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlarePageRuleConfigBasic(domain, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &before),
+					//testAccCheckCloudFlarePageRuleAttributes(&pageRule), // TODO check attributes
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccCheckCloudFlarePageRuleConfigNewValue(domain, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &pageRule),
+					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &after),
 					//testAccCheckCloudFlarePageRuleAttributesUpdated(&pageRule),
+					testAccCheckCloudFlarePageRuleIDUnchanged(&before, &after),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "target", fmt.Sprintf("test.%s", domain)),
+						"cloudflare_page_rule.foobar", "target", fmt.Sprintf("%s/updated", target)),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudFlarePageRule_CreateAfterManualDestroy(t *testing.T) {
+	var before, after cloudflare.PageRule
+	var initialID string
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	target := fmt.Sprintf("test-updated.%s", domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlarePageRuleConfigBasic(domain, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &before),
+					testAccManuallyDeletePageRule("cloudflare_page_rule.foobar", &initialID),
+				),
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testAccCheckCloudFlarePageRuleConfigNewValue(domain, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.foobar", &after),
+					testAccCheckCloudFlarePageRuleRecreated(&before, &after),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.foobar", "actions.0.always_online", "on"),
+						"cloudflare_page_rule.foobar", "target", fmt.Sprintf("%s/updated", target)),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.foobar", "actions.0.always_online", "false"),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.foobar", "actions.0.automatic_https_rewrites", "true"),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.foobar", "actions.0.rocket_loader", "automatic"),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.foobar", "actions.0.ssl", "strict"),
 				),
@@ -129,11 +195,19 @@ func TestAccCloudFlarePageRule_Updated(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudFlarePageRuleRecreated(t *testing.T,
-	before, after *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudFlarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
-			t.Fatalf("Expected change of PageRule Ids, but both were %v", before.ID)
+			return fmt.Errorf("Expected change of PageRule Ids, but both were %v", before.ID)
+		}
+		return nil
+	}
+}
+
+func testAccCheckCloudFlarePageRuleIDUnchanged(before, after *cloudflare.PageRule) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if before.ID != after.ID {
+			return fmt.Errorf("ID should not change suring in place update, but got change %s -> %s", before.ID, after.ID)
 		}
 		return nil
 	}
@@ -156,8 +230,35 @@ func testAccCheckCloudFlarePageRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudFlarePageRuleAttributes(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudFlarePageRuleAttributesBasic(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+
+		// check the api only has attributes we set non-empty values for
+
+		if pageRule.Actions[0].ID != "always_online" {
+			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
+		}
+
+		if pageRule.Actions[0].Value != "on" {
+			return fmt.Errorf("Bad value for actions.always_online: %s", pageRule.Actions[0].Value)
+		}
+
+		if pageRule.Actions[1].ID != "ssl" {
+			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
+		}
+
+		if pageRule.Actions[1].Value != "flexible" {
+			return fmt.Errorf("Bad value for actions.ssl: %s", pageRule.Actions[0].Value)
+		}
+
+		return nil
+	}
+}
+
+func testAccCheckCloudFlarePageRuleAttributesFullySpecified(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+
+		// TODO check each of the different types of (non-empty) values are set at API level
 
 		if pageRule.Actions[0].ID != "always_online" {
 			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
@@ -181,6 +282,8 @@ func testAccCheckCloudFlarePageRuleAttributes(pageRule *cloudflare.PageRule) res
 
 func testAccCheckCloudFlarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+
+		// TODO check some updated attributes get set
 
 		if pageRule.Actions[0].ID != "always_online" {
 			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
@@ -229,14 +332,31 @@ func testAccCheckCloudFlarePageRuleExists(n string, pageRule *cloudflare.PageRul
 	}
 }
 
+func testAccManuallyDeletePageRule(name string, initialID *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return fmt.Errorf("Not found: %s", name)
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		*initialID = rs.Primary.ID
+		err := client.DeletePageRule(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+}
+
 func testAccCheckCloudFlarePageRuleConfigBasic(domain, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "foobar" {
 	domain = "%s"
 	target = "%s"
 	actions = {
-		always_online = "on",
-		ssl = "flexible",
+		always_online = true
+		ssl = "flexible"
 	}
 }`, domain, target)
 }
@@ -245,10 +365,12 @@ func testAccCheckCloudFlarePageRuleConfigNewValue(domain, target string) string 
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "foobar" {
 	domain = "%s"
-	target = "%s"
+	target = "%s/updated"
 	actions = {
-		always_online = "on",
-		ssl = "strict",
+		always_online = false
+		automatic_https_rewrites = true
+		ssl = "strict"
+		rocket_loader = "automatic"
 	}
 }`, domain, target)
 }
@@ -259,13 +381,13 @@ resource "cloudflare_page_rule" "foobar" {
 	domain = "%s"
 	target = "%s"
 	actions = {
-		always_online = "on"
-		automatic_https_rewrites = "on"
-		browser_check = "on"
-		email_obfuscation = "on"
-		ip_geolocation = "on"
-		opportunistic_encryption = "on"
-		server_side_exclude = "on"
+		always_online = true
+		automatic_https_rewrites = true
+		browser_check = true
+		email_obfuscation = true
+		ip_geolocation = true
+		opportunistic_encryption = true
+		server_side_exclude = true
         always_use_https = true
         disable_apps = true
         disable_performance = true
@@ -285,17 +407,32 @@ resource "cloudflare_page_rule" "foobar" {
 	domain = "%s"
 	target = "%s"
 	actions = {
-		always_online = "off"
-		automatic_https_rewrites = "off"
-		browser_check = "off"
-		email_obfuscation = "off"
-		ip_geolocation = "off"
-		opportunistic_encryption = "off"
-		server_side_exclude = "off"
+		always_online = false
+		automatic_https_rewrites = false
+		browser_check = false
+		email_obfuscation = false
+		ip_geolocation = false
+		opportunistic_encryption = false
+		server_side_exclude = false
         always_use_https = false
         disable_apps = false
         disable_performance = false
         disable_security = false
+		forwarding_url {
+        	url = "http://%[1]s/forward"
+			status_code = 301
+		}
+	}
+}`, domain, target)
+}
+
+func testAccCheckCloudFlarePageRuleConfigForwardingAndOthers(domain, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "foobar" {
+	domain = "%s"
+	target = "%s"
+	actions = {
+        disable_security = true
 		forwarding_url {
         	url = "http://%[1]s/forward"
 			status_code = 301
