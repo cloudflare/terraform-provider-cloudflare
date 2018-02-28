@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"net/url"
 )
 
 func resourceCloudFlarePageRule() *schema.Resource {
@@ -17,11 +18,13 @@ func resourceCloudFlarePageRule() *schema.Resource {
 		Read:   resourceCloudFlarePageRuleRead,
 		Update: resourceCloudFlarePageRuleUpdate,
 		Delete: resourceCloudFlarePageRuleDelete,
-		// TODO Importer
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudFlarePageRuleImport,
+		},
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
-			"domain": {
+			"zone": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -34,11 +37,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 			"target": {
 				Type:     schema.TypeString,
 				Required: true,
-			},
-
-			"effective_target": {
-				Type:     schema.TypeString,
-				Computed: true, // better to have a diffsuppressfunc on 'api'  but its unclear what changes the api can make
+				DiffSuppressFunc: suppressEquivalentURLs,
 			},
 
 			"actions": {
@@ -201,9 +200,17 @@ func resourceCloudFlarePageRule() *schema.Resource {
 	}
 }
 
+func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
+	// this is probably due to RFC3986 normalization but its unspecified
+	if strings.Trim(new, "/") == strings.Trim(old, "/") {
+		return true
+	}
+	return false
+},
+
 func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	domain := d.Get("domain").(string)
+	zone := d.Get("zone").(string)
 
 	newPageRuleTargets := []cloudflare.PageRuleTarget{
 		{
@@ -241,9 +248,9 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 		Status:   d.Get("status").(string),
 	}
 
-	zoneID, err := client.ZoneIDByName(domain)
+	zoneID, err := client.ZoneIDByName(zone)
 	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", domain, err)
+		return fmt.Errorf("Error finding zone %q: %s", zone, err)
 	}
 
 	d.Set("zone_id", zoneID)
@@ -282,7 +289,7 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 
 	// Cloudflare presently only has one target type, and its Operator is always
 	// "matches"; so we can just read the first element's Value.
-	d.Set("effective_target", pageRule.Targets[0].Constraint.Value)
+	d.Set("target", pageRule.Targets[0].Constraint.Value)
 
 	actions := map[string]interface{}{}
 	for _, pageRuleAction := range pageRule.Actions {
@@ -363,9 +370,9 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	domain := d.Get("domain").(string)
+	zone := d.Get("zone").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", domain, d.Id())
+	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zone, d.Id())
 
 	if err := client.DeletePageRule(zoneID, d.Id()); err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Page Rule: %s", err)
@@ -373,6 +380,11 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 
 	return nil
 }
+
+var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors"}
+var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
+var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
+var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
@@ -387,7 +399,7 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		break
 
 	case contains(pageRuleAPINilFields, pageRuleAction.ID):
-		// api returns a nil value
+		// api returns a nil value so set the value ourselves
 		value = true
 		break
 
@@ -457,10 +469,28 @@ func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRule
 	return
 }
 
-var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors"}
-var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
-var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
-var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
+func resourceCloudFlarePageRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var zoneName string
+	var pageRuleId string
+	if len(idAttr) == 2 {
+		zoneName = idAttr[0]
+		pageRuleId = idAttr[1]
+		d.Set("zone", zoneName)
+		d.SetId(pageRuleId)
+	} else {
+		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneName/pageRuleId\"", d.Id())
+	}
+	zoneId, err := client.ZoneIDByName(zoneName)
+	d.Set("zone_id", zoneId)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't find zone %q while trying to import page rule %q : %q", zoneName, d.Id(), err)
+	}
+	return []*schema.ResourceData{d}, nil
+}
 
 func contains(slice []string, item string) bool {
 	set := make(map[string]struct{}, len(slice))
