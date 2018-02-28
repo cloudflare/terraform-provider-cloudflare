@@ -21,7 +21,7 @@ func resourceCloudFlareRateLimit() *schema.Resource {
 			State: resourceCloudFlareRateLimitImport,
 		},
 
-		SchemaVersion: 1,
+		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
 			"zone": {
 				Type:     schema.TypeString,
@@ -49,6 +49,51 @@ func resourceCloudFlareRateLimit() *schema.Resource {
 				Type:         schema.TypeInt,
 				Required:     true,
 				ValidateFunc: validation.IntBetween(1, 86400),
+			},
+
+			"action": {
+				Type:     schema.TypeList,
+				Required: true,
+				MinItems: 1,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"mode": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"simulate", "ban"}, true),
+						},
+
+						"timeout": {
+							Type:         schema.TypeInt,
+							Required:     true,
+							ValidateFunc: validation.IntBetween(1, 86400),
+						},
+
+						"response": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MinItems: 1,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"content_type": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"text/plain", "text/xml", "application/json"}, true),
+									},
+
+									"body": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringLenBetween(0, 10240),
+										// maybe good to hash the body before saving in state file?
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 
 			"match": {
@@ -111,51 +156,6 @@ func resourceCloudFlareRateLimit() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 										Computed: true,
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-
-			"action": {
-				Type:     schema.TypeList,
-				Required: true,
-				MinItems: 1,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"mode": {
-							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"simulate", "ban"}, true),
-						},
-
-						"timeout": {
-							Type:         schema.TypeInt,
-							Required:     true,
-							ValidateFunc: validation.IntBetween(1, 86400),
-						},
-
-						"response": {
-							Type:     schema.TypeList,
-							Optional: true,
-							MinItems: 1,
-							MaxItems: 1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"content_type": {
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validation.StringInSlice([]string{"text/plain", "text/xml", "application/json"}, true),
-									},
-
-									"body": {
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validation.StringLenBetween(0, 10240),
-										// maybe good to hash the body before saving in state file?
 									},
 								},
 							},
