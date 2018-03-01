@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"time"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
@@ -15,12 +17,16 @@ func resourceCloudFlareZone() *schema.Resource {
 		Read:   resourceCloudFlareZoneRead,
 		Update: resourceCloudFlareZoneUpdate,
 		Delete: resourceCloudFlareZoneDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudFlareZoneImport,
+		},
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"with_existing_records": {
@@ -37,36 +43,41 @@ func resourceCloudFlareZone() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						//TODO remove defaults looking for the one that causes: * cloudflare_zone.test: error from makeRequest: HTTP status 400: content "{\"success\":false,\"errors\":[{\"code\":1016,\"message\":\"An unknown error has occurred\"}],\"messages\":[],\"result\":null}"
+
 						"advanced_ddos": {
-							Type:     schema.TypeBool, // on/off
+							Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 							Optional: true,
 							Computed: true, //Defaults to on for Business+ plans, off otherwise
 						},
 
 						"always_online": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"brotli": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"browser_cache_ttl": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Default:  14400,
+							Computed: true,
 							/*valid values: 30, 60, 300, 1200, 1800, 3600, 7200, 10800, 14400, 18000, 28800, 43200, 57600, 72000, 86400, 172800, 259200, 345600, 432000, 691200, 1382400, 2073600, 2678400, 5356800, 16070400, 31536000
 							notes: The minimum TTL available depends on the plan level of the zone. (Enterprise = 30, Business = 1800, Pro = 1800, Free = 1800)*/
 						},
 
 						"browser_check": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"cache_level": {
@@ -84,51 +95,59 @@ func resourceCloudFlareZone() *schema.Resource {
 						},
 
 						"development_mode": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"origin_error_page_pass_thru": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"sort_query_string_for_cache": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"email_obfuscation": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"hotlink_protection": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"ip_geolocation": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"ipv6": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"websockets": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"minify": {
@@ -140,19 +159,19 @@ func resourceCloudFlareZone() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"css": {
-										Type:     schema.TypeBool, // on/off
+										Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 										Optional: true,
 										Default:  false,
 									},
 
 									"html": {
-										Type:     schema.TypeBool, // on/off
+										Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 										Optional: true,
 										Default:  false,
 									},
 
 									"js": {
-										Type:     schema.TypeBool, // on/off
+										Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 										Optional: true,
 										Default:  false,
 									},
@@ -160,22 +179,24 @@ func resourceCloudFlareZone() *schema.Resource {
 							},
 						},
 
-						"mobile_redirect": {
-							Type:     schema.TypeBool, // on/off
+						"mobile_redirect": { // TODO: received type is : map[string]interface {}{"mobile_subdomain":interface {}(nil), "strip_uri":false, "status":"off"}
+							Type:     schema.TypeString, // on/off
 							Optional: true,
-							Default:  true,
+							Default:  "",
 						},
 
 						"mirage": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"opportunistic_encryption": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"polish": {
@@ -186,27 +207,31 @@ func resourceCloudFlareZone() *schema.Resource {
 						},
 
 						"webp": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "",
 						},
 
 						"prefetch_preload": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"privacy_pass": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"response_buffering": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"rocket_loader": {
@@ -261,9 +286,10 @@ func resourceCloudFlareZone() *schema.Resource {
 						},
 
 						"server_side_exclude": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"ssl": {
@@ -274,45 +300,51 @@ func resourceCloudFlareZone() *schema.Resource {
 						},
 
 						"tls_client_auth": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "on",
 						},
 
 						"true_client_ip_header": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"waf": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"tls_1_2_only": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  false,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"tls_1_3": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Computed: true, // default depends on plan level
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Computed:     true, // default depends on plan level
 						},
 
 						"automatic_https_rewrites": {
-							Type:     schema.TypeBool, // on/off
-							Optional: true,
-							Default:  true,
+							Type:         schema.TypeString,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional:     true,
+							Default:      "off",
 						},
 
 						"http2": {
-							Type:     schema.TypeBool, // on/off
+							Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 							Optional: true,
-							Default:  false,
+							Default:  "off",
 						},
 
 						"pseudo_ipv4": {
@@ -323,9 +355,33 @@ func resourceCloudFlareZone() *schema.Resource {
 						},
 
 						"always_use_https": {
-							Type:     schema.TypeBool, // on/off
+							Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 							Optional: true,
-							Default:  false,
+							Default:  "off",
+						},
+
+						"sha1_support": {
+							Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Optional: true,
+							Default:  "off",
+						},
+
+						"cname_flattening": {
+							Type:     schema.TypeString, // enum
+							Optional: true,
+							Computed: true,
+						},
+
+						"max_upload": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  100,
+						},
+
+						"edge_cache_ttl": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  7200,
 						},
 					},
 				},
@@ -370,141 +426,173 @@ func resourceCloudFlareZone() *schema.Resource {
 	}
 }
 
-func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudFlareZoneCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	newRecord := cloudflare.DNSRecord{
-		Type:     d.Get("type").(string),
-		Name:     d.Get("name").(string),
-		Content:  d.Get("value").(string),
-		Proxied:  d.Get("proxied").(bool),
-		ZoneName: d.Get("domain").(string),
-	}
-
-	if priority, ok := d.GetOk("priority"); ok {
-		newRecord.Priority = priority.(int)
-	}
-
-	if ttl, ok := d.GetOk("ttl"); ok {
-		newRecord.TTL = ttl.(int)
-	}
-
-	// Validate value based on type
-	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return fmt.Errorf("Error validating record name %q: %s", newRecord.Name, err)
-	}
-
-	// Validate type
-	if err := validateRecordType(newRecord.Type, newRecord.Proxied); err != nil {
-		return fmt.Errorf("Error validating record type %q: %s", newRecord.Type, err)
-	}
-
-	zoneId, err := client.ZoneIDByName(newRecord.ZoneName)
+	//TODO change to zone settings
+	newZone, err := client.CreateZone(d.Get("name").(string), d.Get("with_existing_records").(bool), cloudflare.Organization{})
 	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", newRecord.ZoneName, err)
+		log.Printf("[WARN] Error creating zone: %q", err.Error())
+		zoneId, err := client.ZoneIDByName(d.Get("name").(string))
+		if err != nil {
+			return fmt.Errorf("couldn't find zone %q while trying to import it: %q", d.Get("name").(string), err)
+		}
+		d.SetId(zoneId)
+	} else {
+		d.SetId(newZone.ID)
 	}
 
-	d.Set("zone_id", zoneId)
-	newRecord.ZoneID = zoneId
+	log.Printf("[INFO] CloudFlare New Zone ID: %s", d.Id())
 
-	log.Printf("[DEBUG] CloudFlare Record create configuration: %#v", newRecord)
-
-	r, err := client.CreateDNSRecord(zoneId, newRecord)
-	if err != nil {
-		return fmt.Errorf("Failed to create record: %s", err)
-	}
-
-	// In the Event that the API returns an empty DNS Record, we verify that the
-	// ID returned is not the default ""
-	if r.Result.ID == "" {
-		return fmt.Errorf("Failed to find record in Creat response; Record was empty")
-	}
-
-	d.SetId(r.Result.ID)
-
-	log.Printf("[INFO] CloudFlare Record ID: %s", d.Id())
-
-	return resourceCloudFlareRecordRead(d, meta)
+	return resourceCloudFlareZoneUpdate(d, meta)
 }
 
-func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudFlareZoneUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	domain := d.Get("domain").(string)
+
+	if cfg, ok := d.GetOk("settings"); ok && len(cfg.([]interface{})) > 0 {
+		settingsCfg := cfg.([]interface{})[0].(map[string]interface{})
+		zoneSettings, err := expandZoneSettings(settingsCfg)
+		if err != nil {
+			return err
+		}
+
+		log.Printf("[DEBUG] CloudFlare Zone Settings update configuration: %#v", zoneSettings)
+
+		_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
+		if err != nil {
+			return err
+		}
+	}
+
+	return resourceCloudFlareZoneRead(d, meta)
+}
+
+func expandZoneSettings(cfg map[string]interface{}) ([]cloudflare.ZoneSetting, error) {
+	zoneSettings := make([]cloudflare.ZoneSetting, 0)
+
+	for k, v := range cfg {
+		var zoneSettingValue interface{}
+
+		if strValue, ok := v.(string); ok {
+			//empty string means we didnt set a value
+			if strValue != "" {
+				zoneSettingValue = strValue
+			} else {
+				continue
+			}
+		} else if intValue, ok := v.(int); ok {
+			zoneSettingValue = intValue // passthrough
+		} else if listValue, ok := v.([]interface{}); ok && k == "minify" {
+			if len(listValue) > 0 {
+				zoneSettingValue = listValue[0].(map[string]interface{})
+			} else {
+				continue
+			}
+		} else if listValue, ok := v.([]interface{}); ok && k == "security_header" {
+			if len(listValue) > 0 {
+				zoneSettingValue = listValue[0].(map[string]interface{})
+			} else {
+				continue
+			}
+		} else {
+			return nil, fmt.Errorf("unknown zone setting specified %q = %#v", k, v)
+		}
+		newZoneSetting := cloudflare.ZoneSetting{
+			ID:    k,
+			Value: zoneSettingValue,
+		}
+		zoneSettings = append(zoneSettings, newZoneSetting)
+	}
+	return zoneSettings, nil
+}
+
+func resourceCloudFlareZoneRead(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+
+	zone, err := client.ZoneDetails(d.Id())
 
 	// not all settings are visible to all users, so this might be a subset
 	// assume (for now) that user can see/do everything
-	record, err := client.ZoneSettings(d.Id())
+	zoneSettings, err := client.ZoneSettings(d.Id())
 	if err != nil {
+		// TODO on 404, set id blank
 		return err
 	}
 
-	d.SetId(record.ID)
-	d.Set("hostname", record.Name)
-	d.Set("type", record.Type)
-	d.Set("value", record.Content)
-	d.Set("ttl", record.TTL)
-	d.Set("priority", record.Priority)
-	d.Set("proxied", record.Proxied)
-	d.Set("zone_id", zoneId)
+	log.Printf("[DEBUG] Read CloudFlareZone Settings: %#v", zoneSettings)
+
+	d.Set("status", zone.Status)
+	d.Set("type", zone.Type)
+	d.Set("name_servers", zone.NameServers)
+	d.Set("created_on", zone.CreatedOn.Format(time.RFC3339Nano))
+	d.Set("modified_on", zone.ModifiedOn.Format(time.RFC3339Nano))
+	d.Set("settings", flattenZoneSettings(zoneSettings.Result))
+	d.Set("editable_settings", flattenEditableZoneSettings(zoneSettings.Result))
 
 	return nil
 }
 
-func resourceCloudFlareRecordUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cloudflare.API)
-
-	updateRecord := cloudflare.DNSRecord{
-		ID:       d.Id(),
-		Type:     d.Get("type").(string),
-		Name:     d.Get("name").(string),
-		Content:  d.Get("value").(string),
-		ZoneName: d.Get("domain").(string),
-		Proxied:  false,
+func flattenZoneSettings(settings []cloudflare.ZoneSetting) []map[string]interface{} {
+	cfg := map[string]interface{}{}
+	for _, s := range settings {
+		if s.ID == "minify" {
+			//TODO
+		} else if s.ID == "security_header" {
+			//TODO
+		} else if s.ID == "mobile_redirect" {
+			//TODO
+		} else if strValue, ok := s.Value.(string); ok {
+			log.Printf("[DEBUG] Found string zone setting %q: %q", s.ID, strValue)
+			cfg[s.ID] = strValue
+		} else if floatValue, ok := s.Value.(float64); ok {
+			log.Printf("[DEBUG] Found int zone setting %q: %d", s.ID, int(floatValue))
+			cfg[s.ID] = int(floatValue)
+		} else {
+			log.Printf("[DEBUG] Unexpected value type found in API zone settings - %q : %#v", s.ID, s.Value)
+		}
 	}
+	// TODO if new settings are found in the api, this will fail
 
-	if priority, ok := d.GetOk("priority"); ok {
-		updateRecord.Priority = priority.(int)
-	}
+	log.Printf("[DEBUG] Flattened CloudFlare Zone Settings: %#v", cfg)
 
-	if proxied, ok := d.GetOk("proxied"); ok {
-		updateRecord.Proxied = proxied.(bool)
-	}
-
-	if ttl, ok := d.GetOk("ttl"); ok {
-		updateRecord.TTL = ttl.(int)
-	}
-
-	zoneId, err := client.ZoneIDByName(updateRecord.ZoneName)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", updateRecord.ZoneName, err)
-	}
-
-	updateRecord.ZoneID = zoneId
-
-	log.Printf("[DEBUG] CloudFlare Record update configuration: %#v", updateRecord)
-	err = client.UpdateDNSRecord(zoneId, d.Id(), updateRecord)
-	if err != nil {
-		return fmt.Errorf("Failed to update CloudFlare Record: %s", err)
-	}
-
-	return resourceCloudFlareRecordRead(d, meta)
+	return []map[string]interface{}{cfg}
 }
 
-func resourceCloudFlareRecordDelete(d *schema.ResourceData, meta interface{}) error {
+func flattenEditableZoneSettings(settings []cloudflare.ZoneSetting) []string {
+	ids := make([]string, 0)
+	for _, zs := range settings {
+		if zs.Editable {
+			ids = append(ids, zs.ID)
+		}
+	}
+	log.Printf("[DEBUG] Flattened CloudFlare Editable Zone Settings: %#v", ids)
+
+	return ids
+}
+
+func resourceCloudFlareZoneDelete(d *schema.ResourceData, meta interface{}) error {
+	/* TODO: keeping this off while testing
 	client := meta.(*cloudflare.API)
-	domain := d.Get("domain").(string)
 
-	zoneId, err := client.ZoneIDByName(domain)
+	_, err := client.DeleteZone(d.Id())
 	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", domain, err)
-	}
-
-	log.Printf("[INFO] Deleting CloudFlare Record: %s, %s", domain, d.Id())
-
-	err = client.DeleteDNSRecord(zoneId, d.Id())
-	if err != nil {
-		return fmt.Errorf("Error deleting CloudFlare Record: %s", err)
-	}
+		return fmt.Errorf("Error deleting CloudFlare zone: %s", err)
+	}*/
 
 	return nil
+}
+
+func resourceCloudFlareZoneImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+
+	d.Set("name", d.Id())
+	zoneId, err := client.ZoneIDByName(d.Id())
+	if err != nil {
+		return nil, fmt.Errorf("couldn't find zone %q while trying to import it: %q", d.Id(), err)
+	}
+	d.SetId(zoneId)
+	// with_existing_records is not readable, so on import this always has to be false
+	d.Set("with_existing_records", false)
+	return []*schema.ResourceData{d}, nil
 }

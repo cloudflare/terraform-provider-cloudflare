@@ -30,6 +30,7 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"cloudflare_record": resourceCloudFlareRecord(),
+			"cloudflare_zone":   resourceCloudFlareZone(),
 		},
 
 		ConfigureFunc: providerConfigure,
