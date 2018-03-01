@@ -28,7 +28,7 @@ func TestAccCloudFlarePageRule_Basic(t *testing.T) {
 				Config: testAccCheckCloudFlarePageRuleConfigBasic(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					//testAccCheckCloudFlarePageRuleAttributes(&pageRule),
+					testAccCheckCloudFlarePageRuleAttributesBasic(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -53,7 +53,7 @@ func TestAccCloudFlarePageRule_FullySpecified(t *testing.T) {
 				Config: testAccCheckCloudFlarePageRuleConfigFullySpecified(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					//testAccCheckCloudFlarePageRuleAttributes(&pageRule),
+					testAccCheckCloudFlarePageRuleAttributesFullySpecified(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -99,11 +99,10 @@ func TestAccCloudFlarePageRule_ForwardingAndOthers(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccCheckCloudFlarePageRuleConfigForwardingAndOthers(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					//testAccCheckCloudFlarePageRuleAttributes(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -112,7 +111,7 @@ func TestAccCloudFlarePageRule_ForwardingAndOthers(t *testing.T) {
 						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/", target)),
 				),
 
-				ExpectError: regexp.MustCompile("HTTP status 400"),
+				ExpectError: regexp.MustCompile("\"forwarding_url\" cannot be set with any other actions"),
 			},
 		},
 	})
@@ -132,14 +131,13 @@ func TestAccCloudFlarePageRule_Updated(t *testing.T) {
 				Config: testAccCheckCloudFlarePageRuleConfigBasic(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &before),
-					//testAccCheckCloudFlarePageRuleAttributes(&pageRule), // TODO check attributes
 				),
 			},
 			{
 				Config: testAccCheckCloudFlarePageRuleConfigNewValue(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &after),
-					//testAccCheckCloudFlarePageRuleAttributesUpdated(&pageRule),
+					testAccCheckCloudFlarePageRuleAttributesUpdated(&after),
 					testAccCheckCloudFlarePageRuleIDUnchanged(&before, &after),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/updated", target)),
@@ -176,9 +174,9 @@ func TestAccCloudFlarePageRule_CreateAfterManualDestroy(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/updated", target)),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.test", "actions.0.always_online", "false"),
+						"cloudflare_page_rule.test", "actions.0.always_online", "off"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.test", "actions.0.automatic_https_rewrites", "true"),
+						"cloudflare_page_rule.test", "actions.0.automatic_https_rewrites", "on"),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "actions.0.rocket_loader", "automatic"),
 					resource.TestCheckResourceAttr(
@@ -228,21 +226,37 @@ func testAccCheckCloudFlarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 	return func(s *terraform.State) error {
 
 		// check the api only has attributes we set non-empty values for
+		// this covers on/off attribute types and setting enum-type strings
 
-		if pageRule.Actions[0].ID != "always_online" {
-			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
+		actionMap := pageRuleActionsToMap(pageRule.Actions)
+
+		if val, ok := actionMap["always_online"]; ok {
+			if _, ok := val.(string); !ok || val != "on" { // lots of booleans get mapped to on/off at api
+				return fmt.Errorf("'always_online' not specified correctly at api, found: '%v'", val)
+			}
+		} else {
+			return fmt.Errorf("'always_online' not specified at api")
 		}
 
-		if pageRule.Actions[0].Value != "on" {
-			return fmt.Errorf("Bad value for actions.always_online: %s", pageRule.Actions[0].Value)
+		if val, ok := actionMap["always_use_https"]; ok {
+			if val != nil {
+				return fmt.Errorf("'always_use_https' is a unitary value, expect nil value at api, but found: '%v'", val)
+			}
+		} else {
+			return fmt.Errorf("'always_use_https' not specified at api")
 		}
 
-		if pageRule.Actions[1].ID != "ssl" {
-			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
+		if val, ok := actionMap["ssl"]; ok {
+			if _, ok := val.(string); !ok || val != "flexible" {
+				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
+			}
+		} else {
+			return fmt.Errorf("'ssl' not specified at api")
 		}
 
-		if pageRule.Actions[1].Value != "flexible" {
-			return fmt.Errorf("Bad value for actions.ssl: %s", pageRule.Actions[0].Value)
+		if len(pageRule.Actions) != 3 {
+			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v",
+				3, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -252,22 +266,28 @@ func testAccCheckCloudFlarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 func testAccCheckCloudFlarePageRuleAttributesFullySpecified(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
-		// TODO check each of the different types of (non-empty) values are set at API level
+		// check boolean variables get set correctly
+		actionMap := pageRuleActionsToMap(pageRule.Actions)
 
-		if pageRule.Actions[0].ID != "always_online" {
-			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
+		if val, ok := actionMap["always_use_https"]; ok {
+			if val != nil {
+				return fmt.Errorf("'always_use_https' is a unitary value, expect nil value at api, but found: '%v'", val)
+			}
+		} else {
+			return fmt.Errorf("'always_use_https' not specified at api")
 		}
 
-		if pageRule.Actions[0].Value != "on" {
-			return fmt.Errorf("Bad value for actions.always_online: %s", pageRule.Actions[0].Value)
+		if val, ok := actionMap["browser_cache_ttl"]; ok {
+			if _, ok := val.(float64); !ok || val != 10000.000000 {
+				return fmt.Errorf("'browser_cache_ttl' not specified correctly at api, found: '%f'", val.(float64))
+			}
+		} else {
+			return fmt.Errorf("'browser_cache_ttl' not specified at api")
 		}
 
-		if pageRule.Actions[1].ID != "ssl" {
-			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
-		}
-
-		if pageRule.Actions[1].Value != "flexible" {
-			return fmt.Errorf("Bad value for actions.ssl: %s", pageRule.Actions[0].Value)
+		if len(pageRule.Actions) != 16 {
+			return fmt.Errorf("api should return the attributes we set non-empty (count: %d) but got %d: %#v",
+				16, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -277,22 +297,47 @@ func testAccCheckCloudFlarePageRuleAttributesFullySpecified(pageRule *cloudflare
 func testAccCheckCloudFlarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
-		// TODO check some updated attributes get set
+		actionMap := pageRuleActionsToMap(pageRule.Actions)
 
-		if pageRule.Actions[0].ID != "always_online" {
-			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
+		if _, ok := actionMap["always_use_https"]; ok {
+			return fmt.Errorf("'always_use_https' found at api, but we should have removed it")
 		}
 
-		if pageRule.Actions[0].Value != "on" {
-			return fmt.Errorf("Bad value for actions.always_online: %s", pageRule.Actions[0].Value)
+		if val, ok := actionMap["always_online"]; ok {
+			if _, ok := val.(string); !ok || val != "off" { // lots of booleans get mapped to on/off at api
+				return fmt.Errorf("'always_online' not specified correctly at api, found: '%v'", val)
+			}
+		} else {
+			return fmt.Errorf("'always_online' not specified at api")
 		}
 
-		if pageRule.Actions[0].ID != "ssl" {
-			return fmt.Errorf("Bad type for actions[0]: %s", pageRule.Actions[0].ID)
+		if val, ok := actionMap["automatic_https_rewrites"]; ok {
+			if _, ok := val.(string); !ok || val != "on" { // lots of booleans get mapped to on/off at api
+				return fmt.Errorf("'automatic_https_rewrites' not specified correctly at api, found: '%v'", val)
+			}
+		} else {
+			return fmt.Errorf("'automatic_https_rewrites' not specified at api")
 		}
 
-		if pageRule.Actions[0].Value != "strict" {
-			return fmt.Errorf("Bad value for actions.ssl: %s", pageRule.Actions[0].Value)
+		if val, ok := actionMap["ssl"]; ok {
+			if _, ok := val.(string); !ok || val != "strict" {
+				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
+			}
+		} else {
+			return fmt.Errorf("'ssl' not specified at api")
+		}
+
+		if val, ok := actionMap["rocket_loader"]; ok {
+			if _, ok := val.(string); !ok || val != "automatic" {
+				return fmt.Errorf("'rocket_loader' not specified correctly at api, found: %q", val)
+			}
+		} else {
+			return fmt.Errorf("'rocket_loader' not specified at api")
+		}
+
+		if len(pageRule.Actions) != 4 {
+			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v",
+				4, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -349,8 +394,9 @@ resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
 	actions = {
-		always_online = true
+		always_online = "on"
 		ssl = "flexible"
+ 		always_use_https = true
 	}
 }`, zone, target)
 }
@@ -361,8 +407,9 @@ resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s/updated"
 	actions = {
-		always_online = false
-		automatic_https_rewrites = true
+		always_online = "off"
+		automatic_https_rewrites = "on"
+		always_use_https = false
 		ssl = "strict"
 		rocket_loader = "automatic"
 	}
@@ -375,13 +422,13 @@ resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
 	actions = {
-		always_online = true
-		automatic_https_rewrites = true
-		browser_check = true
-		email_obfuscation = true
-		ip_geolocation = true
-		opportunistic_encryption = true
-		server_side_exclude = true
+		always_online = "on"
+		automatic_https_rewrites = "off"
+		browser_check = "on"
+		email_obfuscation = "on"
+		ip_geolocation = "on"
+		opportunistic_encryption = "on"
+		server_side_exclude = "on"
         always_use_https = true
         disable_apps = true
         disable_performance = true
@@ -401,17 +448,7 @@ resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
 	actions = {
-		always_online = false
-		automatic_https_rewrites = false
-		browser_check = false
-		email_obfuscation = false
-		ip_geolocation = false
-		opportunistic_encryption = false
-		server_side_exclude = false
-        always_use_https = false
-        disable_apps = false
-        disable_performance = false
-        disable_security = false
+		// on/off options cannot even be set to off without causing error
 		forwarding_url {
         	url = "http://%[1]s/forward"
 			status_code = 301

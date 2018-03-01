@@ -30,7 +30,7 @@ resource "cloudflare_page_rule" "foobar" {
 
 The following arguments are supported:
 
-* `domain` - (Required) The domain to which the page rule should be added.
+* `zone` - (Required) The zone to which the page rule should be added.
 * `target` - (Required) The URL pattern to target with the page rule.
 * `actions` - (Required) The actions taken by the page rule, options given below.
 * `priority` - (Optional) The priority of the page rule among others for this target.
@@ -46,10 +46,10 @@ Action blocks support the following:
 * `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
 * `server_side_exclude` - (Optional) Whether this action is `"on"` or `"off"`.
 * `smart_errors` - (Optional) Whether this action is `"on"` or `"off"`.
-* `always_use_https` - (Optional) Whether this action is enabled; if present, it must be `true`.
-* `disable_apps` - (Optional) Whether this action is enabled; if present, it must be `true`.
-* `disable_performance` - (Optional) Whether this action is enabled; if present, must be `true`.
-* `disable_security` - (Optional) Whether this action is enabled; if present, it must be `true`.
+* `always_use_https` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
 * `cache_level` - (Optional) Whether to set the cache level to `"byypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
@@ -68,6 +68,7 @@ Forwarding URL actions support the following:
 The following attributes are exported:
 
 * `id` - The page rule ID.
+* `zone_id` - The ID of the zone in which the page rule will be applied.
 * `target` - The URL pattern targeted by the page rule.
 * `actions` - The actions applied by the page rule.
 * `priority` - The priority of the page rule.

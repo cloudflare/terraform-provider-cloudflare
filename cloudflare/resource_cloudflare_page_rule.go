@@ -9,7 +9,6 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"net/url"
 )
 
 func resourceCloudFlarePageRule() *schema.Resource {
@@ -35,8 +34,8 @@ func resourceCloudFlarePageRule() *schema.Resource {
 			},
 
 			"target": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:             schema.TypeString,
+				Required:         true,
 				DiffSuppressFunc: suppressEquivalentURLs,
 			},
 
@@ -48,54 +47,52 @@ func resourceCloudFlarePageRule() *schema.Resource {
 				Elem: &schema.Resource{
 					SchemaVersion: 1,
 					Schema: map[string]*schema.Schema{
+						// on/off options
 						"always_online": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
 						"automatic_https_rewrites": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
 						"browser_check": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
 						"email_obfuscation": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
 						"ip_geolocation": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
 						"opportunistic_encryption": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
 						"server_side_exclude": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
+						// end on/off fields
 
-						"smart_errors": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
-						},
-
+						// unitary fields
+						// unclear if the api offers any way to disable these once enabled
 						"always_use_https": {
 							Type:     schema.TypeBool,
 							Default:  false,
@@ -206,7 +203,7 @@ func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
 		return true
 	}
 	return false
-},
+}
 
 func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
@@ -240,6 +237,10 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 			newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
 		}
 	}
+	pageRulesActionMap := pageRuleActionsToMap(newPageRuleActions)
+	if _, ok := pageRulesActionMap["forwarding_url"]; ok && len(pageRulesActionMap) > 1 {
+		return fmt.Errorf("\"forwarding_url\" cannot be set with any other actions")
+	}
 
 	newPageRule := cloudflare.PageRule{
 		Targets:  newPageRuleTargets,
@@ -268,6 +269,14 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	d.SetId(r.ID)
 
 	return resourceCloudFlarePageRuleRead(d, meta)
+}
+
+func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{} {
+	vsm := make(map[string]interface{})
+	for _, v := range vs {
+		vsm[v.ID] = v.Value
+	}
+	return vsm
 }
 
 func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) error {
@@ -391,11 +400,7 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 
 	switch {
 	case contains(pageRuleAPIOnOffFields, pageRuleAction.ID):
-		if strings.EqualFold(pageRuleAction.Value.(string), "on") {
-			value = true
-		} else {
-			value = false
-		}
+		value = pageRuleAction.Value.(string)
 		break
 
 	case contains(pageRuleAPINilFields, pageRuleAction.ID):
@@ -404,7 +409,7 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		break
 
 	case contains(pageRuleAPIFloatFields, pageRuleAction.ID):
-		value = pageRuleAction.Value.(float64)
+		value = pageRuleAction.Value.(float64) // we use TypeInt but terraform seems to do the right thing converting from float
 		break
 
 	case contains(pageRuleAPIStringFields, pageRuleAction.ID):
@@ -427,14 +432,18 @@ func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRule
 	pageRuleAction.ID = id
 
 	if strValue, ok := value.(string); ok {
-		if strValue == "" || strValue == "off" {
+		if strValue == "" {
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = strValue
 		}
 	} else if unitValue, ok := value.(bool); ok {
 		if !unitValue {
-			pageRuleAction.Value = nil
+			if contains(pageRuleAPIOnOffFields, id) {
+				pageRuleAction.Value = "off"
+			} else {
+				pageRuleAction.Value = nil
+			}
 		} else {
 			if contains(pageRuleAPIOnOffFields, id) {
 				pageRuleAction.Value = "on"
