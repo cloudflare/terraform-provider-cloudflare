@@ -29,22 +29,21 @@ The following arguments are supported:
 
 * `domain` - (Required) The domain to add the record to
 * `name` - (Required) The name of the record
-* `value` - (Required) The value of the record
 * `type` - (Required) The type of the record
+* `value` - (Optional) The (string) value of the record. Either this or `data` must be specified
+* `data` - (Optional) Map of attributes that constitute the record value. Primarily used for LOC and SRV record types. Either this or `value` must be specified
 * `ttl` - (Optional) The TTL of the record ([automatic: '1'](https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record))
 * `priority` - (Optional) The priority of the record
-* `proxied` - (Optional) Whether the record gets Cloudflare's origin protection.
+* `proxied` - (Optional) Whether the record gets Cloudflare's origin protection; defaults to `false`.
 
 ## Attributes Reference
 
 The following attributes are exported:
 
 * `id` - The record ID
-* `name` - The name of the record
-* `value` - The value of the record
-* `type` - The type of the record
-* `ttl` - The TTL of the record
-* `priority` - The priority of the record
 * `hostname` - The FQDN of the record
-* `proxied` - (Optional) Whether the record gets Cloudflare's origin protection; defaults to `false`.
-* `zone_id` - (Computed) the zone id of the record
+* `proxiable` - Shows whether this record can be proxied, must be true if setting `proxied=true`
+* `created_on` - The RFC3339 timestamp of when the record was created
+* `modified_on` - The RFC3339 timestamp of when the record was last modified
+* `metadata` - A key-value map of string metadata cloudflare associates with the record
+* `zone_id` - The zone id of the record

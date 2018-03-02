@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"log"
 
+	"time"
+
+	"strings"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -21,11 +25,13 @@ func resourceCloudFlareRecord() *schema.Resource {
 			"domain": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"hostname": {
@@ -40,8 +46,16 @@ func resourceCloudFlareRecord() *schema.Resource {
 			},
 
 			"value": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"data"},
+			},
+
+			"data": {
+				Type:          schema.TypeMap,
+				Optional:      true,
+				ConflictsWith: []string{"value"},
 			},
 
 			"ttl": {
@@ -61,6 +75,26 @@ func resourceCloudFlareRecord() *schema.Resource {
 				Type:     schema.TypeBool,
 			},
 
+			"created_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"metadata": {
+				Type:     schema.TypeMap,
+				Computed: true,
+			},
+
+			"modified_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"proxiable": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+
 			"zone_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -75,9 +109,24 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	newRecord := cloudflare.DNSRecord{
 		Type:     d.Get("type").(string),
 		Name:     d.Get("name").(string),
-		Content:  d.Get("value").(string),
 		Proxied:  d.Get("proxied").(bool),
 		ZoneName: d.Get("domain").(string),
+	}
+
+	value, valueOk := d.GetOk("value")
+	if valueOk {
+		newRecord.Content = value.(string)
+	}
+
+	data, dataOk := d.GetOk("data")
+	if dataOk {
+		newRecord.Data = data
+	}
+
+	if valueOk == dataOk {
+		return fmt.Errorf(
+			"either 'value' (present: %t) or 'data' (present: %t) must be provided",
+			valueOk, dataOk)
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
@@ -116,7 +165,7 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	// In the Event that the API returns an empty DNS Record, we verify that the
 	// ID returned is not the default ""
 	if r.Result.ID == "" {
-		return fmt.Errorf("Failed to find record in Creat response; Record was empty")
+		return fmt.Errorf("Failed to find record in Create response; Record was empty")
 	}
 
 	d.SetId(r.Result.ID)
@@ -128,16 +177,18 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	domain := d.Get("domain").(string)
+	zoneID := d.Get("zone_id").(string)
 
-	zoneId, err := client.ZoneIDByName(domain)
+	record, err := client.DNSRecord(zoneID, d.Id())
 	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", domain, err)
-	}
-
-	record, err := client.DNSRecord(zoneId, d.Id())
-	if err != nil {
-		return err
+		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
+			strings.Contains(err.Error(), "HTTP status 404") {
+			log.Printf("[WARN] Removing record from state because it's not found in API")
+			d.SetId("")
+			return nil
+		} else {
+			return err
+		}
 	}
 
 	d.SetId(record.ID)
@@ -147,13 +198,18 @@ func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("ttl", record.TTL)
 	d.Set("priority", record.Priority)
 	d.Set("proxied", record.Proxied)
-	d.Set("zone_id", zoneId)
+	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
+	d.Set("data", expandStringMap(record.Data))
+	d.Set("modified_on", record.ModifiedOn.Format(time.RFC3339Nano))
+	d.Set("metadata", expandStringMap(record.Meta))
+	d.Set("proxiable", record.Proxiable)
 
 	return nil
 }
 
 func resourceCloudFlareRecordUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	zoneID := d.Get("zone_id").(string)
 
 	updateRecord := cloudflare.DNSRecord{
 		ID:       d.Id(),
@@ -161,6 +217,7 @@ func resourceCloudFlareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		Name:     d.Get("name").(string),
 		Content:  d.Get("value").(string),
 		ZoneName: d.Get("domain").(string),
+		ZoneID:   zoneID,
 		Proxied:  false,
 	}
 
@@ -176,15 +233,8 @@ func resourceCloudFlareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		updateRecord.TTL = ttl.(int)
 	}
 
-	zoneId, err := client.ZoneIDByName(updateRecord.ZoneName)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", updateRecord.ZoneName, err)
-	}
-
-	updateRecord.ZoneID = zoneId
-
 	log.Printf("[DEBUG] CloudFlare Record update configuration: %#v", updateRecord)
-	err = client.UpdateDNSRecord(zoneId, d.Id(), updateRecord)
+	err := client.UpdateDNSRecord(zoneID, d.Id(), updateRecord)
 	if err != nil {
 		return fmt.Errorf("Failed to update CloudFlare Record: %s", err)
 	}
@@ -194,19 +244,28 @@ func resourceCloudFlareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 
 func resourceCloudFlareRecordDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	domain := d.Get("domain").(string)
+	zoneID := d.Get("zone_id").(string)
 
-	zoneId, err := client.ZoneIDByName(domain)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", domain, err)
-	}
+	log.Printf("[INFO] Deleting CloudFlare Record: %s, %s", zoneID, d.Id())
 
-	log.Printf("[INFO] Deleting CloudFlare Record: %s, %s", domain, d.Id())
-
-	err = client.DeleteDNSRecord(zoneId, d.Id())
+	err := client.DeleteDNSRecord(zoneID, d.Id())
 	if err != nil {
 		return fmt.Errorf("Error deleting CloudFlare Record: %s", err)
 	}
 
 	return nil
+}
+
+func expandStringMap(inVal interface{}) map[string]string {
+	// although interface could hold anything
+	// we assume that it is either nil or a map of interface values
+	outVal := make(map[string]string)
+	if inVal == nil {
+		return outVal
+	}
+	for k, v := range inVal.(map[string]interface{}) {
+		strValue := fmt.Sprintf("%v", v)
+		outVal[k] = strValue
+	}
+	return outVal
 }
