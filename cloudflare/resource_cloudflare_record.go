@@ -147,17 +147,17 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error validating record type %q: %s", newRecord.Type, err)
 	}
 
-	zoneId, err := client.ZoneIDByName(newRecord.ZoneName)
+	zoneID, err := client.ZoneIDByName(newRecord.ZoneName)
 	if err != nil {
 		return fmt.Errorf("Error finding zone %q: %s", newRecord.ZoneName, err)
 	}
 
-	d.Set("zone_id", zoneId)
-	newRecord.ZoneID = zoneId
+	d.Set("zone_id", zoneID)
+	newRecord.ZoneID = zoneID
 
 	log.Printf("[DEBUG] CloudFlare Record create configuration: %#v", newRecord)
 
-	r, err := client.CreateDNSRecord(zoneId, newRecord)
+	r, err := client.CreateDNSRecord(zoneID, newRecord)
 	if err != nil {
 		return fmt.Errorf("Failed to create record: %s", err)
 	}
@@ -186,9 +186,8 @@ func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) erro
 			log.Printf("[WARN] Removing record from state because it's not found in API")
 			d.SetId("")
 			return nil
-		} else {
-			return err
 		}
+		return err
 	}
 
 	d.SetId(record.ID)
@@ -201,7 +200,9 @@ func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("data", expandStringMap(record.Data))
 	d.Set("modified_on", record.ModifiedOn.Format(time.RFC3339Nano))
-	d.Set("metadata", expandStringMap(record.Meta))
+	if err := d.Set("metadata", expandStringMap(record.Meta)); err != nil {
+		log.Printf("[WARN] Error setting metadata: %s", err)
+	}
 	d.Set("proxiable", record.Proxiable)
 
 	return nil
