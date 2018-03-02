@@ -1,5 +1,9 @@
 ## 0.1.1 (Unreleased)
 
+BACKWARDS INCOMPATIBILITIES / NOTES:
+
+* resource/cloudflare_record: Changing `name` or `domain` now force a recreation of the record [GH-29]
+
 FEATURES:
 
 * **New Data Source:** `cloudflare_ip_ranges` [GH-28]
@@ -7,6 +11,8 @@ FEATURES:
 IMPROVEMENTS:
 
 * resource/cloudflare_record: Validate `TXT` records [GH-14]
+* resource/cloudflare_record: Add `data` input to suppport SRV, LOC records [GH-29]
+* resource/cloudflare_record: Add computed attributes `created_on`, `modified_on`, `proxiable`, and `metadata` to records [GH-29]
 
 ## 0.1.0 (June 20, 2017)
 
