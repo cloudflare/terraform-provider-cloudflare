@@ -13,24 +13,22 @@ import (
 func TestAccCloudFlareZone_Basic(t *testing.T) {
 	var zone cloudflare.Zone
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	name := "cloudflare_zone.test"
+	name := "cloudflare_zone_settings_override.test"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareZoneConfigBasic(zoneName),
+				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlareZoneExists(name, &zone),
-					resource.TestCheckResourceAttr(
-						name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.brotli", "off"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.challenge_ttl", "1800"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.security_level", "medium"),
+					resource.TestCheckResourceAttrSet(
+						name, "settings.0.brotli"),
+					resource.TestCheckResourceAttrSet(
+						name, "settings.0.challenge_ttl"),
+					resource.TestCheckResourceAttrSet(
+						name, "settings.0.security_level"),
 				),
 			},
 		},
@@ -40,14 +38,14 @@ func TestAccCloudFlareZone_Basic(t *testing.T) {
 func TestAccCloudFlareZone_Overrides(t *testing.T) {
 	var zone cloudflare.Zone
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	name := "cloudflare_zone.test"
+	name := "cloudflare_zone_settings_override.test"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareZoneConfigOverrides(zoneName),
+				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigNormal(zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlareZoneExists(name, &zone),
 					resource.TestCheckResourceAttr(
@@ -89,16 +87,16 @@ func testAccCheckCloudFlareZoneExists(n string, zone *cloudflare.Zone) resource.
 	}
 }
 
-func testAccCheckCloudFlareZoneConfigBasic(zone string) string {
+func testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zone string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_zone" "test" {
+resource "cloudflare_zone_settings_override" "test" {
 	name = "%s"
 }`, zone)
 }
 
-func testAccCheckCloudFlareZoneConfigOverrides(zone string) string {
+func testAccCheckCloudFlareZoneSettingsOverrideConfigNormal(zone string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_zone" "test" {
+resource "cloudflare_zone_settings_override" "test" {
 	name = "%s"
 	settings {
 		brotli = "on",
