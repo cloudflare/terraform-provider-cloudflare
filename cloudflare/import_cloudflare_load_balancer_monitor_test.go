@@ -1,0 +1,27 @@
+package cloudflare
+
+import (
+	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+)
+
+func TestAccCloudFlareLoadBalancerMonitor_Import(t *testing.T) {
+	t.Parallel()
+	name := "cloudflare_load_balancer_monitor.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigBasic(),
+			},
+			{
+				ResourceName:      name,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
