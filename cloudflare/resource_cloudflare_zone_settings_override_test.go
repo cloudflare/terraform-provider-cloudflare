@@ -85,7 +85,7 @@ func testAccCheckCloudFlareZoneSettings(n string) resource.TestCheckFunc {
 				zs.ID == "security_level" && zs.Value == "high" {
 				foundSettings[zs.ID] = zs.Value
 			} else if zs.ID == "brotli" || zs.ID == "challenge_ttl" || zs.ID == "security_level" {
-				fmt.Errorf("unexpected value for %q at API: %#v", zs.ID, zs.Value)
+				return fmt.Errorf("unexpected value for %q at API: %#v", zs.ID, zs.Value)
 			}
 		}
 		if len(foundSettings) != 3 {
