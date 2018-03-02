@@ -11,7 +11,6 @@ import (
 )
 
 func TestAccCloudFlareZone_Basic(t *testing.T) {
-	var zone cloudflare.Zone
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_zone_settings_override.test"
 
@@ -22,7 +21,6 @@ func TestAccCloudFlareZone_Basic(t *testing.T) {
 			{
 				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zoneName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareZoneExists(name, &zone),
 					resource.TestCheckResourceAttrSet(
 						name, "settings.0.brotli"),
 					resource.TestCheckResourceAttrSet(
@@ -36,7 +34,6 @@ func TestAccCloudFlareZone_Basic(t *testing.T) {
 }
 
 func TestAccCloudFlareZone_Overrides(t *testing.T) {
-	var zone cloudflare.Zone
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_zone_settings_override.test"
 
@@ -47,7 +44,7 @@ func TestAccCloudFlareZone_Overrides(t *testing.T) {
 			{
 				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigNormal(zoneName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareZoneExists(name, &zone),
+					testAccCheckCloudFlareZoneSettings(name),
 					resource.TestCheckResourceAttr(
 						name, "settings.0.brotli", "on"),
 					resource.TestCheckResourceAttr(
@@ -60,7 +57,7 @@ func TestAccCloudFlareZone_Overrides(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudFlareZoneExists(n string, zone *cloudflare.Zone) resource.TestCheckFunc {
+func testAccCheckCloudFlareZoneSettings(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -72,16 +69,28 @@ func testAccCheckCloudFlareZoneExists(n string, zone *cloudflare.Zone) resource.
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundZone, err := client.ZoneDetails(rs.Primary.ID)
+		foundZone, err := client.ZoneSettings(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
 
-		if foundZone.ID != rs.Primary.ID {
-			return fmt.Errorf("Zone not found")
+		if foundZone.Result == nil || len(foundZone.Result) == 0 {
+			return fmt.Errorf("Zone settings not found")
 		}
 
-		*zone = foundZone
+		foundSettings := map[string]interface{}{}
+		for _, zs := range foundZone.Result {
+			if zs.ID == "brotli" && zs.Value == "on" ||
+				zs.ID == "challenge_ttl" && zs.Value == float64(2700) ||
+				zs.ID == "security_level" && zs.Value == "high" {
+				foundSettings[zs.ID] = zs.Value
+			} else if zs.ID == "brotli" || zs.ID == "challenge_ttl" || zs.ID == "security_level" {
+				fmt.Errorf("unexpected value for %q at API: %#v", zs.ID, zs.Value)
+			}
+		}
+		if len(foundSettings) != 3 {
+			return fmt.Errorf("expected to find 3 attributes matching the expected values but only got %d: %#v", len(foundSettings), foundSettings)
+		}
 
 		return nil
 	}
