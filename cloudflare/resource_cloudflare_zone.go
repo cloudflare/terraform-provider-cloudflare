@@ -39,7 +39,6 @@ func resourceCloudFlareZone() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				Computed: true,
-				MinItems: 1,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -262,7 +261,6 @@ func resourceCloudFlareZone() *schema.Resource {
 						},
 
 						"security_header": {
-							// TODO theres a nested "struct_transport_security" layer - why?
 							Type:     schema.TypeList,
 							Optional: true,
 							Computed: true,
@@ -271,6 +269,12 @@ func resourceCloudFlareZone() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Computed: true,
+									},
+
+									"preload": {
 										Type:     schema.TypeBool,
 										Optional: true,
 										Computed: true,
@@ -451,6 +455,7 @@ func resourceCloudFlareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	newZone, err := client.CreateZone(d.Get("name").(string), d.Get("with_existing_records").(bool), cloudflare.Organization{})
 	if err != nil {
 		log.Printf("[WARN] Error creating zone: %q", err.Error())
+		// TODO remove - this is for testing only
 		zoneId, err := client.ZoneIDByName(d.Get("name").(string))
 		if err != nil {
 			return fmt.Errorf("couldn't find zone %q while trying to import it: %q", d.Get("name").(string), err)
@@ -468,7 +473,7 @@ func resourceCloudFlareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 func resourceCloudFlareZoneUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	if cfg, ok := d.GetOk("settings"); ok && len(cfg.([]interface{})) > 0 {
+	if cfg, ok := d.GetOk("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
 		settingsCfg := cfg.([]interface{})[0].(map[string]interface{})
 		zoneSettings, err := expandZoneSettings(settingsCfg)
 		if err != nil {
@@ -502,8 +507,17 @@ func expandZoneSettings(cfg map[string]interface{}) ([]cloudflare.ZoneSetting, e
 		} else if intValue, ok := v.(int); ok {
 			zoneSettingValue = intValue // passthrough
 		} else if listValue, ok := v.([]interface{}); ok && (k == "minify" || k == "security_header" || k == "mobile_redirect") {
-			if len(listValue) > 0 {
+			if len(listValue) > 0 && listValue != nil {
 				zoneSettingValue = listValue[0].(map[string]interface{})
+			} else {
+				continue
+			}
+		} else if listValue, ok := v.([]interface{}); ok && k == "security_header" {
+			if len(listValue) > 0 && listValue != nil {
+				val := map[string]interface{}{
+					"strict_transport_security": listValue[0].(map[string]interface{}),
+				}
+				zoneSettingValue = val
 			} else {
 				continue
 			}
@@ -548,12 +562,10 @@ func resourceCloudFlareZoneRead(d *schema.ResourceData, meta interface{}) error 
 func flattenZoneSettings(settings []cloudflare.ZoneSetting) []map[string]interface{} {
 	cfg := map[string]interface{}{}
 	for _, s := range settings {
-		if s.ID == "minify" {
-			cfg[s.ID] = s.Value.(map[string]interface{})
+		if s.ID == "minify" || s.ID == "mobile_redirect" {
+			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})}
 		} else if s.ID == "security_header" {
-			cfg[s.ID] = s.Value.(map[string]interface{})
-		} else if s.ID == "mobile_redirect" {
-			cfg[s.ID] = s.Value.(map[string]interface{})
+			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
 		} else if strValue, ok := s.Value.(string); ok {
 			log.Printf("[DEBUG] Found string zone setting %q: %q", s.ID, strValue)
 			cfg[s.ID] = strValue

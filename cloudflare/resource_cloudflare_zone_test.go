@@ -109,7 +109,9 @@ resource "cloudflare_zone" "test" {
 			js = "off"
 			html = "off"
 		}
-
+		security_header {
+			enabled = true
+		}
 	}
 }`, zone)
 }
