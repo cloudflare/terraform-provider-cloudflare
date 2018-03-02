@@ -43,8 +43,6 @@ func resourceCloudFlareZone() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						//TODO remove defaults looking for the one that causes: * cloudflare_zone.test: error from makeRequest: HTTP status 400: content "{\"success\":false,\"errors\":[{\"code\":1016,\"message\":\"An unknown error has occurred\"}],\"messages\":[],\"result\":null}"
-
 						"advanced_ddos": {
 							Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 							Optional: true,
@@ -159,30 +157,52 @@ func resourceCloudFlareZone() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"css": {
-										Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-										Optional: true,
-										Default:  false,
+										Type:         schema.TypeString,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+										Required:     true,
 									},
 
 									"html": {
-										Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-										Optional: true,
-										Default:  false,
+										Type:         schema.TypeString,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+										Required:     true,
 									},
 
 									"js": {
-										Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-										Optional: true,
-										Default:  false,
+										Type:         schema.TypeString,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+										Required:     true,
 									},
 								},
 							},
 						},
 
-						"mobile_redirect": { // TODO: received type is : map[string]interface {}{"mobile_subdomain":interface {}(nil), "strip_uri":false, "status":"off"}
-							Type:     schema.TypeString, // on/off
+						"mobile_redirect": {
+							Type:     schema.TypeList, // on/off
 							Optional: true,
-							Default:  "",
+							Computed: true,
+							MinItems: 1,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									// which parameters are mandatory is not specified
+									"mobile_subdomain": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+
+									"strip_uri": {
+										Type:     schema.TypeBool,
+										Required: true,
+									},
+
+									"status": {
+										Type:         schema.TypeString,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+										Required:     true,
+									},
+								},
+							},
 						},
 
 						"mirage": {
@@ -210,7 +230,7 @@ func resourceCloudFlareZone() *schema.Resource {
 							Type:         schema.TypeString,
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 							Optional:     true,
-							Default:      "",
+							Computed:     true, // default is off but setting it can cause API errors
 						},
 
 						"prefetch_preload": {
@@ -250,7 +270,6 @@ func resourceCloudFlareZone() *schema.Resource {
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									// TODO not specified if these fields are required (test this)
 									"enabled": {
 										Type:     schema.TypeBool,
 										Optional: true,
@@ -357,7 +376,7 @@ func resourceCloudFlareZone() *schema.Resource {
 						"always_use_https": {
 							Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 							Optional: true,
-							Default:  "off",
+							Computed: true, // setting default 'off' caused HTTP status 400: content "{\"success\":false,\"errors\":[{\"code\":1016,\"message\":\"An unknown error has occurred\"}],
 						},
 
 						"sha1_support": {
@@ -429,7 +448,6 @@ func resourceCloudFlareZone() *schema.Resource {
 func resourceCloudFlareZoneCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	//TODO change to zone settings
 	newZone, err := client.CreateZone(d.Get("name").(string), d.Get("with_existing_records").(bool), cloudflare.Organization{})
 	if err != nil {
 		log.Printf("[WARN] Error creating zone: %q", err.Error())
@@ -483,13 +501,7 @@ func expandZoneSettings(cfg map[string]interface{}) ([]cloudflare.ZoneSetting, e
 			}
 		} else if intValue, ok := v.(int); ok {
 			zoneSettingValue = intValue // passthrough
-		} else if listValue, ok := v.([]interface{}); ok && k == "minify" {
-			if len(listValue) > 0 {
-				zoneSettingValue = listValue[0].(map[string]interface{})
-			} else {
-				continue
-			}
-		} else if listValue, ok := v.([]interface{}); ok && k == "security_header" {
+		} else if listValue, ok := v.([]interface{}); ok && (k == "minify" || k == "security_header" || k == "mobile_redirect") {
 			if len(listValue) > 0 {
 				zoneSettingValue = listValue[0].(map[string]interface{})
 			} else {
@@ -537,11 +549,11 @@ func flattenZoneSettings(settings []cloudflare.ZoneSetting) []map[string]interfa
 	cfg := map[string]interface{}{}
 	for _, s := range settings {
 		if s.ID == "minify" {
-			//TODO
+			cfg[s.ID] = s.Value.(map[string]interface{})
 		} else if s.ID == "security_header" {
-			//TODO
+			cfg[s.ID] = s.Value.(map[string]interface{})
 		} else if s.ID == "mobile_redirect" {
-			//TODO
+			cfg[s.ID] = s.Value.(map[string]interface{})
 		} else if strValue, ok := s.Value.(string); ok {
 			log.Printf("[DEBUG] Found string zone setting %q: %q", s.ID, strValue)
 			cfg[s.ID] = strValue
@@ -552,7 +564,7 @@ func flattenZoneSettings(settings []cloudflare.ZoneSetting) []map[string]interfa
 			log.Printf("[DEBUG] Unexpected value type found in API zone settings - %q : %#v", s.ID, s.Value)
 		}
 	}
-	// TODO if new settings are found in the api, this will fail
+	// TODO if new settings are found in the api, this will fail - check against a canonical list
 
 	log.Printf("[DEBUG] Flattened CloudFlare Zone Settings: %#v", cfg)
 
@@ -572,6 +584,7 @@ func flattenEditableZoneSettings(settings []cloudflare.ZoneSetting) []string {
 }
 
 func resourceCloudFlareZoneDelete(d *schema.ResourceData, meta interface{}) error {
+	// we cannot delete settings independently of the zone, which is why the resources have to be combined
 	/* TODO: keeping this off while testing
 	client := meta.(*cloudflare.API)
 

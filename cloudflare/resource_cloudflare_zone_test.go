@@ -49,7 +49,7 @@ func TestAccCloudFlareZone_Overrides(t *testing.T) {
 			{
 				Config: testAccCheckCloudFlareZoneConfigOverrides(zoneName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareZoneExists("cloudflare_record.test", &zone),
+					testAccCheckCloudFlareZoneExists(name, &zone),
 					resource.TestCheckResourceAttr(
 						name, "settings.0.brotli", "on"),
 					resource.TestCheckResourceAttr(
@@ -104,6 +104,12 @@ resource "cloudflare_zone" "test" {
 		brotli = "on",
 		challenge_ttl = 2700
 		security_level = "high"
+		minify {
+			css = "on"
+			js = "off"
+			html = "off"
+		}
+
 	}
 }`, zone)
 }
