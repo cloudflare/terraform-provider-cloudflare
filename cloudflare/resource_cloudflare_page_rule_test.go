@@ -176,7 +176,7 @@ func TestAccCloudFlarePageRule_CreateAfterManualDestroy(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "actions.0.always_online", "off"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.test", "actions.0.automatic_https_rewrites", "on"),
+						"cloudflare_page_rule.test", "actions.0.browser_check", "on"),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "actions.0.rocket_loader", "automatic"),
 					resource.TestCheckResourceAttr(
@@ -238,12 +238,12 @@ func testAccCheckCloudFlarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 			return fmt.Errorf("'always_online' not specified at api")
 		}
 
-		if val, ok := actionMap["always_use_https"]; ok {
+		if val, ok := actionMap["disable_apps"]; ok {
 			if val != nil {
-				return fmt.Errorf("'always_use_https' is a unitary value, expect nil value at api, but found: '%v'", val)
+				return fmt.Errorf("'disable_apps' is a unitary value, expect nil value at api, but found: '%v'", val)
 			}
 		} else {
-			return fmt.Errorf("'always_use_https' not specified at api")
+			return fmt.Errorf("'disable_apps' not specified at api")
 		}
 
 		if val, ok := actionMap["ssl"]; ok {
@@ -269,12 +269,12 @@ func testAccCheckCloudFlarePageRuleAttributesFullySpecified(pageRule *cloudflare
 		// check boolean variables get set correctly
 		actionMap := pageRuleActionsToMap(pageRule.Actions)
 
-		if val, ok := actionMap["always_use_https"]; ok {
+		if val, ok := actionMap["disable_apps"]; ok {
 			if val != nil {
-				return fmt.Errorf("'always_use_https' is a unitary value, expect nil value at api, but found: '%v'", val)
+				return fmt.Errorf("'disable_apps' is a unitary value, expect nil value at api, but found: '%v'", val)
 			}
 		} else {
-			return fmt.Errorf("'always_use_https' not specified at api")
+			return fmt.Errorf("'disable_apps' not specified at api")
 		}
 
 		if val, ok := actionMap["browser_cache_ttl"]; ok {
@@ -285,9 +285,9 @@ func testAccCheckCloudFlarePageRuleAttributesFullySpecified(pageRule *cloudflare
 			return fmt.Errorf("'browser_cache_ttl' not specified at api")
 		}
 
-		if len(pageRule.Actions) != 16 {
+		if len(pageRule.Actions) != 13 {
 			return fmt.Errorf("api should return the attributes we set non-empty (count: %d) but got %d: %#v",
-				16, len(pageRule.Actions), pageRule.Actions)
+				13, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -299,8 +299,8 @@ func testAccCheckCloudFlarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 
 		actionMap := pageRuleActionsToMap(pageRule.Actions)
 
-		if _, ok := actionMap["always_use_https"]; ok {
-			return fmt.Errorf("'always_use_https' found at api, but we should have removed it")
+		if _, ok := actionMap["disable_apps"]; ok {
+			return fmt.Errorf("'disable_apps' found at api, but we should have removed it")
 		}
 
 		if val, ok := actionMap["always_online"]; ok {
@@ -311,12 +311,12 @@ func testAccCheckCloudFlarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 			return fmt.Errorf("'always_online' not specified at api")
 		}
 
-		if val, ok := actionMap["automatic_https_rewrites"]; ok {
+		if val, ok := actionMap["browser_check"]; ok {
 			if _, ok := val.(string); !ok || val != "on" { // lots of booleans get mapped to on/off at api
-				return fmt.Errorf("'automatic_https_rewrites' not specified correctly at api, found: '%v'", val)
+				return fmt.Errorf("'browser_check' not specified correctly at api, found: '%v'", val)
 			}
 		} else {
-			return fmt.Errorf("'automatic_https_rewrites' not specified at api")
+			return fmt.Errorf("'browser_check' not specified at api")
 		}
 
 		if val, ok := actionMap["ssl"]; ok {
@@ -396,7 +396,7 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
 		always_online = "on"
 		ssl = "flexible"
- 		always_use_https = true
+ 		disable_apps = true
 	}
 }`, zone, target)
 }
@@ -408,8 +408,8 @@ resource "cloudflare_page_rule" "test" {
 	target = "%s/updated"
 	actions = {
 		always_online = "off"
-		automatic_https_rewrites = "on"
-		always_use_https = false
+		browser_check = "on"
+		disable_apps = false
 		ssl = "strict"
 		rocket_loader = "automatic"
 	}
@@ -423,13 +423,10 @@ resource "cloudflare_page_rule" "test" {
 	target = "%s"
 	actions = {
 		always_online = "on"
-		automatic_https_rewrites = "off"
 		browser_check = "on"
 		email_obfuscation = "on"
 		ip_geolocation = "on"
-		opportunistic_encryption = "on"
 		server_side_exclude = "on"
-        always_use_https = true
         disable_apps = true
         disable_performance = true
         disable_security = true

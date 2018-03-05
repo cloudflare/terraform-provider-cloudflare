@@ -54,6 +54,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						// may get api errors trying to set this
 						"automatic_https_rewrites": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -78,6 +79,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						// may get api errors trying to set this
 						"opportunistic_encryption": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -92,7 +94,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 						// end on/off fields
 
 						// unitary fields
-						// unclear if the api offers any way to disable these once enabled
+						// getting api errors trying to set this
 						"always_use_https": {
 							Type:     schema.TypeBool,
 							Default:  false,
@@ -300,6 +302,9 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	// "matches"; so we can just read the first element's Value.
 	d.Set("target", pageRule.Targets[0].Constraint.Value)
 
+	d.Set("priority", pageRule.Priority)
+	d.Set("status", pageRule.Status)
+
 	actions := map[string]interface{}{}
 	for _, pageRuleAction := range pageRule.Actions {
 		key, value, err := transformFromCloudFlarePageRuleAction(&pageRuleAction)
@@ -309,10 +314,10 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 		actions[key] = value
 	}
 	log.Printf("[DEBUG] CloudFlare Page Rule actions configuration: %#v", actions)
-	d.Set("actions", []map[string]interface{}{actions})
 
-	d.Set("priority", pageRule.Priority)
-	d.Set("status", pageRule.Status)
+	if err := d.Set("actions", []map[string]interface{}{actions}); err != nil {
+		log.Printf("[WARN] Error setting actions in page rule %q: %s", d.Id(), err)
+	}
 
 	return nil
 }
