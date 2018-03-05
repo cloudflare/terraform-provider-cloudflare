@@ -4,10 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
-
 	"time"
-
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -277,41 +274,35 @@ func expandStringMap(inVal interface{}) map[string]string {
 
 func resourceCloudFlareRecordImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
-	id := d.Id()
 
-	// Get list of Zones to check for record in
-	zones, err := client.ListZones()
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var zoneName string
+	var recordId string
+	if len(idAttr) == 2 {
+		zoneName = idAttr[0]
+		recordId = idAttr[1]
+	} else {
+		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneName/recordId\" for import", d.Id())
+	}
+
+	zoneId, err := client.ZoneIDByName(zoneName)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to fetch list of Zones when importing ID: %s. Error: %s", id, err)
-	}
-	log.Printf("[INFO] Found %d zones to check", len(zones))
-
-	// Itterate through Zones to find zone with record for given id
-	found := false
-	for _, zone := range zones {
-		log.Printf("[INFO] Checking Zone: %s", zone.Name)
-		record, err := client.DNSRecord(zone.ID, id)
-		if err == nil {
-			found = true
-			log.Printf("[INFO] Found record: %s", record.Name)
-			name := strings.TrimSuffix(record.Name, "."+zone.Name)
-			d.Set("domain", zone.Name)
-			d.Set("hostname", record.Name)
-			d.Set("name", name)
-			d.Set("priority", record.Priority)
-			d.Set("proxied", record.Proxied)
-			d.Set("ttl", record.TTL)
-			d.Set("type", record.Type)
-			d.Set("value", record.Content)
-			d.Set("zone_id", zone.ID)
-			break
-		}
-	}
-	if !found {
-		return nil, fmt.Errorf("Unable to find record for ID: %s. Checked %d zones", id, len(zones))
+		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
 	}
 
-	results := make([]*schema.ResourceData, 0)
-	results = append(results, d)
-	return results, nil
+	record, err := client.DNSRecord(zoneId, recordId)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to find record with ID %q: %q", d.Id(), err)
+	}
+
+	log.Printf("[INFO] Found record: %s", record.Name)
+	name := strings.TrimSuffix(record.Name, "."+zoneName)
+
+	d.Set("name", name)
+	d.Set("domain", zoneName)
+	d.Set("zone_id", zoneId)
+	d.SetId(recordId)
+
+	return []*schema.ResourceData{d}, nil
 }
