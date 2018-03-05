@@ -381,8 +381,12 @@ func resourceCloudFlareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 
 	d.Set("threshold", rateLimit.Threshold)
 	d.Set("period", rateLimit.Period)
-	d.Set("match", flattenRateLimitTrafficMatcher(rateLimit.Match))
-	d.Set("action", flattenRateLimitAction(rateLimit.Action))
+	if err := d.Set("match", flattenRateLimitTrafficMatcher(rateLimit.Match)); err != nil {
+		log.Printf("[WARN] Error setting match on rate limit %q: %s", d.Id(), err)
+	}
+	if err := d.Set("action", flattenRateLimitAction(rateLimit.Action)); err != nil {
+		log.Printf("[WARN] Error setting action on rate limit %q: %s", d.Id(), err)
+	}
 
 	d.Set("description", rateLimit.Description)
 	d.Set("disabled", rateLimit.Disabled)
@@ -392,7 +396,7 @@ func resourceCloudFlareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 			bypassUrlPatterns = append(bypassUrlPatterns, bypassItem.Value)
 		} else {
 			// maybe a new type of bypass was added to api
-			log.Printf("[WARN] Unkown bypass type found in rate limit for zone: %s", bypassItem.Name)
+			log.Printf("[WARN] Unkown bypass type found in rate limit for zone %q: %s", d.Id(), bypassItem.Name)
 		}
 	}
 	d.Set("bypass_url_patterns", bypassUrlPatterns)
