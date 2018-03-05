@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	"fmt"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
@@ -28,9 +30,10 @@ func TestAccCloudFlareRateLimit_Import(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportState:         true,
+				ImportStateVerify:   true,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudFlareRateLimitExists(name, &rateLimit),
 					testAccCheckCloudFlareRateLimitIDIsValid(name, zone),

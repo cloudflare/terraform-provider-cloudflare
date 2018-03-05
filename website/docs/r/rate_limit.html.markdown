@@ -86,14 +86,13 @@ The **action.response** block supports:
 
 The following attributes are exported:
 
-* `id` - Composite of zone name and rate limit ID - formatted as `${zone}_${rate_limit_id}`.
+* `id` - The Rate limit ID.
 * `zone_id` - The DNS zone ID.
-* `rate_limit_id` - Rate limit ID.
 
 ## Import
 
-Rate limits can be imported using the composite ID formed of zone name and rate limit ID, e.g.
+Rate limits can be imported using a composite ID formed of zone name and rate limit ID, e.g.
 
 ```
-$ terraform import cloudflare_rate_limit.default example.com_ch8374ftwdghsif43
+$ terraform import cloudflare_rate_limit.default example.com/ch8374ftwdghsif43
 ```

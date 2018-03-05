@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -175,7 +174,7 @@ func testAccCheckCloudFlareRateLimitDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.RateLimit(rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["rate_limit_id"])
+		_, err := client.RateLimit(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Rate limit still exists")
 		}
@@ -196,12 +195,12 @@ func testAccCheckCloudFlareRateLimitExists(n string, rateLimit *cloudflare.RateL
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundRateLimit, err := client.RateLimit(rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["rate_limit_id"])
+		foundRateLimit, err := client.RateLimit(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
 
-		if foundRateLimit.ID != rs.Primary.Attributes["rate_limit_id"] {
+		if foundRateLimit.ID != rs.Primary.ID {
 			return fmt.Errorf("Rate limit not found")
 		}
 
@@ -219,33 +218,21 @@ func testAccCheckCloudFlareRateLimitIDIsValid(n, expectedZone string) resource.T
 		}
 
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("No Record ID is set")
-		}
-		idAttr := strings.SplitN(rs.Primary.ID, "_", 2)
-
-		if len(idAttr) == 2 {
-			if expectedZone != idAttr[0] {
-				return fmt.Errorf("zone in id: %s doesn't match the expected: %s", idAttr[0], expectedZone)
-			}
-			// resource id is 33 char string
-			if len(idAttr[1]) != 32 {
-				return fmt.Errorf("rate limit id value in id: %s is the wrong length for an id", idAttr[1])
-			}
-		} else {
-			return fmt.Errorf("invalid id (\"%s\"), should be in format \"zoneName_resourceId\"", rs.Primary.ID)
+			return fmt.Errorf("No rate limit ID is set")
 		}
 
-		// check attributes relating to id components should always be set in state
-		if rs.Primary.Attributes["zone"] != idAttr[0] {
-			return fmt.Errorf("zone in id: %s doesn't match the zone attribute in state: %s", idAttr[0], rs.Primary.Attributes["zone"])
+		if len(rs.Primary.ID) != 32 {
+			return fmt.Errorf("invalid id %q, should be a string with 32 characters", rs.Primary.ID)
 		}
 
-		if rs.Primary.Attributes["rate_limit_id"] != idAttr[1] {
-			return fmt.Errorf("rate limit id in id: %s doesn't match the rate_limit_id attribute in state: %s", idAttr[0], rs.Primary.Attributes["rate_limit_id"])
-		}
 		if zoneId, ok := rs.Primary.Attributes["zone_id"]; !ok || len(zoneId) < 1 {
 			return errors.New("zone_id is unset, should always be set with id")
 		}
+
+		if zone, _ := rs.Primary.Attributes["zone"]; zone != expectedZone {
+			return fmt.Errorf("found zone value %q, expected %q", zone, expectedZone)
+		}
+
 		return nil
 	}
 }
