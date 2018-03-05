@@ -223,11 +223,14 @@ func resourceCloudFlareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 	d.Set("path", loadBalancerMonitor.Path)
 	d.Set("interval", loadBalancerMonitor.Interval)
 	d.Set("retries", loadBalancerMonitor.Retries)
-	d.Set("header", flattenLoadBalancerMonitorHeader(loadBalancerMonitor.Header))
 	d.Set("type", loadBalancerMonitor.Type)
 	d.Set("description", loadBalancerMonitor.Description)
 	d.Set("created_on", loadBalancerMonitor.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerMonitor.ModifiedOn.Format(time.RFC3339Nano))
+
+	if err := d.Set("header", flattenLoadBalancerMonitorHeader(loadBalancerMonitor.Header)); err != nil {
+		log.Printf("[WARN] Error setting header for load balancer monitor %q: %s", d.Id(), err)
+	}
 
 	return nil
 }
