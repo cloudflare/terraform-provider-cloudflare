@@ -382,6 +382,7 @@ func resourceCloudFlareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 
 	d.Set("description", rateLimit.Description)
 	d.Set("disabled", rateLimit.Disabled)
+
 	bypassUrlPatterns := make([]string, 0)
 	for _, bypassItem := range rateLimit.Bypass {
 		if bypassItem.Name == "url" {
@@ -391,7 +392,10 @@ func resourceCloudFlareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 			log.Printf("[WARN] Unkown bypass type found in rate limit for zone %q: %s", d.Id(), bypassItem.Name)
 		}
 	}
-	d.Set("bypass_url_patterns", bypassUrlPatterns)
+	if err := d.Set("bypass_url_patterns", bypassUrlPatterns); err != nil {
+		log.Printf("[WARN] Error setting bypass_url_patterns on rate limit %q: %s", d.Id(), err)
+	}
+
 	return nil
 }
 
