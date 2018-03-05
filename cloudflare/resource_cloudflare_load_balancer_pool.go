@@ -194,15 +194,21 @@ func resourceCloudFlareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Read CloudFlare Load Balancer Pool from API as struct: %+v", loadBalancerPool)
 
 	d.Set("name", loadBalancerPool.Name)
-	d.Set("origins", flattenLoadBalancerOrigins(loadBalancerPool.Origins))
 	d.Set("enabled", loadBalancerPool.Enabled)
 	d.Set("minimum_origins", loadBalancerPool.MinimumOrigins)
-	d.Set("check_regions", schema.NewSet(schema.HashString, flattenStringList(loadBalancerPool.CheckRegions)))
 	d.Set("description", loadBalancerPool.Description)
 	d.Set("monitor", loadBalancerPool.Monitor)
 	d.Set("notification_email", loadBalancerPool.NotificationEmail)
 	d.Set("created_on", loadBalancerPool.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerPool.ModifiedOn.Format(time.RFC3339Nano))
+
+	if err := d.Set("origins", flattenLoadBalancerOrigins(loadBalancerPool.Origins)); err != nil {
+		log.Printf("[WARN] Error setting origins on load balancer pool %q: %s", d.Id(), err)
+	}
+
+	if err := d.Set("check_regions", schema.NewSet(schema.HashString, flattenStringList(loadBalancerPool.CheckRegions))); err != nil {
+		log.Printf("[WARN] Error setting check_regions on load balancer pool %q: %s", d.Id(), err)
+	}
 
 	return nil
 }

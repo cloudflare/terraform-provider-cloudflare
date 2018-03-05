@@ -261,14 +261,23 @@ func resourceCloudFlareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 
 	d.Set("name", loadBalancer.Name)
 	d.Set("fallback_pool_id", loadBalancer.FallbackPool)
-	d.Set("default_pool_ids", loadBalancer.DefaultPools)
 	d.Set("proxied", loadBalancer.Proxied)
 	d.Set("description", loadBalancer.Description)
 	d.Set("ttl", loadBalancer.TTL)
-	d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop"))
-	d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region"))
 	d.Set("created_on", loadBalancer.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancer.ModifiedOn.Format(time.RFC3339Nano))
+
+	if err := d.Set("default_pool_ids", loadBalancer.DefaultPools); err != nil {
+		log.Printf("[WARN] Error setting default_pool_ids on load balancer %q: %s", d.Id(), err)
+	}
+
+	if err := d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop")); err != nil {
+		log.Printf("[WARN] Error setting pop_pools on load balancer %q: %s", d.Id(), err)
+	}
+
+	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region")); err != nil {
+		log.Printf("[WARN] Error setting region_pools on load balancer %q: %s", d.Id(), err)
+	}
 
 	return nil
 }
