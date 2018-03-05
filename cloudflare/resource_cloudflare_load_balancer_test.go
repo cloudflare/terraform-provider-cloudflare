@@ -9,8 +9,6 @@ import (
 
 	"os"
 
-	"strings"
-
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
@@ -173,7 +171,7 @@ func testAccCheckCloudFlareLoadBalancerDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.LoadBalancerDetails(rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["load_balancer_id"])
+		_, err := client.LoadBalancerDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("load balancer still exists: %s", rs.Primary.ID)
 		}
@@ -194,7 +192,7 @@ func testAccCheckCloudFlareLoadBalancerExists(n string, loadBalancer *cloudflare
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancer, err := client.LoadBalancerDetails(rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["load_balancer_id"])
+		foundLoadBalancer, err := client.LoadBalancerDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -215,28 +213,15 @@ func testAccCheckCloudFlareLoadBalancerIDIsValid(n, expectedZone string) resourc
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No ID is set")
 		}
-		idAttr := strings.SplitN(rs.Primary.ID, "_", 2)
 
-		if len(idAttr) == 2 {
-			if expectedZone != idAttr[0] {
-				return fmt.Errorf("zone in id: %s doesn't match the expected: %s", idAttr[0], expectedZone)
-			}
-			// resource id is 33 char string
-			if len(idAttr[1]) != 32 {
-				return fmt.Errorf("rate limit id value in id: %s is the wrong length for an id", idAttr[1])
-			}
-		} else {
-			return fmt.Errorf("invalid id (\"%s\"), should be in format \"zoneName_loadBalancerId\"", rs.Primary.ID)
+		if len(rs.Primary.ID) != 32 {
+			return fmt.Errorf("invalid id %q, should be a string of length 32", rs.Primary.ID)
 		}
 
-		// check attributes relating to id components should always be set in state
-		if rs.Primary.Attributes["zone"] != idAttr[0] {
-			return fmt.Errorf("zone in id: %s doesn't match the zone attribute in state: %s", idAttr[0], rs.Primary.Attributes["zone"])
+		if rs.Primary.Attributes["zone"] != expectedZone {
+			return fmt.Errorf("zone attribute %q doesn't match the expected value %q", rs.Primary.Attributes["zone"], expectedZone)
 		}
 
-		if rs.Primary.Attributes["load_balancer_id"] != idAttr[1] {
-			return fmt.Errorf("load balancer id in resource id: %s doesn't match the load_balancer_id attribute in state: %s", idAttr[0], rs.Primary.Attributes["load_balancer_id"])
-		}
 		if zoneId, ok := rs.Primary.Attributes["zone_id"]; !ok || len(zoneId) < 1 {
 			return errors.New("zone_id is unset, should always be set with id")
 		}
@@ -277,7 +262,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancer.ID
-		err := client.DeleteLoadBalancer(rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["load_balancer_id"])
+		err := client.DeleteLoadBalancer(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

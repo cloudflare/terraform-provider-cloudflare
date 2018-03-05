@@ -71,8 +71,7 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-* `id` - Combination of the zone name and load balancer ID, e.g. `example.com_12345678910`.
-* `load_balancer_id` - Unique identifier in the API for the load balancer.
+* `id` - Unique identifier in the API for the load balancer.
 * `zone_id` - ID associated with the specified `zone`.
 * `created_on` - The RFC3339 timestamp of when the load balancer was created.
 * `modified_on` - The RFC3339 timestamp of when the load balancer was last modified.

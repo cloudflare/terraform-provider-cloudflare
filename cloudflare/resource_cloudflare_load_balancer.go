@@ -36,11 +36,6 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 				Computed: true,
 			},
 
-			"load_balancer_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -192,10 +187,7 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		return fmt.Errorf("cailed to find id in Create response; resource was empty")
 	}
 
-	// terraform id is *not* the same as the resource id, is is the combination with the zoneId
-	// this makes it easier to import and also matches the keys needed for cloudflare-go operations
-	d.SetId(zoneName + "_" + r.ID)
-	d.Set("load_balancer_id", r.ID)
+	d.SetId(r.ID)
 
 	log.Printf("[INFO] CloudFlare Load Balancer ID: %s", d.Id())
 
@@ -208,7 +200,7 @@ func resourceCloudFlareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	zoneId := d.Get("zone_id").(string)
 
 	loadBalancer := cloudflare.LoadBalancer{
-		ID:           d.Get("load_balancer_id").(string),
+		ID:           d.Id(),
 		Name:         d.Get("name").(string),
 		FallbackPool: d.Get("fallback_pool_id").(string),
 		DefaultPools: expandInterfaceToStringList(d.Get("default_pool_ids")),
@@ -252,7 +244,7 @@ func expandGeoPools(pool interface{}, geoType string) map[string][]string {
 func resourceCloudFlareLoadBalancerRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
-	loadBalancerId := d.Get("load_balancer_id").(string)
+	loadBalancerId := d.Id()
 
 	loadBalancer, err := client.LoadBalancerDetails(zoneId, loadBalancerId)
 	if err != nil {
@@ -296,7 +288,7 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 func resourceCloudFlareLoadBalancerDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
-	loadBalancerId := d.Get("load_balancer_id").(string)
+	loadBalancerId := d.Id()
 
 	log.Printf("[INFO] Deleting CloudFlare Load Balancer: %s in zone: %s", loadBalancerId, zoneId)
 
@@ -312,21 +304,23 @@ func resourceCloudFlareLoadBalancerImport(d *schema.ResourceData, meta interface
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup
-	idAttr := strings.SplitN(d.Id(), "_", 2)
+	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneName string
 	var loadBalancerId string
 	if len(idAttr) == 2 {
 		zoneName = idAttr[0]
 		loadBalancerId = idAttr[1]
-		d.Set("zone", zoneName)
-		d.Set("load_balancer_id", loadBalancerId)
 	} else {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName_loadBalancerId\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/loadBalancerId\"", d.Id())
 	}
 	zoneId, err := client.ZoneIDByName(zoneName)
-	d.Set("zone_id", zoneId)
+
 	if err != nil {
 		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
 	}
+
+	d.Set("zone", zoneName)
+	d.Set("zone_id", zoneId)
+	d.SetId(loadBalancerId)
 	return []*schema.ResourceData{d}, nil
 }
