@@ -460,7 +460,9 @@ func resourceCloudFlareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 
 	log.Printf("[DEBUG] Read CloudFlareZone initial settings: %#v", zoneSettings)
 
-	d.Set("initial_settings", flattenZoneSettings(zoneSettings.Result))
+	if err := d.Set("initial_settings", flattenZoneSettings(zoneSettings.Result)); err != nil {
+		log.Printf("[WARN] Error setting initial_settings for zone %q: %s", d.Id(), err)
+	}
 	d.Set("initial_settings_read_at", time.Now().UTC().Format(time.RFC3339Nano))
 
 	log.Printf("[DEBUG] Saved CloudFlareZone initial settings: %#v", d.Get("initial_settings"))
@@ -576,8 +578,12 @@ func resourceCloudFlareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 
 	d.Set("status", zone.Status)
 	d.Set("type", zone.Type)
-	d.Set("settings", flattenZoneSettings(zoneSettings.Result))
-	d.Set("readonly_settings", flattenReadOnlyZoneSettings(zoneSettings.Result))
+	if err := d.Set("settings", flattenZoneSettings(zoneSettings.Result)); err != nil {
+		log.Printf("[WARN] Error setting settings for zone %q: %s", d.Id(), err)
+	}
+	if err := d.Set("readonly_settings", flattenReadOnlyZoneSettings(zoneSettings.Result)); err != nil {
+		log.Printf("[WARN] Error setting readonly_settings for zone %q: %s", d.Id(), err)
+	}
 
 	return nil
 }
