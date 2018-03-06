@@ -111,6 +111,10 @@ resource "cloudflare_zone_settings_override" "test" {
 		brotli = "on",
 		challenge_ttl = 2700
 		security_level = "high"
+		opportunistic_encryption = "on"
+		automatic_https_rewrites = "on"
+		mirage = "on"
+		waf = "on"
 		minify {
 			css = "on"
 			js = "off"
