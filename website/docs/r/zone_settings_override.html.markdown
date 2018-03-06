@@ -86,7 +86,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
 * `cname_flattening`.
 
-#### Integer Values
+### Integer Values
 
 * `browser_cache_ttl`
 * `challenge_ttl`
@@ -100,16 +100,19 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `security_header`
 
 The **minify** attribute supports the following fields:
+
 * `css` (Required) "on"/"off"
 * `html` (Required) "on"/"off"
 * `js` (Required)"on"/"off"
 
 The **mobile_redirect** attribute supports the following fields:
+
 * `mobile_subdomain` (Required) String value
 * `strip_uri` (Required) true/false
 * `status` (Required) "on"/"off"
 
 The **security_header** attribute supports the following fields:
+
 * `enabled` (Optional) true/false
 * `preload` (Optional) true/false
 * `max_age` (Optional) Integer
