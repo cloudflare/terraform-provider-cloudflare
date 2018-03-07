@@ -75,6 +75,8 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `automatic_https_rewrites`
 * `http2`
 * `sha1_support`
+* `always_use_https`
+* `webp`. Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
 
 ### String Values
 
@@ -129,10 +131,3 @@ The following attributes are exported:
 * `readonly_settings` - Which of the current `settings` are not able to be set by the user. Which settings these are is determined by plan level and user permissions.
 * `zone_status`. A full zone implies that DNS is hosted with Cloudflare. A partial zone is typically a partner-hosted zone or a CNAME setup.
 * `zone_type`. Status of the zone. Valid values: active, pending, initializing, moved, deleted, deactivated.
-
-### Computed Attributes
-
-Some attributes cannot be set in terraform currently due to inconsistency in the values accepted + returned by the API. These are however exported as attributes:
-
-* `webp`
-* `always_use_https`

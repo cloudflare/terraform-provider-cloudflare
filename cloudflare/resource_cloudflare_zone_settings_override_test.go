@@ -113,6 +113,9 @@ resource "cloudflare_zone_settings_override" "test" {
 		security_level = "high"
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"
+		always_use_https = "off"
+		polish = "off"
+		webp = "on"
 		mirage = "on"
 		waf = "on"
 		minify {

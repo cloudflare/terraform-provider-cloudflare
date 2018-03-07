@@ -262,8 +262,10 @@ var resourceCloudFlareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"webp": {
-		Type:     schema.TypeString,
-		Computed: true, // setting this causes API errors, conflict with polish
+		Type:         schema.TypeString,
+		Optional:     true,
+		Computed:     true,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 	},
 
 	"prefetch_preload": {
@@ -413,7 +415,8 @@ var resourceCloudFlareZoneSettingsSchema = map[string]*schema.Schema{
 
 	"always_use_https": {
 		Type:     schema.TypeString,
-		Computed: true, // setting default 'off' caused HTTP status 400: content "{\"success\":false,\"errors\":[{\"code\":1016,\"message\":\"An unknown error has occurred\"}],
+		Optional: true,
+		Computed: true,
 	},
 
 	"sha1_support": {
@@ -486,6 +489,16 @@ func resourceCloudFlareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta i
 			}
 			zoneSettings = append(zoneSettings, newZoneSetting)
 		}
+		if polish, ok := d.GetOk("settings.0.polish"); ok && polish != "" && polish != "off" {
+			// only ever set webp if polish is on
+			if webP, ok := d.GetOk("settings.0.webp"); ok {
+				newZoneSetting := cloudflare.ZoneSetting{
+					ID:    "webp",
+					Value: webP.(string),
+				}
+				zoneSettings = append(zoneSettings, newZoneSetting)
+			}
+		}
 
 		log.Printf("[DEBUG] CloudFlare Zone Settings update configuration: %#v", zoneSettings)
 
@@ -505,11 +518,12 @@ func expandZoneSettings(cfg map[string]interface{}) ([]cloudflare.ZoneSetting, e
 	for k, v := range cfg {
 		var zoneSettingValue interface{}
 
-		if k == "webp" || k == "always_use_https" {
+		if k == "webp" {
 			// errors in the api when setting these values, ignore for now
 			continue
 		} else if k == "browser_cache_ttl" {
 			// need to distinguish explicit 0 from not set
+			// this is set afterwards, in the calling method which has access to the schema
 			continue
 		} else if listValue, ok := v.([]interface{}); ok && (k == "minify" || k == "mobile_redirect") {
 			if len(listValue) > 0 && listValue != nil {
@@ -578,9 +592,17 @@ func resourceCloudFlareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 
 	d.Set("status", zone.Status)
 	d.Set("type", zone.Type)
-	if err := d.Set("settings", flattenZoneSettings(zoneSettings.Result)); err != nil {
+
+	newZoneSettings := flattenZoneSettings(zoneSettings.Result)
+	// if polish is off (or we don't know) we need to ignore what comes back from the api for webp
+	if polish, ok := newZoneSettings[0]["polish"]; !ok || polish.(string) == "" || polish.(string) == "off" {
+		newZoneSettings[0]["webp"] = d.Get("settings.0.webp").(string)
+	}
+
+	if err := d.Set("settings", newZoneSettings); err != nil {
 		log.Printf("[WARN] Error setting settings for zone %q: %s", d.Id(), err)
 	}
+
 	if err := d.Set("readonly_settings", flattenReadOnlyZoneSettings(zoneSettings.Result)); err != nil {
 		log.Printf("[WARN] Error setting readonly_settings for zone %q: %s", d.Id(), err)
 	}
