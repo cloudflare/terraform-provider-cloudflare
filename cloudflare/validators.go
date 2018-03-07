@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"strings"
+
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 // validateRecordType ensures that the cloudflare record type is valid
@@ -78,4 +80,25 @@ func validateRecordName(t string, value string) error {
 	}
 
 	return nil
+}
+
+// validateIntInSlice returns a SchemaValidateFunc which tests if the provided value
+// is of type int
+func validateIntInSlice(valid []int) schema.SchemaValidateFunc {
+	return func(i interface{}, k string) (s []string, es []error) {
+		v, ok := i.(int)
+		if !ok {
+			es = append(es, fmt.Errorf("expected type of %q to be int", k))
+			return
+		}
+
+		for _, str := range valid {
+			if v == str {
+				return
+			}
+		}
+
+		es = append(es, fmt.Errorf("expected %q to be one of %v, got %d", k, valid, v))
+		return
+	}
 }

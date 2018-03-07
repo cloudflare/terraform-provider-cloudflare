@@ -29,7 +29,8 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"cloudflare_record": resourceCloudFlareRecord(),
+			"cloudflare_record":                 resourceCloudFlareRecord(),
+			"cloudflare_zone_settings_override": resourceCloudFlareZoneSettingsOverride(),
 		},
 
 		ConfigureFunc: providerConfigure,
