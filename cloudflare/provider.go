@@ -38,7 +38,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     3,
-				Description: "RPS limit to apply when making calls to the API",
+				Description: "Maximum number of retries to perform when an API request fails",
 			},
 
 			"min_backoff": &schema.Schema{
@@ -59,7 +59,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "RPS limit to apply when making calls to the API",
+				Description: "Whether to print logs from the API client (using the default log library logger)",
 			},
 		},
 

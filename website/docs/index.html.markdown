@@ -37,3 +37,9 @@ The following arguments are supported:
   specified with the `CLOUDFLARE_EMAIL` shell environment variable.
 * `token` - (Required) The Cloudflare API token. This can also be specified
   with the `CLOUDFLARE_TOKEN` shell environment variable.
+* `rps` - (Optional) RPS limit to apply when making calls to the API. Default: 4.
+* `retries` - (Optional) Maximum number of retries to perform when an API request fails. Default: 3.
+* `min_backoff` - (Optional) Minimum backoff period in seconds after failed API calls. Default: 1.
+* `max_backoff` - (Optional) Maximum backoff period in seconds after failed API calls Default: 30.
+* `api_client_logging` - (Optional) Whether to print logs from the API client (using the default log library logger). Default: false.
+
