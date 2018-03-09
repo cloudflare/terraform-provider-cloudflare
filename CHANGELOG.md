@@ -6,6 +6,7 @@ BACKWARDS INCOMPATIBILITIES / NOTES:
 
 FEATURES:
 
+* **New Resource:** `cloudflare_rate_limit` [GH-30]
 * **New Data Source:** `cloudflare_ip_ranges` [GH-28]
 
 IMPROVEMENTS:
