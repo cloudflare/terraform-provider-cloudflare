@@ -492,8 +492,8 @@
 		{
 			"checksumSHA1": "6O4zxgqAD+QZm6plsIfl4MH310Q=",
 			"path": "github.com/hashicorp/terraform/helper/validation",
-			"revision": "3f2f07d5d0e23cfe4eb25e011cb8dbe49f2eeff0",
-			"revisionTime": "2018-02-26T19:06:25Z"
+			"revision": "66ff8f8bed40293bd8a3ba827ca0b0838666c821",
+			"revisionTime": "2018-02-27T22:48:04Z"
 		},
 		{
 			"checksumSHA1": "yFWmdS6yEJZpRJzUqd/mULqCYGk=",
