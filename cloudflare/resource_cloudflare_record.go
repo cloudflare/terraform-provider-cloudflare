@@ -3,10 +3,8 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-
-	"time"
-
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -18,6 +16,9 @@ func resourceCloudFlareRecord() *schema.Resource {
 		Read:   resourceCloudFlareRecordRead,
 		Update: resourceCloudFlareRecordUpdate,
 		Delete: resourceCloudFlareRecordDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudFlareRecordImport,
+		},
 
 		SchemaVersion: 1,
 		MigrateState:  resourceCloudFlareRecordMigrateState,
@@ -269,4 +270,39 @@ func expandStringMap(inVal interface{}) map[string]string {
 		outVal[k] = strValue
 	}
 	return outVal
+}
+
+func resourceCloudFlareRecordImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var zoneName string
+	var recordId string
+	if len(idAttr) == 2 {
+		zoneName = idAttr[0]
+		recordId = idAttr[1]
+	} else {
+		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneName/recordId\" for import", d.Id())
+	}
+
+	zoneId, err := client.ZoneIDByName(zoneName)
+	if err != nil {
+		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
+	}
+
+	record, err := client.DNSRecord(zoneId, recordId)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to find record with ID %q: %q", d.Id(), err)
+	}
+
+	log.Printf("[INFO] Found record: %s", record.Name)
+	name := strings.TrimSuffix(record.Name, "."+zoneName)
+
+	d.Set("name", name)
+	d.Set("domain", zoneName)
+	d.Set("zone_id", zoneId)
+	d.SetId(recordId)
+
+	return []*schema.ResourceData{d}, nil
 }
