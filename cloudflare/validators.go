@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+var allowedHTTPMethods = []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "_ALL_"}
+var allowedSchemes = []string{"HTTP", "HTTPS", "_ALL_"}
+
 // validateRecordType ensures that the cloudflare record type is valid
 func validateRecordType(t string, proxied bool) error {
 	switch t {
