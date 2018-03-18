@@ -47,3 +47,11 @@ The following attributes are exported:
 * `modified_on` - The RFC3339 timestamp of when the record was last modified
 * `metadata` - A key-value map of string metadata cloudflare associates with the record
 * `zone_id` - The zone id of the record
+
+## Import
+
+Records can be imported using a composite ID formed of zone name and record ID, e.g.
+
+```
+$ terraform import cloudflare_record.default example.com/ch8374ftwdghsif43
+```

@@ -19,6 +19,18 @@ func flattenStringList(list []string) []interface{} {
 	return vs
 }
 
+func flattenIntList(list []int) []interface{} {
+	vs := make([]interface{}, 0, len(list))
+	for _, v := range list {
+		vs = append(vs, v)
+	}
+	return vs
+}
+
+func IntIdentity(i interface{}) int {
+	return i.(int)
+}
+
 func HashByMapKey(key string) func(v interface{}) int {
 	return func(v interface{}) int {
 		m := v.(map[string]interface{})
