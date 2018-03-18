@@ -254,7 +254,12 @@ func resourceCloudFlareLoadBalancerPoolMonitorDelete(d *schema.ResourceData, met
 
 	err := client.DeleteLoadBalancerMonitor(d.Id())
 	if err != nil {
-		return errors.Wrap(err, "error deleting cloudflare load balancer monitor")
+		if strings.Contains(err.Error(), "HTTP status 404") {
+			log.Printf("[INFO] Load balancer monitor %s no longer exists", d.Id())
+			return nil
+		} else {
+			return errors.Wrap(err, "error deleting cloudflare load balancer monitor")
+		}
 	}
 
 	return nil
