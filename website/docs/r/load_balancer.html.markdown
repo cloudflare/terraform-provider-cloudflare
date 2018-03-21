@@ -13,18 +13,9 @@ Provides a Cloudflare Load Balancer resource. This sits in front of a number of 
 ## Example Usage
 
 ```hcl
-resource "cloudflare_load_balancer_pool" "foo" {
-  name = "example-lb-pool"
-  origins {
-    name = "example-1"
-    address = "192.0.2.1"
-    enabled = false
-  }
-}
-
-# Define a load balancer which always points to the pool we defined
-# In normal usage, would have different pools set for different pops/regions
-# And some failover defined within that
+# Define a load balancer which always points to a pool we define below
+# In normal usage, would have different pools set for different pops (cloudflare points-of-presence) and/or for different regions
+# Within each pop or region we can define multiple pools in failover order
 resource "cloudflare_load_balancer" "bar" {
   zone = "example.com"
   name = "example-load-balancer"
@@ -39,6 +30,15 @@ resource "cloudflare_load_balancer" "bar" {
   region_pools {
     region = "WNAM"
     pool_ids = ["${cloudflare_load_balancer_pool.foo.id}"]
+  }
+}
+
+resource "cloudflare_load_balancer_pool" "foo" {
+  name = "example-lb-pool"
+  origins {
+    name = "example-1"
+    address = "192.0.2.1"
+    enabled = false
   }
 }
 ```

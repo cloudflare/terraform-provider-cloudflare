@@ -39,7 +39,6 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: false, // allow reusing same load balancer for different dns names
 			},
 
 			"fallback_pool_id": {
@@ -184,7 +183,7 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("cailed to find id in Create response; resource was empty")
+		return fmt.Errorf("failed to find id in Create response; resource was empty")
 	}
 
 	d.SetId(r.ID)
@@ -249,15 +248,13 @@ func resourceCloudFlareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	loadBalancer, err := client.LoadBalancerDetails(zoneId, loadBalancerId)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Load balancer %s in zone %s no longer exists", loadBalancerId, zoneId)
+			log.Printf("[INFO] Load balancer %s in zone %s not found", loadBalancerId, zoneId)
 			d.SetId("")
 			return nil
-		} else {
-			return errors.Wrap(err,
-				fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", zoneId, loadBalancerId))
 		}
+		return errors.Wrap(err,
+			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", zoneId, loadBalancerId))
 	}
-	log.Printf("[INFO] Read CloudFlare Load Balancer from API as struct: %+v", loadBalancer)
 
 	d.Set("name", loadBalancer.Name)
 	d.Set("fallback_pool_id", loadBalancer.FallbackPool)

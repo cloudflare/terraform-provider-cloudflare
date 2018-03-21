@@ -233,7 +233,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   origins {
     name = "example-1"
     address = "192.0.2.1"
-    enabled = false
+    enabled = true
   }
 }`, id)
 }
