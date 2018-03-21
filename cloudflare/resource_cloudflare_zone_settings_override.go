@@ -76,9 +76,10 @@ func resourceCloudFlareZoneSettingsOverride() *schema.Resource {
 
 var resourceCloudFlareZoneSettingsSchema = map[string]*schema.Schema{
 	"advanced_ddos": {
-		Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional: true,
-		Computed: true, //Defaults to on for Business+ plans, off otherwise
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true, //Defaults to on for Business+ plans, off otherwise
 	},
 
 	"always_online": {

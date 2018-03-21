@@ -8,9 +8,10 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"strings"
 )
 
-func TestAccCloudFlareZone_Basic(t *testing.T) {
+func TestAccCloudFlareZoneSettingsOverride_Empty(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_zone_settings_override.test"
 
@@ -21,19 +22,14 @@ func TestAccCloudFlareZone_Basic(t *testing.T) {
 			{
 				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zoneName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(
-						name, "settings.0.brotli"),
-					resource.TestCheckResourceAttrSet(
-						name, "settings.0.challenge_ttl"),
-					resource.TestCheckResourceAttrSet(
-						name, "settings.0.security_level"),
+					testAccCheckCloudFlareZoneSettingsUnchanged(name),
 				),
 			},
 		},
 	})
 }
 
-func TestAccCloudFlareZone_Overrides(t *testing.T) {
+func TestAccCloudFlareZoneSettingsOverride_Full(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_zone_settings_override.test"
 
@@ -55,6 +51,31 @@ func TestAccCloudFlareZone_Overrides(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCheckCloudFlareZoneSettingsUnchanged(n string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No Zone ID is set")
+		}
+
+		for k, v := range rs.Primary.Attributes {
+			if strings.Contains(k, "initial_settings") && k != "initial_settings_read_at" {
+				currentSettingKey := strings.TrimPrefix(k, "initial_")
+
+				if v != rs.Primary.Attributes[currentSettingKey] {
+					return fmt.Errorf("Current setting for %q: %q is not equal to initial setting for %q: %q",
+						currentSettingKey, rs.Primary.Attributes[currentSettingKey], k, v)
+				}
+			}
+		}
+		return nil
+	}
 }
 
 func testAccCheckCloudFlareZoneSettings(n string) resource.TestCheckFunc {

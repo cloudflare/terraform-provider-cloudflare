@@ -88,20 +88,21 @@ func validateRecordName(t string, value string) error {
 // validateIntInSlice returns a SchemaValidateFunc which tests if the provided value
 // is of type int
 func validateIntInSlice(valid []int) schema.SchemaValidateFunc {
-	return func(i interface{}, k string) (s []string, es []error) {
+	return func(i interface{}, k string) ([]string, []error) {
+		var es []error
 		v, ok := i.(int)
 		if !ok {
 			es = append(es, fmt.Errorf("expected type of %q to be int", k))
-			return
+			return nil, es
 		}
 
 		for _, str := range valid {
 			if v == str {
-				return
+				return nil, nil
 			}
 		}
 
 		es = append(es, fmt.Errorf("expected %q to be one of %v, got %d", k, valid, v))
-		return
+		return nil, es
 	}
 }
