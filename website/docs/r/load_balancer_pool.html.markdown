@@ -8,7 +8,8 @@ description: |-
 
 # cloudflare_load_balancer_pool
 
-Provides a Cloudflare Load Balancer pool resource. This provides a pool of origins that can be used by a Cloudflare Load Balancer.
+Provides a Cloudflare Load Balancer pool resource. This provides a pool of origins that can be used by a Cloudflare Load Balancer. Note that the load balancing feature must be enabled in your Clouflare account before you can use this resource.
+
 
 ## Example Usage
 
