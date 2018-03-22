@@ -33,6 +33,9 @@ func resourceCloudFlareRecord() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				StateFunc: func(i interface{}) string {
+					return strings.ToLower(i.(string))
+				},
 			},
 
 			"hostname": {
