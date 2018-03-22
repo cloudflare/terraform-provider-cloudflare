@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/pkg/errors"
+	"reflect"
 )
 
 func resourceCloudFlareZoneSettingsOverride() *schema.Resource {
@@ -415,6 +416,8 @@ var resourceCloudFlareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"always_use_https": {
+		// may cause an error: HTTP status 400: content "{\"success\":false,\"errors\":[{\"code\":1016,\"message\":\"An unknown error has occurred\"}],\"messages\":[],\"result\":null}"
+		// but it still gets set at the API
 		Type:     schema.TypeString,
 		Optional: true,
 		Computed: true,
@@ -464,108 +467,19 @@ func resourceCloudFlareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 
 	log.Printf("[DEBUG] Read CloudFlareZone initial settings: %#v", zoneSettings)
 
-	if err := d.Set("initial_settings", flattenZoneSettings(zoneSettings.Result)); err != nil {
+	if err := d.Set("initial_settings", flattenZoneSettings(d, zoneSettings.Result, true)); err != nil {
 		log.Printf("[WARN] Error setting initial_settings for zone %q: %s", d.Id(), err)
 	}
 	d.Set("initial_settings_read_at", time.Now().UTC().Format(time.RFC3339Nano))
 
+	// set readonly setting so that update can behave correctly
+	if err := d.Set("readonly_settings", flattenReadOnlyZoneSettings(zoneSettings.Result)); err != nil {
+		log.Printf("[WARN] Error setting readonly_settings for zone %q: %s", d.Id(), err)
+	}
+
 	log.Printf("[DEBUG] Saved CloudFlareZone initial settings: %#v", d.Get("initial_settings"))
 
 	return resourceCloudFlareZoneSettingsOverrideUpdate(d, meta)
-}
-
-func resourceCloudFlareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cloudflare.API)
-
-	if cfg, ok := d.GetOk("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
-		settingsCfg := cfg.([]interface{})[0].(map[string]interface{})
-		zoneSettings, err := expandZoneSettings(settingsCfg)
-		if err != nil {
-			return err
-		}
-		if browserTTL, ok := d.GetOk("settings.0.browser_cache_ttl"); ok {
-			newZoneSetting := cloudflare.ZoneSetting{
-				ID:    "browser_cache_ttl",
-				Value: browserTTL.(int),
-			}
-			zoneSettings = append(zoneSettings, newZoneSetting)
-		}
-		if polish, ok := d.GetOk("settings.0.polish"); ok && polish != "" && polish != "off" {
-			// only ever set webp if polish is on
-			if webP, ok := d.GetOk("settings.0.webp"); ok {
-				newZoneSetting := cloudflare.ZoneSetting{
-					ID:    "webp",
-					Value: webP.(string),
-				}
-				zoneSettings = append(zoneSettings, newZoneSetting)
-			}
-		}
-
-		log.Printf("[DEBUG] CloudFlare Zone Settings update configuration: %#v", zoneSettings)
-
-		_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
-		if err != nil {
-			return err
-		}
-	}
-
-	return resourceCloudFlareZoneSettingsOverrideRead(d, meta)
-}
-
-func expandZoneSettings(cfg map[string]interface{}) ([]cloudflare.ZoneSetting, error) {
-	zoneSettings := make([]cloudflare.ZoneSetting, 0)
-
-	// can't distinguish between empty and unset values in here
-	for k, v := range cfg {
-		var zoneSettingValue interface{}
-
-		if k == "webp" {
-			// errors in the api when setting these values, ignore for now
-			continue
-		} else if k == "browser_cache_ttl" {
-			// need to distinguish explicit 0 from not set
-			// this is set afterwards, in the calling method which has access to the schema
-			continue
-		} else if listValue, ok := v.([]interface{}); ok && (k == "minify" || k == "mobile_redirect") {
-			if len(listValue) > 0 && listValue != nil {
-				zoneSettingValue = listValue[0].(map[string]interface{})
-			} else {
-				continue
-			}
-		} else if listValue, ok := v.([]interface{}); ok && k == "security_header" {
-			if len(listValue) > 0 && listValue != nil {
-				val := map[string]interface{}{
-					"strict_transport_security": listValue[0].(map[string]interface{}),
-				}
-				zoneSettingValue = val
-			} else {
-				continue
-			}
-		} else if strValue, ok := v.(string); ok {
-			// default mapping for non-empty string fields
-			//empty string means we didnt set a value
-			if strValue != "" {
-				zoneSettingValue = strValue
-			} else {
-				continue
-			}
-		} else if intValue, ok := v.(int); ok {
-			// default mapping for non-empty int fields
-			if intValue != 0 {
-				zoneSettingValue = intValue // passthrough
-			} else {
-				continue
-			}
-		} else {
-			return nil, fmt.Errorf("unknown zone setting specified %q = %#v", k, v)
-		}
-		newZoneSetting := cloudflare.ZoneSetting{
-			ID:    k,
-			Value: zoneSettingValue,
-		}
-		zoneSettings = append(zoneSettings, newZoneSetting)
-	}
-	return zoneSettings, nil
 }
 
 func resourceCloudFlareZoneSettingsOverrideRead(d *schema.ResourceData, meta interface{}) error {
@@ -594,7 +508,7 @@ func resourceCloudFlareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 	d.Set("status", zone.Status)
 	d.Set("type", zone.Type)
 
-	newZoneSettings := flattenZoneSettings(zoneSettings.Result)
+	newZoneSettings := flattenZoneSettings(d, zoneSettings.Result, false)
 	// if polish is off (or we don't know) we need to ignore what comes back from the api for webp
 	if polish, ok := newZoneSettings[0]["polish"]; !ok || polish.(string) == "" || polish.(string) == "off" {
 		newZoneSettings[0]["webp"] = d.Get("settings.0.webp").(string)
@@ -611,12 +525,19 @@ func resourceCloudFlareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 	return nil
 }
 
-func flattenZoneSettings(settings []cloudflare.ZoneSetting) []map[string]interface{} {
+func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetting, flattenAll bool) []map[string]interface{} {
 	cfg := map[string]interface{}{}
 	for _, s := range settings {
 		if !settingInSchema(s.ID) {
 			log.Printf("[WARN] Value not in schema returned from API zone settings (is it new?) - %q : %#v", s.ID, s.Value)
-		} else if s.ID == "minify" || s.ID == "mobile_redirect" {
+			continue
+		}
+		if _, ok := d.GetOk(fmt.Sprintf("settings.0.%s", s.ID)); !ok && !flattenAll {
+			log.Printf("[DEBUG] Value never specified returned from API zone settings, ignoring - %q : %#v", s.ID, s.Value)
+			continue
+		}
+
+		if s.ID == "minify" || s.ID == "mobile_redirect" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})}
 		} else if s.ID == "security_header" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
@@ -657,10 +578,172 @@ func flattenReadOnlyZoneSettings(settings []cloudflare.ZoneSetting) []string {
 	return ids
 }
 
+func resourceCloudFlareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+
+	if cfg, ok := d.GetOk("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
+
+		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
+		zoneSettings, err := expandOverridenZoneSettings(d, "settings", readOnlySettings)
+		if err != nil {
+			return err
+		}
+
+		log.Printf("[DEBUG] CloudFlare Zone Settings update configuration: %#v", zoneSettings)
+
+		if len(zoneSettings) > 0 {
+			_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
+			if err != nil {
+				return err
+			}
+		} else {
+			log.Printf("[DEBUG] Skipped update call because no settings were set")
+		}
+	}
+
+	return resourceCloudFlareZoneSettingsOverrideRead(d, meta)
+}
+
+func expandOverridenZoneSettings(d *schema.ResourceData, settingsKey string, readOnlySettings []string) ([]cloudflare.ZoneSetting, error) {
+	zoneSettings := make([]cloudflare.ZoneSetting, 0)
+
+	keyFormat := fmt.Sprintf("%s.0.%%s", settingsKey)
+
+	for k, _ := range resourceCloudFlareZoneSettingsSchema {
+
+		// we only update if the user set the value non-empty before, and its different from the read value
+		// note that if user removes an attribute, we don't do anything
+		if settingValue, ok := d.GetOk(fmt.Sprintf(keyFormat, k)); ok && d.HasChange(fmt.Sprintf(keyFormat, k)) {
+
+			zoneSettingValue, err := expandZoneSetting(d, keyFormat, k, settingValue, readOnlySettings)
+			if err != nil {
+				return zoneSettings, err
+			}
+
+			if zoneSettingValue != nil {
+				newZoneSetting := cloudflare.ZoneSetting{
+					ID:    k,
+					Value: zoneSettingValue,
+				}
+				zoneSettings = append(zoneSettings, newZoneSetting)
+			}
+
+		}
+
+	}
+	return zoneSettings, nil
+}
+
+func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settingValue interface{}, readOnlySettings []string) (interface{}, error) {
+
+	if contains(readOnlySettings, k) {
+		return nil, fmt.Errorf("invalid zone setting %q (value: %v) found - cannot be set as it is read only", k, settingValue)
+	}
+
+	var zoneSettingValue interface{}
+	switch k {
+	case "webp":
+		{
+			// only ever set webp if polish is on
+			polishKey := fmt.Sprintf(keyFormatString, "polish")
+			polish := d.Get(polishKey).(string)
+
+			if polish != "" && polish != "off" {
+				zoneSettingValue = settingValue
+			}
+		}
+	case "minify", "mobile_redirect":
+		{
+			listValue := settingValue.([]interface{})
+			if len(listValue) > 0 && listValue != nil {
+				zoneSettingValue = listValue[0].(map[string]interface{})
+			}
+
+		}
+	case "security_header":
+		{
+			listValue := settingValue.([]interface{})
+			if len(listValue) > 0 && listValue != nil {
+				zoneSettingValue = map[string]interface{}{
+					"strict_transport_security": listValue[0].(map[string]interface{}),
+				}
+			}
+		}
+	default:
+		{
+			zoneSettingValue = settingValue
+		}
+	}
+	return zoneSettingValue, nil
+}
+
 func resourceCloudFlareZoneSettingsOverrideDelete(d *schema.ResourceData, meta interface{}) error {
-	// we cannot delete settings independently of the zone, which is why the resources have to be combined
+	client := meta.(*cloudflare.API)
 
-	d.Set("settings", d.Get("initial_settings"))
+	if cfg, ok := d.GetOk("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
 
-	return resourceCloudFlareZoneSettingsOverrideUpdate(d, meta)
+		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
+
+		zoneSettings, err := expandRevertableZoneSettings(d, readOnlySettings)
+		if err != nil {
+			return err
+		}
+
+		log.Printf("[DEBUG] CloudFlare Zone Settings revert to initial settings configuration: %#v", zoneSettings)
+
+		if len(zoneSettings) > 0 {
+			_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
+			if err != nil {
+				return err
+			}
+		} else {
+			log.Printf("[DEBUG] Skipped call to revert settings because no settings were changed")
+		}
+	}
+	return nil
+}
+
+func expandRevertableZoneSettings(d *schema.ResourceData, readOnlySettings []string) ([]cloudflare.ZoneSetting, error) {
+	zoneSettings := make([]cloudflare.ZoneSetting, 0)
+
+	keyFormat := fmt.Sprintf("%s.0.%%s", "initial_settings")
+
+	for k, _ := range resourceCloudFlareZoneSettingsSchema {
+
+		initialKey := fmt.Sprintf("initial_settings.0.%s", k)
+		initialVal := d.Get(initialKey)
+		currentKey := fmt.Sprintf("settings.0.%s", k)
+
+		// if the value was never set we don't need to revert it
+		if currentVal, ok := d.GetOk(currentKey); ok && !schemaValueEquals(initialVal, currentVal) {
+
+			zoneSettingValue, err := expandZoneSetting(d, keyFormat, k, initialVal, readOnlySettings)
+			if err != nil {
+				return zoneSettings, err
+			}
+
+			if zoneSettingValue != nil {
+				newZoneSetting := cloudflare.ZoneSetting{
+					ID:    k,
+					Value: zoneSettingValue,
+				}
+				zoneSettings = append(zoneSettings, newZoneSetting)
+			}
+
+		}
+	}
+	return zoneSettings, nil
+}
+
+func schemaValueEquals(a, b interface{}) bool {
+	// this is the same equality check used in d.HasChange
+
+	// If the type implements the Equal interface, then call that
+	// instead of just doing a reflect.DeepEqual. An example where this is
+	// needed is *Set
+	if eq, ok := a.(schema.Equal); ok {
+		return eq.Equal(b)
+	}
+
+	return reflect.DeepEqual(a, b)
 }

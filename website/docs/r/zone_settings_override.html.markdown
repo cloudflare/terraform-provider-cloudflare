@@ -75,7 +75,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `automatic_https_rewrites`
 * `http2`
 * `sha1_support`
-* `always_use_https`
+* `always_use_https`. In some cases setting this might give the error `HTTP status 400: content "{\"success\":false,\"errors\":[{\"code\":1016,\"message\":\"An unknown error has occurred\"}],\"messages\":[],\"result\":null}"`. Regardless, the value is set correctly.
 * `webp`. Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
 
 ### String Values

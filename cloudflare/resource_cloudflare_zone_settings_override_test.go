@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"reflect"
 	"strings"
 )
 
@@ -22,7 +23,7 @@ func TestAccCloudFlareZoneSettingsOverride_Empty(t *testing.T) {
 			{
 				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zoneName),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareZoneSettingsUnchanged(name),
+					testAccCheckCloudFlareZoneSettingsEmpty(name),
 				),
 			},
 		},
@@ -33,10 +34,17 @@ func TestAccCloudFlareZoneSettingsOverride_Full(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_zone_settings_override.test"
 
+	initialSettings := make(map[string]interface{})
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccGetInitialZoneSettings(t, zoneName, initialSettings),
+				),
+			},
 			{
 				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigNormal(zoneName),
 				Check: resource.ComposeTestCheckFunc(
@@ -50,10 +58,43 @@ func TestAccCloudFlareZoneSettingsOverride_Full(t *testing.T) {
 				),
 			},
 		},
+		CheckDestroy: testAccCheckInitialZoneSettings(zoneName, initialSettings),
 	})
 }
 
-func testAccCheckCloudFlareZoneSettingsUnchanged(n string) resource.TestCheckFunc {
+func TestAccCloudFlareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	name := "cloudflare_zone_settings_override.test"
+
+	initialSettings := make(map[string]interface{})
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccGetInitialZoneSettings(t, zoneName, initialSettings),
+				),
+			},
+			{
+				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigNormal(zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareZoneSettings(name),
+				),
+			},
+			{
+				Config: testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareZoneSettings(name),
+				),
+			},
+		},
+		CheckDestroy: testAccCheckInitialZoneSettings(zoneName, initialSettings),
+	})
+}
+
+func testAccCheckCloudFlareZoneSettingsEmpty(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -65,10 +106,11 @@ func testAccCheckCloudFlareZoneSettingsUnchanged(n string) resource.TestCheckFun
 		}
 
 		for k, v := range rs.Primary.Attributes {
-			if strings.Contains(k, "initial_settings") && k != "initial_settings_read_at" {
+			if strings.Contains(k, "initial_settings") && k != "initial_settings_read_at" && !strings.Contains(k, "#") {
 				currentSettingKey := strings.TrimPrefix(k, "initial_")
 
-				if v != rs.Primary.Attributes[currentSettingKey] {
+				currentVal := rs.Primary.Attributes[currentSettingKey]
+				if currentVal != "" && currentVal != "0" {
 					return fmt.Errorf("Current setting for %q: %q is not equal to initial setting for %q: %q",
 						currentSettingKey, rs.Primary.Attributes[currentSettingKey], k, v)
 				}
@@ -117,6 +159,56 @@ func testAccCheckCloudFlareZoneSettings(n string) resource.TestCheckFunc {
 	}
 }
 
+func testAccGetInitialZoneSettings(t *testing.T, zoneName string, settings map[string]interface{}) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		client := testAccProvider.Meta().(*cloudflare.API)
+
+		zoneID, err := client.ZoneIDByName(zoneName)
+		if err != nil {
+			t.Fatalf("couldn't find zone %q: %s ", zoneName, err.Error())
+		}
+		foundZone, err := client.ZoneSettings(zoneID)
+		if err != nil {
+			t.Fatalf(err.Error())
+		}
+
+		if foundZone.Result == nil || len(foundZone.Result) == 0 {
+			t.Fatalf("Zone settings not found")
+		}
+
+		for _, zs := range foundZone.Result {
+			settings[zs.ID] = zs.Value
+		}
+		return nil
+	}
+}
+
+func testAccCheckInitialZoneSettings(zoneName string, initialSettings map[string]interface{}) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		client := testAccProvider.Meta().(*cloudflare.API)
+
+		zoneID, err := client.ZoneIDByName(zoneName)
+		if err != nil {
+			return fmt.Errorf("couldn't find zone %q : %s", zoneName, err.Error())
+		}
+		foundZone, err := client.ZoneSettings(zoneID)
+		if err != nil {
+			return err
+		}
+
+		if foundZone.Result == nil || len(foundZone.Result) == 0 {
+			return fmt.Errorf("Zone settings not found")
+		}
+
+		for _, zs := range foundZone.Result {
+			if !reflect.DeepEqual(zs.Value, initialSettings[zs.ID]) {
+				return fmt.Errorf("Final setting for %q: %+v not equal to initial setting: %+v", zs.ID, zs.Value, initialSettings[zs.ID])
+			}
+		}
+		return nil
+	}
+}
+
 func testAccCheckCloudFlareZoneSettingsOverrideConfigEmpty(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zone_settings_override" "test" {
@@ -134,11 +226,6 @@ resource "cloudflare_zone_settings_override" "test" {
 		security_level = "high"
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"
-		always_use_https = "off"
-		polish = "off"
-		webp = "on"
-		mirage = "on"
-		waf = "on"
 		minify {
 			css = "on"
 			js = "off"
