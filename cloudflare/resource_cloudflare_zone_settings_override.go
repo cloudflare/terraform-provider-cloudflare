@@ -533,7 +533,7 @@ func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetti
 			continue
 		}
 		if _, ok := d.GetOk(fmt.Sprintf("settings.0.%s", s.ID)); !ok && !flattenAll {
-			log.Printf("[DEBUG] Value never specified returned from API zone settings, ignoring - %q : %#v", s.ID, s.Value)
+			// don't put settings that were never specified in the update request
 			continue
 		}
 
@@ -542,10 +542,8 @@ func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetti
 		} else if s.ID == "security_header" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
 		} else if strValue, ok := s.Value.(string); ok {
-			log.Printf("[DEBUG] Found string zone setting %q: %q", s.ID, strValue)
 			cfg[s.ID] = strValue
 		} else if floatValue, ok := s.Value.(float64); ok {
-			log.Printf("[DEBUG] Found int zone setting %q: %d", s.ID, int(floatValue))
 			cfg[s.ID] = int(floatValue)
 		} else {
 			log.Printf("[WARN] Unexpected value type found in API zone settings - %q : %#v", s.ID, s.Value)
@@ -584,7 +582,7 @@ func resourceCloudFlareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta i
 	if cfg, ok := d.GetOk("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
 
 		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
-		zoneSettings, err := expandOverridenZoneSettings(d, "settings", readOnlySettings)
+		zoneSettings, err := expandOverriddenZoneSettings(d, "settings", readOnlySettings)
 		if err != nil {
 			return err
 		}
@@ -604,7 +602,7 @@ func resourceCloudFlareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta i
 	return resourceCloudFlareZoneSettingsOverrideRead(d, meta)
 }
 
-func expandOverridenZoneSettings(d *schema.ResourceData, settingsKey string, readOnlySettings []string) ([]cloudflare.ZoneSetting, error) {
+func expandOverriddenZoneSettings(d *schema.ResourceData, settingsKey string, readOnlySettings []string) ([]cloudflare.ZoneSetting, error) {
 	zoneSettings := make([]cloudflare.ZoneSetting, 0)
 
 	keyFormat := fmt.Sprintf("%s.0.%%s", settingsKey)
@@ -684,12 +682,12 @@ func resourceCloudFlareZoneSettingsOverrideDelete(d *schema.ResourceData, meta i
 
 		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
 
-		zoneSettings, err := expandRevertableZoneSettings(d, readOnlySettings)
+		zoneSettings, err := expandRevertibleZoneSettings(d, readOnlySettings)
 		if err != nil {
 			return err
 		}
 
-		log.Printf("[DEBUG] CloudFlare Zone Settings revert to initial settings configuration: %#v", zoneSettings)
+		log.Printf("[DEBUG] Reverting CloudFlare Zone Settings to initial settings with update configuration: %#v", zoneSettings)
 
 		if len(zoneSettings) > 0 {
 			_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
@@ -703,7 +701,7 @@ func resourceCloudFlareZoneSettingsOverrideDelete(d *schema.ResourceData, meta i
 	return nil
 }
 
-func expandRevertableZoneSettings(d *schema.ResourceData, readOnlySettings []string) ([]cloudflare.ZoneSetting, error) {
+func expandRevertibleZoneSettings(d *schema.ResourceData, readOnlySettings []string) ([]cloudflare.ZoneSetting, error) {
 	zoneSettings := make([]cloudflare.ZoneSetting, 0)
 
 	keyFormat := fmt.Sprintf("%s.0.%%s", "initial_settings")
