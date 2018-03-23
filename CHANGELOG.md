@@ -9,6 +9,7 @@ FEATURES:
 
 * **New Resource:** `cloudflare_rate_limit` [GH-30]
 * **New Resource:** `cloudflare_page_rule` [GH-38]
+* **New Resource:** `cloudflare_zone_settings_override` [GH-41]
 * **New Data Source:** `cloudflare_ip_ranges` [GH-28]
 
 IMPROVEMENTS:

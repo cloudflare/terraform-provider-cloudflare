@@ -56,6 +56,40 @@ func TestAccCloudFlareRecord_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudFlareRecord_CaseInsensitive(t *testing.T) {
+	t.Parallel()
+	var record cloudflare.DNSRecord
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudFlareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudFlareRecordConfigBasic(domain, "tf-acctest-case-insensitive"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
+					testAccCheckCloudFlareRecordAttributes(&record),
+					resource.TestCheckResourceAttr(
+						resourceName, "name", "tf-acctest-case-insensitive"),
+				),
+			},
+			{
+				Config:   testAccCheckCloudFlareRecordConfigBasic(domain, "tf-acctest-CASE-INSENSITIVE"),
+				PlanOnly: true,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudFlareRecordExists(resourceName, &record),
+					testAccCheckCloudFlareRecordAttributes(&record),
+					resource.TestCheckResourceAttr(
+						resourceName, "name", "tf-acctest-case-insensitive"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudFlareRecord_Apex(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord

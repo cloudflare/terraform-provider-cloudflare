@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"strings"
+
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 var allowedHTTPMethods = []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "_ALL_"}
@@ -89,4 +91,26 @@ func validateStringIP(v interface{}, k string) (warnings []string, errors []erro
 		errors = append(errors, fmt.Errorf("%q is not a valid IP: %q", k, v.(string)))
 	}
 	return
+}
+
+// validateIntInSlice returns a SchemaValidateFunc which tests if the provided value
+// is of type int
+func validateIntInSlice(valid []int) schema.SchemaValidateFunc {
+	return func(i interface{}, k string) ([]string, []error) {
+		var es []error
+		v, ok := i.(int)
+		if !ok {
+			es = append(es, fmt.Errorf("expected type of %q to be int", k))
+			return nil, es
+		}
+
+		for _, str := range valid {
+			if v == str {
+				return nil, nil
+			}
+		}
+
+		es = append(es, fmt.Errorf("expected %q to be one of %v, got %d", k, valid, v))
+		return nil, es
+	}
 }
