@@ -21,6 +21,7 @@ IMPROVEMENTS:
 * resource/cloudflare_record: Add computed attributes `created_on`,
   `modified_on`, `proxiable`, and `metadata` to records [GH-29]
 * resource/cloudflare_record: Support import of existing records [GH-36]
+* New Provider configuration options for API rate limiting [GH-43]
 
 ## 0.1.0 (June 20, 2017)
 
