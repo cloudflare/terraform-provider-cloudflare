@@ -29,6 +29,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"cloudflare_load_balancer_monitor":  resourceCloudFlareLoadBalancerMonitor(),
 			"cloudflare_page_rule":              resourceCloudFlarePageRule(),
 			"cloudflare_record":                 resourceCloudFlareRecord(),
 			"cloudflare_rate_limit":             resourceCloudFlareRateLimit(),
