@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"regexp"
 )
 
 func TestAccCloudFlareLoadBalancer_Basic(t *testing.T) {
@@ -72,6 +73,24 @@ func TestAccCloudFlareLoadBalancer_GeoBalanced(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "1"),
 					resource.TestCheckResourceAttr(name, "region_pools.#", "1"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccCloudFlareLoadBalancer_DuplicatePool(t *testing.T) {
+	t.Parallel()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudFlareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudFlareLoadBalancerConfigDuplicatePool(zone, rnd),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("duplicate entry specified for pop pool in location \"LAX\". each location must only be specified once")),
 			},
 		},
 	})
@@ -295,6 +314,24 @@ resource "cloudflare_load_balancer" "%[2]s" {
   }
   region_pools {
     region = "WNAM"
+    pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+  }
+}`, zone, id)
+}
+
+func testAccCheckCloudFlareLoadBalancerConfigDuplicatePool(zone, id string) string {
+	return testAccCheckCloudFlareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[2]s" {
+  zone = "%[1]s"
+  name = "tf-testacc-lb-%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+  pop_pools {
+    pop = "LAX"
+    pool_ids = ["i_am_an_invalid_pool_id"]
+  }
+  pop_pools {
+    pop = "LAX"
     pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
   }
 }`, zone, id)

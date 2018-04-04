@@ -37,30 +37,7 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 				Type:     schema.TypeSet,
 				Required: true,
 				ForceNew: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-
-						"address": {
-							Type:     schema.TypeString,
-							Required: true,
-							Elem: &schema.Schema{
-								Type:         schema.TypeString,
-								ValidateFunc: validateStringIP,
-							},
-						},
-
-						"enabled": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  true,
-						},
-					},
-				},
-				Set: HashByMapKey("address"),
+				Elem:     originsElem,
 			},
 
 			"enabled": {
@@ -118,6 +95,30 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 			},
 		},
 	}
+}
+
+var originsElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+
+		"address": {
+			Type:     schema.TypeString,
+			Required: true,
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validateStringIP,
+			},
+		},
+
+		"enabled": {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  true,
+		},
+	},
 }
 
 func resourceCloudFlareLoadBalancerPoolCreate(d *schema.ResourceData, meta interface{}) error {
@@ -223,7 +224,7 @@ func flattenLoadBalancerOrigins(origins []cloudflare.LoadBalancerOrigin) *schema
 		}
 		flattened = append(flattened, cfg)
 	}
-	return schema.NewSet(HashByMapKey("address"), flattened)
+	return schema.NewSet(schema.HashResource(originsElem), flattened)
 }
 
 func resourceCloudFlareLoadBalancerPoolDelete(d *schema.ResourceData, meta interface{}) error {

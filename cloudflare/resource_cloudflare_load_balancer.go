@@ -82,50 +82,14 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"pop": {
-							Type:     schema.TypeString,
-							Required: true,
-							// let the api handle validating pops
-						},
-
-						"pool_ids": {
-							Type:     schema.TypeList,
-							Required: true,
-							Elem: &schema.Schema{
-								Type:         schema.TypeString,
-								ValidateFunc: validation.StringLenBetween(1, 32),
-							},
-						},
-					},
-				},
-				Set: HashByMapKey("pop"),
+				Elem:     popPoolElem,
 			},
 
 			"region_pools": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"region": {
-							Type:     schema.TypeString,
-							Required: true,
-							// let the api handle validating regions
-						},
-
-						"pool_ids": {
-							Type:     schema.TypeList,
-							Required: true,
-							Elem: &schema.Schema{
-								Type:         schema.TypeString,
-								ValidateFunc: validation.StringLenBetween(1, 32),
-							},
-						},
-					},
-				},
-				Set: HashByMapKey("region"),
+				Elem:     regionPoolElem,
 			},
 
 			"created_on": {
@@ -139,6 +103,49 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 			},
 		},
 	}
+}
+
+var popPoolElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"pop": {
+			Type:     schema.TypeString,
+			Required: true,
+			// let the api handle validating pops
+		},
+
+		"pool_ids": {
+			Type:     schema.TypeList,
+			Required: true,
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+			},
+		},
+	},
+}
+
+var regionPoolElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"region": {
+			Type:     schema.TypeString,
+			Required: true,
+			// let the api handle validating regions
+		},
+
+		"pool_ids": {
+			Type:     schema.TypeList,
+			Required: true,
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+			},
+		},
+	},
+}
+
+var localPoolElems = map[string]*schema.Resource{
+	"pop":    popPoolElem,
+	"region": regionPoolElem,
 }
 
 func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface{}) error {
@@ -161,11 +168,19 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	}
 
 	if regionPools, ok := d.GetOk("region_pools"); ok {
-		newLoadBalancer.RegionPools = expandGeoPools(regionPools, "region")
+		expandedRegionPools, err := expandGeoPools(regionPools, "region")
+		if err != nil {
+			return err
+		}
+		newLoadBalancer.RegionPools = expandedRegionPools
 	}
 
 	if popPools, ok := d.GetOk("pop_pools"); ok {
-		newLoadBalancer.PopPools = expandGeoPools(popPools, "pop")
+		expandedPopPools, err := expandGeoPools(popPools, "pop")
+		if err != nil {
+			return err
+		}
+		newLoadBalancer.PopPools = expandedPopPools
 	}
 
 	zoneName := d.Get("zone").(string)
@@ -212,11 +227,19 @@ func resourceCloudFlareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	}
 
 	if regionPools, ok := d.GetOk("region_pools"); ok {
-		loadBalancer.RegionPools = expandGeoPools(regionPools, "region")
+		expandedRegionPools, err := expandGeoPools(regionPools, "region")
+		if err != nil {
+			return err
+		}
+		loadBalancer.RegionPools = expandedRegionPools
 	}
 
 	if popPools, ok := d.GetOk("pop_pools"); ok {
-		loadBalancer.PopPools = expandGeoPools(popPools, "pop")
+		expandedPopPools, err := expandGeoPools(popPools, "pop")
+		if err != nil {
+			return err
+		}
+		loadBalancer.PopPools = expandedPopPools
 	}
 
 	log.Printf("[INFO] Updating CloudFlare Load Balancer from struct: %+v", loadBalancer)
@@ -229,15 +252,20 @@ func resourceCloudFlareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	return resourceCloudFlareLoadBalancerRead(d, meta)
 }
 
-func expandGeoPools(pool interface{}, geoType string) map[string][]string {
+func expandGeoPools(pool interface{}, geoType string) (map[string][]string, error) {
 	cfg := pool.(*schema.Set).List()
 	expanded := make(map[string][]string)
 	for _, v := range cfg {
 		locationConfig := v.(map[string]interface{})
-		// assume for now that lists are of type interface{} by default
-		expanded[locationConfig[geoType].(string)] = expandInterfaceToStringList(locationConfig["pool_ids"])
+		// lists are of type interface{} by default
+		location := locationConfig[geoType].(string)
+		if _, present := expanded[location]; !present {
+			expanded[location] = expandInterfaceToStringList(locationConfig["pool_ids"])
+		} else {
+			return nil, fmt.Errorf("duplicate entry specified for %s pool in location %q. each location must only be specified once", geoType, location)
+		}
 	}
-	return expanded
+	return expanded, nil
 }
 
 func resourceCloudFlareLoadBalancerRead(d *schema.ResourceData, meta interface{}) error {
@@ -288,7 +316,7 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 		}
 		flattened = append(flattened, geoConf)
 	}
-	return schema.NewSet(HashByMapKey(geoType), flattened)
+	return schema.NewSet(schema.HashResource(localPoolElems[geoType]), flattened)
 }
 
 func resourceCloudFlareLoadBalancerDelete(d *schema.ResourceData, meta interface{}) error {

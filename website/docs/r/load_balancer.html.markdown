@@ -55,16 +55,16 @@ The following arguments are supported:
 * `ttl` - (Optional) Time to live (TTL) of this load balancer's DNS `name`. Conflicts with `proxied` - this cannot be set for proxied load balancers. Default is `30`.
 * `proxied` - (Optional) Whether the hostname gets Cloudflare's origin protection. Defaults to `false`.
 * `region_pools` - (Optional) A set containing mappings of region/country codes to a list of pool IDs (ordered by their failover priority) for the given region. Fields documented below.
-* `pop_pools` - (Optional) A set containing mappings of Cloudflare Point-of-Presence identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). This feature is only available to enterprise customers. Fields documented below.
+* `pop_pools` - (Optional) A set containing mappings of Cloudflare Point-of-Presence (PoP) identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). This feature is only available to enterprise customers. Fields documented below.
 
 **region_pools** requires the following:
 
-* `region` - (Required) A region code which must be in the list defined [here](https://support.cloudflare.com/hc/en-us/articles/115000540888-Load-Balancing-Geographic-Regions).
+* `region` - (Required) A region code which must be in the list defined [here](https://support.cloudflare.com/hc/en-us/articles/115000540888-Load-Balancing-Geographic-Regions). Multiple entries should not be specified with the same region.
 * `pool_ids` - (Required) A list of pool IDs in failover priority to use in the given region.
 
 **pop_pools** requires the following:
 
-* `pop` - (Required) A 3-letter code for the PoP. Allowed values can be found in the list of datacenters on the [status page](https://www.cloudflarestatus.com/).
+* `pop` - (Required) A 3-letter code for the Point-of-Presence. Allowed values can be found in the list of datacenters on the [status page](https://www.cloudflarestatus.com/). Multiple entries should not be specified with the same PoP.
 * `pool_ids` - (Required) A list of pool IDs in failover priority to use for traffic reaching the given PoP.
 
 ## Attributes Reference
