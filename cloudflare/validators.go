@@ -85,6 +85,14 @@ func validateRecordName(t string, value string) error {
 	return nil
 }
 
+func validateStringIP(v interface{}, k string) (warnings []string, errors []error) {
+	ip := net.ParseIP(v.(string))
+	if ip == nil {
+		errors = append(errors, fmt.Errorf("%q is not a valid IP: %q", k, v.(string)))
+	}
+	return
+}
+
 // validateIntInSlice returns a SchemaValidateFunc which tests if the provided value
 // is of type int
 func validateIntInSlice(valid []int) schema.SchemaValidateFunc {
