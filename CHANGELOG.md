@@ -9,6 +9,8 @@ FEATURES:
 
 * **New Resource:** `cloudflare_rate_limit` [GH-30]
 * **New Resource:** `cloudflare_page_rule` [GH-38]
+* **New Resource:** `cloudflare_load_balancer` [GH-40]
+* **New Resource:** `cloudflare_load_balancer_pool` [GH-40]
 * **New Resource:** `cloudflare_zone_settings_override` [GH-41]
 * **New Resource:** `cloudflare_load_balancer_monitor` [GH-42]
 * **New Data Source:** `cloudflare_ip_ranges` [GH-28]
@@ -22,6 +24,7 @@ IMPROVEMENTS:
   `modified_on`, `proxiable`, and `metadata` to records [GH-29]
 * resource/cloudflare_record: Support import of existing records [GH-36]
 * New Provider configuration options for API rate limiting [GH-43]
+* New Provider configuration options for using Organizations [GH-40]
 
 ## 0.1.0 (June 20, 2017)
 
