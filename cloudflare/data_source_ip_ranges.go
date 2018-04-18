@@ -70,7 +70,7 @@ func dataSourceCloudflareIPRangesRead(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error setting ipv4 cidr blocks: %s", err)
 	}
 
-	if err := d.Set("ipv6_cidr_blocks", ipv4s); err != nil {
+	if err := d.Set("ipv6_cidr_blocks", ipv6s); err != nil {
 		return fmt.Errorf("Error setting ipv6 cidr blocks: %s", err)
 	}
 
