@@ -57,6 +57,11 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				},
 			},
 
+			"session_affinity": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
 			"proxied": {
 				Type:          schema.TypeBool,
 				Optional:      true,
@@ -165,6 +170,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		Proxied:        d.Get("proxied").(bool),
 		TTL:            d.Get("ttl").(int),
 		SteeringPolicy: d.Get("steering_policy").(string),
+		Persistence:    d.Get("session_affinity").(string),
 	}
 
 	if description, ok := d.GetOk("description"); ok {

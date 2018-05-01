@@ -51,6 +51,35 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := acctest.RandString(10)
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zone),
+					// explicitly verify that our session_affinity has been set
+					resource.TestCheckResourceAttr(name, "session_affinity", "cookie"),
+					// dont check that other specified values are set, this will be evident by lack
+					// of plan diff some values will get empty values
+					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
@@ -300,6 +329,17 @@ resource "cloudflare_load_balancer" "%[2]s" {
   steering_policy = ""
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+}`, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[2]s" {
+  zone = "%[1]s"
+  name = "tf-testacc-lb-session-affinity-%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+	session_affinity = "cookie"
 }`, zone, id)
 }
 
