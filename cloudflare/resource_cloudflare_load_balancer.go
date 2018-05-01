@@ -57,6 +57,11 @@ func resourceCloudFlareLoadBalancer() *schema.Resource {
 				},
 			},
 
+			"session_affinity": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
 			"proxied": {
 				Type:          schema.TypeBool,
 				Optional:      true,
@@ -157,6 +162,7 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		DefaultPools: expandInterfaceToStringList(d.Get("default_pool_ids")),
 		Proxied:      d.Get("proxied").(bool),
 		TTL:          d.Get("ttl").(int),
+		Persistence:  d.Get("session_affinity").(string),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
