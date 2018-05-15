@@ -162,14 +162,14 @@ func resourceCloudFlarePageRule() *schema.Resource {
 						},
 
 						"host_header_override": {
-							Type:         schema.TypeString,
-							Optional:     true,
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						// should really validate if FQDN is resolveable, non-empty and < domain length limit will have to do
 						"resolve_override": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
 							ValidateFunc: validation.StringLenBetween(1, 255),
 						},
 
