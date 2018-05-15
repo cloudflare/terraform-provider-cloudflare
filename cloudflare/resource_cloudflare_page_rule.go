@@ -54,6 +54,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						// may get api errors trying to set this
 						"automatic_https_rewrites": {
 							Type:         schema.TypeString,
 							Optional:     true,
