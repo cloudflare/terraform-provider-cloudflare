@@ -73,6 +73,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						"explicit_cache_control": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						"ip_geolocation": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -419,7 +425,7 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors", "waf"}
+var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "explicit_cache_control", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors", "waf"}
 var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
 var pageRuleAPIStringFields = []string{"bypass_cache_on_cookie", "cache_level", "host_header_override", "resolve_override", "rocket_loader", "security_level", "ssl"}

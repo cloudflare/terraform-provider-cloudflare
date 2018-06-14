@@ -42,6 +42,7 @@ Action blocks support the following:
 * `automatic_https_rewrites` - (Optional) Whether this action is `"on"` or `"off"`.
 * `browser_check` - (Optional) Whether this action is `"on"` or `"off"`.
 * `email_obfuscation` - (Optional) Whether this action is `"on"` or `"off"`.
+* `explicit_cache_control` - (Optional) Whether this action is `"on"` or `"off"`.
 * `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
 * `server_side_exclude` - (Optional) Whether this action is `"on"` or `"off"`.
