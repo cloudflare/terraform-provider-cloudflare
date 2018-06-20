@@ -59,7 +59,7 @@ Action blocks support the following:
 * `host_header_override` - (Optional) The Host Header to override on the origin servers.
 * `resolve_override` - (Optional) Override the origin server with this host.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"off"`, `"manual"`, or `"automatic"`.
-* `security_level` - (Optional) Whether to set the security level to `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
+* `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
 * `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
