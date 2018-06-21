@@ -57,11 +57,13 @@ Action blocks support the following:
 * `cache_level` - (Optional) Whether to set the cache level to `"byypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
 * `host_header_override` - (Optional) The Host Header to override on the origin servers.
+* `origin_error_page_pass_thru` - (Optional) Whether this action is `"on"` or `"off"`.
 * `resolve_override` - (Optional) Override the origin server with this host.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"off"`, `"manual"`, or `"automatic"`.
 * `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
 * `sort_query_string_for_cache` - (Optional) Whether this action is `"on"` or `"off"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
+* `true_client_ip_header` - (Optional) Whether this action is `"on"` or `"off"`.
 * `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
 Forwarding URL actions support the following:
