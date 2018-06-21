@@ -428,7 +428,7 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "explicit_cache_control", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors", "waf"}
 var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
-var pageRuleAPIStringFields = []string{"bypass_cache_on_cookie", "cache_level", "host_header_override", "resolve_override", "rocket_loader", "security_level", "ssl"}
+var pageRuleAPIStringFields = []string{"bypass_cache_on_cookie", "cache_level", "host_header_override", "resolve_override", "rocket_loader", "security_level", "ssl", "cache_key"}
 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
