@@ -50,6 +50,7 @@ Action blocks support the following:
 * `always_use_https` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `disable_railgun` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
 * `bypass_cache_on_cookie` - (Optional) Disable the cache on cookie regex match.
@@ -57,6 +58,7 @@ Action blocks support the following:
 * `cache_level` - (Optional) Whether to set the cache level to `"byypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
 * `host_header_override` - (Optional) The Host Header to override on the origin servers.
+* `mirage` - (Optional) Whether this action is `"on"` or `"off"`.
 * `origin_error_page_pass_thru` - (Optional) Whether this action is `"on"` or `"off"`.
 * `resolve_override` - (Optional) Override the origin server with this host.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"off"`, `"manual"`, or `"automatic"`.

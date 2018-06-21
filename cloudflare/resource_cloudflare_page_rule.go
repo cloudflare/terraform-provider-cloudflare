@@ -85,6 +85,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						"mirage": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						// may get api errors trying to set this
 						"opportunistic_encryption": {
 							Type:         schema.TypeString,
@@ -146,6 +152,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 						},
 
 						"disable_security": {
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
+						},
+
+						"disable_railgun": {
 							Type:     schema.TypeBool,
 							Default:  false,
 							Optional: true,
@@ -444,8 +456,8 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "explicit_cache_control", "ip_geolocation", "opportunistic_encryption", "origin_error_page_pass_thru", "server_side_exclude", "sort_query_string_for_cache", "smart_errors", "true_client_ip_header", "waf"}
-var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
+var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "explicit_cache_control", "ip_geolocation", "mirage", "opportunistic_encryption", "origin_error_page_pass_thru", "server_side_exclude", "sort_query_string_for_cache", "smart_errors", "true_client_ip_header", "waf"}
+var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security", "disable_railgun"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
 var pageRuleAPIStringFields = []string{"bypass_cache_on_cookie", "cache_level", "host_header_override", "resolve_override", "rocket_loader", "security_level", "ssl", "cache_key"}
 
