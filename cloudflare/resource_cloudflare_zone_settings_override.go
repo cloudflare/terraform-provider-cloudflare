@@ -8,11 +8,12 @@ import (
 
 	"time"
 
+	"reflect"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/pkg/errors"
-	"reflect"
 )
 
 func resourceCloudFlareZoneSettingsOverride() *schema.Resource {
