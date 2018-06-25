@@ -435,6 +435,9 @@ resource "cloudflare_page_rule" "test" {
         cache_level = "bypass"
 		security_level = "essentially_off"
 		ssl = "flexible"
+		host_header_override = "example.com"
+		bypass_cache_on_cookie = "bypass_cookie"
+		waf = "on"
 	}
 }`, zone, target)
 }

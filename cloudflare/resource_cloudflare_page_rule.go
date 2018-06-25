@@ -12,6 +12,7 @@ import (
 )
 
 func resourceCloudFlarePageRule() *schema.Resource {
+
 	return &schema.Resource{
 		Create: resourceCloudFlarePageRuleCreate,
 		Read:   resourceCloudFlarePageRuleRead,
@@ -137,6 +138,22 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"bypass", "basic", "simplified", "aggressive", "cache_everything"}, false),
+						},
+
+						"host_header_override": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"bypass_cache_on_cookie": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"waf": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
 						"forwarding_url": {
