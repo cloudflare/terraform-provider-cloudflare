@@ -87,6 +87,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `ssl`. Allowed values: "off", "flexible", "full", "strict".
 * `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
 * `cname_flattening`.
+* `min_tls_version`. Allowed values: "1.0", "1.1", "1.2", "1.3"
 
 ### Integer Values
 

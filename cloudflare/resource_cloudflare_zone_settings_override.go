@@ -381,6 +381,13 @@ var resourceCloudFlareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed:     true,
 	},
 
+	"min_tls_version": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"1.0", "1.1", "1.2", "1.3"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
 	"tls_1_2_only": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
