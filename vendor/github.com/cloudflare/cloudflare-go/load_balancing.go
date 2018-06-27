@@ -25,10 +25,12 @@ type LoadBalancerPool struct {
 	CheckRegions []string `json:"check_regions"`
 }
 
+// LoadBalancerOrigin represents a Load Balancer origin's properties.
 type LoadBalancerOrigin struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
-	Enabled bool   `json:"enabled"`
+	Name    string  `json:"name"`
+	Address string  `json:"address"`
+	Enabled bool    `json:"enabled"`
+	Weight  float64 `json:"weight"`
 }
 
 // LoadBalancerMonitor represents a load balancer monitor's properties.
@@ -61,6 +63,7 @@ type LoadBalancer struct {
 	RegionPools  map[string][]string `json:"region_pools"`
 	PopPools     map[string][]string `json:"pop_pools"`
 	Proxied      bool                `json:"proxied"`
+	Persistence  string              `json:"session_affinity,omitempty"`
 }
 
 // loadBalancerPoolResponse represents the response from the load balancer pool endpoints.
