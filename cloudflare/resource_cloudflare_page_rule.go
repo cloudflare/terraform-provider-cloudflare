@@ -61,6 +61,84 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						"bypass_cache_on_cookie": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_by_device_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_deception_armor": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_on_cookie": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"host_header_override": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"polish": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"explicit_cache_control": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"origin_error_page_pass_thru": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"sort_query_string_for_cache": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"resolve_override": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"respect_strong_etag": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"response_buffering": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"true_client_ip_header": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						"browser_check": {
 							Type:         schema.TypeString,
 							Optional:     true,
