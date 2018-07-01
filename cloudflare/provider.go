@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"fmt"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -90,6 +91,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_load_balancer":          resourceCloudFlareLoadBalancer(),
 			"cloudflare_load_balancer_pool":     resourceCloudFlareLoadBalancerPool(),
 			"cloudflare_zone_settings_override": resourceCloudFlareZoneSettingsOverride(),
+			"cloudflare_account_member":         resourceCloudflareAccountMember(),
 		},
 
 		ConfigureFunc: providerConfigure,
