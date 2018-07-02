@@ -34,7 +34,7 @@ The following arguments are supported:
 * `target` - (Required) The URL pattern to target with the page rule.
 * `actions` - (Required) The actions taken by the page rule, options given below.
 * `priority` - (Optional) The priority of the page rule among others for this target.
-* `status` - (Optional) Whether the page rule is active or paused.
+* `status` - (Optional) Whether the page rule is active or disabled.
 
 Action blocks support the following:
 
@@ -51,12 +51,16 @@ Action blocks support the following:
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
+* `bypass_cache_on_cookie` - (Optional) Disable the cache on cookie regex match.
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
 * `cache_level` - (Optional) Whether to set the cache level to `"byypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
+* `host_header_override` - (Optional) The Host Header to override on the origin servers.
+* `resolve_override` - (Optional) Override the origin server with this host.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"off"`, `"manual"`, or `"automatic"`.
 * `security_level` - (Optional) Whether to set the security level to `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
+* `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
 Forwarding URL actions support the following:
 
@@ -72,4 +76,4 @@ The following attributes are exported:
 * `target` - The URL pattern targeted by the page rule.
 * `actions` - The actions applied by the page rule.
 * `priority` - The priority of the page rule.
-* `status` - Whether the page rule is active or paused.
+* `status` - Whether the page rule is active or disabled.

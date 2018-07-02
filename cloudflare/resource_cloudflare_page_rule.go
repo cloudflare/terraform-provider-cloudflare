@@ -91,6 +91,11 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
+						"waf": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
 						// end on/off fields
 
 						// unitary fields
@@ -127,6 +132,13 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.IntAtMost(31536000),
 						},
 
+						// maxlength 12 x 150 + 11 = 1811
+						"bypass_cache_on_cookie": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringLenBetween(1, 1811),
+						},
+
 						"edge_cache_ttl": {
 							Type:         schema.TypeInt,
 							Optional:     true,
@@ -161,6 +173,18 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							},
 						},
 
+						"host_header_override": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						// should really validate if FQDN is resolveable, non-empty and < domain length limit will have to do
+						"resolve_override": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringLenBetween(1, 255),
+						},
+
 						// may not be used with disable_performance
 						"rocket_loader": {
 							Type:         schema.TypeString,
@@ -193,7 +217,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Default:      "active",
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"active", "paused"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"active", "disabled"}, false),
 			},
 		},
 	}
@@ -395,10 +419,10 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors"}
+var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors", "waf"}
 var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
-var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
+var pageRuleAPIStringFields = []string{"bypass_cache_on_cookie", "cache_level", "host_header_override", "resolve_override", "rocket_loader", "security_level", "ssl"}
 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
