@@ -61,6 +61,84 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						"bypass_cache_on_cookie": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_by_device_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_deception_armor": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_on_cookie": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"host_header_override": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"polish": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"explicit_cache_control": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"origin_error_page_pass_thru": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"sort_query_string_for_cache": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"resolve_override": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"respect_strong_etag": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"response_buffering": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"true_client_ip_header": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						"browser_check": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -395,7 +473,28 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors"}
+var pageRuleAPIOnOffFields = []string{
+	"always_online",
+	"automatic_https_rewrites",
+	"browser_check",
+	"bypass_cache_on_cookie",
+	"cache_by_device_type",
+	"cache_deception_armor",
+	"cache_on_cookie",
+	"email_obfuscation",
+	"explicit_cache_control",
+	"host_header_override",
+	"ip_geolocation",
+	"opportunistic_encryption",
+	"origin_error_page_pass_thru",
+	"polish",
+	"resolve_override",
+	"respect_strong_etag",
+	"response_buffering",
+	"server_side_exclude",
+	"sort_query_string_for_cache",
+	"true_client_ip_header",
+}
 var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
 var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
