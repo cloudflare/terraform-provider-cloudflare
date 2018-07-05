@@ -50,6 +50,7 @@ Action blocks support the following:
 * `always_use_https` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `disable_railgun` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.

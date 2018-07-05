@@ -199,6 +199,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							Optional: true,
 						},
 
+						"disable_railgun": {
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
+						},
+
 						"disable_security": {
 							Type:     schema.TypeBool,
 							Default:  false,
@@ -502,7 +508,7 @@ var pageRuleAPIOnOffFields = []string{
 	"sort_query_string_for_cache",
 	"true_client_ip_header",
 }
-var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
+var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_railgun", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
 var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
 
