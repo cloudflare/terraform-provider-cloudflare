@@ -56,6 +56,8 @@ Action blocks support the following:
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
 * `cache_level` - (Optional) Whether to set the cache level to `"byypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
+* `host_header_override` - (Optional) Value of the Host header to send.
+* `resolve_override` - (Optional) Overridden origin server name.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"off"`, `"manual"`, or `"automatic"`.
 * `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
