@@ -510,7 +510,7 @@ var pageRuleAPIOnOffFields = []string{
 }
 var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_railgun", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
-var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
+var pageRuleAPIStringFields = []string{"cache_key", "cache_level", "rocket_loader", "security_level", "ssl"}
 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
