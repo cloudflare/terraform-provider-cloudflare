@@ -85,12 +85,6 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
-						"host_header_override": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-						},
-
 						"mirage": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -116,12 +110,6 @@ func resourceCloudFlarePageRule() *schema.Resource {
 						},
 
 						"sort_query_string_for_cache": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-						},
-
-						"resolve_override": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
@@ -249,6 +237,16 @@ func resourceCloudFlarePageRule() *schema.Resource {
 									},
 								},
 							},
+						},
+
+						"host_header_override": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"resolve_override": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						// may not be used with disable_performance
@@ -495,13 +493,11 @@ var pageRuleAPIOnOffFields = []string{
 	"cache_on_cookie",
 	"email_obfuscation",
 	"explicit_cache_control",
-	"host_header_override",
 	"ip_geolocation",
 	"mirage",
 	"opportunistic_encryption",
 	"origin_error_page_pass_thru",
 	"polish",
-	"resolve_override",
 	"respect_strong_etag",
 	"response_buffering",
 	"server_side_exclude",
@@ -510,7 +506,14 @@ var pageRuleAPIOnOffFields = []string{
 }
 var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_railgun", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
-var pageRuleAPIStringFields = []string{"cache_key", "cache_level", "rocket_loader", "security_level", "ssl"}
+var pageRuleAPIStringFields = []string{
+	"cache_key",
+	"cache_level",
+	"host_header_override",
+	"rocket_loader",
+	"resolve_override",
+	"security_level",
+	"ssl"}
 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
