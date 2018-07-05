@@ -43,19 +43,21 @@ Action blocks support the following:
 * `browser_check` - (Optional) Whether this action is `"on"` or `"off"`.
 * `email_obfuscation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
+* `mirage` - (Optional) Whether this action is `"on"` or `"off"`.
 * `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
 * `server_side_exclude` - (Optional) Whether this action is `"on"` or `"off"`.
 * `smart_errors` - (Optional) Whether this action is `"on"` or `"off"`.
 * `always_use_https` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `disable_railgun` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
 * `cache_level` - (Optional) Whether to set the cache level to `"byypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"off"`, `"manual"`, or `"automatic"`.
-* `security_level` - (Optional) Whether to set the security level to `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
+* `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
 
 Forwarding URL actions support the following:

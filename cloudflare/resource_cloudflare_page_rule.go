@@ -91,6 +91,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						"mirage": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						"polish": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -193,6 +199,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							Optional: true,
 						},
 
+						"disable_railgun": {
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
+						},
+
 						"disable_security": {
 							Type:     schema.TypeBool,
 							Default:  false,
@@ -249,7 +261,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 						"security_level": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"essentially_off", "low", "medium", "high", "under_attack"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"off", "essentially_off", "low", "medium", "high", "under_attack"}, false),
 						},
 
 						"ssl": {
@@ -485,6 +497,7 @@ var pageRuleAPIOnOffFields = []string{
 	"explicit_cache_control",
 	"host_header_override",
 	"ip_geolocation",
+	"mirage",
 	"opportunistic_encryption",
 	"origin_error_page_pass_thru",
 	"polish",
@@ -495,9 +508,9 @@ var pageRuleAPIOnOffFields = []string{
 	"sort_query_string_for_cache",
 	"true_client_ip_header",
 }
-var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
+var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_railgun", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
-var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
+var pageRuleAPIStringFields = []string{"cache_key", "cache_level", "rocket_loader", "security_level", "ssl"}
 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
