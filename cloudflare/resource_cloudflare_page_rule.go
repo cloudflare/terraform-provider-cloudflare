@@ -91,6 +91,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						"mirage": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						"polish": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -485,6 +491,7 @@ var pageRuleAPIOnOffFields = []string{
 	"explicit_cache_control",
 	"host_header_override",
 	"ip_geolocation",
+	"mirage",
 	"opportunistic_encryption",
 	"origin_error_page_pass_thru",
 	"polish",
