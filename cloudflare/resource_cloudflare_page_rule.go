@@ -513,7 +513,8 @@ var pageRuleAPIStringFields = []string{
 	"rocket_loader",
 	"resolve_override",
 	"security_level",
-	"ssl"}
+	"ssl",
+}
 
 func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
