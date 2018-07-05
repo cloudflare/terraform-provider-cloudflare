@@ -163,6 +163,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
+
+						"waf": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
 						// end on/off fields
 
 						// unitary fields
@@ -503,6 +509,7 @@ var pageRuleAPIOnOffFields = []string{
 	"server_side_exclude",
 	"sort_query_string_for_cache",
 	"true_client_ip_header",
+	"waf",
 }
 var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_railgun", "disable_security"}
 var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
