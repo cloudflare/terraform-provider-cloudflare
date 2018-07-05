@@ -61,6 +61,7 @@ Action blocks support the following:
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"off"`, `"manual"`, or `"automatic"`.
 * `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
+* `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
 Forwarding URL actions support the following:
 
