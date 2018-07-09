@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"reflect"
 	"regexp"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -83,6 +84,11 @@ func TestAccCloudFlarePageRule_ForwardingOnly(t *testing.T) {
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/", target)),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.test",
+						"actions.0.forwarding_url.0.url",
+						fmt.Sprintf("http://%s/forward", zone),
+					),
 				),
 			},
 		},
@@ -185,6 +191,33 @@ func TestAccCloudFlarePageRule_CreateAfterManualDestroy(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestTranformForwardingURL(t *testing.T) {
+	key, val, err := transformFromCloudFlarePageRuleAction(&cloudflare.PageRuleAction{
+		ID: "forwarding_url",
+		Value: map[string]interface{}{
+			"url":         "http://test.com/forward",
+			"status_code": 302,
+		},
+	})
+	if err != nil {
+		t.Fatalf("Unexpected error transforming page rule action: %s", err)
+	}
+
+	if key != "forwarding_url" {
+		t.Fatalf("Unexpected key transforming page rule action. Expected \"forwarding_url\", got \"%s\"", key)
+	}
+
+	// the transformed value for a forwarding_url should be [{url: "", "status_code": 302}] (single item slice where the
+	// element in the slice is a map)
+	if sl, isSlice := val.([]interface{}); !isSlice {
+		t.Fatalf("Unexpected value type from transforming page rule action. Expected slice, got %s", reflect.TypeOf(val).Kind())
+	} else if len(sl) != 1 {
+		t.Fatalf("Unexpected slice length after transforming page rule action. Expected 1, got %d", len(sl))
+	} else if _, isMap := sl[0].(map[string]interface{}); !isMap {
+		t.Fatalf("Unexpected type in slice after tranforming page rule action. Expected map[string]interface{}, got %s", reflect.TypeOf(sl[0]).Kind())
+	}
 }
 
 func testAccCheckCloudFlarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
