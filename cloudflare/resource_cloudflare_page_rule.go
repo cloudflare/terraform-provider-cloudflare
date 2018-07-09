@@ -62,8 +62,8 @@ func resourceCloudFlarePageRule() *schema.Resource {
 						},
 
 						"bypass_cache_on_cookie": {
-							Type:         schema.TypeString,
-							Optional:     true,
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						"cache_by_device_type": {
