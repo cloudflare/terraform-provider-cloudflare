@@ -78,3 +78,11 @@ The following attributes are exported:
 * `actions` - The actions applied by the page rule.
 * `priority` - The priority of the page rule.
 * `status` - Whether the page rule is active or disabled.
+
+## Import
+
+Page rules can be imported using a composite ID formed of zone name and page rule ID, e.g.
+
+```
+$ terraform import cloudflare_page_rule.default example.com/ch8374ftwdghsif43
+```
