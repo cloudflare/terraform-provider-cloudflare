@@ -545,7 +545,7 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		break
 
 	case pageRuleAction.ID == "forwarding_url":
-		value = pageRuleAction.Value.(map[string]interface{})
+		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
 		break
 
 	default:
