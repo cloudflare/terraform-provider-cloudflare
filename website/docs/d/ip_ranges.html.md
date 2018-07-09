@@ -16,13 +16,14 @@ Use this data source to get the [IP ranges][1] of Cloudflare edge nodes.
 data "cloudflare_ip_ranges" "cloudflare" {}
 
 resource "google_compute_firewall" "allow_cloudflare_ingress" {
-  name    = "from_cloudflare"
+  name    = "from-cloudflare"
   network = "default"
 
-  ingress {
-    ports         = "443"
-    protocol      = "tcp"
-    source_ranges = ["${data.cloudflare_ip_ranges.cloudflare.cidr_blocks}"]
+  source_ranges = ["${data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks}"]
+  
+  allow {
+    ports    = "443"
+    protocol = "tcp"
   }
 }
 ```
