@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudFlareRecord_Import(t *testing.T) {
+func TestAccCloudflareRecord_Import(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_record.foobar"
 
@@ -17,7 +17,7 @@ func TestAccCloudFlareRecord_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareRecordConfigBasic(zone, name),
+				Config: testAccCheckCloudflareRecordConfigBasic(zone, name),
 			},
 			{
 				ResourceName:        name,

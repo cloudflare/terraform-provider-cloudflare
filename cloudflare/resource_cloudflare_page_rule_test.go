@@ -15,7 +15,7 @@ import (
 
 // TODO parallel tests run into rate limiting, update after client limiting is merged
 
-func TestAccCloudFlarePageRule_Basic(t *testing.T) {
+func TestAccCloudflarePageRule_Basic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	target := fmt.Sprintf("test-basic.%s", zone)
@@ -23,13 +23,13 @@ func TestAccCloudFlarePageRule_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigBasic(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigBasic(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					testAccCheckCloudFlarePageRuleAttributesBasic(&pageRule),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -40,7 +40,7 @@ func TestAccCloudFlarePageRule_Basic(t *testing.T) {
 	})
 }
 
-func TestAccCloudFlarePageRule_FullySpecified(t *testing.T) {
+func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	target := fmt.Sprintf("test-fully-specified.%s", zone)
@@ -48,13 +48,13 @@ func TestAccCloudFlarePageRule_FullySpecified(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigFullySpecified(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					testAccCheckCloudFlarePageRuleAttributesFullySpecified(&pageRule),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					testAccCheckCloudflarePageRuleAttributesFullySpecified(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -65,7 +65,7 @@ func TestAccCloudFlarePageRule_FullySpecified(t *testing.T) {
 	})
 }
 
-func TestAccCloudFlarePageRule_ForwardingOnly(t *testing.T) {
+func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	target := fmt.Sprintf("test-fwd-only.%s", zone)
@@ -73,13 +73,13 @@ func TestAccCloudFlarePageRule_ForwardingOnly(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigForwardingOnly(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigForwardingOnly(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					//testAccCheckCloudFlarePageRuleAttributes(&pageRule),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					//testAccCheckCloudflarePageRuleAttributes(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -95,7 +95,7 @@ func TestAccCloudFlarePageRule_ForwardingOnly(t *testing.T) {
 	})
 }
 
-func TestAccCloudFlarePageRule_ForwardingAndOthers(t *testing.T) {
+func TestAccCloudflarePageRule_ForwardingAndOthers(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	target := fmt.Sprintf("test-fwd-others.%s", zone)
@@ -103,12 +103,12 @@ func TestAccCloudFlarePageRule_ForwardingAndOthers(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigForwardingAndOthers(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -123,7 +123,7 @@ func TestAccCloudFlarePageRule_ForwardingAndOthers(t *testing.T) {
 	})
 }
 
-func TestAccCloudFlarePageRule_Updated(t *testing.T) {
+func TestAccCloudflarePageRule_Updated(t *testing.T) {
 	var before, after cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	target := fmt.Sprintf("test-updated.%s", zone)
@@ -131,20 +131,20 @@ func TestAccCloudFlarePageRule_Updated(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigBasic(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigBasic(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &before),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &before),
 				),
 			},
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigNewValue(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigNewValue(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &after),
-					testAccCheckCloudFlarePageRuleAttributesUpdated(&after),
-					testAccCheckCloudFlarePageRuleIDUnchanged(&before, &after),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &after),
+					testAccCheckCloudflarePageRuleAttributesUpdated(&after),
+					testAccCheckCloudflarePageRuleIDUnchanged(&before, &after),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/updated", target)),
 				),
@@ -153,7 +153,7 @@ func TestAccCloudFlarePageRule_Updated(t *testing.T) {
 	})
 }
 
-func TestAccCloudFlarePageRule_CreateAfterManualDestroy(t *testing.T) {
+func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 	var before, after cloudflare.PageRule
 	var initialID string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -162,21 +162,21 @@ func TestAccCloudFlarePageRule_CreateAfterManualDestroy(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigBasic(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigBasic(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &before),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &before),
 					testAccManuallyDeletePageRule("cloudflare_page_rule.test", &initialID),
 				),
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigNewValue(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigNewValue(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists("cloudflare_page_rule.test", &after),
-					testAccCheckCloudFlarePageRuleRecreated(&before, &after),
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &after),
+					testAccCheckCloudflarePageRuleRecreated(&before, &after),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/updated", target)),
 					resource.TestCheckResourceAttr(
@@ -194,7 +194,7 @@ func TestAccCloudFlarePageRule_CreateAfterManualDestroy(t *testing.T) {
 }
 
 func TestTranformForwardingURL(t *testing.T) {
-	key, val, err := transformFromCloudFlarePageRuleAction(&cloudflare.PageRuleAction{
+	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 		ID: "forwarding_url",
 		Value: map[string]interface{}{
 			"url":         "http://test.com/forward",
@@ -220,7 +220,7 @@ func TestTranformForwardingURL(t *testing.T) {
 	}
 }
 
-func testAccCheckCloudFlarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudflarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
 			return fmt.Errorf("Expected change of PageRule Ids, but both were %v", before.ID)
@@ -229,7 +229,7 @@ func testAccCheckCloudFlarePageRuleRecreated(before, after *cloudflare.PageRule)
 	}
 }
 
-func testAccCheckCloudFlarePageRuleIDUnchanged(before, after *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudflarePageRuleIDUnchanged(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID != after.ID {
 			return fmt.Errorf("ID should not change suring in place update, but got change %s -> %s", before.ID, after.ID)
@@ -238,7 +238,7 @@ func testAccCheckCloudFlarePageRuleIDUnchanged(before, after *cloudflare.PageRul
 	}
 }
 
-func testAccCheckCloudFlarePageRuleDestroy(s *terraform.State) error {
+func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -255,7 +255,7 @@ func testAccCheckCloudFlarePageRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudFlarePageRuleAttributesBasic(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		// check the api only has attributes we set non-empty values for
@@ -296,7 +296,7 @@ func testAccCheckCloudFlarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 	}
 }
 
-func testAccCheckCloudFlarePageRuleAttributesFullySpecified(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudflarePageRuleAttributesFullySpecified(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		// check boolean variables get set correctly
@@ -327,7 +327,7 @@ func testAccCheckCloudFlarePageRuleAttributesFullySpecified(pageRule *cloudflare
 	}
 }
 
-func testAccCheckCloudFlarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		actionMap := pageRuleActionsToMap(pageRule.Actions)
@@ -377,7 +377,7 @@ func testAccCheckCloudFlarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 	}
 }
 
-func testAccCheckCloudFlarePageRuleExists(n string, pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -421,7 +421,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 	}
 }
 
-func testAccCheckCloudFlarePageRuleConfigBasic(zone, target string) string {
+func testAccCheckCloudflarePageRuleConfigBasic(zone, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
@@ -434,7 +434,7 @@ resource "cloudflare_page_rule" "test" {
 }`, zone, target)
 }
 
-func testAccCheckCloudFlarePageRuleConfigNewValue(zone, target string) string {
+func testAccCheckCloudflarePageRuleConfigNewValue(zone, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
@@ -449,7 +449,7 @@ resource "cloudflare_page_rule" "test" {
 }`, zone, target)
 }
 
-func testAccCheckCloudFlarePageRuleConfigFullySpecified(zone, target string) string {
+func testAccCheckCloudflarePageRuleConfigFullySpecified(zone, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
@@ -472,7 +472,7 @@ resource "cloudflare_page_rule" "test" {
 }`, zone, target)
 }
 
-func testAccCheckCloudFlarePageRuleConfigForwardingOnly(zone, target string) string {
+func testAccCheckCloudflarePageRuleConfigForwardingOnly(zone, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
@@ -487,7 +487,7 @@ resource "cloudflare_page_rule" "test" {
 }`, zone, target)
 }
 
-func testAccCheckCloudFlarePageRuleConfigForwardingAndOthers(zone, target string) string {
+func testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zone, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
