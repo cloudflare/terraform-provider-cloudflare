@@ -3,12 +3,12 @@ layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_zone_settings_override"
 sidebar_current: "docs-cloudflare-resource-zone-settings-override"
 description: |-
-  Provides a resource which customizes CloudFlare zone settings.
+  Provides a resource which customizes Cloudflare zone settings.
 ---
 
 # cloudflare_zone_settings_override
 
-Provides a resource which customizes CloudFlare zone settings. Note that after destroying this resource Zone Settings will be reset to their initial values.
+Provides a resource which customizes Cloudflare zone settings. Note that after destroying this resource Zone Settings will be reset to their initial values.
 
 ## Example Usage
 
