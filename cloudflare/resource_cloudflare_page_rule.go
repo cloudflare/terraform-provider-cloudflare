@@ -507,18 +507,27 @@ var pageRuleAPIOnOffFields = []string{
 	"true_client_ip_header",
 	"waf",
 }
-var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_railgun", "disable_security"}
-var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
+var pageRuleAPINilFields = []string{
+	"always_use_https",
+	"disable_apps",
+	"disable_performance",
+	"disable_railgun",
+	"disable_security",
+}
+var pageRuleAPIFloatFields = []string{
+	"browser_cache_ttl",
+	"edge_cache_ttl",
+}
 var pageRuleAPIStringFields = []string{
+	"bypass_cache_on_cookie",
 	"cache_key",
 	"cache_level",
+	"cache_on_cookie",
 	"host_header_override",
-	"rocket_loader",
 	"resolve_override",
+	"rocket_loader",
 	"security_level",
 	"ssl",
-	"bypass_cache_on_cookie",
-	"cache_on_cookie",
 }
 
 func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
