@@ -62,9 +62,8 @@ func resourceCloudflarePageRule() *schema.Resource {
 						},
 
 						"bypass_cache_on_cookie": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						"cache_by_device_type": {
@@ -493,7 +492,6 @@ var pageRuleAPIOnOffFields = []string{
 	"always_online",
 	"automatic_https_rewrites",
 	"browser_check",
-	"bypass_cache_on_cookie",
 	"cache_by_device_type",
 	"cache_deception_armor",
 	"cache_on_cookie",
@@ -521,6 +519,7 @@ var pageRuleAPIStringFields = []string{
 	"resolve_override",
 	"security_level",
 	"ssl",
+	"bypass_cache_on_cookie",
 }
 
 func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
