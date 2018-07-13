@@ -10,18 +10,18 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceCloudFlareRecord() *schema.Resource {
+func resourceCloudflareRecord() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudFlareRecordCreate,
-		Read:   resourceCloudFlareRecordRead,
-		Update: resourceCloudFlareRecordUpdate,
-		Delete: resourceCloudFlareRecordDelete,
+		Create: resourceCloudflareRecordCreate,
+		Read:   resourceCloudflareRecordRead,
+		Update: resourceCloudflareRecordUpdate,
+		Delete: resourceCloudflareRecordDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudFlareRecordImport,
+			State: resourceCloudflareRecordImport,
 		},
 
 		SchemaVersion: 1,
-		MigrateState:  resourceCloudFlareRecordMigrateState,
+		MigrateState:  resourceCloudflareRecordMigrateState,
 		Schema: map[string]*schema.Schema{
 			"domain": {
 				Type:     schema.TypeString,
@@ -107,7 +107,7 @@ func resourceCloudFlareRecord() *schema.Resource {
 	}
 }
 
-func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	newRecord := cloudflare.DNSRecord{
@@ -159,7 +159,7 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	d.Set("zone_id", zoneID)
 	newRecord.ZoneID = zoneID
 
-	log.Printf("[DEBUG] CloudFlare Record create configuration: %#v", newRecord)
+	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
 
 	r, err := client.CreateDNSRecord(zoneID, newRecord)
 	if err != nil {
@@ -174,12 +174,12 @@ func resourceCloudFlareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	d.SetId(r.Result.ID)
 
-	log.Printf("[INFO] CloudFlare Record ID: %s", d.Id())
+	log.Printf("[INFO] Cloudflare Record ID: %s", d.Id())
 
-	return resourceCloudFlareRecordRead(d, meta)
+	return resourceCloudflareRecordRead(d, meta)
 }
 
-func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -212,7 +212,7 @@ func resourceCloudFlareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceCloudFlareRecordUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -238,24 +238,24 @@ func resourceCloudFlareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		updateRecord.TTL = ttl.(int)
 	}
 
-	log.Printf("[DEBUG] CloudFlare Record update configuration: %#v", updateRecord)
+	log.Printf("[DEBUG] Cloudflare Record update configuration: %#v", updateRecord)
 	err := client.UpdateDNSRecord(zoneID, d.Id(), updateRecord)
 	if err != nil {
-		return fmt.Errorf("Failed to update CloudFlare Record: %s", err)
+		return fmt.Errorf("Failed to update Cloudflare Record: %s", err)
 	}
 
-	return resourceCloudFlareRecordRead(d, meta)
+	return resourceCloudflareRecordRead(d, meta)
 }
 
-func resourceCloudFlareRecordDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Deleting CloudFlare Record: %s, %s", zoneID, d.Id())
+	log.Printf("[INFO] Deleting Cloudflare Record: %s, %s", zoneID, d.Id())
 
 	err := client.DeleteDNSRecord(zoneID, d.Id())
 	if err != nil {
-		return fmt.Errorf("Error deleting CloudFlare Record: %s", err)
+		return fmt.Errorf("Error deleting Cloudflare Record: %s", err)
 	}
 
 	return nil
@@ -275,7 +275,7 @@ func expandStringMap(inVal interface{}) map[string]string {
 	return outVal
 }
 
-func resourceCloudFlareRecordImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup
