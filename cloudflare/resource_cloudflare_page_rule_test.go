@@ -184,7 +184,7 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "actions.0.browser_check", "on"),
 					resource.TestCheckResourceAttr(
-						"cloudflare_page_rule.test", "actions.0.rocket_loader", "automatic"),
+						"cloudflare_page_rule.test", "actions.0.rocket_loader", "on"),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "actions.0.ssl", "strict"),
 				),
@@ -361,7 +361,7 @@ func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 		}
 
 		if val, ok := actionMap["rocket_loader"]; ok {
-			if _, ok := val.(string); !ok || val != "automatic" {
+			if _, ok := val.(string); !ok || val != "on" {
 				return fmt.Errorf("'rocket_loader' not specified correctly at api, found: %q", val)
 			}
 		} else {
@@ -444,7 +444,7 @@ resource "cloudflare_page_rule" "test" {
 		browser_check = "on"
 		disable_apps = false
 		ssl = "strict"
-		rocket_loader = "automatic"
+		rocket_loader = "on"
 	}
 }`, zone, target)
 }

@@ -257,7 +257,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 						"rocket_loader": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"off", "manual", "automatic"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"off", "on"}, false),
 						},
 
 						"security_level": {
