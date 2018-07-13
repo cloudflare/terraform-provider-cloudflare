@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudFlareLoadBalancerMonitor_Import(t *testing.T) {
+func TestAccCloudflareLoadBalancerMonitor_Import(t *testing.T) {
 	t.Parallel()
 	name := "cloudflare_load_balancer_monitor.test"
 
@@ -15,7 +15,7 @@ func TestAccCloudFlareLoadBalancerMonitor_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigBasic(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
 			},
 			{
 				ResourceName:      name,

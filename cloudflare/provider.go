@@ -18,7 +18,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-				Description: "A registered CloudFlare email address.",
+				Description: "A registered Cloudflare email address.",
 			},
 
 			"token": &schema.Schema{
@@ -83,13 +83,13 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"cloudflare_load_balancer_monitor":  resourceCloudFlareLoadBalancerMonitor(),
-			"cloudflare_page_rule":              resourceCloudFlarePageRule(),
-			"cloudflare_record":                 resourceCloudFlareRecord(),
-			"cloudflare_rate_limit":             resourceCloudFlareRateLimit(),
-			"cloudflare_load_balancer":          resourceCloudFlareLoadBalancer(),
-			"cloudflare_load_balancer_pool":     resourceCloudFlareLoadBalancerPool(),
-			"cloudflare_zone_settings_override": resourceCloudFlareZoneSettingsOverride(),
+			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
+			"cloudflare_page_rule":              resourceCloudflarePageRule(),
+			"cloudflare_record":                 resourceCloudflareRecord(),
+			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
+			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
+			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
+			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
 		},
 
 		ConfigureFunc: providerConfigure,
@@ -116,7 +116,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	if orgId, ok := d.GetOk("org_id"); ok {
-		log.Printf("[INFO] Using specified organization id %s in CloudFlare provider", orgId.(string))
+		log.Printf("[INFO] Using specified organization id %s in Cloudflare provider", orgId.(string))
 		options = append(options, cloudflare.UsingOrganization(orgId.(string)))
 	} else if zoneName, ok := d.GetOk("use_org_from_zone"); ok {
 		zoneId, err := client.ZoneIDByName(zoneName.(string))
@@ -142,10 +142,10 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		}
 
 		if contains(orgIds, zone.Owner.ID) {
-			log.Printf("[INFO] Using organization %#v in CloudFlare provider", zone.Owner)
+			log.Printf("[INFO] Using organization %#v in Cloudflare provider", zone.Owner)
 			options = append(options, cloudflare.UsingOrganization(zone.Owner.ID))
 		} else {
-			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for CloudFlare provider")
+			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for Cloudflare provider")
 		}
 	} else {
 		return client, err

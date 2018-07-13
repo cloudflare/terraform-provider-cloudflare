@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudFlarePageRule_Import(t *testing.T) {
+func TestAccCloudflarePageRule_Import(t *testing.T) {
 	t.Parallel()
 	var pageRule cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -20,12 +20,12 @@ func TestAccCloudFlarePageRule_Import(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlarePageRuleDestroy,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlarePageRuleConfigFullySpecified(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zone, target),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists(name, &pageRule),
+					testAccCheckCloudflarePageRuleExists(name, &pageRule),
 				),
 			},
 			{
@@ -34,7 +34,7 @@ func TestAccCloudFlarePageRule_Import(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlarePageRuleExists(name, &pageRule),
+					testAccCheckCloudflarePageRuleExists(name, &pageRule),
 				),
 			},
 		},

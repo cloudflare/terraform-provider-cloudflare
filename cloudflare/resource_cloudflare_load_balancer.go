@@ -13,14 +13,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-func resourceCloudFlareLoadBalancer() *schema.Resource {
+func resourceCloudflareLoadBalancer() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudFlareLoadBalancerCreate,
-		Read:   resourceCloudFlareLoadBalancerRead,
-		Update: resourceCloudFlareLoadBalancerUpdate,
-		Delete: resourceCloudFlareLoadBalancerDelete,
+		Create: resourceCloudflareLoadBalancerCreate,
+		Read:   resourceCloudflareLoadBalancerRead,
+		Update: resourceCloudflareLoadBalancerUpdate,
+		Delete: resourceCloudflareLoadBalancerDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudFlareLoadBalancerImport,
+			State: resourceCloudflareLoadBalancerImport,
 		},
 
 		SchemaVersion: 0,
@@ -148,7 +148,7 @@ var localPoolElems = map[string]*schema.Resource{
 	"region": regionPoolElem,
 }
 
-func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	newLoadBalancer := cloudflare.LoadBalancer{
@@ -190,7 +190,7 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	}
 	d.Set("zone_id", zoneId)
 
-	log.Printf("[INFO] Creating CloudFlare Load Balancer from struct: %+v", newLoadBalancer)
+	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
 	r, err := client.CreateLoadBalancer(zoneId, newLoadBalancer)
 	if err != nil {
@@ -203,12 +203,12 @@ func resourceCloudFlareLoadBalancerCreate(d *schema.ResourceData, meta interface
 
 	d.SetId(r.ID)
 
-	log.Printf("[INFO] CloudFlare Load Balancer ID: %s", d.Id())
+	log.Printf("[INFO] Cloudflare Load Balancer ID: %s", d.Id())
 
-	return resourceCloudFlareLoadBalancerRead(d, meta)
+	return resourceCloudflareLoadBalancerRead(d, meta)
 }
 
-func resourceCloudFlareLoadBalancerUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface{}) error {
 	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
@@ -242,14 +242,14 @@ func resourceCloudFlareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 		loadBalancer.PopPools = expandedPopPools
 	}
 
-	log.Printf("[INFO] Updating CloudFlare Load Balancer from struct: %+v", loadBalancer)
+	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
 
 	_, err := client.ModifyLoadBalancer(zoneId, loadBalancer)
 	if err != nil {
 		return errors.Wrap(err, "error creating load balancer for zone")
 	}
 
-	return resourceCloudFlareLoadBalancerRead(d, meta)
+	return resourceCloudflareLoadBalancerRead(d, meta)
 }
 
 func expandGeoPools(pool interface{}, geoType string) (map[string][]string, error) {
@@ -268,7 +268,7 @@ func expandGeoPools(pool interface{}, geoType string) (map[string][]string, erro
 	return expanded, nil
 }
 
-func resourceCloudFlareLoadBalancerRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
 	loadBalancerId := d.Id()
@@ -319,22 +319,22 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 	return schema.NewSet(schema.HashResource(localPoolElems[geoType]), flattened)
 }
 
-func resourceCloudFlareLoadBalancerDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
 	loadBalancerId := d.Id()
 
-	log.Printf("[INFO] Deleting CloudFlare Load Balancer: %s in zone: %s", loadBalancerId, zoneId)
+	log.Printf("[INFO] Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerId, zoneId)
 
 	err := client.DeleteLoadBalancer(zoneId, loadBalancerId)
 	if err != nil {
-		return fmt.Errorf("error deleting CloudFlare Load Balancer: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Load Balancer: %s", err)
 	}
 
 	return nil
 }
 
-func resourceCloudFlareLoadBalancerImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup

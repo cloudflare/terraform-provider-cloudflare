@@ -11,14 +11,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-func resourceCloudFlareRateLimit() *schema.Resource {
+func resourceCloudflareRateLimit() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudFlareRateLimitCreate,
-		Read:   resourceCloudFlareRateLimitRead,
-		Update: resourceCloudFlareRateLimitUpdate,
-		Delete: resourceCloudFlareRateLimitDelete,
+		Create: resourceCloudflareRateLimitCreate,
+		Read:   resourceCloudflareRateLimitRead,
+		Update: resourceCloudflareRateLimitUpdate,
+		Delete: resourceCloudflareRateLimitDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudFlareRateLimitImport,
+			State: resourceCloudflareRateLimitImport,
 		},
 
 		SchemaVersion: 0,
@@ -180,7 +180,7 @@ func resourceCloudFlareRateLimit() *schema.Resource {
 	}
 }
 
-func resourceCloudFlareRateLimitCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	newRateLimit := cloudflare.RateLimit{
@@ -213,7 +213,7 @@ func resourceCloudFlareRateLimitCreate(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
 	}
 
-	log.Printf("[DEBUG] Creating CloudFlare Rate Limit from struct: %+v", newRateLimit)
+	log.Printf("[DEBUG] Creating Cloudflare Rate Limit from struct: %+v", newRateLimit)
 
 	r, err := client.CreateRateLimit(zoneId, newRateLimit)
 	if err != nil {
@@ -228,12 +228,12 @@ func resourceCloudFlareRateLimitCreate(d *schema.ResourceData, meta interface{})
 	// assume ids are immutable, not going to look it up from the api again
 	d.Set("zone_id", zoneId)
 
-	log.Printf("[INFO] CloudFlare Rate Limit ID: %s", d.Id())
+	log.Printf("[INFO] Cloudflare Rate Limit ID: %s", d.Id())
 
-	return resourceCloudFlareRateLimitRead(d, meta)
+	return resourceCloudflareRateLimitRead(d, meta)
 }
 
-func resourceCloudFlareRateLimitUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRateLimitUpdate(d *schema.ResourceData, meta interface{}) error {
 	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
@@ -267,7 +267,7 @@ func resourceCloudFlareRateLimitUpdate(d *schema.ResourceData, meta interface{})
 	if err != nil {
 		return errors.Wrap(err, "error creating rate limit for zone")
 	}
-	return resourceCloudFlareRateLimitRead(d, meta)
+	return resourceCloudflareRateLimitRead(d, meta)
 }
 
 func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.RateLimitTrafficMatcher, err error) {
@@ -331,7 +331,7 @@ func expandRateLimitAction(d *schema.ResourceData) cloudflare.RateLimitAction {
 	}
 
 	if _, ok := tfAction["response"]; ok && len(tfAction["response"].([]interface{})) > 0 {
-		log.Printf("[DEBUG] CloudFlare Rate Limit specified action: %+v \n", tfAction)
+		log.Printf("[DEBUG] Cloudflare Rate Limit specified action: %+v \n", tfAction)
 		tfActionResponse := tfAction["response"].([]interface{})[0].(map[string]interface{})
 
 		action.Response = &cloudflare.RateLimitActionResponse{
@@ -353,7 +353,7 @@ func expandRateLimitBypass(bypassUrlPatterns *schema.Set) []cloudflare.RateLimit
 	return bypass
 }
 
-func resourceCloudFlareRateLimitRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRateLimitRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
 	rateLimitId := d.Id()
@@ -369,7 +369,7 @@ func resourceCloudFlareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 				fmt.Sprintf("Error reading rate limit resource from API for resource %s in zone %s", zoneId, rateLimitId))
 		}
 	}
-	log.Printf("[DEBUG] Read CloudFlare Rate Limit from API as struct: %+v", rateLimit)
+	log.Printf("[DEBUG] Read Cloudflare Rate Limit from API as struct: %+v", rateLimit)
 
 	d.Set("threshold", rateLimit.Threshold)
 	d.Set("period", rateLimit.Period)
@@ -450,22 +450,22 @@ func flattenRateLimitAction(cfg cloudflare.RateLimitAction) []map[string]interfa
 	return []map[string]interface{}{action}
 }
 
-func resourceCloudFlareRateLimitDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRateLimitDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneId := d.Get("zone_id").(string)
 	rateLimitId := d.Id()
 
-	log.Printf("[INFO] Deleting CloudFlare Rate Limit: %s for zone: %s", rateLimitId, zoneId)
+	log.Printf("[INFO] Deleting Cloudflare Rate Limit: %s for zone: %s", rateLimitId, zoneId)
 
 	err := client.DeleteRateLimit(zoneId, rateLimitId)
 	if err != nil {
-		return fmt.Errorf("error deleting CloudFlare Rate Limit for zone: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Rate Limit for zone: %s", err)
 	}
 
 	return nil
 }
 
-func resourceCloudFlareRateLimitImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareRateLimitImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup
