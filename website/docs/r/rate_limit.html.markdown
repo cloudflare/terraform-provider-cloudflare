@@ -36,6 +36,9 @@ resource "cloudflare_rate_limit" "example" {
       body = "custom response body"
     }
   }
+  correlate {
+    by = "nat"
+  }
   disabled = false
   description = "example rate limit for a zone"
   bypass_url_patterns = ["${var.cloudflare_zone}/bypass1","${var.cloudflare_zone}/bypass2"]
@@ -54,6 +57,7 @@ The following arguments are supported:
 * `disabled` - (Optional) Whether this ratelimit is currently disabled. Default: `false`.
 * `description` - (Optional) A note that you can use to describe the reason for a rate limit. This value is sanitized and all tags are removed.
 * `bypass_url_patterns` - (Optional) URLs matching the patterns specified here will be excluded from rate limiting.
+* `correlate` - (Optional) Determines how rate limiting is applied. By default if not specified, rate limiting applies to the clients IP address.
 
 The **match** block supports:
 
@@ -81,6 +85,11 @@ The **action.response** block supports:
 
 * `content_type` - (Required) The content-type of the body, must be one of: 'text/plain', 'text/xml', 'application/json'.
 * `body` - (Required) The body to return, the content here should conform to the content_type.
+
+The **correlate** block supports:
+
+* `by` - (Optional) If set to 'nat', NAT support will be enabled for rate limiting.
+
 
 ## Attributes Reference
 

@@ -76,6 +76,7 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "match.0.request.0.schemes.#", "2"),
 					resource.TestMatchResourceAttr(name, "match.0.request.0.url_pattern", regexp.MustCompile("tfacc-full")),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.statuses.#", "5"),
+					resource.TestCheckResourceAttr(name, "correlate.0.by", "nat"),
 					resource.TestCheckResourceAttr(name, "disabled", "true"),
 					resource.TestCheckResourceAttr(name, "description", "my fully specified rate limit for a zone"),
 				),
@@ -304,6 +305,9 @@ resource "cloudflare_rate_limit" "%[1]s" {
       content_type = "text/plain"
       body = "my response body"
     }
+  }
+  correlate {
+	  by = "nat"
   }
   disabled = true
   description = "my fully specified rate limit for a zone"
