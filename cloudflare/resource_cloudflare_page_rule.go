@@ -285,7 +285,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Default:      "active",
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"active", "disabled"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"active", "deactivated"}, false),
 			},
 		},
 	}

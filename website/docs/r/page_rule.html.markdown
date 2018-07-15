@@ -34,7 +34,7 @@ The following arguments are supported:
 * `target` - (Required) The URL pattern to target with the page rule.
 * `actions` - (Required) The actions taken by the page rule, options given below.
 * `priority` - (Optional) The priority of the page rule among others for this target.
-* `status` - (Optional) Whether the page rule is active or disabled.
+* `status` - (Optional) Whether the page rule is `active` or `deactivated`.
 
 Action blocks support the following:
 
@@ -77,7 +77,7 @@ The following attributes are exported:
 * `target` - The URL pattern targeted by the page rule.
 * `actions` - The actions applied by the page rule.
 * `priority` - The priority of the page rule.
-* `status` - Whether the page rule is active or disabled.
+* `status` - Whether the page rule is active or deactivated.
 
 ## Import
 
