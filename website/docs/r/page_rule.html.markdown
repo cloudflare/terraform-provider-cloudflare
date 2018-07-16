@@ -39,27 +39,27 @@ The following arguments are supported:
 Action blocks support the following:
 
 * `always_online` - (Optional) Whether this action is `"on"` or `"off"`.
-* `automatic_https_rewrites` - (Optional) Whether this action is `"on"` or `"off"`.
-* `browser_check` - (Optional) Whether this action is `"on"` or `"off"`.
-* `email_obfuscation` - (Optional) Whether this action is `"on"` or `"off"`.
-* `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
-* `mirage` - (Optional) Whether this action is `"on"` or `"off"`.
-* `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
-* `server_side_exclude` - (Optional) Whether this action is `"on"` or `"off"`.
-* `smart_errors` - (Optional) Whether this action is `"on"` or `"off"`.
 * `always_use_https` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `automatic_https_rewrites` - (Optional) Whether this action is `"on"` or `"off"`.
+* `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
+* `browser_check` - (Optional) Whether this action is `"on"` or `"off"`.
+* `cache_level` - (Optional) Whether to set the cache level to `"bypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_railgun` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
-* `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
-* `cache_level` - (Optional) Whether to set the cache level to `"byypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
+* `email_obfuscation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
 * `host_header_override` - (Optional) Value of the Host header to send.
+* `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
+* `mirage` - (Optional) Whether this action is `"on"` or `"off"`.
+* `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
 * `resolve_override` - (Optional) Overridden origin server name.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"on"`, `"off"`.
 * `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
+* `server_side_exclude` - (Optional) Whether this action is `"on"` or `"off"`.
+* `smart_errors` - (Optional) Whether this action is `"on"` or `"off"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
 * `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
