@@ -66,6 +66,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `prefetch_preload`
 * `privacy_pass`
 * `response_buffering`
+* `rocket_loader`
 * `server_side_exclude`
 * `tls_client_auth`
 * `true_client_ip_header`
@@ -82,7 +83,6 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 
 * `cache_level`. Allowed values: "aggressive", "basic", "simplified".
 * `polish`. Allowed values: "off", "lossless", "lossy".
-* `rocket_loader`. Allowed values: "on", "off", "manual".
 * `security_level`. Allowed values: "essentially_off", "low", "medium", "high", "under_attack".
 * `ssl`. Allowed values: "off", "flexible", "full", "strict".
 * `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".

@@ -125,6 +125,13 @@ func resourceCloudflarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						// may not be used with disable_performance
+						"rocket_loader": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						"true_client_ip_header": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -251,13 +258,6 @@ func resourceCloudflarePageRule() *schema.Resource {
 						"resolve_override": {
 							Type:     schema.TypeString,
 							Optional: true,
-						},
-
-						// may not be used with disable_performance
-						"rocket_loader": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"off", "manual", "automatic"}, false),
 						},
 
 						"security_level": {
@@ -502,6 +502,7 @@ var pageRuleAPIOnOffFields = []string{
 	"polish",
 	"respect_strong_etag",
 	"response_buffering",
+	"rocket_loader",
 	"server_side_exclude",
 	"sort_query_string_for_cache",
 	"true_client_ip_header",
@@ -525,7 +526,6 @@ var pageRuleAPIStringFields = []string{
 	"cache_on_cookie",
 	"host_header_override",
 	"resolve_override",
-	"rocket_loader",
 	"security_level",
 	"ssl",
 }
