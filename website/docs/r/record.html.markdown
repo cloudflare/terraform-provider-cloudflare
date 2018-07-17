@@ -53,5 +53,10 @@ The following attributes are exported:
 Records can be imported using a composite ID formed of zone name and record ID, e.g.
 
 ```
-$ terraform import cloudflare_record.default example.com/ch8374ftwdghsif43
+$ terraform import cloudflare_record.default example.com/d41d8cd98f00b204e9800998ecf8427e
 ```
+
+where:
+
+* `example.com` - the zone name
+* `d41d8cd98f00b204e9800998ecf8427e` - record ID as returned by [API](https://api.cloudflare.com/#dns-records-for-a-zone-list-dns-records)
