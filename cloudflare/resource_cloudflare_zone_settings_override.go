@@ -441,9 +441,10 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"cname_flattening": {
-		Type:     schema.TypeString, // enum
-		Optional: true,
-		Computed: true,
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"flatten_at_root", "flatten_all", "flatten_none"}, false),
+		Optional:     true,
+		Computed:     true,
 	},
 
 	"max_upload": {
