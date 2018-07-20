@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 
@@ -60,6 +61,173 @@ func resourceCloudflareRecord() *schema.Resource {
 				Type:          schema.TypeMap,
 				Optional:      true,
 				ConflictsWith: []string{"value"},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						// Properties present in several record types
+						"algorithm": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"key_tag": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"flags": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"service": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"certificate": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"type": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"usage": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"selector": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"matching_type": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"weight": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
+						// SRV record properties
+						"proto": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"priority": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"port": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"target": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						// LOC record properties
+						"size": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+						},
+						"altitude": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+						},
+						"long_degrees": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"lat_degrees": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"precision_horz": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+						},
+						"precision_vert": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+						},
+						"long_direction": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"long_minutes": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"long_seconds": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+						},
+						"lat_direction": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"lat_minutes": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"lat_seconds": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+						},
+
+						// DNSKEY record properties
+						"protocol": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"public_key": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						// DS record properties
+						"digest_type": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"digest": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						// NAPTR record properties
+						"order": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"preference": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"regex": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"replacement": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						// SSHFP record properties
+						"fingerprint": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						// URI record properties
+						"content": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
 			},
 
 			"ttl": {
@@ -69,8 +237,9 @@ func resourceCloudflareRecord() *schema.Resource {
 			},
 
 			"priority": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Type:             schema.TypeInt,
+				Optional:         true,
+				DiffSuppressFunc: suppressPriority,
 			},
 
 			"proxied": {
@@ -123,8 +292,22 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	data, dataOk := d.GetOk("data")
+	log.Printf("[DEBUG] Data found in config: %#v", data)
+
+	newDataMap := make(map[string]interface{})
+
 	if dataOk {
-		newRecord.Data = data
+		for id, value := range data.(map[string]interface{}) {
+			newData, err := transformToCloudflareDNSData(newRecord.Type, id, value)
+			if err != nil {
+				return err
+			} else if newData == nil {
+				continue
+			}
+			newDataMap[id] = newData
+		}
+
+		newRecord.Data = newDataMap
 	}
 
 	if valueOk == dataOk {
@@ -226,6 +409,25 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		Proxied:  false,
 	}
 
+	data, dataOk := d.GetOk("data")
+	log.Printf("[DEBUG] Data found in config: %#v", data)
+
+	newDataMap := make(map[string]interface{})
+
+	if dataOk {
+		for id, value := range data.(map[string]interface{}) {
+			newData, err := transformToCloudflareDNSData(updateRecord.Type, id, value)
+			if err != nil {
+				return err
+			} else if newData == nil {
+				continue
+			}
+			newDataMap[id] = newData
+		}
+
+		updateRecord.Data = newDataMap
+	}
+
 	if priority, ok := d.GetOk("priority"); ok {
 		updateRecord.Priority = priority.(int)
 	}
@@ -308,4 +510,63 @@ func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([
 	d.SetId(recordId)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+var dnsTypeIntFields = []string{
+	"algorithm",
+	"key_tag",
+	"type",
+	"usage",
+	"selector",
+	"matching_type",
+	"weight",
+	"priority",
+	"port",
+	"long_degrees",
+	"lat_degrees",
+	"long_minutes",
+	"lat_minutes",
+	"protocol",
+	"digest_type",
+	"order",
+	"preference",
+}
+
+var dnsTypeFloatFields = []string{
+	"size",
+	"altitude",
+	"precision_horz",
+	"precision_vert",
+	"long_seconds",
+	"lat_seconds",
+}
+
+func transformToCloudflareDNSData(recordType string, id string, value interface{}) (newValue interface{}, err error) {
+	switch {
+	case id == "flags":
+		switch {
+		case strings.ToUpper(recordType) == "SRV",
+			strings.ToUpper(recordType) == "CAA",
+			strings.ToUpper(recordType) == "DNSKEY":
+			newValue, err = strconv.Atoi(value.(string))
+		case strings.ToUpper(recordType) == "NAPTR":
+			newValue, err = value.(string), nil
+		}
+	case contains(dnsTypeIntFields, id):
+		newValue, err = strconv.Atoi(value.(string))
+	case contains(dnsTypeFloatFields, id):
+		newValue, err = strconv.ParseFloat(value.(string), 32)
+	default:
+		newValue, err = value.(string), nil
+	}
+
+	return
+}
+
+func suppressPriority(k, old, new string, d *schema.ResourceData) bool {
+	recordType := d.Get("type").(string)
+	if recordType != "MX" && recordType != "URI" {
+		return true
+	}
+	return false
 }

@@ -14,43 +14,15 @@ var allowedSchemes = []string{"HTTP", "HTTPS", "_ALL_"}
 // validateRecordType ensures that the cloudflare record type is valid
 func validateRecordType(t string, proxied bool) error {
 	switch t {
-	case "A":
+	case "A", "AAAA", "CNAME":
 		return nil
-	case "AAAA":
-		return nil
-	case "CNAME":
-		return nil
-	case "TXT":
-		if !proxied {
-			return nil
-		}
-	case "SRV":
-		if !proxied {
-			return nil
-		}
-	case "LOC":
-		if !proxied {
-			return nil
-		}
-	case "MX":
-		if !proxied {
-			return nil
-		}
-	case "NS":
-		if !proxied {
-			return nil
-		}
-	case "SPF":
-		if !proxied {
-			return nil
-		}
-	case "CAA":
+	case "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI":
 		if !proxied {
 			return nil
 		}
 	default:
 		return fmt.Errorf(
-			`Invalid type %q. Valid types are "A", "AAAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF" or "CAA"`, t)
+			`Invalid type %q. Valid types are "A", "AAAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA" or "URI".`, t)
 	}
 
 	return fmt.Errorf("Type %q cannot be proxied", t)
