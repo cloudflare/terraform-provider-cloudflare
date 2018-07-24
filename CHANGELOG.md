@@ -1,4 +1,19 @@
 ## 1.0.1 (Unreleased)
+
+FIXES:
+
+* `cloudflare_ip_ranges` - IPv6 CIDR blocks should return IPv6 addresses [GH-51]
+* `cloudflare_zone_settings_override` - Allow `0` for `browser_cache_ttl` [GH-71]
+* `cloudflare_page_rule` - `forwarding_urls` in page rules are lists [GH-79]
+* `cloudflare_page_rule` - The API supports `active` and `disabled`, not `paused` [GH-84]
+
+IMPROVEMENTS:
+* `cloudflare_zone_settings_override` - Add support for `min_tls_version` [GH-72]
+* `cloudflare_page_rule` - Add support for more settings: `bypass_cache_on_cookie`, `cache_by_device_type`, `cache_deception_armor`, `cache_on_cookie`, `host_header_override`, `polish`, `explicit_cache_control`, `origin_error_page_pass_thru`, `sort_query_string_for_cache`, `resolve_override`, `respect_strong_etag`, `response_buffering`, `true_client_ip_header`, `mirage`, `disable_railgun`, `cache_key`, `waf`, `rocket_loader`, `cname_flattening` [GH-68], [GH-81], [GH-85]
+* `cloudflare_page_rule` - Add `off` setting to `security_level` [GH-81]
+* `cloudflare_record` - DNS Record improvements [GH-97]
+* Various documentation improvements
+
 ## 1.0.0 (April 06, 2018)
 
 BACKWARDS INCOMPATIBILITIES / NOTES:
