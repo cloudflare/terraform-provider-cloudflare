@@ -1,17 +1,17 @@
-## 1.1.0 (Unreleased)
+## 1.1.0 (July 25, 2018)
 
 FIXES:
 
-* `cloudflare_ip_ranges` - IPv6 CIDR blocks should return IPv6 addresses [GH-51]
-* `cloudflare_zone_settings_override` - Allow `0` for `browser_cache_ttl` [GH-71]
-* `cloudflare_page_rule` - `forwarding_urls` in page rules are lists [GH-79]
-* `cloudflare_page_rule` - The API supports `active` and `disabled`, not `paused` [GH-84]
+* `cloudflare_ip_ranges` - IPv6 CIDR blocks should return IPv6 addresses ([#51](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/51))
+* `cloudflare_zone_settings_override` - Allow `0` for `browser_cache_ttl` ([#71](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/71))
+* `cloudflare_page_rule` - `forwarding_urls` in page rules are lists ([#79](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/79))
+* `cloudflare_page_rule` - The API supports `active` and `disabled`, not `paused` ([#84](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/84))
 
 IMPROVEMENTS:
-* `cloudflare_zone_settings_override` - Add support for `min_tls_version` [GH-72]
-* `cloudflare_page_rule` - Add support for more settings: `bypass_cache_on_cookie`, `cache_by_device_type`, `cache_deception_armor`, `cache_on_cookie`, `host_header_override`, `polish`, `explicit_cache_control`, `origin_error_page_pass_thru`, `sort_query_string_for_cache`, `resolve_override`, `respect_strong_etag`, `response_buffering`, `true_client_ip_header`, `mirage`, `disable_railgun`, `cache_key`, `waf`, `rocket_loader`, `cname_flattening` [GH-68], [GH-81], [GH-85]
-* `cloudflare_page_rule` - Add `off` setting to `security_level` [GH-81]
-* `cloudflare_record` - DNS Record improvements [GH-97]
+* `cloudflare_zone_settings_override` - Add support for `min_tls_version` ([#72](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/72))
+* `cloudflare_page_rule` - Add support for more settings: `bypass_cache_on_cookie`, `cache_by_device_type`, `cache_deception_armor`, `cache_on_cookie`, `host_header_override`, `polish`, `explicit_cache_control`, `origin_error_page_pass_thru`, `sort_query_string_for_cache`, `resolve_override`, `respect_strong_etag`, `response_buffering`, `true_client_ip_header`, `mirage`, `disable_railgun`, `cache_key`, `waf`, `rocket_loader`, `cname_flattening` ([#68](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/68)], [[#81](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/81)], [[#85](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/85))
+* `cloudflare_page_rule` - Add `off` setting to `security_level` ([#81](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/81))
+* `cloudflare_record` - DNS Record improvements ([#97](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/97))
 * Various documentation improvements
 
 ## 1.0.0 (April 06, 2018)
