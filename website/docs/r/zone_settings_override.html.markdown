@@ -50,51 +50,51 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 
 * `advanced_ddos`
 * `always_online`
+* `always_use_https`
+* `automatic_https_rewrites`
 * `brotli`
 * `browser_check`
 * `cache_level`
 * `development_mode`
-* `origin_error_page_pass_thru`
-* `sort_query_string_for_cache`
 * `email_obfuscation`
 * `hotlink_protection`
+* `http2`
 * `ip_geolocation`
 * `ipv6`
-* `websockets`
 * `mirage`
 * `opportunistic_encryption`
+* `origin_error_page_pass_thru`
 * `prefetch_preload`
 * `privacy_pass`
 * `response_buffering`
+* `rocket_loader`
 * `server_side_exclude`
+* `sha1_support`
+* `sort_query_string_for_cache`
+* `tls_1_2_only`
+* `tls_1_3`
 * `tls_client_auth`
 * `true_client_ip_header`
 * `waf`
-* `tls_1_2_only`
-* `tls_1_3`
-* `automatic_https_rewrites`
-* `http2`
-* `sha1_support`
-* `always_use_https`. In some cases setting this might give the error `HTTP status 400: content "{\"success\":false,\"errors\":[{\"code\":1016,\"message\":\"An unknown error has occurred\"}],\"messages\":[],\"result\":null}"`. Regardless, the value is set correctly.
 * `webp`. Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
+* `websockets`
 
 ### String Values
 
 * `cache_level`. Allowed values: "aggressive", "basic", "simplified".
+* `cname_flattening`. Allowed values: "flatten_at_root", "flatten_all", "flatten_none".
+* `min_tls_version`. Allowed values: "1.0", "1.1", "1.2", "1.3".
 * `polish`. Allowed values: "off", "lossless", "lossy".
-* `rocket_loader`. Allowed values: "on", "off", "manual".
+* `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
 * `security_level`. Allowed values: "essentially_off", "low", "medium", "high", "under_attack".
 * `ssl`. Allowed values: "off", "flexible", "full", "strict".
-* `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
-* `cname_flattening`.
-* `min_tls_version`. Allowed values: "1.0", "1.1", "1.2", "1.3"
 
 ### Integer Values
 
 * `browser_cache_ttl`
 * `challenge_ttl`
-* `max_upload`
 * `edge_cache_ttl`
+* `max_upload`
 
 ### Nested Objects
 
@@ -111,8 +111,8 @@ The **minify** attribute supports the following fields:
 The **mobile_redirect** attribute supports the following fields:
 
 * `mobile_subdomain` (Required) String value
-* `strip_uri` (Required) true/false
 * `status` (Required) "on"/"off"
+* `strip_uri` (Required) true/false
 
 The **security_header** attribute supports the following fields:
 
