@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudFlareLoadBalancer_Import(t *testing.T) {
+func TestAccCloudflareLoadBalancer_Import(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -23,10 +23,10 @@ func TestAccCloudFlareLoadBalancer_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerExists(name, &loadBalancer),
-					testAccCheckCloudFlareLoadBalancerIDIsValid(name, zone),
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zone),
 				),
 			},
 			{
@@ -35,8 +35,8 @@ func TestAccCloudFlareLoadBalancer_Import(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerExists(name, &loadBalancer),
-					testAccCheckCloudFlareLoadBalancerIDIsValid(name, zone),
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zone),
 				),
 			},
 		},

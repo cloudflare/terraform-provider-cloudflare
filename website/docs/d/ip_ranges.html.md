@@ -1,14 +1,14 @@
 ---
 layout: "cloudflare"
-page_title: "CloudFlare: cloudflare_ip_ranges"
+page_title: "Cloudflare: cloudflare_ip_ranges"
 sidebar_current: "docs-cloudflare-datasource-ip_ranges"
 description: |-
-  Get information on CloudFlare IP ranges.
+  Get information on Cloudflare IP ranges.
 ---
 
 # cloudflare_ip_ranges
 
-Use this data source to get the [IP ranges][1] of CloudFlare edge nodes.
+Use this data source to get the [IP ranges][1] of Cloudflare edge nodes.
 
 ## Example Usage
 
@@ -16,13 +16,14 @@ Use this data source to get the [IP ranges][1] of CloudFlare edge nodes.
 data "cloudflare_ip_ranges" "cloudflare" {}
 
 resource "google_compute_firewall" "allow_cloudflare_ingress" {
-  name    = "from_cloudflare"
+  name    = "from-cloudflare"
   network = "default"
 
-  ingress {
-    ports         = "443"
-    protocol      = "tcp"
-    source_ranges = ["${data.cloudflare_ip_ranges.cloudflare.cidr_blocks}"]
+  source_ranges = ["${data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks}"]
+  
+  allow {
+    ports    = "443"
+    protocol = "tcp"
   }
 }
 ```

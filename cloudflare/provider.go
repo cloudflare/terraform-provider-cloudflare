@@ -19,7 +19,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-				Description: "A registered CloudFlare email address.",
+				Description: "A registered Cloudflare email address.",
 			},
 
 			"token": &schema.Schema{
@@ -118,7 +118,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	if orgId, ok := d.GetOk("org_id"); ok {
-		log.Printf("[INFO] Using specified organization id %s in CloudFlare provider", orgId.(string))
+		log.Printf("[INFO] Using specified organization id %s in Cloudflare provider", orgId.(string))
 		options = append(options, cloudflare.UsingOrganization(orgId.(string)))
 	} else if zoneName, ok := d.GetOk("use_org_from_zone"); ok {
 		zoneId, err := client.ZoneIDByName(zoneName.(string))
@@ -144,10 +144,10 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		}
 
 		if contains(orgIds, zone.Owner.ID) {
-			log.Printf("[INFO] Using organization %#v in CloudFlare provider", zone.Owner)
+			log.Printf("[INFO] Using organization %#v in Cloudflare provider", zone.Owner)
 			options = append(options, cloudflare.UsingOrganization(zone.Owner.ID))
 		} else {
-			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for CloudFlare provider")
+			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for Cloudflare provider")
 		}
 	} else {
 		return client, err
