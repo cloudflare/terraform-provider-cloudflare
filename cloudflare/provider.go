@@ -84,13 +84,13 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"cloudflare_load_balancer_monitor":  resourceCloudFlareLoadBalancerMonitor(),
-			"cloudflare_page_rule":              resourceCloudFlarePageRule(),
-			"cloudflare_record":                 resourceCloudFlareRecord(),
-			"cloudflare_rate_limit":             resourceCloudFlareRateLimit(),
-			"cloudflare_load_balancer":          resourceCloudFlareLoadBalancer(),
-			"cloudflare_load_balancer_pool":     resourceCloudFlareLoadBalancerPool(),
-			"cloudflare_zone_settings_override": resourceCloudFlareZoneSettingsOverride(),
+			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
+			"cloudflare_page_rule":              resourceCloudflarePageRule(),
+			"cloudflare_record":                 resourceCloudflareRecord(),
+			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
+			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
+			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
+			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
 			"cloudflare_account_member":         resourceCloudflareAccountMember(),
 		},
 
