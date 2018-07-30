@@ -86,7 +86,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `min_tls_version`. Allowed values: "1.0", "1.1", "1.2", "1.3".
 * `polish`. Allowed values: "off", "lossless", "lossy".
 * `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
-* `security_level`. Allowed values: "essentially_off", "low", "medium", "high", "under_attack".
+* `security_level`. Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium", "high", "under_attack".
 * `ssl`. Allowed values: "off", "flexible", "full", "strict".
 
 ### Integer Values
