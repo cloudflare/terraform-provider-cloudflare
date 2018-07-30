@@ -15,8 +15,8 @@ Provides a Cloudflare page rule resource.
 ```hcl
 # Add a page rule to the domain
 resource "cloudflare_page_rule" "foobar" {
-  zone = "${var.cloudflare_domain}"
-  target = "sub.${var.cloudflare_domain}/page"
+  zone = "${var.cloudflare_zone}"
+  target = "sub.${var.cloudflare_zone}/page"
   priority = 1
 
   actions = {
@@ -30,7 +30,7 @@ resource "cloudflare_page_rule" "foobar" {
 
 The following arguments are supported:
 
-* `zone` - (Required) The zone to which the page rule should be added.
+* `zone` - (Required) The DNS zone to which the page rule should be added.
 * `target` - (Required) The URL pattern to target with the page rule.
 * `actions` - (Required) The actions taken by the page rule, options given below.
 * `priority` - (Optional) The priority of the page rule among others for this target.
