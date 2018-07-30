@@ -16,7 +16,7 @@ Provides a Cloudflare page rule resource.
 # Add a page rule to the domain
 resource "cloudflare_page_rule" "foobar" {
   zone = "${var.cloudflare_domain}"
-  target = "sub.${self.domain}/page"
+  target = "sub.${var.cloudflare_domain}/page"
   priority = 1
 
   actions = {
