@@ -347,7 +347,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
 		Computed:     true,
-		ValidateFunc: validation.StringInSlice([]string{"essentially_off", "low", "medium", "high", "under_attack"}, false),
+		ValidateFunc: validation.StringInSlice([]string{"off", "essentially_off", "low", "medium", "high", "under_attack"}, false),
 	},
 
 	"server_side_exclude": {

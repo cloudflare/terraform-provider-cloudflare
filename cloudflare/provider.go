@@ -90,6 +90,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
 			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
 			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
+			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
 		},
 
 		ConfigureFunc: providerConfigure,
