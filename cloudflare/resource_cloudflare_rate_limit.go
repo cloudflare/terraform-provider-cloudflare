@@ -176,6 +176,21 @@ func resourceCloudflareRateLimit() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+
+			"correlate": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"by": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"nat"}, true),
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -206,6 +221,8 @@ func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{})
 	if bypassUrlPatterns, ok := d.GetOk("bypass_url_patterns"); ok {
 		newRateLimit.Bypass = expandRateLimitBypass(bypassUrlPatterns.(*schema.Set))
 	}
+
+	newRateLimit.Correlate, _ = expandRateLimitCorrelate(d)
 
 	zoneName := d.Get("zone").(string)
 	zoneId, err := client.ZoneIDByName(zoneName)
@@ -262,6 +279,8 @@ func resourceCloudflareRateLimitUpdate(d *schema.ResourceData, meta interface{})
 	if bypassUrlPatterns, ok := d.GetOk("bypass_url_patterns"); ok {
 		updatedRateLimit.Bypass = expandRateLimitBypass(bypassUrlPatterns.(*schema.Set))
 	}
+
+	updatedRateLimit.Correlate, _ = expandRateLimitCorrelate(d)
 
 	_, err = client.UpdateRateLimit(zoneId, rateLimitId, updatedRateLimit)
 	if err != nil {
@@ -342,6 +361,21 @@ func expandRateLimitAction(d *schema.ResourceData) cloudflare.RateLimitAction {
 	return action
 }
 
+func expandRateLimitCorrelate(d *schema.ResourceData) (correlate cloudflare.RateLimitCorrelate, err error) {
+	v, ok := d.GetOk("correlate")
+	if !ok {
+		return
+	}
+
+	tfCorrelate := v.([]interface{})[0].(map[string]interface{})
+
+	correlate = cloudflare.RateLimitCorrelate{
+		By: tfCorrelate["by"].(string),
+	}
+
+	return
+}
+
 func expandRateLimitBypass(bypassUrlPatterns *schema.Set) []cloudflare.RateLimitKeyValue {
 	bypass := make([]cloudflare.RateLimitKeyValue, bypassUrlPatterns.Len())
 	for i, urlPattern := range bypassUrlPatterns.List() {
@@ -380,6 +414,7 @@ func resourceCloudflareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 		log.Printf("[WARN] Error setting action on rate limit %q: %s", d.Id(), err)
 	}
 
+	d.Set("correlate", flattenRateLimitCorrelate)
 	d.Set("description", rateLimit.Description)
 	d.Set("disabled", rateLimit.Disabled)
 
@@ -448,6 +483,13 @@ func flattenRateLimitAction(cfg cloudflare.RateLimitAction) []map[string]interfa
 		action["response"] = []map[string]interface{}{actionResponse}
 	}
 	return []map[string]interface{}{action}
+}
+
+func flattenRateLimitCorrelate(cfg cloudflare.RateLimitCorrelate) []map[string]interface{} {
+	correlate := map[string]interface{}{
+		"by": cfg.By,
+	}
+	return []map[string]interface{}{correlate}
 }
 
 func resourceCloudflareRateLimitDelete(d *schema.ResourceData, meta interface{}) error {
