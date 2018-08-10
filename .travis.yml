@@ -8,7 +8,6 @@ matrix:
   include:
     - go: 1.x
       env: LATEST=true
-    - go: 1.7.x
     - go: 1.8.x
     - go: 1.9.x
     - go: 1.10.x
