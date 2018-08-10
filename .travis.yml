@@ -3,8 +3,18 @@ sudo: required
 services:
 - docker
 language: go
-go:
-- 1.8.1
+matrix:
+  fast_finish: true
+  include:
+    - go: 1.x
+      env: LATEST=true
+    - go: 1.7.x
+    - go: 1.8.x
+    - go: 1.9.x
+    - go: 1.10.x
+    - go: tip
+  allow_failures:
+    - go: tip
 
 install:
 # This script is used by the Travis build to install a cookie for
@@ -23,7 +33,3 @@ script:
 branches:
   only:
   - master
-matrix:
-  fast_finish: true
-  allow_failures:
-  - go: tip
