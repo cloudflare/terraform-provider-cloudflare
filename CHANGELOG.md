@@ -1,14 +1,14 @@
-## 1.2.0 (Unreleased)
+## 1.2.0 (August 13, 2018)
 
 **Improvements:**
-* **New Resource:** `cloudflare_waf_rule` [GH-98]
-* `cloudflare_zone_settings_override` - Add `off` as Security Level setting [GH-99]
-* `resource_cloudflare_rate_limit` - Add nat support [GH-96]
-* `resource_cloudflare_zone_settings_override` - Add `zrt` as a value for the `tls_1_3` setting [GH-106]
+* **New Resource:** `cloudflare_waf_rule` ([#98](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/98))
+* `cloudflare_zone_settings_override` - Add `off` as Security Level setting ([#99](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/99))
+* `resource_cloudflare_rate_limit` - Add nat support ([#96](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/96))
+* `resource_cloudflare_zone_settings_override` - Add `zrt` as a value for the `tls_1_3` setting ([#106](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/106))
 * Minor documentation improvements
 
 **Fixes:**
-* `cloudflare_record` - Setting a DNS record's `proxied` flag to false stopped working [GH-103]
+* `cloudflare_record` - Setting a DNS record's `proxied` flag to false stopped working ([#103](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/103))
 
 ## 1.1.0 (July 25, 2018)
 
