@@ -1,12 +1,12 @@
 ---
 layout: "cloudflare"
-page_title: "Cloudflare: cloudflare_page rule"
+page_title: "Cloudflare: cloudflare_page_rule"
 sidebar_current: "docs-cloudflare-resource-page_rule"
 description: |-
   Provides a Cloudflare page rule resource.
 ---
 
-# cloudflare_page rule
+# cloudflare_page_rule
 
 Provides a Cloudflare page rule resource.
 
