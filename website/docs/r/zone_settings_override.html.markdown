@@ -72,7 +72,6 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `sha1_support`
 * `sort_query_string_for_cache`
 * `tls_1_2_only`
-* `tls_1_3`
 * `tls_client_auth`
 * `true_client_ip_header`
 * `waf`
@@ -88,6 +87,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
 * `security_level`. Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium", "high", "under_attack".
 * `ssl`. Allowed values: "off", "flexible", "full", "strict".
+* `tls_1_3`. Allowed values: "off", "on", "zrt".
 
 ### Integer Values
 
