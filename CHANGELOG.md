@@ -1,4 +1,15 @@
 ## 1.2.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_waf_rule` [GH-98]
+* `cloudflare_zone_settings_override` - Add `off` as Security Level setting [GH-99]
+* `resource_cloudflare_rate_limit` - Add nat support [GH-96]
+* `resource_cloudflare_zone_settings_override` - Add `zrt` as a value for the `tls_1_3` setting [GH-106]
+* Minor documentation improvements
+
+**Fixes:**
+* `cloudflare_record` - Setting a DNS record's `proxied` flag to false stopped working [GH-103]
+
 ## 1.1.0 (July 25, 2018)
 
 FIXES:
