@@ -1,0 +1,92 @@
+---
+layout: "cloudflare"
+page_title: "Cloudflare: cloudflare_access_rule"
+sidebar_current: "docs-cloudflare-resource-access-rule"
+description: |-
+  Provides a Cloudflare IP Firewall Access Rule resource.
+---
+
+# cloudflare_access_rule
+
+Provides a Cloudflare IP Firewall Access Rule resource. Access control can be applied on basis of IP addresses, IP ranges, AS numbers or countries.
+
+## Example Usage
+
+```hcl
+# Challenge requests coming from known Tor exit nodes.
+resource "cloudflare_access_rule" "tor_exit_nodes" {
+  notes = "Requests coming from known Tor exit nodes"
+  mode = "challenge"
+  configuration {
+    target = "country"
+    value = "T1"
+  }
+}
+
+# Whitelist (sic!) requests coming from Antarctica, but only for single zone.
+resource "cloudflare_access_rule" "antarctica" {
+  notes = "Requests coming from known Tor exit nodes"
+  mode = "whitelist"
+  configuration {
+    target = "country"
+    value = "AQ"
+  }
+  zone = "example.com"
+}
+
+# Whitelist office's network IP ranges on all Organization's zones (or other lists of resources).
+# Resulting Terraform state will be a list of resources.
+provider "cloudflare" {
+  # ... other provider configuration
+  org_id = "d41d8cd98f00b204e9800998ecf8427e"
+}
+variable "my_office" {
+  type = "list"
+  default = ["192.0.2.0/24", "198.51.100.0/24", "2001:db8::/56"]
+}
+resource "cloudflare_access_rule" "office_network" {
+  count = "${length(var.my_office)}"
+  notes = "Requests coming from office network"
+  mode = "whitelist"
+  configuration {
+    target = "ip_range"
+    value = "${element(var.my_office, count.index)}"
+  }
+}
+```
+
+## Argument Reference
+
+The following arguments are supported:
+
+* `zone` - (Optional) The DNS zone to which the access rule should be added. Will be resolved to `zone_id` upon creation.
+* `zone_id` - (Optional) The DNS zone to which the access rule should be added.
+* `mode` - (Required) The action to apply to a matched request. Allowed values: "block", "challenge", "whitelist", "js_challenge"
+* `notes` - (Optional) A personal note about the rule. Typically used as a reminder or explanation for the rule.
+* `configuration` - (Required) Rule configuration to apply to a matched request. It's a complex value. See description below.
+
+**Note:** If both `zone` and `zone_id` are empty, then access rule will be set to User's or Organization's account and apply to all their zones.
+
+The **configuration** block supports:
+
+* `target` - (Required) The request property to target. Allowed values: "ip", "ip_range", "asn", "country"
+* `value` - (Required) The value to target. Depends on target's type.
+
+## Attributes Reference
+
+The following attributes are exported:
+
+* `id` - The access rule ID.
+* `zone_id` - The DNS zone ID.
+
+## Import
+
+Records can be imported using a composite ID formed of zone name and record ID, e.g.
+
+```
+$ terraform import cloudflare_access_rule.default d41d8cd98f00b204e9800998ecf8427e
+```
+
+where:
+
+* `d41d8cd98f00b204e9800998ecf8427e` - access rule ID as returned by [API](https://api.cloudflare.com/#user-level-firewall-access-rule-list-access-rules)

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"fmt"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -83,14 +84,15 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
 			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
-			"cloudflare_page_rule":              resourceCloudflarePageRule(),
-			"cloudflare_record":                 resourceCloudflareRecord(),
-			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
-			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
 			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
-			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
+			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
+			"cloudflare_page_rule":              resourceCloudflarePageRule(),
+			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
+			"cloudflare_record":                 resourceCloudflareRecord(),
 			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
+			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
 		},
 
 		ConfigureFunc: providerConfigure,
