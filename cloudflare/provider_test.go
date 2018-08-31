@@ -41,3 +41,9 @@ func testAccPreCheck(t *testing.T) {
 		t.Fatal("CLOUDFLARE_DOMAIN must be set for acceptance tests. The domain is used to create and destroy record against.")
 	}
 }
+
+func testAccPreCheckOrg(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_ORG_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_ORG_ID must be set for this acceptance test")
+	}
+}

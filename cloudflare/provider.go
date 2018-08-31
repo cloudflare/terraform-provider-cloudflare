@@ -92,6 +92,8 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
 			"cloudflare_record":                 resourceCloudflareRecord(),
 			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
+			"cloudflare_worker_route":           resourceCloudflareWorkerRoute(),
+			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),
 			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
 		},
 
