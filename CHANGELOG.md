@@ -1,4 +1,8 @@
 ## 1.3.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_access_rule` [GH-64]
+
 ## 1.2.0 (August 13, 2018)
 
 **Improvements:**
