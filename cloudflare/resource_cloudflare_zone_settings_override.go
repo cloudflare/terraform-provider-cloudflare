@@ -544,7 +544,7 @@ func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetti
 			log.Printf("[WARN] Value not in schema returned from API zone settings (is it new?) - %q : %#v", s.ID, s.Value)
 			continue
 		}
-		if _, ok := d.GetOk(fmt.Sprintf("settings.0.%s", s.ID)); !ok && !flattenAll {
+		if _, ok := d.GetOkExists(fmt.Sprintf("settings.0.%s", s.ID)); !ok && !flattenAll {
 			// don't put settings that were never specified in the update request
 			continue
 		}
@@ -591,7 +591,7 @@ func flattenReadOnlyZoneSettings(settings []cloudflare.ZoneSetting) []string {
 func resourceCloudflareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	if cfg, ok := d.GetOk("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
+	if cfg, ok := d.GetOkExists("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
 
 		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
 		zoneSettings, err := expandOverriddenZoneSettings(d, "settings", readOnlySettings)
@@ -623,7 +623,7 @@ func expandOverriddenZoneSettings(d *schema.ResourceData, settingsKey string, re
 
 		// we only update if the user set the value non-empty before, and its different from the read value
 		// note that if user removes an attribute, we don't do anything
-		if settingValue, ok := d.GetOk(fmt.Sprintf(keyFormat, k)); ok && d.HasChange(fmt.Sprintf(keyFormat, k)) {
+		if settingValue, ok := d.GetOkExists(fmt.Sprintf(keyFormat, k)); ok && d.HasChange(fmt.Sprintf(keyFormat, k)) {
 
 			zoneSettingValue, err := expandZoneSetting(d, keyFormat, k, settingValue, readOnlySettings)
 			if err != nil {
@@ -690,7 +690,7 @@ func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settin
 func resourceCloudflareZoneSettingsOverrideDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	if cfg, ok := d.GetOk("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
+	if cfg, ok := d.GetOkExists("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
 
 		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
 
