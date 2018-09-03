@@ -3,6 +3,9 @@
 **Improvements:**
 * **New Resource:** `cloudflare_access_rule` [GH-64]
 
+**Fixes:**
+* `cloudflare_zone_settings_override` -  Change Zone Settings Override to use GetOkExists [GH-107]
+
 ## 1.2.0 (August 13, 2018)
 
 **Improvements:**
