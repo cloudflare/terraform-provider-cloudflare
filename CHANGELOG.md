@@ -1,10 +1,10 @@
-## 1.3.0 (Unreleased)
+## 1.3.0 (September 04, 2018)
 
 **Improvements:**
-* **New Resource:** `cloudflare_access_rule` [GH-64]
+* **New Resource:** `cloudflare_access_rule` ([#64](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/64))
 
 **Fixes:**
-* `cloudflare_zone_settings_override` -  Change Zone Settings Override to use GetOkExists [GH-107]
+* `cloudflare_zone_settings_override` -  Change Zone Settings Override to use GetOkExists ([#107](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/107))
 
 ## 1.2.0 (August 13, 2018)
 
