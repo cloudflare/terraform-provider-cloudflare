@@ -27,27 +27,28 @@ func TestAccCloudflareWorkerScript_SingleScriptNonEnt(t *testing.T) {
 		os.Setenv("CLOUDFLARE_ORG_ID", "")
 	}
 
-	testAccCloudflareWorkerScript_SingleScript(t)
+	testAccCloudflareWorkerScript_SingleScript(t, nil)
 }
 
 // ENT customers should still be able to use the single-script
 // configuration format if they want to
 func TestAccCloudflareWorkerScript_SingleScriptEnt(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_ORG_ID") == "" {
-		t.Fatal("CLOUDFLARE_ORG_ID must be set to test ENT-only behavior")
-	}
-
-	testAccCloudflareWorkerScript_SingleScript(t)
+	testAccCloudflareWorkerScript_SingleScript(t, testAccPreCheckOrg)
 }
 
-func testAccCloudflareWorkerScript_SingleScript(t *testing.T) {
+func testAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckFunc) {
 	var script cloudflare.WorkerScript
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := acctest.RandString(10)
 	name := "cloudflare_worker_script." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			if preCheck != nil {
+				preCheck(t)
+			}
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
@@ -94,16 +95,15 @@ resource "cloudflare_worker_script" "%[2]s" {
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	t.Parallel()
 
-	if os.Getenv("CLOUDFLARE_ORG_ID") == "" {
-		t.Fatal("CLOUDFLARE_ORG_ID must be set to test multi-script endpoints")
-	}
-
 	var script cloudflare.WorkerScript
 	rnd := acctest.RandString(10)
 	name := "cloudflare_worker_script." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckOrg(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{

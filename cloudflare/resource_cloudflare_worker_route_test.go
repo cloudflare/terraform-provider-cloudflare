@@ -26,20 +26,16 @@ func TestAccCloudflareWorkerRoute_SingleScriptNonEnt(t *testing.T) {
 		os.Setenv("CLOUDFLARE_ORG_ID", "")
 	}
 
-	testAccCloudflareWorkerRoute_SingleScript(t)
+	testAccCloudflareWorkerRoute_SingleScript(t, nil)
 }
 
 // ENT customers should still be able to use the single-script
 // configuration format if they want to
 func TestAccCloudflareWorkerRoute_SingleScriptEnt(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_ORG_ID") == "" {
-		t.Fatal("CLOUDFLARE_ORG_ID must be set to test ENT-only behavior")
-	}
-
-	testAccCloudflareWorkerRoute_SingleScript(t)
+	testAccCloudflareWorkerRoute_SingleScript(t, testAccPreCheckOrg)
 }
 
-func testAccCloudflareWorkerRoute_SingleScript(t *testing.T) {
+func testAccCloudflareWorkerRoute_SingleScript(t *testing.T, preCheck preCheckFunc) {
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	routeRnd := acctest.RandString(10)
@@ -52,7 +48,12 @@ func testAccCloudflareWorkerRoute_SingleScript(t *testing.T) {
 	scriptRnd := acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			if preCheck != nil {
+				preCheck(t)
+			}
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
@@ -114,10 +115,6 @@ resource "cloudflare_worker_script" "%[3]s" {
 func TestAccCloudflareWorkerRoute_MultiScriptEnt(t *testing.T) {
 	t.Parallel()
 
-	if os.Getenv("CLOUDFLARE_ORG_ID") == "" {
-		t.Fatal("CLOUDFLARE_ORG_ID must be set to test multi-script endpoints")
-	}
-
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	routeRnd := acctest.RandString(10)
@@ -130,7 +127,10 @@ func TestAccCloudflareWorkerRoute_MultiScriptEnt(t *testing.T) {
 	scriptRnd := acctest.RandString(10)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckOrg(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
@@ -190,10 +190,6 @@ resource "cloudflare_worker_script" "%[3]s" {
 func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
 	t.Parallel()
 
-	if os.Getenv("CLOUDFLARE_ORG_ID") == "" {
-		t.Fatal("CLOUDFLARE_ORG_ID must be set to test multi-script endpoints")
-	}
-
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	routeRnd := acctest.RandString(10)
@@ -201,7 +197,10 @@ func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
 	pattern := fmt.Sprintf("%s/%s", zone, acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckOrg(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
