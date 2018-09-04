@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/pkg/errors"
@@ -20,7 +21,7 @@ type WorkerRoute struct {
 	ID      string `json:"id,omitempty"`
 	Pattern string `json:"pattern"`
 	Enabled bool   `json:"enabled"`
-	Script  string `json:"script"`
+	Script  string `json:"script,omitempty"`
 }
 
 // WorkerRoutesResponse embeds Response struct and slice of WorkerRoutes
@@ -171,8 +172,9 @@ func (api *API) UploadWorker(requestParams *WorkerRequestParams, data string) (W
 		return api.uploadWorkerWithName(requestParams.ScriptName, data)
 	}
 	uri := "/zones/" + requestParams.ZoneID + "/workers/script"
-	api.headers.Add("Content-Type", "application/javascript")
-	res, err := api.makeRequest("PUT", uri, []byte(data))
+	headers := make(http.Header)
+	headers.Set("Content-Type", "application/javascript")
+	res, err := api.makeRequestWithHeaders("PUT", uri, []byte(data), headers)
 	var r WorkerScriptResponse
 	if err != nil {
 		return r, errors.Wrap(err, errMakeRequestError)
@@ -193,8 +195,9 @@ func (api *API) uploadWorkerWithName(scriptName string, data string) (WorkerScri
 		return WorkerScriptResponse{}, errors.New("organization ID required for enterprise only request")
 	}
 	uri := "/accounts/" + api.OrganizationID + "/workers/scripts/" + scriptName
-	api.headers.Add("Content-Type", "application/javascript")
-	res, err := api.makeRequest("PUT", uri, []byte(data))
+	headers := make(http.Header)
+	headers.Set("Content-Type", "application/javascript")
+	res, err := api.makeRequestWithHeaders("PUT", uri, []byte(data), headers)
 	var r WorkerScriptResponse
 	if err != nil {
 		return r, errors.Wrap(err, errMakeRequestError)
@@ -206,18 +209,20 @@ func (api *API) uploadWorkerWithName(scriptName string, data string) (WorkerScri
 	return r, nil
 }
 
-func getRoutesPathComponent(api *API) string {
-	if api.OrganizationID == "" {
-		return "filters"
-	}
-	return "routes"
-}
-
 // CreateWorkerRoute creates worker route for a zone
 //
 // API reference: https://api.cloudflare.com/#worker-filters-create-filter
 func (api *API) CreateWorkerRoute(zoneID string, route WorkerRoute) (WorkerRouteResponse, error) {
-	pathComponent := getRoutesPathComponent(api)
+	// Check whether a script name is defined in order to determine whether
+	// to use the single-script or multi-script endpoint.
+	pathComponent := "filters"
+	if route.Script != "" {
+		if api.OrganizationID == "" {
+			return WorkerRouteResponse{}, errors.New("organization ID required for enterprise only request")
+		}
+		pathComponent = "routes"
+	}
+
 	uri := "/zones/" + zoneID + "/workers/" + pathComponent
 	res, err := api.makeRequest("POST", uri, route)
 	if err != nil {
@@ -235,8 +240,9 @@ func (api *API) CreateWorkerRoute(zoneID string, route WorkerRoute) (WorkerRoute
 //
 // API reference: https://api.cloudflare.com/#worker-filters-delete-filter
 func (api *API) DeleteWorkerRoute(zoneID string, routeID string) (WorkerRouteResponse, error) {
-	pathComponent := getRoutesPathComponent(api)
-	uri := "/zones/" + zoneID + "/workers/" + pathComponent + "/" + routeID
+	// For deleting a route, it doesn't matter whether we use the
+	// single-script or multi-script endpoint
+	uri := "/zones/" + zoneID + "/workers/filters/" + routeID
 	res, err := api.makeRequest("DELETE", uri, nil)
 	if err != nil {
 		return WorkerRouteResponse{}, errors.Wrap(err, errMakeRequestError)
@@ -253,7 +259,10 @@ func (api *API) DeleteWorkerRoute(zoneID string, routeID string) (WorkerRouteRes
 //
 // API reference: https://api.cloudflare.com/#worker-filters-list-filters
 func (api *API) ListWorkerRoutes(zoneID string) (WorkerRoutesResponse, error) {
-	pathComponent := getRoutesPathComponent(api)
+	pathComponent := "filters"
+	if api.OrganizationID != "" {
+		pathComponent = "routes"
+	}
 	uri := "/zones/" + zoneID + "/workers/" + pathComponent
 	res, err := api.makeRequest("GET", uri, nil)
 	if err != nil {
@@ -264,6 +273,15 @@ func (api *API) ListWorkerRoutes(zoneID string) (WorkerRoutesResponse, error) {
 	if err != nil {
 		return WorkerRoutesResponse{}, errors.Wrap(err, errUnmarshalError)
 	}
+	for i := range r.Routes {
+		route := &r.Routes[i]
+		// The Enabled flag will not be set in the multi-script API response
+		// so we manually set it to true if the script name is not empty
+		// in case any multi-script customers rely on the Enabled field
+		if route.Script != "" {
+			route.Enabled = true
+		}
+	}
 	return r, nil
 }
 
@@ -271,7 +289,15 @@ func (api *API) ListWorkerRoutes(zoneID string) (WorkerRoutesResponse, error) {
 //
 // API reference: https://api.cloudflare.com/#worker-filters-update-filter
 func (api *API) UpdateWorkerRoute(zoneID string, routeID string, route WorkerRoute) (WorkerRouteResponse, error) {
-	pathComponent := getRoutesPathComponent(api)
+	// Check whether a script name is defined in order to determine whether
+	// to use the single-script or multi-script endpoint.
+	pathComponent := "filters"
+	if route.Script != "" {
+		if api.OrganizationID == "" {
+			return WorkerRouteResponse{}, errors.New("organization ID required for enterprise only request")
+		}
+		pathComponent = "routes"
+	}
 	uri := "/zones/" + zoneID + "/workers/" + pathComponent + "/" + routeID
 	res, err := api.makeRequest("PUT", uri, route)
 	if err != nil {
