@@ -3,13 +3,12 @@ layout: "cloudflare"
 page_title: "Provider: Cloudflare"
 sidebar_current: "docs-cloudflare-index"
 description: |-
-  The Cloudflare provider is used to interact with the DNS resources supported by Cloudflare. The provider needs to be configured with the proper credentials before it can be used.
+  The Cloudflare provider is used to interact with resources supported by Cloudflare. The provider needs to be configured with the proper credentials before it can be used.
 ---
 
 # Cloudflare Provider
 
-The Cloudflare provider is used to interact with the
-DNS resources supported by Cloudflare. The provider needs to be configured
+The Cloudflare provider is used to interact with resources supported by Cloudflare. The provider needs to be configured
 with the proper credentials before it can be used.
 
 Use the navigation to the left to read about the available resources.
