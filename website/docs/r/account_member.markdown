@@ -8,7 +8,7 @@ description: |-
 
 # cloudflare_account_member
 
-Provides a resource which manages Cloudflare account memebers.
+Provides a resource which manages Cloudflare account members.
 
 ## Example Usage
 
