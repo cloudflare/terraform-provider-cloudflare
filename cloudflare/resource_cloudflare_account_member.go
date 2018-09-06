@@ -3,15 +3,11 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 )
-
-// This needs to be hooked up to the provider schema instead.
-var cloudflareOrgID = os.Getenv("CLOUDFLARE_ORG_ID")
 
 func resourceCloudflareAccountMember() *schema.Resource {
 	return &schema.Resource{
@@ -39,7 +35,7 @@ func resourceCloudflareAccountMember() *schema.Resource {
 func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	_, err := client.AccountMember(cloudflareOrgID, d.Id())
+	_, err := client.AccountMember(client.OrganizationID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Member not found") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -60,7 +56,7 @@ func resourceCloudflareAccountMemberDelete(d *schema.ResourceData, meta interfac
 
 	log.Printf("[INFO] Deleting Cloudflare account member ID: %s", d.Id())
 
-	err := client.DeleteAccountMember(cloudflareOrgID, d.Id())
+	err := client.DeleteAccountMember(client.OrganizationID, d.Id())
 	if err != nil {
 		return fmt.Errorf("error deleting Cloudflare account member: %s", err)
 	}
@@ -79,7 +75,7 @@ func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interfac
 		accountMemberRoleIDs = append(accountMemberRoleIDs, roleID.(string))
 	}
 
-	r, err := client.CreateAccountMember(cloudflareOrgID, memberEmailAddress, accountMemberRoleIDs)
+	r, err := client.CreateAccountMember(client.OrganizationID, memberEmailAddress, accountMemberRoleIDs)
 
 	if err != nil {
 		return fmt.Errorf("error creating Cloudflare account member: %s", err)
@@ -100,12 +96,12 @@ func resourceCloudflareAccountMemberUpdate(d *schema.ResourceData, meta interfac
 	memberRoles := d.Get("role_ids").([]interface{})
 
 	for _, r := range memberRoles {
-		accountRole, _ := client.AccountRole(cloudflareOrgID, r.(string))
+		accountRole, _ := client.AccountRole(client.OrganizationID, r.(string))
 		accountRoles = append(accountRoles, accountRole)
 	}
 
 	updatedAccountMember := cloudflare.AccountMember{Roles: accountRoles}
-	_, err := client.UpdateAccountMember(cloudflareOrgID, d.Id(), updatedAccountMember)
+	_, err := client.UpdateAccountMember(client.OrganizationID, d.Id(), updatedAccountMember)
 	if err != nil {
 		return fmt.Errorf("failed to update Cloudflare account member: %s", err)
 	}
