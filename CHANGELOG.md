@@ -1,4 +1,9 @@
-## 1.3.1 (Unreleased)
+## 1.4.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_worker_route` [GH-110]
+* **New Resource:** `cloudflare_worker_script` [GH-110]
+
 ## 1.3.0 (September 04, 2018)
 
 **Improvements:**
