@@ -25,10 +25,6 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"zone_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"paused": {
 				Type:     schema.TypeBool,
 				Default:  false,
@@ -71,13 +67,12 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 
 func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zone := d.Get("zone").(string)
+	zoneName := d.Get("zone").(string)
 
-	zoneID, err := client.ZoneIDByName(zone)
+	zoneId, err := client.ZoneIDByName(zoneName)
 	if err != nil {
 		return err
 	}
-	d.Set("zone_id", zoneID)
 
 	var newZoneLockdown cloudflare.ZoneLockdown
 
@@ -101,10 +96,10 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 
 	var r *cloudflare.ZoneLockdownResponse
 
-	r, err = client.CreateZoneLockdown(zoneID, newZoneLockdown)
+	r, err = client.CreateZoneLockdown(zoneId, newZoneLockdown)
 
 	if err != nil {
-		return fmt.Errorf("error creating zone lockdown for zone %q: %s", zone, err)
+		return fmt.Errorf("error creating zone lockdown for zone %q: %s", zoneName, err)
 	}
 
 	if r.Result.ID == "" {
@@ -120,10 +115,15 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 
 func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneName := d.Get("zone").(string)
 
-	log.Printf("[DEBUG] zoneID: %s", zoneID)
-	zoneLockdownResponse, err := client.ZoneLockdown(zoneID, d.Id())
+	zoneId, err := client.ZoneIDByName(zoneName)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] zoneId: %s", zoneId)
+	zoneLockdownResponse, err := client.ZoneLockdown(zoneId, d.Id())
 
 	log.Printf("[DEBUG] zoneLockdownResponse: %#v", zoneLockdownResponse)
 	log.Printf("[DEBUG] zoneLockdownResponse error: %#v", err)
@@ -163,7 +163,12 @@ func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}
 
 func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneName := d.Get("zone").(string)
+
+	zoneId, err := client.ZoneIDByName(zoneName)
+	if err != nil {
+		return err
+	}
 
 	var newZoneLockdown cloudflare.ZoneLockdown
 
@@ -187,7 +192,7 @@ func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface
 
 	var r *cloudflare.ZoneLockdownResponse
 
-	r, err := client.UpdateZoneLockdown(zoneID, d.Id(), newZoneLockdown)
+	r, err = client.UpdateZoneLockdown(zoneId, d.Id(), newZoneLockdown)
 
 	if err != nil {
 		return fmt.Errorf("error updating zone lockdown for zone %q: %s", d.Get("zone").(string), err)
@@ -206,13 +211,16 @@ func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface
 
 func resourceCloudflareZoneLockdownDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneName := d.Get("zone").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Zone Lockdown: id %s for zone_id %s", d.Id(), zoneID)
+	zoneId, err := client.ZoneIDByName(zoneName)
+	if err != nil {
+		return err
+	}
 
-	var err error
+	log.Printf("[INFO] Deleting Cloudflare Zone Lockdown: id %s for zone %s", d.Id(), zoneName)
 
-	_, err = client.DeleteZoneLockdown(zoneID, d.Id())
+	_, err = client.DeleteZoneLockdown(zoneId, d.Id())
 
 	if err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Zone Lockdown: %s", err)
@@ -249,12 +257,11 @@ func resourceCloudflareZoneLockdownImport(d *schema.ResourceData, meta interface
 		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneName/zoneLockdownId\"", d.Id())
 	}
 	zoneId, err := client.ZoneIDByName(zoneName)
-	d.Set("zone_id", zoneId)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't find zone %q while trying to import zone lockdown %q : %q", zoneName, d.Id(), err)
 	}
 	log.Printf("[DEBUG] zone: %s", zoneName)
-	log.Printf("[DEBUG] zoneID: %s", zoneId)
+	log.Printf("[DEBUG] zoneId: %s", zoneId)
 	log.Printf("[DEBUG] Resource ID : %s", zoneLockdownId)
 	return []*schema.ResourceData{d}, nil
 }
