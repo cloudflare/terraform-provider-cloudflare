@@ -45,7 +45,6 @@ The following arguments are supported:
 The following attributes are exported:
 
 * `id` - The access rule ID.
-* `zone_id` - The DNS zone ID.
 
 ## Import
 
