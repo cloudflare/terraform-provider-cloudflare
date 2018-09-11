@@ -11,6 +11,8 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+var pluginVersion string
+
 // Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
@@ -154,6 +156,10 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		}
 	} else {
 		return client, err
+	}
+
+	if pluginVersion != "" {
+		options = append(options, cloudflare.UserAgent("terraform-provider-cloudflare/"+pluginVersion))
 	}
 
 	config = Config{
