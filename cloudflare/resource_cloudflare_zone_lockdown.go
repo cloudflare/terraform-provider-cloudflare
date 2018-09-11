@@ -97,7 +97,7 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 		newZoneLockdown.Configurations = expandZoneLockdownConfig(configurations.(*schema.Set))
 	}
 
-	log.Printf("[INFO] Creating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown)
+	log.Printf("[DEBUG] Creating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown)
 
 	var r *cloudflare.ZoneLockdownResponse
 
