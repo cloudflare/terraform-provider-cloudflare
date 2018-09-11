@@ -92,7 +92,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 						"polish": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"off","lossless","lossy"}, false),
 						},
 
 						"explicit_cache_control": {
