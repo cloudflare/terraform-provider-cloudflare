@@ -55,6 +55,7 @@ Action blocks support the following:
 * `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `mirage` - (Optional) Whether this action is `"on"` or `"off"`.
 * `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
+* `polish` - (Optional) Whether this action is `"off"`, `"lossless"` or `"lossy"`.
 * `resolve_override` - (Optional) Overridden origin server name.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"on"`, `"off"`.
 * `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
