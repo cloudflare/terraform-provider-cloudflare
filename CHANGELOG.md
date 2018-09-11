@@ -1,8 +1,8 @@
-## 1.4.0 (Unreleased)
+## 1.4.0 (September 11, 2018)
 
 **Improvements:**
-* **New Resource:** `cloudflare_worker_route` [GH-110]
-* **New Resource:** `cloudflare_worker_script` [GH-110]
+* **New Resource:** `cloudflare_worker_route` ([#110](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/110))
+* **New Resource:** `cloudflare_worker_script` ([#110](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/110))
 
 ## 1.3.0 (September 04, 2018)
 
