@@ -89,12 +89,6 @@ func resourceCloudflarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
-						"polish": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-						},
-
 						"explicit_cache_control": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -253,6 +247,12 @@ func resourceCloudflarePageRule() *schema.Resource {
 						"host_header_override": {
 							Type:     schema.TypeString,
 							Optional: true,
+						},
+
+						"polish": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"off", "lossless", "lossy"}, false),
 						},
 
 						"resolve_override": {
@@ -499,7 +499,6 @@ var pageRuleAPIOnOffFields = []string{
 	"mirage",
 	"opportunistic_encryption",
 	"origin_error_page_pass_thru",
-	"polish",
 	"respect_strong_etag",
 	"response_buffering",
 	"rocket_loader",
@@ -525,6 +524,7 @@ var pageRuleAPIStringFields = []string{
 	"cache_level",
 	"cache_on_cookie",
 	"host_header_override",
+	"polish",
 	"resolve_override",
 	"security_level",
 	"ssl",
