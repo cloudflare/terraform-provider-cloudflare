@@ -1,4 +1,12 @@
 ## 1.5.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_zone_lockdown` [GH-115]
+
+**Fixes:**
+* Send User-Agent header with name and version when contacting API
+* `cloudflare_page_rule` - Fix page rule polish (off, lossless or lossy) [GH-116]
+
 ## 1.4.0 (September 11, 2018)
 
 **Improvements:**
