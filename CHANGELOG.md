@@ -1,11 +1,11 @@
-## 1.5.0 (Unreleased)
+## 1.5.0 (September 21, 2018)
 
 **Improvements:**
-* **New Resource:** `cloudflare_zone_lockdown` [GH-115]
+* **New Resource:** `cloudflare_zone_lockdown` ([#115](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/115))
 
 **Fixes:**
 * Send User-Agent header with name and version when contacting API
-* `cloudflare_page_rule` - Fix page rule polish (off, lossless or lossy) [GH-116]
+* `cloudflare_page_rule` - Fix page rule polish (off, lossless or lossy) ([#116](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/116))
 
 ## 1.4.0 (September 11, 2018)
 
