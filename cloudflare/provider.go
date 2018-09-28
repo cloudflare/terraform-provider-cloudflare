@@ -87,6 +87,8 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
+			"cloudflare_filter":                 resourceCloudflareFilter(),
+			"cloudflare_firewall_rule":          resourceCloudflareFirewallRule(),
 			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
 			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
 			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
