@@ -91,7 +91,7 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
-		newFirewallRule.Priority = priority.(string)
+		newFirewallRule.Priority = priority.(int)
 	}
 
 	if filterID, ok := d.GetOk("filter_id"); ok {
