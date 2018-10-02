@@ -155,6 +155,7 @@ func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface
 	zoneID := d.Get("zone_id").(string)
 
 	var newFirewallRule cloudflare.FirewallRule
+	newFirewallRule.ID = d.Id()
 
 	if paused, ok := d.GetOk("paused"); ok {
 		newFirewallRule.Paused = paused.(bool)
@@ -165,11 +166,11 @@ func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface
 	}
 
 	if action, ok := d.GetOk("action"); ok {
-		newFirewallRule.Description = action.(string)
+		newFirewallRule.Action = action.(string)
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
-		newFirewallRule.Priority = priority.(string)
+		newFirewallRule.Priority = priority.(int)
 	}
 
 	if filterID, ok := d.GetOk("filter_id"); ok {
