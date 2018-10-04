@@ -1,4 +1,9 @@
 ## 1.6.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_filter`
+* **New Resource:** `cloudflare_firewall_rule`
+
 ## 1.5.0 (September 21, 2018)
 
 **Improvements:**
