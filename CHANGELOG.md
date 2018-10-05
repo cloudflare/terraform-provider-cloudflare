@@ -1,4 +1,4 @@
-## 1.6.0 (Unreleased)
+## 1.6.0 (October 05, 2018)
 
 **Improvements:**
 * **New Resource:** `cloudflare_filter`
