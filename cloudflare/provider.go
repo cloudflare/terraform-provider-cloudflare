@@ -100,6 +100,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),
 			"cloudflare_zone_lockdown":          resourceCloudflareZoneLockdown(),
 			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
+			"cloudflare_account_member":         resourceCloudflareAccountMember(),
 		},
 
 		ConfigureFunc: providerConfigure,
