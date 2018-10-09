@@ -1,7 +1,7 @@
-## 1.7.0 (Unreleased)
+## 1.7.0 (October 09, 2018)
 
 **Improvements:**
-* **New Resource:** `cloudflare_account_member` [GH-78]
+* **New Resource:** `cloudflare_account_member` ([#78](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/78))
 
 ## 1.6.0 (October 05, 2018)
 
