@@ -28,3 +28,16 @@ The following arguments are supported:
 
 * `email_address` - (Required) The email address of the user who you wish to manage. Note: Following creation, this field becomes read only via the API and cannot be updated.
 * `role_ids` - (Required) Array of account role IDs that you want to assign to a member.
+
+## Import
+
+Account members can be imported using a composite ID formed of account ID and account member ID, e.g.
+
+```
+$ terraform import cloudflare_access_rule.example_user d41d8cd98f00b204e9800998ecf8427e/b58c6f14d292556214bd64909bcdb118
+```
+
+where:
+
+* `d41d8cd98f00b204e9800998ecf8427e` - account ID as returned by the [API](https://api.cloudflare.com/#accounts-account-details)
+* `b58c6f14d292556214bd64909bcdb118` - account member ID as returned by the [API](https://api.cloudflare.com/#account-members-member-details)

@@ -15,6 +15,9 @@ func resourceCloudflareAccountMember() *schema.Resource {
 		Read:   resourceCloudflareAccountMemberRead,
 		Update: resourceCloudflareAccountMemberUpdate,
 		Delete: resourceCloudflareAccountMemberDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudflareAccountMemberImport,
+		},
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
@@ -107,4 +110,37 @@ func resourceCloudflareAccountMemberUpdate(d *schema.ResourceData, meta interfac
 	}
 
 	return resourceCloudflareAccountMemberRead(d, meta)
+}
+
+func resourceCloudflareAccountMemberImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+
+	// split the id so we can lookup the account member
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var accountID string
+	var accountMemberID string
+	if len(idAttr) == 2 {
+		accountID = idAttr[0]
+		accountMemberID = idAttr[1]
+	} else {
+		return nil, fmt.Errorf("invalid id %q specified, should be in format \"accountID/accountMemberID\" for import", d.Id())
+	}
+
+	member, err := client.AccountMember(accountID, accountMemberID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to find account member with ID %q: %q", accountMemberID, err)
+	}
+
+	log.Printf("[INFO] Found account member: %s", member.User.Email)
+
+	var memberIDs []string
+	for _, role := range member.Roles {
+		memberIDs = append(memberIDs, role.ID)
+	}
+
+	d.Set("email_address", member.User.Email)
+	d.Set("role_ids", memberIDs)
+	d.SetId(accountMemberID)
+
+	return []*schema.ResourceData{d}, nil
 }
