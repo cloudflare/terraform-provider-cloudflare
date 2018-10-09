@@ -1,4 +1,8 @@
 ## 1.7.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_account_member` [GH-78]
+
 ## 1.6.0 (October 05, 2018)
 
 **Improvements:**
