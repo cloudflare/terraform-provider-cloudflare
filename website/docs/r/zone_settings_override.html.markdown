@@ -86,7 +86,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `polish`. Allowed values: "off", "lossless", "lossy".
 * `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
 * `security_level`. Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium", "high", "under_attack".
-* `ssl`. Allowed values: "off", "flexible", "full", "strict".
+* `ssl`. Allowed values: "off", "flexible", "full", "strict", "origin_pull".
 * `tls_1_3`. Allowed values: "off", "on", "zrt".
 
 ### Integer Values

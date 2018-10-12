@@ -361,7 +361,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
 		Computed:     true,
-		ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict"}, false), // depends on plan
+		ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict", "origin_pull"}, false), // depends on plan
 	},
 
 	"tls_client_auth": {
