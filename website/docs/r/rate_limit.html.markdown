@@ -66,8 +66,8 @@ The **match** block supports:
 
 The **match.request** block supports:
 
-* `methods` - (Optional) HTTP Methods, can be a subset ['POST','PUT'] or all ['_ALL_']. Default: ['_ALL_'].
-* `schemes` - (Optional) HTTP Schemes, can be one ['HTTPS'], both ['HTTP','HTTPS'] or all ['_ALL_'].  Default: ['_ALL_'].
+* `methods` - (Optional) HTTP Methods, can be a subset ['POST','PUT'] or all ['\_ALL\_']. Default: ['\_ALL\_'].
+* `schemes` - (Optional) HTTP Schemes, can be one ['HTTPS'], both ['HTTP','HTTPS'] or all ['\_ALL\_'].  Default: ['\_ALL\_'].
 * `url_pattern` - (Optional) The URL pattern to match comprised of the host and path, i.e. example.org/path. Wildcard are expanded to match applicable traffic, query strings are not matched. Use * for all traffic to your zone. Default: '*'.
 
 The **match.response** block supports:
