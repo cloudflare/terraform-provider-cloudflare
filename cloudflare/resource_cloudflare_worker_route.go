@@ -175,6 +175,7 @@ func resourceCloudflareWorkerRouteDelete(d *schema.ResourceData, meta interface{
 
 func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
+	isEnterpriseWorker := false
 
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
@@ -186,15 +187,23 @@ func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{
 	} else {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/routeId\"", d.Id())
 	}
-	zoneId, err := client.ZoneIDByName(zoneName)
+
+	zoneID, err := client.ZoneIDByName(zoneName)
+	routes, err := client.ListWorkerRoutes(zoneID)
+
+	for _, r := range routes.Routes {
+		if r.ID == routeId && client.OrganizationID != "" {
+			isEnterpriseWorker = true
+		}
+	}
 
 	if err != nil {
 		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
 	}
 
 	d.Set("zone", zoneName)
-	d.Set("zone_id", zoneId)
-	d.Set("multi_script", d.Get("script_name").(string) != "")
+	d.Set("zone_id", zoneID)
+	d.Set("multi_script", isEnterpriseWorker)
 	d.SetId(routeId)
 
 	return []*schema.ResourceData{d}, nil
