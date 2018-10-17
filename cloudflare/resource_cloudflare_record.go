@@ -442,7 +442,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if ttl, ok := d.GetOk("ttl"); ok {
 		if ttl.(int) != 1 && updateRecord.Proxied {
-			return fmt.Errorf("error validating record %s: ttl cannot be set when `proxied` is true", updateRecord.Name)
+			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", updateRecord.Name)
 		}
 
 		updateRecord.TTL = ttl.(int)
