@@ -335,7 +335,7 @@ func TestAccCloudflareRecord_TtlValidation(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareRecordConfigTtlValidation(domain, recordName),
-				ExpectError: regexp.MustCompile(fmt.Sprintf("error validating record %s:ttl must be set to 1 when `proxied` is true", recordName)),
+				ExpectError: regexp.MustCompile(fmt.Sprintf("error validating record %s: ttl must be set to 1 when `proxied` is true", recordName)),
 			},
 		},
 	})
