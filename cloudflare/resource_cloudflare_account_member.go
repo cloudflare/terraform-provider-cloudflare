@@ -30,6 +30,14 @@ func resourceCloudflareAccountMember() *schema.Resource {
 				Type:     schema.TypeList,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					roleIDs := d.Get("role_ids").([]interface{})
+					if arrayContains(old, roleIDs) && arrayContains(new, roleIDs) {
+						return true
+					}
+
+					return false
+				},
 			},
 		},
 	}
@@ -143,4 +151,13 @@ func resourceCloudflareAccountMemberImport(d *schema.ResourceData, meta interfac
 	d.SetId(accountMemberID)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func arrayContains(a string, list []interface{}) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
