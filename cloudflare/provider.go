@@ -87,6 +87,7 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
+			"cloudflare_account_member":         resourceCloudflareAccountMember(),
 			"cloudflare_filter":                 resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":          resourceCloudflareFirewallRule(),
 			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
@@ -98,10 +99,9 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
 			"cloudflare_worker_route":           resourceCloudflareWorkerRoute(),
 			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),
-			"cloudflare_zone":                   resourceCloudflareZone(),
 			"cloudflare_zone_lockdown":          resourceCloudflareZoneLockdown(),
 			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
-			"cloudflare_account_member":         resourceCloudflareAccountMember(),
+			"cloudflare_zone":                   resourceCloudflareZone(),
 		},
 
 		ConfigureFunc: providerConfigure,
