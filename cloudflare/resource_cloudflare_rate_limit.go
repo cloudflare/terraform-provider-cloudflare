@@ -37,7 +37,7 @@ func resourceCloudflareRateLimit() *schema.Resource {
 			"threshold": {
 				Type:         schema.TypeInt,
 				Required:     true,
-				ValidateFunc: validation.IntBetween(2, 1000000),
+				ValidateFunc: validation.IntBetween(1, 1000000),
 			},
 
 			"period": {
