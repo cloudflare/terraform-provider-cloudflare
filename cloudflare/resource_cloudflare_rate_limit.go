@@ -453,8 +453,10 @@ func flattenRateLimitRequestMatcher(cfg cloudflare.RateLimitRequestMatcher) []ma
 }
 
 func flattenRateLimitResponseMatcher(cfg cloudflare.RateLimitResponseMatcher) []map[string]interface{} {
-	data := map[string]interface{}{
-		"origin_traffic": *cfg.OriginTraffic,
+	data := map[string]interface{}{}
+
+	if cfg.OriginTraffic != nil {
+		data["origin_traffic"] = *cfg.OriginTraffic
 	}
 
 	if len(cfg.Statuses) > 0 {
