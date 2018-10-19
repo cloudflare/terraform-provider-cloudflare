@@ -323,6 +323,49 @@ func TestAccCloudflareRecord_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_TtlValidation(t *testing.T) {
+	t.Parallel()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	recordName := "tf-acctest-ttl-validation"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareRecordConfigTtlValidation(domain, recordName),
+				ExpectError: regexp.MustCompile(fmt.Sprintf("error validating record %s: ttl must be set to 1 when `proxied` is true", recordName)),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
+	t.Parallel()
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	recordName := "tf-acctest-ttl-validation"
+	name := "cloudflare_record.foobar"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigProxied(domain, recordName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(name, &cloudflare.DNSRecord{}),
+				),
+			},
+			{
+				Config:      testAccCheckCloudflareRecordConfigTtlValidation(domain, recordName),
+				ExpectError: regexp.MustCompile(fmt.Sprintf("error validating record %s: ttl must be set to 1 when `proxied` is true", recordName)),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
@@ -547,6 +590,19 @@ resource "cloudflare_record" "foobar" {
 	name = "%s-changed"
 	value = "192.168.0.10"
 	type = "A"
+	ttl = 3600
+}`, zone, name)
+}
+
+func testAccCheckCloudflareRecordConfigTtlValidation(zone, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "foobar" {
+	domain = "%[1]s"
+
+	name = "%[2]s"
+	value = "%[1]s"
+	type = "CNAME"
+	proxied = true
 	ttl = 3600
 }`, zone, name)
 }
