@@ -31,7 +31,6 @@ The following attributes are exported:
 
 * `id` - The zone ID.
 * `vanity_name_servers` - List of Vanity Nameservers (if set).
-* `meta.page_rule_quota` - Number of page rules that can be created.
 * `meta.wildcard_proxiable` - Indicates whether wildcard DNS records can receive Cloudflare security and performance features.
 * `meta.phishing_detected` - Indicates if URLs on the zone have been identified as hosting phishing content.
 * `status` - Status of the zone. Valid values: `active`, `pending`, `initializing`, `moved`, `deleted`, `deactivated`

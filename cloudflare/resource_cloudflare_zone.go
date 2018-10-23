@@ -52,9 +52,6 @@ func resourceCloudflareZone() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"page_rule_quota": {
-							Type: schema.TypeInt,
-						},
 						"wildcard_proxiable": {
 							Type: schema.TypeBool,
 						},
@@ -179,7 +176,6 @@ func resourceCloudflareZoneDelete(d *schema.ResourceData, meta interface{}) erro
 func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]interface{} {
 	cfg := map[string]interface{}{}
 
-	cfg["page_rule_quota"] = strconv.Itoa(meta.PageRuleQuota)
 	cfg["wildcard_proxiable"] = strconv.FormatBool(meta.WildcardProxiable)
 	cfg["phishing_detected"] = strconv.FormatBool(meta.PhishingDetected)
 
