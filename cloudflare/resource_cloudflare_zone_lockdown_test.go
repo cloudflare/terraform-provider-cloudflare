@@ -34,6 +34,29 @@ func TestCloudflareZoneLockdown(t *testing.T) {
 	})
 }
 
+func TestCloudflareZoneLockdown_Import(t *testing.T) {
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := acctest.RandString(10)
+	name := "cloudflare_zone_lockdown." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
 func testCloudflareZoneLockdownConfig(resourceID, zone, paused, description, url, target, value string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone_lockdown" "%[1]s" {

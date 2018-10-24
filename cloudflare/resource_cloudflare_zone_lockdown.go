@@ -257,6 +257,7 @@ func resourceCloudflareZoneLockdownImport(d *schema.ResourceData, meta interface
 	if err != nil {
 		return nil, fmt.Errorf("couldn't find zone %q while trying to import zone lockdown %q : %q", zoneName, d.Id(), err)
 	}
+	d.Set("zone_id", zoneID)
 	log.Printf("[DEBUG] zone: %s", zoneName)
 	log.Printf("[DEBUG] zoneID: %s", zoneID)
 	log.Printf("[DEBUG] Resource ID : %s", zoneLockdownID)
