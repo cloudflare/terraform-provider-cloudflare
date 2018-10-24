@@ -229,12 +229,12 @@ resource "cloudflare_load_balancer_monitor" "test" {
 func testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
-  expected_body = "dead" 
-  expected_codes = "5xx" 
+  expected_body = "dead"
+  expected_codes = "5xx"
   method = "HEAD"
   timeout = 9
   path = "/custom"
-  interval = 55
+  interval = 60
   retries = 5
   description = "this is a very weird load balancer"
   header {
