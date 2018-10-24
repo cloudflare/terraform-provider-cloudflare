@@ -19,7 +19,7 @@ resource "cloudflare_load_balancer_monitor" "test" {
   method = "GET"
   timeout = 7
   path = "/health"
-  interval = 55
+  interval = 60
   retries = 5
   description = "example load balancer"
   header {
