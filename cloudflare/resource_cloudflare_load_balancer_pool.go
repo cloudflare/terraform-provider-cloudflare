@@ -18,6 +18,7 @@ import (
 func resourceCloudflareLoadBalancerPool() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareLoadBalancerPoolCreate,
+		Update: resourceCloudflareLoadBalancerPoolUpdate,
 		Read:   resourceCloudflareLoadBalancerPoolRead,
 		Delete: resourceCloudflareLoadBalancerPoolDelete,
 		Importer: &schema.ResourceImporter{
@@ -153,6 +154,43 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 	d.SetId(r.ID)
 
 	log.Printf("[INFO] New Cloudflare Load Balancer Pool created with  ID: %s", d.Id())
+
+	return resourceCloudflareLoadBalancerPoolRead(d, meta)
+}
+
+func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+
+	loadBalancerPool := cloudflare.LoadBalancerPool{
+		ID:             d.Id(),
+		Name:           d.Get("name").(string),
+		Origins:        expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
+		Enabled:        d.Get("enabled").(bool),
+		MinimumOrigins: d.Get("minimum_origins").(int),
+	}
+
+	if checkRegions, ok := d.GetOk("check_regions"); ok {
+		loadBalancerPool.CheckRegions = expandInterfaceToStringList(checkRegions.(*schema.Set).List())
+	}
+
+	if description, ok := d.GetOk("description"); ok {
+		loadBalancerPool.Description = description.(string)
+	}
+
+	if monitor, ok := d.GetOk("monitor"); ok {
+		loadBalancerPool.Monitor = monitor.(string)
+	}
+
+	if notificationEmail, ok := d.GetOk("notification_email"); ok {
+		loadBalancerPool.NotificationEmail = notificationEmail.(string)
+	}
+
+	log.Printf("[DEBUG] Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool)
+
+	_, err := client.ModifyLoadBalancerPool(loadBalancerPool)
+	if err != nil {
+		return errors.Wrap(err, "error updating load balancer pool")
+	}
 
 	return resourceCloudflareLoadBalancerPoolRead(d, meta)
 }
