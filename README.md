@@ -39,7 +39,7 @@ $ make build
 If you would rather install the provider locally and not impact the
 stable version you already have installed, you can use the
 `~/.terraformrc` file to tell Terraform where your provider is. You do
-this by building using building the provider using Go.
+this by building the provider using Go.
 
 ```sh
 $ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-cloudflare
