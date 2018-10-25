@@ -29,14 +29,12 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 			"name": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ForceNew:     true,
 				ValidateFunc: validation.StringMatch(regexp.MustCompile("[-_a-zA-Z0-9]+"), "Only alphanumeric characters, hyphens and underscores are allowed."),
 			},
 
 			"origins": {
 				Type:     schema.TypeSet,
 				Required: true,
-				ForceNew: true,
 				Elem:     originsElem,
 			},
 
@@ -44,14 +42,12 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
-				ForceNew: true,
 			},
 
 			"minimum_origins": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  1,
-				ForceNew: true,
 			},
 
 			"check_regions": {
@@ -61,27 +57,23 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				ForceNew: true,
 			},
 
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 1024),
-				ForceNew:     true,
 			},
 
 			"monitor": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 32),
-				ForceNew:     true,
 			},
 
 			"notification_email": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 			},
 
 			"created_on": {
