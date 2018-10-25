@@ -34,7 +34,7 @@ The following arguments are supported:
 Account members can be imported using a composite ID formed of account ID and account member ID, e.g.
 
 ```
-$ terraform import cloudflare_access_rule.example_user d41d8cd98f00b204e9800998ecf8427e/b58c6f14d292556214bd64909bcdb118
+$ terraform import cloudflare_account_member.example_user d41d8cd98f00b204e9800998ecf8427e/b58c6f14d292556214bd64909bcdb118
 ```
 
 where:
