@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccCloudFlareLoadBalancerPool_Basic(t *testing.T) {
+func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
 	testStartTime := time.Now().UTC()
@@ -23,24 +23,24 @@ func TestAccCloudFlareLoadBalancerPool_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerPoolDestroy,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerPoolConfigBasic(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
 					// also expect api to generate some values
-					testAccCheckCloudFlareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
+					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
 			},
 		},
 	})
 }
 
-func TestAccCloudFlareLoadBalancerPool_FullySpecified(t *testing.T) {
+func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	rnd := acctest.RandString(10)
@@ -49,12 +49,12 @@ func TestAccCloudFlareLoadBalancerPool_FullySpecified(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerPoolDestroy,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerPoolConfigFullySpecified(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "enabled", "false"),
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
@@ -66,11 +66,7 @@ func TestAccCloudFlareLoadBalancerPool_FullySpecified(t *testing.T) {
 	})
 }
 
-/**
-Any change to a load balancer pool results in a new resource
-Although the API client contains a modify method, this always results in 405 status
-*/
-func TestAccCloudFlareLoadBalancerPool_ForceNew(t *testing.T) {
+func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	var initialId string
@@ -80,58 +76,20 @@ func TestAccCloudFlareLoadBalancerPool_ForceNew(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerPoolDestroy,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerPoolConfigBasic(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
-				),
-			},
-			{
-				PreConfig: func() {
-					initialId = loadBalancerPool.ID
-				},
-				Config: testAccCheckCloudFlareLoadBalancerPoolConfigFullySpecified(rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
-					func(state *terraform.State) error {
-						if initialId == loadBalancerPool.ID {
-							return fmt.Errorf("id should be different after recreation, but is unchanged: %s ",
-								loadBalancerPool.ID)
-						}
-						return nil
-					},
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudFlareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
-	t.Parallel()
-	var loadBalancerPool cloudflare.LoadBalancerPool
-	var initialId string
-	rnd := acctest.RandString(10)
-	name := "cloudflare_load_balancer_pool." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerPoolDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudFlareLoadBalancerPoolConfigBasic(rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					testAccManuallyDeleteLoadBalancerPool(name, &loadBalancerPool, &initialId),
 				),
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudFlareLoadBalancerPoolConfigBasic(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					func(state *terraform.State) error {
 						if initialId == loadBalancerPool.ID {
 							return fmt.Errorf("load balancer pool id is unchanged even after we thought we deleted it ( %s )",
@@ -145,7 +103,7 @@ func TestAccCloudFlareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudFlareLoadBalancerPoolDestroy(s *terraform.State) error {
+func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -162,7 +120,7 @@ func testAccCheckCloudFlareLoadBalancerPoolDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudFlareLoadBalancerPoolExists(n string, loadBalancerPool *cloudflare.LoadBalancerPool) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cloudflare.LoadBalancerPool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -185,7 +143,7 @@ func testAccCheckCloudFlareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 	}
 }
 
-func testAccCheckCloudFlareLoadBalancerPoolDates(n string, loadBalancerPool *cloudflare.LoadBalancerPool, testStartTime time.Time) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *cloudflare.LoadBalancerPool, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, _ := s.RootModule().Resources[n]
@@ -226,7 +184,7 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 }
 
 // using IPs from 192.0.2.0/24 as per RFC5737
-func testAccCheckCloudFlareLoadBalancerPoolConfigBasic(id string) string {
+func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
@@ -238,7 +196,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
 }`, id)
 }
 
-func testAccCheckCloudFlareLoadBalancerPoolConfigFullySpecified(id string) string {
+func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"

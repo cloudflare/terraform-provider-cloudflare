@@ -11,14 +11,14 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
-func resourceCloudFlarePageRule() *schema.Resource {
+func resourceCloudflarePageRule() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudFlarePageRuleCreate,
-		Read:   resourceCloudFlarePageRuleRead,
-		Update: resourceCloudFlarePageRuleUpdate,
-		Delete: resourceCloudFlarePageRuleDelete,
+		Create: resourceCloudflarePageRuleCreate,
+		Read:   resourceCloudflarePageRuleRead,
+		Update: resourceCloudflarePageRuleUpdate,
+		Delete: resourceCloudflarePageRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudFlarePageRuleImport,
+			State: resourceCloudflarePageRuleImport,
 		},
 
 		SchemaVersion: 0,
@@ -61,6 +61,77 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
 
+						"bypass_cache_on_cookie": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"cache_by_device_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_deception_armor": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"cache_on_cookie": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"mirage": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"explicit_cache_control": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"origin_error_page_pass_thru": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"sort_query_string_for_cache": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"respect_strong_etag": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"response_buffering": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						// may not be used with disable_performance
+						"rocket_loader": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
+						"true_client_ip_header": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
+
 						"browser_check": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -91,6 +162,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 						},
+
+						"waf": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+						},
 						// end on/off fields
 
 						// unitary fields
@@ -110,6 +187,12 @@ func resourceCloudFlarePageRule() *schema.Resource {
 						// may not be used with rocket loader
 						// n.b. ConflictsWith doesn't seem to work on nested schemas
 						"disable_performance": {
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
+						},
+
+						"disable_railgun": {
 							Type:     schema.TypeBool,
 							Default:  false,
 							Optional: true,
@@ -161,17 +244,26 @@ func resourceCloudFlarePageRule() *schema.Resource {
 							},
 						},
 
-						// may not be used with disable_performance
-						"rocket_loader": {
+						"host_header_override": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"polish": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"off", "manual", "automatic"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"off", "lossless", "lossy"}, false),
+						},
+
+						"resolve_override": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						"security_level": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"essentially_off", "low", "medium", "high", "under_attack"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"off", "essentially_off", "low", "medium", "high", "under_attack"}, false),
 						},
 
 						"ssl": {
@@ -193,7 +285,7 @@ func resourceCloudFlarePageRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Default:      "active",
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"active", "paused"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"active", "disabled"}, false),
 			},
 		},
 	}
@@ -207,7 +299,7 @@ func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
 	return false
 }
 
-func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zone := d.Get("zone").(string)
 
@@ -230,7 +322,7 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-			newPageRuleAction, err := transformToCloudFlarePageRuleAction(id, value)
+			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
 			if err != nil {
 				return err
 			} else if newPageRuleAction.Value == nil {
@@ -257,7 +349,7 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	d.Set("zone_id", zoneID)
-	log.Printf("[DEBUG] CloudFlare Page Rule create configuration: %#v", newPageRule)
+	log.Printf("[DEBUG] Cloudflare Page Rule create configuration: %#v", newPageRule)
 
 	r, err := client.CreatePageRule(zoneID, newPageRule)
 	if err != nil {
@@ -270,7 +362,7 @@ func resourceCloudFlarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 
 	d.SetId(r.ID)
 
-	return resourceCloudFlarePageRuleRead(d, meta)
+	return resourceCloudflarePageRuleRead(d, meta)
 }
 
 func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{} {
@@ -281,7 +373,7 @@ func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{}
 	return vsm
 }
 
-func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -296,7 +388,7 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 			return fmt.Errorf("Error finding page rule %q: %s", d.Id(), err)
 		}
 	}
-	log.Printf("[DEBUG] CloudFlare Page Rule read configuration: %#v", pageRule)
+	log.Printf("[DEBUG] Cloudflare Page Rule read configuration: %#v", pageRule)
 
 	// Cloudflare presently only has one target type, and its Operator is always
 	// "matches"; so we can just read the first element's Value.
@@ -307,13 +399,13 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 
 	actions := map[string]interface{}{}
 	for _, pageRuleAction := range pageRule.Actions {
-		key, value, err := transformFromCloudFlarePageRuleAction(&pageRuleAction)
+		key, value, err := transformFromCloudflarePageRuleAction(&pageRuleAction)
 		if err != nil {
 			return fmt.Errorf("Failed to parse page rule action: %s", err)
 		}
 		actions[key] = value
 	}
-	log.Printf("[DEBUG] CloudFlare Page Rule actions configuration: %#v", actions)
+	log.Printf("[DEBUG] Cloudflare Page Rule actions configuration: %#v", actions)
 
 	if err := d.Set("actions", []map[string]interface{}{actions}); err != nil {
 		log.Printf("[WARN] Error setting actions in page rule %q: %s", d.Id(), err)
@@ -322,7 +414,7 @@ func resourceCloudFlarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -349,7 +441,7 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 		for _, action := range actions {
 			for id, value := range action.(map[string]interface{}) {
-				newPageRuleAction, err := transformToCloudFlarePageRuleAction(id, value)
+				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
 				if err != nil {
 					return err
 				} else if newPageRuleAction.Value == nil {
@@ -378,10 +470,10 @@ func resourceCloudFlarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Failed to update Cloudflare Page Rule: %s", err)
 	}
 
-	return resourceCloudFlarePageRuleRead(d, meta)
+	return resourceCloudflarePageRuleRead(d, meta)
 }
 
-func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	zone := d.Get("zone").(string)
@@ -395,12 +487,50 @@ func resourceCloudFlarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-var pageRuleAPIOnOffFields = []string{"always_online", "automatic_https_rewrites", "browser_check", "email_obfuscation", "ip_geolocation", "opportunistic_encryption", "server_side_exclude", "smart_errors"}
-var pageRuleAPINilFields = []string{"always_use_https", "disable_apps", "disable_performance", "disable_security"}
-var pageRuleAPIFloatFields = []string{"browser_cache_ttl", "edge_cache_ttl"}
-var pageRuleAPIStringFields = []string{"cache_level", "rocket_loader", "security_level", "ssl"}
+var pageRuleAPIOnOffFields = []string{
+	"always_online",
+	"automatic_https_rewrites",
+	"browser_check",
+	"cache_by_device_type",
+	"cache_deception_armor",
+	"email_obfuscation",
+	"explicit_cache_control",
+	"ip_geolocation",
+	"mirage",
+	"opportunistic_encryption",
+	"origin_error_page_pass_thru",
+	"respect_strong_etag",
+	"response_buffering",
+	"rocket_loader",
+	"server_side_exclude",
+	"sort_query_string_for_cache",
+	"true_client_ip_header",
+	"waf",
+}
+var pageRuleAPINilFields = []string{
+	"always_use_https",
+	"disable_apps",
+	"disable_performance",
+	"disable_railgun",
+	"disable_security",
+}
+var pageRuleAPIFloatFields = []string{
+	"browser_cache_ttl",
+	"edge_cache_ttl",
+}
+var pageRuleAPIStringFields = []string{
+	"bypass_cache_on_cookie",
+	"cache_key",
+	"cache_level",
+	"cache_on_cookie",
+	"host_header_override",
+	"polish",
+	"resolve_override",
+	"security_level",
+	"ssl",
+}
 
-func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
+func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
 	key = pageRuleAction.ID
 
 	switch {
@@ -422,7 +552,7 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		break
 
 	case pageRuleAction.ID == "forwarding_url":
-		value = pageRuleAction.Value.(map[string]interface{})
+		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
 		break
 
 	default:
@@ -432,7 +562,7 @@ func transformFromCloudFlarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	return
 }
 
-func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRuleAction cloudflare.PageRuleAction, err error) {
+func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRuleAction cloudflare.PageRuleAction, err error) {
 
 	pageRuleAction.ID = id
 
@@ -483,7 +613,7 @@ func transformToCloudFlarePageRuleAction(id string, value interface{}) (pageRule
 	return
 }
 
-func resourceCloudFlarePageRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup

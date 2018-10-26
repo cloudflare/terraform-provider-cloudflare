@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudFlareLoadBalancerPool_Import(t *testing.T) {
+func TestAccCloudflareLoadBalancerPool_Import(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	rnd := acctest.RandString(10)
@@ -19,9 +19,9 @@ func TestAccCloudFlareLoadBalancerPool_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerPoolConfigBasic(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 				),
 			},
 			{
@@ -29,7 +29,7 @@ func TestAccCloudFlareLoadBalancerPool_Import(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerPoolExists(name, &loadBalancerPool),
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 				),
 			},
 		},

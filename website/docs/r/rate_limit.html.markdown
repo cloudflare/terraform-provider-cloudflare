@@ -36,6 +36,9 @@ resource "cloudflare_rate_limit" "example" {
       body = "custom response body"
     }
   }
+  correlate {
+    by = "nat"
+  }
   disabled = false
   description = "example rate limit for a zone"
   bypass_url_patterns = ["${var.cloudflare_zone}/bypass1","${var.cloudflare_zone}/bypass2"]
@@ -54,6 +57,7 @@ The following arguments are supported:
 * `disabled` - (Optional) Whether this ratelimit is currently disabled. Default: `false`.
 * `description` - (Optional) A note that you can use to describe the reason for a rate limit. This value is sanitized and all tags are removed.
 * `bypass_url_patterns` - (Optional) URLs matching the patterns specified here will be excluded from rate limiting.
+* `correlate` - (Optional) Determines how rate limiting is applied. By default if not specified, rate limiting applies to the clients IP address.
 
 The **match** block supports:
 
@@ -62,8 +66,8 @@ The **match** block supports:
 
 The **match.request** block supports:
 
-* `methods` - (Optional) HTTP Methods, can be a subset ['POST','PUT'] or all ['_ALL_']. Default: ['_ALL_'].
-* `schemes` - (Optional) HTTP Schemes, can be one ['HTTPS'], both ['HTTP','HTTPS'] or all ['_ALL_'].  Default: ['_ALL_'].
+* `methods` - (Optional) HTTP Methods, can be a subset ['POST','PUT'] or all ['\_ALL\_']. Default: ['\_ALL\_'].
+* `schemes` - (Optional) HTTP Schemes, can be one ['HTTPS'], both ['HTTP','HTTPS'] or all ['\_ALL\_'].  Default: ['\_ALL\_'].
 * `url_pattern` - (Optional) The URL pattern to match comprised of the host and path, i.e. example.org/path. Wildcard are expanded to match applicable traffic, query strings are not matched. Use * for all traffic to your zone. Default: '*'.
 
 The **match.response** block supports:
@@ -74,13 +78,18 @@ The **match.response** block supports:
 The **action** block supports:
 
 * `mode` - (Required) The type of action to perform. Allowable values are 'simulate' and 'ban'.
-* `timeout` - (Required) The time in seconds as an integer to perform the mitigation action. Must be the same or greater than the period (min: 1, max:86,400).
+* `timeout` - (Required) The time in seconds as an integer to perform the mitigation action. Must be the same or greater than the period (min: 1, max: 86400).
 * `response` - (Optional) Custom content-type and body to return, this overrides the custom error for the zone. This field is not required. Omission will result in default HTML error page. Definition below.
 
 The **action.response** block supports:
 
 * `content_type` - (Required) The content-type of the body, must be one of: 'text/plain', 'text/xml', 'application/json'.
 * `body` - (Required) The body to return, the content here should conform to the content_type.
+
+The **correlate** block supports:
+
+* `by` - (Optional) If set to 'nat', NAT support will be enabled for rate limiting.
+
 
 ## Attributes Reference
 

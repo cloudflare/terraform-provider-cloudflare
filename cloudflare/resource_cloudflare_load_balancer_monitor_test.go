@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccCloudFlareLoadBalancerMonitor_Basic(t *testing.T) {
+func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
 	testStartTime := time.Now().UTC()
@@ -21,25 +21,25 @@ func TestAccCloudFlareLoadBalancerMonitor_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerMonitorDestroy,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigBasic(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "description", ""),
 					resource.TestCheckResourceAttr(name, "header.#", "0"),
 					// also expect api to generate some values
-					testAccCheckCloudFlareLoadBalancerMonitorDates(name, &loadBalancerMonitor, testStartTime),
+					testAccCheckCloudflareLoadBalancerMonitorDates(name, &loadBalancerMonitor, testStartTime),
 				),
 			},
 		},
 	})
 }
 
-func TestAccCloudFlareLoadBalancerMonitor_FullySpecified(t *testing.T) {
+func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
 	name := "cloudflare_load_balancer_monitor.test"
@@ -47,12 +47,12 @@ func TestAccCloudFlareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerMonitorDestroy,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigFullySpecified(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "path", "/custom"),
 					resource.TestCheckResourceAttr(name, "header.#", "1"),
@@ -64,7 +64,7 @@ func TestAccCloudFlareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 	})
 }
 
-func TestAccCloudFlareLoadBalancerMonitor_Update(t *testing.T) {
+func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 	t.Parallel()
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
 	var initialId string
@@ -73,21 +73,21 @@ func TestAccCloudFlareLoadBalancerMonitor_Update(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerMonitorDestroy,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigBasic(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 				),
 			},
 			{
 				PreConfig: func() {
 					initialId = loadBalancerMonitor.ID
 				},
-				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigFullySpecified(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					func(state *terraform.State) error {
 						if initialId != loadBalancerMonitor.ID {
 							return fmt.Errorf("wanted update but monitor got recreated (id changed %q -> %q)",
@@ -101,7 +101,7 @@ func TestAccCloudFlareLoadBalancerMonitor_Update(t *testing.T) {
 	})
 }
 
-func TestAccCloudFlareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T) {
+func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
 	var initialId string
@@ -110,20 +110,20 @@ func TestAccCloudFlareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudFlareLoadBalancerMonitorDestroy,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigBasic(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					testAccManuallyDeleteLoadBalancerMonitor(name, &loadBalancerMonitor, &initialId),
 				),
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudFlareLoadBalancerMonitorConfigBasic(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					func(state *terraform.State) error {
 						if initialId == loadBalancerMonitor.ID {
 							return fmt.Errorf("load balancer monitor id is unchanged even after we thought we deleted it ( %s )",
@@ -137,7 +137,7 @@ func TestAccCloudFlareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 	})
 }
 
-func testAccCheckCloudFlareLoadBalancerMonitorDestroy(s *terraform.State) error {
+func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -154,7 +154,7 @@ func testAccCheckCloudFlareLoadBalancerMonitorDestroy(s *terraform.State) error 
 	return nil
 }
 
-func testAccCheckCloudFlareLoadBalancerMonitorExists(n string, load *cloudflare.LoadBalancerMonitor) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.LoadBalancerMonitor) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -177,7 +177,7 @@ func testAccCheckCloudFlareLoadBalancerMonitorExists(n string, load *cloudflare.
 	}
 }
 
-func testAccCheckCloudFlareLoadBalancerMonitorDates(n string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, testStartTime time.Time) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, _ := s.RootModule().Resources[n]
@@ -217,7 +217,7 @@ func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *
 	}
 }
 
-func testAccCheckCloudFlareLoadBalancerMonitorConfigBasic() string {
+func testAccCheckCloudflareLoadBalancerMonitorConfigBasic() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
   expected_body = "alive"
@@ -226,15 +226,15 @@ resource "cloudflare_load_balancer_monitor" "test" {
 }`
 }
 
-func testAccCheckCloudFlareLoadBalancerMonitorConfigFullySpecified() string {
+func testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
-  expected_body = "dead" 
-  expected_codes = "5xx" 
+  expected_body = "dead"
+  expected_codes = "5xx"
   method = "HEAD"
   timeout = 9
   path = "/custom"
-  interval = 55
+  interval = 60
   retries = 5
   description = "this is a very weird load balancer"
   header {

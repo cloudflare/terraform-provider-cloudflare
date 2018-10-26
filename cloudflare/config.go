@@ -17,8 +17,8 @@ type Config struct {
 func (c *Config) Client() (*cloudflare.API, error) {
 	client, err := cloudflare.New(c.Token, c.Email, c.Options...)
 	if err != nil {
-		return nil, fmt.Errorf("Error creating new CloudFlare client: %s", err)
+		return nil, fmt.Errorf("Error creating new Cloudflare client: %s", err)
 	}
-	log.Printf("[INFO] CloudFlare Client configured for user: %s", c.Email)
+	log.Printf("[INFO] Cloudflare Client configured for user: %s", c.Email)
 	return client, nil
 }

@@ -15,11 +15,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-func resourceCloudFlareLoadBalancerPool() *schema.Resource {
+func resourceCloudflareLoadBalancerPool() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudFlareLoadBalancerPoolCreate,
-		Read:   resourceCloudFlareLoadBalancerPoolRead,
-		Delete: resourceCloudFlareLoadBalancerPoolDelete,
+		Create: resourceCloudflareLoadBalancerPoolCreate,
+		Update: resourceCloudflareLoadBalancerPoolUpdate,
+		Read:   resourceCloudflareLoadBalancerPoolRead,
+		Delete: resourceCloudflareLoadBalancerPoolDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -29,14 +30,12 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 			"name": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ForceNew:     true,
 				ValidateFunc: validation.StringMatch(regexp.MustCompile("[-_a-zA-Z0-9]+"), "Only alphanumeric characters, hyphens and underscores are allowed."),
 			},
 
 			"origins": {
 				Type:     schema.TypeSet,
 				Required: true,
-				ForceNew: true,
 				Elem:     originsElem,
 			},
 
@@ -44,14 +43,12 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
-				ForceNew: true,
 			},
 
 			"minimum_origins": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  1,
-				ForceNew: true,
 			},
 
 			"check_regions": {
@@ -61,27 +58,23 @@ func resourceCloudFlareLoadBalancerPool() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				ForceNew: true,
 			},
 
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 1024),
-				ForceNew:     true,
 			},
 
 			"monitor": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 32),
-				ForceNew:     true,
 			},
 
 			"notification_email": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 			},
 
 			"created_on": {
@@ -128,7 +121,7 @@ var originsElem = &schema.Resource{
 	},
 }
 
-func resourceCloudFlareLoadBalancerPoolCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerPool := cloudflare.LoadBalancerPool{
@@ -154,7 +147,7 @@ func resourceCloudFlareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 		loadBalancerPool.NotificationEmail = notificationEmail.(string)
 	}
 
-	log.Printf("[DEBUG] Creating CloudFlare Load Balancer Pool from struct: %+v", loadBalancerPool)
+	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool)
 
 	r, err := client.CreateLoadBalancerPool(loadBalancerPool)
 	if err != nil {
@@ -167,9 +160,46 @@ func resourceCloudFlareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 
 	d.SetId(r.ID)
 
-	log.Printf("[INFO] New CloudFlare Load Balancer Pool created with  ID: %s", d.Id())
+	log.Printf("[INFO] New Cloudflare Load Balancer Pool created with  ID: %s", d.Id())
 
-	return resourceCloudFlareLoadBalancerPoolRead(d, meta)
+	return resourceCloudflareLoadBalancerPoolRead(d, meta)
+}
+
+func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+
+	loadBalancerPool := cloudflare.LoadBalancerPool{
+		ID:             d.Id(),
+		Name:           d.Get("name").(string),
+		Origins:        expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
+		Enabled:        d.Get("enabled").(bool),
+		MinimumOrigins: d.Get("minimum_origins").(int),
+	}
+
+	if checkRegions, ok := d.GetOk("check_regions"); ok {
+		loadBalancerPool.CheckRegions = expandInterfaceToStringList(checkRegions.(*schema.Set).List())
+	}
+
+	if description, ok := d.GetOk("description"); ok {
+		loadBalancerPool.Description = description.(string)
+	}
+
+	if monitor, ok := d.GetOk("monitor"); ok {
+		loadBalancerPool.Monitor = monitor.(string)
+	}
+
+	if notificationEmail, ok := d.GetOk("notification_email"); ok {
+		loadBalancerPool.NotificationEmail = notificationEmail.(string)
+	}
+
+	log.Printf("[DEBUG] Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool)
+
+	_, err := client.ModifyLoadBalancerPool(loadBalancerPool)
+	if err != nil {
+		return errors.Wrap(err, "error updating load balancer pool")
+	}
+
+	return resourceCloudflareLoadBalancerPoolRead(d, meta)
 }
 
 func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.LoadBalancerOrigin) {
@@ -186,7 +216,7 @@ func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.Load
 	return
 }
 
-func resourceCloudFlareLoadBalancerPoolRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerPool, err := client.LoadBalancerPoolDetails(d.Id())
@@ -200,7 +230,7 @@ func resourceCloudFlareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 				fmt.Sprintf("Error reading load balancer pool from API for resource %s ", d.Id()))
 		}
 	}
-	log.Printf("[DEBUG] Read CloudFlare Load Balancer Pool from API as struct: %+v", loadBalancerPool)
+	log.Printf("[DEBUG] Read Cloudflare Load Balancer Pool from API as struct: %+v", loadBalancerPool)
 
 	d.Set("name", loadBalancerPool.Name)
 	d.Set("enabled", loadBalancerPool.Enabled)
@@ -236,14 +266,14 @@ func flattenLoadBalancerOrigins(origins []cloudflare.LoadBalancerOrigin) *schema
 	return schema.NewSet(schema.HashResource(originsElem), flattened)
 }
 
-func resourceCloudFlareLoadBalancerPoolDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[INFO] Deleting CloudFlare Load Balancer Pool: %s ", d.Id())
+	log.Printf("[INFO] Deleting Cloudflare Load Balancer Pool: %s ", d.Id())
 
 	err := client.DeleteLoadBalancerPool(d.Id())
 	if err != nil {
-		return errors.Wrap(err, "error deleting CloudFlare Load Balancer Pool")
+		return errors.Wrap(err, "error deleting Cloudflare Load Balancer Pool")
 	}
 
 	return nil

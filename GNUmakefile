@@ -2,11 +2,12 @@ TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=cloudflare
+VERSION=$(shell git describe --tags --always)
 
 default: build
 
 build: fmtcheck
-	go install
+	go install -ldflags="-X github.com/terraform-providers/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
 
 test: fmtcheck
 	go test -i $(TEST) || exit 1
@@ -60,4 +61,3 @@ endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
 .PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile website website-test
-

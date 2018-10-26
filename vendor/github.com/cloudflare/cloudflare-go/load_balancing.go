@@ -25,6 +25,7 @@ type LoadBalancerPool struct {
 	CheckRegions []string `json:"check_regions"`
 }
 
+// LoadBalancerOrigin represents a Load Balancer origin's properties.
 type LoadBalancerOrigin struct {
 	Name    string  `json:"name"`
 	Address string  `json:"address"`
@@ -63,6 +64,13 @@ type LoadBalancer struct {
 	PopPools     map[string][]string `json:"pop_pools"`
 	Proxied      bool                `json:"proxied"`
 	Persistence  string              `json:"session_affinity,omitempty"`
+
+	// SteeringPolicy controls pool selection logic.
+	// "off" select pools in DefaultPools order
+	// "geo" select pools based on RegionPools/PopPools
+	// "dynamic_latency" select pools based on RTT (requires health checks)
+	// "" maps to "geo" if RegionPools or PopPools have entries otherwise "off"
+	SteeringPolicy string `json:"steering_policy,omitempty"`
 }
 
 // loadBalancerPoolResponse represents the response from the load balancer pool endpoints.

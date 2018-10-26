@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudFlareRateLimit_Import(t *testing.T) {
+func TestAccCloudflareRateLimit_Import(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -23,10 +23,10 @@ func TestAccCloudFlareRateLimit_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudFlareRateLimitConfigMatchingUrl(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudFlareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
 				),
 			},
 			{
@@ -35,8 +35,8 @@ func TestAccCloudFlareRateLimit_Import(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudFlareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudFlareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
 				),
 			},
 		},

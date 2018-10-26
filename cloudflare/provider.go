@@ -3,11 +3,15 @@ package cloudflare
 import (
 	"log"
 	"os"
+	"strings"
 
 	"fmt"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/httpclient"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/terraform-providers/terraform-provider-cloudflare/version"
 )
 
 // Provider returns a terraform.ResourceProvider.
@@ -18,7 +22,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-				Description: "A registered CloudFlare email address.",
+				Description: "A registered Cloudflare email address.",
 			},
 
 			"token": &schema.Schema{
@@ -83,13 +87,23 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"cloudflare_load_balancer_monitor":  resourceCloudFlareLoadBalancerMonitor(),
-			"cloudflare_page_rule":              resourceCloudFlarePageRule(),
-			"cloudflare_record":                 resourceCloudFlareRecord(),
-			"cloudflare_rate_limit":             resourceCloudFlareRateLimit(),
-			"cloudflare_load_balancer":          resourceCloudFlareLoadBalancer(),
-			"cloudflare_load_balancer_pool":     resourceCloudFlareLoadBalancerPool(),
-			"cloudflare_zone_settings_override": resourceCloudFlareZoneSettingsOverride(),
+			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
+			"cloudflare_account_member":         resourceCloudflareAccountMember(),
+			"cloudflare_custom_pages":           resourceCloudflareCustomPages(),
+			"cloudflare_filter":                 resourceCloudflareFilter(),
+			"cloudflare_firewall_rule":          resourceCloudflareFirewallRule(),
+			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
+			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
+			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
+			"cloudflare_page_rule":              resourceCloudflarePageRule(),
+			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
+			"cloudflare_record":                 resourceCloudflareRecord(),
+			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
+			"cloudflare_worker_route":           resourceCloudflareWorkerRoute(),
+			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),
+			"cloudflare_zone_lockdown":          resourceCloudflareZoneLockdown(),
+			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
+			"cloudflare_zone":                   resourceCloudflareZone(),
 		},
 
 		ConfigureFunc: providerConfigure,
@@ -116,7 +130,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	if orgId, ok := d.GetOk("org_id"); ok {
-		log.Printf("[INFO] Using specified organization id %s in CloudFlare provider", orgId.(string))
+		log.Printf("[INFO] Using specified organization id %s in Cloudflare provider", orgId.(string))
 		options = append(options, cloudflare.UsingOrganization(orgId.(string)))
 	} else if zoneName, ok := d.GetOk("use_org_from_zone"); ok {
 		zoneId, err := client.ZoneIDByName(zoneName.(string))
@@ -142,14 +156,21 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		}
 
 		if contains(orgIds, zone.Owner.ID) {
-			log.Printf("[INFO] Using organization %#v in CloudFlare provider", zone.Owner)
+			log.Printf("[INFO] Using organization %#v in Cloudflare provider", zone.Owner)
 			options = append(options, cloudflare.UsingOrganization(zone.Owner.ID))
 		} else {
-			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for CloudFlare provider")
+			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for Cloudflare provider")
 		}
 	} else {
 		return client, err
 	}
+
+	// TODO: This is the SDK version not the CLI version, once we are on 0.12, should revisit
+	tfUserAgent := httpclient.UserAgentString()
+
+	pv := version.ProviderVersion
+	providerUserAgent := fmt.Sprintf("%s terraform-provider-cloudflare/%s", tfUserAgent, pv)
+	options = append(options, cloudflare.UserAgent(strings.TrimSpace(fmt.Sprintf("%s %s", client.UserAgent, providerUserAgent))))
 
 	config = Config{
 		Email:   d.Get("email").(string),

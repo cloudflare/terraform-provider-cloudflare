@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestCloudFlareRecordMigrateState(t *testing.T) {
+func TestCloudflareRecordMigrateState(t *testing.T) {
 	// create the test server for mocking the API calls
-	ts := mockCloudFlareEnv()
+	ts := mockCloudflareEnv()
 	defer ts.Close()
 
-	// Create a CloudFlare client, overriding the BaseURL
+	// Create a Cloudflare client, overriding the BaseURL
 	cfMeta, err := cloudflare.New(
 		"sometoken",
 		"someemail",
@@ -25,7 +25,7 @@ func TestCloudFlareRecordMigrateState(t *testing.T) {
 	)
 
 	if err != nil {
-		t.Fatalf("Error building CloudFlare API: %s", err)
+		t.Fatalf("Error building Cloudflare API: %s", err)
 	}
 
 	cases := map[string]struct {
@@ -135,7 +135,7 @@ func TestCloudFlareRecordMigrateState(t *testing.T) {
 			ID:         tc.ID,
 			Attributes: tc.Attributes,
 		}
-		is, err := resourceCloudFlareRecordMigrateState(
+		is, err := resourceCloudflareRecordMigrateState(
 			tc.StateVersion, is, cfMeta)
 
 		if err != nil {
@@ -152,9 +152,9 @@ func TestCloudFlareRecordMigrateState(t *testing.T) {
 	}
 }
 
-// cloudflareEnv establishes a httptest server to mock out the CloudFlare API
+// cloudflareEnv establishes a httptest server to mock out the Cloudflare API
 // endpoints that we'll be calling.
-func mockCloudFlareEnv() *httptest.Server {
+func mockCloudflareEnv() *httptest.Server {
 	endpoints := mockEndpoints()
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
@@ -176,7 +176,7 @@ func mockCloudFlareEnv() *httptest.Server {
 	return ts
 }
 
-// Stub out the two CloudFlare API routes that will be called
+// Stub out the two Cloudflare API routes that will be called
 func mockEndpoints() []*endpoint {
 	return []*endpoint{
 		&endpoint{

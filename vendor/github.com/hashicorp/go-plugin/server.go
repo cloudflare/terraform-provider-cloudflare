@@ -1,6 +1,8 @@
 package plugin
 
 import (
+	"crypto/tls"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -9,8 +11,14 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"sort"
 	"strconv"
+	"strings"
 	"sync/atomic"
+
+	"github.com/hashicorp/go-hclog"
+
+	"google.golang.org/grpc"
 )
 
 // CoreProtocolVersion is the ProtocolVersion of the plugin system itself.
@@ -30,6 +38,8 @@ type HandshakeConfig struct {
 	// ProtocolVersion is the version that clients must match on to
 	// agree they can communicate. This should match the ProtocolVersion
 	// set on ClientConfig when using a plugin.
+	// This field is not required if VersionedPlugins are being used in the
+	// Client or Server configurations.
 	ProtocolVersion uint
 
 	// MagicCookieKey and value are used as a very basic verification
@@ -40,19 +50,122 @@ type HandshakeConfig struct {
 	MagicCookieValue string
 }
 
+// PluginSet is a set of plugins provided to be registered in the plugin
+// server.
+type PluginSet map[string]Plugin
+
 // ServeConfig configures what sorts of plugins are served.
 type ServeConfig struct {
 	// HandshakeConfig is the configuration that must match clients.
 	HandshakeConfig
 
+	// TLSProvider is a function that returns a configured tls.Config.
+	TLSProvider func() (*tls.Config, error)
+
 	// Plugins are the plugins that are served.
-	Plugins map[string]Plugin
+	// The implied version of this PluginSet is the Handshake.ProtocolVersion.
+	Plugins PluginSet
+
+	// VersionedPlugins is a map of PluginSets for specific protocol versions.
+	// These can be used to negotiate a compatible version between client and
+	// server. If this is set, Handshake.ProtocolVersion is not required.
+	VersionedPlugins map[int]PluginSet
+
+	// GRPCServer should be non-nil to enable serving the plugins over
+	// gRPC. This is a function to create the server when needed with the
+	// given server options. The server options populated by go-plugin will
+	// be for TLS if set. You may modify the input slice.
+	//
+	// Note that the grpc.Server will automatically be registered with
+	// the gRPC health checking service. This is not optional since go-plugin
+	// relies on this to implement Ping().
+	GRPCServer func([]grpc.ServerOption) *grpc.Server
+
+	// Logger is used to pass a logger into the server. If none is provided the
+	// server will create a default logger.
+	Logger hclog.Logger
+}
+
+// protocolVersion determines the protocol version and plugin set to be used by
+// the server. In the event that there is no suitable version, the last version
+// in the config is returned leaving the client to report the incompatibility.
+func protocolVersion(opts *ServeConfig) (int, Protocol, PluginSet) {
+	protoVersion := int(opts.ProtocolVersion)
+	pluginSet := opts.Plugins
+	protoType := ProtocolNetRPC
+	// check if the client sent a list of acceptable versions
+	var clientVersions []int
+	if vs := os.Getenv("PLUGIN_PROTOCOL_VERSIONS"); vs != "" {
+		for _, s := range strings.Split(vs, ",") {
+			v, err := strconv.Atoi(s)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "server sent invalid plugin version %q", s)
+				continue
+			}
+			clientVersions = append(clientVersions, v)
+		}
+	}
+
+	// we want to iterate in reverse order, to ensure we match the newest
+	// compatible plugin version.
+	sort.Sort(sort.Reverse(sort.IntSlice(clientVersions)))
+
+	// set the old un-versioned fields as if they were versioned plugins
+	if opts.VersionedPlugins == nil {
+		opts.VersionedPlugins = make(map[int]PluginSet)
+	}
+
+	if pluginSet != nil {
+		opts.VersionedPlugins[protoVersion] = pluginSet
+	}
+
+	// sort the version to make sure we match the latest first
+	var versions []int
+	for v := range opts.VersionedPlugins {
+		versions = append(versions, v)
+	}
+
+	sort.Sort(sort.Reverse(sort.IntSlice(versions)))
+
+	// see if we have multiple versions of Plugins to choose from
+	for _, version := range versions {
+		// record each version, since we guarantee that this returns valid
+		// values even if they are not a protocol match.
+		protoVersion = version
+		pluginSet = opts.VersionedPlugins[version]
+
+		// all plugins in a set must use the same transport, so check the first
+		// for the protocol type
+		for _, p := range pluginSet {
+			switch p.(type) {
+			case GRPCPlugin:
+				protoType = ProtocolGRPC
+			default:
+				protoType = ProtocolNetRPC
+			}
+			break
+		}
+
+		for _, clientVersion := range clientVersions {
+			if clientVersion == protoVersion {
+				return protoVersion, protoType, pluginSet
+			}
+		}
+	}
+
+	// Return the lowest version as the fallback.
+	// Since we iterated over all the versions in reverse order above, these
+	// values are from the lowest version number plugins (which may be from
+	// a combination of the Handshake.ProtocolVersion and ServeConfig.Plugins
+	// fields). This allows serving the oldest version of our plugins to a
+	// legacy client that did not send a PLUGIN_PROTOCOL_VERSIONS list.
+	return protoVersion, protoType, pluginSet
 }
 
 // Serve serves the plugins given by ServeConfig.
 //
 // Serve doesn't return until the plugin is done being executed. Any
-// errors will be outputted to the log.
+// errors will be outputted to os.Stderr.
 //
 // This is the method that plugins should call in their main() functions.
 func Serve(opts *ServeConfig) {
@@ -74,8 +187,22 @@ func Serve(opts *ServeConfig) {
 		os.Exit(1)
 	}
 
+	// negotiate the version and plugins
+	// start with default version in the handshake config
+	protoVersion, protoType, pluginSet := protocolVersion(opts)
+
 	// Logging goes to the original stderr
 	log.SetOutput(os.Stderr)
+
+	logger := opts.Logger
+	if logger == nil {
+		// internal logger to os.Stderr
+		logger = hclog.New(&hclog.LoggerOptions{
+			Level:      hclog.Trace,
+			Output:     os.Stderr,
+			JSONFormat: true,
+		})
+	}
 
 	// Create our new stdout, stderr files. These will override our built-in
 	// stdout/stderr so that it works across the stream boundary.
@@ -93,30 +220,86 @@ func Serve(opts *ServeConfig) {
 	// Register a listener so we can accept a connection
 	listener, err := serverListener()
 	if err != nil {
-		log.Printf("[ERR] plugin: plugin init: %s", err)
+		logger.Error("plugin init error", "error", err)
 		return
 	}
-	defer listener.Close()
+
+	// Close the listener on return. We wrap this in a func() on purpose
+	// because the "listener" reference may change to TLS.
+	defer func() {
+		listener.Close()
+	}()
+
+	var tlsConfig *tls.Config
+	if opts.TLSProvider != nil {
+		tlsConfig, err = opts.TLSProvider()
+		if err != nil {
+			logger.Error("plugin tls init", "error", err)
+			return
+		}
+	}
 
 	// Create the channel to tell us when we're done
 	doneCh := make(chan struct{})
 
-	// Create the RPC server to dispense
-	server := &RPCServer{
-		Plugins: opts.Plugins,
-		Stdout:  stdout_r,
-		Stderr:  stderr_r,
-		DoneCh:  doneCh,
+	// Build the server type
+	var server ServerProtocol
+	switch protoType {
+	case ProtocolNetRPC:
+		// If we have a TLS configuration then we wrap the listener
+		// ourselves and do it at that level.
+		if tlsConfig != nil {
+			listener = tls.NewListener(listener, tlsConfig)
+		}
+
+		// Create the RPC server to dispense
+		server = &RPCServer{
+			Plugins: pluginSet,
+			Stdout:  stdout_r,
+			Stderr:  stderr_r,
+			DoneCh:  doneCh,
+		}
+
+	case ProtocolGRPC:
+		// Create the gRPC server
+		server = &GRPCServer{
+			Plugins: pluginSet,
+			Server:  opts.GRPCServer,
+			TLS:     tlsConfig,
+			Stdout:  stdout_r,
+			Stderr:  stderr_r,
+			DoneCh:  doneCh,
+		}
+
+	default:
+		panic("unknown server protocol: " + protoType)
 	}
 
-	// Output the address and service name to stdout so that core can bring it up.
-	log.Printf("[DEBUG] plugin: plugin address: %s %s\n",
-		listener.Addr().Network(), listener.Addr().String())
-	fmt.Printf("%d|%d|%s|%s\n",
+	// Initialize the servers
+	if err := server.Init(); err != nil {
+		logger.Error("protocol init", "error", err)
+		return
+	}
+
+	// Build the extra configuration
+	extra := ""
+	if v := server.Config(); v != "" {
+		extra = base64.StdEncoding.EncodeToString([]byte(v))
+	}
+	if extra != "" {
+		extra = "|" + extra
+	}
+
+	logger.Debug("plugin address", "network", listener.Addr().Network(), "address", listener.Addr().String())
+
+	// Output the address and service name to stdout so that the client can bring it up.
+	fmt.Printf("%d|%d|%s|%s|%s%s\n",
 		CoreProtocolVersion,
-		opts.ProtocolVersion,
+		protoVersion,
 		listener.Addr().Network(),
-		listener.Addr().String())
+		listener.Addr().String(),
+		protoType,
+		extra)
 	os.Stdout.Sync()
 
 	// Eat the interrupts
@@ -127,9 +310,7 @@ func Serve(opts *ServeConfig) {
 		for {
 			<-ch
 			newCount := atomic.AddInt32(&count, 1)
-			log.Printf(
-				"[DEBUG] plugin: received interrupt signal (count: %d). Ignoring.",
-				newCount)
+			logger.Debug("plugin received interrupt signal, ignoring", "count", newCount)
 		}
 	}()
 
@@ -137,10 +318,8 @@ func Serve(opts *ServeConfig) {
 	os.Stdout = stdout_w
 	os.Stderr = stderr_w
 
-	// Serve
-	go server.Accept(listener)
-
-	// Wait for the graceful exit
+	// Accept connections and wait for completion
+	go server.Serve(listener)
 	<-doneCh
 }
 
