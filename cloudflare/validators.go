@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"net"
+	"net/url"
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -85,4 +86,15 @@ func validateIntInSlice(valid []int) schema.SchemaValidateFunc {
 		es = append(es, fmt.Errorf("expected %q to be one of %v, got %d", k, valid, v))
 		return nil, es
 	}
+}
+
+// validateURL provides a method to test whether the provided string
+// is a valid URL. Relying on `url.ParseRequestURI` isn't the most
+// robust solution it will catch majority of the issues we're looking to
+// handle here but there _could_ be edge cases.
+func validateURL(v interface{}, k string) (s []string, errors []error) {
+	if _, err := url.ParseRequestURI(v.(string)); err != nil {
+		errors = append(errors, fmt.Errorf("%q: %s", k, err))
+	}
+	return
 }
