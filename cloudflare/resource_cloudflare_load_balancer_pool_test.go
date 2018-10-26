@@ -66,48 +66,6 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	})
 }
 
-/**
-Any change to a load balancer pool results in a new resource
-Although the API client contains a modify method, this always results in 405 status
-*/
-func TestAccCloudflareLoadBalancerPool_ForceNew(t *testing.T) {
-	t.Parallel()
-	var loadBalancerPool cloudflare.LoadBalancerPool
-	var initialId string
-	rnd := acctest.RandString(10)
-	name := "cloudflare_load_balancer_pool." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
-				),
-			},
-			{
-				PreConfig: func() {
-					initialId = loadBalancerPool.ID
-				},
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
-					func(state *terraform.State) error {
-						if initialId == loadBalancerPool.ID {
-							return fmt.Errorf("id should be different after recreation, but is unchanged: %s ",
-								loadBalancerPool.ID)
-						}
-						return nil
-					},
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
