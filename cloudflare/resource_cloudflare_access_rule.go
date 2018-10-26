@@ -17,7 +17,7 @@ func resourceCloudflareAccessRule() *schema.Resource {
 		Update: resourceCloudflareAccessRuleUpdate,
 		Delete: resourceCloudflareAccessRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: resourceCloudflareAccessRuleImport,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -133,6 +133,7 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 		if client.OrganizationID != "" {
 			accessRuleResponse, err = client.OrganizationAccessRule(client.OrganizationID, d.Id())
 		} else {
+
 			accessRuleResponse, err = client.UserAccessRule(d.Id())
 		}
 	} else {
@@ -144,7 +145,7 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Page Rule %s no longer exists", d.Id())
+			log.Printf("[INFO] Access Rule %s no longer exists", d.Id())
 			d.SetId("")
 			return nil
 		}
@@ -227,6 +228,36 @@ func resourceCloudflareAccessRuleDelete(d *schema.ResourceData, meta interface{}
 	}
 
 	return nil
+}
+
+func resourceCloudflareAccessRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+	attributes := strings.Split(d.Id(), "/")
+
+	var (
+		accessRuleType           string
+		accessRuleTypeIdentifier string
+		accessRuleID             string
+	)
+
+	if len(attributes) != 3 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accessRuleType/accessRuleTypeIdentifier/identiferValue\"", d.Id())
+	}
+
+	accessRuleType, accessRuleTypeIdentifier, accessRuleID = attributes[0], attributes[1], attributes[2]
+
+	d.SetId(accessRuleID)
+
+	switch accessRuleType {
+	case "account":
+		client.OrganizationID = accessRuleTypeIdentifier
+	case "zone":
+		d.Set("zone_id", accessRuleTypeIdentifier)
+	}
+
+	resourceCloudflareAccessRuleRead(d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func configurationDiffSuppress(k, old, new string, d *schema.ResourceData) bool {

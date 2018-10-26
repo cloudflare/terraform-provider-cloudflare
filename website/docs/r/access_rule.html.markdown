@@ -81,12 +81,17 @@ The following attributes are exported:
 
 ## Import
 
-Records can be imported using a composite ID formed of zone name and record ID, e.g.
+Records can be imported using a composite ID formed of access rule type,
+access rule type identifier and identifer value, e.g.
 
 ```
-$ terraform import cloudflare_access_rule.default d41d8cd98f00b204e9800998ecf8427e
+$ terraform import cloudflare_access_rule.default zone/cb029e245cfdd66dc8d2e570d5dd3322/d41d8cd98f00b204e9800998ecf8427e
 ```
 
 where:
 
-* `d41d8cd98f00b204e9800998ecf8427e` - access rule ID as returned by [API](https://api.cloudflare.com/#user-level-firewall-access-rule-list-access-rules)
+* `zone` - access rule type (`account`, `zone` or `user`)
+* `cb029e245cfdd66dc8d2e570d5dd3322` - access rule type ID (i.e the zone ID
+  or account ID you wish to target)
+* `d41d8cd98f00b204e9800998ecf8427e` - access rule ID as returned by
+  respective API endpoint for the type you are attempting to import.
