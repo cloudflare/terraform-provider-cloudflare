@@ -51,12 +51,9 @@ you've built it.
 
 ```
 providers {
-  cloudflare = "{GOPATH}/github.com/terraform-providers/terraform-provider-cloudflare/terraform-cloudflare-provider"
+  cloudflare = "${GOPATH}/github.com/terraform-providers/terraform-provider-cloudflare/terraform-provider-cloudflare"
 }
 ```
-
-(Be sure to swap out `{GOPATH}` with your actual `$GOPATH`. This does
-not get evaluated)
 
 A caveat with this approach is that you will need to run `terraform
 init` whenever the provider is rebuilt. You'll also need to remember to
