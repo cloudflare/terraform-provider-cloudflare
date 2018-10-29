@@ -87,6 +87,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"cloudflare_access_application":     resourceCloudflareAccessApplication(),
 			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
 			"cloudflare_account_member":         resourceCloudflareAccountMember(),
 			"cloudflare_custom_pages":           resourceCloudflareCustomPages(),
