@@ -1,9 +1,9 @@
 ---
 layout: "cloudflare"
-page_title: "Cloudflare: cloudflare_access_application
+page_title: "Cloudflare: cloudflare_access_application"
 sidebar_current: "docs-cloudflare-resource-access-application"
 description: |-
-  Provides a Cloudflare IP Firewall Access Application resource.
+  Provides a Cloudflare Access Application resource.
 ---
 
 # cloudflare_access_application
