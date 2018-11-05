@@ -1,23 +1,23 @@
-## 1.8.0 (Unreleased)
+## 1.8.0 (November 05, 2018)
 
 **Improvements:**
-* **New Resource:** `cloudflare_zone` [GH-58]
-* **New Resource:** `cloudflare_custom_pages` [GH-132]
-* `cloudflare_zone_settings_override` - Allow setting SSL level to Strict (SSL-Only Origin Pull) [GH-122]
-* Update provider usage/build docs and how to update a dependency [GH-138]
-* Improve `Building The Provider` instructions [GH-143]
-* `cloudflare_access_rule` - Make importable for all rule types [GH-141]
-* `cloudflare_load_balancer_pool` - Implement `Update` [GH-140]
+* **New Resource:** `cloudflare_zone` ([#58](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/58))
+* **New Resource:** `cloudflare_custom_pages` ([#132](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/132))
+* `cloudflare_zone_settings_override` - Allow setting SSL level to Strict (SSL-Only Origin Pull) ([#122](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/122))
+* Update provider usage/build docs and how to update a dependency ([#138](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/138))
+* Improve `Building The Provider` instructions ([#143](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/143))
+* `cloudflare_access_rule` - Make importable for all rule types ([#141](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/141))
+* `cloudflare_load_balancer_pool` - Implement `Update` ([#140](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/140))
 
 **Fixes:**
-* `cloudflare_rate_limit` - Documentation fixes for markdown where \_ALL\_ is italicized [GH-125]
-* `cloudflare_worker_route` - Correctly set `multi_script` on Enterprise worker imports [GH-124]
-* `account_member` - Ignore role ID ordering [GH-128]
-* `cloudflare_rate_limit` - Origin traffic isn't default anymore [GH-130]
-* `cloudflare_rate_limit` - Update rate limit validation to allow `1` [GH-129]
-* `cloudflare_record` - Add validation to ensure TTL is not set while `proxied` is true [GH-127]
+* `cloudflare_rate_limit` - Documentation fixes for markdown where \_ALL\_ is italicized ([#125](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/125))
+* `cloudflare_worker_route` - Correctly set `multi_script` on Enterprise worker imports ([#124](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/124))
+* `account_member` - Ignore role ID ordering ([#128](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/128))
+* `cloudflare_rate_limit` - Origin traffic isn't default anymore ([#130](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/130))
+* `cloudflare_rate_limit` - Update rate limit validation to allow `1` ([#129](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/129))
+* `cloudflare_record` - Add validation to ensure TTL is not set while `proxied` is true ([#127](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/127))
 * Updated code for provider version in User-Agent
-* `cloudflare_zone_lockdown` - Fix import of zone lockdowns [GH-135]
+* `cloudflare_zone_lockdown` - Fix import of zone lockdowns ([#135](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/135))
 
 ## 1.7.0 (October 09, 2018)
 
