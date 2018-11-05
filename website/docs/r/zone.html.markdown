@@ -21,6 +21,7 @@ resource "cloudflare_zone" "example" {
 ## Argument Reference
 
 The following arguments are supported:
+
 * `zone` - (Required) The DNS zone name which will be added.
 * `paused` - (Optional) Boolean of whether this zone is paused (traffic bypasses Cloudflare). Default: false.
 * `jump_start` - (Optional) Boolean of whether to scan for DNS records on creation. Ignored after zone is created. Default: false.
