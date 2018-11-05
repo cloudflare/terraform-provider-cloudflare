@@ -55,10 +55,9 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 			},
 
 			"interval": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      60,
-				ValidateFunc: validation.IntBetween(60, 3600),
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  60,
 			},
 			// interval has to be larger than (retries+1) * probe_timeout:
 
