@@ -249,15 +249,15 @@ func buildAccessPolicyCondition(options map[string]interface{}) []interface{} {
 			for _, value := range values.([]interface{}) {
 				switch accessPolicyType {
 				case "email":
-					policy = append(policy, cloudflare.AccessPolicyEmail{struct {
+					policy = append(policy, cloudflare.AccessPolicyEmail{Email: struct {
 						Email string `json:"email"`
 					}{Email: value.(string)}})
 				case "email_domain":
-					policy = append(policy, cloudflare.AccessPolicyEmailDomain{struct {
+					policy = append(policy, cloudflare.AccessPolicyEmailDomain{EmailDomain: struct {
 						Domain string `json:"domain"`
 					}{Domain: value.(string)}})
 				case "ip":
-					policy = append(policy, cloudflare.AccessPolicyIP{struct {
+					policy = append(policy, cloudflare.AccessPolicyIP{IP: struct {
 						IP string `json:"ip"`
 					}{IP: value.(string)}})
 				}
