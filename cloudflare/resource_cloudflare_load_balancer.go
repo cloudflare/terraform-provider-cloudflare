@@ -192,15 +192,15 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	}
 
 	zoneName := d.Get("zone").(string)
-	zoneId, err := client.ZoneIDByName(zoneName)
+	zoneID, err := client.ZoneIDByName(zoneName)
 	if err != nil {
 		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
 	}
-	d.Set("zone_id", zoneId)
+	d.Set("zone_id", zoneID)
 
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
-	r, err := client.CreateLoadBalancer(zoneId, newLoadBalancer)
+	r, err := client.CreateLoadBalancer(zoneID, newLoadBalancer)
 	if err != nil {
 		return errors.Wrap(err, "error creating load balancer for zone")
 	}
@@ -219,7 +219,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface{}) error {
 	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
-	zoneId := d.Get("zone_id").(string)
+	zoneID := d.Get("zone_id").(string)
 
 	loadBalancer := cloudflare.LoadBalancer{
 		ID:             d.Id(),
@@ -253,7 +253,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
 
-	_, err := client.ModifyLoadBalancer(zoneId, loadBalancer)
+	_, err := client.ModifyLoadBalancer(zoneID, loadBalancer)
 	if err != nil {
 		return errors.Wrap(err, "error creating load balancer for zone")
 	}
@@ -279,18 +279,18 @@ func expandGeoPools(pool interface{}, geoType string) (map[string][]string, erro
 
 func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneId := d.Get("zone_id").(string)
-	loadBalancerId := d.Id()
+	zoneID := d.Get("zone_id").(string)
+	loadBalancerID := d.Id()
 
-	loadBalancer, err := client.LoadBalancerDetails(zoneId, loadBalancerId)
+	loadBalancer, err := client.LoadBalancerDetails(zoneID, loadBalancerID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Load balancer %s in zone %s not found", loadBalancerId, zoneId)
+			log.Printf("[INFO] Load balancer %s in zone %s not found", loadBalancerID, zoneID)
 			d.SetId("")
 			return nil
 		}
 		return errors.Wrap(err,
-			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", zoneId, loadBalancerId))
+			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", zoneID, loadBalancerID))
 	}
 
 	d.Set("name", loadBalancer.Name)
@@ -331,12 +331,12 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 
 func resourceCloudflareLoadBalancerDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneId := d.Get("zone_id").(string)
-	loadBalancerId := d.Id()
+	zoneID := d.Get("zone_id").(string)
+	loadBalancerID := d.Id()
 
-	log.Printf("[INFO] Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerId, zoneId)
+	log.Printf("[INFO] Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID)
 
-	err := client.DeleteLoadBalancer(zoneId, loadBalancerId)
+	err := client.DeleteLoadBalancer(zoneID, loadBalancerID)
 	if err != nil {
 		return fmt.Errorf("error deleting Cloudflare Load Balancer: %s", err)
 	}
@@ -350,21 +350,21 @@ func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneName string
-	var loadBalancerId string
+	var loadBalancerID string
 	if len(idAttr) == 2 {
 		zoneName = idAttr[0]
-		loadBalancerId = idAttr[1]
+		loadBalancerID = idAttr[1]
 	} else {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/loadBalancerId\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/loadBalancerID\"", d.Id())
 	}
-	zoneId, err := client.ZoneIDByName(zoneName)
+	zoneID, err := client.ZoneIDByName(zoneName)
 
 	if err != nil {
 		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
 	}
 
 	d.Set("zone", zoneName)
-	d.Set("zone_id", zoneId)
-	d.SetId(loadBalancerId)
+	d.Set("zone_id", zoneID)
+	d.SetId(loadBalancerID)
 	return []*schema.ResourceData{d}, nil
 }
