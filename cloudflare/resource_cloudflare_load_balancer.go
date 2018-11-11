@@ -77,6 +77,13 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(0, 1024),
 			},
 
+			"steering_policy": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", ""}, false),
+				Default:      "",
+			},
+
 			// nb enterprise only
 			"pop_pools": {
 				Type:     schema.TypeSet,
@@ -152,11 +159,12 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	client := meta.(*cloudflare.API)
 
 	newLoadBalancer := cloudflare.LoadBalancer{
-		Name:         d.Get("name").(string),
-		FallbackPool: d.Get("fallback_pool_id").(string),
-		DefaultPools: expandInterfaceToStringList(d.Get("default_pool_ids")),
-		Proxied:      d.Get("proxied").(bool),
-		TTL:          d.Get("ttl").(int),
+		Name:           d.Get("name").(string),
+		FallbackPool:   d.Get("fallback_pool_id").(string),
+		DefaultPools:   expandInterfaceToStringList(d.Get("default_pool_ids")),
+		Proxied:        d.Get("proxied").(bool),
+		TTL:            d.Get("ttl").(int),
+		SteeringPolicy: d.Get("steering_policy").(string),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -214,12 +222,13 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	zoneId := d.Get("zone_id").(string)
 
 	loadBalancer := cloudflare.LoadBalancer{
-		ID:           d.Id(),
-		Name:         d.Get("name").(string),
-		FallbackPool: d.Get("fallback_pool_id").(string),
-		DefaultPools: expandInterfaceToStringList(d.Get("default_pool_ids")),
-		Proxied:      d.Get("proxied").(bool),
-		TTL:          d.Get("ttl").(int),
+		ID:             d.Id(),
+		Name:           d.Get("name").(string),
+		FallbackPool:   d.Get("fallback_pool_id").(string),
+		DefaultPools:   expandInterfaceToStringList(d.Get("default_pool_ids")),
+		Proxied:        d.Get("proxied").(bool),
+		TTL:            d.Get("ttl").(int),
+		SteeringPolicy: d.Get("steering_policy").(string),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -289,6 +298,7 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	d.Set("proxied", loadBalancer.Proxied)
 	d.Set("description", loadBalancer.Description)
 	d.Set("ttl", loadBalancer.TTL)
+	d.Set("steering_policy", loadBalancer.SteeringPolicy)
 	d.Set("created_on", loadBalancer.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancer.ModifiedOn.Format(time.RFC3339Nano))
 
