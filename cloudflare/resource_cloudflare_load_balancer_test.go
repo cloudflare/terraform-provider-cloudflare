@@ -9,11 +9,12 @@ import (
 
 	"os"
 
+	"regexp"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"regexp"
 )
 
 func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
@@ -43,6 +44,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerDates(name, &loadBalancer, testStartTime),
 					resource.TestCheckResourceAttr(name, "proxied", "false"), // default value
 					resource.TestCheckResourceAttr(name, "ttl", "30"),
+					resource.TestCheckResourceAttr(name, "steering_policy", ""),
 				),
 			},
 		},
@@ -70,6 +72,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "tf-acctest load balancer using geo-balancing"),
 					resource.TestCheckResourceAttr(name, "proxied", "true"),
 					resource.TestCheckResourceAttr(name, "ttl", "0"),
+					resource.TestCheckResourceAttr(name, "steering_policy", "geo"),
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "1"),
 					resource.TestCheckResourceAttr(name, "region_pools.#", "1"),
 				),
@@ -294,6 +297,7 @@ func testAccCheckCloudflareLoadBalancerConfigBasic(zone, id string) string {
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
   name = "tf-testacc-lb-%[2]s"
+  steering_policy = ""
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
 }`, zone, id)
@@ -308,6 +312,7 @@ resource "cloudflare_load_balancer" "%[2]s" {
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
   description = "tf-acctest load balancer using geo-balancing"
   proxied = true // can't set ttl with proxied
+  steering_policy = "geo"
   pop_pools {
     pop = "LAX"
     pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
