@@ -20,8 +20,8 @@ resource "cloudflare_page_rule" "foobar" {
   priority = 1
 
   actions = {
-    ssl = "flexible",
-    email_obfuscation = "on",
+    ssl = "flexible"
+    email_obfuscation = "on"
   }
 }
 ```
