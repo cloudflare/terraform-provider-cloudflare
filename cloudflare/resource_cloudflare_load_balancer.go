@@ -57,6 +57,13 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				},
 			},
 
+			"session_affinity": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "none",
+				ValidateFunc: validation.StringInSlice([]string{"none", "cookie"}, false),
+			},
+
 			"proxied": {
 				Type:          schema.TypeBool,
 				Optional:      true,
@@ -165,6 +172,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		Proxied:        d.Get("proxied").(bool),
 		TTL:            d.Get("ttl").(int),
 		SteeringPolicy: d.Get("steering_policy").(string),
+		Persistence:    d.Get("session_affinity").(string),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -229,6 +237,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 		Proxied:        d.Get("proxied").(bool),
 		TTL:            d.Get("ttl").(int),
 		SteeringPolicy: d.Get("steering_policy").(string),
+		Persistence:    d.Get("session_affinity").(string),
 	}
 
 	if description, ok := d.GetOk("description"); ok {

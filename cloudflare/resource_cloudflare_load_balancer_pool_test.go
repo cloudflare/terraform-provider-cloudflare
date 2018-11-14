@@ -204,10 +204,12 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     name = "example-1"
     address = "192.0.2.1"
     enabled = false
+    weight = 1.0
   }
   origins {
     name = "example-2"
     address = "192.0.2.2"
+    weight = 0.5
   }
   check_regions = ["WEU"]
   description = "tfacc-fully-specified"
