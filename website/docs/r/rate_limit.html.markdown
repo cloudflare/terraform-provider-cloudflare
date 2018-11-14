@@ -72,7 +72,7 @@ The **match.request** block supports:
 
 The **match.response** block supports:
 
-* `status` - (Optional) HTTP Status codes, can be one [403], many [401,403] or indicate all by not providing this value.
+* `statuses` - (Optional) HTTP Status codes, can be one [403], many [401,403] or indicate all by not providing this value.
 * `origin_traffic` - (Optional) Only count traffic that has come from your origin servers. If true, cached items that Cloudflare serve will not count towards rate limiting. Default: `true`.
 
 The **action** block supports:
