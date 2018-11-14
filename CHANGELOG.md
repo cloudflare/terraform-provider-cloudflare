@@ -1,4 +1,16 @@
 ## 1.9.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_access_application` [GH-145]
+* **New Resource:** `cloudflare_access_policy` [GH-145]
+* `cloudflare_load_balancer` - Add steering policy support [GH-147]
+* `cloudflare_load_balancer` - Support `session_affinity` [GH-153]
+* `cloudflare_load_balancer_pool` - Support `weight` [GH-153]
+
+**Fixes:**
+* `cloudflare_record` - Compare name without the zone name [GH-151]
+* Minor documentation fixes [GH-149] [GH-152]
+
 ## 1.8.0 (November 05, 2018)
 
 **Improvements:**
