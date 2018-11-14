@@ -37,6 +37,7 @@ func resourceCloudflareRecord() *schema.Resource {
 				StateFunc: func(i interface{}) string {
 					return strings.ToLower(i.(string))
 				},
+				DiffSuppressFunc: suppressNameDiff,
 			},
 
 			"hostname": {
@@ -577,4 +578,9 @@ func suppressPriority(k, old, new string, d *schema.ResourceData) bool {
 		return true
 	}
 	return false
+}
+
+func suppressNameDiff(k, old, new string, d *schema.ResourceData) bool {
+	zoneName := d.Get("domain").(string)
+	return strings.TrimSuffix(old, "."+zoneName) == strings.TrimSuffix(new, "."+zoneName)
 }
