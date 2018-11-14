@@ -58,8 +58,10 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 			},
 
 			"session_affinity": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "none",
+				ValidateFunc: validation.StringInSlice([]string{"none", "cookie"}, false),
 			},
 
 			"proxied": {
