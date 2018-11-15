@@ -1,15 +1,15 @@
-## 1.9.0 (Unreleased)
+## 1.9.0 (November 15, 2018)
 
 **Improvements:**
-* **New Resource:** `cloudflare_access_application` [GH-145]
-* **New Resource:** `cloudflare_access_policy` [GH-145]
-* `cloudflare_load_balancer` - Add steering policy support [GH-147]
-* `cloudflare_load_balancer` - Support `session_affinity` [GH-153]
-* `cloudflare_load_balancer_pool` - Support `weight` [GH-153]
+* **New Resource:** `cloudflare_access_application` ([#145](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/145))
+* **New Resource:** `cloudflare_access_policy` ([#145](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/145))
+* `cloudflare_load_balancer` - Add steering policy support ([#147](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/147))
+* `cloudflare_load_balancer` - Support `session_affinity` ([#153](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/153))
+* `cloudflare_load_balancer_pool` - Support `weight` ([#153](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/153))
 
 **Fixes:**
-* `cloudflare_record` - Compare name without the zone name [GH-151]
-* Minor documentation fixes [GH-149] [GH-152]
+* `cloudflare_record` - Compare name without the zone name ([#151](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/151))
+* Minor documentation fixes ([#149](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/149)] [[#152](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/152))
 
 ## 1.8.0 (November 05, 2018)
 
