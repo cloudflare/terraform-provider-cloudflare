@@ -58,7 +58,7 @@ The following arguments are supported:
 * `decision` - (Required) The complete URL of the asset you wish to put
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
 * `name` - (Required) Friendly name of the Access Application.
-* `precedence` - (Optional) Friendly name of the Access Application.
+* `precedence` - (Optional) The unique precedence for policies on a single application. Integer.
 * `require` - (Optional) A series of access conditions, see below for
   full list.
 * `exclude` - (Optional) A series of access conditions, see below for
