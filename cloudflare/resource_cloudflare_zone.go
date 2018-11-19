@@ -135,6 +135,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("type", zone.Type)
 	d.Set("name_servers", zone.NameServers)
 	d.Set("meta", flattenMeta(d, zone.Meta))
+	d.Set("zone", zone.Name)
 
 	return nil
 }
