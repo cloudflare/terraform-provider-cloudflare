@@ -44,7 +44,7 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 			},
 			"require": {
 				Type:     schema.TypeList,
-				Required: true,
+				Optional: true,
 				Elem:     policyOptionElement,
 			},
 			"exclude": {
@@ -54,7 +54,7 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 			},
 			"include": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Required: true,
 				Elem:     policyOptionElement,
 			},
 		},
