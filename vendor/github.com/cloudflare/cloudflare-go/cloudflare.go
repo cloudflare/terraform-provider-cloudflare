@@ -10,6 +10,8 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -114,16 +116,16 @@ func (api *API) SetAuthType(authType int) {
 
 // ZoneIDByName retrieves a zone's ID from the name.
 func (api *API) ZoneIDByName(zoneName string) (string, error) {
-	res, err := api.ListZones(zoneName)
+	res, err := api.ListZonesContext(context.TODO(), WithZoneFilter(zoneName))
 	if err != nil {
-		return "", errors.Wrap(err, "ListZones command failed")
+		return "", errors.Wrap(err, "ListZonesContext command failed")
 	}
 
-	if len(res) > 1 && api.OrganizationID == "" {
+	if len(res.Result) > 1 && api.OrganizationID == "" {
 		return "", errors.New("ambiguous zone name used without an account ID")
 	}
 
-	for _, zone := range res {
+	for _, zone := range res.Result {
 		if api.OrganizationID != "" {
 			if zone.Name == zoneName && api.OrganizationID == zone.Account.ID {
 				return zone.ID, nil
@@ -141,18 +143,22 @@ func (api *API) ZoneIDByName(zoneName string) (string, error) {
 // makeRequest makes a HTTP request and returns the body as a byte slice,
 // closing it before returnng. params will be serialized to JSON.
 func (api *API) makeRequest(method, uri string, params interface{}) ([]byte, error) {
-	return api.makeRequestWithAuthType(method, uri, params, api.authType)
+	return api.makeRequestWithAuthType(context.TODO(), method, uri, params, api.authType)
+}
+
+func (api *API) makeRequestContext(ctx context.Context, method, uri string, params interface{}) ([]byte, error) {
+	return api.makeRequestWithAuthType(ctx, method, uri, params, api.authType)
 }
 
 func (api *API) makeRequestWithHeaders(method, uri string, params interface{}, headers http.Header) ([]byte, error) {
-	return api.makeRequestWithAuthTypeAndHeaders(method, uri, params, api.authType, headers)
+	return api.makeRequestWithAuthTypeAndHeaders(context.TODO(), method, uri, params, api.authType, headers)
 }
 
-func (api *API) makeRequestWithAuthType(method, uri string, params interface{}, authType int) ([]byte, error) {
-	return api.makeRequestWithAuthTypeAndHeaders(method, uri, params, authType, nil)
+func (api *API) makeRequestWithAuthType(ctx context.Context, method, uri string, params interface{}, authType int) ([]byte, error) {
+	return api.makeRequestWithAuthTypeAndHeaders(ctx, method, uri, params, authType, nil)
 }
 
-func (api *API) makeRequestWithAuthTypeAndHeaders(method, uri string, params interface{}, authType int, headers http.Header) ([]byte, error) {
+func (api *API) makeRequestWithAuthTypeAndHeaders(ctx context.Context, method, uri string, params interface{}, authType int, headers http.Header) ([]byte, error) {
 	// Replace nil with a JSON object if needed
 	var jsonBody []byte
 	var err error
@@ -195,7 +201,7 @@ func (api *API) makeRequestWithAuthTypeAndHeaders(method, uri string, params int
 		if err != nil {
 			return nil, errors.Wrap(err, "Error caused by request rate limiting")
 		}
-		resp, respErr = api.request(method, uri, reqBody, authType, headers)
+		resp, respErr = api.request(ctx, method, uri, reqBody, authType, headers)
 
 		// retry if the server is rate limiting us or if it failed
 		// assumes server operations are rolled back on failure
@@ -259,11 +265,12 @@ func (api *API) makeRequestWithAuthTypeAndHeaders(method, uri string, params int
 // request makes a HTTP request to the given API endpoint, returning the raw
 // *http.Response, or an error if one occurred. The caller is responsible for
 // closing the response body.
-func (api *API) request(method, uri string, reqBody io.Reader, authType int, headers http.Header) (*http.Response, error) {
+func (api *API) request(ctx context.Context, method, uri string, reqBody io.Reader, authType int, headers http.Header) (*http.Response, error) {
 	req, err := http.NewRequest(method, api.BaseURL+uri, reqBody)
 	if err != nil {
 		return nil, errors.Wrap(err, "HTTP request creation failed")
 	}
+	req.WithContext(ctx)
 
 	combinedHeaders := make(http.Header)
 	copyHeader(combinedHeaders, api.headers)
@@ -376,4 +383,25 @@ type RetryPolicy struct {
 // This is a subset of the methods implemented in the log package
 type Logger interface {
 	Printf(format string, v ...interface{})
+}
+
+// ReqOption is a functional option for configuring API requests
+type ReqOption func(opt *reqOption)
+type reqOption struct {
+	params url.Values
+}
+
+// WithZoneFilter applies a filter based on zone name.
+func WithZoneFilter(zone string) ReqOption {
+	return func(opt *reqOption) {
+		opt.params.Set("name", zone)
+	}
+}
+
+// WithPagination configures the pagination for a response.
+func WithPagination(opts PaginationOptions) ReqOption {
+	return func(opt *reqOption) {
+		opt.params.Set("page", strconv.Itoa(opts.Page))
+		opt.params.Set("per_page", strconv.Itoa(opts.PerPage))
+	}
 }

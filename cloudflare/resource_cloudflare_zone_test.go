@@ -20,6 +20,7 @@ func TestZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "zone", "example.org"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", "Free Website"),
 				),
 			},
 		},

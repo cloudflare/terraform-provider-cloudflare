@@ -47,6 +47,13 @@ func resourceCloudflareZone() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"plan": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				//TODO ask for complete Enum
+				ValidateFunc: validation.StringMatch(regexp.MustCompile("^([a-zA-Z0-9 ]+)$"), "Not a valid plan: use Free Website, Pro Plan, Business, Enterprise"),
+			},
 			"meta": {
 				Type:     schema.TypeMap,
 				Computed: true,
@@ -108,6 +115,10 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
+	if err := setRatePlan(d, client, zone.ID); err != nil {
+		return err
+	}
+
 	return resourceCloudflareZoneRead(d, meta)
 }
 
@@ -136,6 +147,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("name_servers", zone.NameServers)
 	d.Set("meta", flattenMeta(d, zone.Meta))
 	d.Set("zone", zone.Name)
+	d.Set("plan", zone.Plan.Name)
 
 	return nil
 }
@@ -154,6 +166,10 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		if err != nil {
 			return fmt.Errorf("Error updating zone_id %q: %s", zoneID, err)
 		}
+	}
+
+	if err := setRatePlan(d, client, zoneID); err != nil {
+		return err
 	}
 
 	return resourceCloudflareZoneRead(d, meta)
@@ -183,4 +199,30 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 	log.Printf("[DEBUG] flattenMeta %#v", cfg)
 
 	return cfg
+}
+
+func setRatePlan(d *schema.ResourceData, client *cloudflare.API, zoneID string) error {
+	if planName, ok := d.GetOk("planName"); ok {
+		ratePlan, err := getZonePlanIDFor(client, zoneID, planName.(string))
+		if err != nil {
+			return fmt.Errorf("Error fetching planName %s for zone %q: %s", planName, zoneID, err)
+		}
+		if _, err := client.ZoneSetRatePlan(zoneID, *ratePlan); err != nil {
+			return fmt.Errorf("Error setting planName %s for zone %q: %s", planName, zoneID, err)
+		}
+	}
+	return nil
+}
+
+func getZonePlanIDFor(client *cloudflare.API, zoneID, planName string) (*cloudflare.ZoneRatePlan, error) {
+	plans, err := client.AvailableZoneRatePlans(zoneID)
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range plans {
+		if strings.EqualFold(p.Name, planName) {
+			return &p, nil
+		}
+	}
+	return nil, fmt.Errorf("Not found amongst plans")
 }
