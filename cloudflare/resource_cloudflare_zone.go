@@ -202,7 +202,7 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 }
 
 func setRatePlan(d *schema.ResourceData, client *cloudflare.API, zoneID string) error {
-	if planName, ok := d.GetOk("planName"); ok {
+	if planName, ok := d.GetOk("plan"); ok {
 		ratePlan, err := getZonePlanIDFor(client, zoneID, planName.(string))
 		if err != nil {
 			return fmt.Errorf("Error fetching planName %s for zone %q: %s", planName, zoneID, err)
