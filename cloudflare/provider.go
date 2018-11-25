@@ -84,6 +84,7 @@ func Provider() terraform.ResourceProvider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"cloudflare_ip_ranges": dataSourceCloudflareIPRanges(),
+			"cloudflare_zones":     dataSourceCloudflareZones(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
