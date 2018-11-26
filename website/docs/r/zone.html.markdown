@@ -25,13 +25,14 @@ The following arguments are supported:
 * `zone` - (Required) The DNS zone name which will be added.
 * `paused` - (Optional) Boolean of whether this zone is paused (traffic bypasses Cloudflare). Default: false.
 * `jump_start` - (Optional) Boolean of whether to scan for DNS records on creation. Ignored after zone is created. Default: false.
-* `plan` - (Optional) The name of the commercial plan to apply to the zone, can be updated once the one is created; one of `Free Website`, `TODO`, `TODO`, `TODO` 
+* `plan` - (Optional) The name of the commercial plan to apply to the zone, can be updated once the one is created; one of `Free Website`, `Pro Website`, `Business Website`, `Enterprise Website`. 
 
 ## Attributes Reference
 
 The following attributes are exported:
 
 * `id` - The zone ID.
+* `plan` - The name of the commercial plan to apply to the zone.
 * `vanity_name_servers` - List of Vanity Nameservers (if set).
 * `meta.wildcard_proxiable` - Indicates whether wildcard DNS records can receive Cloudflare security and performance features.
 * `meta.phishing_detected` - Indicates if URLs on the zone have been identified as hosting phishing content.

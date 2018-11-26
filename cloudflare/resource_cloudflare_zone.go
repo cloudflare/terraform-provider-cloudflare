@@ -48,11 +48,10 @@ func resourceCloudflareZone() *schema.Resource {
 				},
 			},
 			"plan": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
-				//TODO ask for complete Enum
-				ValidateFunc: validation.StringMatch(regexp.MustCompile("^([a-zA-Z0-9 ]+)$"), "Not a valid plan: use Free Website, Pro Plan, Business, Enterprise"),
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Free Website", "Business Website", "Pro Website", "Enterprise Website"}, false),
 			},
 			"meta": {
 				Type:     schema.TypeMap,
@@ -86,6 +85,7 @@ func resourceCloudflareZone() *schema.Resource {
 		},
 	}
 }
+
 func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -115,8 +115,10 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
-	if err := setRatePlan(d, client, zone.ID); err != nil {
-		return err
+	if plan, ok := d.GetOk("plan"); ok {
+		if err := setRatePlan(plan.(string), client, zone.ID); err != nil {
+			return err
+		}
 	}
 
 	return resourceCloudflareZoneRead(d, meta)
@@ -168,8 +170,10 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
-	if err := setRatePlan(d, client, zoneID); err != nil {
-		return err
+	if plan, ok := d.GetOk("plan"); ok {
+		if err := setRatePlan(plan.(string), client, zoneID); err != nil {
+			return err
+		}
 	}
 
 	return resourceCloudflareZoneRead(d, meta)
@@ -201,15 +205,13 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 	return cfg
 }
 
-func setRatePlan(d *schema.ResourceData, client *cloudflare.API, zoneID string) error {
-	if planName, ok := d.GetOk("plan"); ok {
-		ratePlan, err := getZonePlanIDFor(client, zoneID, planName.(string))
-		if err != nil {
-			return fmt.Errorf("Error fetching planName %s for zone %q: %s", planName, zoneID, err)
-		}
-		if _, err := client.ZoneSetRatePlan(zoneID, *ratePlan); err != nil {
-			return fmt.Errorf("Error setting planName %s for zone %q: %s", planName, zoneID, err)
-		}
+func setRatePlan(planName string, client *cloudflare.API, zoneID string) error {
+	ratePlan, err := getZonePlanIDFor(client, zoneID, planName)
+	if err != nil {
+		return fmt.Errorf("Error fetching planName %s for zone %q: %s", planName, zoneID, err)
+	}
+	if _, err := client.ZoneSetRatePlan(zoneID, *ratePlan); err != nil {
+		return fmt.Errorf("Error setting planName %s for zone %q: %s", planName, zoneID, err)
 	}
 	return nil
 }
@@ -224,5 +226,5 @@ func getZonePlanIDFor(client *cloudflare.API, zoneID, planName string) (*cloudfl
 			return &p, nil
 		}
 	}
-	return nil, fmt.Errorf("Not found amongst plans")
+	return nil, fmt.Errorf("plan %s not found amongst the available plans", planName)
 }
