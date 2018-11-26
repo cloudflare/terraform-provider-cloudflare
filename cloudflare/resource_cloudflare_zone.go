@@ -49,7 +49,6 @@ func resourceCloudflareZone() *schema.Resource {
 			},
 			"plan": {
 				Type:         schema.TypeString,
-				Computed:     true,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"Free Website", "Business Website", "Pro Website", "Enterprise Website"}, false),
 			},
