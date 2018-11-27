@@ -63,6 +63,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `ipv6`
 * `mirage`
 * `opportunistic_encryption`
+* `opportunistic_onion`
 * `origin_error_page_pass_thru`
 * `prefetch_preload`
 * `privacy_pass`

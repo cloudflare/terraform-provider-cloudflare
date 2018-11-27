@@ -260,6 +260,13 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed:     true,
 	},
 
+	"opportunistic_onion": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
 	"polish": {
 		Type:         schema.TypeString,
 		Optional:     true,
