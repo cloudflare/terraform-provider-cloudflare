@@ -25,6 +25,7 @@ func resourceCloudflareFilter() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
+				Computed: true,
 			},
 			"zone_id": {
 				Type:     schema.TypeString,
