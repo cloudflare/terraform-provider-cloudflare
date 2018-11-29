@@ -127,10 +127,6 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 				zoneName = zone.Name
 			}
 		}
-
-		if zoneName == "" {
-			return fmt.Errorf("failed to find zone name")
-		}
 	}
 
 	log.Printf("[DEBUG] Getting a Filter record for zone %q, id %s", zoneID, d.Id())
