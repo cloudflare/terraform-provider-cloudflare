@@ -50,6 +50,41 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
+	t.Parallel()
+	var rateLimit cloudflare.RateLimit
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := acctest.RandString(10)
+	name := "cloudflare_rate_limit." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRateLimitChallengeConfigBasic(zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					// check that the action challenge mode has been set
+					resource.TestCheckResourceAttr(name, "action.0.mode", "challenge"),
+					resource.TestCheckResourceAttr(name, "action.0.response.#", "0"),
+					resource.TestCheckResourceAttr(name, "bypass_url_patterns.#", "0"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.statuses.#", "0"),
+					resource.TestCheckResourceAttr(name, "disabled", "false"),
+					resource.TestCheckResourceAttr(name, "match.#", "1"),
+					resource.TestCheckResourceAttr(name, "match.0.request.#", "1"),
+					resource.TestCheckResourceAttr(name, "match.0.request.0.schemes.#", "1"),
+					resource.TestCheckResourceAttr(name, "match.0.request.0.url_pattern", "*"),
+					resource.TestCheckResourceAttr(name, "match.0.response.#", "1"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.origin_traffic", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
@@ -312,5 +347,17 @@ resource "cloudflare_rate_limit" "%[1]s" {
   disabled = true
   description = "my fully specified rate limit for a zone"
   bypass_url_patterns = ["%[2]s/bypass1","%[2]s/bypass2"]
+}`, id, zone)
+}
+
+func testAccCheckCloudflareRateLimitChallengeConfigBasic(zone, id string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_rate_limit" "%[1]s" {
+  zone = "%[2]s"
+  threshold = 1000
+  period = 1
+  action {
+    mode = "challenge"
+  }
 }`, id, zone)
 }

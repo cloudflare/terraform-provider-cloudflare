@@ -56,12 +56,12 @@ func resourceCloudflareRateLimit() *schema.Resource {
 						"mode": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"simulate", "ban"}, true),
+							ValidateFunc: validation.StringInSlice([]string{"simulate", "ban", "challenge", "js_challenge"}, true),
 						},
 
 						"timeout": {
 							Type:         schema.TypeInt,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.IntBetween(1, 86400),
 						},
 
@@ -331,6 +331,7 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 			}
 			responseMatcher.Statuses = statuses
 		}
+
 		if originIface, ok := matchResp["origin_traffic"]; ok {
 			originTraffic := originIface.(bool)
 			responseMatcher.OriginTraffic = &originTraffic
