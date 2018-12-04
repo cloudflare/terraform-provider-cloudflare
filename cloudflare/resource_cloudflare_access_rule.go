@@ -126,6 +126,20 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	zoneName := d.Get("zone").(string)
+	if zoneID == "" {
+		zoneID, _ = client.ZoneIDByName(zoneName)
+	} else {
+		zones, err := client.ListZones()
+		if err != nil {
+			return fmt.Errorf("failed to lookup all zones: %s", err)
+		}
+		for _, zone := range zones {
+			if zone.ID == zoneID {
+				zoneName = zone.Name
+			}
+		}
+	}
 
 	var accessRuleResponse *cloudflare.AccessRuleResponse
 	var err error
@@ -155,6 +169,8 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
 
+	d.Set("zone", zoneName)
+	d.Set("zone_id", zoneID)
 	d.Set("mode", accessRuleResponse.Result.Mode)
 	d.Set("notes", accessRuleResponse.Result.Notes)
 	log.Printf("[DEBUG] read configuration: %#v", d.Get("configuration"))
