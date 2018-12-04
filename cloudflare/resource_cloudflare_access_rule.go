@@ -94,11 +94,7 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 			r, err = client.CreateUserAccessRule(newRule)
 		}
 	} else {
-		var zoneID string
-
-		if zoneID != "" {
-			zoneID = zoneID
-		} else {
+		if zoneID == "" {
 			zoneID, err = client.ZoneIDByName(zone)
 			if err != nil {
 				return fmt.Errorf("Error finding zone %q: %s", zone, err)
