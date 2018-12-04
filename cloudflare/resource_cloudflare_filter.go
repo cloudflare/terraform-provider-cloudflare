@@ -25,6 +25,7 @@ func resourceCloudflareFilter() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
+				Computed: true,
 			},
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -111,6 +112,22 @@ func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) er
 func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	zoneName := d.Get("zone").(string)
+
+	if zoneID == "" {
+		zoneID, _ = client.ZoneIDByName(zoneName)
+	} else {
+		zones, err := client.ListZones()
+		if err != nil {
+			return fmt.Errorf("failed to lookup all zones: %s", err)
+		}
+
+		for _, zone := range zones {
+			if zone.ID == zoneID {
+				zoneName = zone.Name
+			}
+		}
+	}
 
 	log.Printf("[DEBUG] Getting a Filter record for zone %q, id %s", zoneID, d.Id())
 	filter, err := client.Filter(zoneID, d.Id())
@@ -129,6 +146,8 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 
 	log.Printf("[DEBUG] Cloudflare Filter read configuration: %#v", filter)
 
+	d.Set("zone", zoneName)
+	d.Set("zone_id", zoneID)
 	d.Set("paused", filter.Paused)
 	d.Set("description", filter.Description)
 	d.Set("expression", filter.Expression)

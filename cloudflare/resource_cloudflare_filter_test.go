@@ -27,6 +27,8 @@ func TestFilterSimple(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "this is notes"),
 					resource.TestCheckResourceAttr(name, "expression", filterUnquoted),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "zone", zone),
+					resource.TestCheckResourceAttrSet(name, "zone_id"),
 				),
 			},
 		},
