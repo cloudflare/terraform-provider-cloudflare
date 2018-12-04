@@ -30,6 +30,8 @@ func TestFirewallRuleSimple(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "action", "allow"),
 					resource.TestCheckResourceAttr(name, "priority", "1"),
+					resource.TestCheckResourceAttr(name, "zone", zone),
+					resource.TestCheckResourceAttrSet(name, "zone_id"),
 				),
 			},
 		},
