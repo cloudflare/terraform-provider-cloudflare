@@ -25,6 +25,7 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
+				Computed: true,
 			},
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -124,6 +125,20 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	zoneName := d.Get("zone").(string)
+	if zoneID == "" {
+		zoneID, _ = client.ZoneIDByName(zoneName)
+	} else {
+		zones, err := client.ListZones()
+		if err != nil {
+			return fmt.Errorf("failed to lookup all zones: %s", err)
+		}
+		for _, zone := range zones {
+			if zone.ID == zoneID {
+				zoneName = zone.Name
+			}
+		}
+	}
 
 	firewallRule, err := client.FirewallRule(zoneID, d.Id())
 
@@ -141,6 +156,8 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[DEBUG] Cloudflare Firewall Rule read configuration: %#v", firewallRule)
 
+	d.Set("zone", zoneName)
+	d.Set("zone_id", zoneID)
 	d.Set("paused", firewallRule.Paused)
 	d.Set("description", firewallRule.Description)
 	d.Set("action", firewallRule.Action)
