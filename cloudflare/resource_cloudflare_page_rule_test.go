@@ -145,6 +145,7 @@ func TestAccCloudflarePageRule_Updated(t *testing.T) {
 					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &after),
 					testAccCheckCloudflarePageRuleAttributesUpdated(&after),
 					testAccCheckCloudflarePageRuleIDUnchanged(&before, &after),
+					testAccCheckCloudflarePageRuleAttributesIgnored(&after),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/updated", target)),
 				),
@@ -377,6 +378,18 @@ func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 	}
 }
 
+func testAccCheckCloudflarePageRuleAttributesIgnored(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+
+		actionMap := pageRuleActionsToMap(pageRule.Actions)
+
+		if _, ok := actionMap["cache_key"]; ok {
+			return fmt.Errorf("'cache_key' found at api, but we should have ignored it")
+		}
+
+		return nil
+	}
+}
 func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -441,6 +454,7 @@ resource "cloudflare_page_rule" "test" {
 	target = "%s/updated"
 	actions = {
 		always_online = "off"
+		cache_key = "foo"
 		browser_check = "on"
 		disable_apps = false
 		ssl = "strict"

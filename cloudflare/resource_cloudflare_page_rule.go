@@ -441,6 +441,9 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 		for _, action := range actions {
 			for id, value := range action.(map[string]interface{}) {
+				if contains(pageRuleKeysToIgnoreOnUpdate, id) {
+					continue
+				}
 				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
 				if err != nil {
 					return err
@@ -528,6 +531,10 @@ var pageRuleAPIStringFields = []string{
 	"resolve_override",
 	"security_level",
 	"ssl",
+}
+
+var pageRuleKeysToIgnoreOnUpdate = []string{
+	"cache_key", // this key can ONLY be set by Cloudflare support, so provider shouldn't try updating it
 }
 
 func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAction) (key string, value interface{}, err error) {
