@@ -567,13 +567,3 @@ func resourceCloudflareRateLimitImport(d *schema.ResourceData, meta interface{})
 
 	return []*schema.ResourceData{d}, nil
 }
-
-// StringInSlice returns a SchemaValidateFunc which tests if the provided value
-// is of type string and matches the value of an element in the valid slice
-// will test with in lower case if ignoreCase is true
-func ValidateAction() schema.SchemaValidateFunc {
-	return func(i interface{}, k string) (s []string, es []error) {
-		es = append(es, fmt.Errorf("failure validating action"))
-		return
-	}
-}
