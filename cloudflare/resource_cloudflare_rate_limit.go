@@ -198,9 +198,15 @@ func resourceCloudflareRateLimit() *schema.Resource {
 func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
+	rateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return errors.Wrap(err, "error expanding rate limit action")
+	}
+
 	newRateLimit := cloudflare.RateLimit{
 		Threshold: d.Get("threshold").(int),
 		Period:    d.Get("period").(int),
+		Action:    rateLimitAction,
 	}
 
 	newRateLimitMatch, err := expandRateLimitTrafficMatcher(d)
@@ -261,9 +267,15 @@ func resourceCloudflareRateLimitUpdate(d *schema.ResourceData, meta interface{})
 	zoneId := d.Get("zone_id").(string)
 	rateLimitId := d.Id()
 
+	rateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return errors.Wrap(err, "error expanding rate limit action")
+	}
+
 	updatedRateLimit := cloudflare.RateLimit{
 		Threshold: d.Get("threshold").(int),
 		Period:    d.Get("period").(int),
+		Action:    rateLimitAction,
 	}
 
 	newRateLimitAction, err := expandRateLimitAction(d)
@@ -351,33 +363,26 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 	return
 }
 
-func validateRateLimitMode(a map[string]interface{}) error {
-	m := a["mode"].(string)
-	t, pres := a["timeout"]
-	req := !strings.Contains(m, "challenge")
-
-	log.Printf("[INFO] Ratelimit timeout %s specified for mode %s", t, m)
-
-	if req && !pres {
-		return fmt.Errorf("timeout required for mode '%s' but not provided", m)
-	} else if !req && pres {
-		return fmt.Errorf("mode '%s' does not accept a timeout", m)
-	}
-	return nil
-}
-
 func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitAction, err error) {
 	log.Printf("[INFO] Expanding Rate Limit action")
 	// dont need to guard for array length because MinItems is set **and** action is required
 	tfAction := d.Get("action").([]interface{})[0].(map[string]interface{})
 
-	errMode := validateRateLimitMode(tfAction)
-	if errMode != nil {
-		return action, err
+	mode := tfAction["mode"].(string)
+	timeout := tfAction["timeout"].(int)
+
+	if timeout == 0 {
+		if mode == "simulate" || mode == "ban" {
+			return action, fmt.Errorf("rate limit timeout must be set if the 'mode' is simulate or ban")
+		}
+	} else {
+		if mode == "challenge" || mode == "js_challenge" {
+			return action, fmt.Errorf("rate limit timeout must not be set if the 'mode' is challenge or js_challenge")
+		}
 	}
 
-	action.Mode = tfAction["mode"].(string)
-	action.Timeout = tfAction["timeout"].(int)
+	action.Mode = mode
+	action.Timeout = timeout
 
 	if _, ok := tfAction["response"]; ok && len(tfAction["response"].([]interface{})) > 0 {
 		log.Printf("[DEBUG] Cloudflare Rate Limit specified action: %+v \n", tfAction)
