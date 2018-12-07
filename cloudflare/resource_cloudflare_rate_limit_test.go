@@ -202,6 +202,42 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
+	t.Parallel()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareRateLimitConfigWithoutTimeout(zone, rnd),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("rate limit timeout must be set if the 'mode' is simulate or ban")),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
+	t.Parallel()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := acctest.RandString(10)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, rnd),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("rate limit timeout must not be set if the 'mode' is challenge or js_challenge")),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
@@ -358,6 +394,32 @@ resource "cloudflare_rate_limit" "%[1]s" {
   period = 1
   action {
     mode = "challenge"
+  }
+}`, id, zone)
+}
+
+func testAccCheckCloudflareRateLimitConfigWithoutTimeout(zone, id string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_rate_limit" "%[1]s" {
+  zone = "%[2]s"
+  threshold = 1000
+  period = 1
+  action {
+    mode = "simulate"
+  }
+}`, id, zone)
+}
+
+
+func testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, id string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_rate_limit" "%[1]s" {
+  zone = "%[2]s"
+  threshold = 1000
+  period = 1
+  action {
+    mode = "challenge"
+    timeoute = 60
   }
 }`, id, zone)
 }
