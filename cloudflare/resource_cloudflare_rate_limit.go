@@ -201,7 +201,6 @@ func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{})
 	newRateLimit := cloudflare.RateLimit{
 		Threshold: d.Get("threshold").(int),
 		Period:    d.Get("period").(int),
-		Action:    expandRateLimitAction(d),
 	}
 
 	newRateLimitMatch, err := expandRateLimitTrafficMatcher(d)
@@ -223,6 +222,12 @@ func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	newRateLimit.Correlate, _ = expandRateLimitCorrelate(d)
+
+	newRateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return err
+	}
+	newRateLimit.Action = newRateLimitAction
 
 	zoneName := d.Get("zone").(string)
 	zoneId, err := client.ZoneIDByName(zoneName)
@@ -259,8 +264,13 @@ func resourceCloudflareRateLimitUpdate(d *schema.ResourceData, meta interface{})
 	updatedRateLimit := cloudflare.RateLimit{
 		Threshold: d.Get("threshold").(int),
 		Period:    d.Get("period").(int),
-		Action:    expandRateLimitAction(d),
 	}
+
+	newRateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return err
+	}
+	updatedRateLimit.Action = newRateLimitAction
 
 	newRateLimitMatch, err := expandRateLimitTrafficMatcher(d)
 	if err != nil {
@@ -341,14 +351,33 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 	return
 }
 
-func expandRateLimitAction(d *schema.ResourceData) cloudflare.RateLimitAction {
+func validateRateLimitMode(a map[string]interface{}) error {
+	m := a["mode"].(string)
+	t, pres := a["timeout"]
+	req := !strings.Contains(m, "challenge")
+
+	log.Printf("[INFO] Ratelimit timeout %s specified for mode %s", t, m)
+
+	if req && !pres {
+		return fmt.Errorf("timeout required for mode '%s' but not provided", m)
+	} else if !req && pres {
+		return fmt.Errorf("mode '%s' does not accept a timeout", m)
+	}
+	return nil
+}
+
+func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitAction, err error) {
+	log.Printf("[INFO] Expanding Rate Limit action")
 	// dont need to guard for array length because MinItems is set **and** action is required
 	tfAction := d.Get("action").([]interface{})[0].(map[string]interface{})
 
-	action := cloudflare.RateLimitAction{
-		Mode:    tfAction["mode"].(string),
-		Timeout: tfAction["timeout"].(int),
+	errMode := validateRateLimitMode(tfAction)
+	if errMode != nil {
+		return action, err
 	}
+
+	action.Mode = tfAction["mode"].(string)
+	action.Timeout = tfAction["timeout"].(int)
 
 	if _, ok := tfAction["response"]; ok && len(tfAction["response"].([]interface{})) > 0 {
 		log.Printf("[DEBUG] Cloudflare Rate Limit specified action: %+v \n", tfAction)
@@ -359,7 +388,7 @@ func expandRateLimitAction(d *schema.ResourceData) cloudflare.RateLimitAction {
 			Body:        tfActionResponse["body"].(string),
 		}
 	}
-	return action
+	return action, nil
 }
 
 func expandRateLimitCorrelate(d *schema.ResourceData) (correlate cloudflare.RateLimitCorrelate, err error) {
@@ -534,4 +563,14 @@ func resourceCloudflareRateLimitImport(d *schema.ResourceData, meta interface{})
 	d.SetId(rateLimitId)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+// StringInSlice returns a SchemaValidateFunc which tests if the provided value
+// is of type string and matches the value of an element in the valid slice
+// will test with in lower case if ignoreCase is true
+func ValidateAction() schema.SchemaValidateFunc {
+	return func(i interface{}, k string) (s []string, es []error) {
+		es = append(es, fmt.Errorf("failure validating action"))
+		return
+	}
 }
