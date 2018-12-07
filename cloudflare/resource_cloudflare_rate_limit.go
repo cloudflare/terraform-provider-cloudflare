@@ -375,10 +375,8 @@ func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitA
 		if mode == "simulate" || mode == "ban" {
 			return action, fmt.Errorf("rate limit timeout must be set if the 'mode' is simulate or ban")
 		}
-	} else {
-		if mode == "challenge" || mode == "js_challenge" {
-			return action, fmt.Errorf("rate limit timeout must not be set if the 'mode' is challenge or js_challenge")
-		}
+	} else if mode == "challenge" || mode == "js_challenge" {
+		return action, fmt.Errorf("rate limit timeout must not be set if the 'mode' is challenge or js_challenge")
 	}
 
 	action.Mode = mode
