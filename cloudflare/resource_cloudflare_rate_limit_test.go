@@ -410,7 +410,6 @@ resource "cloudflare_rate_limit" "%[1]s" {
 }`, id, zone)
 }
 
-
 func testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
