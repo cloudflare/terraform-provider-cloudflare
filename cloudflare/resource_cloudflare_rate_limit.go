@@ -364,7 +364,6 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 }
 
 func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitAction, err error) {
-	log.Printf("[INFO] Expanding Rate Limit action")
 	// dont need to guard for array length because MinItems is set **and** action is required
 	tfAction := d.Get("action").([]interface{})[0].(map[string]interface{})
 
