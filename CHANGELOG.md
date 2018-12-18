@@ -1,15 +1,15 @@
-## 1.10.0 (Unreleased)
+## 1.10.0 (December 18, 2018)
 
 **Improvements:**
-* `cloudflare_zone_settings_override` - Add `opportunistic_onion` zone setting support [GH-170]
-* `cloudflare_zone` - Add ability to set zone plan [GH-160]
+* `cloudflare_zone_settings_override` - Add `opportunistic_onion` zone setting support ([#170](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/170))
+* `cloudflare_zone` - Add ability to set zone plan ([#160](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/160))
 
 **Fixes:**
-* `cloudflare_zone` - Allow zones to be properly imported [GH-157]
-* `cloudflare_access_policy` - Match access_policy argument requisites with reality [GH-158]
-* `cloudflare_filter` - Allow `zone_id` to set `zone` and vice versa [GH-162]
-* `cloudflare_firewall_rule` - Allow `zone_id` to set `zone` and vice versa [GH-174]
-* `cloudflare_access_rule` - Ensure `zone` and `zone_id` are always set [GH-175]
+* `cloudflare_zone` - Allow zones to be properly imported ([#157](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/157))
+* `cloudflare_access_policy` - Match access_policy argument requisites with reality ([#158](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/158))
+* `cloudflare_filter` - Allow `zone_id` to set `zone` and vice versa ([#162](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/162))
+* `cloudflare_firewall_rule` - Allow `zone_id` to set `zone` and vice versa ([#174](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/174))
+* `cloudflare_access_rule` - Ensure `zone` and `zone_id` are always set ([#175](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/175))
 * Minor documentation fixes
 
 ## 1.9.0 (November 15, 2018)
