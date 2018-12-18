@@ -37,6 +37,10 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 				Default:  false,
 				Optional: true,
 			},
+			"priority": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 			"description": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -95,6 +99,10 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 		newZoneLockdown.Paused = paused.(bool)
 	}
 
+	if priority, ok := d.GetOk("priority"); ok {
+		newZoneLockdown.Priority = priority.(int)
+	}
+
 	if description, ok := d.GetOk("description"); ok {
 		newZoneLockdown.Description = description.(string)
 	}
@@ -149,6 +157,7 @@ func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}
 	log.Printf("[DEBUG] Cloudflare Zone Lockdown read configuration: %#v", zoneLockdownResponse)
 
 	d.Set("paused", zoneLockdownResponse.Result.Paused)
+	d.Set("priority", zoneLockdownResponse.Result.Priority)
 	d.Set("description", zoneLockdownResponse.Result.Description)
 	d.Set("urls", zoneLockdownResponse.Result.URLs)
 	log.Printf("[DEBUG] read configurations: %#v", d.Get("configurations"))
@@ -178,6 +187,10 @@ func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface
 
 	if paused, ok := d.GetOk("paused"); ok {
 		newZoneLockdown.Paused = paused.(bool)
+	}
+
+	if priority, ok := d.GetOk("priority"); ok {
+		newZoneLockdown.Priority = priority.(int)
 	}
 
 	if description, ok := d.GetOk("description"); ok {
