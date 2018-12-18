@@ -7,10 +7,26 @@ import (
 	"strconv"
 	"strings"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
+
+// we enforce the use of the Cloudflare API 'legacy_id' field until the mapping of plan is fixed in cloudflare-go
+const (
+	planIDFree       = "free"
+	planIDPro        = "pro"
+	planIDBusiness   = "business"
+	planIDEnterprise = "enterprise"
+)
+
+// we keep a private map and we will have a function to check and validate the descriptive name from the RatePlan API with the legacy_id
+var idForName = map[string]string{
+	"Free Website":       planIDFree,
+	"Pro Website":        planIDPro,
+	"Business Website":   planIDBusiness,
+	"Enterprise Website": planIDEnterprise,
+}
 
 func resourceCloudflareZone() *schema.Resource {
 	return &schema.Resource{
@@ -47,6 +63,12 @@ func resourceCloudflareZone() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"plan": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validation.StringInSlice([]string{planIDFree, planIDPro, planIDBusiness, planIDEnterprise}, false),
+			},
 			"meta": {
 				Type:     schema.TypeMap,
 				Computed: true,
@@ -79,6 +101,7 @@ func resourceCloudflareZone() *schema.Resource {
 		},
 	}
 }
+
 func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -105,6 +128,12 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 			if err != nil {
 				return fmt.Errorf("Error updating zone_id %q: %s", zone.ID, err)
 			}
+		}
+	}
+
+	if plan, ok := d.GetOk("plan"); ok {
+		if err := setRatePlan(client, zone.ID, plan.(string)); err != nil {
+			return err
 		}
 	}
 
@@ -136,6 +165,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("name_servers", zone.NameServers)
 	d.Set("meta", flattenMeta(d, zone.Meta))
 	d.Set("zone", zone.Name)
+	d.Set("plan", planIDForName(zone.Plan.Name))
 
 	return nil
 }
@@ -153,6 +183,12 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 		if err != nil {
 			return fmt.Errorf("Error updating zone_id %q: %s", zoneID, err)
+		}
+	}
+
+	if plan, ok := d.GetOk("plan"); ok {
+		if err := setRatePlan(client, zoneID, plan.(string)); err != nil {
+			return err
 		}
 	}
 
@@ -183,4 +219,44 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 	log.Printf("[DEBUG] flattenMeta %#v", cfg)
 
 	return cfg
+}
+
+func setRatePlan(client *cloudflare.API, zoneID string, planID string) error {
+	ratePlan, err := getZonePlanIDFor(client, zoneID, planNameForID(planID))
+	if err != nil {
+		return fmt.Errorf("Error fetching plans %s for zone %q: %s", planID, zoneID, err)
+	}
+	if _, err := client.ZoneSetRatePlan(zoneID, *ratePlan); err != nil {
+		return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
+	}
+	return nil
+}
+
+func getZonePlanIDFor(client *cloudflare.API, zoneID, planName string) (*cloudflare.ZoneRatePlan, error) {
+	plans, err := client.AvailableZoneRatePlans(zoneID)
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range plans {
+		if strings.EqualFold(p.Name, planName) {
+			return &p, nil
+		}
+	}
+	return nil, fmt.Errorf("plan %s not found amongst the available plans", planName)
+}
+
+func planIDForName(name string) string {
+	if p, ok := idForName[name]; ok {
+		return p
+	}
+	return ""
+}
+
+func planNameForID(id string) string {
+	for k, v := range idForName {
+		if strings.EqualFold(id, v) {
+			return k
+		}
+	}
+	return ""
 }
