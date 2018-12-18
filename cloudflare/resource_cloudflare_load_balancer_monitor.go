@@ -102,6 +102,11 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 				Optional: true,
 			},
 
+			"port": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+
 			"created_on": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -135,6 +140,10 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 
 	if description, ok := d.GetOk("description"); ok {
 		loadBalancerMonitor.Description = description.(string)
+	}
+
+	if port, ok := d.GetOk("port"); ok {
+		loadBalancerMonitor.Port = port.(int)
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -176,6 +185,10 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 
 	if description, ok := d.GetOk("description"); ok {
 		loadBalancerMonitor.Description = description.(string)
+	}
+
+	if port, ok := d.GetOk("port"); ok {
+		loadBalancerMonitor.Port = port.(int)
 	}
 
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -225,6 +238,7 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 	d.Set("retries", loadBalancerMonitor.Retries)
 	d.Set("type", loadBalancerMonitor.Type)
 	d.Set("description", loadBalancerMonitor.Description)
+	d.Set("port", loadBalancerMonitor.Port)
 	d.Set("created_on", loadBalancerMonitor.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerMonitor.ModifiedOn.Format(time.RFC3339Nano))
 

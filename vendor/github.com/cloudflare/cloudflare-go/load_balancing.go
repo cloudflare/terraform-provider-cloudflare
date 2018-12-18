@@ -50,6 +50,7 @@ type LoadBalancerMonitor struct {
 	ExpectedCodes   string              `json:"expected_codes"`
 	FollowRedirects bool                `json:"follow_redirects"`
 	AllowInsecure   bool                `json:"allow_insecure"`
+	Port            int                 `json:"port"`
 }
 
 // LoadBalancer represents a load balancer's properties.
