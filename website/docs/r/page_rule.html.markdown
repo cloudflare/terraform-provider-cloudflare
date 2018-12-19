@@ -33,7 +33,7 @@ The following arguments are supported:
 * `zone` - (Required) The DNS zone to which the page rule should be added.
 * `target` - (Required) The URL pattern to target with the page rule.
 * `actions` - (Required) The actions taken by the page rule, options given below.
-* `priority` - (Optional) The priority of the page rule among others for this target.
+* `priority` - (Optional) The priority of the page rule among others for this target, the higher the number the higher the priority as per [API documentation](https://api.cloudflare.com/#page-rules-for-a-zone-create-page-rule).
 * `status` - (Optional) Whether the page rule is active or disabled.
 
 Action blocks support the following:
