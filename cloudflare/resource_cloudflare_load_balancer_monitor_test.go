@@ -237,7 +237,7 @@ resource "cloudflare_load_balancer_monitor" "test" {
   path = "/custom"
   interval = 60
   retries = 5
-	port = 8080
+  port = 8080
   description = "this is a very weird load balancer"
   header {
     header = "Host"
