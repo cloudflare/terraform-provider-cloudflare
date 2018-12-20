@@ -199,7 +199,10 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 	newZone := os.Getenv("CLOUDFLARE_ALT_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAltDomain(t)
+		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
