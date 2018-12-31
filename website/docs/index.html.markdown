@@ -33,6 +33,45 @@ resource "cloudflare_page_rule" "www" {
 }
 ```
 
+## Authentication
+
+The Cloudflare provider supports the following methods of authentication
+
+- Static Credentials
+- Environment Variables
+
+### Static credentials
+
+Static credentials are provided by adding the `email` and `token` variable to the Cloudflare provider block.
+
+Usage:
+
+```hcl
+# Configure the Cloudflare provider
+provider "cloudflare" {
+  email = "${var.cloudflare_email}"
+  token = "${var.cloudflare_token}"
+}
+```
+
+### Environment variables
+
+You can also provide your credentials via the `CLOUDFLARE_EMAIL` and
+`CLOUDFLARE_TOKEN` environment variables, representing your Cloudflare Email and Cloudflare Secret Key, respectively.
+
+```hcl
+provider "cloudflare" {}
+```
+
+Usage:
+
+```sh
+$ export CLOUDFLARE_EMAIL="email@example.com"
+$ export CLOUDFLARE_TOKEN="asecretkey"
+$ terraform plan
+```
+
+
 ## Argument Reference
 
 The following arguments are supported:
