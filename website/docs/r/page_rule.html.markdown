@@ -50,6 +50,7 @@ Action blocks support the following:
 * `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
 * `email_obfuscation` - (Optional) Whether this action is `"on"` or `"off"`.
+* `explicit_cache_control` - (Optional) Whether origin Cache-Control action is `"on"` or `"off"`.
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
 * `host_header_override` - (Optional) Value of the Host header to send.
 * `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
