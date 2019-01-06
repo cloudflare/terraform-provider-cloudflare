@@ -326,7 +326,7 @@ func testAccCheckCloudflareRateLimitConfigBasic(zone, id string) string {
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
   threshold = 1000
-  period = 1
+  period = 10
   action {
     mode = "simulate"
     timeout = 86400
@@ -339,7 +339,7 @@ func testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, id string) string {
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
   threshold = 1000
-  period = 1
+  period = 10
   match {
     request {
       url_pattern = "%[2]s/tfacc-url-%[1]s"
@@ -357,7 +357,7 @@ func testAccCheckCloudflareRateLimitConfigFullySpecified(zone, id string) string
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
   threshold = 2000
-  period = 2
+  period = 10
   match {
     request {
       url_pattern = "%[2]s/tfacc-full-%[1]s"
@@ -391,7 +391,7 @@ func testAccCheckCloudflareRateLimitChallengeConfigBasic(zone, id string) string
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
   threshold = 1000
-  period = 1
+  period = 10
   action {
     mode = "challenge"
   }
@@ -403,7 +403,7 @@ func testAccCheckCloudflareRateLimitConfigWithoutTimeout(zone, id string) string
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
   threshold = 1000
-  period = 1
+  period = 10
   action {
     mode = "simulate"
   }
@@ -415,10 +415,10 @@ func testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, id string) 
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
   threshold = 1000
-  period = 1
+  period = 10
   action {
     mode = "challenge"
-    timeoute = 60
+    timeout = 60
   }
 }`, id, zone)
 }
