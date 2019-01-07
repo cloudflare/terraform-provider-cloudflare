@@ -56,12 +56,12 @@ func resourceCloudflareRateLimit() *schema.Resource {
 						"mode": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"simulate", "ban"}, true),
+							ValidateFunc: validation.StringInSlice([]string{"simulate", "ban", "challenge", "js_challenge"}, true),
 						},
 
 						"timeout": {
 							Type:         schema.TypeInt,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.IntBetween(1, 86400),
 						},
 
@@ -198,10 +198,15 @@ func resourceCloudflareRateLimit() *schema.Resource {
 func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
+	rateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return errors.Wrap(err, "error expanding rate limit action")
+	}
+
 	newRateLimit := cloudflare.RateLimit{
 		Threshold: d.Get("threshold").(int),
 		Period:    d.Get("period").(int),
-		Action:    expandRateLimitAction(d),
+		Action:    rateLimitAction,
 	}
 
 	newRateLimitMatch, err := expandRateLimitTrafficMatcher(d)
@@ -223,6 +228,12 @@ func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	newRateLimit.Correlate, _ = expandRateLimitCorrelate(d)
+
+	newRateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return err
+	}
+	newRateLimit.Action = newRateLimitAction
 
 	zoneName := d.Get("zone").(string)
 	zoneId, err := client.ZoneIDByName(zoneName)
@@ -256,11 +267,22 @@ func resourceCloudflareRateLimitUpdate(d *schema.ResourceData, meta interface{})
 	zoneId := d.Get("zone_id").(string)
 	rateLimitId := d.Id()
 
+	rateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return errors.Wrap(err, "error expanding rate limit action")
+	}
+
 	updatedRateLimit := cloudflare.RateLimit{
 		Threshold: d.Get("threshold").(int),
 		Period:    d.Get("period").(int),
-		Action:    expandRateLimitAction(d),
+		Action:    rateLimitAction,
 	}
+
+	newRateLimitAction, err := expandRateLimitAction(d)
+	if err != nil {
+		return err
+	}
+	updatedRateLimit.Action = newRateLimitAction
 
 	newRateLimitMatch, err := expandRateLimitTrafficMatcher(d)
 	if err != nil {
@@ -331,6 +353,7 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 			}
 			responseMatcher.Statuses = statuses
 		}
+
 		if originIface, ok := matchResp["origin_traffic"]; ok {
 			originTraffic := originIface.(bool)
 			responseMatcher.OriginTraffic = &originTraffic
@@ -340,14 +363,23 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 	return
 }
 
-func expandRateLimitAction(d *schema.ResourceData) cloudflare.RateLimitAction {
+func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitAction, err error) {
 	// dont need to guard for array length because MinItems is set **and** action is required
 	tfAction := d.Get("action").([]interface{})[0].(map[string]interface{})
 
-	action := cloudflare.RateLimitAction{
-		Mode:    tfAction["mode"].(string),
-		Timeout: tfAction["timeout"].(int),
+	mode := tfAction["mode"].(string)
+	timeout := tfAction["timeout"].(int)
+
+	if timeout == 0 {
+		if mode == "simulate" || mode == "ban" {
+			return action, fmt.Errorf("rate limit timeout must be set if the 'mode' is simulate or ban")
+		}
+	} else if mode == "challenge" || mode == "js_challenge" {
+		return action, fmt.Errorf("rate limit timeout must not be set if the 'mode' is challenge or js_challenge")
 	}
+
+	action.Mode = mode
+	action.Timeout = timeout
 
 	if _, ok := tfAction["response"]; ok && len(tfAction["response"].([]interface{})) > 0 {
 		log.Printf("[DEBUG] Cloudflare Rate Limit specified action: %+v \n", tfAction)
@@ -358,7 +390,7 @@ func expandRateLimitAction(d *schema.ResourceData) cloudflare.RateLimitAction {
 			Body:        tfActionResponse["body"].(string),
 		}
 	}
-	return action
+	return action, nil
 }
 
 func expandRateLimitCorrelate(d *schema.ResourceData) (correlate cloudflare.RateLimitCorrelate, err error) {
