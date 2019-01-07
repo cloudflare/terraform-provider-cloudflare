@@ -26,6 +26,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 			"zone": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"zone_id": {

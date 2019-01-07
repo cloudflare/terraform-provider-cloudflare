@@ -44,6 +44,12 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
+func testAccPreCheckAltDomain(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_ALT_DOMAIN"); v == "" {
+		t.Fatal("CLOUDFLARE_ALT_DOMAIN must be set for this acceptance test")
+	}
+}
+
 func testAccPreCheckOrg(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ORG_ID"); v == "" {
 		t.Fatal("CLOUDFLARE_ORG_ID must be set for this acceptance test")

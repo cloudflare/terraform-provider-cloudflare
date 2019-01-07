@@ -193,6 +193,37 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
+	var before, after cloudflare.PageRule
+	oldZone := os.Getenv("CLOUDFLARE_DOMAIN")
+	newZone := os.Getenv("CLOUDFLARE_ALT_DOMAIN")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAltDomain(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigBasic(oldZone, fmt.Sprintf("test-updating-zone-value.%s", oldZone)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &before),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "zone", oldZone),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigBasic(newZone, fmt.Sprintf("test-updating-zone-value.%s", newZone)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &after),
+					testAccCheckCloudflarePageRuleRecreated(&before, &after),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "zone", newZone),
+				),
+			},
+		},
+	})
+}
+
 func TestTranformForwardingURL(t *testing.T) {
 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 		ID: "forwarding_url",
