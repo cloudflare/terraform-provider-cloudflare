@@ -31,7 +31,7 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "protocol", "tcp/22"),
 					resource.TestCheckResourceAttr(name, "origin_direct.#", "1"),
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://120.120.102.10:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://192.0.2.1:23"),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
 			},
@@ -82,7 +82,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://120.120.102.10:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://192.0.2.1:23"),
 				),
 			},
 			{
@@ -101,7 +101,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 						}
 						return nil
 					},
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://81.120.102.10:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://192.0.2.2:23"),
 				),
 			},
 		},
@@ -227,13 +227,13 @@ func testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneName, ID string) s
 resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${data.cloudflare_zone.test.id}"
   protocol = "tcp/22"
-  
+
   dns = {
     "type" = "CNAME"
     "name" = "ssh.${data.cloudflare_zone.test.zone}"
   }
-  
-  origin_direct = ["tcp://120.120.102.10:23"]
+
+  origin_direct = ["tcp://192.0.2.1:23"]
   origin_port   = 22
 }
 
@@ -248,12 +248,12 @@ func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneName, ID strin
 resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${data.cloudflare_zone.test.id}"
   protocol = "tcp/22"
-  
+
   dns = {
     "type" = "CNAME"
     "name" = "ssh.${data.cloudflare_zone.test.zone}"
   }
-  
+
   origin_dns = {
     name = "ssh.origin.${data.cloudflare_zone.test.zone}"
   }
@@ -277,7 +277,7 @@ resource "cloudflare_spectrum_application" "%[2]s" {
 	"name" = "ssh.${data.cloudflare_zone.test.zone}"
   }
 
-  origin_direct = ["tcp://81.120.102.10:23"]
+  origin_direct = ["tcp://192.0.2.2:23"]
   origin_port   = 22
 }
 

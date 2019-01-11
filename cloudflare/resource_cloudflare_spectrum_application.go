@@ -158,7 +158,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 
 	d.Set("protocol", application.Protocol)
 
-	if err := d.Set("dns", flattenDns(application.DNS)); err != nil {
+	if err := d.Set("dns", flattenDNS(application.DNS)); err != nil {
 		log.Printf("[WARN] Error setting dns on spectrum application %q: %s", d.Id(), err)
 	}
 
@@ -169,7 +169,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 	}
 
 	if application.OriginDNS != nil {
-		if err := d.Set("origin_dns", flattenOriginDns(application.OriginDNS)); err != nil {
+		if err := d.Set("origin_dns", flattenOriginDNS(application.OriginDNS)); err != nil {
 			log.Printf("[WARN] Error setting origin dns on spectrum application %q: %s", d.Id(), err)
 		}
 	}
@@ -198,22 +198,15 @@ func resourceCloudflareSpectrumApplicationDelete(d *schema.ResourceData, meta in
 }
 
 func resourceCloudflareSpectrumApplicationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-	var zoneName string
+	var zoneID string
 	var applicationID string
 	if len(idAttr) == 2 {
-		zoneName = idAttr[0]
+		zoneID = idAttr[0]
 		applicationID = idAttr[1]
 	} else {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/applicationID\"", d.Id())
-	}
-	zoneID, err := client.ZoneIDByName(zoneName)
-
-	if err != nil {
-		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/applicationID\"", d.Id())
 	}
 
 	d.Set("zone_id", zoneID)
@@ -221,7 +214,7 @@ func resourceCloudflareSpectrumApplicationImport(d *schema.ResourceData, meta in
 	return []*schema.ResourceData{d}, nil
 }
 
-func expandDns(d interface{}) cloudflare.SpectrumApplicationDNS {
+func expandDNS(d interface{}) cloudflare.SpectrumApplicationDNS {
 	cfg := d.([]interface{})
 	dns := cloudflare.SpectrumApplicationDNS{}
 
@@ -232,7 +225,7 @@ func expandDns(d interface{}) cloudflare.SpectrumApplicationDNS {
 	return dns
 }
 
-func expandOriginDns(d interface{}) *cloudflare.SpectrumApplicationOriginDNS {
+func expandOriginDNS(d interface{}) *cloudflare.SpectrumApplicationOriginDNS {
 	cfg := d.([]interface{})
 	dns := &cloudflare.SpectrumApplicationOriginDNS{}
 
@@ -242,7 +235,7 @@ func expandOriginDns(d interface{}) *cloudflare.SpectrumApplicationOriginDNS {
 	return dns
 }
 
-func flattenDns(dns cloudflare.SpectrumApplicationDNS) []map[string]interface{} {
+func flattenDNS(dns cloudflare.SpectrumApplicationDNS) []map[string]interface{} {
 	flattened := map[string]interface{}{}
 	flattened["type"] = dns.Type
 	flattened["name"] = dns.Name
@@ -250,7 +243,7 @@ func flattenDns(dns cloudflare.SpectrumApplicationDNS) []map[string]interface{} 
 	return []map[string]interface{}{flattened}
 }
 
-func flattenOriginDns(dns *cloudflare.SpectrumApplicationOriginDNS) []map[string]interface{} {
+func flattenOriginDNS(dns *cloudflare.SpectrumApplicationOriginDNS) []map[string]interface{} {
 	flattened := map[string]interface{}{}
 	flattened["name"] = dns.Name
 
@@ -261,15 +254,15 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 	application := cloudflare.SpectrumApplication{
 		ID:       d.Id(),
 		Protocol: d.Get("protocol").(string),
-		DNS:      expandDns(d.Get("dns")),
+		DNS:      expandDNS(d.Get("dns")),
 	}
 
 	if originDirect, ok := d.GetOk("origin_direct"); ok {
 		application.OriginDirect = expandInterfaceToStringList(originDirect.([]interface{}))
 	}
 
-	if originDns, ok := d.GetOk("origin_dns"); ok {
-		application.OriginDNS = expandOriginDns(originDns)
+	if originDNS, ok := d.GetOk("origin_dns"); ok {
+		application.OriginDNS = expandOriginDNS(originDNS)
 	}
 
 	if originPort, ok := d.GetOk("origin_port"); ok {
