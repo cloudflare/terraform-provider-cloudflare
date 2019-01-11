@@ -18,7 +18,7 @@ locked down using the `cloudflare_zone_lockdown` resource.
 ```hcl
 data "cloudflare_zones" "test" {
   filter {
-    zone   = "example.*"
+    name   = "example.*"
     status = "active"
     paused = false
   }
@@ -47,7 +47,7 @@ values must match in order to be included, see below for full list.
 
 **filter**
 
-- `zone` - (Optional) A regular expression matching the zone to lookup.
+- `name` - (Optional) A regular expression matching the zone to lookup.
 - `status` - (Optional) Status of the zone to lookup. Valid values: active, pending, initializing, moved, deleted, deactivated and read only.
 - `paused` - (Optional) Paused status of the zone to lookup. Valid values are `true` or `false`.
 

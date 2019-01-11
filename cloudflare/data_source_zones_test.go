@@ -99,7 +99,7 @@ func testAccCloudflareZonesConfigMatchName() string {
 	return fmt.Sprintf(`
 data "cloudflare_zones" "examples_domains" {
   filter {
-    zone   = "baa.*"
+    name   = "baa.*"
     paused = "${cloudflare_zone.foo_net.paused}" // true
   }
 }
@@ -112,7 +112,7 @@ func testAccCloudflareZonesConfigMatchPaused() string {
 	return fmt.Sprintf(`
 data "cloudflare_zones" "examples_domains" {
   filter {
-    zone   = "baa.*"
+    name   = "baa.*"
     paused = "${cloudflare_zone.baa_com.paused}" // false
   }
 }

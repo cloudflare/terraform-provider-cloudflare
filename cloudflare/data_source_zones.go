@@ -2,11 +2,12 @@ package cloudflare
 
 import (
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
 	"regexp"
 	"time"
+
+	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func dataSourceCloudflareZones() *schema.Resource {
@@ -21,7 +22,7 @@ func dataSourceCloudflareZones() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"zone": {
+						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -63,8 +64,8 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 	var zoneNames []string
 	for _, v := range zones {
 
-		if filter.zone != nil {
-			if !filter.zone.Match([]byte(v.Name)) {
+		if filter.name != nil {
+			if !filter.name.Match([]byte(v.Name)) {
 				continue
 			}
 		}
@@ -94,14 +95,14 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 	filter := &searchFilter{}
 
 	m := cfg[0].(map[string]interface{})
-	zone, ok := m["zone"]
+	name, ok := m["name"]
 	if ok {
-		match, err := regexp.Compile(zone.(string))
+		match, err := regexp.Compile(name.(string))
 		if err != nil {
 			return nil, err
 		}
 
-		filter.zone = match
+		filter.name = match
 	}
 
 	paused, ok := m["paused"]
@@ -118,7 +119,7 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 }
 
 type searchFilter struct {
-	zone   *regexp.Regexp
+	name   *regexp.Regexp
 	status string
 	paused bool
 }
