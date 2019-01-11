@@ -1,14 +1,14 @@
-## 1.11.0 (Unreleased)
+## 1.11.0 (January 11, 2019)
 
 **Improvements:**
-* **New Resource:** `cloudflare_spectrum_app` [GH-156]
-* **New Data Source:** `cloudflare_zones` [GH-168]
-* `cloudflare_load_balancer_monitor` - Add optional `port` parameter [GH-179]
-* `cloudflare_page_rule` - Improved documentation for `priority` attribute [GH-182], missing `explicit_cache_control` [GH-185]
-* `cloudflare_rate_limit` - Add `challenge` and `js_challenge` rate-limit modes [GH-172]
+* **New Resource:** `cloudflare_spectrum_app` ([#156](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/156))
+* **New Data Source:** `cloudflare_zones` ([#168](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/168))
+* `cloudflare_load_balancer_monitor` - Add optional `port` parameter ([#179](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/179))
+* `cloudflare_page_rule` - Improved documentation for `priority` attribute ([#182](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/182)], missing `explicit_cache_control` [[#185](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/185))
+* `cloudflare_rate_limit` - Add `challenge` and `js_challenge` rate-limit modes ([#172](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/172))
 
 **Fixes:**
-* `cloudflare_page_rule` - Page rule `zone` attribute change to trigger new resource [GH-183]
+* `cloudflare_page_rule` - Page rule `zone` attribute change to trigger new resource ([#183](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/183))
 
 ## 1.10.0 (December 18, 2018)
 
