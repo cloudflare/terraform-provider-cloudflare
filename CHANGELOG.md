@@ -1,4 +1,15 @@
 ## 1.11.0 (Unreleased)
+
+**Improvements:**
+* **New Resource:** `cloudflare_spectrum_app` [GH-156]
+* **New Data Source:** `cloudflare_zones` [GH-168]
+* `cloudflare_load_balancer_monitor` - Add optional `port` parameter [GH-179]
+* `cloudflare_page_rule` - Improved documentation for `priority` attribute [GH-182], missing `explicit_cache_control` [GH-185]
+* `cloudflare_rate_limit` - Add `challenge` and `js_challenge` rate-limit modes [GH-172]
+
+**Fixes:**
+* `cloudflare_page_rule` - Page rule `zone` attribute change to trigger new resource [GH-183]
+
 ## 1.10.0 (December 18, 2018)
 
 **Improvements:**
