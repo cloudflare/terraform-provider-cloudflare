@@ -176,7 +176,7 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	log.Printf("[INFO] Updating Cloudflare Zone: id %s", zoneID)
 
-	if paused, ok := d.GetOkExists("paused"); ok {
+	if paused, ok := d.GetOkExists("paused"); ok && d.HasChange("paused") {
 		log.Printf("[DEBUG] _ paused")
 
 		_, err := client.ZoneSetPaused(zoneID, paused.(bool))
@@ -222,27 +222,28 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 }
 
 func setRatePlan(client *cloudflare.API, zoneID string, planID string) error {
-	ratePlan, err := getZonePlanIDFor(client, zoneID, planNameForID(planID))
+	plan, err := getAvailableZonePlan(client, zoneID, planID)
 	if err != nil {
 		return fmt.Errorf("Error fetching plans %s for zone %q: %s", planID, zoneID, err)
 	}
-	if _, err := client.ZoneSetRatePlan(zoneID, *ratePlan); err != nil {
+	log.Printf("[DEBUG] ratePlan = %#v", plan)
+	if _, err := client.ZoneSetPlan(zoneID, *plan); err != nil {
 		return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
 	}
 	return nil
 }
 
-func getZonePlanIDFor(client *cloudflare.API, zoneID, planName string) (*cloudflare.ZoneRatePlan, error) {
-	plans, err := client.AvailableZoneRatePlans(zoneID)
+func getAvailableZonePlan(client *cloudflare.API, zoneID, planID string) (*cloudflare.ZonePlan, error) {
+	plans, err := client.AvailableZonePlans(zoneID)
 	if err != nil {
 		return nil, err
 	}
 	for _, p := range plans {
-		if strings.EqualFold(p.Name, planName) {
+		if strings.EqualFold(p.LegacyID, planID) {
 			return &p, nil
 		}
 	}
-	return nil, fmt.Errorf("plan %s not found amongst the available plans", planName)
+	return nil, fmt.Errorf("plan '%s' not found amongst the available plans", planID)
 }
 
 func planIDForName(name string) string {
