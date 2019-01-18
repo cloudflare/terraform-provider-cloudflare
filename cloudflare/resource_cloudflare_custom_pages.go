@@ -118,7 +118,7 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 
 	pageType := d.Get("type").(string)
 	customPageParameters := cloudflare.CustomPageParameters{
-		URL:   d.Get("url").(*string),
+		URL:   d.Get("url").(string),
 		State: "customized",
 	}
 	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
