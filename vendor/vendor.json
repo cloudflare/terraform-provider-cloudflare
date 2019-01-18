@@ -251,10 +251,10 @@
 			"revisionTime": "2017-07-27T06:48:18Z"
 		},
 		{
-			"checksumSHA1": "5rPISE09IMrwD3RSbc1pNl7EUIc=",
+			"checksumSHA1": "uPb0LuZbrazd+IMm/Ft764xCiJY=",
 			"path": "github.com/cloudflare/cloudflare-go",
-			"revision": "6de7f92a973cee0a6470993573614522750bc00e",
-			"revisionTime": "2018-12-18T00:17:04Z"
+			"revision": "8409110136dfaefb5364e8fe56dce81aeaabb6fe",
+			"revisionTime": "2019-01-18T17:10:44Z"
 		},
 		{
 			"checksumSHA1": "dvabztWVQX8f6oMLRyv4dLH+TGY=",
