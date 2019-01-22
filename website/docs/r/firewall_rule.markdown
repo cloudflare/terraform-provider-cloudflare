@@ -39,7 +39,6 @@ The following arguments are supported:
 * `action` - (Required) The action to apply to a matched request. Allowed values: "block", "challenge", "allow", "js_challenge".
 * `priority` - (Optional) The priority of the rule to allow control of processing order. A lower number indicates high priority. If not provided, any rules with a priority will be sequenced before those without.
 * `paused` - (Optional) Whether this filter based firewall rule is currently paused. Boolean value.
-* `expression` - (Required) The filter expression to be used.
 * `description` - (Optional) A description of the rule to help identify it.
 
 ## Attributes Reference
