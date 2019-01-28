@@ -51,7 +51,7 @@ you've built it.
 
 ```
 providers {
-  cloudflare = "${GOPATH}/github.com/terraform-providers/terraform-provider-cloudflare/terraform-provider-cloudflare"
+  cloudflare = "${GOPATH}/src/github.com/terraform-providers/terraform-provider-cloudflare/terraform-provider-cloudflare"
 }
 ```
 
