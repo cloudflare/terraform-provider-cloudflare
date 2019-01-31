@@ -16,7 +16,7 @@ Provides a Cloudflare WAF rule resource for a particular zone. This can be used 
 resource "cloudflare_waf_rule" "100000" {
   rule_id = "100000"
   zone = "domain.com"
-  mode = "simulate"
+  mode = "off"
 }
 ```
 
@@ -26,7 +26,7 @@ The following arguments are supported:
 
 * `zone` - (Required) The DNS zone to apply to.
 * `rule_id` - (Required) The WAF Rule ID.
-* `mode` - (Required) The mode of the rule, can be one of ["block", "challenge", "default", "disable, "simulate"].
+* `mode` - (Required) The mode of the rule, can be one of ["on", "off"].
 
 
 ## Attributes Reference
