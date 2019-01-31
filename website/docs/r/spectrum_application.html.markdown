@@ -40,7 +40,7 @@ resource "cloudflare_spectrum_application" "ssh_proxy" {
 
 **dns**
 
-* `type` - (Requried) The type of DNS record associated with the application. Valid values: `CNAME`.
+* `type` - (Required) The type of DNS record associated with the application. Valid values: `CNAME`.
 * `name` - (Required) The name of the DNS record associated with the application.i.e. `ssh.example.com`.
 
 **origin_dns**
