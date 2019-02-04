@@ -27,6 +27,7 @@ resource "cloudflare_load_balancer_monitor" "test" {
     values = ["example.com"]
   }
   allow_insecure = false
+  follow_redirects = true
 }
 ```
 
@@ -45,6 +46,7 @@ The following arguments are supported:
 * `type` - (Optional) The protocol to use for the healthcheck. Currently supported protocols are 'HTTP' and 'HTTPS'. Default: "http".
 * `description` - (Optional) Free text description.
 * `allow_insecure` - (Optional) Do not validate the certificate when monitor use HTTPS.
+* `follow_redirects` - (Optional) Follow redirects if returned by the origin.
 
 **header** requires the following:
 
