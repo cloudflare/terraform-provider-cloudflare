@@ -107,6 +107,10 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 				Optional: true,
 			},
 
+			"allow_insecure": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"created_on": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -146,6 +150,9 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 		loadBalancerMonitor.Port = port.(uint16)
 	}
 
+	if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
+		loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
+	}
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
 	r, err := client.CreateLoadBalancerMonitor(loadBalancerMonitor)
@@ -191,6 +198,9 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 		loadBalancerMonitor.Port = port.(uint16)
 	}
 
+	if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
+		loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
+	}
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
 	_, err := client.ModifyLoadBalancerMonitor(loadBalancerMonitor)
@@ -239,6 +249,7 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 	d.Set("type", loadBalancerMonitor.Type)
 	d.Set("description", loadBalancerMonitor.Description)
 	d.Set("port", loadBalancerMonitor.Port)
+	d.Set("allow_insecure", loadBalancerMonitor.AllowInsecure)
 	d.Set("created_on", loadBalancerMonitor.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerMonitor.ModifiedOn.Format(time.RFC3339Nano))
 
