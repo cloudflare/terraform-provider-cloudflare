@@ -1,13 +1,14 @@
 package cloudflare
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
-	"fmt"
-
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/httpclient"
 	"github.com/hashicorp/terraform/terraform"
@@ -118,9 +119,14 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	limitOpt := cloudflare.UsingRateLimit(float64(d.Get("rps").(int)))
 	retryOpt := cloudflare.UsingRetryPolicy(d.Get("retries").(int), d.Get("min_backoff").(int), d.Get("max_backoff").(int))
 	options := []cloudflare.Option{limitOpt, retryOpt}
+
 	if d.Get("api_client_logging").(bool) {
 		options = append(options, cloudflare.UsingLogger(log.New(os.Stderr, "", log.LstdFlags)))
 	}
+
+	c := cleanhttp.DefaultClient()
+	c.Transport = logging.NewTransport("CloudFlare", c.Transport)
+	options = append(options, cloudflare.HTTPClient(c))
 
 	config := Config{
 		Email:   d.Get("email").(string),
