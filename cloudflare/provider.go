@@ -125,7 +125,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	c := cleanhttp.DefaultClient()
-	c.Transport = logging.NewTransport("CloudFlare", c.Transport)
+	c.Transport = logging.NewTransport("Cloudflare", c.Transport)
 	options = append(options, cloudflare.HTTPClient(c))
 
 	config := Config{
