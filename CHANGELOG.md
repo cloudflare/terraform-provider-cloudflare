@@ -1,4 +1,14 @@
 ## 1.12.0 (Unreleased)
+
+IMPROVEMENTS:
+
+* provider: Enable request/response logging [GH-212]
+* resource/cloudflare_load_balancer_monitor: Add validation for `port` [GH-213]
+
+BUG FIXES:
+
+* resource/cloudflare_load_balancer_monitor: Fix incorrect type cast for `port` [GH-213]
+
 ## 1.11.0 (January 11, 2019)
 
 **Improvements:**
