@@ -308,6 +308,7 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	d.Set("description", loadBalancer.Description)
 	d.Set("ttl", loadBalancer.TTL)
 	d.Set("steering_policy", loadBalancer.SteeringPolicy)
+	d.Set("session_affinity", loadBalancer.Persistence)
 	d.Set("created_on", loadBalancer.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancer.ModifiedOn.Format(time.RFC3339Nano))
 
