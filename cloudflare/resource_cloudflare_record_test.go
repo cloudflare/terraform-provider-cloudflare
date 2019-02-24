@@ -3,11 +3,9 @@ package cloudflare
 import (
 	"fmt"
 	"os"
-	"testing"
-
-	"time"
-
 	"regexp"
+	"testing"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
