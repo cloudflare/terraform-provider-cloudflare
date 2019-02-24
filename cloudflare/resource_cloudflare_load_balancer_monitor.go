@@ -103,8 +103,9 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 			},
 
 			"port": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ValidateFunc: validation.IntBetween(0, 65535),
 			},
 
 			"created_on": {
