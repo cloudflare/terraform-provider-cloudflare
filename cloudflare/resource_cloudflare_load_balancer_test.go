@@ -325,7 +325,7 @@ func testAccCheckCloudflareLoadBalancerConfigBasic(zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
-  name = "tf-testacc-lb-%[2]s"
+  name = "tf-testacc-lb-%[2]s.%[1]s"
   steering_policy = ""
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
@@ -336,7 +336,7 @@ func testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zone, id string) st
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
-  name = "tf-testacc-lb-session-affinity-%[2]s"
+  name = "tf-testacc-lb-session-affinity-%[2]s.%[1]s"
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
 	session_affinity = "cookie"
@@ -347,7 +347,7 @@ func testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zone, id string) string
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
-  name = "tf-testacc-lb-%[2]s"
+  name = "tf-testacc-lb-%[2]s.%[1]s"
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
   description = "tf-acctest load balancer using geo-balancing"
@@ -368,7 +368,7 @@ func testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zone, id string) stri
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
-  name = "tf-testacc-lb-%[2]s"
+  name = "tf-testacc-lb-%[2]s.%[1]s"
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
   pop_pools {
