@@ -26,6 +26,8 @@ resource "cloudflare_load_balancer_monitor" "test" {
     header = "Host"
     values = ["example.com"]
   }
+  allow_insecure = false
+  follow_redirects = true
 }
 ```
 
@@ -43,6 +45,8 @@ The following arguments are supported:
 * `header` - (Optional) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. Fields documented below.
 * `type` - (Optional) The protocol to use for the healthcheck. Currently supported protocols are 'HTTP' and 'HTTPS'. Default: "http".
 * `description` - (Optional) Free text description.
+* `allow_insecure` - (Optional) Do not validate the certificate when monitor use HTTPS.
+* `follow_redirects` - (Optional) Follow redirects if returned by the origin.
 
 **header** requires the following:
 

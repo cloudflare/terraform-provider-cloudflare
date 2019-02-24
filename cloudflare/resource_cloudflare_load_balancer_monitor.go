@@ -108,6 +108,16 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 				ValidateFunc: validation.IntBetween(0, 65535),
 			},
 
+			"allow_insecure": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+
+			"follow_redirects": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+
 			"created_on": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -145,6 +155,14 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 
 	if port, ok := d.GetOk("port"); ok {
 		loadBalancerMonitor.Port = uint16(port.(int))
+	}
+
+	if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
+		loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
+	}
+
+	if followRedirects, ok := d.GetOk("follow_redirects"); ok {
+		loadBalancerMonitor.FollowRedirects = followRedirects.(bool)
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -190,6 +208,14 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 
 	if port, ok := d.GetOk("port"); ok {
 		loadBalancerMonitor.Port = uint16(port.(int))
+	}
+
+	if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
+		loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
+	}
+
+	if followRedirects, ok := d.GetOk("follow_redirects"); ok {
+		loadBalancerMonitor.FollowRedirects = followRedirects.(bool)
 	}
 
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -240,6 +266,8 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 	d.Set("type", loadBalancerMonitor.Type)
 	d.Set("description", loadBalancerMonitor.Description)
 	d.Set("port", loadBalancerMonitor.Port)
+	d.Set("allow_insecure", loadBalancerMonitor.AllowInsecure)
+	d.Set("follow_redirects", loadBalancerMonitor.FollowRedirects)
 	d.Set("created_on", loadBalancerMonitor.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerMonitor.ModifiedOn.Format(time.RFC3339Nano))
 
