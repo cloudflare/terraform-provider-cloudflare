@@ -49,7 +49,7 @@ resource "cloudflare_load_balancer_pool" "foo" {
 The following arguments are supported:
 
 * `zone` - (Required) The zone to add the load balancer to.
-* `name` - (Required) The DNS name to associate with the load balancer.
+* `name` - (Required) The DNS name (FQDN, including the zone) to associate with the load balancer.
 * `fallback_pool_id` - (Required) The pool ID to use when all other pools are detected as unhealthy.
 * `default_pool_ids` - (Required) A list of pool IDs ordered by their failover priority. Used whenever region/pop pools are not defined.
 * `description` - (Optional) Free text description.
