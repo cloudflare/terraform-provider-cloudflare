@@ -143,7 +143,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 	}
 
 	if port, ok := d.GetOk("port"); ok {
-		loadBalancerMonitor.Port = port.(uint16)
+		loadBalancerMonitor.Port = uint16(port.(int))
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -188,7 +188,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 	}
 
 	if port, ok := d.GetOk("port"); ok {
-		loadBalancerMonitor.Port = port.(uint16)
+		loadBalancerMonitor.Port = uint16(port.(int))
 	}
 
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
