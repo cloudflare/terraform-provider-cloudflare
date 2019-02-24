@@ -88,7 +88,7 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", ""}, false),
-				Default:      "",
+				Computed:     true,
 			},
 
 			// nb enterprise only

@@ -44,7 +44,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerDates(name, &loadBalancer, testStartTime),
 					resource.TestCheckResourceAttr(name, "proxied", "false"), // default value
 					resource.TestCheckResourceAttr(name, "ttl", "30"),
-					resource.TestCheckResourceAttr(name, "steering_policy", ""),
+					resource.TestCheckResourceAttr(name, "steering_policy", "off"),
 				),
 			},
 		},
