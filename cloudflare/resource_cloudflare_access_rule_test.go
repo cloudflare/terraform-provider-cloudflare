@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccessRuleASN(t *testing.T) {
+func TestAccAccessRuleASN(t *testing.T) {
 	name := "cloudflare_access_rule.test"
 
 	resource.Test(t, resource.TestCase{
