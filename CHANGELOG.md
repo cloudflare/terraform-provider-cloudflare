@@ -8,8 +8,8 @@ IMPROVEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_load_balancer_monitor: Fix incorrect type cast for `port` [GH-213]
-* resource/cloudflare_load_balancer: Make steering_policy computed to avoid spurious diffs [GH-214]
-* resource/cloudflare_load_balancer: Read session_affinity back from API to make import work & detects drifts [GH-214]
+* resource/cloudflare_load_balancer: Make `steering_policy` computed to avoid spurious diffs [GH-214]
+* resource/cloudflare_load_balancer: Read `session_affinity` back from API to make import work & detects drifts [GH-214]
 
 ## 1.11.0 (January 11, 2019)
 
