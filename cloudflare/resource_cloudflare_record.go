@@ -382,6 +382,25 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
+	data, dataOk := d.GetOk("data")
+	log.Printf("[DEBUG] Data found in config: %#v", data)
+
+	readDataMap := make(map[string]interface{})
+
+	if dataOk {
+		for id, value := range data.(map[string]interface{}) {
+			newData, err := transformToCloudflareDNSData(record.Type, id, value)
+			if err != nil {
+				return err
+			} else if newData == nil {
+				continue
+			}
+			readDataMap[id] = newData
+		}
+
+		record.Data = readDataMap
+	}
+
 	d.SetId(record.ID)
 	d.Set("hostname", record.Name)
 	d.Set("type", record.Type)
