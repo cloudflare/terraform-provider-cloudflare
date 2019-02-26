@@ -8,6 +8,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_record: Ensure `Create`/`Update`/`Read` functions all apply the record transformation and store the correct state values [GH-217]
 * resource/cloudflare_rate_limit: Read `correlate` back from API correctly [GH-204]
 * resource/cloudflare_load_balancer_monitor: Fix incorrect type cast for `port` [GH-213]
 * resource/cloudflare_load_balancer: Make `steering_policy` computed to avoid spurious diffs [GH-214]
