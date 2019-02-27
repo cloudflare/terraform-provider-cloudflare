@@ -302,14 +302,6 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 			return fmt.Errorf("'always_online' not specified at api")
 		}
 
-		if val, ok := actionMap["disable_apps"]; ok {
-			if val != nil {
-				return fmt.Errorf("'disable_apps' is a unitary value, expect nil value at api, but found: '%v'", val)
-			}
-		} else {
-			return fmt.Errorf("'disable_apps' not specified at api")
-		}
-
 		if val, ok := actionMap["ssl"]; ok {
 			if _, ok := val.(string); !ok || val != "flexible" {
 				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
@@ -318,9 +310,9 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 			return fmt.Errorf("'ssl' not specified at api")
 		}
 
-		if len(pageRule.Actions) != 3 {
+		if len(pageRule.Actions) != 2 {
 			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v",
-				3, len(pageRule.Actions), pageRule.Actions)
+				2, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -332,14 +324,6 @@ func testAccCheckCloudflarePageRuleAttributesFullySpecified(pageRule *cloudflare
 
 		// check boolean variables get set correctly
 		actionMap := pageRuleActionsToMap(pageRule.Actions)
-
-		if val, ok := actionMap["disable_apps"]; ok {
-			if val != nil {
-				return fmt.Errorf("'disable_apps' is a unitary value, expect nil value at api, but found: '%v'", val)
-			}
-		} else {
-			return fmt.Errorf("'disable_apps' not specified at api")
-		}
 
 		if val, ok := actionMap["browser_cache_ttl"]; ok {
 			if _, ok := val.(float64); !ok || val != 10000.000000 {
@@ -460,7 +444,6 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
 		always_online = "on"
 		ssl = "flexible"
- 		disable_apps = true
 	}
 }`, zone, target)
 }
@@ -473,7 +456,6 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
 		always_online = "off"
 		browser_check = "on"
-		disable_apps = false
 		ssl = "strict"
 		rocket_loader = "on"
 	}
