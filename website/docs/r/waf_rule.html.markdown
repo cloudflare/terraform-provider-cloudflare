@@ -26,7 +26,7 @@ The following arguments are supported:
 
 * `zone` - (Required) The DNS zone to apply to.
 * `rule_id` - (Required) The WAF Rule ID.
-* `mode` - (Required) The mode of the rule, can be one of ["block", "challenge", "default", "disable, "simulate"].
+* `mode` - (Required) The mode of the rule, can be one of ["block", "challenge", "default", "disable", "simulate"].
 
 
 ## Attributes Reference
