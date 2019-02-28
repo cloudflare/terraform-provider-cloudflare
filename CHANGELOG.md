@@ -1,18 +1,18 @@
 ## 1.12.0 (Unreleased)
 
-IMPROVEMENTS:
+**Improvements:**
 
-* provider: Enable request/response logging [GH-212]
-* resource/cloudflare_load_balancer_monitor: Add validation for `port` [GH-213]
-* resource/cloudflare_load_balancer_monitor: Add `allow_insecure` and `follow_redirects` [GH-205]
+* provider: Enable request/response logging ([#212](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/212))
+* resource/cloudflare_load_balancer_monitor: Add validation for `port` ([#213](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/213))
+* resource/cloudflare_load_balancer_monitor: Add `allow_insecure` and `follow_redirects` ([#205](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/205))
 
-BUG FIXES:
+**Fixes:**
 
-* resource/cloudflare_record: Read `data` back from API correctly [GH-217]
-* resource/cloudflare_rate_limit: Read `correlate` back from API correctly [GH-204]
-* resource/cloudflare_load_balancer_monitor: Fix incorrect type cast for `port` [GH-213]
-* resource/cloudflare_load_balancer: Make `steering_policy` computed to avoid spurious diffs [GH-214]
-* resource/cloudflare_load_balancer: Read `session_affinity` back from API to make import work & detects drifts [GH-214]
+* resource/cloudflare_record: Read `data` back from API correctly ([#217](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/217))
+* resource/cloudflare_rate_limit: Read `correlate` back from API correctly ([#204](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/204))
+* resource/cloudflare_load_balancer_monitor: Fix incorrect type cast for `port` ([#213](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/213))
+* resource/cloudflare_load_balancer: Make `steering_policy` computed to avoid spurious diffs ([#214](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/214))
+* resource/cloudflare_load_balancer: Read `session_affinity` back from API to make import work & detects drifts ([#214](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/214))
 
 ## 1.11.0 (January 11, 2019)
 
