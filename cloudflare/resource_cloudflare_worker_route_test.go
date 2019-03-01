@@ -17,13 +17,13 @@ const (
 )
 
 func TestAccCloudflareWorkerRoute_SingleScriptNonEnt(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_ORG_ID if it is set in order
+	// Temporarily unset CLOUDFLARE_ACCOUNT_ID if it is set in order
 	// to test non-ENT behavior
-	if os.Getenv("CLOUDFLARE_ORG_ID") != "" {
+	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") != "" {
 		defer func(orgId string) {
-			os.Setenv("CLOUDFLARE_ORG_ID", orgId)
-		}(os.Getenv("CLOUDFLARE_ORG_ID"))
-		os.Setenv("CLOUDFLARE_ORG_ID", "")
+			os.Setenv("CLOUDFLARE_ACCOUNT_ID", orgId)
+		}(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
+		os.Setenv("CLOUDFLARE_ACCOUNT_ID", "")
 	}
 
 	testAccCloudflareWorkerRoute_SingleScript(t, nil)

@@ -75,10 +75,10 @@ func Provider() terraform.ResourceProvider {
 				Description: "If specified zone is owned by an organization, configure API client to always use that organization",
 			},
 
-			"org_id": &schema.Schema{
+			"account_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ORG_ID", nil),
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
 				Description: "Configure API client to always use that organization. If set this will override 'user_owner_from_zone'",
 			},
 		},
@@ -139,7 +139,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		return nil, err
 	}
 
-	if orgId, ok := d.GetOk("org_id"); ok {
+	if orgId, ok := d.GetOk("account_id"); ok {
 		log.Printf("[INFO] Using specified organization id %s in Cloudflare provider", orgId.(string))
 		options = append(options, cloudflare.UsingOrganization(orgId.(string)))
 	} else if zoneName, ok := d.GetOk("use_org_from_zone"); ok {

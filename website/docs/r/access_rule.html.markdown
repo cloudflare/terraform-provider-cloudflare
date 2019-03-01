@@ -38,7 +38,7 @@ resource "cloudflare_access_rule" "antarctica" {
 # Resulting Terraform state will be a list of resources.
 provider "cloudflare" {
   # ... other provider configuration
-  org_id = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id = "d41d8cd98f00b204e9800998ecf8427e"
 }
 variable "my_office" {
   type = "list"
