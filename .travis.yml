@@ -5,13 +5,8 @@ language: go
 matrix:
   fast_finish: true
   include:
-    - go: 1.10.x
     - go: 1.11.x
-    - go: 1.x
-      env: LATEST=true
-    - go: tip
-  allow_failures:
-    - go: tip
+      env: GOFLAGS=-mod=vendor GO111MODULE=on
 
 install:
 # This script is used by the Travis build to install a cookie for
@@ -19,11 +14,9 @@ install:
 # packages that live there.
 # See: https://github.com/golang/go/issues/12933
 - bash scripts/gogetcookie.sh
-- go get github.com/kardianos/govendor
 
 script:
 - make test
-- make vendor-status
 - make vet
 - make website-test
 
