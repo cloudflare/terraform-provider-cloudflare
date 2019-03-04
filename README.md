@@ -79,17 +79,34 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 $ make testacc
 ```
 
-## Updating a vendored dependency
+## Managing dependencies
 
-Terraform providers use [`govendor`][govendor] to manage the vendored
-dependencies. To update a dependency, you can run `govendor fetch
-<dependency_path>`. An example of updating the `cloudflare-go` library:
+Terraform providers use [Go modules][go modules] to manage the
+dependencies. To add or update a dependency, you would run the
+following (`v1.2.3` of `foo` is a new package we want to add):
 
 ```
-$ govendor fetch github.com/cloudflare/cloudflare-go
+# Depending on your environment, you may need to `export GO111MODULE=on`
+# before using these commands.
+
+$ go get foo@v1.2.3
+$ go mod tidy
+$ go mod vendor
 ```
 
-This will update the local `vendor` directory and `vendor/vendor.json`
-to include the new dependencies.
+Stepping through the above commands:
 
-[govendor]: https://github.com/kardianos/govendor
+- `go get foo@v1.2.3` fetches version `v1.2.3` from the source (if
+    needed) and adds it to the `go.mod` file for use.
+- `go mod tidy` cleans up any dangling dependencies or references that
+  aren't defined in your module file.
+- `go mod vendor` manages the `vendor` directory of the project. This is
+  done to maintain backwards compatibility with older versions of Go
+  that don't support Go modules.
+
+(The example above will also work if you'd like to upgrade to `v1.2.3`)
+
+If you wish to remove a dependency, you can remove the reference from
+`go.mod` and use the same commands above but omit the initial `go get`.
+
+[go modules]: https://github.com/golang/go/wiki/Modules
