@@ -43,7 +43,11 @@ Action blocks support the following:
 * `automatic_https_rewrites` - (Optional) Whether this action is `"on"` or `"off"`.
 * `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
 * `browser_check` - (Optional) Whether this action is `"on"` or `"off"`.
+* `bypass_cache_on_cookie` - (Optional) String value of cookie name to conditionally bypass cache the page.
+* `cache_by_device_type` - (Optional) Whether this action is `"on"` or `"off"`.
+* `cache_deception_armor` - (Optional) Whether this action is `"on"` or `"off"`.
 * `cache_level` - (Optional) Whether to set the cache level to `"bypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
+* `cache_on_cookie` - (Optional) String value of cookie name to conditionally cache the page.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_railgun` - (Optional) Boolean of whether this action is enabled. Default: false.
@@ -56,13 +60,18 @@ Action blocks support the following:
 * `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `mirage` - (Optional) Whether this action is `"on"` or `"off"`.
 * `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
+* `origin_error_page_pass_thru` - (Optional) Whether this action is `"on"` or `"off"`.
 * `polish` - (Optional) Whether this action is `"off"`, `"lossless"` or `"lossy"`.
 * `resolve_override` - (Optional) Overridden origin server name.
+* `respect_strong_etag` - (Optional) Whether this action is `"on"` or `"off"`.
+* `response_buffering` - (Optional) Whether this action is `"on"` or `"off"`.
 * `rocket_loader` - (Optional) Whether to set the rocket loader to `"on"`, `"off"`.
 * `security_level` - (Optional) Whether to set the security level to `"off"`, `"essentially_off"`, `"low"`, `"medium"`, `"high"`, or `"under_attack"`.
 * `server_side_exclude` - (Optional) Whether this action is `"on"` or `"off"`.
 * `smart_errors` - (Optional) Whether this action is `"on"` or `"off"`.
+* `sort_query_string_for_cache` - (Optional) Whether this action is `"on"` or `"off"`.
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
+* `true_client_ip_header` - (Optional) Whether this action is `"on"` or `"off"`.
 * `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
 Forwarding URL actions support the following:
