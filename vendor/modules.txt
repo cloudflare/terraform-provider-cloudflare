@@ -1,12 +1,12 @@
 # github.com/agext/levenshtein v1.2.1
 github.com/agext/levenshtein
-# github.com/apparentlymart/go-cidr v0.0.0-20170418151526-7e4b007599d4
+# github.com/apparentlymart/go-cidr v0.0.0-20170616213631-2bd8b58cf427
 github.com/apparentlymart/go-cidr/cidr
 # github.com/apparentlymart/go-textseg v1.0.0
 github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v1.0.0
 github.com/armon/go-radix
-# github.com/aws/aws-sdk-go v1.8.34
+# github.com/aws/aws-sdk-go v1.14.31
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/credentials
 github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
@@ -15,20 +15,26 @@ github.com/aws/aws-sdk-go/aws/session
 github.com/aws/aws-sdk-go/service/s3
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/endpoints
+github.com/aws/aws-sdk-go/internal/sdkio
 github.com/aws/aws-sdk-go/internal/shareddefaults
 github.com/aws/aws-sdk-go/aws/client
+github.com/aws/aws-sdk-go/internal/sdkuri
 github.com/aws/aws-sdk-go/aws/client/metadata
-github.com/aws/aws-sdk-go/aws/request
 github.com/aws/aws-sdk-go/aws/corehandlers
+github.com/aws/aws-sdk-go/aws/request
 github.com/aws/aws-sdk-go/aws/credentials/stscreds
+github.com/aws/aws-sdk-go/aws/csm
 github.com/aws/aws-sdk-go/aws/defaults
 github.com/aws/aws-sdk-go/aws/awsutil
 github.com/aws/aws-sdk-go/aws/signer/v4
 github.com/aws/aws-sdk-go/private/protocol
+github.com/aws/aws-sdk-go/private/protocol/eventstream
+github.com/aws/aws-sdk-go/private/protocol/eventstream/eventstreamapi
+github.com/aws/aws-sdk-go/private/protocol/rest
 github.com/aws/aws-sdk-go/private/protocol/restxml
+github.com/aws/aws-sdk-go/internal/sdkrand
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
-github.com/aws/aws-sdk-go/private/protocol/rest
 github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
@@ -38,34 +44,23 @@ github.com/bgentry/go-netrc/netrc
 github.com/bgentry/speakeasy
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/client9/misspell v0.3.4
-github.com/client9/misspell/cmd/misspell
-github.com/client9/misspell
 # github.com/cloudflare/cloudflare-go v0.0.0-20190123152938-9837a599c0ba
 github.com/cloudflare/cloudflare-go
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
-# github.com/go-ini/ini v1.23.1
+# github.com/go-ini/ini v1.25.4
 github.com/go-ini/ini
-# github.com/golang/lint v0.0.0-20180702182130-06c8688daad7
-github.com/golang/lint/golint
 # github.com/golang/protobuf v1.2.0
 github.com/golang/protobuf/proto
-github.com/golang/protobuf/protoc-gen-go
-github.com/golang/protobuf/protoc-gen-go/generator
-github.com/golang/protobuf/protoc-gen-go/grpc
 github.com/golang/protobuf/ptypes
-github.com/golang/protobuf/protoc-gen-go/descriptor
-github.com/golang/protobuf/protoc-gen-go/generator/internal/remap
-github.com/golang/protobuf/protoc-gen-go/plugin
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
-# github.com/hashicorp/go-cleanhttp v0.0.0-20170211013415-3573b8b52aa7
+# github.com/hashicorp/go-cleanhttp v0.5.0
 github.com/hashicorp/go-cleanhttp
 # github.com/hashicorp/go-getter v0.0.0-20180809191950-4bda8fa99001
 github.com/hashicorp/go-getter
@@ -78,9 +73,9 @@ github.com/hashicorp/go-multierror
 github.com/hashicorp/go-plugin
 # github.com/hashicorp/go-safetemp v1.0.0
 github.com/hashicorp/go-safetemp
-# github.com/hashicorp/go-uuid v0.0.0-20160120003506-36289988d83c
+# github.com/hashicorp/go-uuid v1.0.0
 github.com/hashicorp/go-uuid
-# github.com/hashicorp/go-version v0.0.0-20161031182605-e96d38404026
+# github.com/hashicorp/go-version v1.0.0
 github.com/hashicorp/go-version
 # github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f
 github.com/hashicorp/hcl
@@ -99,14 +94,14 @@ github.com/hashicorp/hcl2/hclparse
 github.com/hashicorp/hcl2/hcldec
 github.com/hashicorp/hcl2/hcl/hclsyntax
 github.com/hashicorp/hcl2/hcl/json
-# github.com/hashicorp/hil v0.0.0-20170512213305-fac2259da677
+# github.com/hashicorp/hil v0.0.0-20170627220502-fa9f258a9250
 github.com/hashicorp/hil
 github.com/hashicorp/hil/ast
 github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v0.0.0-20150609070431-0dc08b1671f3
 github.com/hashicorp/logutils
-# github.com/hashicorp/terraform v0.11.8
+# github.com/hashicorp/terraform v0.11.12-beta1.0.20190227065421-fc531f54a878
 github.com/hashicorp/terraform/plugin
 github.com/hashicorp/terraform/helper/hashcode
 github.com/hashicorp/terraform/helper/logging
@@ -139,16 +134,13 @@ github.com/hashicorp/terraform/svchost/auth
 github.com/hashicorp/yamux
 # github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7
 github.com/jmespath/go-jmespath
-# github.com/kisielk/gotool v1.0.0
-github.com/kisielk/gotool
-github.com/kisielk/gotool/internal/load
 # github.com/mattn/go-colorable v0.0.9
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.3
 github.com/mattn/go-isatty
 # github.com/mitchellh/cli v1.0.0
 github.com/mitchellh/cli
-# github.com/mitchellh/copystructure v0.0.0-20161013195342-5af94aef99f5
+# github.com/mitchellh/copystructure v0.0.0-20170525013902-d23ffcb85de3
 github.com/mitchellh/copystructure
 # github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747
 github.com/mitchellh/go-homedir
@@ -160,9 +152,9 @@ github.com/mitchellh/go-wordwrap
 github.com/mitchellh/hashstructure
 # github.com/mitchellh/mapstructure v0.0.0-20170307201123-53818660ed49
 github.com/mitchellh/mapstructure
-# github.com/mitchellh/reflectwalk v0.0.0-20161003174516-92573fe8d000
+# github.com/mitchellh/reflectwalk v0.0.0-20170726202117-63d60e9d0dbc
 github.com/mitchellh/reflectwalk
-# github.com/oklog/run v0.0.0-20180308005104-6934b124db28
+# github.com/oklog/run v1.0.0
 github.com/oklog/run
 # github.com/pkg/errors v0.8.0
 github.com/pkg/errors
@@ -171,7 +163,7 @@ github.com/posener/complete
 github.com/posener/complete/cmd/install
 github.com/posener/complete/cmd
 github.com/posener/complete/match
-# github.com/ulikunitz/xz v0.0.0-20180703112113-636d36a76670
+# github.com/ulikunitz/xz v0.5.4
 github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/xlog
 github.com/ulikunitz/xz/lzma
@@ -184,7 +176,7 @@ github.com/zclconf/go-cty/cty/function/stdlib
 github.com/zclconf/go-cty/cty/set
 github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/json
-# golang.org/x/crypto v0.0.0-20180816225734-aabede6cba87
+# golang.org/x/crypto v0.0.0-20180904163835-0709b304e793
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/ssh
@@ -201,9 +193,7 @@ golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp/elgamal
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
-# golang.org/x/lint v0.0.0-20180702182130-06c8688daad7
-golang.org/x/lint
-# golang.org/x/net v0.0.0-20181029044818-c44066c5c816
+# golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3
 golang.org/x/net/context
 golang.org/x/net/html
 golang.org/x/net/trace
@@ -213,29 +203,18 @@ golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/http/httpguts
-# golang.org/x/sys v0.0.0-20180831094639-fa5fdf94c789
+# golang.org/x/sys v0.0.0-20181218192612-074acd46bca6
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.0
 golang.org/x/text/unicode/norm
 golang.org/x/text/transform
 golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
-# golang.org/x/time v0.0.0-20180412165947-fbb02b2291d2
+# golang.org/x/time v0.0.0-20181108054448-85acf8d2951c
 golang.org/x/time/rate
-# golang.org/x/tools v0.0.0-20180831211245-7ca132754999
-golang.org/x/tools/cmd/goimports
-golang.org/x/tools/imports
-golang.org/x/tools/go/ast/astutil
-golang.org/x/tools/go/gcexportdata
-golang.org/x/tools/internal/fastwalk
-golang.org/x/tools/go/loader
-golang.org/x/tools/go/internal/gcimporter
-golang.org/x/tools/go/buildutil
-golang.org/x/tools/go/internal/cgo
-golang.org/x/tools/go/types/typeutil
-# google.golang.org/genproto v0.0.0-20180831171423-11092d34479b
+# google.golang.org/genproto v0.0.0-20181219182458-5a97ab628bfb
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v0.0.0-20180831195830-ce4f3c8a8922
+# google.golang.org/grpc v1.17.0
 google.golang.org/grpc
 google.golang.org/grpc/credentials
 google.golang.org/grpc/health
@@ -249,9 +228,11 @@ google.golang.org/grpc/encoding/proto
 google.golang.org/grpc/grpclog
 google.golang.org/grpc/internal
 google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/binarylog
 google.golang.org/grpc/internal/channelz
 google.golang.org/grpc/internal/envconfig
 google.golang.org/grpc/internal/grpcrand
+google.golang.org/grpc/internal/grpcsync
 google.golang.org/grpc/internal/transport
 google.golang.org/grpc/keepalive
 google.golang.org/grpc/metadata
@@ -263,19 +244,7 @@ google.golang.org/grpc/resolver/passthrough
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
+google.golang.org/grpc/credentials/internal
 google.golang.org/grpc/balancer/base
-# honnef.co/go/tools v0.0.0-20180728063816-88497007e858
-honnef.co/go/tools/cmd/staticcheck
-honnef.co/go/tools/lint/lintutil
-honnef.co/go/tools/staticcheck
-honnef.co/go/tools/lint
-honnef.co/go/tools/version
-honnef.co/go/tools/deprecated
-honnef.co/go/tools/functions
-honnef.co/go/tools/internal/sharedcheck
-honnef.co/go/tools/lint/lintdsl
-honnef.co/go/tools/ssa
-honnef.co/go/tools/staticcheck/vrp
-honnef.co/go/tools/ssa/ssautil
-honnef.co/go/tools/callgraph
-honnef.co/go/tools/callgraph/static
+google.golang.org/grpc/binarylog/grpc_binarylog_v1
+google.golang.org/grpc/internal/syscall
