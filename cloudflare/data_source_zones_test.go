@@ -35,7 +35,7 @@ func TestAccCloudflareZonesMatchPaused(t *testing.T) {
 				Config: testAccCloudflareZonesConfigMatchPaused(),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZonesDataSourceID("data.cloudflare_zones.examples_domains"),
-					resource.TestCheckResourceAttr("data.cloudflare_zones.examples_domains", "zones.#", "1"),
+					resource.TestCheckResourceAttrSet("data.cloudflare_zones.examples_domains", "zones.#"),
 				),
 			},
 		},
@@ -52,7 +52,7 @@ func TestAccCloudflareZonesMatchStatus(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZonesDataSourceID("data.cloudflare_zones.examples_domains"),
 					testAccCheckCloudflareZonesReturned("data.cloudflare_zones.examples_domains", "zones.#", func(i int) bool {
-						return i >= 1 && i <= 2
+						return i > 0
 					}),
 				),
 			},
