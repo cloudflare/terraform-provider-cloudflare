@@ -18,7 +18,7 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/pkg/errors v0.8.0
 	github.com/posener/complete v1.1.2 // indirect
-	github.com/smartystreets/goconvey v0.0.0-20190222223459-a17d461953aa // indirect
+	github.com/smartystreets/goconvey v0.0.0-20190306221043-200a235640ff // indirect
 	github.com/zclconf/go-cty v0.0.0-20190212192503-19dda139b164 // indirect
 	golang.org/x/crypto v0.0.0-20190306032710-8dd112bcdc25 // indirect
 	golang.org/x/net v0.0.0-20190306045800-16b79f2e4e95 // indirect
