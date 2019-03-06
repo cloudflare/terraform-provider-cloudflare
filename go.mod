@@ -19,7 +19,7 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/posener/complete v1.1.2 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20190222223459-a17d461953aa // indirect
-	github.com/zclconf/go-cty v0.0.0-20180831220647-752f6a689f5e // indirect
+	github.com/zclconf/go-cty v0.0.0-20190212192503-19dda139b164 // indirect
 	golang.org/x/crypto v0.0.0-20180904163835-0709b304e793 // indirect
 	golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3 // indirect
 	golang.org/x/sys v0.0.0-20181218192612-074acd46bca6 // indirect
