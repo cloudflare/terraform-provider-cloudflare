@@ -209,7 +209,7 @@ golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/http/httpguts
-# golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
+# golang.org/x/sys v0.0.0-20190306223140-b294cbcfc56d
 golang.org/x/sys/unix
 golang.org/x/sys/cpu
 # golang.org/x/text v0.3.0
