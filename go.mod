@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/go-hclog v0.0.0-20180828044259-75ecd6e6d645 // indirect
 	github.com/hashicorp/go-plugin v0.0.0-20180814222501-a4620f9913d1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
-	github.com/hashicorp/hcl2 v0.0.0-20180822193130-ed8144cda141 // indirect
+	github.com/hashicorp/hcl2 v0.0.0-20190306024511-fdf8e232b64f // indirect
 	github.com/hashicorp/terraform v0.11.12-beta1.0.20190227065421-fc531f54a878
 	github.com/mitchellh/cli v1.0.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
