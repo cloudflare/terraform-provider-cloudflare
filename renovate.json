@@ -1,5 +1,9 @@
 {
-  "extends": [
-    "config:base"
-  ]
+  "extends": ["config:base"],
+  "labels": ["dependencies"],
+  "gomodTidy": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "assignees": ["@patryk", "@jacobbednarz"]
+  }
 }
