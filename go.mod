@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
-	github.com/cloudflare/cloudflare-go v0.0.0-20190123152938-9837a599c0ba
+	github.com/cloudflare/cloudflare-go v0.8.5
 	github.com/hashicorp/go-cleanhttp v0.5.0
 	github.com/hashicorp/go-getter v0.0.0-20180809191950-4bda8fa99001 // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20180828044259-75ecd6e6d645 // indirect
