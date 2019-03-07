@@ -219,9 +219,9 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
 # golang.org/x/time v0.0.0-20181108054448-85acf8d2951c
 golang.org/x/time/rate
-# google.golang.org/genproto v0.0.0-20181219182458-5a97ab628bfb
+# google.golang.org/genproto v0.0.0-20190307020245-6e86cb5d2f12
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.17.0
+# google.golang.org/grpc v1.19.0
 google.golang.org/grpc
 google.golang.org/grpc/credentials
 google.golang.org/grpc/health
