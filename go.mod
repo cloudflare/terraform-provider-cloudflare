@@ -16,7 +16,7 @@ require (
 	github.com/mitchellh/cli v1.0.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
-	github.com/pkg/errors v0.8.0
+	github.com/pkg/errors v0.8.1
 	github.com/posener/complete v1.1.2 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20190306221043-200a235640ff // indirect
 	github.com/zclconf/go-cty v0.0.0-20190212192503-19dda139b164 // indirect
