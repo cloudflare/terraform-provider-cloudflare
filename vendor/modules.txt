@@ -70,7 +70,7 @@ github.com/hashicorp/go-cleanhttp
 # github.com/hashicorp/go-getter v0.0.0-20180809191950-4bda8fa99001
 github.com/hashicorp/go-getter
 github.com/hashicorp/go-getter/helper/url
-# github.com/hashicorp/go-hclog v0.0.0-20180828044259-75ecd6e6d645
+# github.com/hashicorp/go-hclog v0.8.0
 github.com/hashicorp/go-hclog
 # github.com/hashicorp/go-multierror v1.0.0
 github.com/hashicorp/go-multierror
