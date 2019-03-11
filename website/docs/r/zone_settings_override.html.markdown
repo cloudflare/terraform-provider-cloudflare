@@ -48,7 +48,6 @@ The **settings** block supports settings that may be applied to the zone. These 
 
 These can be specified as "on" or "off" string. Similar to boolean values, but here the empty string also means to use the existing value. Attributes available:
 
-* `advanced_ddos`
 * `always_online`
 * `always_use_https`
 * `automatic_https_rewrites`
