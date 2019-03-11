@@ -19,7 +19,7 @@ require (
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/zclconf/go-cty v0.0.0-20190212192503-19dda139b164 // indirect
 	golang.org/x/crypto v0.0.0-20190310223557-c2843e01d9a2 // indirect
-	golang.org/x/net v0.0.0-20190306045800-16b79f2e4e95 // indirect
+	golang.org/x/net v0.0.0-20190311034339-56fb01167e7d // indirect
 	golang.org/x/sys v0.0.0-20190308032937-584f3b12f43e // indirect
 	google.golang.org/genproto v0.0.0-20190307221350-5fe7a883aa19 // indirect
 )
