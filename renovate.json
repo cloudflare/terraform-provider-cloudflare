@@ -3,7 +3,7 @@
   "labels": ["dependencies"],
   "prConcurrentLimit": 1,
   "gomodTidy": true,
-   "ignoreDeps": [
+  "ignoreDeps": [
     "golang.org/x/crypto", 
     "golang.org/x/sys",
     "golang.org/x/net"
