@@ -3,6 +3,11 @@
   "labels": ["dependencies"],
   "prConcurrentLimit": 1,
   "gomodTidy": true,
+   "ignoreDeps": [
+    "golang.org/x/crypto", 
+    "golang.org/x/sys",
+    "golang.org/x/net"
+  ],
   "vulnerabilityAlerts": {
     "labels": ["security"],
     "assignees": ["@patryk", "@jacobbednarz"]
