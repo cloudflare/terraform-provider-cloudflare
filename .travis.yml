@@ -2,11 +2,19 @@ sudo: required
 services:
 - docker
 language: go
+env:
+  global:
+    - GOFLAGS="-mod=vendor"
+    - GO111MODULE=on
 matrix:
   fast_finish: true
   include:
     - go: 1.11.x
-      env: GOFLAGS=-mod=vendor GO111MODULE=on
+    - go: 1.12.x
+    - go: 1.x
+    - go: tip
+  allow_failures:
+    - go: tip
 
 install:
 # This script is used by the Travis build to install a cookie for
