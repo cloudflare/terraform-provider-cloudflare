@@ -132,7 +132,7 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zoneID").(string)
+	zoneID := d.Get("zone_id").(string)
 
 	var pageOptions cloudflare.CustomPageOptions
 	if accountID != "" {
