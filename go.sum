@@ -187,8 +187,8 @@ github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ
 github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f h1:UdxlrJz4JOnY8W+DbLISwf2B8WXEolNRA8BGCwI9jws=
 github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f/go.mod h1:oZtUIOe8dh44I2q6ScRibXws4Ajl+d+nod3AaR9vL5w=
 github.com/hashicorp/hcl2 v0.0.0-20180308163058-5f8ed954abd8/go.mod h1:xp1eMAxqhQKBxz+yQUTsig9bBMRRWRWw+rK3FJmHf/A=
-github.com/hashicorp/hcl2 v0.0.0-20190306024511-fdf8e232b64f h1:YfD6Zo+AkPU+rN6oeBIPjRBgF4vnv1FFysrsFA/4Y5s=
-github.com/hashicorp/hcl2 v0.0.0-20190306024511-fdf8e232b64f/go.mod h1:HtEzazM5AZ9fviNEof8QZB4T1Vz9UhHrGhnMPzl//Ek=
+github.com/hashicorp/hcl2 v0.0.0-20190315215159-956e03eb6dda h1:+/iprYu+pEX1JDUcTe3UhbtEbr0Dmx542PxMAe2g5Tw=
+github.com/hashicorp/hcl2 v0.0.0-20190315215159-956e03eb6dda/go.mod h1:HtEzazM5AZ9fviNEof8QZB4T1Vz9UhHrGhnMPzl//Ek=
 github.com/hashicorp/hil v0.0.0-20170627220502-fa9f258a9250 h1:fooK5IvDL/KIsi4LxF/JH68nVdrBSiGNPhS2JAQjtjo=
 github.com/hashicorp/hil v0.0.0-20170627220502-fa9f258a9250/go.mod h1:KHvg/R2/dPtaePb16oW4qIyzkMxXOL38xjRN64adsts=
 github.com/hashicorp/logutils v0.0.0-20150609070431-0dc08b1671f3 h1:oD64EFjELI9RY9yoWlfua58r+etdnoIC871z+rr6lkA=
