@@ -41,7 +41,7 @@ Action blocks support the following:
 * `always_online` - (Optional) Whether this action is `"on"` or `"off"`.
 * `always_use_https` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `automatic_https_rewrites` - (Optional) Whether this action is `"on"` or `"off"`.
-* `browser_cache_ttl` - (Optional) The Time To Live for the browser cache.
+* `browser_cache_ttl` - (Optional) The Time To Live for the browser cache. `0` means 'Respect Existing Headers'
 * `browser_check` - (Optional) Whether this action is `"on"` or `"off"`.
 * `bypass_cache_on_cookie` - (Optional) String value of cookie name to conditionally bypass cache the page.
 * `cache_by_device_type` - (Optional) Whether this action is `"on"` or `"off"`.
