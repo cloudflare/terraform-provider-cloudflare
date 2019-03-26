@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"crypto/md5"
 	"fmt"
 	"log"
 	"strings"
@@ -75,12 +76,17 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("either `account_id` or `zone_id` must be set")
 	}
 
-	var pageOptions cloudflare.CustomPageOptions
+	var (
+		pageOptions cloudflare.CustomPageOptions
+		identifier  string
+	)
 
 	if accountID != "" {
 		pageOptions = cloudflare.CustomPageOptions{AccountID: accountID}
+		identifier = accountID
 	} else {
 		pageOptions = cloudflare.CustomPageOptions{ZoneID: zoneID}
+		identifier = zoneID
 	}
 
 	page, err := client.CustomPage(&pageOptions, pageType)
@@ -96,6 +102,9 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 		d.SetId("")
 		return nil
 	}
+
+	checksum := stringChecksum(fmt.Sprintf("%s/%s", identifier, page.ID))
+	d.SetId(checksum)
 
 	d.Set("state", page.State)
 	d.Set("url", page.URL)
@@ -169,7 +178,19 @@ func resourceCloudflareCustomPagesImport(d *schema.ResourceData, meta interface{
 		d.Set("zone_id", identifier)
 	}
 
+	checksum := stringChecksum(fmt.Sprintf("%s/%s", identifier, pageType))
+	d.SetId(checksum)
+
 	resourceCloudflareCustomPagesRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+// stringChecksum takes a string and returns the checksum of the string.
+func stringChecksum(s string) string {
+	h := md5.New()
+	h.Write([]byte(s))
+	bs := h.Sum(nil)
+
+	return fmt.Sprintf("%x", bs)
 }
