@@ -446,7 +446,10 @@ func resourceCloudflareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 		log.Printf("[WARN] Error setting action on rate limit %q: %s", d.Id(), err)
 	}
 
-	d.Set("correlate", flattenRateLimitCorrelate(*rateLimit.Correlate))
+	if rateLimit.Correlate != nil {
+		d.Set("correlate", flattenRateLimitCorrelate(*rateLimit.Correlate))
+	}
+
 	d.Set("description", rateLimit.Description)
 	d.Set("disabled", rateLimit.Disabled)
 
