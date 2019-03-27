@@ -1,4 +1,15 @@
 ## 1.13.0 (Unreleased)
+
+**Improvements**
+
+* resource/cloudflare_zone_settings: Remove option to toggle `always_on_ddos` ([#253](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/253))
+* resource/cloudflare_page_rule: Update documentation to clarify "0" usag
+
+**Fixes:**
+
+* resource/cloudflare_custom_pages: Use correct casing for `zone_id` lookups
+* resource/cloudflare_rate_limit: Make `correlate` optional and not flap in state management ([#271](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/271))
+
 ## 1.12.0 (March 07, 2019)
 
 **Improvements:**
