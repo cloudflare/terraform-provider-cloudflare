@@ -393,7 +393,7 @@ func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitA
 	return action, nil
 }
 
-func expandRateLimitCorrelate(d *schema.ResourceData) (correlate cloudflare.RateLimitCorrelate, err error) {
+func expandRateLimitCorrelate(d *schema.ResourceData) (correlate *cloudflare.RateLimitCorrelate, err error) {
 	v, ok := d.GetOk("correlate")
 	if !ok {
 		return
@@ -401,7 +401,7 @@ func expandRateLimitCorrelate(d *schema.ResourceData) (correlate cloudflare.Rate
 
 	tfCorrelate := v.([]interface{})[0].(map[string]interface{})
 
-	correlate = cloudflare.RateLimitCorrelate{
+	correlate = &cloudflare.RateLimitCorrelate{
 		By: tfCorrelate["by"].(string),
 	}
 
@@ -446,7 +446,7 @@ func resourceCloudflareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 		log.Printf("[WARN] Error setting action on rate limit %q: %s", d.Id(), err)
 	}
 
-	d.Set("correlate", flattenRateLimitCorrelate(rateLimit.Correlate))
+	d.Set("correlate", flattenRateLimitCorrelate(*rateLimit.Correlate))
 	d.Set("description", rateLimit.Description)
 	d.Set("disabled", rateLimit.Disabled)
 
