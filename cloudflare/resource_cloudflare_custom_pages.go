@@ -121,11 +121,11 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 		URL:   d.Get("url").(string),
 		State: "customized",
 	}
-	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
+	r, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}
-
+	d.SetId(r.ID)
 	return resourceCloudflareCustomPagesRead(d, meta)
 }
 
@@ -143,13 +143,14 @@ func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{
 
 	pageType := d.Get("type").(string)
 	customPageParameters := cloudflare.CustomPageParameters{
-		URL:   nil,
+		URL:   "http://www.url-required.com",
 		State: "default",
 	}
-	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
+	r, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}
+	d.SetId(r.ID)
 
 	return resourceCloudflareCustomPagesRead(d, meta)
 }
