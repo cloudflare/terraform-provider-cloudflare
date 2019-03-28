@@ -31,7 +31,7 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "protocol", "tcp/22"),
 					resource.TestCheckResourceAttr(name, "origin_direct.#", "1"),
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://192.0.2.1:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://1.2.3.4:23"),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
 			},
@@ -82,7 +82,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://192.0.2.1:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://1.2.3.4:23"),
 				),
 			},
 			{
@@ -101,7 +101,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 						}
 						return nil
 					},
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://192.0.2.2:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://1.2.3.4:23"),
 				),
 			},
 		},
@@ -225,20 +225,22 @@ func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudfla
 func testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneName, ID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_spectrum_application" "%[2]s" {
-  zone_id  = "${data.cloudflare_zone.test.id}"
+  zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
   protocol = "tcp/22"
 
   dns = {
     "type" = "CNAME"
-    "name" = "ssh.${data.cloudflare_zone.test.zone}"
+    "name" = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
 
-  origin_direct = ["tcp://192.0.2.1:23"]
+  origin_direct = ["tcp://1.2.3.4:23"]
   origin_port   = 22
 }
 
-data "cloudflare_zone" "test" {
-  zone = "%[1]s"
+data "cloudflare_zones" "test" {
+  filter {
+		name = "%[1]s.*"
+	}
 }
 `, zoneName, ID)
 }
@@ -246,22 +248,24 @@ data "cloudflare_zone" "test" {
 func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneName, ID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_spectrum_application" "%[2]s" {
-  zone_id  = "${data.cloudflare_zone.test.id}"
+  zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
   protocol = "tcp/22"
 
   dns = {
     "type" = "CNAME"
-    "name" = "ssh.${data.cloudflare_zone.test.zone}"
+    "name" = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
 
   origin_dns = {
-    name = "ssh.origin.${data.cloudflare_zone.test.zone}"
+    name = "ssh.origin.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
   origin_port   = 22
 }
 
-data "cloudflare_zone" "test" {
-  zone = "%[1]s"
+data "cloudflare_zones" "test" {
+  filter {
+		name = "%[1]s.*"
+	}
 }
 `, zoneName, ID)
 }
@@ -269,19 +273,21 @@ data "cloudflare_zone" "test" {
 func testAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zoneName, ID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_spectrum_application" "%[2]s" {
-  zone_id  = "${data.cloudflare_zone.test.id}"
+  zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
   protocol = "tcp/22"
 
   dns = {
 	"type" = "CNAME"
-	"name" = "ssh.${data.cloudflare_zone.test.zone}"
+	"name" = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
 
-  origin_direct = ["tcp://192.0.2.2:23"]
+  origin_direct = ["tcp://1.2.3.4:23"]
   origin_port   = 22
 }
 
-data "cloudflare_zone" "test" {
-	zone = "%[1]s"
+data "cloudflare_zones" "test" {
+	filter {
+		name = "%[1]s.*"
+	}
 }`, zoneName, ID)
 }
