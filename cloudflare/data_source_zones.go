@@ -15,7 +15,6 @@ func dataSourceCloudflareZones() *schema.Resource {
 		Read: dataSourceCloudflareZonesRead,
 
 		Schema: map[string]*schema.Schema{
-
 			"filter": {
 				Type:     schema.TypeList,
 				Required: true,
@@ -39,10 +38,20 @@ func dataSourceCloudflareZones() *schema.Resource {
 				},
 			},
 			"zones": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -61,7 +70,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("error listing Zone: %s", err)
 	}
 
-	var zoneNames []string
+	zoneDetails := make([]interface{}, 0)
 	for _, v := range zones {
 
 		if filter.name != nil {
@@ -78,10 +87,13 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 			continue
 		}
 
-		zoneNames = append(zoneNames, v.Name)
+		zoneDetails = append(zoneDetails, map[string]interface{}{
+			"id":   v.ID,
+			"name": v.Name,
+		})
 	}
 
-	err = d.Set("zones", zoneNames)
+	err = d.Set("zones", zoneDetails)
 	if err != nil {
 		return fmt.Errorf("Error setting zones: %s", err)
 	}

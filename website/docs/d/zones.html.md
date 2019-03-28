@@ -25,8 +25,7 @@ data "cloudflare_zones" "test" {
 }
 
 resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
-  count       = "${length(data.cloudflare_zones.test.zones)}"
-  zone        = "${element(data.cloudflare_zones.test.zones, count.index)}"
+  zone        = "${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   paused      = "false"
   description = "Restrict access to these endpoints to requests from a known IP address"
   urls = [
@@ -53,6 +52,11 @@ values must match in order to be included, see below for full list.
 
 ## Attributes Reference
 
-- `zones` - A list of zone names
+- `zones` - A map of zone details. Full list below:
+
+**zones**
+
+- `id` - The zone ID
+- `name` - Zone name
 
 [1]: https://api.cloudflare.com/#zone-properties
