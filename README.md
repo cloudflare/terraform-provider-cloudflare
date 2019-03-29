@@ -9,16 +9,16 @@
 Requirements
 ------------
 
--	[Terraform](https://www.terraform.io/downloads.html) 0.10.x
+-	[Terraform](https://www.terraform.io/downloads.html) 0.12.x
 -	[Go](https://golang.org/doc/install) 1.11 (to build the provider plugin)
 
 ## Building The Provider
 
-Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-cloudflare`
+Clone repository:
 
 ```sh
-$ mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com/terraform-providers
 $ git clone https://github.com/terraform-providers/terraform-provider-cloudflare.git
+cd terraform-provider-cloudflare
 ```
 
 When it comes to building you have two options:
@@ -30,7 +30,7 @@ globally, you can use `make build` in the provider directory which will
 build and link the binary into your `$GOPATH/bin` directory.
 
 ```sh
-$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-cloudflare
+$ cd terraform-provider-cloudflare
 $ make build
 ```
 
@@ -42,7 +42,7 @@ stable version you already have installed, you can use the
 this by building the provider using Go.
 
 ```sh
-$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-cloudflare
+$ cd terraform-provider-cloudflare
 $ go build -o terraform-provider-cloudflare
 ```
 
@@ -51,7 +51,7 @@ you've built it.
 
 ```
 providers {
-  cloudflare = "${GOPATH}/src/github.com/terraform-providers/terraform-provider-cloudflare/terraform-provider-cloudflare"
+  cloudflare = "<path to terraform-provider-cloudflare>/terraform-provider-cloudflare"
 }
 ```
 
