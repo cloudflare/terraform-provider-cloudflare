@@ -3,12 +3,14 @@
 **Improvements**
 
 * resource/cloudflare_zone_settings: Remove option to toggle `always_on_ddos` ([#253](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/253))
-* resource/cloudflare_page_rule: Update documentation to clarify "0" usag
+* resource/cloudflare_page_rule: Update documentation to clarify "0" usage
+* datasource/cloudflare_zone: Return zone ID and zone name ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
 
 **Fixes:**
 
 * resource/cloudflare_custom_pages: Use correct casing for `zone_id` lookups
 * resource/cloudflare_rate_limit: Make `correlate` optional and not flap in state management ([#271](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/271))
+* resource/cloudflare_spectrum_application: Fixed integration tests to work ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
 
 ## 1.12.0 (March 07, 2019)
 
@@ -17,7 +19,7 @@
 * provider: Enable request/response logging ([#212](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/212))
 * resource/cloudflare_load_balancer_monitor: Add validation for `port` ([#213](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/213))
 * resource/cloudflare_load_balancer_monitor: Add `allow_insecure` and `follow_redirects` ([#205](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/205))
-* resouce/cloudflare_page_rule: Updated available actions documentation to match what is available ([#228](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/228))
+* resource/cloudflare_page_rule: Updated available actions documentation to match what is available ([#228](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/228))
 * provider: Swap to using go modules for dependency management ([#230](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/230))
 * provider: Minimum Go version for development is now 1.11 ([#230](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/230))
 
