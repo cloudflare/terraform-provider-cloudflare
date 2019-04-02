@@ -56,6 +56,7 @@ The following arguments are supported:
 * `ttl` - (Optional) Time to live (TTL) of this load balancer's DNS `name`. Conflicts with `proxied` - this cannot be set for proxied load balancers. Default is `30`.
 * `steering_policy` - (Optional) Determine which method the load balancer uses to determine the fastest route to your origin. Valid values  are: "off", "geo", "dynamic_latency" or "". Default is "".
 * `proxied` - (Optional) Whether the hostname gets Cloudflare's origin protection. Defaults to `false`.
+* `enabled` - (Optional) Enable or disable the load balancer. Defaults to `true` (enabled).
 * `region_pools` - (Optional) A set containing mappings of region/country codes to a list of pool IDs (ordered by their failover priority) for the given region. Fields documented below.
 * `pop_pools` - (Optional) A set containing mappings of Cloudflare Point-of-Presence (PoP) identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). This feature is only available to enterprise customers. Fields documented below.
 * `session_affinity` - (Optional) Associates all requests coming from an end-user with a single origin. Cloudflare will set a cookie on the initial response to the client, such that consequent requests with the cookie in the request will go to the same origin, so long as it is available.
