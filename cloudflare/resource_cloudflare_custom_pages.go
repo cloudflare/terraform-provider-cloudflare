@@ -100,6 +100,7 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 	d.Set("state", page.State)
 	d.Set("url", page.URL)
 	d.Set("type", page.ID)
+	d.SetId(page.ID)
 
 	return nil
 }
@@ -121,11 +122,10 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 		URL:   d.Get("url").(string),
 		State: "customized",
 	}
-	r, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}
-	d.SetId(r.ID)
 	return resourceCloudflareCustomPagesRead(d, meta)
 }
 
@@ -146,11 +146,10 @@ func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{
 		URL:   "http://www.url-required.com",
 		State: "default",
 	}
-	r, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}
-	d.SetId(r.ID)
 
 	return resourceCloudflareCustomPagesRead(d, meta)
 }
