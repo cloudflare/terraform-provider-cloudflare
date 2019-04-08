@@ -17,13 +17,13 @@ func validateRecordType(t string, proxied bool) error {
 	switch t {
 	case "A", "AAAA", "CNAME":
 		return nil
-	case "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI":
+	case "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR":
 		if !proxied {
 			return nil
 		}
 	default:
 		return fmt.Errorf(
-			`Invalid type %q. Valid types are "A", "AAAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA" or "URI".`, t)
+			`Invalid type %q. Valid types are "A", "AAAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI" or "PTR.`, t)
 	}
 
 	return fmt.Errorf("Type %q cannot be proxied", t)
