@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.18.3 // indirect
+	github.com/aws/aws-sdk-go v1.19.11 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.8.6-0.20190328165822-4034ff974d99
 	github.com/hashicorp/go-cleanhttp v0.5.0
