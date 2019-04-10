@@ -20,7 +20,10 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 	ownershipToken := os.Getenv("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckLogpushToken(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareLogpushJobDestroy,
 		Steps: []resource.TestStep{

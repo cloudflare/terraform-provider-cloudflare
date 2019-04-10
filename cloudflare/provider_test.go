@@ -55,3 +55,9 @@ func testAccPreCheckOrg(t *testing.T) {
 		t.Fatal("CLOUDFLARE_ORG_ID must be set for this acceptance test")
 	}
 }
+
+func testAccPreCheckLogpushToken(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN"); v == "" {
+		t.Fatal("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN must be set for this acceptance test")
+	}
+}
