@@ -39,5 +39,5 @@ $ terraform import cloudflare_logpush_job.example_job d41d8cd98f00b204e9800998ec
 
 where:
 
-* `d41d8cd98f00b204e9800998ecf8427e` - account ID as returned by the [API](https://api.cloudflare.com/#accounts-account-details)
+* `d41d8cd98f00b204e9800998ecf8427e` - zone ID as returned by the API
 * `b58c6f14d292556214bd64909bcdb118` - logpush job ID as returned by the [API](https://api.cloudflare.com/#logpush-jobs-list-logpush-jobs)
