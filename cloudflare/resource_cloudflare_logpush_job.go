@@ -19,7 +19,7 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
-			"zone": {
+			"zone_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -69,13 +69,7 @@ func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) 
 	client := meta.(*cloudflare.API)
 	jobId, err := strconv.Atoi(d.Id())
 
-	zoneName := d.Get("zone").(string)
-	zoneId, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
-	}
-
-	job, err := client.LogpushJob(zoneId, jobId)
+	job, err := client.LogpushJob(d.Get("zone_id").(string), jobId)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
@@ -103,16 +97,9 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	job := getJobFromResource(d)
 
-	zoneName := d.Get("zone").(string)
-	zoneId, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
-	}
-	d.Set("zone_id", zoneId)
-
 	log.Printf("[DEBUG] Creating Cloudflare Logpush Job from struct: %+v", job)
 
-	j, err := client.CreateLogpushJob(zoneId, job)
+	j, err := client.CreateLogpushJob(d.Get("zone_id").(string), job)
 
 	if err != nil {
 		return fmt.Errorf("error creating logpush job")
@@ -133,16 +120,9 @@ func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	job := getJobFromResource(d)
 
-	zoneName := d.Get("zone").(string)
-	zoneId, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
-	}
-	d.Set("zone_id", zoneId)
-
 	log.Printf("[INFO] Updating Cloudflare Logpush Job from struct: %+v", job)
 
-	updateErr := client.UpdateLogpushJob(zoneId, job.ID, job)
+	updateErr := client.UpdateLogpushJob(d.Get("zone_id").(string), job.ID, job)
 
 	if updateErr != nil {
 		return fmt.Errorf("error updating logpush job: %+v", job.ID)
@@ -155,16 +135,9 @@ func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	job := getJobFromResource(d)
 
-	zoneName := d.Get("zone").(string)
-	zoneId, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
-	}
-	d.Set("zone_id", zoneId)
+	log.Printf("[DEBUG] Deleting Cloudflare Logpush job from zone :%+v with id: %+v", d.Get("zone_id"), job.ID)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Logpush job from zone :%+v with id: %+v", zoneId, job.ID)
-
-	deleteErr := client.DeleteLogpushJob(zoneId, job.ID)
+	deleteErr := client.DeleteLogpushJob(d.Get("zone_id").(string), job.ID)
 	if deleteErr != nil {
 		return fmt.Errorf("error deleting logpush job: %+v", job.ID)
 	}
