@@ -31,7 +31,7 @@ The following arguments are supported:
 
 ## Import
 
-Logpush jobs can be imported using a composite ID formed of zone ID and logpush ID, e.g.
+Logpush jobs can be imported using a composite ID formed of zone ID and logpush job ID, e.g.
 
 ```
 $ terraform import cloudflare_logpush_job.example_job d41d8cd98f00b204e9800998ecf8427e/1
