@@ -113,11 +113,13 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[INFO] Created Cloudflare Logpush Job ID: %s", d.Id())
 
-	return nil
+	return resourceCloudflareLogpushJobRead(d, meta)
+
 }
 
 func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+
 	job := getJobFromResource(d)
 
 	log.Printf("[INFO] Updating Cloudflare Logpush Job from struct: %+v", job)
@@ -128,7 +130,7 @@ func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("error updating logpush job: %+v", job.ID)
 	}
 
-	return nil
+	return resourceCloudflareLogpushJobRead(d, meta)
 }
 
 func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}) error {
@@ -142,5 +144,6 @@ func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("error deleting logpush job: %+v", job.ID)
 	}
 
-	return nil
+	return resourceCloudflareLogpushJobRead(d, meta)
+
 }
