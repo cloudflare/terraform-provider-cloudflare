@@ -103,10 +103,6 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	job := getJobFromResource(d)
 
-	if d.Get("ownership_challenge") == "" {
-		return fmt.Errorf("You must include an ownership_challenge token when creating a logpush job")
-	}
-
 	zoneName := d.Get("zone").(string)
 	zoneId, err := client.ZoneIDByName(zoneName)
 	if err != nil {
