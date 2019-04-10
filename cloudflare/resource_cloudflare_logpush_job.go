@@ -93,7 +93,7 @@ func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("enabled", job.Enabled)
 	d.Set("logpull_options", job.LogpullOptions)
 	d.Set("destination_conf", job.DestinationConf)
-	d.Set("ownership_challenge", d.Get("ownership_challenge"))
+	d.Set("ownership_challenge", job.OwnershipChallenge)
 
 	return nil
 }
