@@ -41,7 +41,7 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 			},
 			"ownership_challenge": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 		},
 	}
