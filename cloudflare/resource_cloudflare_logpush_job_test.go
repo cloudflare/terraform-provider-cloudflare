@@ -15,8 +15,8 @@ import (
 
 func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 	jobID := acctest.RandString(10)
-	name := "cloudflare_logpush_job." + rnd
-	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
+	name := "cloudflare_logpush_job." + jobID
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ownershipToken := os.Getenv("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN")
 
 	resource.Test(t, resource.TestCase{
