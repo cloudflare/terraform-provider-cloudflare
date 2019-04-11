@@ -14,9 +14,9 @@ import (
 )
 
 func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	jobID := acctest.RandString(10)
 	name := "cloudflare_logpush_job." + rnd
+	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
 	ownershipToken := os.Getenv("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN")
 
 	resource.Test(t, resource.TestCase{
@@ -28,7 +28,7 @@ func TestAccCloudflareLogpushJob_Basic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLogpushJobDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLogpushJobConfig(zone, rnd, ownershipToken),
+				Config: testAccCheckCloudflareLogpushJobConfig(jobID, zoneID, ownershipToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", "test-logpush-job"),
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
@@ -63,14 +63,14 @@ func testAccCheckCloudflareLogpushJobDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareLogpushJobConfig(zoneName, ID, ownershipToken string) string {
+func testAccCheckCloudflareLogpushJobConfig(jobID, zoneID, ownershipToken string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_logpush_job" "%[2]s" {
+resource "cloudflare_logpush_job" "%[1]s" {
   name = "test-logpush-job"
   enabled = "true" 
-  zone = "%[1]s"
+  zone_id = "%[2]s"
   destination_conf = "s3://logpush-test-bucket?region=us-west-1"
   logpull_options = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
   ownership_challenge = "%[3]s"
-}`, zoneName, ID, ownershipToken)
+}`, jobID, zoneID, ownershipToken)
 }
