@@ -86,8 +86,9 @@ github.com/hashicorp/go-getter/helper/url
 github.com/hashicorp/go-hclog
 # github.com/hashicorp/go-multierror v1.0.0
 github.com/hashicorp/go-multierror
-# github.com/hashicorp/go-plugin v0.0.0-20180814222501-a4620f9913d1
+# github.com/hashicorp/go-plugin v1.0.0
 github.com/hashicorp/go-plugin
+github.com/hashicorp/go-plugin/internal/plugin
 # github.com/hashicorp/go-safetemp v1.0.0
 github.com/hashicorp/go-safetemp
 # github.com/hashicorp/go-uuid v1.0.0
@@ -148,7 +149,7 @@ github.com/hashicorp/terraform/svchost/disco
 github.com/hashicorp/terraform/helper/config
 github.com/hashicorp/terraform/svchost
 github.com/hashicorp/terraform/svchost/auth
-# github.com/hashicorp/yamux v0.0.0-20160720233140-d1caa6c97c9f
+# github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb
 github.com/hashicorp/yamux
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
