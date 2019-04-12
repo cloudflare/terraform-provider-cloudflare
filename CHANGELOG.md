@@ -2,15 +2,19 @@
 
 **Improvements**
 
-* resource/cloudflare_zone_settings: Remove option to toggle `always_on_ddos` ([#253](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/253))
-* resource/cloudflare_page_rule: Update documentation to clarify "0" usage
-* datasource/cloudflare_zone: Return zone ID and zone name ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
+* **New Resource:** `cloudflare_logpush_job` [GH-287]
+* `cloudflare_zone_settings` - Remove option to toggle `always_on_ddos` [GH-253]
+* `cloudflare_page_rule` - Update documentation to clarify "0" usage
+* `cloudflare_zones` - Return zone ID and zone name [GH-275]
+* `cloudflare_load_balancer` - Add `enabled` field [GH-208]
+* `cloudflare_record` - validators: Allow PTR DNS records [GH-283]
 
 **Fixes:**
 
-* resource/cloudflare_custom_pages: Use correct casing for `zone_id` lookups
-* resource/cloudflare_rate_limit: Make `correlate` optional and not flap in state management ([#271](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/271))
-* resource/cloudflare_spectrum_application: Fixed integration tests to work ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
+* `cloudflare_custom_pages` - Use correct casing for `zone_id` lookups
+* `cloudflare_rate_limit` - Make `correlate` optional and not flap in state management [GH-271]
+* `cloudflare_spectrum_application` - Fixed integration tests to work [GH-275]
+* `cloudflare_page_rule` - Better track field changes in `actions` resource. [GH-107]
 
 ## 1.12.0 (March 07, 2019)
 
