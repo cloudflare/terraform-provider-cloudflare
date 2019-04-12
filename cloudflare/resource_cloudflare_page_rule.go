@@ -6,7 +6,7 @@ import (
 
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -323,7 +323,7 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
+			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, false)
 			if err != nil {
 				return err
 			} else if newPageRuleAction.Value == nil {
@@ -436,24 +436,24 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 		}
 	}
 
-	if v, ok := d.GetOk("actions"); ok {
-		actions := v.([]interface{})
-		newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(actions))
+	old, new := d.GetChange("actions")
 
-		for _, action := range actions {
-			for id, value := range action.(map[string]interface{}) {
-				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
-				if err != nil {
-					return err
-				} else if newPageRuleAction.Value == nil {
-					continue
-				}
-				newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
-			}
+	oldActions := old.([]interface{})[0].(map[string]interface{})
+	newActions := new.([]interface{})[0].(map[string]interface{})
+
+	newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(newActions))
+
+	for id, value := range newActions {
+		newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, id != "forwarding_url" && oldActions[id] != value)
+		if err != nil {
+			return err
+		} else if newPageRuleAction.Value == nil {
+			continue
 		}
-
-		updatePageRule.Actions = newPageRuleActions
+		newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
 	}
+
+	updatePageRule.Actions = newPageRuleActions
 
 	if priority, ok := d.GetOk("priority"); ok {
 		updatePageRule.Priority = priority.(int)
@@ -563,12 +563,12 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	return
 }
 
-func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRuleAction cloudflare.PageRuleAction, err error) {
+func transformToCloudflarePageRuleAction(id string, value interface{}, changed bool) (pageRuleAction cloudflare.PageRuleAction, err error) {
 
 	pageRuleAction.ID = id
 
 	if strValue, ok := value.(string); ok {
-		if strValue == "" {
+		if strValue == "" && !changed {
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = strValue
@@ -588,7 +588,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRule
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if intValue == 0 {
+		if intValue == 0 && !changed {
 			// This happens when not set by the user
 			pageRuleAction.Value = nil
 		} else {
