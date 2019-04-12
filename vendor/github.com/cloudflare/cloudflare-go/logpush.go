@@ -10,14 +10,15 @@ import (
 
 // LogpushJob describes a Logpush job.
 type LogpushJob struct {
-	ID              int        `json:"id,omitempty"`
-	Enabled         bool       `json:"enabled"`
-	Name            string     `json:"name"`
-	LogpullOptions  string     `json:"logpull_options"`
-	DestinationConf string     `json:"destination_conf"`
-	LastComplete    *time.Time `json:"last_complete,omitempty"`
-	LastError       *time.Time `json:"last_error,omitempty"`
-	ErrorMessage    string     `json:"error_message,omitempty"`
+	ID                 int        `json:"id,omitempty"`
+	Enabled            bool       `json:"enabled"`
+	Name               string     `json:"name"`
+	LogpullOptions     string     `json:"logpull_options"`
+	DestinationConf    string     `json:"destination_conf"`
+	OwnershipChallenge string     `json:"ownership_challenge,omitempty"`
+	LastComplete       *time.Time `json:"last_complete,omitempty"`
+	LastError          *time.Time `json:"last_error,omitempty"`
+	ErrorMessage       string     `json:"error_message,omitempty"`
 }
 
 // LogpushJobsResponse is the API response, containing an array of Logpush Jobs.
@@ -135,7 +136,7 @@ func (api *API) LogpushJob(zoneID string, jobID int) (LogpushJob, error) {
 // API reference: https://api.cloudflare.com/#logpush-jobs-update-logpush-job
 func (api *API) UpdateLogpushJob(zoneID string, jobID int, job LogpushJob) error {
 	uri := "/zones/" + zoneID + "/logpush/jobs/" + strconv.Itoa(jobID)
-	res, err := api.makeRequest("PUT", uri, nil)
+	res, err := api.makeRequest("PUT", uri, job)
 	if err != nil {
 		return errors.Wrap(err, errMakeRequestError)
 	}

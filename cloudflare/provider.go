@@ -99,6 +99,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
 			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
 			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
+			"cloudflare_logpush_job":            resourceCloudflareLogpushJob(),
 			"cloudflare_page_rule":              resourceCloudflarePageRule(),
 			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
 			"cloudflare_record":                 resourceCloudflareRecord(),
