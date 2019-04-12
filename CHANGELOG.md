@@ -1,20 +1,20 @@
-## 1.13.0 (Unreleased)
+## 1.13.0 (April 12, 2019)
 
 **Improvements**
 
-* **New Resource:** `cloudflare_logpush_job` [GH-287]
-* `cloudflare_zone_settings` - Remove option to toggle `always_on_ddos` [GH-253]
+* **New Resource:** `cloudflare_logpush_job` ([#287](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/287))
+* `cloudflare_zone_settings` - Remove option to toggle `always_on_ddos` ([#253](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/253))
 * `cloudflare_page_rule` - Update documentation to clarify "0" usage
-* `cloudflare_zones` - Return zone ID and zone name [GH-275]
-* `cloudflare_load_balancer` - Add `enabled` field [GH-208]
-* `cloudflare_record` - validators: Allow PTR DNS records [GH-283]
+* `cloudflare_zones` - Return zone ID and zone name ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
+* `cloudflare_load_balancer` - Add `enabled` field ([#208](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/208))
+* `cloudflare_record` - validators: Allow PTR DNS records ([#283](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/283))
 
 **Fixes:**
 
 * `cloudflare_custom_pages` - Use correct casing for `zone_id` lookups
-* `cloudflare_rate_limit` - Make `correlate` optional and not flap in state management [GH-271]
-* `cloudflare_spectrum_application` - Fixed integration tests to work [GH-275]
-* `cloudflare_page_rule` - Better track field changes in `actions` resource. [GH-107]
+* `cloudflare_rate_limit` - Make `correlate` optional and not flap in state management ([#271](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/271))
+* `cloudflare_spectrum_application` - Fixed integration tests to work ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
+* `cloudflare_page_rule` - Better track field changes in `actions` resource. ([#107](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/107))
 
 ## 1.12.0 (March 07, 2019)
 
