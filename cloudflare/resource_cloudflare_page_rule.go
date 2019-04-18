@@ -326,7 +326,7 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, false)
 			if err != nil {
 				return err
-			} else if newPageRuleAction.Value == nil {
+			} else if newPageRuleAction.Value == nil || newPageRuleAction.Value == "" {
 				continue
 			}
 			newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
@@ -588,7 +588,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, changed b
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if intValue == 0 && !changed {
+		if (id == "edge_cache_ttl" && intValue == 0) || !changed {
 			// This happens when not set by the user
 			pageRuleAction.Value = nil
 		} else {
