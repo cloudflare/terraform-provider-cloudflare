@@ -21,6 +21,7 @@ func TestZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
 			{
@@ -30,6 +31,27 @@ func TestZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
+			},
+			{
+				Config: testZoneConfigWithPartialSetup("test", "example.org", "true", "false", "free"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "partial"),
+				),
+			},
+			{
+				Config: testZoneConfigWithExplicitFullSetup("test", "example.org", "true", "false", "free"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
 		},
@@ -103,4 +125,26 @@ func TestPlanIDFallsBackToEmptyIfUnknown(t *testing.T) {
 			}
 		})
 	}
+}
+
+func testZoneConfigWithPartialSetup(resourceID, zoneName, paused, jumpStart, plan string) string {
+	return fmt.Sprintf(`
+				resource "cloudflare_zone" "%[1]s" {
+                    zone = "%[2]s"
+					paused = %[3]s
+					jump_start = %[4]s
+					plan = "%[5]s"
+					type = "partial"
+				}`, resourceID, zoneName, paused, jumpStart, plan)
+}
+
+func testZoneConfigWithExplicitFullSetup(resourceID, zoneName, paused, jumpStart, plan string) string {
+	return fmt.Sprintf(`
+				resource "cloudflare_zone" "%[1]s" {
+                    zone = "%[2]s"
+					paused = %[3]s
+					jump_start = %[4]s
+					plan = "%[5]s"
+					type = "full"
+				}`, resourceID, zoneName, paused, jumpStart, plan)
 }

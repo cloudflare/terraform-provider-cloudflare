@@ -88,8 +88,10 @@ func resourceCloudflareZone() *schema.Resource {
 				Computed: true,
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringInSlice([]string{"full", "partial"}, false),
+				Default:      "full",
+				Optional:     true,
 			},
 			"name_servers": {
 				Type:     schema.TypeList,
@@ -107,13 +109,14 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 
 	zoneName := d.Get("zone").(string)
 	jumpstart := d.Get("jump_start").(bool)
+	zoneType := d.Get("type").(string)
 	organization := cloudflare.Organization{
 		ID: client.OrganizationID,
 	}
 
 	log.Printf("[INFO] Creating Cloudflare Zone: name %s", zoneName)
 
-	zone, err := client.CreateZone(zoneName, jumpstart, organization, "full")
+	zone, err := client.CreateZone(zoneName, jumpstart, organization, zoneType)
 
 	if err != nil {
 		return fmt.Errorf("Error creating zone %q: %s", zoneName, err)
