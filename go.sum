@@ -68,8 +68,8 @@ github.com/chzyer/readline v0.0.0-20161106042343-c914be64f07d/go.mod h1:nSuG5e5P
 github.com/chzyer/test v0.0.0-20160617131543-bea8f082b6fd/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/client9/misspell v0.3.4 h1:ta993UF76GwbvJcIo3Y68y/M3WxlpEHPWIGDkJYwzJI=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/cloudflare/cloudflare-go v0.0.0-20190409214620-92c75602c045 h1:KfokgO0AdwI7ef0JieGGUmNGqAMdFpEKUWVEWULxKCI=
-github.com/cloudflare/cloudflare-go v0.0.0-20190409214620-92c75602c045/go.mod h1:wqCYq1S9oX9sYJ5O8rF6z8qocTG+vA35evLmFE2Qi60=
+github.com/cloudflare/cloudflare-go v0.9.0 h1:2CT1hLxSpL2o0NICiRicIpjc7G5eDO8YJuJoQK5y00E=
+github.com/cloudflare/cloudflare-go v0.9.0/go.mod h1:wqCYq1S9oX9sYJ5O8rF6z8qocTG+vA35evLmFE2Qi60=
 github.com/codegangsta/cli v1.20.0/go.mod h1:/qJNoX69yVSKu5o4jLyXAENLRyk1uhi7zkbQ3slBdOA=
 github.com/coreos/bbolt v1.3.1-coreos.1/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkEiiKk=
 github.com/coreos/etcd v3.2.0-rc.1.0.20170908195435-80aa810309d4+incompatible h1:VLCxgrfBsnJtqTy0WFP0GsjjwWZQiuQiNgiWnY6g6Gc=
