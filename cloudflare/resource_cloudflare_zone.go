@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -113,7 +113,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 
 	log.Printf("[INFO] Creating Cloudflare Zone: name %s", zoneName)
 
-	zone, err := client.CreateZone(zoneName, jumpstart, organization)
+	zone, err := client.CreateZone(zoneName, jumpstart, organization, "full")
 
 	if err != nil {
 		return fmt.Errorf("Error creating zone %q: %s", zoneName, err)
