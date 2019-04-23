@@ -55,7 +55,7 @@ github.com/bgentry/go-netrc/netrc
 github.com/bgentry/speakeasy
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudflare/cloudflare-go v0.8.6-0.20190409214620-92c75602c045
+# github.com/cloudflare/cloudflare-go v0.0.0-20190409214620-92c75602c045
 github.com/cloudflare/cloudflare-go
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
@@ -275,7 +275,7 @@ google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/datastore
 google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
-# google.golang.org/genproto v0.0.0-20190404175554-64821d5d2107
+# google.golang.org/genproto v0.0.0-20190423004201-e7d98fc518a7
 google.golang.org/genproto/googleapis/rpc/status
 google.golang.org/genproto/googleapis/iam/v1
 google.golang.org/genproto/googleapis/rpc/code
