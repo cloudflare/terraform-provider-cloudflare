@@ -93,6 +93,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_access_policy":          resourceCloudflareAccessPolicy(),
 			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
 			"cloudflare_account_member":         resourceCloudflareAccountMember(),
+			"cloudflare_argo":                   resourceCloudflareArgo(),
 			"cloudflare_custom_pages":           resourceCloudflareCustomPages(),
 			"cloudflare_filter":                 resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":          resourceCloudflareFirewallRule(),
