@@ -1,7 +1,6 @@
 package cloudflare
 
 import (
-	"crypto/md5"
 	"fmt"
 	"log"
 	"strings"
@@ -184,13 +183,4 @@ func resourceCloudflareCustomPagesImport(d *schema.ResourceData, meta interface{
 	resourceCloudflareCustomPagesRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-// stringChecksum takes a string and returns the checksum of the string.
-func stringChecksum(s string) string {
-	h := md5.New()
-	h.Write([]byte(s))
-	bs := h.Sum(nil)
-
-	return fmt.Sprintf("%x", bs)
 }
