@@ -1,4 +1,15 @@
 ## 1.13.1 (Unreleased)
+
+**Improvements:**
+
+* **New Resource:** `cloudflare_argo` Manage Argo features ([#304](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/304))
+* `cloudflare_zone`: Support management of partial zones ([#303](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/303))
+* `cloudflare_rate_limit`: Update `modes` documentation ([#293](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/212))
+
+**Fixes:**
+
+* `cloudflare_page_rule` - Allow setting `browser_cache_ttl` to 0 ([#293](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/291))
+
 ## 1.13.0 (April 12, 2019)
 
 **Improvements**
