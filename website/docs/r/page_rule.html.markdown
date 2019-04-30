@@ -87,9 +87,9 @@ Forwarding URL actions support the following:
 
 Minify actions support the following:
 
-* `html` - (Required) Whether HTML should be minified.
-* `css` - (Required) Whether CSS should be minified.
-* `js` - (Required) Whether Javascript should be minified.
+* `html` - (Required) Whether HTML should be minified. Valid values are `"on"` or `"off"`.
+* `css` - (Required) Whether CSS should be minified. Valid values are `"on"` or `"off"`.
+* `js` - (Required) Whether Javascript should be minified. Valid values are `"on"` or `"off"`.
 
 ## Attributes Reference
 
