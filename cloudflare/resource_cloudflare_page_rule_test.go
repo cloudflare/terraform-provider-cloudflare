@@ -13,8 +13,6 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-// TODO parallel tests run into rate limiting, update after client limiting is merged
-
 func TestAccCloudflarePageRule_Basic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -54,7 +52,6 @@ func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					testAccCheckCloudflarePageRuleAttributesFullySpecified(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -79,7 +76,6 @@ func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigForwardingOnly(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					//testAccCheckCloudflarePageRuleAttributes(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -342,29 +338,6 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 	}
 }
 
-func testAccCheckCloudflarePageRuleAttributesFullySpecified(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-
-		// check boolean variables get set correctly
-		actionMap := pageRuleActionsToMap(pageRule.Actions)
-
-		if val, ok := actionMap["browser_cache_ttl"]; ok {
-			if _, ok := val.(float64); !ok || val != 10000.000000 {
-				return fmt.Errorf("'browser_cache_ttl' not specified correctly at api, found: '%f'", val.(float64))
-			}
-		} else {
-			return fmt.Errorf("'browser_cache_ttl' not specified at api")
-		}
-
-		if len(pageRule.Actions) != 13 {
-			return fmt.Errorf("api should return the attributes we set non-empty (count: %d) but got %d: %#v",
-				13, len(pageRule.Actions), pageRule.Actions)
-		}
-
-		return nil
-	}
-}
-
 func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
@@ -514,8 +487,6 @@ resource "cloudflare_page_rule" "test" {
 		disable_apps = true
 		disable_performance = true
 		disable_security = true
-		browser_cache_ttl = 10000
-		edge_cache_ttl = 10000
 		cache_level = "bypass"
 		security_level = "essentially_off"
 		ssl = "flexible"
