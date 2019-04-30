@@ -55,7 +55,7 @@ github.com/bgentry/go-netrc/netrc
 github.com/bgentry/speakeasy
 # github.com/blang/semver v0.0.0-20190414102917-ba2c2ddd8906
 github.com/blang/semver
-# github.com/cloudflare/cloudflare-go v0.9.0
+# github.com/cloudflare/cloudflare-go v0.9.1
 github.com/cloudflare/cloudflare-go
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
