@@ -224,6 +224,29 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRuleMinifyAction(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	target := fmt.Sprintf("test-action-minify.%s", zone)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigMinify(zone, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.css", "on"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.js", "off"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.html", "on"),
+				),
+			},
+		},
+	})
+}
+
 func TestTranformForwardingURL(t *testing.T) {
 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 		ID: "forwarding_url",
@@ -436,6 +459,21 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 	}
 }
 
+func testAccCheckCloudflarePageRuleConfigMinify(zone, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone = "%s"
+	target = "%s"
+	actions = {
+		minify {
+			js = "off"
+			css = "on"
+			html = "on"
+		}
+	}
+}`, zone, target)
+}
+
 func testAccCheckCloudflarePageRuleConfigBasic(zone, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "test" {
@@ -473,12 +511,12 @@ resource "cloudflare_page_rule" "test" {
 		email_obfuscation = "on"
 		ip_geolocation = "on"
 		server_side_exclude = "on"
-        disable_apps = true
-        disable_performance = true
-        disable_security = true
-        browser_cache_ttl = 10000
-        edge_cache_ttl = 10000
-        cache_level = "bypass"
+		disable_apps = true
+		disable_performance = true
+		disable_security = true
+		browser_cache_ttl = 10000
+		edge_cache_ttl = 10000
+		cache_level = "bypass"
 		security_level = "essentially_off"
 		ssl = "flexible"
 	}
@@ -493,7 +531,7 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
 		// on/off options cannot even be set to off without causing error
 		forwarding_url {
-        	url = "http://%[1]s/forward"
+			url = "http://%[1]s/forward"
 			status_code = 301
 		}
 	}
@@ -508,7 +546,7 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
         disable_security = true
 		forwarding_url {
-        	url = "http://%[1]s/forward"
+			url = "http://%[1]s/forward"
 			status_code = 301
 		}
 	}
