@@ -6,7 +6,7 @@ require (
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.19.20 // indirect
 	github.com/blang/semver v0.0.0-20190414102917-ba2c2ddd8906 // indirect
-	github.com/cloudflare/cloudflare-go v0.9.0
+	github.com/cloudflare/cloudflare-go v0.9.1
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/go-getter v1.2.0 // indirect
 	github.com/hashicorp/go-hclog v0.9.0 // indirect
