@@ -245,6 +245,33 @@ func resourceCloudflarePageRule() *schema.Resource {
 							},
 						},
 
+						"minify": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								SchemaVersion: 1,
+								Schema: map[string]*schema.Schema{
+									"js": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
+
+									"css": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
+
+									"html": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
+								},
+							},
+						},
+
 						"host_header_override": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -444,7 +471,8 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 	newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(newActions))
 
 	for id, value := range newActions {
-		newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, id != "forwarding_url" && oldActions[id] != value)
+		hasChanged := id != "forwarding_url" && id != "minify" && oldActions[id] != value
+		newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, hasChanged)
 		if err != nil {
 			return err
 		} else if newPageRuleAction.Value == nil {
@@ -552,7 +580,7 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = pageRuleAction.Value.(string)
 		break
 
-	case pageRuleAction.ID == "forwarding_url":
+	case pageRuleAction.ID == "forwarding_url" || pageRuleAction.ID == "minify":
 		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
 		break
 
@@ -605,6 +633,20 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, changed b
 			pageRuleAction.Value = map[string]interface{}{
 				"url":         fwd["url"].(string),
 				"status_code": fwd["status_code"].(int),
+			}
+		}
+	} else if id == "minify" {
+		minifyActionSchema := value.([]interface{})
+
+		log.Printf("[DEBUG] minify action to be applied: %#v", minifyActionSchema)
+
+		if len(minifyActionSchema) != 0 {
+			minify := minifyActionSchema[0].(map[string]interface{})
+
+			pageRuleAction.Value = map[string]interface{}{
+				"css":  minify["css"].(string),
+				"js":   minify["js"].(string),
+				"html": minify["html"].(string),
 			}
 		}
 	} else {
