@@ -224,6 +224,29 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRuleMinifyAction(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	target := fmt.Sprintf("test-action-minify.%s", zone)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigMinify(zone, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.css", "on"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.js", "off"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.html", "on"),
+				),
+			},
+		},
+	})
+}
+
 func TestTranformForwardingURL(t *testing.T) {
 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 		ID: "forwarding_url",
@@ -434,6 +457,21 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 		}
 		return nil
 	}
+}
+
+func testAccCheckCloudflarePageRuleConfigMinify(zone, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone = "%s"
+	target = "%s"
+	actions = {
+		minify {
+			js = "off"
+			css = "on"
+			html = "on"
+		}
+	}
+}`, zone, target)
 }
 
 func testAccCheckCloudflarePageRuleConfigBasic(zone, target string) string {
