@@ -22,6 +22,11 @@ resource "cloudflare_page_rule" "foobar" {
   actions = {
     ssl = "flexible"
     email_obfuscation = "on"
+    minify {
+      html = "off"
+      css  = "on"
+      js   = "on"
+    }
   }
 }
 ```
@@ -58,6 +63,7 @@ Action blocks support the following:
 * `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
 * `host_header_override` - (Optional) Value of the Host header to send.
 * `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
+* `minify` - (Optional) The configuration for HTML, CSS and JS minification. See below for full list of options.
 * `mirage` - (Optional) Whether this action is `"on"` or `"off"`.
 * `opportunistic_encryption` - (Optional) Whether this action is `"on"` or `"off"`.
 * `origin_error_page_pass_thru` - (Optional) Whether this action is `"on"` or `"off"`.
@@ -78,6 +84,12 @@ Forwarding URL actions support the following:
 
 * `url` - (Required) The URL to which the page rule should forward.
 * `status_code` - (Required) The status code to use for the redirection.
+
+Minify actions support the following:
+
+* `html` - (Required) Whether HTML should be minified.
+* `css` - (Required) Whether CSS should be minified.
+* `js` - (Required) Whether Javascript should be minified.
 
 ## Attributes Reference
 
