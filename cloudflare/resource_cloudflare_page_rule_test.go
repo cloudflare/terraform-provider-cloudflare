@@ -473,12 +473,12 @@ resource "cloudflare_page_rule" "test" {
 		email_obfuscation = "on"
 		ip_geolocation = "on"
 		server_side_exclude = "on"
-        disable_apps = true
-        disable_performance = true
-        disable_security = true
-        browser_cache_ttl = 10000
-        edge_cache_ttl = 10000
-        cache_level = "bypass"
+		disable_apps = true
+		disable_performance = true
+		disable_security = true
+		browser_cache_ttl = 10000
+		edge_cache_ttl = 10000
+		cache_level = "bypass"
 		security_level = "essentially_off"
 		ssl = "flexible"
 	}
@@ -493,7 +493,7 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
 		// on/off options cannot even be set to off without causing error
 		forwarding_url {
-        	url = "http://%[1]s/forward"
+			url = "http://%[1]s/forward"
 			status_code = 301
 		}
 	}
@@ -508,7 +508,7 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
         disable_security = true
 		forwarding_url {
-        	url = "http://%[1]s/forward"
+			url = "http://%[1]s/forward"
 			status_code = 301
 		}
 	}
