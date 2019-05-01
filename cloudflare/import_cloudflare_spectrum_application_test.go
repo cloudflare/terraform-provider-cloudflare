@@ -1,10 +1,9 @@
 package cloudflare
 
 import (
+	"fmt"
 	"os"
 	"testing"
-
-	"fmt"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -15,6 +14,7 @@ func TestAccCloudflareSpectrumApplication_Import(t *testing.T) {
 	t.Parallel()
 	var application cloudflare.SpectrumApplication
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := acctest.RandString(10)
 	name := "cloudflare_spectrum_application." + rnd
 
@@ -31,7 +31,7 @@ func TestAccCloudflareSpectrumApplication_Import(t *testing.T) {
 			},
 			{
 				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
 				Check: resource.ComposeTestCheckFunc(
