@@ -2,13 +2,44 @@ package cloudflare
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strconv"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/terraform"
 
 	"github.com/hashicorp/terraform/helper/resource"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zones", &resource.Sweeper{
+		Name: "cloudflare_zones",
+		F:    testSweepCloudflareZones,
+	})
+}
+
+func testSweepCloudflareZones(r string) error {
+	client, _ := cloudflare.New(os.Getenv("CLOUDFLARE_TOKEN"), os.Getenv("CLOUDFLARE_EMAIL"))
+	zones, _ := client.ListZones("baa.com", "baa.net", "baa.org", "foo.net")
+
+	if len(zones) == 0 {
+		log.Print("[DEBUG] No Cloudflare Zones to sweep")
+		return nil
+	}
+
+	for _, zone := range zones {
+		log.Printf("[INFO] Deleting Cloudflare Zone ID: %s", zone.ID)
+		_, err := client.DeleteZone(zone.ID)
+
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete Cloudflare Zone (%s): %s", zone.Name, err)
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareZonesMatchName(t *testing.T) {
 	resource.Test(t, resource.TestCase{
