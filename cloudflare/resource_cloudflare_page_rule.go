@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"strings"
 
@@ -206,15 +207,15 @@ func resourceCloudflarePageRule() *schema.Resource {
 						},
 
 						"browser_cache_ttl": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							ValidateFunc: validation.IntAtMost(31536000),
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "",
 						},
 
 						"edge_cache_ttl": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							ValidateFunc: validation.IntAtMost(31536000),
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "",
 						},
 
 						"cache_level": {
@@ -599,7 +600,11 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, changed b
 		if strValue == "" && !changed {
 			pageRuleAction.Value = nil
 		} else {
-			pageRuleAction.Value = strValue
+			if id == "browser_cache_ttl" || id == "edge_cache_ttl" {
+				pageRuleAction.Value, _ = strconv.Atoi(strValue)
+			} else {
+				pageRuleAction.Value = strValue
+			}
 		}
 	} else if unitValue, ok := value.(bool); ok {
 		if !unitValue {
@@ -614,13 +619,6 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, changed b
 			} else {
 				pageRuleAction.Value = true
 			}
-		}
-	} else if intValue, ok := value.(int); ok {
-		if (id == "edge_cache_ttl" && intValue == 0) || !changed {
-			// This happens when not set by the user
-			pageRuleAction.Value = nil
-		} else {
-			pageRuleAction.Value = intValue
 		}
 	} else if id == "forwarding_url" {
 		forwardActionSchema := value.([]interface{})
