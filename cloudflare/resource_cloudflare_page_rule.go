@@ -616,7 +616,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, changed b
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if (id == "edge_cache_ttl" && intValue == 0) || !changed {
+		if (id == "edge_cache_ttl" && intValue == 0) && !changed {
 			// This happens when not set by the user
 			pageRuleAction.Value = nil
 		} else {
