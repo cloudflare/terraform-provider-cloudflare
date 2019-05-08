@@ -18,5 +18,5 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/zclconf/go-cty v0.0.0-20190501004126-d36a6f0dbffd // indirect
-	google.golang.org/genproto v0.0.0-20190502174028-54afdca5d873 // indirect
+	google.golang.org/genproto v0.0.0-20190508194615-b515fa19cec8 // indirect
 )
