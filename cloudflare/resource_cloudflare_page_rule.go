@@ -350,7 +350,8 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
+
+			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 			if err != nil {
 				return err
 			} else if newPageRuleAction.Value == nil || newPageRuleAction.Value == "" {
@@ -469,7 +470,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 		for _, action := range actions {
 			for id, value := range action.(map[string]interface{}) {
-				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
+				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 				if err != nil {
 					return err
 				} else if newPageRuleAction.Value == nil {
@@ -588,9 +589,11 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	return
 }
 
-func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRuleAction cloudflare.PageRuleAction, err error) {
+func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
 
 	pageRuleAction.ID = id
+
+	changed := d.HasChange(fmt.Sprintf("actions.0.%s", id))
 
 	if strValue, ok := value.(string); ok {
 		if strValue == "" && !changed {
@@ -613,11 +616,12 @@ func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRule
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if (id == "edge_cache_ttl" && intValue == 0) || !changed {
-			// This happens when not set by the user
-			pageRuleAction.Value = nil
-		} else {
+		if id == "browser_cache_ttl" && changed {
 			pageRuleAction.Value = intValue
+		} else if id == "edge_cache_ttl" && intValue > 0 && changed {
+			pageRuleAction.Value = intValue
+		} else {
+			pageRuleAction.Value = nil
 		}
 	} else if id == "forwarding_url" {
 		forwardActionSchema := value.([]interface{})
