@@ -350,7 +350,8 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, false)
+
+			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 			if err != nil {
 				return err
 			} else if newPageRuleAction.Value == nil || newPageRuleAction.Value == "" {
@@ -463,25 +464,24 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 		}
 	}
 
-	old, new := d.GetChange("actions")
+	if v, ok := d.GetOk("actions"); ok {
+		actions := v.([]interface{})
+		newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(actions))
 
-	oldActions := old.([]interface{})[0].(map[string]interface{})
-	newActions := new.([]interface{})[0].(map[string]interface{})
-
-	newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(newActions))
-
-	for id, value := range newActions {
-		hasChanged := id != "forwarding_url" && id != "minify" && oldActions[id] != value
-		newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, hasChanged)
-		if err != nil {
-			return err
-		} else if newPageRuleAction.Value == nil {
-			continue
+		for _, action := range actions {
+			for id, value := range action.(map[string]interface{}) {
+				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
+				if err != nil {
+					return err
+				} else if newPageRuleAction.Value == nil {
+					continue
+				}
+				newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
+			}
 		}
-		newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
-	}
 
-	updatePageRule.Actions = newPageRuleActions
+		updatePageRule.Actions = newPageRuleActions
+	}
 
 	if priority, ok := d.GetOk("priority"); ok {
 		updatePageRule.Priority = priority.(int)
@@ -493,9 +493,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
-	// contrary to docs, change page rule actually does a full replace
-	// this part of the api needs some work, so it may change in future
-	if err := client.ChangePageRule(zoneID, d.Id(), updatePageRule); err != nil {
+	if err := client.UpdatePageRule(zoneID, d.Id(), updatePageRule); err != nil {
 		return fmt.Errorf("Failed to update Cloudflare Page Rule: %s", err)
 	}
 
@@ -591,9 +589,11 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	return
 }
 
-func transformToCloudflarePageRuleAction(id string, value interface{}, changed bool) (pageRuleAction cloudflare.PageRuleAction, err error) {
+func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
 
 	pageRuleAction.ID = id
+
+	changed := d.HasChange(fmt.Sprintf("actions.0.%s", id))
 
 	if strValue, ok := value.(string); ok {
 		if strValue == "" && !changed {
@@ -616,11 +616,12 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, changed b
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if (id == "edge_cache_ttl" && intValue == 0) || !changed {
-			// This happens when not set by the user
-			pageRuleAction.Value = nil
-		} else {
+		if id == "browser_cache_ttl" && changed {
 			pageRuleAction.Value = intValue
+		} else if id == "edge_cache_ttl" && intValue > 0 && changed {
+			pageRuleAction.Value = intValue
+		} else {
+			pageRuleAction.Value = nil
 		}
 	} else if id == "forwarding_url" {
 		forwardActionSchema := value.([]interface{})
