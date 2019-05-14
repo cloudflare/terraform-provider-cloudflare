@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -16,7 +15,7 @@ import (
 func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -42,7 +41,7 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -69,7 +68,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -112,7 +111,7 @@ func TestAccCloudflareSpectrumApplication_CreateAfterManualDestroy(t *testing.T)
 	var spectrumApp cloudflare.SpectrumApplication
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{

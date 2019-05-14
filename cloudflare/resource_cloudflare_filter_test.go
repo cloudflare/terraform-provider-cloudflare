@@ -5,12 +5,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestFilterSimple(t *testing.T) {
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 
