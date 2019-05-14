@@ -8,7 +8,7 @@ require (
 	github.com/blang/semver v0.0.0-20190414102917-ba2c2ddd8906 // indirect
 	github.com/cloudflare/cloudflare-go v0.9.1
 	github.com/hashicorp/go-cleanhttp v0.5.1
-	github.com/hashicorp/go-getter v1.2.0 // indirect
+	github.com/hashicorp/go-getter v1.3.0 // indirect
 	github.com/hashicorp/go-hclog v0.9.1 // indirect
 	github.com/hashicorp/go-plugin v1.0.0 // indirect
 	github.com/hashicorp/hcl2 v0.0.0-20190503214257-640445e16309 // indirect
