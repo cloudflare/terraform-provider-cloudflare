@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -17,7 +16,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	t.Parallel()
 	testStartTime := time.Now().UTC()
 	var loadBalancerPool cloudflare.LoadBalancerPool
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -43,7 +42,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -70,7 +69,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	var initialId string
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 
 	resource.Test(t, resource.TestCase{

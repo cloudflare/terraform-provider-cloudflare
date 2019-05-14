@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -67,4 +68,8 @@ func testAccPreCheckLogpushToken(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ZONE_ID"); v == "" {
 		t.Fatal("CLOUDFLARE_ZONE_ID must be set for this acceptance test")
 	}
+}
+
+func generateRandomResourceName() string {
+	return acctest.RandStringFromCharSet(10, acctest.CharSetAlpha)
 }
