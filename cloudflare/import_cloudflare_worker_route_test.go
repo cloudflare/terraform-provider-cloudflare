@@ -27,7 +27,7 @@ func TestAccCloudflareWorkerRoute_Import(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerRouteConfigSingleScriptInitial(zone, routeRnd, scriptRnd, pattern),
+				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zone, routeRnd, scriptRnd, pattern),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerRouteExists(routeName, &route),
 				),
