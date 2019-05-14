@@ -93,7 +93,7 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 			"steering_policy": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", ""}, false),
+				ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", ""}, false),
 				Computed:     true,
 			},
 

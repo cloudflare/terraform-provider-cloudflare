@@ -5,6 +5,7 @@
 * **New Resource:** `cloudflare_argo` Manage Argo features ([#304](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/304))
 * `cloudflare_zone`: Support management of partial zones ([#303](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/303))
 * `cloudflare_rate_limit`: Update `modes` documentation ([#293](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/212))
+* `cloudflare_load_balancer`: Allow steering policy of "random" ([#329](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/329))
 
 **Fixes:**
 

@@ -1,6 +1,5 @@
 // +build linux
 // +build !appengine
-// +build !android
 
 package isatty
 

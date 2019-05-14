@@ -54,7 +54,7 @@ The following arguments are supported:
 * `default_pool_ids` - (Required) A list of pool IDs ordered by their failover priority. Used whenever region/pop pools are not defined.
 * `description` - (Optional) Free text description.
 * `ttl` - (Optional) Time to live (TTL) of this load balancer's DNS `name`. Conflicts with `proxied` - this cannot be set for proxied load balancers. Default is `30`.
-* `steering_policy` - (Optional) Determine which method the load balancer uses to determine the fastest route to your origin. Valid values  are: "off", "geo", "dynamic_latency" or "". Default is "".
+* `steering_policy` - (Optional) Determine which method the load balancer uses to determine the fastest route to your origin. Valid values  are: `"off"`, `"geo"`, `"dynamic_latency"`, `"random"` or `""`. Default is `""`.
 * `proxied` - (Optional) Whether the hostname gets Cloudflare's origin protection. Defaults to `false`.
 * `enabled` - (Optional) Enable or disable the load balancer. Defaults to `true` (enabled).
 * `region_pools` - (Optional) A set containing mappings of region/country codes to a list of pool IDs (ordered by their failover priority) for the given region. Fields documented below.

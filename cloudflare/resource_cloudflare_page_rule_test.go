@@ -13,8 +13,6 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-// TODO parallel tests run into rate limiting, update after client limiting is merged
-
 func TestAccCloudflarePageRule_Basic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -54,7 +52,6 @@ func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					testAccCheckCloudflarePageRuleAttributesFullySpecified(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -79,7 +76,6 @@ func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigForwardingOnly(zone, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					//testAccCheckCloudflarePageRuleAttributes(&pageRule),
 					resource.TestCheckResourceAttr(
 						"cloudflare_page_rule.test", "zone", zone),
 					resource.TestCheckResourceAttr(
@@ -224,6 +220,29 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRuleMinifyAction(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	target := fmt.Sprintf("test-action-minify.%s", zone)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigMinify(zone, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.css", "on"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.js", "off"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.minify.0.html", "on"),
+				),
+			},
+		},
+	})
+}
+
 func TestTranformForwardingURL(t *testing.T) {
 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 		ID: "forwarding_url",
@@ -313,29 +332,6 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 		if len(pageRule.Actions) != 2 {
 			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v",
 				2, len(pageRule.Actions), pageRule.Actions)
-		}
-
-		return nil
-	}
-}
-
-func testAccCheckCloudflarePageRuleAttributesFullySpecified(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-
-		// check boolean variables get set correctly
-		actionMap := pageRuleActionsToMap(pageRule.Actions)
-
-		if val, ok := actionMap["browser_cache_ttl"]; ok {
-			if _, ok := val.(float64); !ok || val != 10000.000000 {
-				return fmt.Errorf("'browser_cache_ttl' not specified correctly at api, found: '%f'", val.(float64))
-			}
-		} else {
-			return fmt.Errorf("'browser_cache_ttl' not specified at api")
-		}
-
-		if len(pageRule.Actions) != 13 {
-			return fmt.Errorf("api should return the attributes we set non-empty (count: %d) but got %d: %#v",
-				13, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -436,6 +432,21 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 	}
 }
 
+func testAccCheckCloudflarePageRuleConfigMinify(zone, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone = "%s"
+	target = "%s"
+	actions = {
+		minify {
+			js = "off"
+			css = "on"
+			html = "on"
+		}
+	}
+}`, zone, target)
+}
+
 func testAccCheckCloudflarePageRuleConfigBasic(zone, target string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_page_rule" "test" {
@@ -473,12 +484,10 @@ resource "cloudflare_page_rule" "test" {
 		email_obfuscation = "on"
 		ip_geolocation = "on"
 		server_side_exclude = "on"
-        disable_apps = true
-        disable_performance = true
-        disable_security = true
-        browser_cache_ttl = 10000
-        edge_cache_ttl = 10000
-        cache_level = "bypass"
+		disable_apps = true
+		disable_performance = true
+		disable_security = true
+		cache_level = "bypass"
 		security_level = "essentially_off"
 		ssl = "flexible"
 	}
@@ -493,7 +502,7 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
 		// on/off options cannot even be set to off without causing error
 		forwarding_url {
-        	url = "http://%[1]s/forward"
+			url = "http://%[1]s/forward"
 			status_code = 301
 		}
 	}
@@ -508,7 +517,7 @@ resource "cloudflare_page_rule" "test" {
 	actions = {
         disable_security = true
 		forwarding_url {
-        	url = "http://%[1]s/forward"
+			url = "http://%[1]s/forward"
 			status_code = 301
 		}
 	}

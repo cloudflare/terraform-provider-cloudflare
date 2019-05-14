@@ -6,10 +6,17 @@
   "ignoreDeps": [
     "golang.org/x/crypto", 
     "golang.org/x/sys",
-    "golang.org/x/net"
+    "golang.org/x/net",
+    "github.com/blang/semver"
   ],
   "vulnerabilityAlerts": {
     "labels": ["security"],
     "assignees": ["@patryk", "@jacobbednarz"]
-  }
+  },
+  "packageRules": [
+    {
+      "packageNames": ["github.com/aws/aws-sdk-go"],
+      "extends": ["schedule:weekly"]
+    }
+  ]
 }
