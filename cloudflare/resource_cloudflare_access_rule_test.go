@@ -32,7 +32,7 @@ func testAccessRuleAccountConfig(mode, notes, target, value string) string {
 resource "cloudflare_access_rule" "test" {
   notes = "%[2]s"
   mode = "%[1]s"
-  configuration {
+  configuration = {
     target = "%[3]s"
     value = "%[4]s"
   }
