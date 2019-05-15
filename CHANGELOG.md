@@ -1,4 +1,4 @@
-## 1.13.1 (Unreleased)
+## 1.14.0 (Unreleased)
 
 **Improvements:**
 
@@ -10,6 +10,7 @@
 **Fixes:**
 
 * `cloudflare_page_rule` - Allow setting `browser_cache_ttl` to 0 ([#293](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/291))
+* `cloudflare_page_rule` - Swap to completely replacing rules [GH-338]
 
 ## 1.13.0 (April 12, 2019)
 
