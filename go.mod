@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/go-getter v1.3.0 // indirect
 	github.com/hashicorp/go-hclog v0.9.2 // indirect
 	github.com/hashicorp/go-plugin v1.0.0 // indirect
-	github.com/hashicorp/hcl2 v0.0.0-20190503214257-640445e16309 // indirect
+	github.com/hashicorp/hcl2 v0.0.0-20190514224406-6a61d80ae3d0 // indirect
 	github.com/hashicorp/terraform v0.11.13
 	github.com/mitchellh/cli v1.0.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
