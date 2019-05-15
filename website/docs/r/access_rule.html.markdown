@@ -25,7 +25,7 @@ resource "cloudflare_access_rule" "tor_exit_nodes" {
 
 # Whitelist (sic!) requests coming from Antarctica, but only for single zone.
 resource "cloudflare_access_rule" "antarctica" {
-  notes = "Requests coming from known Tor exit nodes"
+  notes = "Requests coming from Antarctica"
   mode = "whitelist"
   configuration {
     target = "country"
