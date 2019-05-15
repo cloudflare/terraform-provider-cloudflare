@@ -227,9 +227,9 @@ resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
   protocol = "tcp/22"
 
-  dns = {
-    "type" = "CNAME"
-    "name" = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+  dns {
+    type = "CNAME"
+    name = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
 
   origin_direct = ["tcp://1.2.3.4:23"]
@@ -250,12 +250,12 @@ resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
   protocol = "tcp/22"
 
-  dns = {
-    "type" = "CNAME"
-    "name" = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+  dns {
+    type = "CNAME"
+    name = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
 
-  origin_dns = {
+  origin_dns {
     name = "ssh.origin.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
   origin_port   = 22
@@ -275,9 +275,9 @@ resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
   protocol = "tcp/22"
 
-  dns = {
-	"type" = "CNAME"
-	"name" = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+  dns {
+		type = "CNAME"
+		name = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
   }
 
   origin_direct = ["tcp://1.2.3.4:23"]
