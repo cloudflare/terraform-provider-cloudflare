@@ -17,6 +17,6 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/posener/complete v1.2.1 // indirect
-	github.com/zclconf/go-cty v0.0.0-20190512084121-f22aff679d50 // indirect
+	github.com/zclconf/go-cty v0.0.0-20190516232837-4fecf87372ec // indirect
 	google.golang.org/genproto v0.0.0-20190516174543-bb713bdc0e52 // indirect
 )
