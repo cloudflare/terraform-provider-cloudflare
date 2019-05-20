@@ -16,16 +16,12 @@ var Version = "0.11.14"
 // A pre-release marker for the version. If this is "" (empty string)
 // then it means that it is a final release. Otherwise, this is a pre-release
 // such as "dev" (in development), "beta", "rc1", etc.
-var Prerelease = "rc1"
+var Prerelease = ""
 
 // SemVer is an instance of version.Version. This has the secondary
 // benefit of verifying during tests and init time that our version is a
 // proper semantic version, which should always be the case.
-var SemVer *version.Version
-
-func init() {
-	SemVer = version.Must(version.NewVersion(Version))
-}
+var SemVer = version.Must(version.NewVersion(Version))
 
 // Header is the header name used to send the current terraform version
 // in http requests.

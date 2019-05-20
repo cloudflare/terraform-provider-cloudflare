@@ -1,4 +1,4 @@
-# hashstructure [![GoDoc](https://godoc.org/github.com/mitchellh/hashstructure?status.svg)](https://godoc.org/github.com/mitchellh/hashstructure)
+# hashstructure
 
 hashstructure is a Go library for creating a unique hash value
 for arbitrary values in Go.
@@ -19,9 +19,6 @@ sending data across the network, caching values locally (de-dup), and so on.
 
   * Optionally specify a custom hash function to optimize for speed, collision
     avoidance for your data set, etc.
-  
-  * Optionally hash the output of `.String()` on structs that implement fmt.Stringer,
-    allowing effective hashing of time.Time
 
 ## Installation
 
@@ -37,29 +34,28 @@ For usage and examples see the [Godoc](http://godoc.org/github.com/mitchellh/has
 
 A quick code example is shown below:
 
-```go
-type ComplexStruct struct {
-    Name     string
-    Age      uint
-    Metadata map[string]interface{}
-}
 
-v := ComplexStruct{
-    Name: "mitchellh",
-    Age:  64,
-    Metadata: map[string]interface{}{
-        "car":      true,
-        "location": "California",
-        "siblings": []string{"Bob", "John"},
-    },
-}
+	type ComplexStruct struct {
+		Name     string
+		Age      uint
+		Metadata map[string]interface{}
+	}
 
-hash, err := hashstructure.Hash(v, nil)
-if err != nil {
-    panic(err)
-}
+	v := ComplexStruct{
+		Name: "mitchellh",
+		Age:  64,
+		Metadata: map[string]interface{}{
+			"car":      true,
+			"location": "California",
+			"siblings": []string{"Bob", "John"},
+		},
+	}
 
-fmt.Printf("%d", hash)
-// Output:
-// 2307517237273902113
-```
+	hash, err := hashstructure.Hash(v, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%d", hash)
+	// Output:
+	// 2307517237273902113

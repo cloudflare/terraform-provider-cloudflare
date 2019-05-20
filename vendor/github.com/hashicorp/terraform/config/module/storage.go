@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform/registry"
@@ -149,6 +150,9 @@ func (s Storage) recordModule(rec moduleRecord) error {
 			break
 		}
 	}
+
+	// Make sure we always use a slash separator.
+	rec.Dir = filepath.ToSlash(rec.Dir)
 
 	manifest.Modules = append(manifest.Modules, rec)
 
@@ -332,7 +336,7 @@ func (s Storage) findRegistryModule(mSource, constraint string) (moduleRecord, e
 	// we need to lookup available versions
 	// Only on Get if it's not found, on unconditionally on Update
 	if (s.Mode == GetModeGet && !found) || (s.Mode == GetModeUpdate) {
-		resp, err := s.registry.ModuleVersions(mod)
+		resp, err := s.registry.Versions(mod)
 		if err != nil {
 			return rec, err
 		}
@@ -352,7 +356,7 @@ func (s Storage) findRegistryModule(mSource, constraint string) (moduleRecord, e
 
 		rec.Version = match.Version
 
-		rec.url, err = s.registry.ModuleLocation(mod, rec.Version)
+		rec.url, err = s.registry.Location(mod, rec.Version)
 		if err != nil {
 			return rec, err
 		}
