@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -18,7 +17,7 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -54,7 +53,7 @@ func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -89,7 +88,7 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -125,7 +124,7 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 	var rateLimit cloudflare.RateLimit
 	var initialRateLimitId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -167,7 +166,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 	var rateLimit cloudflare.RateLimit
 	var initialRateLimitId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -205,7 +204,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 	t.Parallel()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -223,7 +222,7 @@ func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 	t.Parallel()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },

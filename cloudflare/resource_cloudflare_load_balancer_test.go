@@ -12,7 +12,6 @@ import (
 	"regexp"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -23,7 +22,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 	testStartTime := time.Now().UTC()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -55,7 +54,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -84,7 +83,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -113,7 +112,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 	t.Parallel()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -137,7 +136,7 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 	var loadBalancer cloudflare.LoadBalancer
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -179,7 +178,7 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 	var loadBalancer cloudflare.LoadBalancer
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{

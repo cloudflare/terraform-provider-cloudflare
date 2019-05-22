@@ -437,7 +437,7 @@ func testAccCheckCloudflarePageRuleConfigMinify(zone, target string) string {
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
-	actions = {
+	actions {
 		minify {
 			js = "off"
 			css = "on"
@@ -452,7 +452,7 @@ func testAccCheckCloudflarePageRuleConfigBasic(zone, target string) string {
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
-	actions = {
+	actions {
 		always_online = "on"
 		ssl = "flexible"
 	}
@@ -464,7 +464,7 @@ func testAccCheckCloudflarePageRuleConfigNewValue(zone, target string) string {
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s/updated"
-	actions = {
+	actions {
 		always_online = "off"
 		browser_check = "on"
 		ssl = "strict"
@@ -478,7 +478,7 @@ func testAccCheckCloudflarePageRuleConfigFullySpecified(zone, target string) str
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
-	actions = {
+	actions {
 		always_online = "on"
 		browser_check = "on"
 		email_obfuscation = "on"
@@ -499,7 +499,7 @@ func testAccCheckCloudflarePageRuleConfigForwardingOnly(zone, target string) str
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
-	actions = {
+	actions {
 		// on/off options cannot even be set to off without causing error
 		forwarding_url {
 			url = "http://%[1]s/forward"
@@ -514,8 +514,8 @@ func testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zone, target string
 resource "cloudflare_page_rule" "test" {
 	zone = "%s"
 	target = "%s"
-	actions = {
-        disable_security = true
+	actions {
+		disable_security = true
 		forwarding_url {
 			url = "http://%[1]s/forward"
 			status_code = 301

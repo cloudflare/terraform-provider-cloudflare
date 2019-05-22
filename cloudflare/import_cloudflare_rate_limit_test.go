@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
@@ -15,7 +14,7 @@ func TestAccCloudflareRateLimit_Import(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{

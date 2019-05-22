@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -38,14 +37,14 @@ func TestAccCloudflareWorkerRoute_SingleScriptEnt(t *testing.T) {
 func testAccCloudflareWorkerRoute_SingleScript(t *testing.T, preCheck preCheckFunc) {
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	routeRnd := acctest.RandString(10)
+	routeRnd := generateRandomResourceName()
 	routeName := "cloudflare_worker_route." + routeRnd
-	pattern1 := fmt.Sprintf("%s/%s", zone, acctest.RandString(10))
-	pattern2 := fmt.Sprintf("%s/%s", zone, acctest.RandString(10))
+	pattern1 := fmt.Sprintf("%s/%s", zone, generateRandomResourceName())
+	pattern2 := fmt.Sprintf("%s/%s", zone, generateRandomResourceName())
 
 	// We also create a script in order to test routes since routes
 	// need to point to a script
-	scriptRnd := acctest.RandString(10)
+	scriptRnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -117,14 +116,14 @@ func TestAccCloudflareWorkerRoute_MultiScriptEnt(t *testing.T) {
 
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	routeRnd := acctest.RandString(10)
+	routeRnd := generateRandomResourceName()
 	routeName := "cloudflare_worker_route." + routeRnd
-	pattern1 := fmt.Sprintf("%s/%s", zone, acctest.RandString(10))
-	pattern2 := fmt.Sprintf("%s/%s", zone, acctest.RandString(10))
+	pattern1 := fmt.Sprintf("%s/%s", zone, generateRandomResourceName())
+	pattern2 := fmt.Sprintf("%s/%s", zone, generateRandomResourceName())
 
 	// We also create a script in order to test routes since routes
 	// need to point to a script
-	scriptRnd := acctest.RandString(10)
+	scriptRnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -192,9 +191,9 @@ func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
 
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	routeRnd := acctest.RandString(10)
+	routeRnd := generateRandomResourceName()
 	routeName := "cloudflare_worker_route." + routeRnd
-	pattern := fmt.Sprintf("%s/%s", zone, acctest.RandString(10))
+	pattern := fmt.Sprintf("%s/%s", zone, generateRandomResourceName())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

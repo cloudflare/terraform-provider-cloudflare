@@ -5,14 +5,13 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestAccCloudflareWorkerScript_Import(t *testing.T) {
 	var script cloudflare.WorkerScript
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 
 	resource.Test(t, resource.TestCase{

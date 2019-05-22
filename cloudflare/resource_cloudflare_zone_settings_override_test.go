@@ -5,11 +5,12 @@ import (
 	"os"
 	"testing"
 
+	"reflect"
+	"strings"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"reflect"
-	"strings"
 )
 
 func TestAccCloudflareZoneSettingsOverride_Empty(t *testing.T) {
@@ -221,7 +222,7 @@ func testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zone string) string 
 resource "cloudflare_zone_settings_override" "test" {
 	name = "%s"
 	settings {
-		brotli = "on",
+		brotli = "on"
 		challenge_ttl = 2700
 		security_level = "high"
 		opportunistic_encryption = "on"
