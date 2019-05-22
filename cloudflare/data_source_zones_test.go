@@ -3,11 +3,9 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/terraform"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -21,8 +19,15 @@ func init() {
 }
 
 func testSweepCloudflareZones(r string) error {
-	client, _ := cloudflare.New(os.Getenv("CLOUDFLARE_TOKEN"), os.Getenv("CLOUDFLARE_EMAIL"))
-	zones, _ := client.ListZones("baa.com", "baa.net", "baa.org", "foo.net")
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Fatalf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	zones, zoneErr := client.ListZones("baa.com", "baa.net", "baa.org", "foo.net")
+	if zoneErr != nil {
+		log.Fatalf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
+	}
 
 	if len(zones) == 0 {
 		log.Print("[DEBUG] No Cloudflare Zones to sweep")
