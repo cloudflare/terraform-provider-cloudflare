@@ -21,12 +21,12 @@ func init() {
 func testSweepCloudflareZones(r string) error {
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Fatalf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
 	}
 
 	zones, zoneErr := client.ListZones("baa.com", "baa.net", "baa.org", "foo.net")
 	if zoneErr != nil {
-		log.Fatalf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
+		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
 	}
 
 	if len(zones) == 0 {
