@@ -6,10 +6,9 @@ require (
 	github.com/aws/aws-sdk-go v1.19.33 // indirect
 	github.com/cloudflare/cloudflare-go v0.9.1
 	github.com/hashicorp/go-cleanhttp v0.5.1
-	github.com/hashicorp/go-getter v1.3.0 // indirect
 	github.com/hashicorp/go-hclog v0.9.2 // indirect
 	github.com/hashicorp/hcl2 v0.0.0-20190520013302-4b22149b7cef // indirect
-	github.com/hashicorp/terraform v0.12.0-rc1
+	github.com/hashicorp/terraform v0.12.0
 	github.com/pkg/errors v0.8.1
 	github.com/zclconf/go-cty v0.0.0-20190516232837-4fecf87372ec // indirect
 	google.golang.org/genproto v0.0.0-20190516174543-bb713bdc0e52 // indirect
