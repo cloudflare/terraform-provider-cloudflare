@@ -1,4 +1,4 @@
-## 1.15.0 (Unreleased)
+## 1.15.0 (May 24, 2019)
 
 * The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions. ([#309](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/309))
 
