@@ -4,8 +4,25 @@ import (
 	"crypto/md5"
 	"fmt"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 )
+
+func client(meta interface{}) *cloudflare.API {
+	return meta.(*cloudflare.API)
+}
+
+// TODO: will need to be refactored when Orginization API is deprecated.
+// https://github.com/terraform-providers/terraform-provider-cloudflare/issues/227
+func clientWithOrg(meta interface{}) (*cloudflare.API, error) {
+	client := client(meta)
+
+	if client.OrganizationID == "" {
+		return nil, fmt.Errorf("provider needs 'org_id' for this action")
+	}
+
+	return client, nil
+}
 
 func expandInterfaceToStringList(list interface{}) []string {
 	ifaceList := list.([]interface{})
