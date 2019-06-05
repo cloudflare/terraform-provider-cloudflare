@@ -189,7 +189,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
   origins {
     name = "example-1"
-    address = "192.0.2.1"
+    address = "1.1.1.2"
     enabled = true
   }
 }`, id)
@@ -201,13 +201,13 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
   origins {
     name = "example-1"
-    address = "192.0.2.1"
+    address = "1.1.1.2"
     enabled = false
     weight = 1.0
   }
   origins {
     name = "example-2"
-    address = "192.0.2.2"
+    address = "1.1.1.3"
     weight = 0.5
   }
   check_regions = ["WEU"]
