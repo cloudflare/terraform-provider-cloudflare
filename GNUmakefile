@@ -9,6 +9,10 @@ default: build
 build: fmtcheck
 	go install -ldflags="-X github.com/terraform-providers/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
 
+sweep:
+	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
+	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
+
 test: fmtcheck
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
@@ -57,4 +61,4 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build test testacc vet fmt fmtcheck errcheck test-compile website website-test
+.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test
