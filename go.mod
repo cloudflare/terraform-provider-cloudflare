@@ -7,9 +7,8 @@ require (
 	github.com/cloudflare/cloudflare-go v0.9.1
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/go-hclog v0.9.2 // indirect
-	github.com/hashicorp/hcl2 v0.0.0-20190520013302-4b22149b7cef // indirect
+	github.com/hashicorp/hcl2 v0.0.0-20190607164243-318e80eefe28 // indirect
 	github.com/hashicorp/terraform v0.12.1
 	github.com/pkg/errors v0.8.1
-	github.com/zclconf/go-cty v1.0.0 // indirect
 	google.golang.org/genproto v0.0.0-20190605233146-eb0b1bdb6ae6 // indirect
 )
