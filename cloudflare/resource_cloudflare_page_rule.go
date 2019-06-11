@@ -3,7 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-
+	"strconv"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -206,9 +206,9 @@ func resourceCloudflarePageRule() *schema.Resource {
 						},
 
 						"browser_cache_ttl": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							ValidateFunc: validation.IntAtMost(31536000),
+							Type:     schema.TypeString,
+							Optional: true,
+							//ValidateFunc: validation.IntAtMost(31536000),
 						},
 
 						"edge_cache_ttl": {
@@ -596,7 +596,12 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	changed := d.HasChange(fmt.Sprintf("actions.0.%s", id))
 
 	if strValue, ok := value.(string); ok {
-		if strValue == "" && !changed {
+		if id == "browser_cache_ttl" && changed {
+			intValue, err := strconv.Atoi(strValue)
+			if err == nil {
+				pageRuleAction.Value = intValue
+			}
+		} else if strValue == "" && !changed {
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = strValue
@@ -616,9 +621,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if id == "browser_cache_ttl" && changed {
-			pageRuleAction.Value = intValue
-		} else if id == "edge_cache_ttl" && intValue > 0 && changed {
+		if id == "edge_cache_ttl" && intValue > 0 && changed {
 			pageRuleAction.Value = intValue
 		} else {
 			pageRuleAction.Value = nil

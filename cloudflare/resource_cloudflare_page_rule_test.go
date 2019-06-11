@@ -2,16 +2,123 @@ package cloudflare
 
 import (
 	"fmt"
-	"os"
-	"testing"
-
-	"reflect"
-	"regexp"
-
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"os"
+	"reflect"
+	"regexp"
+	"testing"
 )
+
+func TestCreatesBrowserCacheTTLIntegerValues(t *testing.T) {
+	runTestSteps(t, []resource.TestStep{
+		{
+			Config: buildPageRule(`browser_cache_ttl = 1`),
+			Check:  assertActionExists("browser_cache_ttl", "1", float64(1)),
+		},
+	})
+}
+
+func TestCreatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
+	runTestSteps(t, []resource.TestStep{
+		{
+			Config: buildPageRule(`browser_cache_ttl = 0`),
+			Check:  assertActionExists("browser_cache_ttl", "0", float64(0)),
+		},
+	})
+}
+
+func TestUpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
+	runTestSteps(t, []resource.TestStep{
+		{
+			Config: buildPageRule(`browser_cache_ttl = 1`),
+		},
+		{
+			Config: buildPageRule(`browser_cache_ttl = 0`),
+			Check:  assertActionExists("browser_cache_ttl", "0", float64(0)),
+		},
+	})
+}
+
+func TestDeletesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
+	runTestSteps(t, []resource.TestStep{
+		{
+			Config: buildPageRule(`browser_cache_ttl = 0`),
+		},
+		{
+			Config: buildPageRule(`browser_check = "on"`),
+			Check:  assertActionNotExists("browser_cache_ttl"),
+		},
+	})
+}
+
+func buildPageRule(actions string) string {
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	target := fmt.Sprintf("terraform-test.%s", zone)
+
+	return fmt.Sprintf(`
+		resource "cloudflare_page_rule" "terraform-test" {
+			zone = "%s"
+			target = "%s"
+			actions = {
+				%s
+			}
+        }`,
+		zone,
+		target,
+		actions)
+}
+
+func runTestSteps(t *testing.T, testSteps []resource.TestStep) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps:        testSteps,
+	})
+}
+
+func assertActionExists(key string, stateValue string, cloudflareValue interface{}) resource.TestCheckFunc {
+	resourceName := "cloudflare_page_rule.terraform-test"
+	return resource.ComposeTestCheckFunc(
+		assertStatePageRuleActionExists(resourceName, key, stateValue),
+		assertCloudflarePageRuleActionExists(resourceName, key, cloudflareValue),
+	)
+}
+
+func assertActionNotExists(key string) resource.TestCheckFunc {
+	resourceName := "cloudflare_page_rule.terraform-test"
+	return resource.ComposeTestCheckFunc(
+		assertStatePageRuleActionExists(resourceName, key, ""),
+	)
+}
+
+func assertStatePageRuleActionExists(resourceName string, key string, value string) resource.TestCheckFunc {
+	return resource.TestCheckResourceAttr(
+		resourceName,
+		fmt.Sprintf("actions.0.%s", key),
+		value)
+}
+
+func assertCloudflarePageRuleActionExists(resourceName string, key string, value interface{}) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		rs, _ := state.RootModule().Resources[resourceName]
+		client := testAccProvider.Meta().(*cloudflare.API)
+		pageRule, err := client.PageRule(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err != nil {
+			return fmt.Errorf("cloudflare page rule not found: %s", err)
+		}
+		for _, pageRuleAction := range pageRule.Actions {
+			if pageRuleAction.ID == key && pageRuleAction.Value == value {
+				return nil
+			}
+		}
+		return fmt.Errorf("cloudflare page rule action not found %#v:%#v\nAction State\n%#v", key, value, pageRule.Actions)
+	}
+}
+
+//#################################################################
 
 func TestAccCloudflarePageRule_Basic(t *testing.T) {
 	var pageRule cloudflare.PageRule
