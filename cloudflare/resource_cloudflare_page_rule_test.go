@@ -61,7 +61,7 @@ func buildPageRule(actions string) string {
 		resource "cloudflare_page_rule" "terraform-test" {
 			zone = "%s"
 			target = "%s"
-			actions = {
+			actions {
 				%s
 			}
         }`,
