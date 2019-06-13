@@ -459,6 +459,13 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Optional: true,
 		Computed: true,
 	},
+
+	"h2_prioritization": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off", "custom"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta interface{}) error {
