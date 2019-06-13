@@ -58,6 +58,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `email_obfuscation`
 * `hotlink_protection`
 * `http2`
+* `image_resizing`
 * `ip_geolocation`
 * `ipv6`
 * `mirage`
