@@ -46,7 +46,7 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -67,7 +67,7 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWAFRuleConfig(zone, ruleID, mode, name string) string {
+func TestAccCheckCloudflareWAFRuleConfig(zone, ruleID, mode, name string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_waf_rule" "%[4]s" {
 					rule_id = %[2]s

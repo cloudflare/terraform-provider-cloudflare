@@ -364,7 +364,7 @@ func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
+func TestAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
 			return fmt.Errorf("Expected change of Record Ids, but both were %v", before.ID)
@@ -373,7 +373,7 @@ func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) 
 	}
 }
 
-func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -390,7 +390,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func TestAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		err := client.DeleteDNSRecord(record.ZoneID, record.ID)
@@ -401,7 +401,7 @@ func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestChec
 	}
 }
 
-func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func TestAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		if record.Content != "192.168.0.10" {
@@ -412,7 +412,7 @@ func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resour
 	}
 }
 
-func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func TestAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		if record.Content != "192.168.0.11" {
@@ -423,7 +423,7 @@ func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord)
 	}
 }
 
-func testAccCheckCloudflareRecordDates(n string, record *cloudflare.DNSRecord, testStartTime time.Time) resource.TestCheckFunc {
+func TestAccCheckCloudflareRecordDates(n string, record *cloudflare.DNSRecord, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, _ := s.RootModule().Resources[n]
@@ -451,7 +451,7 @@ func testAccCheckCloudflareRecordDates(n string, record *cloudflare.DNSRecord, t
 	}
 }
 
-func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func TestAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -478,7 +478,7 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 	}
 }
 
-func testAccCheckCloudflareRecordConfigBasic(zone, name string) string {
+func TestAccCheckCloudflareRecordConfigBasic(zone, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
@@ -490,7 +490,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone, name)
 }
 
-func testAccCheckCloudflareRecordConfigApex(zone string) string {
+func TestAccCheckCloudflareRecordConfigApex(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
@@ -501,7 +501,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone)
 }
 
-func testAccCheckCloudflareRecordConfigLOC(zone string) string {
+func TestAccCheckCloudflareRecordConfigLOC(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
   domain = "%[1]s"
@@ -525,7 +525,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone)
 }
 
-func testAccCheckCloudflareRecordConfigSRV(zone string) string {
+func TestAccCheckCloudflareRecordConfigSRV(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
   domain = "%[1]s"
@@ -544,7 +544,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone)
 }
 
-func testAccCheckCloudflareRecordConfigProxied(zone, name string) string {
+func TestAccCheckCloudflareRecordConfigProxied(zone, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%[1]s"
@@ -556,7 +556,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone, name)
 }
 
-func testAccCheckCloudflareRecordConfigNewValue(zone, name string) string {
+func TestAccCheckCloudflareRecordConfigNewValue(zone, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
@@ -568,7 +568,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone, name)
 }
 
-func testAccCheckCloudflareRecordConfigChangeType(zone, name string) string {
+func TestAccCheckCloudflareRecordConfigChangeType(zone, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%[1]s"
@@ -580,7 +580,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone, name)
 }
 
-func testAccCheckCloudflareRecordConfigChangeHostname(zone, name string) string {
+func TestAccCheckCloudflareRecordConfigChangeHostname(zone, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%s"
@@ -592,7 +592,7 @@ resource "cloudflare_record" "foobar" {
 }`, zone, name)
 }
 
-func testAccCheckCloudflareRecordConfigTtlValidation(zone, name string) string {
+func TestAccCheckCloudflareRecordConfigTtlValidation(zone, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
 	domain = "%[1]s"

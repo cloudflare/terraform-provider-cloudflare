@@ -138,7 +138,7 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 	})
 }
 
-func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -155,7 +155,7 @@ func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error 
 	return nil
 }
 
-func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.LoadBalancerMonitor) resource.TestCheckFunc {
+func TestAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.LoadBalancerMonitor) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -178,7 +178,7 @@ func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, testStartTime time.Time) resource.TestCheckFunc {
+func TestAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, _ := s.RootModule().Resources[n]
@@ -206,7 +206,7 @@ func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonito
 	}
 }
 
-func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, initialId *string) resource.TestCheckFunc {
+func TestAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerMonitor.ID
@@ -218,7 +218,7 @@ func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerMonitorConfigBasic() string {
+func TestAccCheckCloudflareLoadBalancerMonitorConfigBasic() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
   expected_body = "alive"
@@ -227,7 +227,7 @@ resource "cloudflare_load_balancer_monitor" "test" {
 }`
 }
 
-func testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified() string {
+func TestAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
   expected_body = "dead"

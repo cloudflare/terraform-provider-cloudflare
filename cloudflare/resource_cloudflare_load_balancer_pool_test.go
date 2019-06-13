@@ -102,7 +102,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -119,7 +119,7 @@ func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cloudflare.LoadBalancerPool) resource.TestCheckFunc {
+func TestAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cloudflare.LoadBalancerPool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -142,7 +142,7 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *cloudflare.LoadBalancerPool, testStartTime time.Time) resource.TestCheckFunc {
+func TestAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *cloudflare.LoadBalancerPool, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, _ := s.RootModule().Resources[n]
@@ -170,7 +170,7 @@ func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *clo
 	}
 }
 
-func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudflare.LoadBalancerPool, initialId *string) resource.TestCheckFunc {
+func TestAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudflare.LoadBalancerPool, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerPool.ID
@@ -183,7 +183,7 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 }
 
 // using IPs from 192.0.2.0/24 as per RFC5737
-func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id string) string {
+func TestAccCheckCloudflareLoadBalancerPoolConfigBasic(id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
@@ -195,7 +195,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
 }`, id)
 }
 
-func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string) string {
+func TestAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"

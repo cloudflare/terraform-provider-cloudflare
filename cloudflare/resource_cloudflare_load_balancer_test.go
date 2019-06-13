@@ -213,7 +213,7 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -230,7 +230,7 @@ func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare.LoadBalancer) resource.TestCheckFunc {
+func TestAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare.LoadBalancer) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -253,7 +253,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZone string) resource.TestCheckFunc {
+func TestAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZone string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -279,7 +279,7 @@ func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZone string) resourc
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.LoadBalancer, testStartTime time.Time) resource.TestCheckFunc {
+func TestAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.LoadBalancer, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, _ := s.RootModule().Resources[n]
@@ -307,7 +307,7 @@ func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.
 	}
 }
 
-func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.LoadBalancer, initialId *string) resource.TestCheckFunc {
+func TestAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.LoadBalancer, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
@@ -320,7 +320,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerConfigBasic(zone, id string) string {
+func TestAccCheckCloudflareLoadBalancerConfigBasic(zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
@@ -331,7 +331,7 @@ resource "cloudflare_load_balancer" "%[2]s" {
 }`, zone, id)
 }
 
-func testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zone, id string) string {
+func TestAccCheckCloudflareLoadBalancerConfigSessionAffinity(zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
@@ -342,7 +342,7 @@ resource "cloudflare_load_balancer" "%[2]s" {
 }`, zone, id)
 }
 
-func testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zone, id string) string {
+func TestAccCheckCloudflareLoadBalancerConfigGeoBalanced(zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"
@@ -363,7 +363,7 @@ resource "cloudflare_load_balancer" "%[2]s" {
 }`, zone, id)
 }
 
-func testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zone, id string) string {
+func TestAccCheckCloudflareLoadBalancerConfigDuplicatePool(zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[2]s" {
   zone = "%[1]s"

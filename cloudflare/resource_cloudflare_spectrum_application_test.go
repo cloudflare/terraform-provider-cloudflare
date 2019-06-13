@@ -146,7 +146,7 @@ func TestAccCloudflareSpectrumApplication_CreateAfterManualDestroy(t *testing.T)
 	})
 }
 
-func testAccCheckCloudflareSpectrumApplicationDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareSpectrumApplicationDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -163,7 +163,7 @@ func testAccCheckCloudflareSpectrumApplicationDestroy(s *terraform.State) error 
 	return nil
 }
 
-func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *cloudflare.SpectrumApplication) resource.TestCheckFunc {
+func TestAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *cloudflare.SpectrumApplication) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -186,7 +186,7 @@ func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *clou
 	}
 }
 
-func testAccCheckCloudflareSpectrumApplicationIDIsValid(n string) resource.TestCheckFunc {
+func TestAccCheckCloudflareSpectrumApplicationIDIsValid(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -208,7 +208,7 @@ func testAccCheckCloudflareSpectrumApplicationIDIsValid(n string) resource.TestC
 	}
 }
 
-func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudflare.SpectrumApplication, initialId *string) resource.TestCheckFunc {
+func TestAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudflare.SpectrumApplication, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
@@ -221,7 +221,7 @@ func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudfla
 	}
 }
 
-func testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneName, ID string) string {
+func TestAccCheckCloudflareSpectrumApplicationConfigBasic(zoneName, ID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
@@ -244,7 +244,7 @@ data "cloudflare_zones" "test" {
 `, zoneName, ID)
 }
 
-func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneName, ID string) string {
+func TestAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneName, ID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
@@ -269,7 +269,7 @@ data "cloudflare_zones" "test" {
 `, zoneName, ID)
 }
 
-func testAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zoneName, ID string) string {
+func TestAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zoneName, ID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_spectrum_application" "%[2]s" {
   zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"

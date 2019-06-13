@@ -237,7 +237,7 @@ func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
@@ -254,7 +254,7 @@ func testAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateLimit) resource.TestCheckFunc {
+func TestAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateLimit) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -281,7 +281,7 @@ func testAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateL
 	}
 }
 
-func testAccCheckCloudflareRateLimitIDIsValid(n, expectedZone string) resource.TestCheckFunc {
+func TestAccCheckCloudflareRateLimitIDIsValid(n, expectedZone string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -308,7 +308,7 @@ func testAccCheckCloudflareRateLimitIDIsValid(n, expectedZone string) resource.T
 	}
 }
 
-func testAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit, initialRateLimitId *string) resource.TestCheckFunc {
+func TestAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit, initialRateLimitId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialRateLimitId = rateLimit.ID
@@ -320,7 +320,7 @@ func testAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit
 	}
 }
 
-func testAccCheckCloudflareRateLimitConfigBasic(zone, id string) string {
+func TestAccCheckCloudflareRateLimitConfigBasic(zone, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
@@ -333,7 +333,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
 }`, id, zone)
 }
 
-func testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, id string) string {
+func TestAccCheckCloudflareRateLimitConfigMatchingUrl(zone, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
@@ -351,7 +351,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
 }`, id, zone)
 }
 
-func testAccCheckCloudflareRateLimitConfigFullySpecified(zone, id string) string {
+func TestAccCheckCloudflareRateLimitConfigFullySpecified(zone, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
@@ -385,7 +385,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
 }`, id, zone)
 }
 
-func testAccCheckCloudflareRateLimitChallengeConfigBasic(zone, id string) string {
+func TestAccCheckCloudflareRateLimitChallengeConfigBasic(zone, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
@@ -397,7 +397,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
 }`, id, zone)
 }
 
-func testAccCheckCloudflareRateLimitConfigWithoutTimeout(zone, id string) string {
+func TestAccCheckCloudflareRateLimitConfigWithoutTimeout(zone, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"
@@ -409,7 +409,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
 }`, id, zone)
 }
 
-func testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, id string) string {
+func TestAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
   zone = "%[2]s"

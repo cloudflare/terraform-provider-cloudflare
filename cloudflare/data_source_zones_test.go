@@ -96,7 +96,7 @@ func TestAccCloudflareZonesMatchStatus(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareZonesDataSourceID(n string) resource.TestCheckFunc {
+func TestAccCheckCloudflareZonesDataSourceID(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		all := s.RootModule().Resources
 		rs, ok := all[n]
@@ -111,7 +111,7 @@ func testAccCheckCloudflareZonesDataSourceID(n string) resource.TestCheckFunc {
 	}
 }
 
-func testAccCheckCloudflareZonesReturned(n string, a string, check func(int) bool) resource.TestCheckFunc {
+func TestAccCheckCloudflareZonesReturned(n string, a string, check func(int) bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		all := s.RootModule().Resources
 		rs, ok := all[n]
@@ -131,7 +131,7 @@ func testAccCheckCloudflareZonesReturned(n string, a string, check func(int) boo
 	}
 }
 
-func testAccCloudflareZonesConfigMatchName() string {
+func TestAccCloudflareZonesConfigMatchName() string {
 	return fmt.Sprintf(`
 data "cloudflare_zones" "examples_domains" {
   filter {
@@ -144,7 +144,7 @@ data "cloudflare_zones" "examples_domains" {
 `, testZones)
 }
 
-func testAccCloudflareZonesConfigMatchPaused() string {
+func TestAccCloudflareZonesConfigMatchPaused() string {
 	return fmt.Sprintf(`
 data "cloudflare_zones" "examples_domains" {
   filter {
@@ -157,7 +157,7 @@ data "cloudflare_zones" "examples_domains" {
 `, testZones)
 }
 
-func testAccCloudflareZonesConfigMatchStatus() string {
+func TestAccCloudflareZonesConfigMatchStatus() string {
 	return fmt.Sprintf(`
 data "cloudflare_zones" "examples_domains" {
   filter {

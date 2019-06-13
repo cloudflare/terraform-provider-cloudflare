@@ -31,7 +31,7 @@ func TestProvider_impl(t *testing.T) {
 
 type preCheckFunc = func(*testing.T)
 
-func testAccPreCheck(t *testing.T) {
+func TestAccPreCheck(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_EMAIL"); v == "" {
 		t.Fatal("CLOUDFLARE_EMAIL must be set for acceptance tests")
 	}
@@ -49,19 +49,19 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
-func testAccPreCheckAltDomain(t *testing.T) {
+func TestAccPreCheckAltDomain(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ALT_DOMAIN"); v == "" {
 		t.Fatal("CLOUDFLARE_ALT_DOMAIN must be set for this acceptance test")
 	}
 }
 
-func testAccPreCheckOrg(t *testing.T) {
+func TestAccPreCheckOrg(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ORG_ID"); v == "" {
 		t.Fatal("CLOUDFLARE_ORG_ID must be set for this acceptance test")
 	}
 }
 
-func testAccPreCheckLogpushToken(t *testing.T) {
+func TestAccPreCheckLogpushToken(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN"); v == "" {
 		t.Fatal("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN must be set for this acceptance test")
 	}

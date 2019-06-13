@@ -95,7 +95,7 @@ func TestAccCloudflareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareZoneSettingsEmpty(n string) resource.TestCheckFunc {
+func TestAccCheckCloudflareZoneSettingsEmpty(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -121,7 +121,7 @@ func testAccCheckCloudflareZoneSettingsEmpty(n string) resource.TestCheckFunc {
 	}
 }
 
-func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
+func TestAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -160,7 +160,7 @@ func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 	}
 }
 
-func testAccGetInitialZoneSettings(t *testing.T, zoneName string, settings map[string]interface{}) resource.TestCheckFunc {
+func TestAccGetInitialZoneSettings(t *testing.T, zoneName string, settings map[string]interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 
@@ -184,7 +184,7 @@ func testAccGetInitialZoneSettings(t *testing.T, zoneName string, settings map[s
 	}
 }
 
-func testAccCheckInitialZoneSettings(zoneName string, initialSettings map[string]interface{}) resource.TestCheckFunc {
+func TestAccCheckInitialZoneSettings(zoneName string, initialSettings map[string]interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 
@@ -210,14 +210,14 @@ func testAccCheckInitialZoneSettings(zoneName string, initialSettings map[string
 	}
 }
 
-func testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zone string) string {
+func TestAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zone_settings_override" "test" {
 	name = "%s"
 }`, zone)
 }
 
-func testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zone string) string {
+func TestAccCheckCloudflareZoneSettingsOverrideConfigNormal(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zone_settings_override" "test" {
 	name = "%s"

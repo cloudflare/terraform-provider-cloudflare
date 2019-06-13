@@ -27,7 +27,7 @@ func TestAccAccessRuleASN(t *testing.T) {
 	})
 }
 
-func testAccessRuleAccountConfig(mode, notes, target, value string) string {
+func TestAccessRuleAccountConfig(mode, notes, target, value string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_rule" "test" {
   notes = "%[2]s"

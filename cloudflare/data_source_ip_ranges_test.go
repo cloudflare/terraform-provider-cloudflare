@@ -27,7 +27,7 @@ func TestAccCloudflareIPRanges(t *testing.T) {
 	})
 }
 
-func testAccCloudflareIPRanges(n string) resource.TestCheckFunc {
+func TestAccCloudflareIPRanges(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		r := s.RootModule().Resources[n]
 		a := r.Primary.Attributes

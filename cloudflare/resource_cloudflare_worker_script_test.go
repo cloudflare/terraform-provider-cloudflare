@@ -35,7 +35,7 @@ func TestAccCloudflareWorkerScript_SingleScriptEnt(t *testing.T) {
 	testAccCloudflareWorkerScript_SingleScript(t, testAccPreCheckOrg)
 }
 
-func testAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckFunc) {
+func TestAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckFunc) {
 	var script cloudflare.WorkerScript
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
@@ -75,7 +75,7 @@ func testAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckF
 	})
 }
 
-func testAccCheckCloudflareWorkerScriptConfigSingleScriptInitial(zone, rnd string) string {
+func TestAccCheckCloudflareWorkerScriptConfigSingleScriptInitial(zone, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[2]s" {
   zone = "%[1]s"
@@ -83,7 +83,7 @@ resource "cloudflare_worker_script" "%[2]s" {
 }`, zone, rnd, scriptContent1)
 }
 
-func testAccCheckCloudflareWorkerScriptConfigSingleScriptUpdate(zone, rnd string) string {
+func TestAccCheckCloudflareWorkerScriptConfigSingleScriptUpdate(zone, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[2]s" {
   zone = "%[1]s"
@@ -130,7 +130,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd string) string {
+func TestAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[1]s" {
   name = "%[1]s"
@@ -138,7 +138,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 }`, rnd, scriptContent1)
 }
 
-func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd string) string {
+func TestAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[1]s" {
   name = "%[1]s"
@@ -161,7 +161,7 @@ func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.Worker
 	return params
 }
 
-func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript) resource.TestCheckFunc {
+func TestAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -188,7 +188,7 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 	}
 }
 
-func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
+func TestAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_worker_script" {
 			continue
