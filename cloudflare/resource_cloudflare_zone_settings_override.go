@@ -435,9 +435,10 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"sha1_support": {
-		Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional: true,
-		Computed: true,
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
 	},
 
 	"cname_flattening": {
