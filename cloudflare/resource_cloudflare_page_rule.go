@@ -208,7 +208,6 @@ func resourceCloudflarePageRule() *schema.Resource {
 						"browser_cache_ttl": {
 							Type:     schema.TypeString,
 							Optional: true,
-							//ValidateFunc: validation.IntAtMost(31536000),
 						},
 
 						"edge_cache_ttl": {
