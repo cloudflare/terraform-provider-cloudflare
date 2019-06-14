@@ -45,3 +45,30 @@ func testFilterConfig(resourceID, zoneName, paused, description, expression stri
 		}
 		`, resourceID, zoneName, paused, description, expression)
 }
+
+const multiLineFilter = `
+resource "cloudflare_filter" "%[1]s" {
+	zone = "%[2]s"
+	paused = "%[3]s"
+	description = "%[4]s"
+	expression = <<EOF
+%[5]s
+EOF
+}
+`
+
+func TestFilterWhitespace(t *testing.T) {
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(multiLineFilter, rnd, zone, "true", "multi-line filter",
+					"\t\nhttp.request.method in {\"PUT\" \"DELETE\"} and\nhttp.request.uri.path eq \"/\"  \n"),
+			},
+		},
+	})
+}
