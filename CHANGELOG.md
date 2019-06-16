@@ -1,4 +1,9 @@
 ## 1.16.0 (Unreleased)
+
+**Improvements:**
+
+* `cloudflare_zone_settings_override`: Add support for `h2_prioritization` and `image_resizing` ([#381](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/381))
+
 ## 1.15.0 (May 24, 2019)
 
 * The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions. ([#309](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/309))
