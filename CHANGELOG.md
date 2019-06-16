@@ -2,7 +2,8 @@
 
 **Improvements:**
 
-* `cloudflare_zone_settings_override`: Add support for `h2_prioritization` and `image_resizing` ([#381](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/381))
+* `resource/cloudflare_zone_settings_override`: Add support for `h2_prioritization` and `image_resizing` ([#381](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/381))
+* `resource/cloudflare_load_balancer_pool`: Update IP range for tests to not use reserved ranges [#369](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/369))
 
 ## 1.15.0 (May 24, 2019)
 
