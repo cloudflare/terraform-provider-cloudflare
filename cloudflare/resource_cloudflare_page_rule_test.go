@@ -15,7 +15,7 @@ import (
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
-			Config: buildPageRule(`browser_cache_ttl = 1`),
+			Config: buildPageRuleConfig(`browser_cache_ttl = 1`),
 			Check:  assertActionExists("browser_cache_ttl", "1", float64(1)),
 		},
 	})
@@ -24,7 +24,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T)
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
-			Config: buildPageRule(`browser_cache_ttl = 0`),
+			Config: buildPageRuleConfig(`browser_cache_ttl = 0`),
 			Check:  assertActionExists("browser_cache_ttl", "0", float64(0)),
 		},
 	})
@@ -33,10 +33,10 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders
 func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
-			Config: buildPageRule(`browser_cache_ttl = 1`),
+			Config: buildPageRuleConfig(`browser_cache_ttl = 1`),
 		},
 		{
-			Config: buildPageRule(`browser_cache_ttl = 0`),
+			Config: buildPageRuleConfig(`browser_cache_ttl = 0`),
 			Check:  assertActionExists("browser_cache_ttl", "0", float64(0)),
 		},
 	})
@@ -45,16 +45,16 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders
 func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
-			Config: buildPageRule(`browser_cache_ttl = 0`),
+			Config: buildPageRuleConfig(`browser_cache_ttl = 0`),
 		},
 		{
-			Config: buildPageRule(`browser_check = "on"`),
+			Config: buildPageRuleConfig(`browser_check = "on"`),
 			Check:  assertActionNotExists("browser_cache_ttl"),
 		},
 	})
 }
 
-func buildPageRule(actions string) string {
+func buildPageRuleConfig(actions string) string {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	target := fmt.Sprintf("terraform-test.%s", zone)
 
