@@ -83,26 +83,26 @@ func testAccRunResourceTestSteps(t *testing.T, testSteps []resource.TestStep) {
 func assertActionExists(key string, stateValue string, cloudflareValue interface{}) resource.TestCheckFunc {
 	resourceName := "cloudflare_page_rule.terraform-test"
 	return resource.ComposeTestCheckFunc(
-		assertStatePageRuleActionExists(resourceName, key, stateValue),
-		assertCloudflarePageRuleActionExists(resourceName, key, cloudflareValue),
+		testAccCheckStatePageRuleExistsWithAction(resourceName, key, stateValue),
+		testAccCheckCloudflarePageRuleExistsWithAction(resourceName, key, cloudflareValue),
 	)
 }
 
 func assertActionNotExists(key string) resource.TestCheckFunc {
 	resourceName := "cloudflare_page_rule.terraform-test"
 	return resource.ComposeTestCheckFunc(
-		assertStatePageRuleActionExists(resourceName, key, ""),
+		testAccCheckStatePageRuleExistsWithAction(resourceName, key, ""),
 	)
 }
 
-func assertStatePageRuleActionExists(resourceName string, key string, value string) resource.TestCheckFunc {
+func testAccCheckStatePageRuleExistsWithAction(resourceName string, key string, value string) resource.TestCheckFunc {
 	return resource.TestCheckResourceAttr(
 		resourceName,
 		fmt.Sprintf("actions.0.%s", key),
 		value)
 }
 
-func assertCloudflarePageRuleActionExists(resourceName string, key string, value interface{}) resource.TestCheckFunc {
+func testAccCheckCloudflarePageRuleExistsWithAction(resourceName string, key string, value interface{}) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		rs, _ := state.RootModule().Resources[resourceName]
 		client := testAccProvider.Meta().(*cloudflare.API)
