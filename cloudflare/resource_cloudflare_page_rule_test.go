@@ -13,7 +13,7 @@ import (
 )
 
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T) {
-	runTestSteps(t, []resource.TestStep{
+	testAccRunResourceTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRuleConfig(`browser_cache_ttl = 1`),
 			Check:  assertActionExists("browser_cache_ttl", "1", float64(1)),
@@ -22,7 +22,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T)
 }
 
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
-	runTestSteps(t, []resource.TestStep{
+	testAccRunResourceTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRuleConfig(`browser_cache_ttl = 0`),
 			Check:  assertActionExists("browser_cache_ttl", "0", float64(0)),
@@ -31,7 +31,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders
 }
 
 func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
-	runTestSteps(t, []resource.TestStep{
+	testAccRunResourceTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRuleConfig(`browser_cache_ttl = 1`),
 		},
@@ -43,7 +43,7 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders
 }
 
 func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
-	runTestSteps(t, []resource.TestStep{
+	testAccRunResourceTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRuleConfig(`browser_cache_ttl = 0`),
 		},
@@ -71,7 +71,7 @@ func buildPageRuleConfig(actions string) string {
 		actions)
 }
 
-func runTestSteps(t *testing.T, testSteps []resource.TestStep) {
+func testAccRunResourceTestSteps(t *testing.T, testSteps []resource.TestStep) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
