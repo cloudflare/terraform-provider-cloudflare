@@ -2,13 +2,14 @@ package cloudflare
 
 import (
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
 	"os"
 	"reflect"
 	"regexp"
 	"testing"
+
+	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestCreatesBrowserCacheTTLIntegerValues(t *testing.T) {
