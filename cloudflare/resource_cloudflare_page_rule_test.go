@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestCreatesBrowserCacheTTLIntegerValues(t *testing.T) {
+func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRule(`browser_cache_ttl = 1`),
@@ -21,7 +21,7 @@ func TestCreatesBrowserCacheTTLIntegerValues(t *testing.T) {
 	})
 }
 
-func TestCreatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
+func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRule(`browser_cache_ttl = 0`),
@@ -30,7 +30,7 @@ func TestCreatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	})
 }
 
-func TestUpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
+func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRule(`browser_cache_ttl = 1`),
@@ -42,7 +42,7 @@ func TestUpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	})
 }
 
-func TestDeletesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
+func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	runTestSteps(t, []resource.TestStep{
 		{
 			Config: buildPageRule(`browser_cache_ttl = 0`),
