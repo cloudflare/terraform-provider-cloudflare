@@ -276,7 +276,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T)
 			Config: buildPageRuleConfig("test", "browser_cache_ttl = 1"),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-				testAccCheckStatePageRuleExistsWithAction("cloudflare_page_rule.test", "browser_cache_ttl", "1"),
+				resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.browser_cache_ttl", "1"),
 				testAccCheckCloudflarePageRuleExistsWithAction("cloudflare_page_rule.test", "browser_cache_ttl", float64(1)),
 			),
 		},
@@ -290,7 +290,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders
 			Config: buildPageRuleConfig("test", "browser_cache_ttl = 0"),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-				testAccCheckStatePageRuleExistsWithAction("cloudflare_page_rule.test", "browser_cache_ttl", "0"),
+				resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.browser_cache_ttl", "0"),
 				testAccCheckCloudflarePageRuleExistsWithAction("cloudflare_page_rule.test", "browser_cache_ttl", float64(0)),
 			),
 		},
@@ -307,7 +307,7 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders
 			Config: buildPageRuleConfig("test", "browser_cache_ttl = 0"),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-				testAccCheckStatePageRuleExistsWithAction("cloudflare_page_rule.test", "browser_cache_ttl", "0"),
+				resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.browser_cache_ttl", "0"),
 				testAccCheckCloudflarePageRuleExistsWithAction("cloudflare_page_rule.test", "browser_cache_ttl", float64(0)),
 			),
 		},
@@ -324,7 +324,7 @@ func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders
 			Config: buildPageRuleConfig("test", `browser_check = "on"`),
 			Check: resource.ComposeTestCheckFunc(
 				testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-				testAccCheckStatePageRuleExistsWithAction("cloudflare_page_rule.test", "browser_cache_ttl", ""),
+				resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.browser_cache_ttl", ""),
 			),
 		},
 	})
@@ -609,13 +609,6 @@ func testAccRunResourceTestSteps(t *testing.T, testSteps []resource.TestStep) {
 		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps:        testSteps,
 	})
-}
-
-func testAccCheckStatePageRuleExistsWithAction(resourceName string, key string, value string) resource.TestCheckFunc {
-	return resource.TestCheckResourceAttr(
-		resourceName,
-		fmt.Sprintf("actions.0.%s", key),
-		value)
 }
 
 func testAccCheckCloudflarePageRuleExistsWithAction(resourceName string, key string, value interface{}) resource.TestCheckFunc {
