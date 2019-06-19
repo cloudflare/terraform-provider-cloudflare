@@ -541,6 +541,7 @@ resource "cloudflare_page_rule" "test" {
 	actions {
 		always_online = "on"
 		browser_check = "on"
+		browser_cache_ttl = 0
 		email_obfuscation = "on"
 		ip_geolocation = "on"
 		server_side_exclude = "on"

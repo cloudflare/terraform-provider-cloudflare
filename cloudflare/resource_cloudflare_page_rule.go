@@ -541,8 +541,10 @@ var pageRuleAPINilFields = []string{
 	"disable_security",
 }
 var pageRuleAPIFloatFields = []string{
-	"browser_cache_ttl",
 	"edge_cache_ttl",
+}
+var pageRuleAPIFloatAsStringFields = []string{
+	"browser_cache_ttl",
 }
 var pageRuleAPIStringFields = []string{
 	"bypass_cache_on_cookie",
@@ -575,6 +577,10 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 
 	case contains(pageRuleAPIStringFields, pageRuleAction.ID):
 		value = pageRuleAction.Value.(string)
+		break
+
+	case contains(pageRuleAPIFloatAsStringFields, pageRuleAction.ID):
+		value = fmt.Sprintf("%.0f", pageRuleAction.Value.(float64))
 		break
 
 	case pageRuleAction.ID == "forwarding_url" || pageRuleAction.ID == "minify":
