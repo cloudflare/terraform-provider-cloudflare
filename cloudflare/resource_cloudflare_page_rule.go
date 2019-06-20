@@ -540,12 +540,6 @@ var pageRuleAPINilFields = []string{
 	"disable_railgun",
 	"disable_security",
 }
-var pageRuleAPIFloatFields = []string{
-	"edge_cache_ttl",
-}
-var pageRuleAPIFloatAsStringFields = []string{
-	"browser_cache_ttl",
-}
 var pageRuleAPIStringFields = []string{
 	"bypass_cache_on_cookie",
 	"cache_key",
@@ -571,15 +565,15 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = true
 		break
 
-	case contains(pageRuleAPIFloatFields, pageRuleAction.ID):
-		value = pageRuleAction.Value.(float64) // we use TypeInt but terraform seems to do the right thing converting from float
-		break
-
 	case contains(pageRuleAPIStringFields, pageRuleAction.ID):
 		value = pageRuleAction.Value.(string)
 		break
 
-	case contains(pageRuleAPIFloatAsStringFields, pageRuleAction.ID):
+	case pageRuleAction.ID == "edge_cache_ttl":
+		value = pageRuleAction.Value.(float64) // we use TypeInt but terraform seems to do the right thing converting from float
+		break
+
+	case pageRuleAction.ID == "browser_cache_ttl":
 		value = fmt.Sprintf("%.0f", pageRuleAction.Value.(float64))
 		break
 
