@@ -15,7 +15,7 @@
   },
   "packageRules": [
     {
-      "packageNames": ["github.com/aws/aws-sdk-go"],
+      "packageNames": ["github.com/aws/aws-sdk-go", "github.com/hashicorp/hcl2"],
       "extends": ["schedule:weekly"]
     }
   ]
