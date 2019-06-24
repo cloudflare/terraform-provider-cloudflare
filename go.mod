@@ -3,7 +3,7 @@ module github.com/terraform-providers/terraform-provider-cloudflare
 go 1.12
 
 require (
-	github.com/aws/aws-sdk-go v1.20.1 // indirect
+	github.com/aws/aws-sdk-go v1.20.6 // indirect
 	github.com/cloudflare/cloudflare-go v0.9.2
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/go-hclog v0.9.2 // indirect
