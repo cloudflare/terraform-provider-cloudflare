@@ -595,7 +595,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	changed := d.HasChange(fmt.Sprintf("actions.0.%s", id))
 
 	if strValue, ok := value.(string); ok {
-		if id == "browser_cache_ttl" && changed {
+		if id == "browser_cache_ttl" {
 			intValue, err := strconv.Atoi(strValue)
 			if err == nil {
 				pageRuleAction.Value = intValue
