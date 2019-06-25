@@ -297,6 +297,24 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders
 	})
 }
 
+func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLToSameValue(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	testAccRunResourceTestSteps(t, []resource.TestStep{
+		{
+			Config: buildPageRuleConfig("test", "browser_cache_ttl = 1"),
+		},
+		{
+			Config: buildPageRuleConfig("test", `browser_cache_ttl = 1
+browser_check = "on"`),
+			Check: resource.ComposeTestCheckFunc(
+				testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+				testAccCheckCloudflarePageRuleHasAction(&pageRule, "browser_cache_ttl", float64(1)),
+				resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.browser_cache_ttl", "1"),
+			),
+		},
+	})
+}
+
 func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	testAccRunResourceTestSteps(t, []resource.TestStep{
