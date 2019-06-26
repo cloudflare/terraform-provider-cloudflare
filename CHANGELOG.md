@@ -2,7 +2,7 @@
 
 **Fixes:**
 
-* `resource/cloudflare_page_rule`: Fix regression in `browser_cache_ttl` where the value was sent as a string instead of an integer to the remote (for Enterprise users)  [#390](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/390))
+* `resource/cloudflare_page_rule`: Fix regression in `browser_cache_ttl` where the value was sent as a string instead of an integer to the remote [#390](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/390))
 
 ## 1.16.0 (June 20, 2019)
 
