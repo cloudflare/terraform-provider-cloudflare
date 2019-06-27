@@ -315,7 +315,7 @@ google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
-# google.golang.org/genproto v0.0.0-20190627163349-621ef7fb66c1
+# google.golang.org/genproto v0.0.0-20190627193203-8a5ba248b858
 google.golang.org/genproto/googleapis/rpc/status
 google.golang.org/genproto/googleapis/iam/v1
 google.golang.org/genproto/googleapis/rpc/code
