@@ -42,8 +42,7 @@ func resourceCloudflareZone() *schema.Resource {
 			"zone": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringMatch(regexp.MustCompile("^([a-zA-Z0-9][\\-a-zA-Z0-9]*\\.)+[\\-a-zA-Z0-9]{2,20}$"), ""),
+				ForceNew:     true
 			},
 			"jump_start": {
 				Type:     schema.TypeBool,
