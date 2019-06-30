@@ -42,7 +42,7 @@ func resourceCloudflareZone() *schema.Resource {
 			"zone": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ForceNew:     true
+				ForceNew:     true,
 			},
 			"jump_start": {
 				Type:     schema.TypeBool,
