@@ -3,7 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-
+	"strconv"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -206,9 +206,8 @@ func resourceCloudflarePageRule() *schema.Resource {
 						},
 
 						"browser_cache_ttl": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							ValidateFunc: validation.IntAtMost(31536000),
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						"edge_cache_ttl": {
@@ -541,10 +540,6 @@ var pageRuleAPINilFields = []string{
 	"disable_railgun",
 	"disable_security",
 }
-var pageRuleAPIFloatFields = []string{
-	"browser_cache_ttl",
-	"edge_cache_ttl",
-}
 var pageRuleAPIStringFields = []string{
 	"bypass_cache_on_cookie",
 	"cache_key",
@@ -570,12 +565,16 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = true
 		break
 
-	case contains(pageRuleAPIFloatFields, pageRuleAction.ID):
+	case contains(pageRuleAPIStringFields, pageRuleAction.ID):
+		value = pageRuleAction.Value.(string)
+		break
+
+	case pageRuleAction.ID == "edge_cache_ttl":
 		value = pageRuleAction.Value.(float64) // we use TypeInt but terraform seems to do the right thing converting from float
 		break
 
-	case contains(pageRuleAPIStringFields, pageRuleAction.ID):
-		value = pageRuleAction.Value.(string)
+	case pageRuleAction.ID == "browser_cache_ttl":
+		value = fmt.Sprintf("%.0f", pageRuleAction.Value.(float64))
 		break
 
 	case pageRuleAction.ID == "forwarding_url" || pageRuleAction.ID == "minify":
@@ -596,7 +595,12 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	changed := d.HasChange(fmt.Sprintf("actions.0.%s", id))
 
 	if strValue, ok := value.(string); ok {
-		if strValue == "" && !changed {
+		if id == "browser_cache_ttl" {
+			intValue, err := strconv.Atoi(strValue)
+			if err == nil {
+				pageRuleAction.Value = intValue
+			}
+		} else if strValue == "" && !changed {
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = strValue
@@ -616,9 +620,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if id == "browser_cache_ttl" && changed {
-			pageRuleAction.Value = intValue
-		} else if id == "edge_cache_ttl" && intValue > 0 && changed {
+		if id == "edge_cache_ttl" && intValue > 0 && changed {
 			pageRuleAction.Value = intValue
 		} else {
 			pageRuleAction.Value = nil

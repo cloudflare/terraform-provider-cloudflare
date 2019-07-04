@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -39,7 +38,7 @@ func TestAccCloudflareWorkerScript_SingleScriptEnt(t *testing.T) {
 func testAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckFunc) {
 	var script cloudflare.WorkerScript
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -96,7 +95,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	t.Parallel()
 
 	var script cloudflare.WorkerScript
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 
 	resource.Test(t, resource.TestCase{

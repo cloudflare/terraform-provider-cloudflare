@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
@@ -15,7 +14,7 @@ func TestAccCloudflareLoadBalancer_Import(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{

@@ -19,7 +19,7 @@ resource "cloudflare_page_rule" "foobar" {
   target = "sub.${var.cloudflare_zone}/page"
   priority = 1
 
-  actions = {
+  actions {
     ssl = "flexible"
     email_obfuscation = "on"
     minify {

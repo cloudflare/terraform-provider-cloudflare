@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"testing"
 
@@ -9,6 +10,41 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_zones", &resource.Sweeper{
+		Name: "cloudflare_zones",
+		F:    testSweepCloudflareZones,
+	})
+}
+
+func testSweepCloudflareZones(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	zones, zoneErr := client.ListZones("baa.com", "baa.net", "baa.org", "foo.net")
+	if zoneErr != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
+	}
+
+	if len(zones) == 0 {
+		log.Print("[DEBUG] No Cloudflare Zones to sweep")
+		return nil
+	}
+
+	for _, zone := range zones {
+		log.Printf("[INFO] Deleting Cloudflare Zone ID: %s", zone.ID)
+		_, err := client.DeleteZone(zone.ID)
+
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete Cloudflare Zone (%s): %s", zone.Name, err)
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareZonesMatchName(t *testing.T) {
 	resource.Test(t, resource.TestCase{

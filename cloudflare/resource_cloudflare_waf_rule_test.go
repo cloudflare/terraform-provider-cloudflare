@@ -14,8 +14,8 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 	t.Parallel()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	ruleID := "100000"
-
-	name := "cloudflare_waf_rule." + ruleID
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_waf_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -23,7 +23,7 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWAFRuleConfig(zone, ruleID, "simulate"),
+				Config: testAccCheckCloudflareWAFRuleConfig(zone, ruleID, "simulate", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
 					resource.TestCheckResourceAttr(name, "zone", zone),
@@ -33,7 +33,7 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWAFRuleConfig(zone, ruleID, "challenge"),
+				Config: testAccCheckCloudflareWAFRuleConfig(zone, ruleID, "challenge", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
 					resource.TestCheckResourceAttr(name, "zone", zone),
@@ -67,11 +67,11 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWAFRuleConfig(zone, ruleID, mode string) string {
+func testAccCheckCloudflareWAFRuleConfig(zone, ruleID, mode, name string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_waf_rule" "%[2]s" {
+				resource "cloudflare_waf_rule" "%[4]s" {
 					rule_id = %[2]s
 					zone = "%[1]s"
 					mode = "%[3]s"
-				}`, zone, ruleID, mode)
+				}`, zone, ruleID, mode, name)
 }

@@ -6,13 +6,12 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestCloudflareZoneLockdown(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -36,7 +35,7 @@ func TestCloudflareZoneLockdown(t *testing.T) {
 
 func TestCloudflareZoneLockdown_Import(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{

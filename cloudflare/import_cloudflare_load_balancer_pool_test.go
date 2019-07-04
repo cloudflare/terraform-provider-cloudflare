@@ -4,14 +4,13 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestAccCloudflareLoadBalancerPool_Import(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 
 	resource.Test(t, resource.TestCase{
