@@ -40,6 +40,9 @@ func resourceCloudflareFilter() *schema.Resource {
 			"expression": {
 				Type:     schema.TypeString,
 				Required: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return strings.TrimSpace(new) == old
+				},
 			},
 			"description": {
 				Type:         schema.TypeString,
