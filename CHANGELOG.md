@@ -1,5 +1,6 @@
 ## 1.17.0 (Unreleased)
 
+**Improvements:**
 
 * `resource/cloudflare_filter`: Strip all surrounding whitespace from filter expressions to match API responses [#361](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/361))
 
