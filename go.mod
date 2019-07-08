@@ -10,5 +10,5 @@ require (
 	github.com/hashicorp/hcl2 v0.0.0-20190708003748-5b39d9ff3a9a // indirect
 	github.com/hashicorp/terraform v0.12.3
 	github.com/pkg/errors v0.8.1
-	google.golang.org/genproto v0.0.0-20190701235045-710ae3a149df // indirect
+	google.golang.org/genproto v0.0.0-20190708164322-3bdd9d9f5532 // indirect
 )
