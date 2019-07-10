@@ -72,7 +72,6 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `server_side_exclude`
 * `sha1_support`
 * `sort_query_string_for_cache`
-* `tls_1_2_only`
 * `tls_client_auth`
 * `true_client_ip_header`
 * `waf`

@@ -397,6 +397,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 		Optional:     true,
 		Computed:     true,
+		Deprecated:   "tls_1_2_only has been deprecated in favour of using `min_tls_version = \"1.2\"` instead.",
 	},
 
 	"tls_1_3": {
