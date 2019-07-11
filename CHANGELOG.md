@@ -1,6 +1,6 @@
 ## 1.17.0 (Unreleased)
 
-**Deprecations**
+**Deprecations:**
 
 * `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has has been superseded by using `min_tls_version` instead.
 
