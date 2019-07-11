@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"errors"
 	"fmt"
+	"log"
 	"testing"
 
 	"os"
@@ -11,6 +12,50 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_spectrum_applications", &resource.Sweeper{
+		Name: "cloudflare_spectrum_applications",
+		F:    testSweepCloudflareSpectrumApplications,
+	})
+}
+
+func testSweepCloudflareSpectrumApplications(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zones, zoneErr := client.ListZones(zone)
+
+	if zoneErr != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
+	}
+
+	for _, zone := range zones {
+		spectrumApps, spectrumErr := client.SpectrumApplications(zone.ID)
+		if spectrumErr != nil {
+			log.Printf("[ERROR] Failed to fetch Cloudflare spectrum applications: %s", zoneErr)
+		}
+
+		if len(spectrumApps) == 0 {
+			log.Print("[DEBUG] No Cloudflare spectrum applications to sweep")
+			return nil
+		}
+
+		for _, application := range spectrumApps {
+			log.Printf("[INFO] Deleting Cloudflare spectrum application ID: %s", application.ID)
+			err := client.DeleteSpectrumApplication(zone.ID, application.ID)
+
+			if err != nil {
+				log.Printf("[ERROR] Failed to delete Cloudflare spectrum application (%s) in zone ID: %s", application.ID, zone.ID)
+			}
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
