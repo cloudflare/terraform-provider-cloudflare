@@ -1,5 +1,9 @@
 ## 1.17.0 (Unreleased)
 
+**Deprecations**
+
+* `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has has been superseded by using `min_tls_version` instead.
+
 **Improvements:**
 
 * `resource/cloudflare_filter`: Strip all surrounding whitespace from filter expressions to match API responses [#361](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/361))
