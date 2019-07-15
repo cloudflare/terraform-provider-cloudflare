@@ -31,12 +31,10 @@ resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
   urls = [
     "api.mysite.com/some/endpoint*",
   ]
-  configurations = [
-    {
-      "target" = "ip"
-      "value" = "198.51.100.4"
-    },
-  ]
+  configurations {
+    target = "ip"
+    value = "198.51.100.4"
+  }
 }
 ```
 
