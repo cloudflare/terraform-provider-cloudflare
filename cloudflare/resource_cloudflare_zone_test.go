@@ -58,7 +58,7 @@ func TestAccCloudflareZone(t *testing.T) {
 	})
 }
 
-func TestZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
+func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 	name := "cloudflare_zone.tf-acc-unicode-test-1"
 
 	resource.Test(t, resource.TestCase{
@@ -79,7 +79,7 @@ func TestZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 	})
 }
 
-func TestZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
+func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 	name := "cloudflare_zone.tf-acc-unicode-test-2"
 
 	resource.Test(t, resource.TestCase{
@@ -100,7 +100,7 @@ func TestZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 	})
 }
 
-func TestZonePerformsUnicodeComparison(t *testing.T) {
+func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 	name := "cloudflare_zone.tf-acc-unicode-test-3"
 
 	resource.Test(t, resource.TestCase{
