@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestCloudflareZoneLockdown(t *testing.T) {
+func TestAccCloudflareZoneLockdown(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
@@ -33,7 +33,7 @@ func TestCloudflareZoneLockdown(t *testing.T) {
 	})
 }
 
-func TestCloudflareZoneLockdown_Import(t *testing.T) {
+func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
@@ -63,11 +63,9 @@ func testCloudflareZoneLockdownConfig(resourceID, zone, paused, description, url
 					paused = "%[3]s"
 					description = "%[4]s"
 					urls = ["%[5]s"]
-					configurations = [
-						{
-							target = "%[6]s"
-							value = "%[7]s"
-						}
-					]
+					configurations {
+						target = "%[6]s"
+						value = "%[7]s"
+					}
 				}`, resourceID, zone, paused, description, url, target, value)
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestZone(t *testing.T) {
+func TestAccCloudflareZone(t *testing.T) {
 	name := "cloudflare_zone.test"
 
 	resource.Test(t, resource.TestCase{
