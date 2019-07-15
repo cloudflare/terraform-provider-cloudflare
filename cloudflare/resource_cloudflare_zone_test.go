@@ -58,10 +58,84 @@ func TestAccCloudflareZone(t *testing.T) {
 	})
 }
 
+func TestZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-unicode-test-1"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testZoneConfig("tf-acc-unicode-test-1", "zajęzyk.pl", "true", "false"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
+			},
+		},
+	})
+}
+
+func TestZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-unicode-test-2"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testZoneConfig("tf-acc-unicode-test-2", "xn--zajzyk-y4a.pl", "true", "false"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
+			},
+		},
+	})
+}
+
+func TestZonePerformsUnicodeComparison(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-unicode-test-3"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testZoneConfig("tf-acc-unicode-test-3", "zajęzyk.pl", "true", "false"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
+			},
+			{
+				Config:   testZoneConfig("tf-acc-unicode-test-3", "xn--zajzyk-y4a.pl", "true", "false"),
+				PlanOnly: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
+			},
+		},
+	})
+}
+
 func testZoneConfig(resourceID, zoneName, paused, jumpStart string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone" "%[1]s" {
-                    zone = "%[2]s"
+					zone = "%[2]s"
 					paused = %[3]s
 					jump_start = %[4]s
 				}`, resourceID, zoneName, paused, jumpStart)
@@ -70,7 +144,7 @@ func testZoneConfig(resourceID, zoneName, paused, jumpStart string) string {
 func testZoneConfigWithPlan(resourceID, zoneName, paused, jumpStart, plan string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone" "%[1]s" {
-                    zone = "%[2]s"
+					zone = "%[2]s"
 					paused = %[3]s
 					jump_start = %[4]s
 					plan = "%[5]s"
