@@ -1,8 +1,12 @@
 ## 1.17.0 (Unreleased)
 
+**Removals:**
+
+* `resource/cloudflare_zone_settings_override`: `sha1_support` has been removed due to Cloudflare no longer supporting SHA1 certificates or the API endpoint ([#415](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/415))
+
 **Deprecations:**
 
-* `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has has been superseded by using `min_tls_version` instead ([#405](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/405))
+* `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has been superseded by using `min_tls_version` instead ([#405](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/405))
 
 **Improvements:**
 
