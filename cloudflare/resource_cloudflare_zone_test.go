@@ -2,22 +2,24 @@ package cloudflare
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestAccCloudflareZone(t *testing.T) {
-	name := "cloudflare_zone.test"
+	name := "cloudflare_zone.tf-acc-test"
+	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig("test", "example.org", "true", "false"),
+				Config: testZoneConfig(resourceName, "example.cfapi.net", "true", "false"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
@@ -25,9 +27,9 @@ func TestAccCloudflareZone(t *testing.T) {
 				),
 			},
 			{
-				Config: testZoneConfigWithPlan("test", "example.org", "true", "false", "free"),
+				Config: testZoneConfigWithPlan(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
@@ -35,9 +37,9 @@ func TestAccCloudflareZone(t *testing.T) {
 				),
 			},
 			{
-				Config: testZoneConfigWithPartialSetup("test", "example.org", "true", "false", "free"),
+				Config: testZoneConfigWithPartialSetup(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
@@ -45,9 +47,9 @@ func TestAccCloudflareZone(t *testing.T) {
 				),
 			},
 			{
-				Config: testZoneConfigWithExplicitFullSetup("test", "example.org", "true", "false", "free"),
+				Config: testZoneConfigWithExplicitFullSetup(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
