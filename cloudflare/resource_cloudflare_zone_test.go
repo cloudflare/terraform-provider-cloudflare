@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudflareZone(t *testing.T) {
-	name := "cloudflare_zone.tf-acc-test"
+func TestAccCloudflareZoneBasic(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-basic-zone"
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
@@ -26,6 +26,18 @@ func TestAccCloudflareZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareZoneWithPlan(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-with-plan-zone"
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithPlan(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
@@ -36,6 +48,18 @@ func TestAccCloudflareZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareZonePartialSetup(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-partial-setup-zone"
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithPartialSetup(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
@@ -46,6 +70,18 @@ func TestAccCloudflareZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareZoneFullSetup(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-full-setup-zone"
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithExplicitFullSetup(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
