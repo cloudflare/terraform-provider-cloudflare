@@ -66,9 +66,9 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig("tf-acc-unicode-test-1", "zajęzyk.pl", "true", "false"),
+				Config: testZoneConfig("tf-acc-unicode-test-1", "żółw.cfapi.net", "true", "false"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
@@ -87,9 +87,9 @@ func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig("tf-acc-unicode-test-2", "xn--zajzyk-y4a.pl", "true", "false"),
+				Config: testZoneConfig("tf-acc-unicode-test-2", "xn--w-uga1v8h.cfapi.net", "true", "false"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
@@ -108,9 +108,9 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig("tf-acc-unicode-test-3", "zajęzyk.pl", "true", "false"),
+				Config: testZoneConfig("tf-acc-unicode-test-3", "żółw.cfapi.net", "true", "false"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
@@ -118,10 +118,10 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 				),
 			},
 			{
-				Config:   testZoneConfig("tf-acc-unicode-test-3", "xn--zajzyk-y4a.pl", "true", "false"),
+				Config:   testZoneConfig("tf-acc-unicode-test-3", "xn--w-uga1v8h.cfapi.net", "true", "false"),
 				PlanOnly: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "zajęzyk.pl"),
+					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
@@ -204,7 +204,7 @@ func TestPlanIDFallsBackToEmptyIfUnknown(t *testing.T) {
 func testZoneConfigWithPartialSetup(resourceID, zoneName, paused, jumpStart, plan string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone" "%[1]s" {
-                    zone = "%[2]s"
+					zone = "%[2]s"
 					paused = %[3]s
 					jump_start = %[4]s
 					plan = "%[5]s"
@@ -215,7 +215,7 @@ func testZoneConfigWithPartialSetup(resourceID, zoneName, paused, jumpStart, pla
 func testZoneConfigWithExplicitFullSetup(resourceID, zoneName, paused, jumpStart, plan string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone" "%[1]s" {
-                    zone = "%[2]s"
+					zone = "%[2]s"
 					paused = %[3]s
 					jump_start = %[4]s
 					plan = "%[5]s"
