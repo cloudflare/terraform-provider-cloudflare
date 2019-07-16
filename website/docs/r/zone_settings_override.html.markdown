@@ -70,7 +70,6 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `response_buffering`
 * `rocket_loader`
 * `server_side_exclude`
-* `sha1_support`
 * `sort_query_string_for_cache`
 * `tls_client_auth`
 * `true_client_ip_header`
