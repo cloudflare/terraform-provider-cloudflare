@@ -19,7 +19,7 @@ Use the navigation to the left to read about the available resources.
 # Configure the Cloudflare provider
 provider "cloudflare" {
   email = "${var.cloudflare_email}"
-  token = "${var.cloudflare_token}"
+  key   = "${var.cloudflare_key}"
 }
 
 # Create a record
@@ -39,9 +39,9 @@ The following arguments are supported:
 
 * `email` - (Required) The email associated with the account. This can also be
   specified with the `CLOUDFLARE_EMAIL` shell environment variable.
-* `token` - (Required) The Cloudflare API token. This can also be specified
-  with the `CLOUDFLARE_TOKEN` shell environment variable.
-* `rps` - (Optional) RPS limit to apply when making calls to the API. Default: 4. 
+* `key` - (Required) The Cloudflare API key. This can also be specified
+  with the `CLOUDFLARE_KEY` shell environment variable.
+* `rps` - (Optional) RPS limit to apply when making calls to the API. Default: 4.
   This can also be specified with the `CLOUDFLARE_RPS` shell environment variable.
 * `retries` - (Optional) Maximum number of retries to perform when an API request fails. Default: 3.
   This can also be specified with the `CLOUDFLARE_RETRIES` shell environment variable.
@@ -54,7 +54,6 @@ The following arguments are supported:
 * `org_id` - (Optional) Configure API client with this organisation ID, so calls use the organization API rather than the (default) user API.
   This is required for other users in your organization to have access to the resources you manage.
   This can also be specified with the `CLOUDFLARE_ORG_ID` shell environment variable.
-* `use_org_from_zone` - (Optional) Takes a zone name value. This is used to lookup the organization ID that owns this zone, 
+* `use_org_from_zone` - (Optional) Takes a zone name value. This is used to lookup the organization ID that owns this zone,
   which will be used to configure the API client. If `org_id` is also specified, this field will be ignored.
   This can also be specified with the `CLOUDFLARE_ORG_ZONE` shell environment variable.
-

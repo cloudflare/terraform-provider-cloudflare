@@ -26,11 +26,11 @@ func Provider() terraform.ResourceProvider {
 				Description: "A registered Cloudflare email address.",
 			},
 
-			"token": &schema.Schema{
+			"key": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_TOKEN", nil),
-				Description: "The token key for API operations.",
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_KEY", nil),
+				Description: "The API key for operations.",
 			},
 
 			"rps": &schema.Schema{
@@ -132,7 +132,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 
 	config := Config{
 		Email:   d.Get("email").(string),
-		Token:   d.Get("token").(string),
+		Key:     d.Get("key").(string),
 		Options: options,
 	}
 
@@ -186,7 +186,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 
 	config = Config{
 		Email:   d.Get("email").(string),
-		Token:   d.Get("token").(string),
+		Key:     d.Get("key").(string),
 		Options: options,
 	}
 

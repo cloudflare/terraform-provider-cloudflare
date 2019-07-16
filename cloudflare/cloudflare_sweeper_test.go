@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 // sharedClient returns a common Cloudflare client setup needed for the
 // sweeper functions.
 func sharedClient() (*cloudflare.API, error) {
-	client, err := cloudflare.New(os.Getenv("CLOUDFLARE_TOKEN"), os.Getenv("CLOUDFLARE_EMAIL"))
+	client, err := cloudflare.New(os.Getenv("CLOUDFLARE_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
 
 	if err != nil {
 		return client, err
