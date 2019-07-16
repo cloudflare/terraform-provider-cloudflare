@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestFilterSimple(t *testing.T) {
+func TestAccFilterSimple(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -56,7 +56,7 @@ EOF
 }
 `
 
-func TestFilterWhitespace(t *testing.T) {
+func TestAccFilterWhitespace(t *testing.T) {
 	rnd := generateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 
