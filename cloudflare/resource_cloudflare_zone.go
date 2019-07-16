@@ -3,9 +3,10 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-	"regexp"
 	"strconv"
 	"strings"
+
+	"golang.org/x/net/idna"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -40,10 +41,10 @@ func resourceCloudflareZone() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringMatch(regexp.MustCompile("^([a-zA-Z0-9][\\-a-zA-Z0-9]*\\.)+[\\-a-zA-Z0-9]{2,20}$"), ""),
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: zoneDiffFunc,
 			},
 			"jump_start": {
 				Type:     schema.TypeBool,
@@ -263,4 +264,17 @@ func planNameForID(id string) string {
 		}
 	}
 	return ""
+}
+
+// zoneDiffFunc is a DiffSuppressFunc that accepts two strings and then converts
+// them to unicode before performing the comparison whether or not the value has
+// changed. This ensures that zones which could be either are evaluated
+// consistently and align with what the Cloudflare API returns.
+func zoneDiffFunc(k, old, new string, d *schema.ResourceData) bool {
+	var p *idna.Profile
+	p = idna.New()
+	unicodeOld, _ := p.ToUnicode(old)
+	unicodeNew, _ := p.ToUnicode(new)
+
+	return unicodeOld == unicodeNew
 }
