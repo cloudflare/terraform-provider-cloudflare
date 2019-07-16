@@ -2,29 +2,29 @@
 
 **Deprecations:**
 
-* `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has has been superseded by using `min_tls_version` instead.
+* `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has has been superseded by using `min_tls_version` instead ([#405](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/405))
 
 **Improvements:**
 
-* `resource/cloudflare_filter`: Strip all surrounding whitespace from filter expressions to match API responses [#361](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/361))
-* `resource/cloudflare_zone`: Support unicode zone name values [#412](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/412)) 
+* `resource/cloudflare_filter`: Strip all surrounding whitespace from filter expressions to match API responses ([#361](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/361))
+* `resource/cloudflare_zone`: Support unicode zone name values ([#412](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/412)) 
 
 ## 1.16.1 (June 27, 2019)
 
 **Fixes:**
 
-* `resource/cloudflare_page_rule`: Fix regression in `browser_cache_ttl` where the value was sent as a string instead of an integer to the remote [#390](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/390))
+* `resource/cloudflare_page_rule`: Fix regression in `browser_cache_ttl` where the value was sent as a string instead of an integer to the remote ([#390](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/390))
 
 ## 1.16.0 (June 20, 2019)
 
 **Improvements:**
 
 * `resource/cloudflare_zone_settings_override`: Add support for `h2_prioritization` and `image_resizing` ([#381](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/381))
-* `resource/cloudflare_load_balancer_pool`: Update IP range for tests to not use reserved ranges [#369](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/369))
+* `resource/cloudflare_load_balancer_pool`: Update IP range for tests to not use reserved ranges ([#369](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/369))
 
 **Fixes:**
 
-* `resource/cloudflare_page_rule`: Fix issues with `browser_cache_ttl` defaults and when value is `0` (for Enterprise users)  [#379](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/379))
+* `resource/cloudflare_page_rule`: Fix issues with `browser_cache_ttl` defaults and when value is `0` (for Enterprise users)   ([#379](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/379))
 
 ## 1.15.0 (May 24, 2019)
 
