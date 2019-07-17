@@ -63,6 +63,24 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"ubiquitous", "optimal", "force"}, false),
 						},
+						"geo_restrictions": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"label": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"us", "eu", "highest_security"}, false),
+									},
+								},
+							},
+						},
+						"type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"legacy_custom", "sni_custom"}, false),
+						},
 					},
 				},
 			},
