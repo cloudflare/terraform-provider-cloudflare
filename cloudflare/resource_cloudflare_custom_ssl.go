@@ -55,6 +55,7 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 						"private_key": {
 							Type:     schema.TypeString,
 							Optional: false,
+							Sensitive: true,
 						},
 						"bundle_method": {
 							Type:     schema.TypeString,
@@ -164,7 +165,6 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) error {
-
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
@@ -226,7 +226,6 @@ func resourceCloudflareCustomSslImport(d *schema.ResourceData, meta interface{})
 func expandToZoneCustomSSLPriority(d *schema.ResourceData) ([]cloudflare.ZoneCustomSSLPriority, error) {
 	data, dataOk := d.GetOk("custom_ssl_priority")
 	log.Printf("[DEBUG] Custom SSL priority found in config: %#v", data)
-	//type mt map[string]interface{}
 	var mtSlice []cloudflare.ZoneCustomSSLPriority
 	if dataOk {
 		for _, innerData := range data.([]interface{}) {
@@ -235,7 +234,6 @@ func expandToZoneCustomSSLPriority(d *schema.ResourceData) ([]cloudflare.ZoneCus
 				switch idName := id; idName {
 				case "id":
 					newValue := value.(string)
-					//newData[id] = newValue
 					newData["ID"] = newValue
 				case "priority":
 					newValue := value.(int)
@@ -252,7 +250,6 @@ func expandToZoneCustomSSLPriority(d *schema.ResourceData) ([]cloudflare.ZoneCus
 			}
 			// map -> json -> struct
 			json.Unmarshal(zcspJson, &zcsp)
-			//return mtSlice, fmt.Errorf("FAILURE: %#v %#v", newData, zcsp)
 			mtSlice = append(mtSlice, zcsp)
 		}
 	}
