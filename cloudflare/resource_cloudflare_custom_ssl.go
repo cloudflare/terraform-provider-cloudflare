@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform/helper/validation"
 	"log"
 	"strings"
 	"time"
@@ -53,13 +54,14 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 							Optional: false,
 						},
 						"private_key": {
-							Type:     schema.TypeString,
-							Optional: false,
+							Type:      schema.TypeString,
+							Optional:  false,
 							Sensitive: true,
 						},
 						"bundle_method": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"ubiquitous", "optimal", "force"}, false),
 						},
 					},
 				},
