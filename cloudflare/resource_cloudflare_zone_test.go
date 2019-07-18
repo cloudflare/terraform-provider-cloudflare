@@ -65,7 +65,6 @@ func TestAccCloudflareZonePartialSetup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone", "foo.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
