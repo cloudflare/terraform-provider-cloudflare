@@ -2,52 +2,89 @@ package cloudflare
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccCloudflareZone(t *testing.T) {
-	name := "cloudflare_zone.test"
+func TestAccCloudflareZoneBasic(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-basic-zone"
+	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfig("test", "example.org", "true", "false"),
+				Config: testZoneConfig(resourceName, "example.cfapi.net", "true", "false"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareZoneWithPlan(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-with-plan-zone"
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithPlan("test", "example.org", "true", "false", "free"),
+				Config: testZoneConfigWithPlan(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareZonePartialSetup(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-partial-setup-zone"
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithPartialSetup("test", "example.org", "true", "false", "free"),
+				Config: testZoneConfigWithPartialSetup(resourceName, "foo.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "foo.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareZoneFullSetup(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-full-setup-zone"
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithExplicitFullSetup("test", "example.org", "true", "false", "free"),
+				Config: testZoneConfigWithExplicitFullSetup(resourceName, "example.cfapi.net", "true", "false", "free"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "example.org"),
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDFree),
