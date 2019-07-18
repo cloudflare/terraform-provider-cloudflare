@@ -24,7 +24,7 @@ func testSweepCloudflareZones(r string) error {
 		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
 	}
 
-	zones, zoneErr := client.ListZones("baa.com", "baa.net", "baa.org", "foo.net")
+	zones, zoneErr := client.ListZones("baa-com.cfapi.net", "baa-net.cfapi.net", "baa-org.cfapi.net", "foo-net.cfapi.net")
 	if zoneErr != nil {
 		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
 	}
@@ -171,25 +171,25 @@ data "cloudflare_zones" "examples_domains" {
 }
 
 const testZones = `resource "cloudflare_zone" "baa_com" {
-  zone       = "baa.com"
+  zone       = "baa-com.cfapi.net"
   paused     = false
   jump_start = false
 }
 
 resource "cloudflare_zone" "baa_org" {
-  zone       = "baa.org"
+  zone       = "baa-org.cfapi.net"
   paused     = true
   jump_start = false
 }
 
 resource "cloudflare_zone" "baa_net" {
-  zone       = "baa.net"
+  zone       = "baa-net.cfapi.net"
   paused     = true
   jump_start = false
 }
 
 resource "cloudflare_zone" "foo_net" {
-  zone       = "foo.net"
+  zone       = "foo-net.cfapi.net"
   paused     = true
   jump_start = false
   depends_on = ["cloudflare_zone.baa_net", "cloudflare_zone.baa_org", "cloudflare_zone.baa_com"]
