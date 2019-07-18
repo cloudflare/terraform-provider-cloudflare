@@ -23,7 +23,7 @@ resource "cloudflare_access_policy" "test_policy" {
   precedence     = "1"
   decision       = "allow"
 
-  include = {
+  include {
     email = ["test@example.com"]
   }
 }
@@ -37,7 +37,7 @@ resource "cloudflare_access_policy" "test_policy" {
   precedence     = "1"
   decision       = "allow"
 
-  include = {
+  include {
     email = ["test@example.com"]
   }
 
