@@ -7,6 +7,16 @@
 **Deprecations:**
 
 * `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has been superseded by using `min_tls_version` instead ([#405](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/405))
+* `resource/cloudflare_access_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_filter`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_firewall_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_load_balancer`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_page_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_rate_limit`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_waf_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_worker_route`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_worker_script`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_zone_lockdown`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
 
 **Improvements:**
 
