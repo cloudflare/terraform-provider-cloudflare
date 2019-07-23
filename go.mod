@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/aws/aws-sdk-go v1.21.1 // indirect
-	github.com/cloudflare/cloudflare-go v0.9.3
+	github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/go-hclog v0.9.2 // indirect
 	github.com/hashicorp/hcl2 v0.0.0-20190722005019-618463aa7958 // indirect
