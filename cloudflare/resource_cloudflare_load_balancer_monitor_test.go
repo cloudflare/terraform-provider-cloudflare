@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"time"
@@ -57,9 +58,46 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "path", "/custom"),
 					resource.TestCheckResourceAttr(name, "header.#", "1"),
 					resource.TestCheckResourceAttr(name, "retries", "5"),
-					resource.TestCheckResourceAttr(name, "expected_codes", "5xx"),
 					resource.TestCheckResourceAttr(name, "port", "8080"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancerMonitor_TcpFullySpecified(t *testing.T) {
+	t.Parallel()
+	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
+	name := "cloudflare_load_balancer_monitor.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigTcpFullySpecified(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					// checking our overrides of default values worked
+					resource.TestCheckResourceAttr(name, "retries", "5"),
+					resource.TestCheckResourceAttr(name, "port", "8080"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
+	t.Parallel()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired(),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("expected_body must be set")),
 			},
 		},
 	})
@@ -243,5 +281,26 @@ resource "cloudflare_load_balancer_monitor" "test" {
     header = "Host"
     values = ["example.com"]
   }
+}`
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigTcpFullySpecified() string {
+	return `
+resource "cloudflare_load_balancer_monitor" "test" {
+  type = "tcp"
+  method = "connection_established"
+  timeout = 9
+  interval = 60
+  retries = 5
+  port = 8080
+  description = "this is a very weird tcp load balancer"
+}`
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired() string {
+	return `
+resource "cloudflare_load_balancer_monitor" "test" {
+  expected_codes = "2xx"
+  description = "this is a wrong config"
 }`
 }
