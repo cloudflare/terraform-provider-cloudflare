@@ -24,9 +24,14 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone_id": {
+			"zone": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
+			},
+			"zone_id": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"custom_ssl_priority": {
 				Type:     schema.TypeList,
@@ -129,7 +134,12 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 
 func resourceCloudflareCustomSslCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneName := d.Get("zone").(string)
+	zoneID, err := client.ZoneIDByName(zoneName)
+	if err != nil {
+		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
+	}
+	d.Set("zone_id", zoneID)
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 	zcso, err := expandToZoneCustomSSLOptions(d)
 	if err != nil {
@@ -224,17 +234,24 @@ func resourceCloudflareCustomSslDelete(d *schema.ResourceData, meta interface{})
 }
 
 func resourceCloudflareCustomSslImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-
+	var zoneName string
 	if len(idAttr) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/certID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/certID\"", d.Id())
 	}
 
-	zoneID, certID := idAttr[0], idAttr[1]
+	zoneName, certID := idAttr[0], idAttr[1]
+	zoneID, err := client.ZoneIDByName(zoneName)
+	if err != nil {
+		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
+	}
 
-	log.Printf("[DEBUG] Importing Cloudflare Custom SSL Cert: id %s for zone %s", certID, zoneID)
+	log.Printf("[DEBUG] Importing Cloudflare Custom SSL Cert: id %s for zone %s", certID, zoneName)
 
+	d.Set("zone", zoneName)
 	d.Set("zone_id", zoneID)
 	d.SetId(certID)
 
