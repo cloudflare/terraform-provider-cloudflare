@@ -76,7 +76,7 @@ Action blocks support the following:
 * `server_side_exclude` - (Optional) Whether this action is `"on"` or `"off"`.
 * `smart_errors` - (Optional) Whether this action is `"on"` or `"off"`.
 * `sort_query_string_for_cache` - (Optional) Whether this action is `"on"` or `"off"`.
-* `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, or `"strict"`.
+* `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, `"strict"`, or `"origin_pull"`
 * `true_client_ip_header` - (Optional) Whether this action is `"on"` or `"off"`.
 * `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
