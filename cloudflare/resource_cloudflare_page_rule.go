@@ -297,7 +297,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 						"ssl": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict", "origin_pull"}, false),
 						},
 					},
 				},
