@@ -108,10 +108,6 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"bundle_method": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"uploaded_on": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -211,7 +207,6 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("issuer", record.Issuer)
 	d.Set("signature", record.Signature)
 	d.Set("status", record.Status)
-	d.Set("bundle_method", record.BundleMethod)
 	d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
 	d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", record.ModifiedOn.Format(time.RFC3339Nano))
