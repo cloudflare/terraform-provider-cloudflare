@@ -147,9 +147,6 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 		Retries:  d.Get("retries").(int),
 	}
 
-	//
-	// common
-	//
 	if description, ok := d.GetOk("description"); ok {
 		loadBalancerMonitor.Description = description.(string)
 	}
@@ -203,9 +200,6 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 		}
 	}
 
-	//
-	// create
-	//
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
 	r, err := client.CreateLoadBalancerMonitor(loadBalancerMonitor)
@@ -235,9 +229,6 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 		Retries:  d.Get("retries").(int),
 	}
 
-	//
-	// common
-	//
 	if description, ok := d.GetOk("description"); ok {
 		loadBalancerMonitor.Description = description.(string)
 	}
@@ -291,9 +282,6 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 		}
 	}
 
-	//
-	// update
-	//
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
 	_, err := client.ModifyLoadBalancerMonitor(loadBalancerMonitor)
