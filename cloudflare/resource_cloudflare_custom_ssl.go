@@ -152,6 +152,8 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
+	var updateErr bool = false
+	var reprioritizeErr bool = false
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	zcso, err := expandToZoneCustomSSLOptions(d)
@@ -159,23 +161,30 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Failed to update custom ssl cert: %s", err)
 	}
 
-	res, err := client.UpdateSSL(zoneID, certID, zcso)
+	res, uErr := client.UpdateSSL(zoneID, certID, zcso)
+	if uErr != nil {
+		fmt.Errorf("Failed to update custom ssl cert: %s", uErr)
+		updateErr = true
+	} else {
+		log.Printf("[DEBUG] Custom SSL set to: %s", res.ID)
+	}
+
+	zcsp, err := expandToZoneCustomSSLPriority(d)
 	if err != nil {
 		fmt.Printf("Failed to update custom ssl cert: %s", err)
 	}
 
-	log.Printf("[DEBUG] Custom SSL set to: %s", res.ID)
-
-	zcsp, err := expandToZoneCustomSSLPriority(d)
+	resList, reErr := client.ReprioritizeSSL(zoneID, zcsp)
 	if err != nil {
-		return fmt.Errorf("Failed to update custom ssl cert: %s", err)
+		fmt.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
+		reprioritizeErr = true
+	} else {
+		log.Printf("[DEBUG] Custom SSL reprioritized to: %#v", resList)
 	}
 
-	resList, err := client.ReprioritizeSSL(zoneID, zcsp)
-	if err != nil {
-		return fmt.Errorf("Failed to update / reprioritize custom ssl cert: %s", err)
+	if updateErr && reprioritizeErr {
+		return fmt.Errorf("Failed to update and reprioritize custom ssl cert: %s", uErr, reErr)
 	}
-	log.Printf("[DEBUG] Custom SSL reprioritized to: %#v", resList)
 
 	return resourceCloudflareCustomSslRead(d, meta)
 }
@@ -185,17 +194,40 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
 
+	// update all possible schema attributes with fields from api response
 	record, err := client.SSLDetails(zoneID, certID)
 	if err != nil {
 		log.Printf("[WARN] Removing record from state because it's not found in API")
 		d.SetId("")
 		return nil
 	}
+	zcso, err := expandToZoneCustomSSLOptions(d)
+	if err != nil {
+		log.Printf("[WARN] Problem setting zone options not read from state %s", err)
+	}
+	zcso.BundleMethod = record.BundleMethod
+	customSslOpts := flattenCustomSSLOptions(zcso)
+
+	// fill in fields that the api doesn't return
+	data, dataOk := d.GetOk("custom_ssl_options")
+	newData := make(map[string]string)
+	if dataOk {
+		for id, value := range data.(map[string]interface{}) {
+			newValue := value.(string)
+			newData[id] = newValue
+		}
+	}
+	customSslOpts["%"] = newData["%"]
+	customSslOpts["geo_restrictions.label"] = newData["geo_restrictions.label"]
+	customSslOpts["type"] = newData["type"]
 
 	d.SetId(record.ID)
 	d.Set("hosts", record.Hosts)
 	d.Set("issuer", record.Issuer)
 	d.Set("signature", record.Signature)
+	if err := d.Set("custom_ssl_options", customSslOpts); err != nil {
+		return fmt.Errorf("[WARN] Error reading custom ssl opts %q: %s", d.Id(), err)
+	}
 	d.Set("status", record.Status)
 	d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
 	d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
@@ -292,4 +324,13 @@ func expandToZoneCustomSSLOptions(d *schema.ResourceData) (cloudflare.ZoneCustom
 	json.Unmarshal(zcsoJson, &zcso)
 	log.Printf("[DEBUG] Custom SSL options creating: %#v", zcso)
 	return zcso, nil
+}
+
+func flattenCustomSSLOptions(sslopt cloudflare.ZoneCustomSSLOptions) map[string]interface{} {
+	data := map[string]interface{}{
+		"certificate":   sslopt.Certificate,
+		"private_key":   sslopt.PrivateKey,
+		"bundle_method": sslopt.BundleMethod,
+	}
+	return data
 }
