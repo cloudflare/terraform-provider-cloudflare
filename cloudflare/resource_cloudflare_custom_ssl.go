@@ -47,6 +47,7 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 			"custom_ssl_options": {
 				Type:     schema.TypeMap,
 				Optional: true,
+				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"certificate": {
