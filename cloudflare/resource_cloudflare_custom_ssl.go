@@ -232,9 +232,15 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 			newData[id] = newValue
 		}
 	}
-	customSslOpts["%"] = newData["%"]
-	customSslOpts["geo_restrictions.label"] = newData["geo_restrictions.label"]
-	customSslOpts["type"] = newData["type"]
+	if val, ok := newData["%"]; ok {
+		customSslOpts["%"] = val
+	}
+	if val, ok := newData["geo_restrictions.label"]; ok {
+		customSslOpts["geo_restrictions.label"] = val
+	}
+	if val, ok := newData["type"]; ok {
+		customSslOpts["type"] = val
+	}
 
 	d.SetId(record.ID)
 	d.Set("hosts", record.Hosts)
