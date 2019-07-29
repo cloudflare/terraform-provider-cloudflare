@@ -164,7 +164,7 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 
 	res, uErr := client.UpdateSSL(zoneID, certID, zcso)
 	if uErr != nil {
-		fmt.Errorf("Failed to update custom ssl cert: %s", uErr)
+		log.Printf("[DEBUG] Failed to update custom ssl cert: %s", uErr)
 		updateErr = true
 	} else {
 		log.Printf("[DEBUG] Custom SSL set to: %s", res.ID)
@@ -172,19 +172,19 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 
 	zcsp, err := expandToZoneCustomSSLPriority(d)
 	if err != nil {
-		fmt.Printf("Failed to update custom ssl cert: %s", err)
+		log.Printf("Failed to update custom ssl cert: %s", err)
 	}
 
 	resList, reErr := client.ReprioritizeSSL(zoneID, zcsp)
 	if err != nil {
-		fmt.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
+		log.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
 		reprioritizeErr = true
 	} else {
 		log.Printf("[DEBUG] Custom SSL reprioritized to: %#v", resList)
 	}
 
 	if updateErr && reprioritizeErr {
-		return fmt.Errorf("Failed to update and reprioritize custom ssl cert: %s", uErr, reErr)
+		return fmt.Errorf("Failed to update and reprioritize custom ssl cert: %s, %s", uErr, reErr)
 	}
 
 	return resourceCloudflareCustomSslRead(d, meta)
