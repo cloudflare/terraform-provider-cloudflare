@@ -153,8 +153,8 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
-	var uErr bool
-	var reErr bool
+	var uErr error
+	var reErr error
 	var updateErr bool = false
 	var reprioritizeErr bool = false
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
