@@ -25,33 +25,12 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
-			"expected_body": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
-			"expected_codes": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
-			"method": {
+			//
+			// common
+			//
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "GET",
-			},
-
-			"timeout": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      5,
-				ValidateFunc: validation.IntBetween(1, 10),
-			},
-
-			"path": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "/",
 			},
 
 			"interval": {
@@ -61,6 +40,18 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 			},
 			// interval has to be larger than (retries+1) * probe_timeout:
 
+			"method": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+
+			"port": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ValidateFunc: validation.IntBetween(0, 65535),
+			},
+
 			"retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -68,11 +59,51 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 				ValidateFunc: validation.IntBetween(1, 5),
 			},
 
+			"timeout": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      5,
+				ValidateFunc: validation.IntBetween(1, 10),
+			},
+
 			"type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "http",
-				ValidateFunc: validation.StringInSlice([]string{"http", "https"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"http", "https", "tcp"}, false),
+			},
+
+			"created_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"modified_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			//
+			// http/https only
+			//
+			"allow_insecure": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+
+			"expected_body": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
+			"expected_codes": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
+			"follow_redirects": {
+				Type:     schema.TypeBool,
+				Optional: true,
 			},
 
 			"header": {
@@ -97,34 +128,9 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 				Set: HashByMapKey("header"),
 			},
 
-			"description": {
+			"path": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-
-			"port": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(0, 65535),
-			},
-
-			"allow_insecure": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-
-			"follow_redirects": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-
-			"created_on": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-
-			"modified_on": {
-				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
@@ -135,18 +141,10 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
-		ExpectedBody:  d.Get("expected_body").(string),
-		ExpectedCodes: d.Get("expected_codes").(string),
-		Method:        d.Get("method").(string),
-		Timeout:       d.Get("timeout").(int),
-		Type:          d.Get("type").(string),
-		Path:          d.Get("path").(string),
-		Interval:      d.Get("interval").(int),
-		Retries:       d.Get("retries").(int),
-	}
-
-	if header, ok := d.GetOk("header"); ok {
-		loadBalancerMonitor.Header = expandLoadBalancerMonitorHeader(header)
+		Timeout:  d.Get("timeout").(int),
+		Type:     d.Get("type").(string),
+		Interval: d.Get("interval").(int),
+		Retries:  d.Get("retries").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -157,12 +155,49 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 		loadBalancerMonitor.Port = uint16(port.(int))
 	}
 
-	if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
-		loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
-	}
+	switch loadBalancerMonitor.Type {
+	case "tcp":
+		if method, ok := d.GetOk("method"); ok {
+			loadBalancerMonitor.Method = method.(string)
+		} else {
+			loadBalancerMonitor.Method = "connection_established"
+		}
+	case "http", "https":
+		if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
+			loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
+		}
 
-	if followRedirects, ok := d.GetOk("follow_redirects"); ok {
-		loadBalancerMonitor.FollowRedirects = followRedirects.(bool)
+		if expectedBody, ok := d.GetOk("expected_body"); ok {
+			loadBalancerMonitor.ExpectedBody = expectedBody.(string)
+		} else {
+			return fmt.Errorf("expected_body must be set")
+		}
+
+		if expectedCodes, ok := d.GetOk("expected_codes"); ok {
+			loadBalancerMonitor.ExpectedCodes = expectedCodes.(string)
+		} else {
+			return fmt.Errorf("expected_codes must be set")
+		}
+
+		if followRedirects, ok := d.GetOk("follow_redirects"); ok {
+			loadBalancerMonitor.FollowRedirects = followRedirects.(bool)
+		}
+
+		if method, ok := d.GetOk("method"); ok {
+			loadBalancerMonitor.Method = method.(string)
+		} else {
+			loadBalancerMonitor.Method = "GET"
+		}
+
+		if header, ok := d.GetOk("header"); ok {
+			loadBalancerMonitor.Header = expandLoadBalancerMonitorHeader(header)
+		}
+
+		if path, ok := d.GetOk("path"); ok {
+			loadBalancerMonitor.Path = path.(string)
+		} else {
+			loadBalancerMonitor.Path = "/"
+		}
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -173,7 +208,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("cailed to find id in create response; resource was empty")
+		return fmt.Errorf("failed to find id in create response; resource was empty")
 	}
 
 	d.SetId(r.ID)
@@ -187,19 +222,11 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
-		ID:            d.Id(),
-		ExpectedBody:  d.Get("expected_body").(string),
-		ExpectedCodes: d.Get("expected_codes").(string),
-		Method:        d.Get("method").(string),
-		Timeout:       d.Get("timeout").(int),
-		Type:          d.Get("type").(string),
-		Path:          d.Get("path").(string),
-		Interval:      d.Get("interval").(int),
-		Retries:       d.Get("retries").(int),
-	}
-
-	if header, ok := d.GetOk("header"); ok {
-		loadBalancerMonitor.Header = expandLoadBalancerMonitorHeader(header)
+		ID:       d.Id(),
+		Timeout:  d.Get("timeout").(int),
+		Type:     d.Get("type").(string),
+		Interval: d.Get("interval").(int),
+		Retries:  d.Get("retries").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -210,12 +237,49 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 		loadBalancerMonitor.Port = uint16(port.(int))
 	}
 
-	if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
-		loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
-	}
+	switch loadBalancerMonitor.Type {
+	case "tcp":
+		if method, ok := d.GetOk("method"); ok {
+			loadBalancerMonitor.Method = method.(string)
+		} else {
+			loadBalancerMonitor.Method = "connection_established"
+		}
+	case "http", "https":
+		if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
+			loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
+		}
 
-	if followRedirects, ok := d.GetOk("follow_redirects"); ok {
-		loadBalancerMonitor.FollowRedirects = followRedirects.(bool)
+		if expectedBody, ok := d.GetOk("expected_body"); ok {
+			loadBalancerMonitor.ExpectedBody = expectedBody.(string)
+		} else {
+			return fmt.Errorf("expected_body must be set")
+		}
+
+		if expectedCodes, ok := d.GetOk("expected_codes"); ok {
+			loadBalancerMonitor.ExpectedCodes = expectedCodes.(string)
+		} else {
+			return fmt.Errorf("expected_codes must be set")
+		}
+
+		if header, ok := d.GetOk("header"); ok {
+			loadBalancerMonitor.Header = expandLoadBalancerMonitorHeader(header)
+		}
+
+		if followRedirects, ok := d.GetOk("follow_redirects"); ok {
+			loadBalancerMonitor.FollowRedirects = followRedirects.(bool)
+		}
+
+		if method, ok := d.GetOk("method"); ok {
+			loadBalancerMonitor.Method = method.(string)
+		} else {
+			loadBalancerMonitor.Method = "GET"
+		}
+
+		if path, ok := d.GetOk("path"); ok {
+			loadBalancerMonitor.Path = path.(string)
+		} else {
+			loadBalancerMonitor.Path = "/"
+		}
 	}
 
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -256,24 +320,27 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 	}
 	log.Printf("[DEBUG] Read Cloudflare Load Balancer Monitor from API as struct: %+v", loadBalancerMonitor)
 
-	d.Set("expected_body", loadBalancerMonitor.ExpectedBody)
-	d.Set("expected_codes", loadBalancerMonitor.ExpectedCodes)
-	d.Set("method", loadBalancerMonitor.Method)
-	d.Set("timeout", loadBalancerMonitor.Timeout)
-	d.Set("path", loadBalancerMonitor.Path)
-	d.Set("interval", loadBalancerMonitor.Interval)
-	d.Set("retries", loadBalancerMonitor.Retries)
-	d.Set("type", loadBalancerMonitor.Type)
+	if loadBalancerMonitor.Type == "http" || loadBalancerMonitor.Type == "https" {
+		d.Set("allow_insecure", loadBalancerMonitor.AllowInsecure)
+		d.Set("expected_body", loadBalancerMonitor.ExpectedBody)
+		d.Set("expected_codes", loadBalancerMonitor.ExpectedCodes)
+		d.Set("follow_redirects", loadBalancerMonitor.FollowRedirects)
+		d.Set("path", loadBalancerMonitor.Path)
+
+		if err := d.Set("header", flattenLoadBalancerMonitorHeader(loadBalancerMonitor.Header)); err != nil {
+			log.Printf("[WARN] Error setting header for load balancer monitor %q: %s", d.Id(), err)
+		}
+	}
+
 	d.Set("description", loadBalancerMonitor.Description)
+	d.Set("interval", loadBalancerMonitor.Interval)
+	d.Set("method", loadBalancerMonitor.Method)
 	d.Set("port", loadBalancerMonitor.Port)
-	d.Set("allow_insecure", loadBalancerMonitor.AllowInsecure)
-	d.Set("follow_redirects", loadBalancerMonitor.FollowRedirects)
+	d.Set("retries", loadBalancerMonitor.Retries)
+	d.Set("timeout", loadBalancerMonitor.Timeout)
+	d.Set("type", loadBalancerMonitor.Type)
 	d.Set("created_on", loadBalancerMonitor.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerMonitor.ModifiedOn.Format(time.RFC3339Nano))
-
-	if err := d.Set("header", flattenLoadBalancerMonitorHeader(loadBalancerMonitor.Header)); err != nil {
-		log.Printf("[WARN] Error setting header for load balancer monitor %q: %s", d.Id(), err)
-	}
 
 	return nil
 }
