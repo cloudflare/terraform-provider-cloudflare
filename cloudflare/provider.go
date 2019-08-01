@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/go-cleanhttp"
@@ -17,72 +16,72 @@ import (
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
-	return &schema.Provider{
+	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"email": &schema.Schema{
+			"email": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
 				Description: "A registered Cloudflare email address.",
 			},
 
-			"token": &schema.Schema{
+			"token": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_TOKEN", nil),
 				Description: "The API key for operations.",
 			},
 
-			"api_token": &schema.Schema{
+			"api_token": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
 				Description: "The API Token for operations.",
 			},
 
-			"rps": &schema.Schema{
+			"rps": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_RPS", 4),
 				Description: "RPS limit to apply when making calls to the API",
 			},
 
-			"retries": &schema.Schema{
+			"retries": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_RETRIES", 3),
 				Description: "Maximum number of retries to perform when an API request fails",
 			},
 
-			"min_backoff": &schema.Schema{
+			"min_backoff": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_MIN_BACKOFF", 1),
 				Description: "Minimum backoff period in seconds after failed API calls",
 			},
 
-			"max_backoff": &schema.Schema{
+			"max_backoff": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_MAX_BACKOFF", 30),
 				Description: "Maximum backoff period in seconds after failed API calls",
 			},
 
-			"api_client_logging": &schema.Schema{
+			"api_client_logging": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_CLIENT_LOGGING", false),
 				Description: "Whether to print logs from the API client (using the default log library logger)",
 			},
 
-			"use_org_from_zone": &schema.Schema{
+			"use_org_from_zone": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ORG_ZONE", nil),
 				Description: "If specified zone is owned by an organization, configure API client to always use that organization",
 			},
 
-			"org_id": &schema.Schema{
+			"org_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ORG_ID", nil),
@@ -120,12 +119,22 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
 			"cloudflare_zone":                   resourceCloudflareZone(),
 		},
-
-		ConfigureFunc: providerConfigure,
 	}
+
+	provider.ConfigureFunc = func(d *schema.ResourceData) (interface{}, error) {
+		terraformVersion := provider.TerraformVersion
+		if terraformVersion == "" {
+			// Terraform 0.12 introduced this field to the protocol
+			// We can therefore assume that if it's missing it's 0.10 or 0.11
+			terraformVersion = "0.11+compatible"
+		}
+		return providerConfigure(d, terraformVersion)
+	}
+
+	return provider
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, error) {
 	limitOpt := cloudflare.UsingRateLimit(float64(d.Get("rps").(int)))
 	retryOpt := cloudflare.UsingRetryPolicy(d.Get("retries").(int), d.Get("min_backoff").(int), d.Get("max_backoff").(int))
 	options := []cloudflare.Option{limitOpt, retryOpt}
@@ -137,6 +146,11 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	c := cleanhttp.DefaultClient()
 	c.Transport = logging.NewTransport("Cloudflare", c.Transport)
 	options = append(options, cloudflare.HTTPClient(c))
+
+	tfUserAgent := httpclient.TerraformUserAgent(terraformVersion)
+	providerUserAgent := fmt.Sprintf("terraform-provider-cloudflare/%s", version.ProviderVersion)
+	ua := fmt.Sprintf("%s %s", tfUserAgent, providerUserAgent)
+	options = append(options, cloudflare.UserAgent(ua))
 
 	config := Config{Options: options}
 
@@ -193,13 +207,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	} else {
 		return client, err
 	}
-
-	// TODO: This is the SDK version not the CLI version, once we are on 0.12, should revisit
-	tfUserAgent := httpclient.UserAgentString()
-
-	pv := version.ProviderVersion
-	providerUserAgent := fmt.Sprintf("%s terraform-provider-cloudflare/%s", tfUserAgent, pv)
-	options = append(options, cloudflare.UserAgent(strings.TrimSpace(fmt.Sprintf("%s %s", client.UserAgent, providerUserAgent))))
 
 	config.Options = options
 
