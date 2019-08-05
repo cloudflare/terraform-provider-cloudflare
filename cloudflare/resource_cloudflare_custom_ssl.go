@@ -3,12 +3,13 @@ package cloudflare
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/validation"
 	"log"
 	"strings"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform/helper/validation"
+
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -65,17 +66,9 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"ubiquitous", "optimal", "force"}, false),
 						},
 						"geo_restrictions": {
-							Type:     schema.TypeMap,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"label": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validation.StringInSlice([]string{"us", "eu", "highest_security"}, false),
-									},
-								},
-							},
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"us", "eu", "highest_security"}, false),
 						},
 						"type": {
 							Type:         schema.TypeString,
@@ -155,8 +148,8 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	certID := d.Id()
 	var uErr error
 	var reErr error
-	var updateErr bool = false
-	var reprioritizeErr bool = false
+	var updateErr = false
+	var reprioritizeErr = false
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	// Enable partial state mode for atomic subsequent updates
@@ -235,8 +228,8 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	if val, ok := newData["%"]; ok {
 		customSslOpts["%"] = val
 	}
-	if val, ok := newData["geo_restrictions.label"]; ok {
-		customSslOpts["geo_restrictions.label"] = val
+	if val, ok := newData["geo_restrictions"]; ok {
+		customSslOpts["geo_restrictions"] = val
 	}
 	if val, ok := newData["type"]; ok {
 		customSslOpts["type"] = val
@@ -311,12 +304,12 @@ func expandToZoneCustomSSLPriority(d *schema.ResourceData) ([]cloudflare.ZoneCus
 				}
 			}
 			zcsp := cloudflare.ZoneCustomSSLPriority{}
-			zcspJson, err := json.Marshal(newData)
+			zcspJSON, err := json.Marshal(newData)
 			if err != nil {
 				return mtSlice, fmt.Errorf("Failed to create custom ssl priorities: %s", err)
 			}
 			// map -> json -> struct
-			json.Unmarshal(zcspJson, &zcsp)
+			json.Unmarshal(zcspJSON, &zcsp)
 			mtSlice = append(mtSlice, zcsp)
 		}
 	}
@@ -328,30 +321,41 @@ func expandToZoneCustomSSLOptions(d *schema.ResourceData) (cloudflare.ZoneCustom
 	data, dataOk := d.GetOk("custom_ssl_options")
 	log.Printf("[DEBUG] Custom SSL options found in config: %#v", data)
 
-	newData := make(map[string]string)
+	newData := make(map[string]interface{})
 	if dataOk {
 		for id, value := range data.(map[string]interface{}) {
-			newValue := value.(string)
+			var newValue interface{}
+			if id == "geo_restrictions" {
+				newValue = cloudflare.ZoneCustomSSLGeoRestrictions{
+					Label: value.(string),
+				}
+			} else {
+				newValue = value.(string)
+			}
 			newData[id] = newValue
 		}
 	}
 
 	zcso := cloudflare.ZoneCustomSSLOptions{}
-	zcsoJson, err := json.Marshal(newData)
+	zcsoJSON, err := json.Marshal(newData)
 	if err != nil {
 		return zcso, fmt.Errorf("Failed to create custom ssl options: %s", err)
 	}
+
+	log.Printf("[DEBUG] Custom SSL JSON: %s", string(zcsoJSON))
+
 	// map -> json -> struct
-	json.Unmarshal(zcsoJson, &zcso)
+	json.Unmarshal(zcsoJSON, &zcso)
 	log.Printf("[DEBUG] Custom SSL options creating: %#v", zcso)
 	return zcso, nil
 }
 
 func flattenCustomSSLOptions(sslopt cloudflare.ZoneCustomSSLOptions) map[string]interface{} {
 	data := map[string]interface{}{
-		"certificate":   sslopt.Certificate,
-		"private_key":   sslopt.PrivateKey,
-		"bundle_method": sslopt.BundleMethod,
+		"certificate":      sslopt.Certificate,
+		"private_key":      sslopt.PrivateKey,
+		"bundle_method":    sslopt.BundleMethod,
+		"geo_restrictions": sslopt.GeoRestrictions.Label,
 	}
 	return data
 }
