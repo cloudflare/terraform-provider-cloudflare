@@ -601,7 +601,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 			if err == nil {
 				pageRuleAction.Value = intValue
 			}
-		} else if strValue == "" && !changed {
+		} else if strValue == "" {
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = strValue
@@ -656,6 +656,8 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	} else {
 		err = fmt.Errorf("Bad value for %s: %s", id, value)
 	}
+
+	log.Printf("[DEBUG] Page Rule Action to be applied: %#v", pageRuleAction)
 
 	return
 }
