@@ -1,4 +1,4 @@
-## 1.17.0 (Unreleased)
+## 1.17.0 (August 09, 2019)
 
 **Removals:**
 
@@ -20,15 +20,15 @@
 
 **Improvements:**
 
-* **New Resource:** `cloudflare_custom_ssl` [GH-418]
+* **New Resource:** `cloudflare_custom_ssl` ([#418](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/418))
 * `resource/cloudflare_filter`: Strip all surrounding whitespace from filter expressions to match API responses ([#361](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/361))
 * `resource/cloudflare_zone`: Support unicode zone name values ([#412](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/412))
 * `resource/cloudflare_page_rule`: Allow setting `origin_pull` for SSL ([#430](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/430))
 * `resource/cloudflare_load_balancer_monitor`: Add TCP support for load balancer monitor ([#428](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/428))
 
 **Fixes:**
-* `resource/cloudflare_logpush_job`: Update documentation [GH-395]
-* `resource/cloudflare_zone_lockdown`: Fix: examples in documentation [GH-407]
+* `resource/cloudflare_logpush_job`: Update documentation ([#395](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/395))
+* `resource/cloudflare_zone_lockdown`: Fix: examples in documentation ([#407](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/407))
 * `resource/cloudflare_page_rule`: Set nil on changed string-based Page Rule actions
 
 ## 1.16.1 (June 27, 2019)
