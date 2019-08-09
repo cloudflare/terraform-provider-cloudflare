@@ -1,8 +1,8 @@
-## 1.17.1 (Unreleased)
+## 1.17.1 (August 09, 2019)
 
 **Fixes:**
 
-* Partially revert [GH-421] deprecation messages
+* Partially revert [[#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421)] deprecation messages
 
 ## 1.17.0 (August 09, 2019)
 
