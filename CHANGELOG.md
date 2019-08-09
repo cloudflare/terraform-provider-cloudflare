@@ -1,4 +1,9 @@
-## 1.18.0 (Unreleased)
+## 1.17.1 (Unreleased)
+
+**Fixes:**
+
+* Partially revert [GH-421] deprecation messages
+
 ## 1.17.0 (August 09, 2019)
 
 **Removals:**
