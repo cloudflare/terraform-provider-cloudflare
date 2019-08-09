@@ -22,10 +22,10 @@ func resourceCloudflareWorkerRoute() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:       schema.TypeString,
-				Required:   true,
-				ForceNew:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				// Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
 			"zone_id": {
