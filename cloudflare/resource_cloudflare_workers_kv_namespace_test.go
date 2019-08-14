@@ -41,9 +41,16 @@ func testAccCloudflareWorkersKVNamespaceDesroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.ListWorkersKVNamespaces(context.Background())
+		resp, err := client.ListWorkersKVNamespaces(context.Background())
+
 		if err == nil {
-			return fmt.Errorf("Namespace still exists")
+			return err
+		}
+
+		for _, n := range resp.Result {
+			if n.ID == rs.Primary.ID {
+				return fmt.Errorf("Namespace still exists")
+			}
 		}
 	}
 
