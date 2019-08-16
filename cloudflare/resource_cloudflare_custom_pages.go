@@ -75,12 +75,17 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("either `account_id` or `zone_id` must be set")
 	}
 
-	var pageOptions cloudflare.CustomPageOptions
+	var (
+		pageOptions cloudflare.CustomPageOptions
+		identifier  string
+	)
 
 	if accountID != "" {
 		pageOptions = cloudflare.CustomPageOptions{AccountID: accountID}
+		identifier = accountID
 	} else {
 		pageOptions = cloudflare.CustomPageOptions{ZoneID: zoneID}
+		identifier = zoneID
 	}
 
 	page, err := client.CustomPage(&pageOptions, pageType)
@@ -96,6 +101,9 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 		d.SetId("")
 		return nil
 	}
+
+	checksum := stringChecksum(fmt.Sprintf("%s/%s", identifier, page.ID))
+	d.SetId(checksum)
 
 	d.Set("state", page.State)
 	d.Set("url", page.URL)
@@ -118,7 +126,7 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 
 	pageType := d.Get("type").(string)
 	customPageParameters := cloudflare.CustomPageParameters{
-		URL:   d.Get("url").(*string),
+		URL:   d.Get("url").(string),
 		State: "customized",
 	}
 	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
@@ -132,7 +140,7 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zoneID").(string)
+	zoneID := d.Get("zone_id").(string)
 
 	var pageOptions cloudflare.CustomPageOptions
 	if accountID != "" {
@@ -168,6 +176,9 @@ func resourceCloudflareCustomPagesImport(d *schema.ResourceData, meta interface{
 	} else {
 		d.Set("zone_id", identifier)
 	}
+
+	checksum := stringChecksum(fmt.Sprintf("%s/%s", identifier, pageType))
+	d.SetId(checksum)
 
 	resourceCloudflareCustomPagesRead(d, meta)
 

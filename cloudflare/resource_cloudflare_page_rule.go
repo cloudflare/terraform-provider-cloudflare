@@ -3,10 +3,10 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-
+	"strconv"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -26,6 +26,8 @@ func resourceCloudflarePageRule() *schema.Resource {
 			"zone": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
+				// Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
 			"zone_id": {
@@ -205,9 +207,8 @@ func resourceCloudflarePageRule() *schema.Resource {
 						},
 
 						"browser_cache_ttl": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							ValidateFunc: validation.IntAtMost(31536000),
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						"edge_cache_ttl": {
@@ -244,6 +245,33 @@ func resourceCloudflarePageRule() *schema.Resource {
 							},
 						},
 
+						"minify": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								SchemaVersion: 1,
+								Schema: map[string]*schema.Schema{
+									"js": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
+
+									"css": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
+
+									"html": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
+								},
+							},
+						},
+
 						"host_header_override": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -269,7 +297,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 						"ssl": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict", "origin_pull"}, false),
 						},
 					},
 				},
@@ -322,10 +350,11 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
+
+			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 			if err != nil {
 				return err
-			} else if newPageRuleAction.Value == nil {
+			} else if newPageRuleAction.Value == nil || newPageRuleAction.Value == "" {
 				continue
 			}
 			newPageRuleActions = append(newPageRuleActions, newPageRuleAction)
@@ -441,7 +470,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 		for _, action := range actions {
 			for id, value := range action.(map[string]interface{}) {
-				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value)
+				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 				if err != nil {
 					return err
 				} else if newPageRuleAction.Value == nil {
@@ -464,9 +493,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
-	// contrary to docs, change page rule actually does a full replace
-	// this part of the api needs some work, so it may change in future
-	if err := client.ChangePageRule(zoneID, d.Id(), updatePageRule); err != nil {
+	if err := client.UpdatePageRule(zoneID, d.Id(), updatePageRule); err != nil {
 		return fmt.Errorf("Failed to update Cloudflare Page Rule: %s", err)
 	}
 
@@ -514,10 +541,6 @@ var pageRuleAPINilFields = []string{
 	"disable_railgun",
 	"disable_security",
 }
-var pageRuleAPIFloatFields = []string{
-	"browser_cache_ttl",
-	"edge_cache_ttl",
-}
 var pageRuleAPIStringFields = []string{
 	"bypass_cache_on_cookie",
 	"cache_key",
@@ -543,15 +566,19 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = true
 		break
 
-	case contains(pageRuleAPIFloatFields, pageRuleAction.ID):
-		value = pageRuleAction.Value.(float64) // we use TypeInt but terraform seems to do the right thing converting from float
-		break
-
 	case contains(pageRuleAPIStringFields, pageRuleAction.ID):
 		value = pageRuleAction.Value.(string)
 		break
 
-	case pageRuleAction.ID == "forwarding_url":
+	case pageRuleAction.ID == "edge_cache_ttl":
+		value = pageRuleAction.Value.(float64) // we use TypeInt but terraform seems to do the right thing converting from float
+		break
+
+	case pageRuleAction.ID == "browser_cache_ttl":
+		value = fmt.Sprintf("%.0f", pageRuleAction.Value.(float64))
+		break
+
+	case pageRuleAction.ID == "forwarding_url" || pageRuleAction.ID == "minify":
 		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
 		break
 
@@ -562,12 +589,19 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	return
 }
 
-func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRuleAction cloudflare.PageRuleAction, err error) {
+func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
 
 	pageRuleAction.ID = id
 
+	changed := d.HasChange(fmt.Sprintf("actions.0.%s", id))
+
 	if strValue, ok := value.(string); ok {
-		if strValue == "" {
+		if id == "browser_cache_ttl" {
+			intValue, err := strconv.Atoi(strValue)
+			if err == nil {
+				pageRuleAction.Value = intValue
+			}
+		} else if strValue == "" {
 			pageRuleAction.Value = nil
 		} else {
 			pageRuleAction.Value = strValue
@@ -587,11 +621,10 @@ func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRule
 			}
 		}
 	} else if intValue, ok := value.(int); ok {
-		if intValue == 0 {
-			// This happens when not set by the user
-			pageRuleAction.Value = nil
-		} else {
+		if id == "edge_cache_ttl" && intValue > 0 && changed {
 			pageRuleAction.Value = intValue
+		} else {
+			pageRuleAction.Value = nil
 		}
 	} else if id == "forwarding_url" {
 		forwardActionSchema := value.([]interface{})
@@ -606,9 +639,25 @@ func transformToCloudflarePageRuleAction(id string, value interface{}) (pageRule
 				"status_code": fwd["status_code"].(int),
 			}
 		}
+	} else if id == "minify" {
+		minifyActionSchema := value.([]interface{})
+
+		log.Printf("[DEBUG] minify action to be applied: %#v", minifyActionSchema)
+
+		if len(minifyActionSchema) != 0 {
+			minify := minifyActionSchema[0].(map[string]interface{})
+
+			pageRuleAction.Value = map[string]interface{}{
+				"css":  minify["css"].(string),
+				"js":   minify["js"].(string),
+				"html": minify["html"].(string),
+			}
+		}
 	} else {
 		err = fmt.Errorf("Bad value for %s: %s", id, value)
 	}
+
+	log.Printf("[DEBUG] Page Rule Action to be applied: %#v", pageRuleAction)
 
 	return
 }

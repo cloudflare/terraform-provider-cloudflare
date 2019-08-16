@@ -6,13 +6,12 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestCloudflareZoneLockdown(t *testing.T) {
+func TestAccCloudflareZoneLockdown(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -35,9 +34,9 @@ func TestCloudflareZoneLockdown(t *testing.T) {
 	})
 }
 
-func TestCloudflareZoneLockdown_Import(t *testing.T) {
+func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := acctest.RandString(10)
+	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -62,15 +61,13 @@ func testCloudflareZoneLockdownConfig(resourceID, zone, paused, priority, descri
 	return fmt.Sprintf(`
 				resource "cloudflare_zone_lockdown" "%[1]s" {
 					zone = "%[2]s"
-          paused = "%[3]s"
-          priority = "%[4]s"
+					paused = "%[3]s"
+					priority = "%[4]s"
 					description = "%[5]s"
 					urls = ["%[6]s"]
-					configurations = [
-						{
-							target = "%[7]s"
-							value = "%[8]s"
-						}
-					]
+					configurations {
+						target = "%[7]s"
+						value = "%[8]s"
+					}
 				}`, resourceID, zone, paused, priority, description, url, target, value)
 }

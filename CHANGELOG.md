@@ -1,4 +1,127 @@
-## 1.11.0 (Unreleased)
+## 1.17.2 (Unreleased)
+## 1.17.1 (August 09, 2019)
+
+**Fixes:**
+
+* Partially revert [[#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421)] deprecation messages
+
+## 1.17.0 (August 09, 2019)
+
+**Removals:**
+
+* `resource/cloudflare_zone_settings_override`: `sha1_support` has been removed due to Cloudflare no longer supporting SHA1 certificates or the API endpoint ([#415](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/415))
+
+**Deprecations:**
+
+* `resource/cloudflare_zone_settings_override`: `tls_1_2_only` has been superseded by using `min_tls_version` instead ([#405](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/405))
+* `resource/cloudflare_access_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_filter`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_firewall_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_load_balancer`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_page_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_rate_limit`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_waf_rule`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_worker_route`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_worker_script`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+* `resource/cloudflare_zone_lockdown`: `zone` has been superseded by using `zone_id` ([#421](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/421))
+
+**Improvements:**
+
+* **New Resource:** `cloudflare_custom_ssl` ([#418](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/418))
+* `resource/cloudflare_filter`: Strip all surrounding whitespace from filter expressions to match API responses ([#361](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/361))
+* `resource/cloudflare_zone`: Support unicode zone name values ([#412](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/412))
+* `resource/cloudflare_page_rule`: Allow setting `origin_pull` for SSL ([#430](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/430))
+* `resource/cloudflare_load_balancer_monitor`: Add TCP support for load balancer monitor ([#428](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/428))
+
+**Fixes:**
+* `resource/cloudflare_logpush_job`: Update documentation ([#395](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/395))
+* `resource/cloudflare_zone_lockdown`: Fix: examples in documentation ([#407](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/407))
+* `resource/cloudflare_page_rule`: Set nil on changed string-based Page Rule actions
+
+## 1.16.1 (June 27, 2019)
+
+**Fixes:**
+
+* `resource/cloudflare_page_rule`: Fix regression in `browser_cache_ttl` where the value was sent as a string instead of an integer to the remote ([#390](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/390))
+
+## 1.16.0 (June 20, 2019)
+
+**Improvements:**
+
+* `resource/cloudflare_zone_settings_override`: Add support for `h2_prioritization` and `image_resizing` ([#381](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/381))
+* `resource/cloudflare_load_balancer_pool`: Update IP range for tests to not use reserved ranges ([#369](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/369))
+
+**Fixes:**
+
+* `resource/cloudflare_page_rule`: Fix issues with `browser_cache_ttl` defaults and when value is `0` (for Enterprise users)   ([#379](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/379))
+
+## 1.15.0 (May 24, 2019)
+
+* The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions. ([#309](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/309))
+
+## 1.14.0 (May 15, 2019)
+
+**Improvements:**
+
+* **New Resource:** `cloudflare_argo` Manage Argo features ([#304](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/304))
+* `cloudflare_zone`: Support management of partial zones ([#303](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/303))
+* `cloudflare_rate_limit`: Update `modes` documentation ([#293](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/212))
+* `cloudflare_load_balancer`: Allow steering policy of "random" ([#329](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/329))
+
+**Fixes:**
+
+* `cloudflare_page_rule` - Allow setting `browser_cache_ttl` to 0 ([#293](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/291))
+* `cloudflare_page_rule` - Swap to completely replacing rules ([#338](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/338))
+
+## 1.13.0 (April 12, 2019)
+
+**Improvements**
+
+* **New Resource:** `cloudflare_logpush_job` ([#287](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/287))
+* `cloudflare_zone_settings` - Remove option to toggle `always_on_ddos` ([#253](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/253))
+* `cloudflare_page_rule` - Update documentation to clarify "0" usage
+* `cloudflare_zones` - Return zone ID and zone name ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
+* `cloudflare_load_balancer` - Add `enabled` field ([#208](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/208))
+* `cloudflare_record` - validators: Allow PTR DNS records ([#283](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/283))
+
+**Fixes:**
+
+* `cloudflare_custom_pages` - Use correct casing for `zone_id` lookups
+* `cloudflare_rate_limit` - Make `correlate` optional and not flap in state management ([#271](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/271))
+* `cloudflare_spectrum_application` - Fixed integration tests to work ([#275](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/275))
+* `cloudflare_page_rule` - Better track field changes in `actions` resource. ([#107](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/107))
+
+## 1.12.0 (March 07, 2019)
+
+**Improvements:**
+
+* provider: Enable request/response logging ([#212](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/212))
+* resource/cloudflare_load_balancer_monitor: Add validation for `port` ([#213](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/213))
+* resource/cloudflare_load_balancer_monitor: Add `allow_insecure` and `follow_redirects` ([#205](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/205))
+* resource/cloudflare_page_rule: Updated available actions documentation to match what is available ([#228](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/228))
+* provider: Swap to using go modules for dependency management ([#230](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/230))
+* provider: Minimum Go version for development is now 1.11 ([#230](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/230))
+
+**Fixes:**
+
+* resource/cloudflare_record: Read `data` back from API correctly ([#217](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/217))
+* resource/cloudflare_rate_limit: Read `correlate` back from API correctly ([#204](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/204))
+* resource/cloudflare_load_balancer_monitor: Fix incorrect type cast for `port` ([#213](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/213))
+* resource/cloudflare_load_balancer: Make `steering_policy` computed to avoid spurious diffs ([#214](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/214))
+* resource/cloudflare_load_balancer: Read `session_affinity` back from API to make import work & detects drifts ([#214](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/214))
+
+## 1.11.0 (January 11, 2019)
+
+**Improvements:**
+* **New Resource:** `cloudflare_spectrum_app` ([#156](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/156))
+* **New Data Source:** `cloudflare_zones` ([#168](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/168))
+* `cloudflare_load_balancer_monitor` - Add optional `port` parameter ([#179](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/179))
+* `cloudflare_page_rule` - Improved documentation for `priority` attribute ([#182](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/182)], missing `explicit_cache_control` [[#185](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/185))
+* `cloudflare_rate_limit` - Add `challenge` and `js_challenge` rate-limit modes ([#172](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/172))
+
+**Fixes:**
+* `cloudflare_page_rule` - Page rule `zone` attribute change to trigger new resource ([#183](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/183))
+
 ## 1.10.0 (December 18, 2018)
 
 **Improvements:**

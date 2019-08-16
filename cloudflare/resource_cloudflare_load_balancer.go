@@ -29,6 +29,7 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				// Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
 			"zone_id": {
@@ -71,6 +72,12 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				ConflictsWith: []string{"ttl"},
 			},
 
+			"enabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
+			},
+
 			"ttl": {
 				Type:          schema.TypeInt,
 				Optional:      true,
@@ -87,8 +94,8 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 			"steering_policy": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", ""}, false),
-				Default:      "",
+				ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", ""}, false),
+				Computed:     true,
 			},
 
 			// nb enterprise only
@@ -165,11 +172,13 @@ var localPoolElems = map[string]*schema.Resource{
 func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
+	enabled := d.Get("enabled").(bool)
 	newLoadBalancer := cloudflare.LoadBalancer{
 		Name:           d.Get("name").(string),
 		FallbackPool:   d.Get("fallback_pool_id").(string),
 		DefaultPools:   expandInterfaceToStringList(d.Get("default_pool_ids")),
 		Proxied:        d.Get("proxied").(bool),
+		Enabled:        &enabled,
 		TTL:            d.Get("ttl").(int),
 		SteeringPolicy: d.Get("steering_policy").(string),
 		Persistence:    d.Get("session_affinity").(string),
@@ -229,12 +238,14 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
+	enabled := d.Get("enabled").(bool)
 	loadBalancer := cloudflare.LoadBalancer{
 		ID:             d.Id(),
 		Name:           d.Get("name").(string),
 		FallbackPool:   d.Get("fallback_pool_id").(string),
 		DefaultPools:   expandInterfaceToStringList(d.Get("default_pool_ids")),
 		Proxied:        d.Get("proxied").(bool),
+		Enabled:        &enabled,
 		TTL:            d.Get("ttl").(int),
 		SteeringPolicy: d.Get("steering_policy").(string),
 		Persistence:    d.Get("session_affinity").(string),
@@ -305,9 +316,11 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	d.Set("name", loadBalancer.Name)
 	d.Set("fallback_pool_id", loadBalancer.FallbackPool)
 	d.Set("proxied", loadBalancer.Proxied)
+	d.Set("enabled", *loadBalancer.Enabled)
 	d.Set("description", loadBalancer.Description)
 	d.Set("ttl", loadBalancer.TTL)
 	d.Set("steering_policy", loadBalancer.SteeringPolicy)
+	d.Set("session_affinity", loadBalancer.Persistence)
 	d.Set("created_on", loadBalancer.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancer.ModifiedOn.Format(time.RFC3339Nano))
 

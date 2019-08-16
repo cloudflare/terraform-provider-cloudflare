@@ -3,11 +3,9 @@ package cloudflare
 import (
 	"fmt"
 	"os"
-	"testing"
-
-	"time"
-
 	"regexp"
+	"testing"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
@@ -47,7 +45,7 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						resourceName, "ttl", "3600"),
 					resource.TestCheckResourceAttr(
-						resourceName, "metadata.%", "2"),
+						resourceName, "metadata.%", "3"),
 					resource.TestCheckResourceAttr(
 						resourceName, "metadata.auto_added", "false"),
 				),
@@ -134,7 +132,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(
-						resourceName, "value", "37 46 46.000 N 122 23 35.000 W 0m 100m 0m 0m"),
+						resourceName, "value", "37 46 46.000 N 122 23 35.000 W 0.00m 100.00m 0.00m 0.00m"),
 					resource.TestCheckResourceAttr(
 						resourceName, "proxiable", "false"),
 					resource.TestCheckResourceAttr(
@@ -506,43 +504,43 @@ resource "cloudflare_record" "foobar" {
 func testAccCheckCloudflareRecordConfigLOC(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
-	domain = "%[1]s"
-	name = "%[1]s"
-	data {
-	  "lat_degrees" =  "37"
-	  "lat_minutes" = "46"
-	  "lat_seconds" = "46"
-	  "lat_direction" = "N"
-	  "long_degrees" = "122"
-	  "long_minutes" = "23"
-	  "long_seconds" = "35"
-	  "long_direction" = "W"
-	  "altitude" = 0
-	  "size" = 100
-	  "precision_horz" = 0
-	  "precision_vert" = 0
-	}
-	type = "LOC"
-	ttl = 3600
+  domain = "%[1]s"
+  name = "%[1]s"
+  data = {
+    lat_degrees =  "37"
+    lat_minutes = "46"
+    lat_seconds = 46.000
+    lat_direction = "N"
+    long_degrees = "122"
+    long_minutes = "23"
+    long_seconds = 35.000
+    long_direction = "W"
+    altitude = 0.00
+    size = 100.00
+    precision_horz = 0.00
+    precision_vert = 0.00
+  }
+  type = "LOC"
+  ttl = 3600
 }`, zone)
 }
 
 func testAccCheckCloudflareRecordConfigSRV(zone string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "foobar" {
-	domain = "%[1]s"
-	name = "%[1]s"
-	data {
-	  "priority" = 5
-      "weight" = 0
-      "port" = 5222
-      "target" = "talk.l.google.com"
-      "service" = "_xmpp-client"
-      "proto" = "_tcp"
-      "name" = "%[1]s"
-	}
-	type = "SRV"
-	ttl = 3600
+  domain = "%[1]s"
+  name = "%[1]s"
+  data = {
+    priority = 5
+    weight = 0
+    port = 5222
+    target = "talk.l.google.com"
+    service = "_xmpp-client"
+    proto = "_tcp"
+    name = "%[1]s"
+  }
+  type = "SRV"
+  ttl = 3600
 }`, zone)
 }
 

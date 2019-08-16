@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
@@ -24,20 +25,20 @@ type Zone struct {
 	Name string `json:"name"`
 	// DevMode contains the time in seconds until development expires (if
 	// positive) or since it expired (if negative). It will be 0 if never used.
-	DevMode           int          `json:"development_mode"`
-	OriginalNS        []string     `json:"original_name_servers"`
-	OriginalRegistrar string       `json:"original_registrar"`
-	OriginalDNSHost   string       `json:"original_dnshost"`
-	CreatedOn         time.Time    `json:"created_on"`
-	ModifiedOn        time.Time    `json:"modified_on"`
-	NameServers       []string     `json:"name_servers"`
-	Owner             Owner        `json:"owner"`
-	Permissions       []string     `json:"permissions"`
-	Plan              ZoneRatePlan `json:"plan"`
-	PlanPending       ZoneRatePlan `json:"plan_pending,omitempty"`
-	Status            string       `json:"status"`
-	Paused            bool         `json:"paused"`
-	Type              string       `json:"type"`
+	DevMode           int       `json:"development_mode"`
+	OriginalNS        []string  `json:"original_name_servers"`
+	OriginalRegistrar string    `json:"original_registrar"`
+	OriginalDNSHost   string    `json:"original_dnshost"`
+	CreatedOn         time.Time `json:"created_on"`
+	ModifiedOn        time.Time `json:"modified_on"`
+	NameServers       []string  `json:"name_servers"`
+	Owner             Owner     `json:"owner"`
+	Permissions       []string  `json:"permissions"`
+	Plan              ZonePlan  `json:"plan"`
+	PlanPending       ZonePlan  `json:"plan_pending,omitempty"`
+	Status            string    `json:"status"`
+	Paused            bool      `json:"paused"`
+	Type              string    `json:"type"`
 	Host              struct {
 		Name    string
 		Website string
@@ -58,15 +59,29 @@ type ZoneMeta struct {
 	PhishingDetected  bool `json:"phishing_detected"`
 }
 
+// ZonePlan contains the plan information for a zone.
+type ZonePlan struct {
+	ZonePlanCommon
+	IsSubscribed      bool   `json:"is_subscribed"`
+	CanSubscribe      bool   `json:"can_subscribe"`
+	LegacyID          string `json:"legacy_id"`
+	LegacyDiscount    bool   `json:"legacy_discount"`
+	ExternallyManaged bool   `json:"externally_managed"`
+}
+
 // ZoneRatePlan contains the plan information for a zone.
 type ZoneRatePlan struct {
-	ID         string                   `json:"id"`
-	Name       string                   `json:"name,omitempty"`
-	Price      int                      `json:"price,omitempty"`
-	Currency   string                   `json:"currency,omitempty"`
-	Duration   int                      `json:"duration,omitempty"`
-	Frequency  string                   `json:"frequency,omitempty"`
+	ZonePlanCommon
 	Components []zoneRatePlanComponents `json:"components,omitempty"`
+}
+
+// ZonePlanCommon contains fields used by various Plan endpoints
+type ZonePlanCommon struct {
+	ID        string `json:"id"`
+	Name      string `json:"name,omitempty"`
+	Price     int    `json:"price,omitempty"`
+	Currency  string `json:"currency,omitempty"`
+	Frequency string `json:"frequency,omitempty"`
 }
 
 type zoneRatePlanComponents struct {
@@ -89,8 +104,8 @@ type ZoneResponse struct {
 // ZonesResponse represents the response from the Zone endpoint containing an array of zones.
 type ZonesResponse struct {
 	Response
-	Result []Zone `json:"result"`
-	ResultInfo
+	Result     []Zone `json:"result"`
+	ResultInfo `json:"result_info"`
 }
 
 // ZoneIDResponse represents the response from the Zone endpoint, containing only a zone ID.
@@ -102,7 +117,14 @@ type ZoneIDResponse struct {
 // AvailableZoneRatePlansResponse represents the response from the Available Rate Plans endpoint.
 type AvailableZoneRatePlansResponse struct {
 	Response
-	Result []ZoneRatePlan `json:"result"`
+	Result     []ZoneRatePlan `json:"result"`
+	ResultInfo `json:"result_info"`
+}
+
+// AvailableZonePlansResponse represents the response from the Available Plans endpoint.
+type AvailableZonePlansResponse struct {
+	Response
+	Result []ZonePlan `json:"result"`
 	ResultInfo
 }
 
@@ -240,6 +262,7 @@ type PurgeCacheResponse struct {
 type newZone struct {
 	Name      string `json:"name"`
 	JumpStart bool   `json:"jump_start"`
+	Type      string `json:"type"`
 	// We use a pointer to get a nil type when the field is empty.
 	// This allows us to completely omit this with json.Marshal().
 	Organization *Organization `json:"organization,omitempty"`
@@ -254,12 +277,18 @@ type newZone struct {
 // This will add the new zone to the specified multi-user organization.
 //
 // API reference: https://api.cloudflare.com/#zone-create-a-zone
-func (api *API) CreateZone(name string, jumpstart bool, org Organization) (Zone, error) {
+func (api *API) CreateZone(name string, jumpstart bool, org Organization, zoneType string) (Zone, error) {
 	var newzone newZone
 	newzone.Name = name
 	newzone.JumpStart = jumpstart
 	if org.ID != "" {
 		newzone.Organization = &org
+	}
+
+	if zoneType == "partial" {
+		newzone.Type = "partial"
+	} else {
+		newzone.Type = "full"
 	}
 
 	res, err := api.makeRequest("POST", "/zones", newzone)
@@ -321,10 +350,7 @@ func (api *API) ListZones(z ...string) ([]Zone, error) {
 			}
 		}
 	} else {
-		// TODO: Paginate here. We only grab the first page of results.
-		// Could do this concurrently after the first request by creating a
-		// sync.WaitGroup or just a channel + workers.
-		res, err = api.makeRequest("GET", "/zones", nil)
+		res, err = api.makeRequest("GET", "/zones?per_page=50", nil)
 		if err != nil {
 			return []Zone{}, errors.Wrap(err, errMakeRequestError)
 		}
@@ -332,7 +358,40 @@ func (api *API) ListZones(z ...string) ([]Zone, error) {
 		if err != nil {
 			return []Zone{}, errors.Wrap(err, errUnmarshalError)
 		}
-		zones = r.Result
+
+		totalPageCount := r.TotalPages
+		var wg sync.WaitGroup
+		wg.Add(totalPageCount)
+		errc := make(chan error)
+
+		for i := 1; i <= totalPageCount; i++ {
+			go func(pageNumber int) error {
+				res, err = api.makeRequest("GET", fmt.Sprintf("/zones?per_page=50&page=%d", pageNumber), nil)
+				if err != nil {
+					errc <- err
+				}
+
+				err = json.Unmarshal(res, &r)
+				if err != nil {
+					errc <- err
+				}
+
+				for _, zone := range r.Result {
+					zones = append(zones, zone)
+				}
+
+				select {
+				case err := <-errc:
+					return err
+				default:
+					wg.Done()
+				}
+
+				return nil
+			}(i)
+		}
+
+		wg.Wait()
 	}
 
 	return zones, nil
@@ -378,9 +437,9 @@ func (api *API) ZoneDetails(zoneID string) (Zone, error) {
 
 // ZoneOptions is a subset of Zone, for editable options.
 type ZoneOptions struct {
-	Paused   *bool         `json:"paused,omitempty"`
-	VanityNS []string      `json:"vanity_name_servers,omitempty"`
-	Plan     *ZoneRatePlan `json:"plan,omitempty"`
+	Paused   *bool     `json:"paused,omitempty"`
+	VanityNS []string  `json:"vanity_name_servers,omitempty"`
+	Plan     *ZonePlan `json:"plan,omitempty"`
 }
 
 // ZoneSetPaused pauses Cloudflare service for the entire zone, sending all
@@ -407,8 +466,8 @@ func (api *API) ZoneSetVanityNS(zoneID string, ns []string) (Zone, error) {
 	return zone, nil
 }
 
-// ZoneSetRatePlan changes the zone plan.
-func (api *API) ZoneSetRatePlan(zoneID string, plan ZoneRatePlan) (Zone, error) {
+// ZoneSetPlan changes the zone plan.
+func (api *API) ZoneSetPlan(zoneID string, plan ZonePlan) (Zone, error) {
 	zoneopts := ZoneOptions{Plan: &plan}
 	zone, err := api.EditZone(zoneID, zoneopts)
 	if err != nil {
@@ -445,7 +504,7 @@ func (api *API) EditZone(zoneID string, zoneOpts ZoneOptions) (Zone, error) {
 // API reference: https://api.cloudflare.com/#zone-purge-all-files
 func (api *API) PurgeEverything(zoneID string) (PurgeCacheResponse, error) {
 	uri := "/zones/" + zoneID + "/purge_cache"
-	res, err := api.makeRequest("DELETE", uri, PurgeCacheRequest{true, nil, nil, nil})
+	res, err := api.makeRequest("POST", uri, PurgeCacheRequest{true, nil, nil, nil})
 	if err != nil {
 		return PurgeCacheResponse{}, errors.Wrap(err, errMakeRequestError)
 	}
@@ -462,7 +521,7 @@ func (api *API) PurgeEverything(zoneID string) (PurgeCacheResponse, error) {
 // API reference: https://api.cloudflare.com/#zone-purge-individual-files-by-url-and-cache-tags
 func (api *API) PurgeCache(zoneID string, pcr PurgeCacheRequest) (PurgeCacheResponse, error) {
 	uri := "/zones/" + zoneID + "/purge_cache"
-	res, err := api.makeRequest("DELETE", uri, pcr)
+	res, err := api.makeRequest("POST", uri, pcr)
 	if err != nil {
 		return PurgeCacheResponse{}, errors.Wrap(err, errMakeRequestError)
 	}
@@ -503,6 +562,23 @@ func (api *API) AvailableZoneRatePlans(zoneID string) ([]ZoneRatePlan, error) {
 	err = json.Unmarshal(res, &r)
 	if err != nil {
 		return []ZoneRatePlan{}, errors.Wrap(err, errUnmarshalError)
+	}
+	return r.Result, nil
+}
+
+// AvailableZonePlans returns information about all plans available to the specified zone.
+//
+// API reference: https://api.cloudflare.com/#zone-rate-plan-list-available-plans
+func (api *API) AvailableZonePlans(zoneID string) ([]ZonePlan, error) {
+	uri := "/zones/" + zoneID + "/available_plans"
+	res, err := api.makeRequest("GET", uri, nil)
+	if err != nil {
+		return []ZonePlan{}, errors.Wrap(err, errMakeRequestError)
+	}
+	var r AvailableZonePlansResponse
+	err = json.Unmarshal(res, &r)
+	if err != nil {
+		return []ZonePlan{}, errors.Wrap(err, errUnmarshalError)
 	}
 	return r.Result, nil
 }

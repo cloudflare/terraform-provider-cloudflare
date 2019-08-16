@@ -22,10 +22,11 @@ func resourceCloudflareFilter() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				ForceNew:   true,
+				Computed:   true,
+				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -40,6 +41,9 @@ func resourceCloudflareFilter() *schema.Resource {
 			"expression": {
 				Type:     schema.TypeString,
 				Required: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return strings.TrimSpace(new) == old
+				},
 			},
 			"description": {
 				Type:         schema.TypeString,

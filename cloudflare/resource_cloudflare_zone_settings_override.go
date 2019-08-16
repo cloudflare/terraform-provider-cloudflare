@@ -77,13 +77,6 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 }
 
 var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
-	"advanced_ddos": {
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional:     true,
-		Computed:     true, //Defaults to on for Business+ plans, off otherwise
-	},
-
 	"always_online": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
@@ -404,6 +397,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 		Optional:     true,
 		Computed:     true,
+		Deprecated:   "tls_1_2_only has been deprecated in favour of using `min_tls_version = \"1.2\"` instead.",
 	},
 
 	"tls_1_3": {
@@ -441,12 +435,6 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed: true,
 	},
 
-	"sha1_support": {
-		Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional: true,
-		Computed: true,
-	},
-
 	"cname_flattening": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"flatten_at_root", "flatten_all", "flatten_none"}, false),
@@ -464,6 +452,20 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Type:     schema.TypeInt,
 		Optional: true,
 		Computed: true,
+	},
+
+	"h2_prioritization": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off", "custom"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
+	"image_resizing": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
 	},
 }
 

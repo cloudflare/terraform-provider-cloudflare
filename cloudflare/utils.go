@@ -1,6 +1,11 @@
 package cloudflare
 
-import "github.com/hashicorp/terraform/helper/schema"
+import (
+	"crypto/md5"
+	"fmt"
+
+	"github.com/hashicorp/terraform/helper/schema"
+)
 
 func expandInterfaceToStringList(list interface{}) []string {
 	ifaceList := list.([]interface{})
@@ -36,4 +41,13 @@ func HashByMapKey(key string) func(v interface{}) int {
 		m := v.(map[string]interface{})
 		return schema.HashString(m[key])
 	}
+}
+
+// stringChecksum takes a string and returns the checksum of the string.
+func stringChecksum(s string) string {
+	h := md5.New()
+	h.Write([]byte(s))
+	bs := h.Sum(nil)
+
+	return fmt.Sprintf("%x", bs)
 }

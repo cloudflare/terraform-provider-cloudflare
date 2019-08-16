@@ -5,12 +5,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestFilterSimple(t *testing.T) {
-	rnd := acctest.RandString(10)
+func TestAccFilterSimple(t *testing.T) {
+	rnd := generateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 
@@ -44,4 +43,31 @@ func testFilterConfig(resourceID, zoneName, paused, description, expression stri
 		  expression = "%[5]s"
 		}
 		`, resourceID, zoneName, paused, description, expression)
+}
+
+const multiLineFilter = `
+resource "cloudflare_filter" "%[1]s" {
+	zone = "%[2]s"
+	paused = "%[3]s"
+	description = "%[4]s"
+	expression = <<EOF
+%[5]s
+EOF
+}
+`
+
+func TestAccFilterWhitespace(t *testing.T) {
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(multiLineFilter, rnd, zone, "true", "multi-line filter",
+					"\t\nhttp.request.method in {\"PUT\" \"DELETE\"} and\nhttp.request.uri.path eq \"/\"  \n"),
+			},
+		},
+	})
 }

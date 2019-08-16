@@ -16,8 +16,8 @@ type TemplateExpr struct {
 }
 
 func (e *TemplateExpr) walkChildNodes(w internalWalkFunc) {
-	for i, part := range e.Parts {
-		e.Parts[i] = w(part).(Expression)
+	for _, part := range e.Parts {
+		w(part)
 	}
 }
 
@@ -89,6 +89,26 @@ func (e *TemplateExpr) StartRange() hcl.Range {
 	return e.Parts[0].StartRange()
 }
 
+// IsStringLiteral returns true if and only if the template consists only of
+// single string literal, as would be created for a simple quoted string like
+// "foo".
+//
+// If this function returns true, then calling Value on the same expression
+// with a nil EvalContext will return the literal value.
+//
+// Note that "${"foo"}", "${1}", etc aren't considered literal values for the
+// purposes of this method, because the intent of this method is to identify
+// situations where the user seems to be explicitly intending literal string
+// interpretation, not situations that result in literals as a technicality
+// of the template expression unwrapping behavior.
+func (e *TemplateExpr) IsStringLiteral() bool {
+	if len(e.Parts) != 1 {
+		return false
+	}
+	_, ok := e.Parts[0].(*LiteralValueExpr)
+	return ok
+}
+
 // TemplateJoinExpr is used to convert tuples of strings produced by template
 // constructs (i.e. for loops) into flat strings, by converting the values
 // tos strings and joining them. This AST node is not used directly; it's
@@ -98,7 +118,7 @@ type TemplateJoinExpr struct {
 }
 
 func (e *TemplateJoinExpr) walkChildNodes(w internalWalkFunc) {
-	e.Tuple = w(e.Tuple).(Expression)
+	w(e.Tuple)
 }
 
 func (e *TemplateJoinExpr) Value(ctx *hcl.EvalContext) (cty.Value, hcl.Diagnostics) {
@@ -184,7 +204,7 @@ type TemplateWrapExpr struct {
 }
 
 func (e *TemplateWrapExpr) walkChildNodes(w internalWalkFunc) {
-	e.Wrapped = w(e.Wrapped).(Expression)
+	w(e.Wrapped)
 }
 
 func (e *TemplateWrapExpr) Value(ctx *hcl.EvalContext) (cty.Value, hcl.Diagnostics) {

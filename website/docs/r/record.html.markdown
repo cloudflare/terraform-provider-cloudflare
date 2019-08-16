@@ -21,6 +21,23 @@ resource "cloudflare_record" "foobar" {
   type   = "A"
   ttl    = 3600
 }
+
+# Add a record requiring a data map
+resource "cloudflare_record" "_sip_tls" {
+  domain = "${var.cloudflare_zone}"
+  name   = "_sip._tls"
+  type   = "SRV"
+
+  data = {
+    service  = "_sip"
+    proto    = "_tls"
+    name     = "terraform-srv"
+    priority = 0
+    weight   = 0
+    port     = 443
+    target   = "example.com"
+  }
+}
 ```
 
 ## Argument Reference

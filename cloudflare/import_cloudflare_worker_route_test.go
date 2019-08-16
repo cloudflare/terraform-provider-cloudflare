@@ -6,20 +6,19 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestAccCloudflareWorkerRoute_Import(t *testing.T) {
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	routeRnd := acctest.RandString(10)
+	routeRnd := generateRandomResourceName()
 	routeName := "cloudflare_worker_route." + routeRnd
-	pattern := fmt.Sprintf("%s/%s", zone, acctest.RandString(10))
+	pattern := fmt.Sprintf("%s/%s", zone, generateRandomResourceName())
 
 	// We also create a script in order to test routes since routes
 	// need to point to a script
-	scriptRnd := acctest.RandString(10)
+	scriptRnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -27,7 +26,7 @@ func TestAccCloudflareWorkerRoute_Import(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerRouteConfigSingleScriptInitial(zone, routeRnd, scriptRnd, pattern),
+				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zone, routeRnd, scriptRnd, pattern),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerRouteExists(routeName, &route),
 				),

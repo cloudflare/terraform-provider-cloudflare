@@ -48,7 +48,6 @@ The **settings** block supports settings that may be applied to the zone. These 
 
 These can be specified as "on" or "off" string. Similar to boolean values, but here the empty string also means to use the existing value. Attributes available:
 
-* `advanced_ddos`
 * `always_online`
 * `always_use_https`
 * `automatic_https_rewrites`
@@ -59,6 +58,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `email_obfuscation`
 * `hotlink_protection`
 * `http2`
+* `image_resizing`
 * `ip_geolocation`
 * `ipv6`
 * `mirage`
@@ -70,9 +70,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `response_buffering`
 * `rocket_loader`
 * `server_side_exclude`
-* `sha1_support`
 * `sort_query_string_for_cache`
-* `tls_1_2_only`
 * `tls_client_auth`
 * `true_client_ip_header`
 * `waf`
@@ -83,6 +81,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 
 * `cache_level`. Allowed values: "aggressive", "basic", "simplified".
 * `cname_flattening`. Allowed values: "flatten_at_root", "flatten_all", "flatten_none".
+* `h2_prioritization`. Allowed values: "on", "off", "custom".
 * `min_tls_version`. Allowed values: "1.0", "1.1", "1.2", "1.3".
 * `polish`. Allowed values: "off", "lossless", "lossy".
 * `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".

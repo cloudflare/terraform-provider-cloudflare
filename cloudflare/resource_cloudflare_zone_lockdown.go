@@ -22,9 +22,10 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				ForceNew:   true,
+				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 			"zone_id": {
 				Type:     schema.TypeString,

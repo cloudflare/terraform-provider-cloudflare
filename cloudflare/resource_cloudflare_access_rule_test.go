@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccessRuleASN(t *testing.T) {
+func TestAccAccessRuleASN(t *testing.T) {
 	name := "cloudflare_access_rule.test"
 
 	resource.Test(t, resource.TestCase{
@@ -15,7 +15,7 @@ func TestAccessRuleASN(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessRuleAccountConfig(name, "challenge", "this is notes", "asn", "AS112"),
+				Config: testAccessRuleAccountConfig("challenge", "this is notes", "asn", "AS112"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
@@ -27,14 +27,14 @@ func TestAccessRuleASN(t *testing.T) {
 	})
 }
 
-func testAccessRuleAccountConfig(resourceID, mode, notes, target, value string) string {
+func testAccessRuleAccountConfig(mode, notes, target, value string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_access_rule" "%[1]s" {
-					notes = "%[3]s"
-					mode = "%[2]s"
-					configuration {
-					  target = "%[4]s"
-					  value = "%[5]s"
-					}
-				}`, resourceID, mode, notes, target, value)
+resource "cloudflare_access_rule" "test" {
+  notes = "%[2]s"
+  mode = "%[1]s"
+  configuration = {
+    target = "%[3]s"
+    value = "%[4]s"
+  }
+}`, mode, notes, target, value)
 }

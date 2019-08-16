@@ -18,7 +18,7 @@ type RateLimit struct {
 	Threshold   int                     `json:"threshold"`
 	Period      int                     `json:"period"`
 	Action      RateLimitAction         `json:"action"`
-	Correlate   RateLimitCorrelate      `json:"correlate"`
+	Correlate   *RateLimitCorrelate     `json:"correlate,omitempty"`
 }
 
 // RateLimitTrafficMatcher contains the rules that will be used to apply a rate limit to traffic
@@ -36,8 +36,17 @@ type RateLimitRequestMatcher struct {
 
 // RateLimitResponseMatcher contains the matching rules pertaining to responses
 type RateLimitResponseMatcher struct {
-	Statuses      []int `json:"status,omitempty"`
-	OriginTraffic *bool `json:"origin_traffic,omitempty"` // api defaults to true so we need an explicit empty value
+	Statuses      []int                            `json:"status,omitempty"`
+	OriginTraffic *bool                            `json:"origin_traffic,omitempty"` // api defaults to true so we need an explicit empty value
+	Headers       []RateLimitResponseMatcherHeader `json:"headers,omitempty"`
+}
+
+// RateLimitResponseMatcherHeader contains the structure of the origin
+// HTTP headers used in request matcher checks.
+type RateLimitResponseMatcherHeader struct {
+	Name  string `json:"name"`
+	Op    string `json:"op"`
+	Value string `json:"value"`
 }
 
 // RateLimitKeyValue is k-v formatted as expected in the rate limit description

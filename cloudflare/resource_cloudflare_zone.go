@@ -3,11 +3,12 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	"golang.org/x/net/idna"
+
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -40,10 +41,10 @@ func resourceCloudflareZone() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringMatch(regexp.MustCompile("^([a-zA-Z0-9][\\-a-zA-Z0-9]*\\.)+[\\-a-zA-Z0-9]{2,20}$"), ""),
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: zoneDiffFunc,
 			},
 			"jump_start": {
 				Type:     schema.TypeBool,
@@ -88,8 +89,10 @@ func resourceCloudflareZone() *schema.Resource {
 				Computed: true,
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringInSlice([]string{"full", "partial"}, false),
+				Default:      "full",
+				Optional:     true,
 			},
 			"name_servers": {
 				Type:     schema.TypeList,
@@ -107,13 +110,14 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 
 	zoneName := d.Get("zone").(string)
 	jumpstart := d.Get("jump_start").(bool)
+	zoneType := d.Get("type").(string)
 	organization := cloudflare.Organization{
 		ID: client.OrganizationID,
 	}
 
 	log.Printf("[INFO] Creating Cloudflare Zone: name %s", zoneName)
 
-	zone, err := client.CreateZone(zoneName, jumpstart, organization)
+	zone, err := client.CreateZone(zoneName, jumpstart, organization, zoneType)
 
 	if err != nil {
 		return fmt.Errorf("Error creating zone %q: %s", zoneName, err)
@@ -176,7 +180,7 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	log.Printf("[INFO] Updating Cloudflare Zone: id %s", zoneID)
 
-	if paused, ok := d.GetOkExists("paused"); ok {
+	if paused, ok := d.GetOkExists("paused"); ok && d.HasChange("paused") {
 		log.Printf("[DEBUG] _ paused")
 
 		_, err := client.ZoneSetPaused(zoneID, paused.(bool))
@@ -222,27 +226,28 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 }
 
 func setRatePlan(client *cloudflare.API, zoneID string, planID string) error {
-	ratePlan, err := getZonePlanIDFor(client, zoneID, planNameForID(planID))
+	plan, err := getAvailableZonePlan(client, zoneID, planID)
 	if err != nil {
 		return fmt.Errorf("Error fetching plans %s for zone %q: %s", planID, zoneID, err)
 	}
-	if _, err := client.ZoneSetRatePlan(zoneID, *ratePlan); err != nil {
+	log.Printf("[DEBUG] ratePlan = %#v", plan)
+	if _, err := client.ZoneSetPlan(zoneID, *plan); err != nil {
 		return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
 	}
 	return nil
 }
 
-func getZonePlanIDFor(client *cloudflare.API, zoneID, planName string) (*cloudflare.ZoneRatePlan, error) {
-	plans, err := client.AvailableZoneRatePlans(zoneID)
+func getAvailableZonePlan(client *cloudflare.API, zoneID, planID string) (*cloudflare.ZonePlan, error) {
+	plans, err := client.AvailableZonePlans(zoneID)
 	if err != nil {
 		return nil, err
 	}
 	for _, p := range plans {
-		if strings.EqualFold(p.Name, planName) {
+		if strings.EqualFold(p.LegacyID, planID) {
 			return &p, nil
 		}
 	}
-	return nil, fmt.Errorf("plan %s not found amongst the available plans", planName)
+	return nil, fmt.Errorf("plan '%s' not found amongst the available plans", planID)
 }
 
 func planIDForName(name string) string {
@@ -259,4 +264,17 @@ func planNameForID(id string) string {
 		}
 	}
 	return ""
+}
+
+// zoneDiffFunc is a DiffSuppressFunc that accepts two strings and then converts
+// them to unicode before performing the comparison whether or not the value has
+// changed. This ensures that zones which could be either are evaluated
+// consistently and align with what the Cloudflare API returns.
+func zoneDiffFunc(k, old, new string, d *schema.ResourceData) bool {
+	var p *idna.Profile
+	p = idna.New()
+	unicodeOld, _ := p.ToUnicode(old)
+	unicodeNew, _ := p.ToUnicode(new)
+
+	return unicodeOld == unicodeNew
 }

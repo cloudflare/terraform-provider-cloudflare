@@ -22,10 +22,11 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Computed: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				ForceNew:   true,
+				Computed:   true,
+				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -40,7 +41,7 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 			"action": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "allow", "js_challenge"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "allow", "js_challenge", "log"}, false),
 			},
 			"priority": {
 				Type:         schema.TypeInt,

@@ -23,7 +23,7 @@ resource "cloudflare_access_policy" "test_policy" {
   precedence     = "1"
   decision       = "allow"
 
-  include = {
+  include {
     email = ["test@example.com"]
   }
 }
@@ -37,7 +37,7 @@ resource "cloudflare_access_policy" "test_policy" {
   precedence     = "1"
   decision       = "allow"
 
-  include = {
+  include {
     email = ["test@example.com"]
   }
 
@@ -55,8 +55,8 @@ The following arguments are supported:
   associated with.
 * `zone_id` - (Required) The DNS zone to which the access rule should be
   added.
-* `decision` - (Required) The complete URL of the asset you wish to put
-  Cloudflare Access in front of. Can include subdomains or paths. Or both.
+* `decision` - (Required) Defines the action Access will take if the policy matches the user.
+  Allowed values: `allow`, `deny`, `bypass`
 * `name` - (Required) Friendly name of the Access Application.
 * `precedence` - (Optional) The unique precedence for policies on a single application. Integer.
 * `require` - (Optional) A series of access conditions, see below for

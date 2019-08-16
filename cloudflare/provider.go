@@ -1,13 +1,14 @@
 package cloudflare
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
-	"fmt"
-
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/httpclient"
 	"github.com/hashicorp/terraform/terraform"
@@ -84,6 +85,7 @@ func Provider() terraform.ResourceProvider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"cloudflare_ip_ranges": dataSourceCloudflareIPRanges(),
+			"cloudflare_zones":     dataSourceCloudflareZones(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -91,15 +93,19 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_access_policy":          resourceCloudflareAccessPolicy(),
 			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
 			"cloudflare_account_member":         resourceCloudflareAccountMember(),
+			"cloudflare_argo":                   resourceCloudflareArgo(),
 			"cloudflare_custom_pages":           resourceCloudflareCustomPages(),
+			"cloudflare_custom_ssl":             resourceCloudflareCustomSsl(),
 			"cloudflare_filter":                 resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":          resourceCloudflareFirewallRule(),
 			"cloudflare_load_balancer_monitor":  resourceCloudflareLoadBalancerMonitor(),
 			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
 			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
+			"cloudflare_logpush_job":            resourceCloudflareLogpushJob(),
 			"cloudflare_page_rule":              resourceCloudflarePageRule(),
 			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
 			"cloudflare_record":                 resourceCloudflareRecord(),
+			"cloudflare_spectrum_application":   resourceCloudflareSpectrumApplication(),
 			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
 			"cloudflare_worker_route":           resourceCloudflareWorkerRoute(),
 			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),
@@ -116,9 +122,14 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	limitOpt := cloudflare.UsingRateLimit(float64(d.Get("rps").(int)))
 	retryOpt := cloudflare.UsingRetryPolicy(d.Get("retries").(int), d.Get("min_backoff").(int), d.Get("max_backoff").(int))
 	options := []cloudflare.Option{limitOpt, retryOpt}
+
 	if d.Get("api_client_logging").(bool) {
 		options = append(options, cloudflare.UsingLogger(log.New(os.Stderr, "", log.LstdFlags)))
 	}
+
+	c := cleanhttp.DefaultClient()
+	c.Transport = logging.NewTransport("Cloudflare", c.Transport)
+	options = append(options, cloudflare.HTTPClient(c))
 
 	config := Config{
 		Email:   d.Get("email").(string),

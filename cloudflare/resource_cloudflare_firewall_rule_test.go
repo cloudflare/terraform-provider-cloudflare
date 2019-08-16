@@ -5,12 +5,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestFirewallRuleSimple(t *testing.T) {
-	rnd := acctest.RandString(10)
+func TestAccFirewallRuleSimple(t *testing.T) {
+	rnd := generateRandomResourceName()
 	name := "cloudflare_firewall_rule." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 

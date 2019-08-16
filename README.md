@@ -6,11 +6,10 @@
 
 <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
 
-Requirements
-------------
+## Requirements
 
--	[Terraform](https://www.terraform.io/downloads.html) 0.10.x
--	[Go](https://golang.org/doc/install) 1.10 (to build the provider plugin)
+-	[Terraform](https://www.terraform.io/downloads.html) 0.12.x
+-	[Go](https://golang.org/doc/install) 1.11 (to build the provider plugin)
 
 ## Building The Provider
 
@@ -51,7 +50,7 @@ you've built it.
 
 ```
 providers {
-  cloudflare = "${GOPATH}/github.com/terraform-providers/terraform-provider-cloudflare/terraform-provider-cloudflare"
+  cloudflare = "${GOPATH}/src/github.com/terraform-providers/terraform-provider-cloudflare/terraform-provider-cloudflare"
 }
 ```
 
@@ -61,7 +60,10 @@ comment it/remove it when it's not in use to avoid tripping yourself up.
 
 ## Developing the Provider
 
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.9+ is *required*). You'll also need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well as adding `$GOPATH/bin` to your `$PATH`.
+If you wish to work on the provider, you'll first need [Go](http://www.golang.org)
+installed on your machine (version 1.11+ is *required*). You'll also need to
+correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well
+as adding `$GOPATH/bin` to your `$PATH`.
 
 See above for which option suits your workflow for building the provider.
 
@@ -79,17 +81,34 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 $ make testacc
 ```
 
-## Updating a vendored dependency
+## Managing dependencies
 
-Terraform providers use [`govendor`][govendor] to manage the vendored
-dependencies. To update a dependency, you can run `govendor fetch
-<dependency_path>`. An example of updating the `cloudflare-go` library:
+Terraform providers use [Go modules][go modules] to manage the
+dependencies. To add or update a dependency, you would run the
+following (`v1.2.3` of `foo` is a new package we want to add):
 
 ```
-$ govendor fetch github.com/cloudflare/cloudflare-go
+# Depending on your environment, you may need to `export GO111MODULE=on`
+# before using these commands.
+
+$ go get foo@v1.2.3
+$ go mod tidy
+$ go mod vendor
 ```
 
-This will update the local `vendor` directory and `vendor/vendor.json`
-to include the new dependencies.
+Stepping through the above commands:
 
-[govendor]: https://github.com/kardianos/govendor
+- `go get foo@v1.2.3` fetches version `v1.2.3` from the source (if
+    needed) and adds it to the `go.mod` file for use.
+- `go mod tidy` cleans up any dangling dependencies or references that
+  aren't defined in your module file.
+- `go mod vendor` manages the `vendor` directory of the project. This is
+  done to maintain backwards compatibility with older versions of Go
+  that don't support Go modules.
+
+(The example above will also work if you'd like to upgrade to `v1.2.3`)
+
+If you wish to remove a dependency, you can remove the reference from
+`go.mod` and use the same commands above but omit the initial `go get`.
+
+[go modules]: https://github.com/golang/go/wiki/Modules

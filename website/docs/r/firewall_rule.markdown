@@ -22,7 +22,7 @@ resource "cloudflare_filter" "wordpress" {
   expression = "(http.request.uri.path ~ \".*wp-login.php\" or http.request.uri.path ~ \".*xmlrpc.php\") and ip.src ne 192.0.2.1"
 }
 
-resource "cloudflare_firewall_rule" "wodpress" {
+resource "cloudflare_firewall_rule" "wordpress" {
   zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   description = "Block wordpress break-in attempts"
   filter_id = "${cloudflare_filter.wordpress.id}"
@@ -36,10 +36,9 @@ The following arguments are supported:
 
 * `zone` - (Optional) The DNS zone to which the Firewall Rule should be added. Will be resolved to `zone_id` upon creation.
 * `zone_id` - (Optional) The DNS zone to which the Filter should be added.
-* `action` - (Required) The action to apply to a matched request. Allowed values: "block", "challenge", "allow", "js_challenge".
+* `action` - (Required) The action to apply to a matched request. Allowed values: "block", "challenge", "allow", "js_challenge". Enterprise plan also allows "log".
 * `priority` - (Optional) The priority of the rule to allow control of processing order. A lower number indicates high priority. If not provided, any rules with a priority will be sequenced before those without.
 * `paused` - (Optional) Whether this filter based firewall rule is currently paused. Boolean value.
-* `expression` - (Required) The filter expression to be used.
 * `description` - (Optional) A description of the rule to help identify it.
 
 ## Attributes Reference

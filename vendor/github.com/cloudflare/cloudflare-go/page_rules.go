@@ -43,6 +43,7 @@ Valid IDs are:
   forwarding_url
   host_header_override
   ip_geolocation
+  minify
   mirage
   opportunistic_encryption
   origin_error_page_pass_thru
@@ -85,6 +86,7 @@ var PageRuleActions = map[string]string{
 	"forwarding_url":              "Forwarding URL",              // Value of type map[string]interface
 	"host_header_override":        "Host Header Override",        // Value of type string
 	"ip_geolocation":              "IP Geolocation Header",       // Value of type string
+	"minify":                      "Minify",                      // Value of type map[string]interface
 	"mirage":                      "Mirage",                      // Value of type string
 	"opportunistic_encryption":    "Opportunistic Encryption",    // Value of type string
 	"origin_error_page_pass_thru": "Origin Error Page Pass-thru", // Value of type string
@@ -96,9 +98,9 @@ var PageRuleActions = map[string]string{
 	"security_level":              "Security Level",              // Value of type string
 	"server_side_exclude":         "Server Side Excludes",        // Value of type string
 	"sort_query_string_for_cache": "Query String Sort",           // Value of type string
-	"ssl": "SSL", // Value of type string
-	"true_client_ip_header": "True Client IP Header", // Value of type string
-	"waf": "Web Application Firewall", // Value of type string
+	"ssl":                         "SSL",                         // Value of type string
+	"true_client_ip_header":       "True Client IP Header",       // Value of type string
+	"waf":                         "Web Application Firewall",    // Value of type string
 }
 
 // PageRule describes a Page Rule.
@@ -203,7 +205,7 @@ func (api *API) ChangePageRule(zoneID, ruleID string, rule PageRule) error {
 // API reference: https://api.cloudflare.com/#page-rules-for-a-zone-update-a-page-rule
 func (api *API) UpdatePageRule(zoneID, ruleID string, rule PageRule) error {
 	uri := "/zones/" + zoneID + "/pagerules/" + ruleID
-	res, err := api.makeRequest("PUT", uri, nil)
+	res, err := api.makeRequest("PUT", uri, rule)
 	if err != nil {
 		return errors.Wrap(err, errMakeRequestError)
 	}
