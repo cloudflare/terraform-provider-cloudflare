@@ -1,4 +1,9 @@
 ## 1.17.2 (Unreleased)
+
+**Improvements:**
+
+* `resource/cloudflare_zone_lockdown`: `priority` can now be set on the resource ([#445](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/445))
+
 ## 1.17.1 (August 09, 2019)
 
 **Fixes:**
