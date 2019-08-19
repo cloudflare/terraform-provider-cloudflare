@@ -93,7 +93,7 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 
 			"expected_body": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 
 			"expected_codes": {
@@ -163,14 +163,11 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 			loadBalancerMonitor.Method = "connection_established"
 		}
 	case "http", "https":
+		expectedBody := d.Get("expected_body")
+		loadBalancerMonitor.ExpectedBody = expectedBody.(string)
+
 		if allowInsecure, ok := d.GetOk("allow_insecure"); ok {
 			loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
-		}
-
-		if expectedBody, ok := d.GetOk("expected_body"); ok {
-			loadBalancerMonitor.ExpectedBody = expectedBody.(string)
-		} else {
-			return fmt.Errorf("expected_body must be set")
 		}
 
 		if expectedCodes, ok := d.GetOk("expected_codes"); ok {

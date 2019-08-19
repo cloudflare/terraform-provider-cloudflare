@@ -265,6 +265,15 @@ resource "cloudflare_load_balancer_monitor" "test" {
 }`
 }
 
+func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody() string {
+	return `
+resource "cloudflare_load_balancer_monitor" "test" {
+  expected_body = ""
+  expected_codes = "2xx"
+
+}`
+}
+
 func testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
