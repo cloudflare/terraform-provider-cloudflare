@@ -34,6 +34,29 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 	})
 }
 
+// test creating a config with only the required fields
+func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_lockdown." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "1", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", zone),
+					resource.TestMatchResourceAttr(name, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestCheckResourceAttr(name, "urls.#", "1"),
+					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
