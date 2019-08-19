@@ -19,12 +19,36 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "1", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone", zone),
 					resource.TestMatchResourceAttr(name, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
 					resource.TestCheckResourceAttr(name, "paused", "false"),
+					resource.TestCheckResourceAttr(name, "priority", "1"),
 					resource.TestCheckResourceAttr(name, "description", "this is notes"),
+					resource.TestCheckResourceAttr(name, "urls.#", "1"),
+					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+// test creating a config with only the required fields
+func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_lockdown." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "1", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", zone),
+					resource.TestMatchResourceAttr(name, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
 					resource.TestCheckResourceAttr(name, "urls.#", "1"),
 					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
 				),
@@ -44,7 +68,7 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "1", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
 			},
 			{
 				ResourceName:        name,
@@ -56,16 +80,17 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	})
 }
 
-func testCloudflareZoneLockdownConfig(resourceID, zone, paused, description, url, target, value string) string {
+func testCloudflareZoneLockdownConfig(resourceID, zone, paused, priority, description, url, target, value string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone_lockdown" "%[1]s" {
 					zone = "%[2]s"
 					paused = "%[3]s"
-					description = "%[4]s"
-					urls = ["%[5]s"]
+					priority = "%[4]s"
+					description = "%[5]s"
+					urls = ["%[6]s"]
 					configurations {
-						target = "%[6]s"
-						value = "%[7]s"
+						target = "%[7]s"
+						value = "%[8]s"
 					}
-				}`, resourceID, zone, paused, description, url, target, value)
+				}`, resourceID, zone, paused, priority, description, url, target, value)
 }
