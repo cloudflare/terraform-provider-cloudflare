@@ -21,16 +21,23 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{
 			"email": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
 				Description: "A registered Cloudflare email address.",
 			},
 
 			"token": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_TOKEN", nil),
-				Description: "The token key for API operations.",
+				Description: "The API key for operations.",
+			},
+
+			"api_token": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
+				Description: "The API Token for operations.",
 			},
 
 			"rps": &schema.Schema{
@@ -131,10 +138,19 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	c.Transport = logging.NewTransport("Cloudflare", c.Transport)
 	options = append(options, cloudflare.HTTPClient(c))
 
-	config := Config{
-		Email:   d.Get("email").(string),
-		Token:   d.Get("token").(string),
-		Options: options,
+	config := Config{Options: options}
+
+	if v, ok := d.GetOk("api_token"); ok {
+		config.APIToken = v.(string)
+	} else if v, ok := d.GetOk("token"); ok {
+		config.Token = v.(string)
+		if v, ok = d.GetOk("email"); ok {
+			config.Email = v.(string)
+		} else {
+			return nil, fmt.Errorf("email is not set correctly")
+		}
+	} else {
+		return nil, fmt.Errorf("credentials are not set correctly")
 	}
 
 	client, err := config.Client()
@@ -185,11 +201,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	providerUserAgent := fmt.Sprintf("%s terraform-provider-cloudflare/%s", tfUserAgent, pv)
 	options = append(options, cloudflare.UserAgent(strings.TrimSpace(fmt.Sprintf("%s %s", client.UserAgent, providerUserAgent))))
 
-	config = Config{
-		Email:   d.Get("email").(string),
-		Token:   d.Get("token").(string),
-		Options: options,
-	}
+	config.Options = options
 
 	client, err = config.Client()
 	if err != nil {
