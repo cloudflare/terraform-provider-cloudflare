@@ -24,15 +24,16 @@ func resourceCloudflarePageRule() *schema.Resource {
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				// Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
+				Type:       schema.TypeString,
+				Optional:   true,
+				ForceNew:   true,
+				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
 			"zone_id": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
+				ForceNew: true,
 			},
 
 			"target": {
@@ -330,6 +331,14 @@ func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
 func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zone := d.Get("zone").(string)
+	zoneID := d.Get("zone_id").(string)
+
+	// While we are deprecating `zone`, we need to perform the validation
+	// inside the `Create` to ensure we get at least one of the expected
+	// values.
+	if zone == "" && zoneID == "" {
+		return fmt.Errorf("either zone name or ID must be provided")
+	}
 
 	newPageRuleTargets := []cloudflare.PageRuleTarget{
 		{
@@ -372,9 +381,12 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 		Status:   d.Get("status").(string),
 	}
 
-	zoneID, err := client.ZoneIDByName(zone)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", zone, err)
+	if zoneID == "" {
+		var err error
+		zoneID, err = client.ZoneIDByName(zone)
+		if err != nil {
+			return fmt.Errorf("Error finding zone %q: %s", zone, err)
+		}
 	}
 
 	d.Set("zone_id", zoneID)

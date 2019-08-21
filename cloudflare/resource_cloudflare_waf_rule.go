@@ -27,14 +27,14 @@ func resourceCloudflareWAFRule() *schema.Resource {
 			},
 
 			"zone": {
-				Type:     schema.TypeString,
-				Required: true,
-				// Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
 			"zone_id": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 
 			"package_id": {
@@ -73,11 +73,22 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 	client := meta.(*cloudflare.API)
 	ruleID := d.Get("rule_id").(string)
 	zone := d.Get("zone").(string)
+	zoneID := d.Get("zone_id").(string)
 	mode := d.Get("mode").(string)
 
-	zoneID, err := client.ZoneIDByName(zone)
-	if err != nil {
-		return err
+	// While we are deprecating `zone`, we need to perform the validation
+	// inside the `Create` to ensure we get at least one of the expected
+	// values.
+	if zone == "" && zoneID == "" {
+		return fmt.Errorf("either zone name or ID must be provided")
+	}
+
+	if zoneID == "" {
+		var err error
+		zoneID, err = client.ZoneIDByName(zone)
+		if err != nil {
+			return err
+		}
 	}
 
 	packs, err := client.ListWAFPackages(zoneID)
