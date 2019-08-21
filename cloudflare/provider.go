@@ -74,18 +74,18 @@ func Provider() terraform.ResourceProvider {
 				Description: "Whether to print logs from the API client (using the default log library logger)",
 			},
 
-			"use_org_from_zone": {
+			"use_account_from_zone": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ORG_ZONE", nil),
-				Description: "If specified zone is owned by an organization, configure API client to always use that organization",
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_FROM_ZONE", nil),
+				Description: "If specified zone is owned by an account, configure API client to always use that account",
 			},
 
-			"org_id": {
+			"account_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ORG_ID", nil),
-				Description: "Configure API client to always use that organization. If set this will override 'user_owner_from_zone'",
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
+				Description: "Configure API client to always use that account. If set this will override 'use_account_from_zone'",
 			},
 		},
 
@@ -172,10 +172,10 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 		return nil, err
 	}
 
-	if orgId, ok := d.GetOk("org_id"); ok {
-		log.Printf("[INFO] Using specified organization id %s in Cloudflare provider", orgId.(string))
-		options = append(options, cloudflare.UsingOrganization(orgId.(string)))
-	} else if zoneName, ok := d.GetOk("use_org_from_zone"); ok {
+	if accountID, ok := d.GetOk("account_id"); ok {
+		log.Printf("[INFO] Using specified account id %s in Cloudflare provider", accountID.(string))
+		options = append(options, cloudflare.UsingAccount(accountID.(string)))
+	} else if zoneName, ok := d.GetOk("use_account_from_zone"); ok {
 		zoneId, err := client.ZoneIDByName(zoneName.(string))
 		if err != nil {
 			return nil, fmt.Errorf("error finding zone %q: %s", zoneName.(string), err)
@@ -185,24 +185,24 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 		if err != nil {
 			return nil, err
 		}
-		log.Printf("[DEBUG] Looked up zone to match organization details to: %#v", zone)
+		log.Printf("[DEBUG] Looked up zone to match account details to: %#v", zone)
 
-		orgs, _, err := client.ListOrganizations()
+		accounts, _, err := client.Accounts(cloudflare.PaginationOptions{})
 		if err != nil {
-			return nil, fmt.Errorf("error listing organizations: %s", err.Error())
+			return nil, fmt.Errorf("error listing accounts: %s", err.Error())
 		}
-		log.Printf("[DEBUG] Found organizations for current user: %#v", orgs)
+		log.Printf("[DEBUG] Found accounts for current user: %#v", accounts)
 
-		orgIds := make([]string, len(orgs))
-		for _, org := range orgs {
-			orgIds = append(orgIds, org.ID)
+		accountIDs := make([]string, len(accounts))
+		for _, org := range accounts {
+			accountIDs = append(accountIDs, org.ID)
 		}
 
-		if contains(orgIds, zone.Owner.ID) {
-			log.Printf("[INFO] Using organization %#v in Cloudflare provider", zone.Owner)
-			options = append(options, cloudflare.UsingOrganization(zone.Owner.ID))
+		if contains(accountIDs, zone.Owner.ID) {
+			log.Printf("[INFO] Using account %#v in Cloudflare provider", zone.Owner)
+			options = append(options, cloudflare.UsingAccount(zone.Owner.ID))
 		} else {
-			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for Cloudflare provider")
+			log.Printf("[INFO] Zone ownership specified but account owner not found. Falling back to using user API for Cloudflare provider")
 		}
 	} else {
 		return client, err

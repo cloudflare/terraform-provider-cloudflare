@@ -207,7 +207,7 @@ func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{
 	routes, err := client.ListWorkerRoutes(zoneID)
 
 	for _, r := range routes.Routes {
-		if r.ID == routeID && client.OrganizationID != "" {
+		if r.ID == routeID && client.AccountID != "" {
 			isEnterpriseWorker = true
 		}
 	}
