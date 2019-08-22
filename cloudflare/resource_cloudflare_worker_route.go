@@ -32,6 +32,7 @@ func resourceCloudflareWorkerRoute() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
+				Computed: true,
 			},
 
 			"multi_script": {
