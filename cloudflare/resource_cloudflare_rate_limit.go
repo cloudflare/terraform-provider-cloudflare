@@ -24,15 +24,16 @@ func resourceCloudflareRateLimit() *schema.Resource {
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
 			"zone": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				// Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
+				Type:       schema.TypeString,
+				Optional:   true,
+				ForceNew:   true,
+				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
 			"zone_id": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
+				ForceNew: true,
 			},
 
 			"threshold": {
@@ -199,6 +200,16 @@ func resourceCloudflareRateLimit() *schema.Resource {
 func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
+	zoneName := d.Get("zone").(string)
+	zoneID := d.Get("zone_id").(string)
+
+	// While we are deprecating `zone`, we need to perform the validation
+	// inside the `Create` to ensure we get at least one of the expected
+	// values.
+	if zoneName == "" && zoneID == "" {
+		return fmt.Errorf("either zone name or ID must be provided")
+	}
+
 	rateLimitAction, err := expandRateLimitAction(d)
 	if err != nil {
 		return errors.Wrap(err, "error expanding rate limit action")
@@ -236,15 +247,20 @@ func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{})
 	}
 	newRateLimit.Action = newRateLimitAction
 
-	zoneName := d.Get("zone").(string)
-	zoneId, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return fmt.Errorf("error finding zone %q: %s", zoneName, err)
+	if zoneID == "" {
+		var err error
+		zoneID, err = client.ZoneIDByName(zoneName)
+		if err != nil {
+			return fmt.Errorf("error finding zone %q: %s", zoneName, err)
+		}
 	}
+
+	// assume ids are immutable, not going to look it up from the api again
+	d.Set("zone_id", zoneID)
 
 	log.Printf("[DEBUG] Creating Cloudflare Rate Limit from struct: %+v", newRateLimit)
 
-	r, err := client.CreateRateLimit(zoneId, newRateLimit)
+	r, err := client.CreateRateLimit(zoneID, newRateLimit)
 	if err != nil {
 		return errors.Wrap(err, "error creating rate limit for zone")
 	}
@@ -254,8 +270,6 @@ func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	d.SetId(r.ID)
-	// assume ids are immutable, not going to look it up from the api again
-	d.Set("zone_id", zoneId)
 
 	log.Printf("[INFO] Cloudflare Rate Limit ID: %s", d.Id())
 
