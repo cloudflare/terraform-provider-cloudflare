@@ -348,6 +348,34 @@ func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders
 	})
 }
 
+func TestAccCloudflarePageRuleEdgeCacheTTLNotClobbered(t *testing.T) {
+	var before, after cloudflare.PageRule
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	target := fmt.Sprintf("test-edge-cache-ttl-not-clobbered.%s", zone)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zone, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &before),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.edge_cache_ttl", "10"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtlAndAlwaysOnline(zone, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &after),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.edge_cache_ttl", "10"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
@@ -599,6 +627,31 @@ resource "cloudflare_page_rule" "test" {
 			url = "http://%[1]s/forward"
 			status_code = 301
 		}
+	}
+}`, zone, target)
+}
+
+func testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zone, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone = "%s"
+	target = "%s"
+	actions {
+		always_online = "on"
+		ssl = "flexible"
+		edge_cache_ttl = 10
+	}
+}`, zone, target)
+}
+
+func testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtlAndAlwaysOnline(zone, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone = "%s"
+	target = "%s"
+	actions {
+		always_online = "on"
+		edge_cache_ttl = 10
 	}
 }`, zone, target)
 }
