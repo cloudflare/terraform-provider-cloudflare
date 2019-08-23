@@ -1,4 +1,4 @@
-## 1.17.2 (Unreleased)
+## 1.18.0 (Unreleased)
 
 **Fixes:**
 
