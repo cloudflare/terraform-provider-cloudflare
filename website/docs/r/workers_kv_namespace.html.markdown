@@ -14,7 +14,7 @@ Provides a Workers KV Namespace
 
 ```hcl
 resource "cloudflare_workers_kv_namespace" "example" {
-  title        = "test-namespace"
+  title = "test-namespace"
 }
 ```
 
@@ -22,7 +22,7 @@ resource "cloudflare_workers_kv_namespace" "example" {
 
 The following arguments are supported:
 
-* `title` - (Required) The name of the namespace you wish to create
+* `title` - (Required) The name of the namespace you wish to create.
 
 
 ## Import

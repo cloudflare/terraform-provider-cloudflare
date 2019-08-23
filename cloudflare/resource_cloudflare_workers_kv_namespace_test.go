@@ -18,7 +18,7 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCloudflareWorkersKVNamespaceDesroy,
+		CheckDestroy: testAccCloudflareWorkersKVNamespaceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVNamespace(rnd),
@@ -33,7 +33,7 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	})
 }
 
-func testAccCloudflareWorkersKVNamespaceDesroy(s *terraform.State) error {
+func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
