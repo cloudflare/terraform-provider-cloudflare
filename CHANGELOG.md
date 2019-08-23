@@ -1,4 +1,28 @@
-## 1.17.2 (Unreleased)
+## 1.18.0 (Unreleased)
+
+**Fixes:**
+
+* `resource/cloudflare_page_rule`: Fix a logic condition where setting `edge_cache_ttl` action but then not updating it in subsequent `apply` runs causes it to be blown away ([#453](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/453))
+
+**Improvements:**
+
+* provider: You can now use API tokens to authenticate instead of user email and key ([#450](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/450))
+* `resource/cloudflare_zone_lockdown`: `priority` can now be set on the resource ([#445](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/445))
+* `resource/cloudflare_custom_ssl`: Updated website documentation navigation to include link for resource ([#442)](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/442))
+
+**Deprecations:**
+
+* `resource/cloudflare_access_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_filter`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_firewall_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_load_balancer`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_page_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_rate_limit`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_waf_rule`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_worker_route`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_worker_script`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+* `resource/cloudflare_zone_lockdown`: `zone` has been superseded by using `zone_id` ([#452](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/452))
+
 ## 1.17.1 (August 09, 2019)
 
 **Fixes:**
