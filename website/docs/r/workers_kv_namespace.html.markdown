@@ -27,10 +27,11 @@ The following arguments are supported:
 
 ## Import
 
-KV Namespace settings can be imported using the it's title e.g.
+Workers KV Namespace settings can be imported using it's ID
 
 ```
-$ terraform import cloudflare_kv_namespace.example title
+$ terraform import cloudflare_workers_kv_namespace.example beaeb6716c9443eaa4deef11763ccca6
 ```
 
-where `title` is the title of the namespace
+where:
+- `beaeb6716c9443eaa4deef11763ccca6` is the ID of the namespace
