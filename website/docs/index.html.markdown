@@ -8,8 +8,9 @@ description: |-
 
 # Cloudflare Provider
 
-The Cloudflare provider is used to interact with resources supported by Cloudflare. The provider needs to be configured
-with the proper credentials before it can be used.
+The Cloudflare provider is used to interact with resources supported by
+Cloudflare. The provider needs to be configured with the proper credentials
+before it can be used.
 
 Use the navigation to the left to read about the available resources.
 
@@ -18,8 +19,8 @@ Use the navigation to the left to read about the available resources.
 ```hcl
 # Configure the Cloudflare provider
 provider "cloudflare" {
-  email = "${var.cloudflare_email}"
-  token = "${var.cloudflare_token}"
+  email   = "${var.cloudflare_email}"
+  api_key = "${var.cloudflare_api_key}"
 }
 
 # Create a record
@@ -39,11 +40,12 @@ The following arguments are supported:
 
 * `email` - (Optional) The email associated with the account. This can also be
   specified with the `CLOUDFLARE_EMAIL` shell environment variable.
-* `token` - (Optional) The Cloudflare API key. This can also be specified
-  with the `CLOUDFLARE_TOKEN` shell environment variable.
-* `api_token` - (Optional) The Cloudflare API Token. This can also be specified with
-  the `CLOUDFLARE_API_TOKEN` shell environment variable. This is an alternative to
-  `email`+`token`(key). If both are specified, `api_token` will be used over `email`+`token`(key) fields.
+* `api_key` - (Optional) The Cloudflare API key. This can also be specified
+  with the `CLOUDFLARE_API_KEY` shell environment variable.
+* `api_token` - (Optional) The Cloudflare API Token. This can also be specified
+  with the `CLOUDFLARE_API_TOKEN` shell environment variable. This is an
+  alternative to `email`+`api_key`. If both are specified, `api_token` will be
+  used over `email`+`api_key` fields.
 * `rps` - (Optional) RPS limit to apply when making calls to the API. Default: 4.
   This can also be specified with the `CLOUDFLARE_RPS` shell environment variable.
 * `retries` - (Optional) Maximum number of retries to perform when an API request fails. Default: 3.
@@ -57,7 +59,6 @@ The following arguments are supported:
 * `org_id` - (Optional) Configure API client with this organisation ID, so calls use the organization API rather than the (default) user API.
   This is required for other users in your organization to have access to the resources you manage.
   This can also be specified with the `CLOUDFLARE_ORG_ID` shell environment variable.
-* `use_org_from_zone` - (Optional) Takes a zone name value. This is used to lookup the organization ID that owns this zone, 
+* `use_org_from_zone` - (Optional) Takes a zone name value. This is used to lookup the organization ID that owns this zone,
   which will be used to configure the API client. If `org_id` is also specified, this field will be ignored.
   This can also be specified with the `CLOUDFLARE_ORG_ZONE` shell environment variable.
-
