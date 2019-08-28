@@ -29,6 +29,7 @@ func resourceCloudflareWAFRule() *schema.Resource {
 			"zone": {
 				Type:       schema.TypeString,
 				Optional:   true,
+				Computed:   true,
 				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
