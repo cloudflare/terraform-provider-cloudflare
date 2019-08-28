@@ -111,13 +111,13 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	zoneName := d.Get("zone").(string)
 	jumpstart := d.Get("jump_start").(bool)
 	zoneType := d.Get("type").(string)
-	organization := cloudflare.Organization{
-		ID: client.OrganizationID,
+	account := cloudflare.Account{
+		ID: client.AccountID,
 	}
 
 	log.Printf("[INFO] Creating Cloudflare Zone: name %s", zoneName)
 
-	zone, err := client.CreateZone(zoneName, jumpstart, organization, zoneType)
+	zone, err := client.CreateZone(zoneName, jumpstart, account, zoneType)
 
 	if err != nil {
 		return fmt.Errorf("Error creating zone %q: %s", zoneName, err)

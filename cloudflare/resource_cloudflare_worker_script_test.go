@@ -17,13 +17,13 @@ const (
 )
 
 func TestAccCloudflareWorkerScript_SingleScriptNonEnt(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_ORG_ID if it is set in order
+	// Temporarily unset CLOUDFLARE_ACCOUNT_ID if it is set in order
 	// to test non-ENT behavior
-	if os.Getenv("CLOUDFLARE_ORG_ID") != "" {
-		defer func(orgId string) {
-			os.Setenv("CLOUDFLARE_ORG_ID", orgId)
-		}(os.Getenv("CLOUDFLARE_ORG_ID"))
-		os.Setenv("CLOUDFLARE_ORG_ID", "")
+	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") != "" {
+		defer func(accountId string) {
+			os.Setenv("CLOUDFLARE_ACCOUNT_ID", accountId)
+		}(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
+		os.Setenv("CLOUDFLARE_ACCOUNT_ID", "")
 	}
 
 	testAccCloudflareWorkerScript_SingleScript(t, nil)
@@ -32,7 +32,7 @@ func TestAccCloudflareWorkerScript_SingleScriptNonEnt(t *testing.T) {
 // ENT customers should still be able to use the single-script
 // configuration format if they want to
 func TestAccCloudflareWorkerScript_SingleScriptEnt(t *testing.T) {
-	testAccCloudflareWorkerScript_SingleScript(t, testAccPreCheckOrg)
+	testAccCloudflareWorkerScript_SingleScript(t, testAccPreCheckAccount)
 }
 
 func testAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckFunc) {
@@ -101,7 +101,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheckOrg(t)
+			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,

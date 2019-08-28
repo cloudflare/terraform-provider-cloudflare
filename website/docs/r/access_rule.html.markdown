@@ -34,11 +34,11 @@ resource "cloudflare_access_rule" "antarctica" {
   zone = "example.com"
 }
 
-# Whitelist office's network IP ranges on all Organization's zones (or other lists of resources).
+# Whitelist office's network IP ranges on all account zones (or other lists of resources).
 # Resulting Terraform state will be a list of resources.
 provider "cloudflare" {
   # ... other provider configuration
-  org_id = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id = "d41d8cd98f00b204e9800998ecf8427e"
 }
 variable "my_office" {
   type = "list"
@@ -65,7 +65,7 @@ The following arguments are supported:
 * `notes` - (Optional) A personal note about the rule. Typically used as a reminder or explanation for the rule.
 * `configuration` - (Required) Rule configuration to apply to a matched request. It's a complex value. See description below.
 
-**Note:** If both `zone` and `zone_id` are empty, then access rule will be set to User's or Organization's account and apply to all their zones.
+**Note:** If both `zone` and `zone_id` are empty, then access rule will be set to the account level and apply to all their zones.
 
 The **configuration** block supports:
 
