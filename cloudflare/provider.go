@@ -74,14 +74,14 @@ func Provider() terraform.ResourceProvider {
 				Description: "Whether to print logs from the API client (using the default log library logger)",
 			},
 
-			"use_account_from_zone": &schema.Schema{
+			"use_account_from_zone": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_FROM_ZONE", nil),
 				Description: "If specified zone is owned by an account, configure API client to always use that account",
 			},
 
-			"account_id": &schema.Schema{
+			"account_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
@@ -194,8 +194,8 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 		log.Printf("[DEBUG] Found accounts for current user: %#v", accounts)
 
 		accountIDs := make([]string, len(accounts))
-		for _, org := range accounts {
-			accountIDs = append(accountIDs, org.ID)
+		for _, account := range accounts {
+			accountIDs = append(accountIDs, account.ID)
 		}
 
 		if contains(accountIDs, zone.Owner.ID) {
