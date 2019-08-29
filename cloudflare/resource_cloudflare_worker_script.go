@@ -27,6 +27,7 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 				ForceNew: true,
 				// zone is used for single-script, name is used for multi-script
 				ConflictsWith: []string{"name"},
+				Computed:      true,
 				Deprecated:    "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
 			},
 
