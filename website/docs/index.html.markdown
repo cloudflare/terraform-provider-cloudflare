@@ -56,9 +56,9 @@ The following arguments are supported:
   This can also be specified with the `CLOUDFLARE_MAX_BACKOFF` shell environment variable.
 * `api_client_logging` - (Optional) Whether to print logs from the API client (using the default log library logger). Default: false.
   This can also be specified with the `CLOUDFLARE_API_CLIENT_LOGGING` shell environment variable.
-* `org_id` - (Optional) Configure API client with this organisation ID, so calls use the organization API rather than the (default) user API.
-  This is required for other users in your organization to have access to the resources you manage.
-  This can also be specified with the `CLOUDFLARE_ORG_ID` shell environment variable.
-* `use_org_from_zone` - (Optional) Takes a zone name value. This is used to lookup the organization ID that owns this zone,
-  which will be used to configure the API client. If `org_id` is also specified, this field will be ignored.
-  This can also be specified with the `CLOUDFLARE_ORG_ZONE` shell environment variable.
+* `account_id` - (Optional) Configure API client with this account ID, so calls use the account API rather than the (default) user API.
+  This is required for other users in your account to have access to the resources you manage.
+  This can also be specified with the `CLOUDFLARE_ACCOUNT_ID` shell environment variable.
+* `use_account_from_zone` - (Optional) Takes a zone name value. This is used to lookup the account ID that owns this zone,
+  which will be used to configure the API client. If `account_id` is also specified, this field will be ignored.
+  This can also be specified with the `CLOUDFLARE_FROM_ACCOUNT_ZONE` shell environment variable.
