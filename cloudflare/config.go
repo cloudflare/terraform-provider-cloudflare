@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	Email    string
-	Token    string
+	APIKey   string
 	APIToken string
 	Options  []cloudflare.Option
 }
@@ -22,7 +22,7 @@ func (c *Config) Client() (*cloudflare.API, error) {
 	if c.APIToken != "" {
 		client, err = cloudflare.NewWithAPIToken(c.APIToken, c.Options...)
 	} else {
-		client, err = cloudflare.New(c.Token, c.Email, c.Options...)
+		client, err = cloudflare.New(c.APIKey, c.Email, c.Options...)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("Error creating new Cloudflare client: %s", err)

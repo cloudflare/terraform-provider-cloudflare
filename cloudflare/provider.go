@@ -25,10 +25,10 @@ func Provider() terraform.ResourceProvider {
 				Description: "A registered Cloudflare email address.",
 			},
 
-			"token": {
+			"api_key": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_TOKEN", nil),
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
 				Description: "The API key for operations.",
 			},
 
@@ -156,8 +156,8 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 
 	if v, ok := d.GetOk("api_token"); ok {
 		config.APIToken = v.(string)
-	} else if v, ok := d.GetOk("token"); ok {
-		config.Token = v.(string)
+	} else if v, ok := d.GetOk("api_key"); ok {
+		config.APIKey = v.(string)
 		if v, ok = d.GetOk("email"); ok {
 			config.Email = v.(string)
 		} else {

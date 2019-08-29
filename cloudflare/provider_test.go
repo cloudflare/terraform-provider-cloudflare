@@ -36,8 +36,8 @@ func testAccPreCheck(t *testing.T) {
 		t.Fatal("CLOUDFLARE_EMAIL must be set for acceptance tests")
 	}
 
-	if v := os.Getenv("CLOUDFLARE_TOKEN"); v == "" {
-		t.Fatal("CLOUDFLARE_TOKEN must be set for acceptance tests")
+	if v := os.Getenv("CLOUDFLARE_API_KEY"); v == "" {
+		t.Fatal("CLOUDFLARE_API_KEY must be set for acceptance tests")
 	}
 
 	if v := os.Getenv("CLOUDFLARE_DOMAIN"); v == "" {
