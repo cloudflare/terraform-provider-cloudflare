@@ -41,7 +41,7 @@ __NOTE:__ This is only for enterprise accounts. With multi-script, each route po
 resource "cloudflare_worker_route" "my_route" {
   zone = "example.com"
   pattern = "example.com/*"
-  script_name = "${cloudflare_worker_script.my_script.name}"
+  script_name = cloudflare_worker_script.my_script.name
 }
 
 resource "cloudflare_worker_script" "my_script" {
