@@ -15,7 +15,7 @@ Provides a Cloudflare record resource.
 ```hcl
 # Add a record to the domain
 resource "cloudflare_record" "foobar" {
-  domain = "${var.cloudflare_zone}"
+  domain = var.cloudflare_zone
   name   = "terraform"
   value  = "192.168.0.11"
   type   = "A"
@@ -24,7 +24,7 @@ resource "cloudflare_record" "foobar" {
 
 # Add a record requiring a data map
 resource "cloudflare_record" "_sip_tls" {
-  domain = "${var.cloudflare_zone}"
+  domain = var.cloudflare_zone
   name   = "_sip._tls"
   type   = "SRV"
 
