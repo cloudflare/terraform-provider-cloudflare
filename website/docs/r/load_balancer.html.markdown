@@ -19,18 +19,18 @@ Provides a Cloudflare Load Balancer resource. This sits in front of a number of 
 resource "cloudflare_load_balancer" "bar" {
   zone = "example.com"
   name = "example-load-balancer"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.foo.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.foo.id}"]
+  fallback_pool_id = cloudflare_load_balancer_pool.foo.id
+  default_pool_ids = [cloudflare_load_balancer_pool.foo.id]
   description = "example load balancer using geo-balancing"
   proxied = true
   steering_policy = "geo"
   pop_pools {
     pop = "LAX"
-    pool_ids = ["${cloudflare_load_balancer_pool.foo.id}"]
+    pool_ids = [cloudflare_load_balancer_pool.foo.id]
   }
   region_pools {
     region = "WNAM"
-    pool_ids = ["${cloudflare_load_balancer_pool.foo.id}"]
+    pool_ids = [cloudflare_load_balancer_pool.foo.id"]
   }
 }
 
