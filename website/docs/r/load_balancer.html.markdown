@@ -30,7 +30,7 @@ resource "cloudflare_load_balancer" "bar" {
   }
   region_pools {
     region = "WNAM"
-    pool_ids = [cloudflare_load_balancer_pool.foo.id"]
+    pool_ids = [cloudflare_load_balancer_pool.foo.id]
   }
 }
 
