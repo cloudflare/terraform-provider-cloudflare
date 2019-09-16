@@ -35,7 +35,7 @@ resource "cloudflare_page_rule" "foobar" {
 
 The following arguments are supported:
 
-* `zone_id` - (Required) The DNS zone id to which the page rule should be added.
+* `zone_id` - (Required) The DNS zone ID to which the page rule should be added.
 * `target` - (Required) The URL pattern to target with the page rule.
 * `actions` - (Required) The actions taken by the page rule, options given below.
 * `priority` - (Optional) The priority of the page rule among others for this target, the higher the number the higher the priority as per [API documentation](https://api.cloudflare.com/#page-rules-for-a-zone-create-page-rule).
