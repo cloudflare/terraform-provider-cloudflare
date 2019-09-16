@@ -59,6 +59,3 @@ The following arguments are supported:
 * `account_id` - (Optional) Configure API client with this account ID, so calls use the account API rather than the (default) user API.
   This is required for other users in your account to have access to the resources you manage.
   This can also be specified with the `CLOUDFLARE_ACCOUNT_ID` shell environment variable.
-* `use_account_from_zone` - (Optional) Takes a zone name value. This is used to lookup the account ID that owns this zone,
-  which will be used to configure the API client. If `account_id` is also specified, this field will be ignored.
-  This can also be specified with the `CLOUDFLARE_FROM_ACCOUNT_ZONE` shell environment variable.

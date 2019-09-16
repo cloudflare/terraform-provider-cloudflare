@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/go-cleanhttp"
+	cloudflare "github.com/cloudflare/cloudflare-go"
+	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/httpclient"
@@ -74,18 +74,11 @@ func Provider() terraform.ResourceProvider {
 				Description: "Whether to print logs from the API client (using the default log library logger)",
 			},
 
-			"use_account_from_zone": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_FROM_ZONE", nil),
-				Description: "If specified zone is owned by an account, configure API client to always use that account",
-			},
-
 			"account_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
-				Description: "Configure API client to always use that account. If set this will override 'use_account_from_zone'",
+				Description: "Configure API client to always use that account.",
 			},
 		},
 
@@ -175,35 +168,6 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	if accountID, ok := d.GetOk("account_id"); ok {
 		log.Printf("[INFO] Using specified account id %s in Cloudflare provider", accountID.(string))
 		options = append(options, cloudflare.UsingAccount(accountID.(string)))
-	} else if zoneName, ok := d.GetOk("use_account_from_zone"); ok {
-		zoneId, err := client.ZoneIDByName(zoneName.(string))
-		if err != nil {
-			return nil, fmt.Errorf("error finding zone %q: %s", zoneName.(string), err)
-		}
-
-		zone, err := client.ZoneDetails(zoneId)
-		if err != nil {
-			return nil, err
-		}
-		log.Printf("[DEBUG] Looked up zone to match account details to: %#v", zone)
-
-		accounts, _, err := client.Accounts(cloudflare.PaginationOptions{})
-		if err != nil {
-			return nil, fmt.Errorf("error listing accounts: %s", err.Error())
-		}
-		log.Printf("[DEBUG] Found accounts for current user: %#v", accounts)
-
-		accountIDs := make([]string, len(accounts))
-		for _, account := range accounts {
-			accountIDs = append(accountIDs, account.ID)
-		}
-
-		if contains(accountIDs, zone.Owner.ID) {
-			log.Printf("[INFO] Using account %#v in Cloudflare provider", zone.Owner)
-			options = append(options, cloudflare.UsingAccount(zone.Owner.ID))
-		} else {
-			log.Printf("[INFO] Zone ownership specified but account owner not found. Falling back to using user API for Cloudflare provider")
-		}
 	} else {
 		return client, err
 	}
