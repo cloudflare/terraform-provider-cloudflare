@@ -24,7 +24,7 @@ resource "cloudflare_worker_route" "my_route" {
   # it's recommended to set `depends_on` to point to the cloudflare_worker_script
   # resource in order to make sure that the script is uploaded before the route
   # is created
-  depends_on = ["cloudflare_worker_script.my_script"]
+  depends_on = [cloudflare_worker_script.my_script]
 }
 
 resource "cloudflare_worker_script" "my_script" {
@@ -41,7 +41,7 @@ __NOTE:__ This is only for enterprise accounts. With multi-script, each route po
 resource "cloudflare_worker_route" "my_route" {
   zone = "example.com"
   pattern = "example.com/*"
-  script_name = "${cloudflare_worker_script.my_script.name}"
+  script_name = cloudflare_worker_script.my_script.name
 }
 
 resource "cloudflare_worker_script" "my_script" {

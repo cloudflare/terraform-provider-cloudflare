@@ -18,7 +18,7 @@ __NOTE:__ This is for non-enterprise accounts where there is one script per zone
 # Sets the script for the example.com zone
 resource "cloudflare_worker_script" "my_script" {
   zone = "example.com"
-  content = "${file("script.js")}"
+  content = file("script.js")
 }
 ```
 
@@ -30,7 +30,7 @@ __NOTE:__ This is only for enterprise accounts. With multi-script, each script i
 # Sets the script with the name "script_1"
 resource "cloudflare_worker_script" "my_script" {
   name = "script_1"
-  content = "${file("script.js")}"
+  content = file("script.js")
 }
 ```
 

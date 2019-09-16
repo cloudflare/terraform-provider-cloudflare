@@ -15,7 +15,7 @@ Provides a Cloudflare page rule resource.
 ```hcl
 # Add a page rule to the domain
 resource "cloudflare_page_rule" "foobar" {
-  zone = "${var.cloudflare_zone}"
+  zone = var.cloudflare_zone
   target = "sub.${var.cloudflare_zone}/page"
   priority = 1
 
