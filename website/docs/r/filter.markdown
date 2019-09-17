@@ -24,8 +24,7 @@ resource "cloudflare_filter" "wordpress" {
 
 The following arguments are supported:
 
-* `zone` - (Optional) The DNS zone to which the Filter should be added. Will be resolved to `zone_id` upon creation.
-* `zone_id` - (Optional) The DNS zone to which the Filter should be added.
+* `zone_id` - (Required) The DNS zone to which the Filter should be added.
 * `paused` - (Optional) Whether this filter is currently paused. Boolean value.
 * `expression` - (Required) The filter expression to be used.
 * `description` - (Optional) A note that you can use to describe the purpose of the filter.
@@ -36,7 +35,6 @@ The following arguments are supported:
 The following attributes are exported:
 
 * `id` - Filter identifier.
-* `zone_id` - The DNS zone ID.
 
 ## Import
 
