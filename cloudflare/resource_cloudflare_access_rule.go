@@ -21,13 +21,6 @@ func resourceCloudflareAccessRule() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				ForceNew:   true,
-				Computed:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
 			"zone_id": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -68,7 +61,6 @@ func resourceCloudflareAccessRule() *schema.Resource {
 
 func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zone := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
 
 	newRule := cloudflare.AccessRule{
@@ -88,22 +80,13 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 	var r *cloudflare.AccessRuleResponse
 	var err error
 
-	if zone == "" && zoneID == "" {
+	if zoneID == "" {
 		if client.AccountID != "" {
 			r, err = client.CreateAccountAccessRule(client.AccountID, newRule)
 		} else {
 			r, err = client.CreateUserAccessRule(newRule)
 		}
 	} else {
-		if zoneID == "" {
-			zoneID, err = client.ZoneIDByName(zone)
-			if err != nil {
-				return fmt.Errorf("Error finding zone %q: %s", zone, err)
-			}
-
-			d.Set("zone_id", zoneID)
-		}
-
 		r, err = client.CreateZoneAccessRule(zoneID, newRule)
 	}
 
@@ -123,20 +106,6 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	zoneName := d.Get("zone").(string)
-	if zoneID == "" {
-		zoneID, _ = client.ZoneIDByName(zoneName)
-	} else {
-		zones, err := client.ListZones()
-		if err != nil {
-			return fmt.Errorf("failed to lookup all zones: %s", err)
-		}
-		for _, zone := range zones {
-			if zone.ID == zoneID {
-				zoneName = zone.Name
-			}
-		}
-	}
 
 	var accessRuleResponse *cloudflare.AccessRuleResponse
 	var err error
@@ -166,7 +135,6 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
 
-	d.Set("zone", zoneName)
 	d.Set("zone_id", zoneID)
 	d.Set("mode", accessRuleResponse.Result.Mode)
 	d.Set("notes", accessRuleResponse.Result.Notes)
