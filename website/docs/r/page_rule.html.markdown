@@ -15,7 +15,7 @@ Provides a Cloudflare page rule resource.
 ```hcl
 # Add a page rule to the domain
 resource "cloudflare_page_rule" "foobar" {
-  zone = "${var.cloudflare_zone}"
+  zone_id = "${var.cloudflare_zone_id}"
   target = "sub.${var.cloudflare_zone}/page"
   priority = 1
 
@@ -35,7 +35,7 @@ resource "cloudflare_page_rule" "foobar" {
 
 The following arguments are supported:
 
-* `zone` - (Required) The DNS zone to which the page rule should be added.
+* `zone_id` - (Required) The DNS zone ID to which the page rule should be added.
 * `target` - (Required) The URL pattern to target with the page rule.
 * `actions` - (Required) The actions taken by the page rule, options given below.
 * `priority` - (Optional) The priority of the page rule among others for this target, the higher the number the higher the priority as per [API documentation](https://api.cloudflare.com/#page-rules-for-a-zone-create-page-rule).
@@ -96,7 +96,6 @@ Minify actions support the following:
 The following attributes are exported:
 
 * `id` - The page rule ID.
-* `zone_id` - The ID of the zone in which the page rule will be applied.
 * `target` - The URL pattern targeted by the page rule.
 * `actions` - The actions applied by the page rule.
 * `priority` - The priority of the page rule.
@@ -104,8 +103,8 @@ The following attributes are exported:
 
 ## Import
 
-Page rules can be imported using a composite ID formed of zone name and page rule ID, e.g.
+Page rules can be imported using a composite ID formed of zone ID and page rule ID, e.g.
 
 ```
-$ terraform import cloudflare_page_rule.default example.com/ch8374ftwdghsif43
+$ terraform import cloudflare_page_rule.default d41d8cd98f00b204e9800998ecf8427e/ch8374ftwdghsif43
 ```
