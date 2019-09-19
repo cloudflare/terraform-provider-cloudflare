@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -16,7 +16,7 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
@@ -26,10 +26,10 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRateLimitConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigBasic(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "action.0.response.#", "0"),
@@ -52,7 +52,7 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
@@ -62,10 +62,10 @@ func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRateLimitChallengeConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitChallengeConfigBasic(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 					// check that the action challenge mode has been set
 					resource.TestCheckResourceAttr(name, "action.0.mode", "challenge"),
 					resource.TestCheckResourceAttr(name, "action.0.response.#", "0"),
@@ -87,7 +87,8 @@ func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
@@ -97,10 +98,10 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRateLimitConfigFullySpecified(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigFullySpecified(zoneID, rnd, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "action.0.response.#", "1"),
 					resource.TestCheckResourceAttr(name, "action.0.response.0.content_type", "text/plain"),
@@ -123,7 +124,8 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	var initialRateLimitId string
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
@@ -133,20 +135,20 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 				),
 			},
 			{
 				PreConfig: func() {
 					initialRateLimitId = rateLimit.ID
 				},
-				Config: testAccCheckCloudflareRateLimitConfigFullySpecified(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigFullySpecified(zoneID, rnd, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 					func(state *terraform.State) error {
 						if initialRateLimitId != rateLimit.ID {
 							// rate limit change shows resource was recreated, we want in place update
@@ -165,7 +167,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	var initialRateLimitId string
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
@@ -175,19 +177,19 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 					testAccManuallyDeleteRateLimit(name, &rateLimit, &initialRateLimitId),
 				),
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 					func(state *terraform.State) error {
 						if initialRateLimitId == rateLimit.ID {
 							return fmt.Errorf("rate limit id is unchanged even after we thought we deleted it ( %s )",
@@ -203,7 +205,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 
 func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 	t.Parallel()
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
@@ -212,7 +214,7 @@ func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccCheckCloudflareRateLimitConfigWithoutTimeout(zone, rnd),
+				Config:      testAccCheckCloudflareRateLimitConfigWithoutTimeout(zoneID, rnd),
 				ExpectError: regexp.MustCompile(regexp.QuoteMeta("rate limit timeout must be set if the 'mode' is simulate or ban")),
 			},
 		},
@@ -221,7 +223,7 @@ func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 
 func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 	t.Parallel()
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
@@ -230,7 +232,7 @@ func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, rnd),
+				Config:      testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zoneID, rnd),
 				ExpectError: regexp.MustCompile(regexp.QuoteMeta("rate limit timeout must not be set if the 'mode' is challenge or js_challenge")),
 			},
 		},
@@ -296,7 +298,7 @@ func testAccCheckCloudflareRateLimitIDIsValid(n, expectedZone string) resource.T
 			return fmt.Errorf("invalid id %q, should be a string with 32 characters", rs.Primary.ID)
 		}
 
-		if zoneId, ok := rs.Primary.Attributes["zone_id"]; !ok || len(zoneId) < 1 {
+		if zoneID, ok := rs.Primary.Attributes["zone_id"]; !ok || len(zoneID) < 1 {
 			return errors.New("zone_id is unset, should always be set with id")
 		}
 
@@ -320,23 +322,23 @@ func testAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit
 	}
 }
 
-func testAccCheckCloudflareRateLimitConfigBasic(zone, id string) string {
+func testAccCheckCloudflareRateLimitConfigBasic(zoneID, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
-  zone = "%[2]s"
+  zone_id = "%[2]s"
   threshold = 1000
   period = 10
   action {
     mode = "simulate"
     timeout = 86400
   }
-}`, id, zone)
+}`, id, zoneID)
 }
 
-func testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, id string) string {
+func testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
-  zone = "%[2]s"
+  zone_id = "%[2]s"
   threshold = 1000
   period = 10
   match {
@@ -348,18 +350,18 @@ resource "cloudflare_rate_limit" "%[1]s" {
     mode = "simulate"
     timeout = 86400
   }
-}`, id, zone)
+}`, id, zoneID)
 }
 
-func testAccCheckCloudflareRateLimitConfigFullySpecified(zone, id string) string {
+func testAccCheckCloudflareRateLimitConfigFullySpecified(zoneID, id, zoneName string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
-  zone = "%[2]s"
+  zone_id = "%[2]s"
   threshold = 2000
   period = 10
   match {
     request {
-      url_pattern = "%[2]s/tfacc-full-%[1]s"
+      url_pattern = "%[3]s/tfacc-full-%[1]s"
       schemes = ["HTTP", "HTTPS"]
       methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"]
     }
@@ -381,43 +383,43 @@ resource "cloudflare_rate_limit" "%[1]s" {
   }
   disabled = true
   description = "my fully specified rate limit for a zone"
-  bypass_url_patterns = ["%[2]s/bypass1","%[2]s/bypass2"]
-}`, id, zone)
+  bypass_url_patterns = ["%[3]s/bypass1","%[3]s/bypass2"]
+}`, id, zoneID, zoneName)
 }
 
-func testAccCheckCloudflareRateLimitChallengeConfigBasic(zone, id string) string {
+func testAccCheckCloudflareRateLimitChallengeConfigBasic(zoneID, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
-  zone = "%[2]s"
+  zone_id = "%[2]s"
   threshold = 1000
   period = 10
   action {
     mode = "challenge"
   }
-}`, id, zone)
+}`, id, zoneID)
 }
 
-func testAccCheckCloudflareRateLimitConfigWithoutTimeout(zone, id string) string {
+func testAccCheckCloudflareRateLimitConfigWithoutTimeout(zoneID, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
-  zone = "%[2]s"
+  zone_id = "%[2]s"
   threshold = 1000
   period = 10
   action {
     mode = "simulate"
   }
-}`, id, zone)
+}`, id, zoneID)
 }
 
-func testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zone, id string) string {
+func testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zoneID, id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_rate_limit" "%[1]s" {
-  zone = "%[2]s"
+  zone_id = "%[2]s"
   threshold = 1000
   period = 10
   action {
     mode = "challenge"
     timeout = 60
   }
-}`, id, zone)
+}`, id, zoneID)
 }
