@@ -8,13 +8,13 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestAccCloudflareZoneSettingsOverride_Empty(t *testing.T) {
-	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := "cloudflare_zone_settings_override.test"
 
 	resource.Test(t, resource.TestCase{
@@ -22,7 +22,7 @@ func TestAccCloudflareZoneSettingsOverride_Empty(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneName),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettingsEmpty(name),
 				),
@@ -32,7 +32,7 @@ func TestAccCloudflareZoneSettingsOverride_Empty(t *testing.T) {
 }
 
 func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
-	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := "cloudflare_zone_settings_override.test"
 
 	initialSettings := make(map[string]interface{})
@@ -41,13 +41,13 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneName),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccGetInitialZoneSettings(t, zoneName, initialSettings),
+					testAccGetInitialZoneSettings(t, zoneID, initialSettings),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneName),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettings(name),
 					resource.TestCheckResourceAttr(
@@ -59,12 +59,12 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 				),
 			},
 		},
-		CheckDestroy: testAccCheckInitialZoneSettings(zoneName, initialSettings),
+		CheckDestroy: testAccCheckInitialZoneSettings(zoneID, initialSettings),
 	})
 }
 
 func TestAccCloudflareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
-	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := "cloudflare_zone_settings_override.test"
 
 	initialSettings := make(map[string]interface{})
@@ -73,25 +73,25 @@ func TestAccCloudflareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneName),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccGetInitialZoneSettings(t, zoneName, initialSettings),
+					testAccGetInitialZoneSettings(t, zoneID, initialSettings),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneName),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettings(name),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneName),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettings(name),
 				),
 			},
 		},
-		CheckDestroy: testAccCheckInitialZoneSettings(zoneName, initialSettings),
+		CheckDestroy: testAccCheckInitialZoneSettings(zoneID, initialSettings),
 	})
 }
 
@@ -160,14 +160,10 @@ func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 	}
 }
 
-func testAccGetInitialZoneSettings(t *testing.T, zoneName string, settings map[string]interface{}) resource.TestCheckFunc {
+func testAccGetInitialZoneSettings(t *testing.T, zoneID string, settings map[string]interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 
-		zoneID, err := client.ZoneIDByName(zoneName)
-		if err != nil {
-			t.Fatalf("couldn't find zone %q: %s ", zoneName, err.Error())
-		}
 		foundZone, err := client.ZoneSettings(zoneID)
 		if err != nil {
 			t.Fatalf(err.Error())
@@ -184,14 +180,10 @@ func testAccGetInitialZoneSettings(t *testing.T, zoneName string, settings map[s
 	}
 }
 
-func testAccCheckInitialZoneSettings(zoneName string, initialSettings map[string]interface{}) resource.TestCheckFunc {
+func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 
-		zoneID, err := client.ZoneIDByName(zoneName)
-		if err != nil {
-			return fmt.Errorf("couldn't find zone %q : %s", zoneName, err.Error())
-		}
 		foundZone, err := client.ZoneSettings(zoneID)
 		if err != nil {
 			return err
@@ -210,17 +202,17 @@ func testAccCheckInitialZoneSettings(zoneName string, initialSettings map[string
 	}
 }
 
-func testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zone string) string {
+func testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zone_settings_override" "test" {
-	name = "%s"
-}`, zone)
+	zone_id = "%s"
+}`, zoneID)
 }
 
-func testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zone string) string {
+func testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zone_settings_override" "test" {
-	name = "%s"
+	zone_id = "%s"
 	settings {
 		brotli = "on"
 		challenge_ttl = 2700
@@ -236,5 +228,5 @@ resource "cloudflare_zone_settings_override" "test" {
 			enabled = true
 		}
 	}
-}`, zone)
+}`, zoneID)
 }
