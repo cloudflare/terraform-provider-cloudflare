@@ -172,9 +172,9 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 		return nil, err
 	}
 
-	if orgId, ok := d.GetOk("org_id"); ok {
-		log.Printf("[INFO] Using specified organization id %s in Cloudflare provider", orgId.(string))
-		options = append(options, cloudflare.UsingOrganization(orgId.(string)))
+	if accountId, ok := d.GetOk("org_id"); ok {
+		log.Printf("[INFO] Using specified account id %s in Cloudflare provider", accountId.(string))
+		options = append(options, cloudflare.UsingAccount(accountId.(string)))
 	} else if zoneName, ok := d.GetOk("use_org_from_zone"); ok {
 		zoneId, err := client.ZoneIDByName(zoneName.(string))
 		if err != nil {
@@ -187,22 +187,23 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 		}
 		log.Printf("[DEBUG] Looked up zone to match organization details to: %#v", zone)
 
-		orgs, _, err := client.ListOrganizations()
+		pageOpts := cloudflare.PaginationOptions{}
+		accounts, _, err := client.Accounts(pageOpts)
 		if err != nil {
 			return nil, fmt.Errorf("error listing organizations: %s", err.Error())
 		}
-		log.Printf("[DEBUG] Found organizations for current user: %#v", orgs)
+		log.Printf("[DEBUG] Found accounts for current user: %#v", accounts)
 
-		orgIds := make([]string, len(orgs))
-		for _, org := range orgs {
-			orgIds = append(orgIds, org.ID)
+		accountIds := make([]string, len(accounts))
+		for _, account := range accounts {
+			accountIds = append(accountIds, account.ID)
 		}
 
-		if contains(orgIds, zone.Owner.ID) {
-			log.Printf("[INFO] Using organization %#v in Cloudflare provider", zone.Owner)
-			options = append(options, cloudflare.UsingOrganization(zone.Owner.ID))
+		if contains(accountIds, zone.Owner.ID) {
+			log.Printf("[INFO] Using account %#v in Cloudflare provider", zone.Owner)
+			options = append(options, cloudflare.UsingAccount(zone.Owner.ID))
 		} else {
-			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for Cloudflare provider")
+			log.Printf("[INFO] Zone ownership specified but account owner not found. Falling back to using user API for Cloudflare provider")
 		}
 	} else {
 		return client, err

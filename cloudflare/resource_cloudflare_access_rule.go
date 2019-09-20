@@ -89,8 +89,8 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 	var err error
 
 	if zone == "" && zoneID == "" {
-		if client.OrganizationID != "" {
-			r, err = client.CreateOrganizationAccessRule(client.OrganizationID, newRule)
+		if client.AccountID != "" {
+			r, err = client.CreateAccountAccessRule(client.AccountID, newRule)
 		} else {
 			r, err = client.CreateUserAccessRule(newRule)
 		}
@@ -142,8 +142,8 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 	var err error
 
 	if zoneID == "" {
-		if client.OrganizationID != "" {
-			accessRuleResponse, err = client.OrganizationAccessRule(client.OrganizationID, d.Id())
+		if client.AccountID != "" {
+			accessRuleResponse, err = client.AccountAccessRule(client.AccountID, d.Id())
 		} else {
 
 			accessRuleResponse, err = client.UserAccessRule(d.Id())
@@ -203,8 +203,8 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 	var err error
 
 	if zoneID == "" {
-		if client.OrganizationID != "" {
-			_, err = client.UpdateOrganizationAccessRule(client.OrganizationID, d.Id(), newRule)
+		if client.AccountID != "" {
+			_, err = client.UpdateAccountAccessRule(client.AccountID, d.Id(), newRule)
 		} else {
 			_, err = client.UpdateUserAccessRule(d.Id(), newRule)
 		}
@@ -228,8 +228,8 @@ func resourceCloudflareAccessRuleDelete(d *schema.ResourceData, meta interface{}
 	var err error
 
 	if zoneID == "" {
-		if client.OrganizationID != "" {
-			_, err = client.DeleteOrganizationAccessRule(client.OrganizationID, d.Id())
+		if client.AccountID != "" {
+			_, err = client.DeleteAccountAccessRule(client.AccountID, d.Id())
 		} else {
 			_, err = client.DeleteUserAccessRule(d.Id())
 		}
@@ -264,7 +264,7 @@ func resourceCloudflareAccessRuleImport(d *schema.ResourceData, meta interface{}
 
 	switch accessRuleType {
 	case "account":
-		client.OrganizationID = accessRuleTypeIdentifier
+		client.AccountID = accessRuleTypeIdentifier
 	case "zone":
 		d.Set("zone_id", accessRuleTypeIdentifier)
 	}
