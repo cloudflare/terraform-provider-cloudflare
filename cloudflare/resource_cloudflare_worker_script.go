@@ -71,7 +71,7 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 		params = cloudflare.WorkerRequestParams{
 			ZoneID: zoneID,
 		}
-		id = "zone_id:" + zoneID
+		id = "zone:" + zoneID
 	}
 
 	return ScriptData{

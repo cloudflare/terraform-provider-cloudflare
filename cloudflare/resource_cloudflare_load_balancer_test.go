@@ -20,6 +20,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 	t.Parallel()
 	testStartTime := time.Now().UTC()
 	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
@@ -30,7 +31,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
@@ -52,6 +53,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
@@ -62,7 +64,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
@@ -81,6 +83,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
@@ -91,7 +94,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
@@ -110,6 +113,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 
 func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 	t.Parallel()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 
@@ -119,7 +123,7 @@ func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, rnd),
+				Config:      testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, zone, rnd),
 				ExpectError: regexp.MustCompile(regexp.QuoteMeta("duplicate entry specified for pop pool in location \"LAX\". each location must only be specified once")),
 			},
 		},
@@ -134,6 +138,7 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	var initialId string
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
@@ -144,7 +149,7 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
@@ -154,7 +159,7 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 				PreConfig: func() {
 					initialId = loadBalancer.ID
 				},
-				Config: testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
@@ -176,6 +181,7 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	var initialId string
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer." + rnd
@@ -186,7 +192,7 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
@@ -195,7 +201,7 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, rnd),
+				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
@@ -252,7 +258,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZone string) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZoneID string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -267,8 +273,8 @@ func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZone string) resourc
 			return fmt.Errorf("invalid id %q, should be a string of length 32", rs.Primary.ID)
 		}
 
-		if rs.Primary.Attributes["zoneID"] != expectedZone {
-			return fmt.Errorf("zoneID attribute %q doesn't match the expected value %q", rs.Primary.Attributes["zoneID"], expectedZone)
+		if rs.Primary.Attributes["zone_id"] != expectedZoneID {
+			return fmt.Errorf("zoneID attribute %q doesn't match the expected value %q", rs.Primary.Attributes["zone_id"], expectedZoneID)
 		}
 
 		return nil
@@ -316,63 +322,63 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, id string) string {
+func testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[2]s" {
+resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[2]s.%[1]s"
+  name = "tf-testacc-lb-%[3]s.%[2]s"
   steering_policy = ""
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
-}`, zoneID, id)
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+}`, zoneID, zone, id)
 }
 
-func testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, id string) string {
+func testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[2]s" {
+resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
-  name = "tf-testacc-lb-session-affinity-%[2]s.%[1]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+  name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
 	session_affinity = "cookie"
-}`, zoneID, id)
+}`, zoneID, zone, id)
 }
 
-func testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, id string) string {
+func testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[2]s" {
+resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[2]s.%[1]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+  name = "tf-testacc-lb-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   description = "tf-acctest load balancer using geo-balancing"
   proxied = true // can't set ttl with proxied
   steering_policy = "geo"
   pop_pools {
     pop = "LAX"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   }
   region_pools {
     region = "WNAM"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   }
-}`, zoneID, id)
+}`, zoneID, zone, id)
 }
 
-func testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, id string) string {
+func testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, zone, id string) string {
 	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[2]s" {
+resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[2]s.%[1]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[2]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+  name = "tf-testacc-lb-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   pop_pools {
     pop = "LAX"
     pool_ids = ["i_am_an_invalid_pool_id"]
   }
   pop_pools {
     pop = "LAX"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[2]s.id}"]
+    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   }
-}`, zoneID, id)
+}`, zoneID, zone, id)
 }

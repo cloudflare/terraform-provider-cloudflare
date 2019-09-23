@@ -10,7 +10,7 @@ import (
 
 func TestAccCloudflareWAFRule_Import(t *testing.T) {
 	t.Parallel()
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "100000"
 	name := generateRandomResourceName()
 
@@ -20,11 +20,11 @@ func TestAccCloudflareWAFRule_Import(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWAFRuleConfig(zone, ruleID, "block", name),
+				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "block", name),
 			},
 			{
 				ResourceName:        "cloudflare_waf_rule." + name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
 			},

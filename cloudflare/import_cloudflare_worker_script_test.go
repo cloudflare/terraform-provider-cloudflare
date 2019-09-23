@@ -10,7 +10,7 @@ import (
 
 func TestAccCloudflareWorkerScript_Import(t *testing.T) {
 	var script cloudflare.WorkerScript
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 
@@ -20,7 +20,7 @@ func TestAccCloudflareWorkerScript_Import(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerScriptConfigSingleScriptInitial(zone, rnd),
+				Config: testAccCheckCloudflareWorkerScriptConfigSingleScriptInitial(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script),
 				),

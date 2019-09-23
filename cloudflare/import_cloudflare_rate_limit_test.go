@@ -13,7 +13,8 @@ import (
 func TestAccCloudflareRateLimit_Import(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
@@ -22,20 +23,20 @@ func TestAccCloudflareRateLimit_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zone, rnd),
+				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 				),
 			},
 			{
 				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRateLimitExists(name, &rateLimit),
-					testAccCheckCloudflareRateLimitIDIsValid(name, zone),
+					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 				),
 			},
 		},
