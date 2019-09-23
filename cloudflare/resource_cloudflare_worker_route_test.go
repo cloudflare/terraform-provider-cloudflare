@@ -18,8 +18,8 @@ func TestAccCloudflareWorkerRoute_SingleScriptNonEnt(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_ACCOUNT_ID if it is set in order
 	// to test non-ENT behavior
 	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") != "" {
-		defer func(accountId string) {
-			os.Setenv("CLOUDFLARE_ACCOUNT_ID", accountId)
+		defer func(accountID string) {
+			os.Setenv("CLOUDFLARE_ACCOUNT_ID", accountID)
 		}(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
 		os.Setenv("CLOUDFLARE_ACCOUNT_ID", "")
 	}
@@ -34,6 +34,16 @@ func TestAccCloudflareWorkerRoute_SingleScriptEnt(t *testing.T) {
 }
 
 func testAccCloudflareWorkerRoute_SingleScript(t *testing.T, preCheck preCheckFunc) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	var route cloudflare.WorkerRoute
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

@@ -35,6 +35,16 @@ func TestAccCloudflareWorkerScript_SingleScriptEnt(t *testing.T) {
 }
 
 func testAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckFunc) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(accountId string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", accountId)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	var script cloudflare.WorkerScript
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
