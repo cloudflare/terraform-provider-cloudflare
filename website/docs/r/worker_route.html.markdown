@@ -17,7 +17,7 @@ __NOTE:__ This is for non-enterprise accounts where there is one script per zone
 ```hcl
 # Enables the zone's worker script for all URLs that match `example.com/*`
 resource "cloudflare_worker_route" "my_route" {
-  zone = "example.com"
+  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   pattern = "example.com/*"
   enabled = true
 
@@ -39,7 +39,7 @@ __NOTE:__ This is only for enterprise accounts. With multi-script, each route po
 ```hcl
 # Runs the specified worker script for all URLs that match `example.com/*`
 resource "cloudflare_worker_route" "my_route" {
-  zone = "example.com"
+  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   pattern = "example.com/*"
   script_name = "${cloudflare_worker_script.my_script.name}"
 }
@@ -53,27 +53,20 @@ resource "cloudflare_worker_script" "my_script" {
 
 The following arguments are supported:
 
-* `zone` - (Required) The zone to add the route to.
+* `zone_id` - (Required) The zone ID to add the route to.
 * `pattern` - (Required) The [route pattern](https://developers.cloudflare.com/workers/api/route-matching/)
 * `enabled` (For single-script accounts only) Whether to run the worker script for requests that match the route pattern. Default is `false`
 * `script_name` (For multi-script accounts only) Which worker script to run for requests that match the route pattern. If `script_name` is empty, workers will be skipped for matching requests.
 
-## Attributes Reference
-
-The following attributes are exported:
-
-* `zone_id` - The zone id of the route
-
 ## Import
 
-Records can be imported using a composite ID formed of zone name and route ID, e.g.
+Records can be imported using a composite ID formed of zone ID and route ID, e.g.
 
 ```
-$ terraform import cloudflare_worker_route.default example.com/9a7806061c88ada191ed06f989cc3dac
+$ terraform import cloudflare_worker_route.default d41d8cd98f00b204e9800998ecf8427e/9a7806061c88ada191ed06f989cc3dac
 ```
 
 where:
 
+* `d41d8cd98f00b204e9800998ecf8427e` - zone ID
 * `9a7806061c88ada191ed06f989cc3dac` - route ID as returned by [API](https://api.cloudflare.com/#worker-filters-list-filters)
-
-

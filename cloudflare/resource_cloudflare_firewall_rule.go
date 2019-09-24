@@ -21,18 +21,10 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				ForceNew:   true,
-				Computed:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
 			"zone_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				ForceNew: true,
-				Computed: true,
 			},
 			"filter_id": {
 				Type:     schema.TypeString,
@@ -63,20 +55,9 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 
 func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneName := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
 
 	var err error
-
-	if zoneName == "" && zoneID == "" {
-		return fmt.Errorf("'zone' or 'zone_id' is required")
-	} else if zoneID == "" {
-		zoneID, err = client.ZoneIDByName(zoneName)
-		if err != nil {
-			return fmt.Errorf("Error finding zone %q: %s", zoneName, err)
-		}
-		d.Set("zone_id", zoneID)
-	}
 
 	var newFirewallRule cloudflare.FirewallRule
 
@@ -109,7 +90,7 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 	r, err = client.CreateFirewallRules(zoneID, []cloudflare.FirewallRule{newFirewallRule})
 
 	if err != nil {
-		return fmt.Errorf("error creating Firewall Rule for zone %q: %s", zoneName, err)
+		return fmt.Errorf("error creating Firewall Rule for zone %q: %s", zoneID, err)
 	}
 
 	if len(r) == 0 {
@@ -126,20 +107,6 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	zoneName := d.Get("zone").(string)
-	if zoneID == "" {
-		zoneID, _ = client.ZoneIDByName(zoneName)
-	} else {
-		zones, err := client.ListZones()
-		if err != nil {
-			return fmt.Errorf("failed to lookup all zones: %s", err)
-		}
-		for _, zone := range zones {
-			if zone.ID == zoneID {
-				zoneName = zone.Name
-			}
-		}
-	}
 
 	firewallRule, err := client.FirewallRule(zoneID, d.Id())
 
@@ -157,8 +124,6 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[DEBUG] Cloudflare Firewall Rule read configuration: %#v", firewallRule)
 
-	d.Set("zone", zoneName)
-	d.Set("zone_id", zoneID)
 	d.Set("paused", firewallRule.Paused)
 	d.Set("description", firewallRule.Description)
 	d.Set("action", firewallRule.Action)

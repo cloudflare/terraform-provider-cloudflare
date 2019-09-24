@@ -12,7 +12,7 @@ import (
 
 func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 	t.Parallel()
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "100000"
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_waf_rule.%s", rnd)
@@ -23,21 +23,19 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWAFRuleConfig(zone, ruleID, "simulate", rnd),
+				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "simulate", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
-					resource.TestCheckResourceAttr(name, "zone", zone),
-					resource.TestCheckResourceAttrSet(name, "zone_id"),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttr(name, "mode", "simulate"),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWAFRuleConfig(zone, ruleID, "challenge", rnd),
+				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "challenge", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
-					resource.TestCheckResourceAttr(name, "zone", zone),
-					resource.TestCheckResourceAttrSet(name, "zone_id"),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
 				),
@@ -67,11 +65,11 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWAFRuleConfig(zone, ruleID, mode, name string) string {
+func testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, mode, name string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_waf_rule" "%[4]s" {
 					rule_id = %[2]s
-					zone = "%[1]s"
+					zone_id = "%[1]s"
 					mode = "%[3]s"
-				}`, zone, ruleID, mode, name)
+				}`, zoneID, ruleID, mode, name)
 }

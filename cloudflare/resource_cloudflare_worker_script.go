@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -21,27 +21,20 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				// zone is used for single-script, name is used for multi-script
-				ConflictsWith: []string{"name"},
-				Deprecated:    "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
-
 			"zone_id": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				ForceNew: true,
+				// zone_id is used for single-script, name is used for multi-script
+				ConflictsWith: []string{"name"},
 			},
 
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				// zone is used for single-script, name is used for multi-script
-				ConflictsWith: []string{"zone"},
+				// zone_id is used for single-script, name is used for multi-script
+				ConflictsWith: []string{"zone_id"},
 			},
 
 			"content": {
@@ -60,10 +53,10 @@ type ScriptData struct {
 }
 
 func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, error) {
-	zoneName := d.Get("zone").(string)
+	zoneID := d.Get("zone_id").(string)
 	scriptName := d.Get("name").(string)
-	if zoneName == "" && scriptName == "" {
-		return ScriptData{}, fmt.Errorf("either `zone` or `name` field must be set")
+	if zoneID == "" && scriptName == "" {
+		return ScriptData{}, fmt.Errorf("either `zone_id` or `name` field must be set")
 	}
 
 	var params cloudflare.WorkerRequestParams
@@ -75,15 +68,10 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 		}
 		id = "name:" + scriptName
 	} else {
-		zoneID, err := client.ZoneIDByName(zoneName)
-		if err != nil {
-			return ScriptData{}, fmt.Errorf("error finding zone %q: %s", zoneName, err)
-		}
-		d.Set("zone_id", zoneID)
 		params = cloudflare.WorkerRequestParams{
 			ZoneID: zoneID,
 		}
-		id = "zone:" + zoneName
+		id = "zone:" + zoneID
 	}
 
 	return ScriptData{
@@ -196,8 +184,6 @@ func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceCloudflareWorkerScriptImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), ":", 2)
 	var scriptType string
@@ -212,16 +198,12 @@ func resourceCloudflareWorkerScriptImport(d *schema.ResourceData, meta interface
 	if scriptType == "name" {
 		d.Set("name", scriptId)
 	} else if scriptType == "zone" {
-		zoneName := scriptId
-		zoneId, err := client.ZoneIDByName(zoneName)
-		if err != nil {
-			return nil, fmt.Errorf("error finding zone %q: %s", zoneName, err)
-		}
-		d.Set("zone", zoneName)
-		d.Set("zone_id", zoneId)
+		d.Set("zone_id", scriptId)
 	} else {
 		return nil, fmt.Errorf("invalid scriptType (\"%s\") specified, should be either \"name\" or \"zone\"", scriptType)
 	}
+
+	resourceCloudflareWorkerScriptRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

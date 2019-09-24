@@ -17,7 +17,7 @@ Provides a Cloudflare Load Balancer resource. This sits in front of a number of 
 # In normal usage, would have different pools set for different pops (cloudflare points-of-presence) and/or for different regions
 # Within each pop or region we can define multiple pools in failover order
 resource "cloudflare_load_balancer" "bar" {
-  zone = "example.com"
+  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   name = "example-load-balancer"
   fallback_pool_id = "${cloudflare_load_balancer_pool.foo.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.foo.id}"]
@@ -48,7 +48,7 @@ resource "cloudflare_load_balancer_pool" "foo" {
 
 The following arguments are supported:
 
-* `zone` - (Required) The zone to add the load balancer to.
+* `zone_id` - (Required) The zone ID to add the load balancer to.
 * `name` - (Required) The DNS name (FQDN, including the zone) to associate with the load balancer.
 * `fallback_pool_id` - (Required) The pool ID to use when all other pools are detected as unhealthy.
 * `default_pool_ids` - (Required) A list of pool IDs ordered by their failover priority. Used whenever region/pop pools are not defined.
@@ -76,6 +76,5 @@ The following arguments are supported:
 The following attributes are exported:
 
 * `id` - Unique identifier in the API for the load balancer.
-* `zone_id` - ID associated with the specified `zone`.
 * `created_on` - The RFC3339 timestamp of when the load balancer was created.
 * `modified_on` - The RFC3339 timestamp of when the load balancer was last modified.

@@ -10,7 +10,7 @@ import (
 
 	"reflect"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/pkg/errors"
@@ -25,7 +25,7 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
-			"name": {
+			"zone_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -472,11 +472,8 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	zoneId, err := client.ZoneIDByName(d.Get("name").(string))
-	if err != nil {
-		return fmt.Errorf("couldn't find zone %q while trying to import it: %q", d.Get("name").(string), err)
-	}
-	d.SetId(zoneId)
+	zoneID := d.Get("zone_id").(string)
+	d.SetId(zoneID)
 
 	log.Printf("[INFO] Creating zone settings resource for zone ID: %s", d.Id())
 

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -24,7 +24,7 @@ func resourceCloudflareRecord() *schema.Resource {
 		SchemaVersion: 1,
 		MigrateState:  resourceCloudflareRecordMigrateState,
 		Schema: map[string]*schema.Schema{
-			"domain": {
+			"zone_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -37,7 +37,6 @@ func resourceCloudflareRecord() *schema.Resource {
 				StateFunc: func(i interface{}) string {
 					return strings.ToLower(i.(string))
 				},
-				DiffSuppressFunc: suppressNameDiff,
 			},
 
 			"hostname": {
@@ -268,11 +267,6 @@ func resourceCloudflareRecord() *schema.Resource {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-
-			"zone_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 	}
 }
@@ -281,10 +275,10 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	client := meta.(*cloudflare.API)
 
 	newRecord := cloudflare.DNSRecord{
-		Type:     d.Get("type").(string),
-		Name:     d.Get("name").(string),
-		Proxied:  d.Get("proxied").(bool),
-		ZoneName: d.Get("domain").(string),
+		Type:    d.Get("type").(string),
+		Name:    d.Get("name").(string),
+		Proxied: d.Get("proxied").(bool),
+		ZoneID:  d.Get("zone_id").(string),
 	}
 
 	value, valueOk := d.GetOk("value")
@@ -339,17 +333,9 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error validating record type %q: %s", newRecord.Type, err)
 	}
 
-	zoneID, err := client.ZoneIDByName(newRecord.ZoneName)
-	if err != nil {
-		return fmt.Errorf("Error finding zone %q: %s", newRecord.ZoneName, err)
-	}
-
-	d.Set("zone_id", zoneID)
-	newRecord.ZoneID = zoneID
-
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
 
-	r, err := client.CreateDNSRecord(zoneID, newRecord)
+	r, err := client.CreateDNSRecord(newRecord.ZoneID, newRecord)
 	if err != nil {
 		return fmt.Errorf("Failed to create record: %s", err)
 	}
@@ -424,13 +410,12 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	zoneID := d.Get("zone_id").(string)
 
 	updateRecord := cloudflare.DNSRecord{
-		ID:       d.Id(),
-		Type:     d.Get("type").(string),
-		Name:     d.Get("name").(string),
-		Content:  d.Get("value").(string),
-		ZoneName: d.Get("domain").(string),
-		ZoneID:   zoneID,
-		Proxied:  false,
+		ID:      d.Id(),
+		Type:    d.Get("type").(string),
+		Name:    d.Get("name").(string),
+		Content: d.Get("value").(string),
+		ZoneID:  zoneID,
+		Proxied: false,
 	}
 
 	data, dataOk := d.GetOk("data")
@@ -510,32 +495,28 @@ func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([
 
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-	var zoneName string
-	var recordId string
+	var zoneID string
+	var recordID string
 	if len(idAttr) == 2 {
-		zoneName = idAttr[0]
-		recordId = idAttr[1]
+		zoneID = idAttr[0]
+		recordID = idAttr[1]
 	} else {
-		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneName/recordId\" for import", d.Id())
+		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneID/recordID\" for import", d.Id())
 	}
 
-	zoneId, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
-	}
-
-	record, err := client.DNSRecord(zoneId, recordId)
+	record, err := client.DNSRecord(zoneID, recordID)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to find record with ID %q: %q", d.Id(), err)
 	}
 
 	log.Printf("[INFO] Found record: %s", record.Name)
-	name := strings.TrimSuffix(record.Name, "."+zoneName)
+	name := strings.TrimSuffix(record.Name, "."+record.ZoneName)
 
 	d.Set("name", name)
-	d.Set("domain", zoneName)
-	d.Set("zone_id", zoneId)
-	d.SetId(recordId)
+	d.Set("zone_id", zoneID)
+	d.SetId(recordID)
+
+	resourceCloudflareZoneRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -597,9 +578,4 @@ func suppressPriority(k, old, new string, d *schema.ResourceData) bool {
 		return true
 	}
 	return false
-}
-
-func suppressNameDiff(k, old, new string, d *schema.ResourceData) bool {
-	zoneName := d.Get("domain").(string)
-	return strings.TrimSuffix(old, "."+zoneName) == strings.TrimSuffix(new, "."+zoneName)
 }

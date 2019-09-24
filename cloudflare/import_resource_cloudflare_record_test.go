@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccCloudflareRecord_Import(t *testing.T) {
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := "cloudflare_record.foobar"
 
 	resource.Test(t, resource.TestCase{
@@ -17,11 +17,11 @@ func TestAccCloudflareRecord_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zone, name),
+				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name),
 			},
 			{
 				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
 			},

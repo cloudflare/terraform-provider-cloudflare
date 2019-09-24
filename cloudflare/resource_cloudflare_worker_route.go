@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -21,18 +21,10 @@ func resourceCloudflareWorkerRoute() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				ForceNew:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
-
 			"zone_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				ForceNew: true,
-				Computed: true,
 			},
 
 			"multi_script": {
@@ -79,25 +71,8 @@ func getRouteFromResource(d *schema.ResourceData) cloudflare.WorkerRoute {
 func resourceCloudflareWorkerRouteCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	route := getRouteFromResource(d)
-	zoneName := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	// While we are deprecating `zone`, we need to perform the validation
-	// inside the `Create` to ensure we get at least one of the expected
-	// values.
-	if zoneName == "" && zoneID == "" {
-		return fmt.Errorf("either zone name or ID must be provided")
-	}
-
-	if zoneID == "" {
-		var err error
-		zoneID, err = client.ZoneIDByName(zoneName)
-		if err != nil {
-			return fmt.Errorf("error finding zone %q: %s", zoneName, err)
-		}
-	}
-
-	d.Set("zone_id", zoneID)
 	d.Set("multi_script", route.Script != "")
 
 	log.Printf("[INFO] Creating Cloudflare Worker Route from struct: %+v", route)
@@ -194,16 +169,15 @@ func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{
 
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-	var zoneName string
+	var zoneID string
 	var routeID string
 	if len(idAttr) == 2 {
-		zoneName = idAttr[0]
+		zoneID = idAttr[0]
 		routeID = idAttr[1]
 	} else {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/routeID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/routeID\"", d.Id())
 	}
 
-	zoneID, err := client.ZoneIDByName(zoneName)
 	routes, err := client.ListWorkerRoutes(zoneID)
 
 	for _, r := range routes.Routes {
@@ -213,13 +187,14 @@ func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
+		return nil, fmt.Errorf("error finding route %q for zone ID %q: %s", routeID, zoneID, err)
 	}
 
-	d.Set("zone", zoneName)
 	d.Set("zone_id", zoneID)
 	d.Set("multi_script", isEnterpriseWorker)
 	d.SetId(routeID)
+
+	resourceCloudflareWorkerRouteRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
