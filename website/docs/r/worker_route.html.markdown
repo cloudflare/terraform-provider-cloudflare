@@ -12,30 +12,6 @@ Provides a Cloudflare worker route resource. A route will also require a `cloudf
 
 ## Example Usage
 
-__NOTE:__ This is for non-enterprise accounts where there is one script per zone. The `enabled` flag determines whether to run the worker script for a request that matches the specified `pattern`. For enterprise accounts, see the "multi-script" example below.
-
-```hcl
-# Enables the zone's worker script for all URLs that match `example.com/*`
-resource "cloudflare_worker_route" "my_route" {
-  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
-  pattern = "example.com/*"
-  enabled = true
-
-  # it's recommended to set `depends_on` to point to the cloudflare_worker_script
-  # resource in order to make sure that the script is uploaded before the route
-  # is created
-  depends_on = ["cloudflare_worker_script.my_script"]
-}
-
-resource "cloudflare_worker_script" "my_script" {
-  # see "cloudflare_worker_script" documentation ...
-}
-```
-
-## Multi-script example usage
-
-__NOTE:__ This is only for enterprise accounts. With multi-script, each route points to a particular script instead of setting an `enabled` flag
-
 ```hcl
 # Runs the specified worker script for all URLs that match `example.com/*`
 resource "cloudflare_worker_route" "my_route" {
@@ -54,9 +30,8 @@ resource "cloudflare_worker_script" "my_script" {
 The following arguments are supported:
 
 * `zone_id` - (Required) The zone ID to add the route to.
-* `pattern` - (Required) The [route pattern](https://developers.cloudflare.com/workers/api/route-matching/)
-* `enabled` (For single-script accounts only) Whether to run the worker script for requests that match the route pattern. Default is `false`
-* `script_name` (For multi-script accounts only) Which worker script to run for requests that match the route pattern. If `script_name` is empty, workers will be skipped for matching requests.
+* `pattern` - (Required) The [route pattern](https://developers.cloudflare.com/workers/about/routes/)
+* `script_name` Which worker script to run for requests that match the route pattern. If `script_name` is empty, workers will be skipped for matching requests.
 
 ## Import
 

@@ -21,20 +21,10 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				// zone_id is used for single-script, name is used for multi-script
-				ConflictsWith: []string{"name"},
-			},
-
 			"name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				ForceNew: true,
-				// zone_id is used for single-script, name is used for multi-script
-				ConflictsWith: []string{"zone_id"},
 			},
 
 			"content": {
@@ -53,26 +43,15 @@ type ScriptData struct {
 }
 
 func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, error) {
-	zoneID := d.Get("zone_id").(string)
 	scriptName := d.Get("name").(string)
-	if zoneID == "" && scriptName == "" {
-		return ScriptData{}, fmt.Errorf("either `zone_id` or `name` field must be set")
-	}
 
 	var params cloudflare.WorkerRequestParams
 	var id string
 
-	if scriptName != "" {
-		params = cloudflare.WorkerRequestParams{
-			ScriptName: scriptName,
-		}
-		id = "name:" + scriptName
-	} else {
-		params = cloudflare.WorkerRequestParams{
-			ZoneID: zoneID,
-		}
-		id = "zone:" + zoneID
+	params = cloudflare.WorkerRequestParams{
+		ScriptName: scriptName,
 	}
+	id = "name:" + scriptName
 
 	return ScriptData{
 		id,
@@ -184,24 +163,8 @@ func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceCloudflareWorkerScriptImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	// split the id so we can lookup
-	idAttr := strings.SplitN(d.Id(), ":", 2)
-	var scriptType string
-	var scriptId string
-	if len(idAttr) == 2 {
-		scriptType = idAttr[0]
-		scriptId = idAttr[1]
-	} else {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"scriptType:scriptId\"", d.Id())
-	}
-
-	if scriptType == "name" {
-		d.Set("name", scriptId)
-	} else if scriptType == "zone" {
-		d.Set("zone_id", scriptId)
-	} else {
-		return nil, fmt.Errorf("invalid scriptType (\"%s\") specified, should be either \"name\" or \"zone\"", scriptType)
-	}
+	scriptID := d.Id()
+	d.Set("name", scriptID)
 
 	resourceCloudflareWorkerScriptRead(d, meta)
 
