@@ -46,15 +46,13 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 	scriptName := d.Get("name").(string)
 
 	var params cloudflare.WorkerRequestParams
-	var id string
 
 	params = cloudflare.WorkerRequestParams{
 		ScriptName: scriptName,
 	}
-	id = "name:" + scriptName
 
 	return ScriptData{
-		id,
+		scriptName,
 		params,
 	}, nil
 }
