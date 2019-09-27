@@ -27,11 +27,6 @@ func resourceCloudflareWorkerRoute() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"multi_script": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
-
 			"pattern": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -40,15 +35,6 @@ func resourceCloudflareWorkerRoute() *schema.Resource {
 			"script_name": {
 				Type:     schema.TypeString,
 				Optional: true,
-				// enabled is used for single-script, script_name is used for multi-script
-				ConflictsWith: []string{"enabled"},
-			},
-
-			"enabled": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				// enabled is used for single-script, script_name is used for multi-script
-				ConflictsWith: []string{"script_name"},
 			},
 		},
 	}
@@ -58,12 +44,7 @@ func getRouteFromResource(d *schema.ResourceData) cloudflare.WorkerRoute {
 	route := cloudflare.WorkerRoute{
 		ID:      d.Id(),
 		Pattern: d.Get("pattern").(string),
-	}
-	scriptName := d.Get("script_name").(string)
-	if scriptName != "" {
-		route.Script = scriptName
-	} else {
-		route.Enabled = d.Get("enabled").(bool)
+		Script:  d.Get("script_name").(string),
 	}
 	return route
 }
@@ -72,8 +53,6 @@ func resourceCloudflareWorkerRouteCreate(d *schema.ResourceData, meta interface{
 	client := meta.(*cloudflare.API)
 	route := getRouteFromResource(d)
 	zoneID := d.Get("zone_id").(string)
-
-	d.Set("multi_script", route.Script != "")
 
 	log.Printf("[INFO] Creating Cloudflare Worker Route from struct: %+v", route)
 
@@ -122,12 +101,7 @@ func resourceCloudflareWorkerRouteRead(d *schema.ResourceData, meta interface{})
 	}
 
 	d.Set("pattern", route.Pattern)
-
-	if d.Get("multi_script").(bool) {
-		d.Set("script_name", route.Script)
-	} else {
-		d.Set("enabled", route.Enabled)
-	}
+	d.Set("script_name", route.Script)
 
 	return nil
 }
@@ -143,7 +117,6 @@ func resourceCloudflareWorkerRouteUpdate(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return errors.Wrap(err, "error updating worker route")
 	}
-	d.Set("multi_script", route.Script != "")
 
 	return nil
 }
@@ -164,9 +137,6 @@ func resourceCloudflareWorkerRouteDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-	isEnterpriseWorker := false
-
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -178,20 +148,7 @@ func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/routeID\"", d.Id())
 	}
 
-	routes, err := client.ListWorkerRoutes(zoneID)
-
-	for _, r := range routes.Routes {
-		if r.ID == routeID && client.AccountID != "" {
-			isEnterpriseWorker = true
-		}
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("error finding route %q for zone ID %q: %s", routeID, zoneID, err)
-	}
-
 	d.Set("zone_id", zoneID)
-	d.Set("multi_script", isEnterpriseWorker)
 	d.SetId(routeID)
 
 	resourceCloudflareWorkerRouteRead(d, meta)
