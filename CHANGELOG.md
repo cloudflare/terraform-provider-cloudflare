@@ -1,4 +1,10 @@
 ## 1.18.2 (Unreleased)
+
+**Improvements:**
+
+* `cloudflare/resource_cloudflare_argo`: Handle errors when fetching tiered caching + smart routing settings ([#477](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/477))
+* Various documentation updates for 0.12 syntax
+
 ## 1.18.1 (August 29, 2019)
 
 **Fixes:**
