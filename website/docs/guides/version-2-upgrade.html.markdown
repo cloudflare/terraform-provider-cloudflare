@@ -38,11 +38,13 @@ provider "cloudflare" {
 ## Provider global configuration changes
 
 The following changes have been made to fields:
+
 - renamed `token` to `api_key`
 - renamed `org_id` to `account_id`
 - removed `use_org_from_zone`, you need to explicitly specify `account_id`
 
 The following changes have been made to environment variables:
+
 - renamed `CLOUDFLARE_TOKEN` to `CLOUDFLARE_API_TOKEN`
 - renamed `CLOUDFLARE_ORG_ID` to `CLOUDFLARE_ACCOUNT_ID`
 - removed `CLOUDFLARE_ORG_ZONE`, you need to explicitly specify `CLOUDFLARE_ACCOUNT_ID`
@@ -71,7 +73,7 @@ provider "cloudflare" {
 
 ## Zone Name to Zone ID changes
 
-All resources that accepted Zone Name have been changed to accept Zone ID instead.
+All resources that accepted Zone Name have been changed to accept Zone ID instead. You can find the Zone ID in the Cloudflare Dashboard on the overview page in the right hand side navigation.
 
 The following resources now require Zone IDs:
 - `cloudflare_access_rule`
@@ -120,7 +122,7 @@ resource "cloudflare_record" "foobar" {
 
 ## Workers single-script support removed
 
-Formerly Enterprise-only APIs for configuring multiple Worker scripts have been opened for all customers. Therefore,
+Formerly Enterprise-only APIs for configuring multiple Worker scripts are now available for all customers. Therefore,
 there is no longer need for single-script support, which works in compatibility mode now.
 
 Before:
@@ -130,7 +132,6 @@ resource "cloudflare_worker_script" "my_script" {
   content = "${file("script.js")}"
 }
 
-```hcl
 resource "cloudflare_worker_route" "my_route" {
   zone = "example.com"
   pattern = "example.com/*"
@@ -147,7 +148,6 @@ resource "cloudflare_worker_script" "my_script" {
   content = "${file("script.js")}"
 }
 
-```hcl
 # Runs the specified worker script for all URLs that match `example.com/*`
 resource "cloudflare_worker_route" "my_route" {
   zone_id = "d41d8cd98f00b204e9800998ecf8427e"
