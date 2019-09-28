@@ -138,6 +138,7 @@ resource "cloudflare_worker_route" "my_route" {
   depends_on = ["cloudflare_worker_script.my_script"]
 }
 ```
+
 After:
 ```hcl
 # Sets the script with the name "script_1"
