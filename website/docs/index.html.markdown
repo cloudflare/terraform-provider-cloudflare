@@ -17,8 +17,10 @@ Use the navigation to the left to read about the available resources.
 ## Example Usage
 
 ```hcl
-# Configure the Cloudflare provider
+# Configure the Cloudflare provider.
+# You may optionally use version directive to prevent breaking changes occurring unannounced.
 provider "cloudflare" {
+  version = "~> 2.0"
   email   = "${var.cloudflare_email}"
   api_key = "${var.cloudflare_api_key}"
 }
