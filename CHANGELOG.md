@@ -1,4 +1,29 @@
-## 1.18.2 (Unreleased)
+## 2.0.0 (Unreleased)
+
+**Breaking changes:**
+* `provider/cloudflare`:
+ * renamed `token` to `api_key`
+ * renamed `org_id` to `account_id`
+ * removed `use_org_from_zone`, you need to explicitly specify `account_id`
+* Environment variables:
+ * renamed `CLOUDFLARE_TOKEN` to `CLOUDFLARE_API_TOKEN`
+ * renamed `CLOUDFLARE_ORG_ID` to `CLOUDFLARE_ACCOUNT_ID`
+ * removed `CLOUDFLARE_ORG_ZONE`, you need to explicitly specify `CLOUDFLARE_ACCOUNT_ID`
+* Changed the following resources to require Zone ID:
+ * `cloudflare_access_rule`
+ * `cloudflare_filter`
+ * `cloudflare_firewall_rule`
+ * `cloudflare_load_balancer`
+ * `cloudflare_page_rule`
+ * `cloudflare_rate_limit`
+ * `cloudflare_record`
+ * `cloudflare_waf_rule`
+ * `cloudflare_worker_route"`
+ * `cloudflare_zone_lockdown`
+ * `cloudflare_zone_settings_override`
+* Workers single-script support removed
+
+Please see [Version 2 Upgrade Guide](https://www.terraform.io/docs/providers/cloudflare/guides/version-2-upgrade.html) for details.
 
 **Improvements:**
 
