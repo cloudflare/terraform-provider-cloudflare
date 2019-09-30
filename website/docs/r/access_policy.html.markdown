@@ -42,7 +42,7 @@ resource "cloudflare_access_policy" "test_policy" {
   }
 
   require = {
-    ip = ["${var.office_ip}"]
+    ip = [var.office_ip]
   }
 }
 ```

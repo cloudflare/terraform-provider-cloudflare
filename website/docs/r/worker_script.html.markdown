@@ -16,7 +16,7 @@ Provides a Cloudflare worker script resource. In order for a script to be active
 # Sets the script with the name "script_1"
 resource "cloudflare_worker_script" "my_script" {
   name = "script_1"
-  content = "${file("script.js")}"
+  content = file("script.js")
 }
 ```
 

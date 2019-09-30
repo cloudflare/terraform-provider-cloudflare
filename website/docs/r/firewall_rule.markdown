@@ -25,7 +25,7 @@ resource "cloudflare_filter" "wordpress" {
 resource "cloudflare_firewall_rule" "wordpress" {
   zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   description = "Block wordpress break-in attempts"
-  filter_id = "${cloudflare_filter.wordpress.id}"
+  filter_id = cloudflare_filter.wordpress.id
   action = "block"
 }
 ```

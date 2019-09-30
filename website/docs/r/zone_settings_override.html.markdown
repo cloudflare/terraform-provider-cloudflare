@@ -14,7 +14,7 @@ Provides a resource which customizes Cloudflare zone settings. Note that after d
 
 ```hcl
 resource "cloudflare_zone_settings_override" "test" {
-	zone_id = "${var.cloudflare_zone_id}"
+	zone_id = var.cloudflare_zone_id
 	settings {
 		brotli = "on"
 		challenge_ttl = 2700

@@ -17,7 +17,7 @@ Provides a Cloudflare worker route resource. A route will also require a `cloudf
 resource "cloudflare_worker_route" "my_route" {
   zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   pattern = "example.com/*"
-  script_name = "${cloudflare_worker_script.my_script.name}"
+  script_name = cloudflare_worker_script.my_script.name
 }
 
 resource "cloudflare_worker_script" "my_script" {

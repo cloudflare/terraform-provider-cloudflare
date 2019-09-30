@@ -1,4 +1,22 @@
-## 1.18.1 (Unreleased)
+## 1.18.2 (Unreleased)
+
+**Improvements:**
+
+* `cloudflare/resource_cloudflare_argo`: Handle errors when fetching tiered caching + smart routing settings ([#477](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/477))
+* Various documentation updates for 0.12 syntax
+
+## 1.18.1 (August 29, 2019)
+
+**Fixes:**
+
+* `resource/cloudflare_load_balancer`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/462))
+* `resource/cloudflare_page_rule`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/462))
+* `resource/cloudflare_rate_limit`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/462))
+* `resource/cloudflare_waf_rule`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/462))
+* `resource/cloudflare_worker_route`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/462))
+* `resource/cloudflare_worker_script`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/462))
+* `resource/cloudflare_zone_lockdown`: Mark `zone` as Computed to allow deprecations ([#462](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/462))
+
 ## 1.18.0 (August 27, 2019)
 
 **Fixes:**
