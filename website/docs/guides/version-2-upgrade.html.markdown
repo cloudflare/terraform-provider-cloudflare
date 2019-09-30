@@ -78,6 +78,7 @@ provider "cloudflare" {
 All resources that accepted Zone Name have been changed to accept Zone ID instead. You can find the Zone ID in the Cloudflare Dashboard on the overview page in the right hand side navigation.
 
 The following resources now require Zone IDs:
+
 - `cloudflare_access_rule`
 - `cloudflare_filter`
 - `cloudflare_firewall_rule`
@@ -86,7 +87,7 @@ The following resources now require Zone IDs:
 - `cloudflare_rate_limit`
 - `cloudflare_record`
 - `cloudflare_waf_rule`
-- `cloudflare_worker_route"`
+- `cloudflare_worker_route`
 - `cloudflare_zone_lockdown`
 - `cloudflare_zone_settings_override`
 
