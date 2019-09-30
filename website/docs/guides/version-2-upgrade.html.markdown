@@ -50,6 +50,7 @@ The following changes have been made to environment variables:
 - removed `CLOUDFLARE_ORG_ZONE`, you need to explicitly specify `CLOUDFLARE_ACCOUNT_ID`
 
 Before:
+
 ```hcl
 provider "cloudflare" {
   version = "~> 1.0"
@@ -61,6 +62,7 @@ provider "cloudflare" {
 ```
 
 After:
+
 ```hcl
 provider "cloudflare" {
   version = "~> 2.0"
@@ -89,6 +91,7 @@ The following resources now require Zone IDs:
 - `cloudflare_zone_settings_override`
 
 Before:
+
 ```hcl
 resource "cloudflare_zone_lockdown" "example" {
   zone = "example.com"
@@ -105,6 +108,7 @@ resource "cloudflare_record" "foobar" {
 ```
 
 After:
+
 ```hcl
 resource "cloudflare_zone_lockdown" "example" {
   zone_id = "43feed7a08b85f654aa54ca9d61bb0c0"
@@ -126,6 +130,7 @@ Formerly Enterprise-only APIs for configuring multiple Worker scripts are now av
 there is no longer need for single-script support, which works in compatibility mode now.
 
 Before:
+
 ```hcl
 resource "cloudflare_worker_script" "my_script" {
   zone = "example.com"
@@ -141,6 +146,7 @@ resource "cloudflare_worker_route" "my_route" {
 ```
 
 After:
+
 ```hcl
 # Sets the script with the name "script_1"
 resource "cloudflare_worker_script" "my_script" {
