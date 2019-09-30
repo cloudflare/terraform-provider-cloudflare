@@ -21,18 +21,10 @@ func resourceCloudflareFilter() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				ForceNew:   true,
-				Computed:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
 			"zone_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				ForceNew: true,
-				Computed: true,
 			},
 			"paused": {
 				Type:     schema.TypeBool,
@@ -61,20 +53,9 @@ func resourceCloudflareFilter() *schema.Resource {
 
 func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneName := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
 
 	var err error
-
-	if zoneName == "" && zoneID == "" {
-		return fmt.Errorf("'zone' or 'zone_id' is required")
-	} else if zoneID == "" {
-		zoneID, err = client.ZoneIDByName(zoneName)
-		if err != nil {
-			return fmt.Errorf("Error finding zone %q: %s", zoneName, err)
-		}
-		d.Set("zone_id", zoneID)
-	}
 
 	var newFilter cloudflare.Filter
 
@@ -116,22 +97,6 @@ func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) er
 func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	zoneName := d.Get("zone").(string)
-
-	if zoneID == "" {
-		zoneID, _ = client.ZoneIDByName(zoneName)
-	} else {
-		zones, err := client.ListZones()
-		if err != nil {
-			return fmt.Errorf("failed to lookup all zones: %s", err)
-		}
-
-		for _, zone := range zones {
-			if zone.ID == zoneID {
-				zoneName = zone.Name
-			}
-		}
-	}
 
 	log.Printf("[DEBUG] Getting a Filter record for zone %q, id %s", zoneID, d.Id())
 	filter, err := client.Filter(zoneID, d.Id())
@@ -150,8 +115,6 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 
 	log.Printf("[DEBUG] Cloudflare Filter read configuration: %#v", filter)
 
-	d.Set("zone", zoneName)
-	d.Set("zone_id", zoneID)
 	d.Set("paused", filter.Paused)
 	d.Set("description", filter.Description)
 	d.Set("expression", filter.Expression)

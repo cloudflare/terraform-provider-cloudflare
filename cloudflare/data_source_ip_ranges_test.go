@@ -3,7 +3,6 @@ package cloudflare
 import (
 	"fmt"
 	"net"
-	"os"
 	"sort"
 	"strconv"
 	"testing"
@@ -31,8 +30,6 @@ func testAccCloudflareIPRanges(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		r := s.RootModule().Resources[n]
 		a := r.Primary.Attributes
-
-		fmt.Fprintf(os.Stderr, "%#v", a)
 
 		var (
 			cidrBlockSize int

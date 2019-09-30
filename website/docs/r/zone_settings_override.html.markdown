@@ -14,7 +14,7 @@ Provides a resource which customizes Cloudflare zone settings. Note that after d
 
 ```hcl
 resource "cloudflare_zone_settings_override" "test" {
-	name = var.cloudflare_zone
+	zone_id = var.cloudflare_zone_id
 	settings {
 		brotli = "on"
 		challenge_ttl = 2700
@@ -39,7 +39,7 @@ resource "cloudflare_zone_settings_override" "test" {
 
 The following arguments are supported:
 
-* `name` - (Required) The DNS zone to which apply settings.
+* `zone_id` - (Required) The DNS zone ID to which apply settings.
 * `settings` - (Optional) Settings overrides that will be applied to the zone. If a setting is not specified the existing setting will be used. For a full list of available settings see below.
 
 The **settings** block supports settings that may be applied to the zone. These may be on/off values, unitary fields, string values, integers or nested objects.

@@ -2,11 +2,9 @@ package cloudflare
 
 import (
 	"fmt"
-	"os"
-	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -15,81 +13,6 @@ const (
 	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
 )
-
-func TestAccCloudflareWorkerScript_SingleScriptNonEnt(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_ORG_ID if it is set in order
-	// to test non-ENT behavior
-	if os.Getenv("CLOUDFLARE_ORG_ID") != "" {
-		defer func(orgId string) {
-			os.Setenv("CLOUDFLARE_ORG_ID", orgId)
-		}(os.Getenv("CLOUDFLARE_ORG_ID"))
-		os.Setenv("CLOUDFLARE_ORG_ID", "")
-	}
-
-	testAccCloudflareWorkerScript_SingleScript(t, nil)
-}
-
-// ENT customers should still be able to use the single-script
-// configuration format if they want to
-func TestAccCloudflareWorkerScript_SingleScriptEnt(t *testing.T) {
-	testAccCloudflareWorkerScript_SingleScript(t, testAccPreCheckOrg)
-}
-
-func testAccCloudflareWorkerScript_SingleScript(t *testing.T, preCheck preCheckFunc) {
-	var script cloudflare.WorkerScript
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
-	name := "cloudflare_worker_script." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			if preCheck != nil {
-				preCheck(t)
-			}
-		},
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareWorkerScriptConfigSingleScriptInitial(zone, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script),
-					resource.TestCheckResourceAttr(name, "zone", zone),
-					resource.TestMatchResourceAttr(name, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
-					resource.TestCheckResourceAttr(name, "content", scriptContent1),
-					resource.TestCheckNoResourceAttr(name, "name"),
-				),
-			},
-			{
-				Config: testAccCheckCloudflareWorkerScriptConfigSingleScriptUpdate(zone, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script),
-					resource.TestCheckResourceAttr(name, "zone", zone),
-					resource.TestMatchResourceAttr(name, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
-					resource.TestCheckResourceAttr(name, "content", scriptContent2),
-					resource.TestCheckNoResourceAttr(name, "name"),
-				),
-			},
-		},
-	})
-}
-
-func testAccCheckCloudflareWorkerScriptConfigSingleScriptInitial(zone, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[2]s" {
-  zone = "%[1]s"
-  content = "%[3]s"
-}`, zone, rnd, scriptContent1)
-}
-
-func testAccCheckCloudflareWorkerScriptConfigSingleScriptUpdate(zone, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[2]s" {
-  zone = "%[1]s"
-  content = "%[3]s"
-}`, zone, rnd, scriptContent2)
-}
 
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	t.Parallel()
@@ -101,7 +24,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheckOrg(t)
+			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
@@ -112,8 +35,6 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 					testAccCheckCloudflareWorkerScriptExists(name, &script),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent1),
-					resource.TestCheckNoResourceAttr(name, "zone"),
-					resource.TestCheckNoResourceAttr(name, "zone_id"),
 				),
 			},
 			{
@@ -122,8 +43,6 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 					testAccCheckCloudflareWorkerScriptExists(name, &script),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
-					resource.TestCheckNoResourceAttr(name, "zone"),
-					resource.TestCheckNoResourceAttr(name, "zone_id"),
 				),
 			},
 		},
@@ -147,15 +66,8 @@ resource "cloudflare_worker_script" "%[1]s" {
 }
 
 func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.WorkerRequestParams {
-	var params cloudflare.WorkerRequestParams
-	if rs.Primary.Attributes["name"] != "" {
-		params = cloudflare.WorkerRequestParams{
-			ScriptName: rs.Primary.Attributes["name"],
-		}
-	} else {
-		params = cloudflare.WorkerRequestParams{
-			ZoneID: rs.Primary.Attributes["zone_id"],
-		}
+	params := cloudflare.WorkerRequestParams{
+		ScriptName: rs.Primary.Attributes["name"],
 	}
 
 	return params

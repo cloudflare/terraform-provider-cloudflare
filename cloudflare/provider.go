@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/go-cleanhttp"
+	cloudflare "github.com/cloudflare/cloudflare-go"
+	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/httpclient"
@@ -25,10 +25,10 @@ func Provider() terraform.ResourceProvider {
 				Description: "A registered Cloudflare email address.",
 			},
 
-			"token": {
+			"api_key": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_TOKEN", nil),
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
 				Description: "The API key for operations.",
 			},
 
@@ -74,18 +74,11 @@ func Provider() terraform.ResourceProvider {
 				Description: "Whether to print logs from the API client (using the default log library logger)",
 			},
 
-			"use_org_from_zone": {
+			"account_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ORG_ZONE", nil),
-				Description: "If specified zone is owned by an organization, configure API client to always use that organization",
-			},
-
-			"org_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ORG_ID", nil),
-				Description: "Configure API client to always use that organization. If set this will override 'user_owner_from_zone'",
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
+				Description: "Configure API client to always use that account.",
 			},
 		},
 
@@ -156,8 +149,8 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 
 	if v, ok := d.GetOk("api_token"); ok {
 		config.APIToken = v.(string)
-	} else if v, ok := d.GetOk("token"); ok {
-		config.Token = v.(string)
+	} else if v, ok := d.GetOk("api_key"); ok {
+		config.APIKey = v.(string)
 		if v, ok = d.GetOk("email"); ok {
 			config.Email = v.(string)
 		} else {
@@ -172,38 +165,9 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 		return nil, err
 	}
 
-	if orgId, ok := d.GetOk("org_id"); ok {
-		log.Printf("[INFO] Using specified organization id %s in Cloudflare provider", orgId.(string))
-		options = append(options, cloudflare.UsingOrganization(orgId.(string)))
-	} else if zoneName, ok := d.GetOk("use_org_from_zone"); ok {
-		zoneId, err := client.ZoneIDByName(zoneName.(string))
-		if err != nil {
-			return nil, fmt.Errorf("error finding zone %q: %s", zoneName.(string), err)
-		}
-
-		zone, err := client.ZoneDetails(zoneId)
-		if err != nil {
-			return nil, err
-		}
-		log.Printf("[DEBUG] Looked up zone to match organization details to: %#v", zone)
-
-		orgs, _, err := client.ListOrganizations()
-		if err != nil {
-			return nil, fmt.Errorf("error listing organizations: %s", err.Error())
-		}
-		log.Printf("[DEBUG] Found organizations for current user: %#v", orgs)
-
-		orgIds := make([]string, len(orgs))
-		for _, org := range orgs {
-			orgIds = append(orgIds, org.ID)
-		}
-
-		if contains(orgIds, zone.Owner.ID) {
-			log.Printf("[INFO] Using organization %#v in Cloudflare provider", zone.Owner)
-			options = append(options, cloudflare.UsingOrganization(zone.Owner.ID))
-		} else {
-			log.Printf("[INFO] Zone ownership specified but organization owner not found. Falling back to using user API for Cloudflare provider")
-		}
+	if accountID, ok := d.GetOk("account_id"); ok {
+		log.Printf("[INFO] Using specified account id %s in Cloudflare provider", accountID.(string))
+		options = append(options, cloudflare.UsingAccount(accountID.(string)))
 	} else {
 		return client, err
 	}

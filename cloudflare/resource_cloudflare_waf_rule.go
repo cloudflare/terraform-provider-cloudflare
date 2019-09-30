@@ -26,17 +26,9 @@ func resourceCloudflareWAFRule() *schema.Resource {
 				Required: true,
 			},
 
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				Computed:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
-
 			"zone_id": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Required: true,
 			},
 
 			"package_id": {
@@ -74,24 +66,8 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	ruleID := d.Get("rule_id").(string)
-	zone := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
 	mode := d.Get("mode").(string)
-
-	// While we are deprecating `zone`, we need to perform the validation
-	// inside the `Create` to ensure we get at least one of the expected
-	// values.
-	if zone == "" && zoneID == "" {
-		return fmt.Errorf("either zone name or ID must be provided")
-	}
-
-	if zoneID == "" {
-		var err error
-		zoneID, err = client.ZoneIDByName(zone)
-		if err != nil {
-			return err
-		}
-	}
 
 	packs, err := client.ListWAFPackages(zoneID)
 	if err != nil {
@@ -102,8 +78,6 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 		rule, err := client.WAFRule(zoneID, p.ID, ruleID)
 
 		if err == nil {
-			d.Set("zone", zone)
-			d.Set("zone_id", zoneID)
 			d.Set("package_id", rule.PackageID)
 			d.Set("mode", mode)
 
@@ -170,18 +144,13 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-	var zoneName string
+	var zoneID string
 	var WAFID string
 	if len(idAttr) == 2 {
-		zoneName = idAttr[0]
+		zoneID = idAttr[0]
 		WAFID = idAttr[1]
 	} else {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/WAFID\" for import", d.Id())
-	}
-
-	zoneID, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/WAFID\" for import", d.Id())
 	}
 
 	packs, err := client.ListWAFPackages(zoneID)
@@ -193,7 +162,6 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 		rule, err := client.WAFRule(zoneID, p.ID, WAFID)
 		if err == nil {
 			d.Set("rule_id", rule.ID)
-			d.Set("zone", zoneName)
 			d.Set("zone_id", zoneID)
 			d.Set("package_id", rule.PackageID)
 			d.Set("mode", rule.Mode)
@@ -206,6 +174,8 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 	if d.Id() != WAFID {
 		return nil, fmt.Errorf("Unable to find WAF Rule %s", WAFID)
 	}
+
+	resourceCloudflareWAFRuleRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

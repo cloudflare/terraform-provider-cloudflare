@@ -14,7 +14,7 @@ Provides a Cloudflare rate limit resource for a given zone. This can be used to 
 
 ```hcl
 resource "cloudflare_rate_limit" "example" {
-  zone = var.cloudflare_zone
+  zone = var.cloudflare_zone_id
   threshold = 2000
   period = 2
   match {
@@ -49,7 +49,7 @@ resource "cloudflare_rate_limit" "example" {
 
 The following arguments are supported:
 
-* `zone` - (Required) The DNS zone to apply rate limiting to.
+* `zone_id` - (Required) The DNS zone ID to apply rate limiting to.
 * `threshold` - (Required) The threshold that triggers the rate limit mitigations, combine with period. i.e. threshold per period (min: 2, max: 1,000,000).
 * `period` - (Required) The time in seconds to count matching traffic. If the count exceeds threshold within this period the action will be performed (min: 1, max: 86,400).
 * `action` - (Required) The action to be performed when the threshold of matched traffic within the period defined is exceeded.
@@ -96,12 +96,11 @@ The **correlate** block supports:
 The following attributes are exported:
 
 * `id` - The Rate limit ID.
-* `zone_id` - The DNS zone ID.
 
 ## Import
 
 Rate limits can be imported using a composite ID formed of zone name and rate limit ID, e.g.
 
 ```
-$ terraform import cloudflare_rate_limit.default example.com/ch8374ftwdghsif43
+$ terraform import cloudflare_rate_limit.default d41d8cd98f00b204e9800998ecf8427e/ch8374ftwdghsif43
 ```

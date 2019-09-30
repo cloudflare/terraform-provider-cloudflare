@@ -3,14 +3,14 @@ package cloudflare
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestAccCloudflareZoneLockdown(t *testing.T) {
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
 
@@ -19,10 +19,9 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "1", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/*", "ip", "198.51.100.4"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", zone),
-					resource.TestMatchResourceAttr(name, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "priority", "1"),
 					resource.TestCheckResourceAttr(name, "description", "this is notes"),
@@ -36,7 +35,8 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 
 // test creating a config with only the required fields
 func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
 
@@ -45,10 +45,9 @@ func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "1", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/*", "ip", "198.51.100.4"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", zone),
-					resource.TestMatchResourceAttr(name, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "urls.#", "1"),
 					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
 				),
@@ -58,7 +57,8 @@ func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
 }
 
 func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone_lockdown." + rnd
 
@@ -68,11 +68,11 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareZoneLockdownConfig(rnd, zone, "false", "1", "this is notes", rnd+"."+zone+"/*", "ip", "198.51.100.4"),
+				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/*", "ip", "198.51.100.4"),
 			},
 			{
 				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
 			},
@@ -80,10 +80,10 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	})
 }
 
-func testCloudflareZoneLockdownConfig(resourceID, zone, paused, priority, description, url, target, value string) string {
+func testCloudflareZoneLockdownConfig(resourceID, zoneID, paused, priority, description, url, target, value string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone_lockdown" "%[1]s" {
-					zone = "%[2]s"
+					zone_id = "%[2]s"
 					paused = "%[3]s"
 					priority = "%[4]s"
 					description = "%[5]s"
@@ -92,5 +92,5 @@ func testCloudflareZoneLockdownConfig(resourceID, zone, paused, priority, descri
 						target = "%[7]s"
 						value = "%[8]s"
 					}
-				}`, resourceID, zone, paused, priority, description, url, target, value)
+				}`, resourceID, zoneID, paused, priority, description, url, target, value)
 }

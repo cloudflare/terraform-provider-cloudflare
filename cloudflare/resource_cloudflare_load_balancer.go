@@ -7,7 +7,7 @@ import (
 
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/pkg/errors"
@@ -25,19 +25,10 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				ForceNew:   true,
-				Computed:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
-
 			"zone_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				ForceNew: true,
-				Computed: true,
 			},
 
 			"name": {
@@ -175,15 +166,7 @@ var localPoolElems = map[string]*schema.Resource{
 func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	zoneName := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
-
-	// While we are deprecating `zone`, we need to perform the validation
-	// inside the `Create` to ensure we get at least one of the expected
-	// values.
-	if zoneName == "" && zoneID == "" {
-		return fmt.Errorf("either zone name or ID must be provided")
-	}
 
 	enabled := d.Get("enabled").(bool)
 	newLoadBalancer := cloudflare.LoadBalancer{
@@ -220,16 +203,6 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		}
 		newLoadBalancer.PopPools = expandedPopPools
 	}
-
-	if zoneID == "" {
-		var err error
-		zoneID, err = client.ZoneIDByName(zoneName)
-		if err != nil {
-			return fmt.Errorf("error finding zone %q: %s", zoneName, err)
-		}
-	}
-
-	d.Set("zone_id", zoneID)
 
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
@@ -383,26 +356,21 @@ func resourceCloudflareLoadBalancerDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-	var zoneName string
+	var zoneID string
 	var loadBalancerID string
 	if len(idAttr) == 2 {
-		zoneName = idAttr[0]
+		zoneID = idAttr[0]
 		loadBalancerID = idAttr[1]
 	} else {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneName/loadBalancerID\"", d.Id())
-	}
-	zoneID, err := client.ZoneIDByName(zoneName)
-
-	if err != nil {
-		return nil, fmt.Errorf("error finding zoneName %q: %s", zoneName, err)
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/loadBalancerID\"", d.Id())
 	}
 
-	d.Set("zone", zoneName)
 	d.Set("zone_id", zoneID)
 	d.SetId(loadBalancerID)
+
+	resourceCloudflareLoadBalancerRead(d, meta)
+
 	return []*schema.ResourceData{d}, nil
 }

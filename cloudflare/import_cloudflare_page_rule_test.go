@@ -13,9 +13,9 @@ import (
 func TestAccCloudflarePageRule_Import(t *testing.T) {
 	t.Parallel()
 	var pageRule cloudflare.PageRule
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := "cloudflare_page_rule.test"
-	target := fmt.Sprintf("test-import.%s", zone)
+	target := fmt.Sprintf("test-import.%s", os.Getenv("CLOUDFLARE_DOMAIN"))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -23,14 +23,14 @@ func TestAccCloudflarePageRule_Import(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zone, target),
+				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zoneID, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(name, &pageRule),
 				),
 			},
 			{
 				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 				ImportState:         true,
 				ImportStateVerify:   true,
 				Check: resource.ComposeTestCheckFunc(
@@ -43,7 +43,7 @@ func TestAccCloudflarePageRule_Import(t *testing.T) {
 
 func TestAccCloudflarePageRule_ImportWithBrowserCacheTTL30(t *testing.T) {
 	var pageRule cloudflare.PageRule
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := "cloudflare_page_rule.test"
 	testAccRunResourceTestSteps(t, []resource.TestStep{
 		{
@@ -54,7 +54,7 @@ func TestAccCloudflarePageRule_ImportWithBrowserCacheTTL30(t *testing.T) {
 		},
 		{
 			ResourceName:        name,
-			ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+			ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			ImportState:         true,
 			ImportStateVerify:   true,
 			Check: resource.ComposeTestCheckFunc(
@@ -66,7 +66,7 @@ func TestAccCloudflarePageRule_ImportWithBrowserCacheTTL30(t *testing.T) {
 
 func TestAccCloudflarePageRule_ImportWithoutBrowserCacheTTL(t *testing.T) {
 	var pageRule cloudflare.PageRule
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := "cloudflare_page_rule.test"
 	testAccRunResourceTestSteps(t, []resource.TestStep{
 		{
@@ -77,7 +77,7 @@ func TestAccCloudflarePageRule_ImportWithoutBrowserCacheTTL(t *testing.T) {
 		},
 		{
 			ResourceName:        name,
-			ImportStateIdPrefix: fmt.Sprintf("%s/", zone),
+			ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
 			ImportState:         true,
 			ImportStateVerify:   true,
 			Check: resource.ComposeTestCheckFunc(

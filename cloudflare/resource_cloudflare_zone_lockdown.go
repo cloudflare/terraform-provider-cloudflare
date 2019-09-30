@@ -21,18 +21,10 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				ForceNew:   true,
-				Computed:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
 			"zone_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				ForceNew: true,
-				Computed: true,
 			},
 			"paused": {
 				Type:     schema.TypeBool,
@@ -80,20 +72,9 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 
 func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneName := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
 
 	var err error
-
-	if zoneName == "" && zoneID == "" {
-		return fmt.Errorf("'zone' or 'zone_id' is required")
-	} else if zoneID == "" {
-		zoneID, err = client.ZoneIDByName(zoneName)
-		if err != nil {
-			return fmt.Errorf("Error finding zone %q: %s", zoneName, err)
-		}
-		d.Set("zone_id", zoneID)
-	}
 
 	var newZoneLockdown cloudflare.ZoneLockdown
 
@@ -124,7 +105,7 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 	r, err = client.CreateZoneLockdown(zoneID, newZoneLockdown)
 
 	if err != nil {
-		return fmt.Errorf("error creating zone lockdown for zone %q: %s", zoneName, err)
+		return fmt.Errorf("error creating zone lockdown for zone ID %q: %s", zoneID, err)
 	}
 
 	if r.Result.ID == "" {
@@ -254,27 +235,23 @@ func expandZoneLockdownConfig(configs *schema.Set) []cloudflare.ZoneLockdownConf
 }
 
 func resourceCloudflareZoneLockdownImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-	var zoneName string
+	var zoneID string
 	var zoneLockdownID string
 	if len(idAttr) == 2 {
-		zoneName = idAttr[0]
+		zoneID = idAttr[0]
 		zoneLockdownID = idAttr[1]
-		d.Set("zone", zoneName)
+		d.Set("zone_id", zoneID)
 		d.SetId(zoneLockdownID)
 	} else {
-		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneName/zoneLockdownId\"", d.Id())
+		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/zoneLockdownId\"", d.Id())
 	}
-	zoneID, err := client.ZoneIDByName(zoneName)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't find zone %q while trying to import zone lockdown %q : %q", zoneName, d.Id(), err)
-	}
-	d.Set("zone_id", zoneID)
-	log.Printf("[DEBUG] zone: %s", zoneName)
+
 	log.Printf("[DEBUG] zoneID: %s", zoneID)
 	log.Printf("[DEBUG] Resource ID : %s", zoneLockdownID)
+
+	resourceCloudflareZoneLockdownRead(d, meta)
+
 	return []*schema.ResourceData{d}, nil
 }

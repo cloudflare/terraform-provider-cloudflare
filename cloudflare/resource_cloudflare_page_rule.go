@@ -23,19 +23,10 @@ func resourceCloudflarePageRule() *schema.Resource {
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				ForceNew:   true,
-				Computed:   true,
-				Deprecated: "`zone` is deprecated in favour of explicit `zone_id` and will be removed in the next major release",
-			},
-
 			"zone_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				ForceNew: true,
-				Computed: true,
 			},
 
 			"target": {
@@ -332,15 +323,7 @@ func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
 
 func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zone := d.Get("zone").(string)
 	zoneID := d.Get("zone_id").(string)
-
-	// While we are deprecating `zone`, we need to perform the validation
-	// inside the `Create` to ensure we get at least one of the expected
-	// values.
-	if zone == "" && zoneID == "" {
-		return fmt.Errorf("either zone name or ID must be provided")
-	}
 
 	newPageRuleTargets := []cloudflare.PageRuleTarget{
 		{
@@ -383,15 +366,6 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 		Status:   d.Get("status").(string),
 	}
 
-	if zoneID == "" {
-		var err error
-		zoneID, err = client.ZoneIDByName(zone)
-		if err != nil {
-			return fmt.Errorf("Error finding zone %q: %s", zone, err)
-		}
-	}
-
-	d.Set("zone_id", zoneID)
 	log.Printf("[DEBUG] Cloudflare Page Rule create configuration: %#v", newPageRule)
 
 	r, err := client.CreatePageRule(zoneID, newPageRule)
@@ -517,9 +491,8 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 func resourceCloudflarePageRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	zone := d.Get("zone").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zone, d.Id())
+	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zoneID, d.Id())
 
 	if err := client.DeletePageRule(zoneID, d.Id()); err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Page Rule: %s", err)
@@ -675,25 +648,21 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 }
 
 func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
-	var zoneName string
-	var pageRuleId string
+	var zoneID string
+	var pageRuleID string
 	if len(idAttr) == 2 {
-		zoneName = idAttr[0]
-		pageRuleId = idAttr[1]
-		d.Set("zone", zoneName)
-		d.SetId(pageRuleId)
+		zoneID = idAttr[0]
+		pageRuleID = idAttr[1]
+		d.Set("zone_id", zoneID)
+		d.SetId(pageRuleID)
 	} else {
-		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneName/pageRuleId\"", d.Id())
+		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/pageRuleID\"", d.Id())
 	}
-	zoneId, err := client.ZoneIDByName(zoneName)
-	d.Set("zone_id", zoneId)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't find zone %q while trying to import page rule %q : %q", zoneName, d.Id(), err)
-	}
+
+	resourceCloudflarePageRuleRead(d, meta)
+
 	return []*schema.ResourceData{d}, nil
 }
 
