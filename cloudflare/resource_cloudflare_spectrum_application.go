@@ -33,6 +33,15 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 				Required: true,
 			},
 
+			"traffic_type": {
+				Type:     schema.TypeString,
+				Default:  "direct",
+				Optional: true,
+				ValidateFunc: validation.StringInSlice([]string{
+					"direct", "http", "https",
+				}, false),
+			},
+
 			"dns": {
 				Type:     schema.TypeList,
 				Required: true,
@@ -176,6 +185,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 
 	d.Set("origin_port", application.OriginPort)
 	d.Set("tls", application.TLS)
+	d.Set("traffic_type", application.TrafficType)
 	d.Set("ip_firewall", application.IPFirewall)
 	d.Set("proxy_protocol", application.ProxyProtocol)
 
@@ -271,6 +281,10 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 
 	if tls, ok := d.GetOk("tls"); ok {
 		application.TLS = tls.(string)
+	}
+
+	if traffic_type, ok := d.GetOk("traffic_type"); ok {
+		application.TrafficType = traffic_type.(string)
 	}
 
 	if ipFirewall, ok := d.GetOk("ip_firewall"); ok {

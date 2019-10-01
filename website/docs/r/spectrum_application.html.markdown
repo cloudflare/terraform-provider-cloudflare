@@ -16,6 +16,7 @@ Provides a Cloudflare Spectrum Application. You can extend the power of Cloudfla
 # Define a spectrum application proxies ssh traffic
 resource "cloudflare_spectrum_application" "ssh_proxy" {
   protocol = "tcp/22"
+  traffic_type = "direct"
   dns = {
     type = "CNAME"
     name = "ssh.example.com"
@@ -37,6 +38,7 @@ resource "cloudflare_spectrum_application" "ssh_proxy" {
 * `tls` - (Optional) TLS configuration option for Cloudflare to connect to your origin. Valid values are: `off`, `flexible`, `full` and `strict`. Defaults to `off`.
 * `ip_firewall` - (Optional) Enables the IP Firewall for this application. Defaults to `true`.
 * `proxy_protocol` - (Optional) Enables Proxy Protocol v1 to the origin. Defaults to `false`.
+* `traffic_type` - (Optional) Set's application type. Valid values are: `direct`, `http`, `https`.  Defaults to `direct`.
 
 **dns**
 
