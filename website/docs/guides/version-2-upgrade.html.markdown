@@ -45,7 +45,7 @@ The following changes have been made to fields:
 
 The following changes have been made to environment variables:
 
-- renamed `CLOUDFLARE_TOKEN` to `CLOUDFLARE_API_TOKEN`
+- renamed `CLOUDFLARE_TOKEN` to `CLOUDFLARE_API_KEY`
 - renamed `CLOUDFLARE_ORG_ID` to `CLOUDFLARE_ACCOUNT_ID`
 - removed `CLOUDFLARE_ORG_ZONE`, you need to explicitly specify `CLOUDFLARE_ACCOUNT_ID`
 
