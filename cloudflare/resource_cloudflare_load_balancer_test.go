@@ -11,8 +11,8 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
