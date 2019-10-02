@@ -51,3 +51,14 @@ func stringChecksum(s string) string {
 
 	return fmt.Sprintf("%x", bs)
 }
+
+// Returns true if string value exists in string slice
+func contains(slice []string, item string) bool {
+	set := make(map[string]struct{}, len(slice))
+	for _, s := range slice {
+		set[s] = struct{}{}
+	}
+
+	_, ok := set[item]
+	return ok
+}

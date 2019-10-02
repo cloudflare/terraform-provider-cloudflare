@@ -54,7 +54,7 @@ github.com/aws/aws-sdk-go/private/protocol/query/queryutil
 github.com/bgentry/go-netrc/netrc
 # github.com/bgentry/speakeasy v0.1.0
 github.com/bgentry/speakeasy
-# github.com/cloudflare/cloudflare-go v0.10.2
+# github.com/cloudflare/cloudflare-go v0.10.3
 github.com/cloudflare/cloudflare-go
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
@@ -263,7 +263,7 @@ golang.org/x/crypto/openpgp/elgamal
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
-# golang.org/x/net v0.0.0-20190930134127-c5a3c61f89f3
+# golang.org/x/net v0.0.0-20191002035440-2ec189313ef0
 golang.org/x/net/idna
 golang.org/x/net/context
 golang.org/x/net/trace
@@ -313,7 +313,7 @@ google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
-# google.golang.org/genproto v0.0.0-20190927181202-20e1ac93f88c
+# google.golang.org/genproto v0.0.0-20191007204434-a023cd5227bd
 google.golang.org/genproto/googleapis/rpc/status
 google.golang.org/genproto/googleapis/iam/v1
 google.golang.org/genproto/googleapis/rpc/code
