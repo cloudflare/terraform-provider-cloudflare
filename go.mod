@@ -9,5 +9,5 @@ require (
 	github.com/hashicorp/terraform v0.12.8
 	github.com/pkg/errors v0.8.1
 	golang.org/x/net v0.0.0-20191002035440-2ec189313ef0
-	google.golang.org/genproto v0.0.0-20190927181202-20e1ac93f88c // indirect
+	google.golang.org/genproto v0.0.0-20191002201930-455060b39886 // indirect
 )
