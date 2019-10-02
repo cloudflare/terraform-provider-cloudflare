@@ -470,7 +470,9 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 }
 
 var fetchAsSingleSetting = []string{
+	"binary_ast",
 	"h2_prioritization",
+	"image_resizing",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta interface{}) error {
