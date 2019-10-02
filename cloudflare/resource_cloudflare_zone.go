@@ -101,6 +101,10 @@ func resourceCloudflareZone() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"verification_key": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -170,6 +174,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("meta", flattenMeta(d, zone.Meta))
 	d.Set("zone", zone.Name)
 	d.Set("plan", planIDForName(zone.Plan.Name))
+	d.Set("verification_key", zone.VerificationKey)
 
 	return nil
 }

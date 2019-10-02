@@ -11,3 +11,5 @@ require (
 	golang.org/x/net v0.0.0-20191002035440-2ec189313ef0
 	google.golang.org/genproto v0.0.0-20190927181202-20e1ac93f88c // indirect
 )
+
+replace github.com/cloudflare/cloudflare-go => github.com/inge4pres/cloudflare-go v0.10.3
