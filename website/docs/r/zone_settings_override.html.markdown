@@ -48,53 +48,52 @@ The **settings** block supports settings that may be applied to the zone. These 
 
 These can be specified as "on" or "off" string. Similar to boolean values, but here the empty string also means to use the existing value. Attributes available:
 
-* `always_online`
-* `always_use_https`
-* `automatic_https_rewrites`
-* `brotli`
-* `browser_check`
-* `cache_level`
-* `development_mode`
-* `email_obfuscation`
-* `hotlink_protection`
-* `http2`
-* `image_resizing`
-* `ip_geolocation`
-* `ipv6`
-* `mirage`
-* `opportunistic_encryption`
-* `opportunistic_onion`
-* `origin_error_page_pass_thru`
-* `prefetch_preload`
-* `privacy_pass`
-* `response_buffering`
-* `rocket_loader`
-* `server_side_exclude`
-* `sort_query_string_for_cache`
-* `tls_client_auth`
-* `true_client_ip_header`
-* `waf`
-* `webp`. Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
-* `websockets`
+* `always_online` (default: `on`)
+* `always_use_https` (default: `off`)
+* `automatic_https_rewrites` (default value depends on the zone's plan level)
+* `brotli` (default: `off`)
+* `browser_check` (default: `on`)
+* `development_mode` (default: `off`)
+* `email_obfuscation` (default: `on`)
+* `hotlink_protection` (default: `off`)
+* `http2` (default: `off`)
+* `image_resizing` (default: `off`)
+* `ip_geolocation` (default: `on`)
+* `ipv6` (default: `off`)
+* `mirage` (default: `off`)
+* `opportunistic_encryption` (default value depends on the zone's plan level)
+* `opportunistic_onion` (default: `off`)
+* `origin_error_page_pass_thru` (default: `off`)
+* `prefetch_preload` (default: `off`)
+* `privacy_pass` (default: `on`)
+* `response_buffering` (default: `off`)
+* `rocket_loader` (default: `off`)
+* `server_side_exclude` (default: `on`)
+* `sort_query_string_for_cache` (default: `off`)
+* `tls_client_auth` (default: `on`)
+* `true_client_ip_header` (default: `off`)
+* `waf` (default: `off`)
+* `webp` (default: `off`). Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
+* `websockets` (default: `off`)
 
 ### String Values
 
-* `cache_level`. Allowed values: "aggressive", "basic", "simplified".
-* `cname_flattening`. Allowed values: "flatten_at_root", "flatten_all", "flatten_none".
-* `h2_prioritization`. Allowed values: "on", "off", "custom".
-* `min_tls_version`. Allowed values: "1.0", "1.1", "1.2", "1.3".
-* `polish`. Allowed values: "off", "lossless", "lossy".
-* `pseudo_ipv4`. Allowed values: "off", "add_header", "overwrite_header".
-* `security_level`. Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium", "high", "under_attack".
-* `ssl`. Allowed values: "off", "flexible", "full", "strict", "origin_pull".
-* `tls_1_3`. Allowed values: "off", "on", "zrt".
+* `cache_level`. Allowed values: "aggressive" (default), "basic", "simplified".
+* `cname_flattening`. Allowed values: "flatten_at_root" (default), "flatten_all", "flatten_none".
+* `h2_prioritization`. Allowed values: "on", "off" (default), "custom".
+* `min_tls_version`. Allowed values: "1.0" (default), "1.1", "1.2", "1.3".
+* `polish`. Allowed values: "off" (default), "lossless", "lossy".
+* `pseudo_ipv4`. Allowed values: "off" (default), "add_header", "overwrite_header".
+* `security_level`. Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium" (default), "high", "under_attack".
+* `ssl`. Allowed values: "off" (default), "flexible", "full", "strict", "origin_pull".
+* `tls_1_3`. Allowed values: "off" (default), "on", "zrt".
 
 ### Integer Values
 
-* `browser_cache_ttl`
-* `challenge_ttl`
-* `edge_cache_ttl`
-* `max_upload`
+* `browser_cache_ttl` (default: `14400`)
+* `challenge_ttl` (default: `1800`)
+* `edge_cache_ttl` (default: `7200`)
+* `max_upload` (default: `100`)
 
 ### Nested Objects
 
