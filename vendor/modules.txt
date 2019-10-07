@@ -1,4 +1,4 @@
-# cloud.google.com/go v0.36.0
+# cloud.google.com/go v0.45.1
 cloud.google.com/go/compute/metadata
 cloud.google.com/go/iam
 cloud.google.com/go/internal
@@ -8,7 +8,7 @@ cloud.google.com/go/internal/version
 cloud.google.com/go/storage
 # github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
-# github.com/apparentlymart/go-cidr v1.0.0
+# github.com/apparentlymart/go-cidr v1.0.1
 github.com/apparentlymart/go-cidr/cidr
 # github.com/apparentlymart/go-textseg v1.0.0
 github.com/apparentlymart/go-textseg/textseg
@@ -80,13 +80,13 @@ github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
 # github.com/google/uuid v1.1.1
 github.com/google/uuid
-# github.com/googleapis/gax-go/v2 v2.0.3
+# github.com/googleapis/gax-go/v2 v2.0.5
 github.com/googleapis/gax-go/v2
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-cleanhttp v0.5.1
 github.com/hashicorp/go-cleanhttp
-# github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e
+# github.com/hashicorp/go-getter v1.4.0
 github.com/hashicorp/go-getter
 github.com/hashicorp/go-getter/helper/url
 # github.com/hashicorp/go-hclog v0.9.2
@@ -102,7 +102,7 @@ github.com/hashicorp/go-safetemp
 github.com/hashicorp/go-uuid
 # github.com/hashicorp/go-version v1.1.0
 github.com/hashicorp/go-version
-# github.com/hashicorp/golang-lru v0.5.0
+# github.com/hashicorp/golang-lru v0.5.1
 github.com/hashicorp/golang-lru/simplelru
 # github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f
 github.com/hashicorp/hcl
@@ -114,15 +114,22 @@ github.com/hashicorp/hcl/hcl/token
 github.com/hashicorp/hcl/json/parser
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
+# github.com/hashicorp/hcl/v2 v2.0.0
+github.com/hashicorp/hcl/v2
+github.com/hashicorp/hcl/v2/ext/dynblock
+github.com/hashicorp/hcl/v2/ext/typeexpr
+github.com/hashicorp/hcl/v2/gohcl
+github.com/hashicorp/hcl/v2/hcldec
+github.com/hashicorp/hcl/v2/hcled
+github.com/hashicorp/hcl/v2/hclparse
+github.com/hashicorp/hcl/v2/hclsyntax
+github.com/hashicorp/hcl/v2/hclwrite
+github.com/hashicorp/hcl/v2/json
 # github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
-github.com/hashicorp/hcl2/ext/dynblock
-github.com/hashicorp/hcl2/ext/typeexpr
 github.com/hashicorp/hcl2/gohcl
 github.com/hashicorp/hcl2/hcl
 github.com/hashicorp/hcl2/hcl/hclsyntax
 github.com/hashicorp/hcl2/hcl/json
-github.com/hashicorp/hcl2/hcldec
-github.com/hashicorp/hcl2/hcled
 github.com/hashicorp/hcl2/hclparse
 github.com/hashicorp/hcl2/hclwrite
 # github.com/hashicorp/hil v0.0.0-20190212112733-ab17b08d6590
@@ -132,7 +139,7 @@ github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v1.0.0
 github.com/hashicorp/logutils
-# github.com/hashicorp/terraform v0.12.8
+# github.com/hashicorp/terraform v0.12.10
 github.com/hashicorp/terraform/addrs
 github.com/hashicorp/terraform/command/format
 github.com/hashicorp/terraform/config
@@ -228,7 +235,7 @@ github.com/ulikunitz/xz/lzma
 # github.com/vmihailenco/msgpack v4.0.1+incompatible
 github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
-# github.com/zclconf/go-cty v1.0.1-0.20190708163926-19588f92a98f
+# github.com/zclconf/go-cty v1.1.0
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/convert
 github.com/zclconf/go-cty/cty/function
@@ -239,7 +246,7 @@ github.com/zclconf/go-cty/cty/msgpack
 github.com/zclconf/go-cty/cty/set
 # github.com/zclconf/go-cty-yaml v1.0.1
 github.com/zclconf/go-cty-yaml
-# go.opencensus.io v0.20.2
+# go.opencensus.io v0.22.0
 go.opencensus.io
 go.opencensus.io/internal
 go.opencensus.io/internal/tagencoding
@@ -282,7 +289,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
+# golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 golang.org/x/oauth2
 golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
@@ -298,7 +305,7 @@ golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 # golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0
 golang.org/x/time/rate
-# google.golang.org/api v0.3.1
+# google.golang.org/api v0.9.0
 google.golang.org/api/gensupport
 google.golang.org/api/googleapi
 google.golang.org/api/googleapi/internal/uritemplates
@@ -309,9 +316,11 @@ google.golang.org/api/option
 google.golang.org/api/storage/v1
 google.golang.org/api/transport/http
 google.golang.org/api/transport/http/internal/propagation
-# google.golang.org/appengine v1.4.0
+# google.golang.org/appengine v1.6.1
 google.golang.org/appengine
 google.golang.org/appengine/datastore
+google.golang.org/appengine/datastore/internal/cloudkey
+google.golang.org/appengine/datastore/internal/cloudpb
 google.golang.org/appengine/internal
 google.golang.org/appengine/internal/app_identity
 google.golang.org/appengine/internal/base
@@ -327,7 +336,7 @@ google.golang.org/genproto/googleapis/iam/v1
 google.golang.org/genproto/googleapis/rpc/code
 google.golang.org/genproto/googleapis/rpc/status
 google.golang.org/genproto/googleapis/type/expr
-# google.golang.org/grpc v1.19.1
+# google.golang.org/grpc v1.21.1
 google.golang.org/grpc
 google.golang.org/grpc/balancer
 google.golang.org/grpc/balancer/base
@@ -344,6 +353,7 @@ google.golang.org/grpc/health
 google.golang.org/grpc/health/grpc_health_v1
 google.golang.org/grpc/internal
 google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/balancerload
 google.golang.org/grpc/internal/binarylog
 google.golang.org/grpc/internal/channelz
 google.golang.org/grpc/internal/envconfig
