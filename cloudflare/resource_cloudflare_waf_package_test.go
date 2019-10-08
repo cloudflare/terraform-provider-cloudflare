@@ -49,21 +49,7 @@ func TestAccCloudflareWAFPackage_CreateThenUpdate(t *testing.T) {
 }
 
 func testAccGetWAFPackage(zoneID string) (string, error) {
-	config := Config{}
-	if apiToken, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
-		config.APIToken = apiToken
-	} else if apiKey, ok := os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
-		config.APIKey = apiKey
-		if email, ok := os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
-			config.Email = email
-		} else {
-			return "", fmt.Errorf("Cloudflare email is not set correctly")
-		}
-	} else {
-		return "", fmt.Errorf("Cloudflare credentials are not set correctly")
-	}
-
-	client, err := config.Client()
+	client, err := sharedClient()
 	if err != nil {
 		return "", err
 	}
