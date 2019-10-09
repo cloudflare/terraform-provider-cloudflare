@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccCloudflareZoneSettingsOverride_Empty(t *testing.T) {
@@ -56,6 +56,8 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 						name, "settings.0.challenge_ttl", "2700"),
 					resource.TestCheckResourceAttr(
 						name, "settings.0.security_level", "high"),
+					resource.TestCheckResourceAttr(
+						name, "settings.0.h2_prioritization", "on"),
 				),
 			},
 		},
@@ -219,6 +221,7 @@ resource "cloudflare_zone_settings_override" "test" {
 		security_level = "high"
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"
+		h2_prioritization = "on"
 		minify {
 			css = "on"
 			js = "off"

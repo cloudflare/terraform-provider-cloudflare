@@ -1,4 +1,20 @@
 ## 2.0.1 (Unreleased)
+
+* **New Resource:** `cloudflare_waf_package` ([#475](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/475))
+
+**Fixes:**
+
+* `resource/cloudflare_page_rule`: Set `h2_prioritization` individually not via bulk endpoint ([#493](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/493))
+
+**Improvements:**
+
+* `resource/cloudflare_spectrum_application`: Add support for setting `traffic_type` ([#481](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/481))
+* `resource/cloudflare_zone_settings_override`: Update documentation with default values ([#498](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/498))
+
+**Internals:**
+
+* Migrated to Terraform plugin SDK ([#489](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/489))
+
 ## 2.0.0 (September 30, 2019)
 
 **Breaking changes:**

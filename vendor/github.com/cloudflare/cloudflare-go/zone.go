@@ -49,6 +49,7 @@ type Zone struct {
 	DeactReason string   `json:"deactivation_reason"`
 	Meta        ZoneMeta `json:"meta"`
 	Account     Account  `json:"account"`
+	VerificationKey string `json:"verification_key"`
 }
 
 // ZoneMeta describes metadata about a zone.
@@ -139,7 +140,7 @@ type ZoneRatePlanResponse struct {
 type ZoneSetting struct {
 	ID            string      `json:"id"`
 	Editable      bool        `json:"editable"`
-	ModifiedOn    string      `json:"modified_on"`
+	ModifiedOn    string      `json:"modified_on,omitempty"`
 	Value         interface{} `json:"value"`
 	TimeRemaining int         `json:"time_remaining"`
 }

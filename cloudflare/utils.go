@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func expandInterfaceToStringList(list interface{}) []string {
@@ -50,4 +50,15 @@ func stringChecksum(s string) string {
 	bs := h.Sum(nil)
 
 	return fmt.Sprintf("%x", bs)
+}
+
+// Returns true if string value exists in string slice
+func contains(slice []string, item string) bool {
+	set := make(map[string]struct{}, len(slice))
+	for _, s := range slice {
+		set[s] = struct{}{}
+	}
+
+	_, ok := set[item]
+	return ok
 }

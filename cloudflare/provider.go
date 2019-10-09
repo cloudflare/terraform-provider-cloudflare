@@ -7,10 +7,10 @@ import (
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
-	"github.com/hashicorp/terraform/helper/logging"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/httpclient"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/terraform-providers/terraform-provider-cloudflare/version"
 )
 
@@ -106,6 +106,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_record":                 resourceCloudflareRecord(),
 			"cloudflare_spectrum_application":   resourceCloudflareSpectrumApplication(),
 			"cloudflare_waf_group":              resourceCloudflareWAFGroup(),
+			"cloudflare_waf_package":            resourceCloudflareWAFPackage(),
 			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
 			"cloudflare_worker_route":           resourceCloudflareWorkerRoute(),
 			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),

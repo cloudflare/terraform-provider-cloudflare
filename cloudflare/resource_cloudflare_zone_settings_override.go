@@ -11,8 +11,8 @@ import (
 	"reflect"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -469,6 +469,12 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 }
 
+var fetchAsSingleSetting = []string{
+	"binary_ast",
+	"h2_prioritization",
+	"image_resizing",
+}
+
 func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -481,6 +487,14 @@ func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 	zoneSettings, err := client.ZoneSettings(d.Id())
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error reading initial settings for zone %q", d.Id()))
+	}
+
+	for _, settingName := range fetchAsSingleSetting {
+		singleSeting, err := client.ZoneSingleSetting(d.Id(), settingName)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error reading initial setting '%q' for zone %q", settingName, d.Id()))
+		}
+		zoneSettings.Result = append(zoneSettings.Result, singleSeting)
 	}
 
 	log.Printf("[DEBUG] Read CloudflareZone initial settings: %#v", zoneSettings)
@@ -519,6 +533,14 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 	zoneSettings, err := client.ZoneSettings(d.Id())
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error reading settings for zone %q", d.Id()))
+	}
+
+	for _, settingName := range fetchAsSingleSetting {
+		singleSeting, err := client.ZoneSingleSetting(d.Id(), settingName)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error reading setting '%q' for zone %q", settingName, d.Id()))
+		}
+		zoneSettings.Result = append(zoneSettings.Result, singleSeting)
 	}
 
 	log.Printf("[DEBUG] Read CloudflareZone Settings: %#v", zoneSettings)
@@ -606,6 +628,21 @@ func resourceCloudflareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta i
 		}
 
 		log.Printf("[DEBUG] Cloudflare Zone Settings update configuration: %#v", zoneSettings)
+
+		var indexesToCut []int
+		for i, setting := range zoneSettings {
+			if contains(fetchAsSingleSetting, setting.ID) {
+				_, err := client.UpdateZoneSingleSetting(d.Id(), setting.ID, setting)
+				if err != nil {
+					return err
+				}
+				indexesToCut = append(indexesToCut, i)
+			}
+		}
+
+		for _, indexToCut := range indexesToCut {
+			zoneSettings = append(zoneSettings[:indexToCut], zoneSettings[indexToCut+1:]...)
+		}
 
 		if len(zoneSettings) > 0 {
 			_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)

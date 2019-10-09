@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceCloudflarePageRule() *schema.Resource {
@@ -664,14 +664,4 @@ func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) 
 	resourceCloudflarePageRuleRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func contains(slice []string, item string) bool {
-	set := make(map[string]struct{}, len(slice))
-	for _, s := range slice {
-		set[s] = struct{}{}
-	}
-
-	_, ok := set[item]
-	return ok
 }
