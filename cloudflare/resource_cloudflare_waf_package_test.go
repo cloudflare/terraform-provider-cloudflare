@@ -49,6 +49,12 @@ func TestAccCloudflareWAFPackage_CreateThenUpdate(t *testing.T) {
 }
 
 func testAccGetWAFPackage(zoneID string) (string, error) {
+	if os.Getenv(resource.TestEnvVar) == "" {
+		// Test will be skipped as acceptance tests are not enabled,
+		// we thus don't need to use the client to grab a package ID
+		return "", nil
+	}
+
 	client, err := sharedClient()
 	if err != nil {
 		return "", err
