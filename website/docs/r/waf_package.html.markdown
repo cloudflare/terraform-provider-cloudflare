@@ -27,8 +27,8 @@ The following arguments are supported:
 
 * `zone_id` - (Required) The DNS zone ID to apply to.
 * `package_id` - (Required) The WAF Package ID.
-* `sensitivity` - (Required) The sensitivity of the package, can be one of ["high", "medium", "low", "off"].
-* `action_mode` - (Required) The action mode of the package, can be one of ["block", "challenge", "simulate"].
+* `sensitivity` - (Optional) The sensitivity of the package, can be one of ["high", "medium", "low", "off"].
+* `action_mode` - (Optional) The action mode of the package, can be one of ["block", "challenge", "simulate"].
 
 
 ## Attributes Reference
