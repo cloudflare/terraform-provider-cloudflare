@@ -49,21 +49,13 @@ func TestAccCloudflareWAFGroup_CreateThenUpdate(t *testing.T) {
 }
 
 func testAccGetWAFGroup(zoneID string) (string, error) {
-	config := Config{}
-	if apiToken, ok := os.LookupEnv("CLOUDFLARE_API_TOKEN"); ok {
-		config.APIToken = apiToken
-	} else if apiKey, ok := os.LookupEnv("CLOUDFLARE_API_KEY"); ok {
-		config.APIKey = apiKey
-		if email, ok := os.LookupEnv("CLOUDFLARE_EMAIL"); ok {
-			config.Email = email
-		} else {
-			return "", fmt.Errorf("Cloudflare email is not set correctly")
-		}
-	} else {
-		return "", fmt.Errorf("Cloudflare credentials are not set correctly")
+	if os.Getenv(resource.TestEnvVar) == "" {
+		// Test will be skipped as acceptance tests are not enabled,
+		// we thus don't need to use the client to grab a package ID
+		return "", nil
 	}
 
-	client, err := config.Client()
+	client, err := sharedClient()
 	if err != nil {
 		return "", err
 	}

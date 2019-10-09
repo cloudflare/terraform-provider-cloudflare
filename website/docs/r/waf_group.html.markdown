@@ -26,7 +26,8 @@ The following arguments are supported:
 
 * `zone_id` - (Required) The DNS zone ID to apply to.
 * `group_id` - (Required) The WAF Rule Group ID.
-* `mode` - (Required) The mode of the group, can be one of ["on", "off"].
+* `package_id` - (Optional) The ID of the WAF Rule Package that contains the group.
+* `mode` - (Optional) The mode of the group, can be one of ["on", "off"].
 
 
 ## Attributes Reference
