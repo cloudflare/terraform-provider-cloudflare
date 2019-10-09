@@ -38,6 +38,20 @@ resource "cloudflare_record" "_sip_tls" {
     target   = "example.com"
   }
 }
+
+data "cloudflare_zones" "infra" {
+  filter {
+    name   = "example.com"
+    status = "active"
+    paused = false
+  }
+}
+
+resource "cloudflare_record" "infra" {
+  zone_id = "${lookup(data.cloudflare_zones.infra.zones[0], "id")}"
+  name    = "..."
+...
+}
 ```
 
 ## Argument Reference
