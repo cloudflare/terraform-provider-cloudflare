@@ -42,5 +42,5 @@ The following attributes are exported:
 Packages can be imported using a composite ID formed of zone ID and the WAF Package ID, e.g.
 
 ```
-$ terraform import cloudflare_waf_rule.owasp ae36f999674d196762efcc5abb06b345/a25a9a7e9c00afc1fb2e0245519d725b
+$ terraform import cloudflare_waf_package.owasp ae36f999674d196762efcc5abb06b345/a25a9a7e9c00afc1fb2e0245519d725b
 ```
