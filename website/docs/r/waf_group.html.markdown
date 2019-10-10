@@ -34,12 +34,12 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-* `id` - The WAF Rule Group ID, the same as group_id.
+* `id` - The WAF Rule Group ID, the same as `group_id`.
 * `package_id` - The ID of the WAF Rule Package that contains the group.
 
 ## Import
 
-Rules can be imported using a composite ID formed of zone ID and the WAF Rule Group ID, e.g.
+WAF Rule Groups can be imported using a composite ID formed of zone ID and the WAF Rule Group ID, e.g.
 
 ```
 $ terraform import cloudflare_waf_group.honey_pot ae36f999674d196762efcc5abb06b345/de677e5818985db1285d0e80225f06e5
