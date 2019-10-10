@@ -95,7 +95,6 @@ func TestAccCloudflareZonePartialSetupEnterprise(t *testing.T) {
 	})
 }
 
-
 func TestAccCloudflareZoneFullSetup(t *testing.T) {
 	name := "cloudflare_zone.tf-acc-full-setup-zone"
 	resourceName := strings.Split(name, ".")[1]
