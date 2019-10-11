@@ -31,6 +31,7 @@ output "waf_packages" {
 
 ## Argument Reference
 
+- `zone_id` - (Required) The ID of the DNS zone in which to search for the WAF Rule Packages.
 - `filter` - (Optional) One or more values used to look up WAF Rule Packages. If more than one value is given all
 values must match in order to be included, see below for full list.
 
