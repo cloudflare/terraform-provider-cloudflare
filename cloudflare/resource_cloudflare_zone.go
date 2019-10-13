@@ -135,6 +135,15 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
+	// In the cases where the zone isn't completely setup yet, we need to
+	// check the `status` field and should it be pending, use the `Name`
+	// from `zone.PlanPending` instead to account for paid plans.
+	if status, ok := d.GetOk("status"); ok {
+		if status == "pending" && zone.PlanPending.Name != "" {
+			d.Set("plan", zone.PlanPending.Name)
+		}
+	}
+
 	if plan, ok := d.GetOk("plan"); ok {
 		if err := setRatePlan(client, zone.ID, plan.(string)); err != nil {
 			return err
@@ -162,6 +171,18 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error finding Zone %q: %s", d.Id(), err)
 	}
 
+	// In the cases where the zone isn't completely setup yet, we need to
+	// check the `status` field and should it be pending, use the `Name`
+	// from `zone.PlanPending` instead to account for paid plans.
+	var plan string
+	if status, ok := d.GetOk("status"); ok {
+		if status == "pending" && zone.PlanPending.Name != "" {
+			plan = zone.PlanPending.Name
+		} else {
+			plan = zone.Plan.Name
+		}
+	}
+
 	d.Set("paused", zone.Paused)
 	d.Set("vanity_name_servers", zone.VanityNS)
 	d.Set("status", zone.Status)
@@ -169,7 +190,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("name_servers", zone.NameServers)
 	d.Set("meta", flattenMeta(d, zone.Meta))
 	d.Set("zone", zone.Name)
-	d.Set("plan", planIDForName(zone.Plan.Name))
+	d.Set("plan", planIDForName(plan))
 
 	return nil
 }
@@ -177,6 +198,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Id()
+	zone, _ := client.ZoneDetails(zoneID)
 
 	log.Printf("[INFO] Updating Cloudflare Zone: id %s", zoneID)
 
@@ -187,6 +209,15 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 
 		if err != nil {
 			return fmt.Errorf("Error updating zone_id %q: %s", zoneID, err)
+		}
+	}
+
+	// In the cases where the zone isn't completely setup yet, we need to
+	// check the `status` field and should it be pending, use the `Name`
+	// from `zone.PlanPending` instead to account for paid plans.
+	if status, ok := d.GetOk("status"); ok {
+		if status == "pending" && zone.PlanPending.Name != "" {
+			d.Set("plan", zone.PlanPending.Name)
 		}
 	}
 
