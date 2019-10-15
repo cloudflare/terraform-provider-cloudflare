@@ -136,15 +136,6 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
-	// In the cases where the zone isn't completely setup yet, we need to
-	// check the `status` field and should it be pending, use the `Name`
-	// from `zone.PlanPending` instead to account for paid plans.
-	if status, ok := d.GetOk("status"); ok {
-		if status == "pending" && zone.PlanPending.Name != "" {
-			d.Set("plan", zone.PlanPending.Name)
-		}
-	}
-
 	if plan, ok := d.GetOk("plan"); ok {
 		if err := setRatePlan(client, zone.ID, plan.(string)); err != nil {
 			return err
