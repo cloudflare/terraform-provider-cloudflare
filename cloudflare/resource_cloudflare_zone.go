@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/net/idna"
 
@@ -175,12 +176,10 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	// check the `status` field and should it be pending, use the `Name`
 	// from `zone.PlanPending` instead to account for paid plans.
 	var plan string
-	if status, ok := d.GetOk("status"); ok {
-		if status == "pending" && zone.PlanPending.Name != "" {
-			plan = zone.PlanPending.Name
-		} else {
-			plan = zone.Plan.Name
-		}
+	if zone.Status == "pending" && zone.PlanPending.Name != "" {
+		plan = zone.PlanPending.Name
+	} else {
+		plan = zone.Plan.Name
 	}
 
 	d.Set("paused", zone.Paused)
@@ -215,10 +214,8 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 	// In the cases where the zone isn't completely setup yet, we need to
 	// check the `status` field and should it be pending, use the `Name`
 	// from `zone.PlanPending` instead to account for paid plans.
-	if status, ok := d.GetOk("status"); ok {
-		if status == "pending" && zone.PlanPending.Name != "" {
-			d.Set("plan", zone.PlanPending.Name)
-		}
+	if zone.Status == "pending" && zone.PlanPending.Name != "" {
+		d.Set("plan", zone.PlanPending.Name)
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
