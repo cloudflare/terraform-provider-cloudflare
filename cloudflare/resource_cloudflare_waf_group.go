@@ -93,30 +93,31 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 		var group cloudflare.WAFGroup
 
 		group, err = client.WAFGroup(zoneID, pkg.ID, groupID)
-
-		if err == nil {
-			d.Set("group_id", group.ID)
-			d.Set("zone_id", zoneID)
-			d.Set("package_id", pkg.ID)
-			d.Set("mode", mode)
-
-			// Set the ID to the group_id parameter passed in from the user.
-			// All WAF Groups already exist so we already know the group_id
-			//
-			// This is a work around as we are not really "creating" a WAF Group,
-			// only associating it with our terraform config for future updates.
-			d.SetId(group.ID)
-
-			if group.Mode != mode {
-				err = resourceCloudflareWAFGroupUpdate(d, meta)
-				if err != nil {
-					d.SetId("")
-					return err
-				}
-			}
-
-			return nil
+		if err != nil {
+			continue
 		}
+
+		d.Set("group_id", group.ID)
+		d.Set("zone_id", zoneID)
+		d.Set("package_id", pkg.ID)
+		d.Set("mode", mode)
+
+		// Set the ID to the group_id parameter passed in from the user.
+		// All WAF Groups already exist so we already know the group_id
+		//
+		// This is a work around as we are not really "creating" a WAF Group,
+		// only associating it with our terraform config for future updates.
+		d.SetId(group.ID)
+
+		if group.Mode != mode {
+			err = resourceCloudflareWAFGroupUpdate(d, meta)
+			if err != nil {
+				d.SetId("")
+				return err
+			}
+		}
+
+		return nil
 	}
 
 	return fmt.Errorf("Unable to find WAF Group %s", groupID)
