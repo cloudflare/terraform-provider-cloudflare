@@ -178,7 +178,7 @@ func TestAccCloudflareZoneWithEnterprisePlan(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithPlan(resourceName, "example.cfapi.net", "false", "false", "enterprise"),
+				Config: testZoneConfigWithExplicitFullSetup(resourceName, "example.cfapi.net", "false", "false", "enterprise"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "false"),
