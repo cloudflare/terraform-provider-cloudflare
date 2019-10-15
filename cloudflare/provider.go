@@ -84,8 +84,9 @@ func Provider() terraform.ResourceProvider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"cloudflare_ip_ranges":    dataSourceCloudflareIPRanges(),
-			"cloudflare_zones":        dataSourceCloudflareZones(),
+			"cloudflare_waf_groups":   dataSourceCloudflareWAFGroups(),
 			"cloudflare_waf_packages": dataSourceCloudflareWAFPackages(),
+			"cloudflare_zones":        dataSourceCloudflareZones(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -106,6 +107,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
 			"cloudflare_record":                 resourceCloudflareRecord(),
 			"cloudflare_spectrum_application":   resourceCloudflareSpectrumApplication(),
+			"cloudflare_waf_package":            resourceCloudflareWAFPackage(),
 			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
 			"cloudflare_worker_route":           resourceCloudflareWorkerRoute(),
 			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),
