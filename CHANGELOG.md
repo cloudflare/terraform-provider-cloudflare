@@ -1,10 +1,13 @@
 ## 2.0.1 (Unreleased)
 
 * **New Resource:** `cloudflare_waf_package` ([#475](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/475))
+* **New datasource:** `cloudflare_waf_groups` ([#508](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/508))
+* **New datasource:** `cloudflare_waf_packages` ([#509](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/509))
 
 **Fixes:**
 
 * `resource/cloudflare_page_rule`: Set `h2_prioritization` individually not via bulk endpoint ([#493](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/493))
+* `resource/cloudflare_zone_settings_override`: Set `zone_id` to prevent unnecessary re-creation of resources ([#502](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/502))
 
 **Improvements:**
 
