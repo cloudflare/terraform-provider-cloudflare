@@ -187,17 +187,18 @@ func resourceCloudflareWAFGroupImport(d *schema.ResourceData, meta interface{}) 
 
 	for _, pkg := range pkgList {
 		group, err := client.WAFGroup(zoneID, pkg.ID, groupID)
-
-		if err == nil {
-			d.Set("group_id", group.ID)
-			d.Set("zone_id", zoneID)
-			d.Set("package_id", pkg.ID)
-			d.Set("mode", group.Mode)
-
-			d.SetId(group.ID)
-
-			return []*schema.ResourceData{d}, nil
+		if err != nil {
+			continue
 		}
+
+		d.Set("group_id", group.ID)
+		d.Set("zone_id", zoneID)
+		d.Set("package_id", pkg.ID)
+		d.Set("mode", group.Mode)
+
+		d.SetId(group.ID)
+
+		return []*schema.ResourceData{d}, nil
 	}
 
 	return nil, fmt.Errorf("Unable to find WAF Group %s", groupID)
