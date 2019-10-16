@@ -259,12 +259,21 @@ func setRatePlan(client *cloudflare.API, zoneID string, planID string) error {
 	}
 
 	// Due to the async delivery of the subscription service, there is
-	// potential that the update is made and we query the endpoint
-	// before it's populated in other systems. This is an arbitary number
-	// and it would be preferrable to work out a better way of polling
-	// for changes without having to do it in every system that sets the
-	// rate plan but it works.
-	time.Sleep(3000 * time.Millisecond)
+	// potential that the update is made and we query the zone endpoint
+	// before it's propagated. To handle this, a poor mans retry and
+	// backoff mechanism will try to compare the current zone state and
+	// what we intend for it to be and if they don't match, try again
+	// after a brief pause.
+	backoffTimes := []int{1, 3, 5}
+	for _, i := range backoffTimes {
+		zone, _ := client.ZoneDetails(zoneID)
+
+		if zone.PlanPending.LegacyID == planID {
+			break
+		}
+
+		time.Sleep(time.Duration(i) * time.Second)
+	}
 
 	return nil
 }
