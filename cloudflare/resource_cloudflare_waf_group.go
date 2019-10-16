@@ -100,14 +100,6 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 		d.Set("group_id", group.ID)
 		d.Set("zone_id", zoneID)
 		d.Set("package_id", pkg.ID)
-		d.Set("mode", mode)
-
-		// Set the ID to the group_id parameter passed in from the user.
-		// All WAF Groups already exist so we already know the group_id
-		//
-		// This is a work around as we are not really "creating" a WAF Group,
-		// only associating it with our terraform config for future updates.
-		d.SetId(group.ID)
 
 		if group.Mode != mode {
 			err = resourceCloudflareWAFGroupUpdate(d, meta)
@@ -117,7 +109,7 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 			}
 		}
 
-		return nil
+		return resourceCloudflareWAFGroupRead(d, meta)
 	}
 
 	return fmt.Errorf("Unable to find WAF Group %s", groupID)
@@ -163,7 +155,7 @@ func resourceCloudflareWAFGroupUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	return nil
+	return resourceCloudflareWAFGroupRead(d, meta)
 }
 
 func resourceCloudflareWAFGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
