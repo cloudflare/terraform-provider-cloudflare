@@ -33,10 +33,10 @@ var idForName = map[string]string{
 // maintain a mapping for the subscription API term for rate plans to
 // the one we are expecting end users to use.
 var subscriptionIDOfRatePlans = map[string]string{
-	"free":       "CF_FREE",
-	"pro":        "CF_PRO",
-	"business":   "CF_BIZ",
-	"enterprise": "CF_ENT",
+	planIDFree:       "CF_FREE",
+	planIDPro:        "CF_PRO",
+	planIDBusiness:   "CF_BIZ",
+	planIDEnterprise: "CF_ENT",
 }
 
 func resourceCloudflareZone() *schema.Resource {
@@ -146,7 +146,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
-		if err := setRatePlan(client, zone.ID, plan.(string)); err != nil {
+		if err := setRatePlan(client, zone.ID, plan.(string), true); err != nil {
 			return err
 		}
 	}
@@ -219,7 +219,8 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
-		if err := setRatePlan(client, zoneID, plan.(string)); err != nil {
+		planName := planIDForName(plan.(string))
+		if err := setRatePlan(client, zoneID, planName, false); err != nil {
 			return err
 		}
 	}
@@ -253,9 +254,17 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 	return cfg
 }
 
-func setRatePlan(client *cloudflare.API, zoneID string, planID string) error {
-	if err := client.ZoneSetPlan(zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
-		return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
+// setRatePlan handles the internals of creating or updating a zone
+// subscription rate plan.
+func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool) error {
+	if isNewPlan {
+		if err := client.ZoneSetPlan(zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
+			return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
+		}
+	} else {
+		if err := client.ZoneUpdatePlan(zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
+			return fmt.Errorf("Error updating plan %s for zone %q: %s", planID, zoneID, err)
+		}
 	}
 
 	// Due to the async delivery of the subscription service, there is
