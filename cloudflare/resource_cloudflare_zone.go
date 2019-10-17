@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/net/idna"
 
@@ -27,6 +28,15 @@ var idForName = map[string]string{
 	"Pro Website":        planIDPro,
 	"Business Website":   planIDBusiness,
 	"Enterprise Website": planIDEnterprise,
+}
+
+// maintain a mapping for the subscription API term for rate plans to
+// the one we are expecting end users to use.
+var subscriptionIDOfRatePlans = map[string]string{
+	planIDFree:       "CF_FREE",
+	planIDPro:        "CF_PRO",
+	planIDBusiness:   "CF_BIZ",
+	planIDEnterprise: "CF_ENT",
 }
 
 func resourceCloudflareZone() *schema.Resource {
@@ -136,7 +146,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
-		if err := setRatePlan(client, zone.ID, plan.(string)); err != nil {
+		if err := setRatePlan(client, zone.ID, plan.(string), true); err != nil {
 			return err
 		}
 	}
@@ -162,6 +172,16 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error finding Zone %q: %s", d.Id(), err)
 	}
 
+	// In the cases where the zone isn't completely setup yet, we need to
+	// check the `status` field and should it be pending, use the `Name`
+	// from `zone.PlanPending` instead to account for paid plans.
+	var plan string
+	if zone.Status == "pending" && zone.PlanPending.Name != "" {
+		plan = zone.PlanPending.Name
+	} else {
+		plan = zone.Plan.Name
+	}
+
 	d.Set("paused", zone.Paused)
 	d.Set("vanity_name_servers", zone.VanityNS)
 	d.Set("status", zone.Status)
@@ -169,7 +189,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("name_servers", zone.NameServers)
 	d.Set("meta", flattenMeta(d, zone.Meta))
 	d.Set("zone", zone.Name)
-	d.Set("plan", planIDForName(zone.Plan.Name))
+	d.Set("plan", planIDForName(plan))
 
 	return nil
 }
@@ -177,6 +197,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Id()
+	zone, _ := client.ZoneDetails(zoneID)
 
 	log.Printf("[INFO] Updating Cloudflare Zone: id %s", zoneID)
 
@@ -190,8 +211,16 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
+	// In the cases where the zone isn't completely setup yet, we need to
+	// check the `status` field and should it be pending, use the `Name`
+	// from `zone.PlanPending` instead to account for paid plans.
+	if zone.Status == "pending" && zone.PlanPending.Name != "" {
+		d.Set("plan", zone.PlanPending.Name)
+	}
+
 	if plan, ok := d.GetOk("plan"); ok {
-		if err := setRatePlan(client, zoneID, plan.(string)); err != nil {
+		planName := planIDForName(plan.(string))
+		if err := setRatePlan(client, zoneID, planName, false); err != nil {
 			return err
 		}
 	}
@@ -225,29 +254,37 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 	return cfg
 }
 
-func setRatePlan(client *cloudflare.API, zoneID string, planID string) error {
-	plan, err := getAvailableZonePlan(client, zoneID, planID)
-	if err != nil {
-		return fmt.Errorf("Error fetching plans %s for zone %q: %s", planID, zoneID, err)
-	}
-	log.Printf("[DEBUG] ratePlan = %#v", plan)
-	if _, err := client.ZoneSetPlan(zoneID, *plan); err != nil {
-		return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
-	}
-	return nil
-}
-
-func getAvailableZonePlan(client *cloudflare.API, zoneID, planID string) (*cloudflare.ZonePlan, error) {
-	plans, err := client.AvailableZonePlans(zoneID)
-	if err != nil {
-		return nil, err
-	}
-	for _, p := range plans {
-		if strings.EqualFold(p.LegacyID, planID) {
-			return &p, nil
+// setRatePlan handles the internals of creating or updating a zone
+// subscription rate plan.
+func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool) error {
+	if isNewPlan {
+		if err := client.ZoneSetPlan(zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
+			return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
+		}
+	} else {
+		if err := client.ZoneUpdatePlan(zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
+			return fmt.Errorf("Error updating plan %s for zone %q: %s", planID, zoneID, err)
 		}
 	}
-	return nil, fmt.Errorf("plan '%s' not found amongst the available plans", planID)
+
+	// Due to the async delivery of the subscription service, there is
+	// potential that the update is made and we query the zone endpoint
+	// before it's propagated. To handle this, a poor mans retry and
+	// backoff mechanism will try to compare the current zone state and
+	// what we intend for it to be and if they don't match, try again
+	// after a brief pause.
+	backoffTimes := []int{1, 3, 5}
+	for _, i := range backoffTimes {
+		zone, _ := client.ZoneDetails(zoneID)
+
+		if zone.PlanPending.LegacyID == planID {
+			break
+		}
+
+		time.Sleep(time.Duration(i) * time.Second)
+	}
+
+	return nil
 }
 
 func planIDForName(name string) string {
