@@ -193,7 +193,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("name_servers", zone.NameServers)
 	d.Set("meta", flattenMeta(d, zone.Meta))
 	d.Set("zone", zone.Name)
-  d.Set("plan", planIDForName(plan))
+	d.Set("plan", planIDForName(plan))
 	d.Set("verification_key", zone.VerificationKey)
 
 	return nil
