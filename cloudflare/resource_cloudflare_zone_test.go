@@ -191,6 +191,28 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareZoneWithEnterprisePlan(t *testing.T) {
+	name := "cloudflare_zone.tf-acc-with-enterprise-plan"
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testZoneConfigWithExplicitFullSetup(resourceName, "example.cfapi.net", "false", "false", "enterprise"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "paused", "false"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
+			},
+		},
+	})
+}
+
 func testZoneConfig(resourceID, zoneName, paused, jumpStart string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone" "%[1]s" {
