@@ -48,9 +48,9 @@ The following arguments are supported:
 
 ## Import
 
-Custom SSL Certs can be imported using a composite ID formed of the zone id and certificate id,
+Custom SSL Certs can be imported using a composite ID formed of the zone id and [certificate id](https://api.cloudflare.com/#custom-ssl-for-a-zone-properties),
 separated by a "/" e.g.
 
 ```
-$ terraform import cloudflare_custom_ssl.default 1d5fdc9e88c8a8c4518b068cd94331fe/c671356fb0ef68a9d746e3c9ef84ec3e
+$ terraform import cloudflare_custom_ssl.default 1d5fdc9e88c8a8c4518b068cd94331fe/0123f0ab-9cde-45b2-80bd-4da3010f1337
 ```
