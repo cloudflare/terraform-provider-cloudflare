@@ -48,7 +48,7 @@ The following arguments are supported:
 
 ## Import
 
-Custom SSL Certs can be imported using a composite ID formed of the zone id and [certificate id](https://api.cloudflare.com/#custom-ssl-for-a-zone-properties),
+Custom SSL Certs can be imported using a composite ID formed of the zone ID and [certificate ID](https://api.cloudflare.com/#custom-ssl-for-a-zone-properties),
 separated by a "/" e.g.
 
 ```
