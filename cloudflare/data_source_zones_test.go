@@ -24,7 +24,7 @@ func testSweepCloudflareZones(r string) error {
 		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
 	}
 
-	zones, zoneErr := client.ListZones("baa-com.cfapi.net", "baa-net.cfapi.net", "baa-org.cfapi.net", "foo-net.cfapi.net")
+	zones, zoneErr := client.ListZones()
 	if zoneErr != nil {
 		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
 	}
@@ -35,6 +35,11 @@ func testSweepCloudflareZones(r string) error {
 	}
 
 	for _, zone := range zones {
+		// Don't try and sweep the static domains.
+		if zone.Name == "terraform.cfapi.net" || zone.Name == "terraform2.cfapi.net" {
+			continue
+		}
+
 		log.Printf("[INFO] Deleting Cloudflare Zone ID: %s", zone.ID)
 		_, err := client.DeleteZone(zone.ID)
 
