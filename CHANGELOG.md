@@ -1,4 +1,4 @@
-## 2.0.1 (Unreleased)
+## 2.0.1 (October 22, 2019)
 
 * **New Resource:** `cloudflare_access_service_tokens` ([#521](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/521))
 * **New Resource:** `cloudflare_waf_package` ([#475](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/475))
