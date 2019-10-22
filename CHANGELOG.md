@@ -1,5 +1,6 @@
 ## 2.0.1 (Unreleased)
 
+* **New Resource:** `cloudflare_access_service_tokens` ([#521](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/521))
 * **New Resource:** `cloudflare_waf_package` ([#475](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/475))
 * **New Resource:** `cloudflare_waf_group` ([#476](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/476))
 * **New datasource:** `cloudflare_waf_groups` ([#508](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/508))
