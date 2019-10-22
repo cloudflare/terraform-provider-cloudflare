@@ -12,6 +12,16 @@ import (
 )
 
 func TestAccAccessServiceTokenCreate(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
@@ -35,6 +45,16 @@ func TestAccAccessServiceTokenCreate(t *testing.T) {
 }
 
 func TestAccAccessServiceTokenUpdate(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
@@ -61,6 +81,16 @@ func TestAccAccessServiceTokenUpdate(t *testing.T) {
 }
 
 func TestAccAccessServiceTokenDelete(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
