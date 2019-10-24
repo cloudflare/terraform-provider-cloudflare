@@ -120,7 +120,6 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 		}
 
 		foundGroup := false
-		log.Printf("RULES == %#v\n", ruleList)
 		for _, rule := range ruleList {
 			if filter.GroupID != "" {
 				if filter.GroupID != rule.Group.ID {
