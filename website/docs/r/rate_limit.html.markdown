@@ -14,7 +14,7 @@ Provides a Cloudflare rate limit resource for a given zone. This can be used to 
 
 ```hcl
 resource "cloudflare_rate_limit" "example" {
-  zone = var.cloudflare_zone_id
+  zone_id = var.cloudflare_zone_id
   threshold = 2000
   period = 2
   match {
