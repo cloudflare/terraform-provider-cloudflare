@@ -94,11 +94,11 @@ func testAccCloudflareWAFRulesConfig(zoneID string, filters map[string]string, n
 	}
 
 	return fmt.Sprintf(`
-				data "cloudflare_waf_rules" "%[1]s" {
-					zone_id = "%[2]s"
+data "cloudflare_waf_rules" "%[1]s" {
+	zone_id = "%[2]s"
 
-					filter {
-						%[3]s
-					}
-				}`, name, zoneID, strings.Join(filters_str, "\n\t\t\t\t"))
+	filter {
+		%[3]s
+	}
+}`, name, zoneID, strings.Join(filters_str, "\n\t\t"))
 }
