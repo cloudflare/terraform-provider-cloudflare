@@ -1,4 +1,7 @@
 ## 2.0.2 (Unreleased)
+
+* **New datasource:** `cloudflare_waf_rules` ([#525](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/525))
+
 ## 2.0.1 (October 22, 2019)
 
 * **New Resource:** `cloudflare_access_service_tokens` ([#521](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/521))
