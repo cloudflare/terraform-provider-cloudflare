@@ -82,9 +82,9 @@ func TestAccCloudflareZonePartialSetupEnterprise(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithPartialSetup(resourceName, "foo.net", "false", "false", "enterprise"),
+				Config: testZoneConfigWithPartialSetup(resourceName, "tf-acc-partial-enterprise.cfapi.net", "false", "false", "enterprise"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "foo.net"),
+					resource.TestCheckResourceAttr(name, "zone", "tf-acc-partial-enterprise.cfapi.net"),
 					resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
 					resource.TestCheckResourceAttr(name, "type", "partial"),
