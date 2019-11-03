@@ -86,6 +86,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_ip_ranges":    dataSourceCloudflareIPRanges(),
 			"cloudflare_waf_groups":   dataSourceCloudflareWAFGroups(),
 			"cloudflare_waf_packages": dataSourceCloudflareWAFPackages(),
+			"cloudflare_waf_rules":    dataSourceCloudflareWAFRules(),
 			"cloudflare_zones":        dataSourceCloudflareZones(),
 		},
 
