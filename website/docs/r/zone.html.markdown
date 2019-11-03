@@ -39,6 +39,7 @@ The following attributes are exported:
 * `meta.phishing_detected` - Indicates if URLs on the zone have been identified as hosting phishing content.
 * `status` - Status of the zone. Valid values: `active`, `pending`, `initializing`, `moved`, `deleted`, `deactivated`.
 * `name_servers` - Cloudflare-assigned name servers. This is only populated for zones that use Cloudflare DNS.
+* `verification_key` - Contains the TXT record value to validate domain ownership. This is only populated for zones of type `partial`. 
 
 ## Import
 
