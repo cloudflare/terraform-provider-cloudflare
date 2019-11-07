@@ -5,7 +5,7 @@
 **Improvements:**
 
 * `resource/cloudflare_zone`: Expose `verification_key` for partial setups ([#532](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/532))
-* `resource/cloudflare_worker_route`: Enabled API Tokens support from upstream [cloudflare-go](https://github.com/cloudflare/cloudflare-go) release
+* `resource/cloudflare_worker_route`: Enable API Tokens support from upstream [cloudflare-go](https://github.com/cloudflare/cloudflare-go) release
 
 ## 2.0.1 (October 22, 2019)
 
