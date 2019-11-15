@@ -59,6 +59,29 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "header.#", "1"),
 					resource.TestCheckResourceAttr(name, "retries", "5"),
 					resource.TestCheckResourceAttr(name, "port", "8080"),
+					resource.TestCheckResourceAttr(name, "expected_body", "dead"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancerMonitor_EmptyExpectedBody(t *testing.T) {
+	t.Parallel()
+	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
+	name := "cloudflare_load_balancer_monitor.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					// checking empty string value passes all validations and created
+					resource.TestCheckResourceAttr(name, "expected_body", ""),
 				),
 			},
 		},
@@ -281,6 +304,15 @@ resource "cloudflare_load_balancer_monitor" "test" {
     header = "Host"
     values = ["example.com"]
   }
+}`
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody() string {
+	return `
+resource "cloudflare_load_balancer_monitor" "test" {
+  expected_body = ""
+  expected_codes = "2xx"
+  description = "we don't want to check for a given body"
 }`
 }
 
