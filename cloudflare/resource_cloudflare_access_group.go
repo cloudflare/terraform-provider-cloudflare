@@ -23,6 +23,7 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 			"account_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -125,6 +126,7 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 	}
 
 	d.SetId(accessGroup.ID)
+	resourceCloudflareAccessGroupRead(d, meta)
 
 	return nil
 }
