@@ -136,11 +136,11 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &before),
+					testAccCheckCloudflareAccessGroupExists(name, &before),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareAccessGroupConfigNewValue(name, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, "test-changed@example.com"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &after),
 					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
@@ -168,26 +168,19 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &before),
-					testAccManuallyDeleteAccessGroup("cloudflare_access_group.test", &initialID),
+					testAccCheckCloudflareAccessGroupExists(name, &before),
+					testAccManuallyDeleteAccessGroup(name, &initialID),
 				),
 				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config: testAccCheckCloudflareAccessGroupConfigNewValue(name, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &after),
+					testAccCheckCloudflareAccessGroupExists(name, &after),
 					testAccCheckCloudflareAccessGroupRecreated(&before, &after),
-					resource.TestCheckResourceAttr(
-						"cloudflare_access_group.test", "account_id", accountID),
-					resource.TestCheckResourceAttr(
-						"cloudflare_access_group.test", "name", fmt.Sprintf("%s/updated", name)),
-					resource.TestCheckResourceAttr(
-						"cloudflare_access_group.test", "include.0.email.0", email),
-					resource.TestCheckResourceAttr(
-						"cloudflare_access_group.test", "exclude.0.email.0", email),
-					resource.TestCheckResourceAttr(
-						"cloudflare_access_group.test", "require.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s-updated", rnd)),
+					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
 				),
 			},
 		},
@@ -210,16 +203,16 @@ func TestAccCloudflareAccessGroup_UpdatingAccountIDForcesNewResource(t *testing.
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &before),
-					resource.TestCheckResourceAttr("cloudflare_access_group.test", "account_id", accountID),
+					testAccCheckCloudflareAccessGroupExists(name, &before),
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
 				),
 			},
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, newAccountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists("cloudflare_page_rule.test", &after),
+					testAccCheckCloudflareAccessGroupExists(name, &after),
 					testAccCheckCloudflareAccessGroupRecreated(&before, &after),
-					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "account_id", newAccountID),
+					resource.TestCheckResourceAttr(name, "account_id", newAccountID),
 				),
 			},
 		},
