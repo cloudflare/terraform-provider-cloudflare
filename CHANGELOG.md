@@ -6,6 +6,7 @@
 **Improvements:**
 
 * `resource/cloudflare_zone_settings_override`: Add `non_identity` to allowed `decision` schema ([#541](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/541))
+* `resource/cloudflare_zone_settings_override`: Add support for `0rtt` and `http3` settings ([#542](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/542))
 
 ## 2.1.0 (November 07, 2019)
 
