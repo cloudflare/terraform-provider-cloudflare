@@ -3,7 +3,6 @@ package cloudflare
 import (
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -20,7 +19,7 @@ var (
 func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -30,11 +29,11 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(resourceName, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &accessGroup),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
 				),
 			},
@@ -45,7 +44,7 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -55,11 +54,11 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessGroupConfigExclude(resourceName, accountID, email),
+				Config: testAccessGroupConfigExclude(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &accessGroup),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.0", email),
 				),
@@ -71,7 +70,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -81,11 +80,11 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessGroupConfigRequire(resourceName, accountID, email),
+				Config: testAccessGroupConfigRequire(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &accessGroup),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
 					resource.TestCheckResourceAttr(name, "require.0.email.0", email),
 				),
@@ -97,7 +96,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -107,11 +106,11 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessGroupConfigFullConfig(resourceName, accountID, email),
+				Config: testAccessGroupConfigFullConfig(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &accessGroup),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.0", email),
 					resource.TestCheckResourceAttr(name, "require.0.email.0", email),
@@ -125,7 +124,6 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -136,7 +134,7 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(resourceName, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &before),
 				),
@@ -144,7 +142,7 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessGroupConfigNewValue(name, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &after),
+					testAccCheckCloudflareAccessGroupExists(name, &after),
 					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", "test-changed@example.com"),
 				),
@@ -158,7 +156,6 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	var initialID string
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -169,7 +166,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(resourceName, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &before),
 					testAccManuallyDeleteAccessGroup("cloudflare_access_group.test", &initialID),
@@ -201,7 +198,6 @@ func TestAccCloudflareAccessGroup_UpdatingAccountIDForcesNewResource(t *testing.
 	var before, after cloudflare.AccessGroup
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
 	newAccountID := "01a7362d577a6c3019a474fd6f485634"
 
 	resource.Test(t, resource.TestCase{
@@ -212,14 +208,14 @@ func TestAccCloudflareAccessGroup_UpdatingAccountIDForcesNewResource(t *testing.
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(resourceName, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists("cloudflare_access_group.test", &before),
 					resource.TestCheckResourceAttr("cloudflare_access_group.test", "account_id", accountID),
 				),
 			},
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(resourceName, newAccountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, newAccountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists("cloudflare_page_rule.test", &after),
 					testAccCheckCloudflareAccessGroupRecreated(&before, &after),
