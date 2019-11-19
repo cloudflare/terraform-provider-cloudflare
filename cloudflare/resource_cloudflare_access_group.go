@@ -172,9 +172,9 @@ func resourceCloudflareAccessGroupDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudflareAccessGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 3)
+	attributes := strings.SplitN(d.Id(), "/", 2)
 
-	if len(attributes) != 3 {
+	if len(attributes) != 2 {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/accessGroupID\"", d.Id())
 	}
 
