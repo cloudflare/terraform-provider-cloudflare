@@ -57,6 +57,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `email_obfuscation` (default: `on`)
 * `hotlink_protection` (default: `off`)
 * `http2` (default: `off`)
+* `http3` (default: `off`)
 * `image_resizing` (default: `off`)
 * `ip_geolocation` (default: `on`)
 * `ipv6` (default: `off`)
@@ -75,6 +76,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `waf` (default: `off`)
 * `webp` (default: `off`). Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
 * `websockets` (default: `off`)
+* `0rtt` (default: `off`)
 
 ### String Values
 
