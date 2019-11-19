@@ -40,7 +40,7 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 			"decision": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"allow", "deny", "bypass"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"allow", "deny", "non_identity", "bypass"}, false),
 			},
 			"require": {
 				Type:     schema.TypeList,
