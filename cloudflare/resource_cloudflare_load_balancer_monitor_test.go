@@ -69,7 +69,8 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 func TestAccCloudflareLoadBalancerMonitor_EmptyExpectedBody(t *testing.T) {
 	t.Parallel()
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
-	name := "cloudflare_load_balancer_monitor.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -77,7 +78,7 @@ func TestAccCloudflareLoadBalancerMonitor_EmptyExpectedBody(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					// checking empty string value passes all validations and created
@@ -307,13 +308,13 @@ resource "cloudflare_load_balancer_monitor" "test" {
 }`
 }
 
-func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody() string {
-	return `
-resource "cloudflare_load_balancer_monitor" "test" {
+func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(resourceName string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_monitor" "%[1]s" {
   expected_body = ""
   expected_codes = "2xx"
   description = "we don't want to check for a given body"
-}`
+}`, resourceName)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigTcpFullySpecified() string {
