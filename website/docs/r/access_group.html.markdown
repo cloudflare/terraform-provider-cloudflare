@@ -9,8 +9,8 @@ description: |-
 # cloudflare_access_group
 
 Provides a Cloudflare Access Group resource. Access Groups are used
-in conjunction with Access Plolicies to restrict access to a
-particular resource.
+in conjunction with Access Policies to restrict access to a
+particular resource based on group membership.
 
 ## Example Usage
 

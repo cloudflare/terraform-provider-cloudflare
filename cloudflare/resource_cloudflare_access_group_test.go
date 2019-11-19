@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -11,16 +12,20 @@ import (
 )
 
 var (
-	accountID   = "01a7362d577a6c3019a474fd6f485823"
+	accountID   = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	email       = "test@example.com"
 	accessGroup cloudflare.AccessGroup
 )
 
 func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
-	name := "cloudflare_access_group.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
@@ -38,10 +43,14 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
-	name := "cloudflare_access_group.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
@@ -60,10 +69,14 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_Require(t *testing.T) {
-	name := "cloudflare_access_group.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
@@ -82,10 +95,14 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
-	name := "cloudflare_access_group.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
@@ -106,11 +123,15 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 	var before, after cloudflare.AccessGroup
-	name := "cloudflare_access_group.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
@@ -135,11 +156,15 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	var initialID string
-	name := "cloudflare_access_group.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
@@ -174,14 +199,15 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_UpdatingAccountIDForcesNewResource(t *testing.T) {
 	var before, after cloudflare.AccessGroup
-	name := "cloudflare_access_group.test"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 	newAccountID := "01a7362d577a6c3019a474fd6f485634"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheckAltDomain(t)
+			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -206,77 +232,77 @@ func TestAccCloudflareAccessGroup_UpdatingAccountIDForcesNewResource(t *testing.
 
 func testAccCloudflareAccessGroupConfigBasic(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_access_group" "%[1]s" {
-					account_id = "%[2]s"
-					name = "%[1]s"
+resource "cloudflare_access_group" "%[1]s" {
+  account_id = "%[2]s"
+  name = "%[1]s"
 
-					include {
-						email = ["%[3]s"]
-					  }
-				}`, resourceName, accountID, email)
+  include {
+    email = ["%[3]s"]
+  }
+}`, resourceName, accountID, email)
 }
 
 func testAccessGroupConfigExclude(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_access_group" "%[1]s" {
-					account_id = "%[2]s"
-					name = "%[1]s"
+resource "cloudflare_access_group" "%[1]s" {
+  account_id = "%[2]s"
+  name = "%[1]s"
 
-					include {
-						email = ["%[3]s"]
-					}
-					
-					exclude {
-						email = ["%[3]s"]
-					}
-				}`, resourceName, accountID, email)
+  include {
+    email = ["%[3]s"]
+  }
+
+  exclude {
+    email = ["%[3]s"]
+  }
+}`, resourceName, accountID, email)
 }
 
 func testAccessGroupConfigRequire(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_access_group" "%[1]s" {
-					account_id = "%[2]s"
-					name = "%[1]s"
+resource "cloudflare_access_group" "%[1]s" {
+  account_id = "%[2]s"
+  name = "%[1]s"
 
-					include {
-						email = ["%[3]s"]
-					}
-					
-					require {
-						email = ["%[3]s"]
-					}
-				}`, resourceName, accountID, email)
+  include {
+    email = ["%[3]s"]
+  }
+
+  require {
+    email = ["%[3]s"]
+  }
+}`, resourceName, accountID, email)
 }
 
 func testAccessGroupConfigFullConfig(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_access_group" "%[1]s" {
-					account_id = "%[2]s"
-					name = "%[1]s"
+resource "cloudflare_access_group" "%[1]s" {
+  account_id = "%[2]s"
+  name = "%[1]s"
 
-					include {
-						email = ["%[3]s"]
-					}
-					
-					require {
-						email = ["%[3]s"]
-					}
+  include {
+    email = ["%[3]s"]
+  }
 
-					exclude {
-						email = ["%[3]s"]
-					}
-				}`, resourceName, accountID, email)
+  require {
+    email = ["%[3]s"]
+  }
+
+  exclude {
+    email = ["%[3]s"]
+  }
+}`, resourceName, accountID, email)
 }
 
 func testAccCheckCloudflareAccessGroupConfigNewValue(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_access_group" "test" {
-					account_id = "%[2]s"
-					name = "%[1]s"
-					include {
-						email = ["%[3]s"]
-					}
-				}`, resourceName, accountID, email)
+resource "cloudflare_access_group" "test" {
+  account_id = "%[2]s"
+  name = "%[1]s"
+  include {
+    email = ["%[3]s"]
+  }
+}`, resourceName, accountID, email)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
