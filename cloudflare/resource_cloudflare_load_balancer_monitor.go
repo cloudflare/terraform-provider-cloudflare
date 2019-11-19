@@ -167,11 +167,8 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 			loadBalancerMonitor.AllowInsecure = allowInsecure.(bool)
 		}
 
-		if expectedBody, ok := d.GetOk("expected_body"); ok {
-			loadBalancerMonitor.ExpectedBody = expectedBody.(string)
-		} else {
-			return fmt.Errorf("expected_body must be set")
-		}
+		expectedBody := d.Get("expected_body")
+		loadBalancerMonitor.ExpectedBody = expectedBody.(string)
 
 		if expectedCodes, ok := d.GetOk("expected_codes"); ok {
 			loadBalancerMonitor.ExpectedCodes = expectedCodes.(string)
@@ -252,7 +249,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 		if expectedBody, ok := d.GetOk("expected_body"); ok {
 			loadBalancerMonitor.ExpectedBody = expectedBody.(string)
 		} else {
-			return fmt.Errorf("expected_body must be set")
+			loadBalancerMonitor.ExpectedBody = ""
 		}
 
 		if expectedCodes, ok := d.GetOk("expected_codes"); ok {

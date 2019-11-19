@@ -49,7 +49,7 @@ resource "cloudflare_load_balancer_monitor" "tcp_monitor" {
 
 The following arguments are supported:
 
-* `expected_body` - (Optional) A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. Only valid and required if `type` is "http" or "https".
+* `expected_body` - (Optional) A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. Only valid if `type` is "http" or "https". Default: "".
 * `expected_codes` - (Optional) The expected HTTP response code or code range of the health check. Eg `2xx`. Only valid and required if `type` is "http" or "https".
 * `method` - (Optional) The method to use for the health check. Valid values are any valid HTTP verb if `type` is "http" or "https", or `connection_established` if `type` is "tcp". Default: "GET" if `type` is "http" or "https", or "connection_established" if `type` is "tcp" .
 * `timeout` - (Optional) The timeout (in seconds) before marking the health check as failed. Default: 5.

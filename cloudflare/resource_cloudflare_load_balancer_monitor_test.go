@@ -59,6 +59,30 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "header.#", "1"),
 					resource.TestCheckResourceAttr(name, "retries", "5"),
 					resource.TestCheckResourceAttr(name, "port", "8080"),
+					resource.TestCheckResourceAttr(name, "expected_body", "dead"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancerMonitor_EmptyExpectedBody(t *testing.T) {
+	t.Parallel()
+	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					// checking empty string value passes all validations and created
+					resource.TestCheckResourceAttr(name, "expected_body", ""),
 				),
 			},
 		},
@@ -97,7 +121,7 @@ func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired(),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta("expected_body must be set")),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("expected_codes must be set")),
 			},
 		},
 	})
@@ -284,6 +308,15 @@ resource "cloudflare_load_balancer_monitor" "test" {
 }`
 }
 
+func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(resourceName string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_monitor" "%[1]s" {
+  expected_body = ""
+  expected_codes = "2xx"
+  description = "we don't want to check for a given body"
+}`, resourceName)
+}
+
 func testAccCheckCloudflareLoadBalancerMonitorConfigTcpFullySpecified() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
@@ -300,7 +333,6 @@ resource "cloudflare_load_balancer_monitor" "test" {
 func testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
-  expected_codes = "2xx"
   description = "this is a wrong config"
 }`
 }
