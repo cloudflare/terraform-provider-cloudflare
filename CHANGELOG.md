@@ -2,6 +2,11 @@
 
 * **New Resource:** `cloudflare_access_group` ([#510](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/510))
 
+
+**Improvements:**
+
+* `resource/cloudflare_zone_settings_override`: Add `non_identity` to allowed `decision` schema ([#541](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/541))
+
 ## 2.1.0 (November 07, 2019)
 
 * **New datasource:** `cloudflare_waf_rules` ([#525](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/525))
