@@ -93,6 +93,7 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"cloudflare_access_application":     resourceCloudflareAccessApplication(),
 			"cloudflare_access_policy":          resourceCloudflareAccessPolicy(),
+			"cloudflare_access_group":           resourceCloudflareAccessGroup(),
 			"cloudflare_access_rule":            resourceCloudflareAccessRule(),
 			"cloudflare_access_service_token":   resourceCloudflareAccessServiceToken(),
 			"cloudflare_account_member":         resourceCloudflareAccountMember(),
