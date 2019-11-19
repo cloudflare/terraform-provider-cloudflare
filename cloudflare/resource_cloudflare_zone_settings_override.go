@@ -415,9 +415,17 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"http2": {
-		Type: schema.TypeString, ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional: true,
-		Computed: true,
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
+	"http3": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
 	},
 
 	"pseudo_ipv4": {
@@ -462,6 +470,13 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"image_resizing": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
+	"0rtt": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 		Optional:     true,
