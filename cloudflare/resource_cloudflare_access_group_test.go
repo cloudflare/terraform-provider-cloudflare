@@ -174,7 +174,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudflareAccessGroupConfigNewValue(name, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasicWithUpdate(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &after),
 					testAccCheckCloudflareAccessGroupRecreated(&before, &after),
@@ -231,6 +231,18 @@ resource "cloudflare_access_group" "%[1]s" {
 }`, resourceName, accountID, email)
 }
 
+func testAccCloudflareAccessGroupConfigBasicWithUpdate(resourceName, accountID, email string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_group" "%[1]s" {
+  account_id = "%[2]s"
+  name = "%[1]s-updated"
+
+  include {
+    email = ["%[3]s"]
+  }
+}`, resourceName, accountID, email)
+}
+
 func testAccessGroupConfigExclude(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
@@ -278,17 +290,6 @@ resource "cloudflare_access_group" "%[1]s" {
   }
 
   exclude {
-    email = ["%[3]s"]
-  }
-}`, resourceName, accountID, email)
-}
-
-func testAccCheckCloudflareAccessGroupConfigNewValue(resourceName, accountID, email string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "test" {
-  account_id = "%[2]s"
-  name = "%[1]s"
-  include {
     email = ["%[3]s"]
   }
 }`, resourceName, accountID, email)
