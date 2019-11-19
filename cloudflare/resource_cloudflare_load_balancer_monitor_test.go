@@ -120,7 +120,7 @@ func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired(),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta("expected_body must be set")),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("expected_codes must be set")),
 			},
 		},
 	})
@@ -332,7 +332,6 @@ resource "cloudflare_load_balancer_monitor" "test" {
 func testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired() string {
 	return `
 resource "cloudflare_load_balancer_monitor" "test" {
-  expected_codes = "2xx"
   description = "this is a wrong config"
 }`
 }
