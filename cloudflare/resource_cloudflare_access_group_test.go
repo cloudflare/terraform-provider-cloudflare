@@ -187,38 +187,6 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessGroup_UpdatingAccountIDForcesNewResource(t *testing.T) {
-	var before, after cloudflare.AccessGroup
-	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	newAccountID := "01a7362d577a6c3019a474fd6f485634"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
-		},
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, &before),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
-				),
-			},
-			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, newAccountID, email),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, &after),
-					testAccCheckCloudflareAccessGroupRecreated(&before, &after),
-					resource.TestCheckResourceAttr(name, "account_id", newAccountID),
-				),
-			},
-		},
-	})
-}
-
 func testAccCloudflareAccessGroupConfigBasic(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
