@@ -13,10 +13,19 @@ Provides a Cloudflare worker script resource. In order for a script to be active
 ## Example Usage
 
 ```hcl
+resource "cloudflare_workers_kv_namespace" "my_namespace" {
+  title = "example"
+}
+
 # Sets the script with the name "script_1"
 resource "cloudflare_worker_script" "my_script" {
   name = "script_1"
   content = file("script.js")
+  
+  kv_namespace_binding {
+    name = "my_binding"
+    namespace_id = cloudflare_workers_kv_namespace.my_namespace.id
+  }
 }
 ```
 
@@ -26,6 +35,11 @@ The following arguments are supported:
 
 * `name` - (Required) The name for the script.
 * `content` - (Required) The script content.
+
+**kv_namespace_binding** (optional) block supports:
+
+* `name` - (Required) The name for the binding.
+* `namespace_id` - (Required) ID of KV namespace.
 
 ## Import
 
