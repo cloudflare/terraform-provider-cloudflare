@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	Email    string
-	APIKey   string
-	APIToken string
-	Options  []cloudflare.Option
+	Email             string
+	APIKey            string
+	APIUserServiceKey string
+	APIToken          string
+	Options           []cloudflare.Option
 }
 
 // Client returns a new client for accessing cloudflare.
@@ -26,6 +27,10 @@ func (c *Config) Client() (*cloudflare.API, error) {
 	}
 	if err != nil {
 		return nil, fmt.Errorf("Error creating new Cloudflare client: %s", err)
+	}
+
+	if c.APIUserServiceKey != "" {
+		client.APIUserServiceKey = c.APIUserServiceKey
 	}
 
 	log.Printf("[INFO] Cloudflare Client configured for user: %s", c.Email)

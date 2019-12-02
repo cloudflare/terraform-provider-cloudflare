@@ -39,6 +39,13 @@ func Provider() terraform.ResourceProvider {
 				Description: "The API Token for operations.",
 			},
 
+			"api_user_service_key": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_USER_SERVICE_KEY", nil),
+				Description: "A special Cloudflare API key good for a restricted set of endpoints.",
+			},
+
 			"rps": {
 				Type:        schema.TypeInt,
 				Optional:    true,
@@ -106,6 +113,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_load_balancer_pool":     resourceCloudflareLoadBalancerPool(),
 			"cloudflare_load_balancer":          resourceCloudflareLoadBalancer(),
 			"cloudflare_logpush_job":            resourceCloudflareLogpushJob(),
+			"cloudflare_origin_ca_certificate":  resourceCloudflareOriginCACertificate(),
 			"cloudflare_page_rule":              resourceCloudflarePageRule(),
 			"cloudflare_rate_limit":             resourceCloudflareRateLimit(),
 			"cloudflare_record":                 resourceCloudflareRecord(),
@@ -166,6 +174,10 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 		}
 	} else {
 		return nil, fmt.Errorf("credentials are not set correctly")
+	}
+
+	if v, ok := d.GetOk("api_user_service_key"); ok {
+		config.APIUserServiceKey = v.(string)
 	}
 
 	client, err := config.Client()
