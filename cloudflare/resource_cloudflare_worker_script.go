@@ -69,9 +69,7 @@ type ScriptData struct {
 func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, error) {
 	scriptName := d.Get("name").(string)
 
-	var params cloudflare.WorkerRequestParams
-
-	params = cloudflare.WorkerRequestParams{
+	params := cloudflare.WorkerRequestParams{
 		ScriptName: scriptName,
 	}
 
