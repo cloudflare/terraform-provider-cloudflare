@@ -57,5 +57,6 @@ values must match in order to be included, see below for full list.
 - `group_id` - The ID of the WAF Rule Group that contains the WAF Rule
 - `group_name` - The Name of the WAF Rule Group that contains the WAF Rule
 - `package_id` - The ID of the WAF Rule Package that contains the WAF Rule
+- `allowed_modes` - The list of allowed `mode` values for the WAF Rule
 
 [1]: https://api.cloudflare.com/#waf-rule-groups-properties
