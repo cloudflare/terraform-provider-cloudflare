@@ -31,7 +31,7 @@ func TestAccCloudflareWorkerScript_Import(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 				),
 			},
 			{
@@ -39,7 +39,7 @@ func TestAccCloudflareWorkerScript_Import(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 				),
 			},
 		},

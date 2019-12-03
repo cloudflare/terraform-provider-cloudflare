@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -31,8 +32,31 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"kv_namespace_binding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"namespace_id": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+				Set: resourceCloudflareWorkerScriptKvNamespaceBindingHash,
+			},
 		},
 	}
+}
+
+func resourceCloudflareWorkerScriptKvNamespaceBindingHash(v interface{}) int {
+	m := v.(map[string]interface{})
+
+	return hashcode.String(fmt.Sprintf("%s-%s", m["name"].(string), m["namespace_id"].(string)))
 }
 
 type ScriptData struct {
@@ -45,9 +69,7 @@ type ScriptData struct {
 func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, error) {
 	scriptName := d.Get("name").(string)
 
-	var params cloudflare.WorkerRequestParams
-
-	params = cloudflare.WorkerRequestParams{
+	params := cloudflare.WorkerRequestParams{
 		ScriptName: scriptName,
 	}
 
@@ -55,6 +77,32 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 		scriptName,
 		params,
 	}, nil
+}
+
+type ScriptBindings map[string]cloudflare.WorkerBinding
+
+func getWorkerScriptBindings(scriptName string, client *cloudflare.API) (ScriptBindings, error) {
+	resp, err := client.ListWorkerBindings(&cloudflare.WorkerRequestParams{ScriptName: scriptName})
+	if err != nil {
+		return nil, fmt.Errorf("cannot list script bindings: %v", err)
+	}
+
+	bindings := make(ScriptBindings, len(resp.BindingList))
+
+	for _, b := range resp.BindingList {
+		bindings[b.Name] = b.Binding
+	}
+
+	return bindings, nil
+}
+
+func parseWorkerKvNamespaceBindings(d *schema.ResourceData, bindings ScriptBindings) {
+	for _, rawData := range d.Get("kv_namespace_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerKvNamespaceBinding{
+			NamespaceID: data["namespace_id"].(string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface{}) error {
@@ -68,7 +116,7 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 	// make sure that the worker does not already exist
 	r, _ := client.DownloadWorker(&scriptData.Params)
 	if r.WorkerScript.Script != "" {
-		return fmt.Errorf("script already exists.")
+		return fmt.Errorf("script already exists")
 	}
 
 	scriptBody := d.Get("content").(string)
@@ -78,7 +126,16 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Creating Cloudflare Worker Script from struct: %+v", &scriptData.Params)
 
-	_, err = client.UploadWorker(&scriptData.Params, scriptBody)
+	bindings := make(ScriptBindings)
+
+	parseWorkerKvNamespaceBindings(d, bindings)
+
+	scriptParams := cloudflare.WorkerScriptParams{
+		Script:   scriptBody,
+		Bindings: bindings,
+	}
+
+	_, err = client.UploadWorkerWithBindings(&scriptData.Params, &scriptParams)
 	if err != nil {
 		return errors.Wrap(err, "error creating worker script")
 	}
@@ -109,7 +166,31 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 			fmt.Sprintf("Error reading worker script from API for resouce %+v", &scriptData.Params))
 	}
 
-	d.Set("content", r.Script)
+	bindings, err := getWorkerScriptBindings(d.Get("name").(string), client)
+	if err != nil {
+		return err
+	}
+
+	kvNamespaceBindings := &schema.Set{
+		F: resourceCloudflareWorkerScriptKvNamespaceBindingHash,
+	}
+
+	for name, binding := range bindings {
+		switch v := binding.(type) {
+		case cloudflare.WorkerKvNamespaceBinding:
+			kvNamespaceBindings.Add(map[string]interface{}{
+				"name":         name,
+				"namespace_id": v.NamespaceID,
+			})
+		}
+	}
+
+	_ = d.Set("content", r.Script)
+
+	if err := d.Set("kv_namespace_binding", kvNamespaceBindings); err != nil {
+		return fmt.Errorf("cannot set kv_namespace bindings for firewall policy (%s): %v", d.Id(), err)
+	}
+
 	return nil
 }
 
@@ -128,7 +209,16 @@ func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Updating Cloudflare Worker Script from struct: %+v", &scriptData.Params)
 
-	_, err = client.UploadWorker(&scriptData.Params, scriptBody)
+	bindings := make(ScriptBindings)
+
+	parseWorkerKvNamespaceBindings(d, bindings)
+
+	scriptParams := cloudflare.WorkerScriptParams{
+		Script:   scriptBody,
+		Bindings: bindings,
+	}
+
+	_, err = client.UploadWorkerWithBindings(&scriptData.Params, &scriptParams)
 	if err != nil {
 		return errors.Wrap(err, "error updating worker script")
 	}
@@ -162,9 +252,9 @@ func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface
 
 func resourceCloudflareWorkerScriptImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	scriptID := d.Id()
-	d.Set("name", scriptID)
+	_ = d.Set("name", scriptID)
 
-	resourceCloudflareWorkerScriptRead(d, meta)
+	_ = resourceCloudflareWorkerScriptRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

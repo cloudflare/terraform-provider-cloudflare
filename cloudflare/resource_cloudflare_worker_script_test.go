@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -32,7 +33,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent1),
 				),
@@ -40,7 +41,15 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "content", scriptContent2),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateKvNamespaceBinding(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{rnd, fmt.Sprintf("%s-copy", rnd)}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -65,6 +74,28 @@ resource "cloudflare_worker_script" "%[1]s" {
 }`, rnd, scriptContent2)
 }
 
+func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateKvNamespaceBinding(rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_workers_kv_namespace" "%[1]s" {
+ title = "%[1]s"
+}
+
+resource "cloudflare_worker_script" "%[1]s" {
+  name = "%[1]s"
+  content = "%[2]s"
+
+  kv_namespace_binding {
+	name = "%[1]s"
+	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
+  }
+
+  kv_namespace_binding {
+	name = "%[1]s-copy"
+	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
+  }
+}`, rnd, scriptContent2)
+}
+
 func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.WorkerRequestParams {
 	params := cloudflare.WorkerRequestParams{
 		ScriptName: rs.Primary.Attributes["name"],
@@ -73,7 +104,7 @@ func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.Worker
 	return params
 }
 
-func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript) resource.TestCheckFunc {
+func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -93,6 +124,18 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 
 		if r.Script == "" {
 			return fmt.Errorf("Worker Script not found")
+		}
+
+		name := strings.Replace(n, "cloudflare_worker_script.", "", -1)
+		foundBindings, err := getWorkerScriptBindings(name, client)
+		if err != nil {
+			return fmt.Errorf("cannot list script bindings: %v", err)
+		}
+
+		for _, binding := range bindings {
+			if _, ok := foundBindings[binding]; !ok {
+				return fmt.Errorf("cannot find binding with name %s", binding)
+			}
 		}
 
 		*script = r.WorkerScript
