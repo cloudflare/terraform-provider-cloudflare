@@ -15,9 +15,10 @@ Provides a Cloudflare Spectrum Application. You can extend the power of Cloudfla
 ```hcl
 # Define a spectrum application proxies ssh traffic
 resource "cloudflare_spectrum_application" "ssh_proxy" {
-  protocol = "tcp/22"
+  zone_id      = var.cloudflare_zone_id
+  protocol     = "tcp/22"
   traffic_type = "direct"
-  dns = {
+  dns {
     type = "CNAME"
     name = "ssh.example.com"
   }
@@ -30,6 +31,7 @@ resource "cloudflare_spectrum_application" "ssh_proxy" {
 
 ## Argument Reference
 
+* `zone_id` - (Required) The DNS zone ID to add the application to
 * `protocol`  - (Required) The port configuration at Cloudflare’s edge. e.g. `tcp/22`.
 * `dns` - (Required) The name and type of DNS record for the Spectrum application. Fields documented below.
 * `origin_direct` - (Optional) A list of destination addresses to the origin. e.g. `tcp://192.0.2.1:22`.

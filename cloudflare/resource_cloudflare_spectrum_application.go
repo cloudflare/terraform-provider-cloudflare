@@ -82,7 +82,7 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 
 			"origin_port": {
 				Type:     schema.TypeInt,
-				Required: true,
+				Optional: true,
 			},
 
 			"tls": {
