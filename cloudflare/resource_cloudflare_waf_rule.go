@@ -31,6 +31,11 @@ func resourceCloudflareWAFRule() *schema.Resource {
 				Required: true,
 			},
 
+			"group_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
 			"package_id": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -59,6 +64,7 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 
 	// Only need to set mode as that is the only attribute that could have changed
 	d.Set("mode", rule.Mode)
+	d.Set("group_id", rule.Group.ID)
 	d.SetId(rule.ID)
 
 	return nil
@@ -94,6 +100,7 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 
 		d.Set("rule_id", rule.ID)
 		d.Set("zone_id", zoneID)
+		d.Set("group_id", rule.Group.ID)
 		d.Set("package_id", pkg.ID)
 
 		if rule.Mode != mode {
@@ -181,6 +188,7 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 			d.Set("rule_id", rule.ID)
 			d.Set("zone_id", zoneID)
 			d.Set("package_id", rule.PackageID)
+			d.Set("group_id", rule.Group.ID)
 			d.Set("mode", rule.Mode)
 
 			// The ID is known by the user in advance

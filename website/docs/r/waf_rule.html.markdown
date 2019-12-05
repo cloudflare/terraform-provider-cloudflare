@@ -36,6 +36,7 @@ The following attributes are exported:
 
 * `id` - The WAF Rule ID, the same as rule_id.
 * `package_id` - The ID of the WAF Rule Package that contains the rule.
+* `group_id` - The ID of the WAF Rule Group that contains the rule.
 
 ## Import
 
