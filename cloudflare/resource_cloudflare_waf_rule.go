@@ -33,6 +33,7 @@ func resourceCloudflareWAFRule() *schema.Resource {
 
 			"package_id": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 
@@ -67,33 +68,43 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 	client := meta.(*cloudflare.API)
 	ruleID := d.Get("rule_id").(string)
 	zoneID := d.Get("zone_id").(string)
+	packageID := d.Get("package_id").(string)
 	mode := d.Get("mode").(string)
 
-	packs, err := client.ListWAFPackages(zoneID)
-	if err != nil {
-		return err
+	// If no package ID is given try to resolve it
+	var pkgList []cloudflare.WAFPackage
+	if packageID == "" {
+		var err error
+		pkgList, err = client.ListWAFPackages(zoneID)
+		if err != nil {
+			return err
+		}
+	} else {
+		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
 	}
 
-	for _, p := range packs {
-		rule, err := client.WAFRule(zoneID, p.ID, ruleID)
+	for _, pkg := range pkgList {
+		var err error
+		var rule cloudflare.WAFRule
 
-		if err == nil {
-			d.Set("package_id", rule.PackageID)
-			d.Set("mode", mode)
-
-			// Set the ID to the rule_id parameter passed in from the user.
-			// All WAF rules already exist so we already know the rule_id e.g. 100000.
-			//
-			// This is a work around as we are not really "creating" a WAF Rule,
-			// only associating it with our terraform config for future updates.
-			d.SetId(ruleID)
-
-			if rule.Mode != mode {
-				return resourceCloudflareWAFRuleUpdate(d, meta)
-			}
-
-			return nil
+		rule, err = client.WAFRule(zoneID, pkg.ID, ruleID)
+		if err != nil {
+			continue
 		}
+
+		d.Set("rule_id", rule.ID)
+		d.Set("zone_id", zoneID)
+		d.Set("package_id", pkg.ID)
+
+		if rule.Mode != mode {
+			err = resourceCloudflareWAFRuleUpdate(d, meta)
+			if err != nil {
+				d.SetId("")
+				return err
+			}
+		}
+
+		return resourceCloudflareWAFRuleRead(d, meta)
 	}
 
 	return fmt.Errorf("Unable to find WAF Rule %s", ruleID)
@@ -142,7 +153,7 @@ func resourceCloudflareWAFRuleUpdate(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	return nil
+	return resourceCloudflareWAFRuleRead(d, meta)
 }
 
 func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
