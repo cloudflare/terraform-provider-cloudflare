@@ -1,13 +1,19 @@
 ## 2.2.0 (Unreleased)
 
 * **New Resource:** `cloudflare_access_group` ([#510](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/510))
-
+* **New Resource:** `cloudflare_workers_kv_namespace` [GH-443]
 
 **Improvements:**
 
 * `resource/cloudflare_zone_settings_override`: Add `non_identity` to allowed `decision` schema ([#541](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/541))
 * `resource/cloudflare_zone_settings_override`: Add support for `0rtt` and `http3` settings ([#542](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/542))
 * `resource/cloudflare_load_balancer_monitor`: Allow empty string for `expected_body` ([#539](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/539))
+* `resource/cloudflare_worker_script`: Add support for Worker KV Namespace Bindings [GH-544]
+* `data_source/waf_rules`, `resource/cloudflare_waf_rule`, Support allowed modes for WAF Rules [GH-550]
+
+**Fixes:**
+
+* `resource/cloudflare_spectrum_application`: Spectrum origin_port is optional [GH-549]
 
 ## 2.1.0 (November 07, 2019)
 
