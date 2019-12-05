@@ -111,9 +111,15 @@ func resourceCloudflareWAFRuleDelete(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
+	// Find the default mode to be used
+	defaultMode := "default"
+	if !contains(rule.AllowedModes, defaultMode) {
+		defaultMode = "on"
+	}
+
 	// Can't delete WAF Rule so instead reset it to default
-	if rule.Mode != "default" {
-		_, err = client.UpdateWAFRule(zoneID, packageID, ruleID, "default")
+	if rule.Mode != defaultMode {
+		_, err = client.UpdateWAFRule(zoneID, packageID, ruleID, defaultMode)
 		if err != nil {
 			return err
 		}

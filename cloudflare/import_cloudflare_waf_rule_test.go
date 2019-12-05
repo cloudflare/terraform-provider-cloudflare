@@ -11,7 +11,7 @@ import (
 func TestAccCloudflareWAFRule_Import(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	ruleID := "100000"
+	ruleID := "100001"
 	name := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{

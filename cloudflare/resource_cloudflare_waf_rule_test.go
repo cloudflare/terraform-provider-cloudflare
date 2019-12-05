@@ -44,6 +44,40 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWAFRule_CreateThenUpdate_SimpleModes(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	ruleID := "950000"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_waf_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "on", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttrSet(name, "package_id"),
+					resource.TestCheckResourceAttr(name, "mode", "on"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "off", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttrSet(name, "package_id"),
+					resource.TestCheckResourceAttr(name, "mode", "off"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
@@ -57,7 +91,7 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 			return err
 		}
 
-		if rule.Mode != "default" {
+		if rule.Mode != "default" && rule.Mode != "on" {
 			return fmt.Errorf("Expected mode to be reset to default, got: %s", rule.Mode)
 		}
 	}

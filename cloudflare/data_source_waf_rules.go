@@ -80,6 +80,13 @@ func dataSourceCloudflareWAFRules() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"allowed_modes": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 					},
 				},
 			},
@@ -139,13 +146,14 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 			}
 
 			ruleDetails = append(ruleDetails, map[string]interface{}{
-				"id":          rule.ID,
-				"description": rule.Description,
-				"priority":    rule.Priority,
-				"mode":        rule.Mode,
-				"group_id":    rule.Group.ID,
-				"group_name":  rule.Group.Name,
-				"package_id":  pkg.ID,
+				"id":            rule.ID,
+				"description":   rule.Description,
+				"priority":      rule.Priority,
+				"mode":          rule.Mode,
+				"group_id":      rule.Group.ID,
+				"group_name":    rule.Group.Name,
+				"package_id":    pkg.ID,
+				"allowed_modes": rule.AllowedModes,
 			})
 		}
 
