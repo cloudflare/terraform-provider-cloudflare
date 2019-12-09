@@ -51,7 +51,7 @@ The following attributes are exported:
 Firewall Rule can be imported using a composite ID formed of zone ID and rule ID, e.g.
 
 ```
-$ terraform import cloudflare_filter.default d41d8cd98f00b204e9800998ecf8427e/9e107d9d372bb6826bd81d3542a419d6
+$ terraform import cloudflare_firewall_rule.default d41d8cd98f00b204e9800998ecf8427e/9e107d9d372bb6826bd81d3542a419d6
 ```
 
 where:
