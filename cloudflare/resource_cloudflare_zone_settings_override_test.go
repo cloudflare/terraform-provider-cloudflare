@@ -58,6 +58,8 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 						name, "settings.0.security_level", "high"),
 					resource.TestCheckResourceAttr(
 						name, "settings.0.h2_prioritization", "on"),
+					resource.TestCheckResourceAttr(
+						name, "settings.0.zero_rtt", "off"),
 				),
 			},
 		},
@@ -230,6 +232,7 @@ resource "cloudflare_zone_settings_override" "test" {
 		security_header {
 			enabled = true
 		}
+		zero_rtt = "off"
 	}
 }`, zoneID)
 }

@@ -476,7 +476,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed:     true,
 	},
 
-	"0rtt": {
+	"zero_rtt": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 		Optional:     true,
@@ -585,6 +585,10 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetting, flattenAll bool) []map[string]interface{} {
 	cfg := map[string]interface{}{}
 	for _, s := range settings {
+		if s.ID == "0rtt" { // NOTE: 0rtt is an invalid attribute in HCLs grammar.  Remap to `zero_rtt`
+			s.ID = "zero_rtt"
+		}
+
 		if !settingInSchema(s.ID) {
 			log.Printf("[WARN] Value not in schema returned from API zone settings (is it new?) - %q : %#v", s.ID, s.Value)
 			continue
@@ -688,6 +692,11 @@ func expandOverriddenZoneSettings(d *schema.ResourceData, settingsKey string, re
 			zoneSettingValue, err := expandZoneSetting(d, keyFormat, k, settingValue, readOnlySettings)
 			if err != nil {
 				return zoneSettings, err
+			}
+
+			// Remap zero_rtt key back to Cloudflare's setting name, 0rtt
+			if k == "zero_rtt" {
+				k = "0rtt"
 			}
 
 			if zoneSettingValue != nil {
