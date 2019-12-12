@@ -1,4 +1,10 @@
 ## 2.2.1 (Unreleased)
+
+
+**Fixes:**
+
+* `resource/cloudflare_zone_settings_override`: Renamed `0rtt` to `zero_rtt` to conform to HCL grammar requirements ([#557](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/557))
+
 ## 2.2.0 (December 05, 2019)
 
 * **New Resource:** `cloudflare_access_group` ([#510](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/510))
@@ -7,7 +13,7 @@
 **Improvements:**
 
 * `resource/cloudflare_zone_settings_override`: Add `non_identity` to allowed `decision` schema ([#541](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/541))
-* `resource/cloudflare_zone_settings_override`: Add support for `zero_rtt` and `http3` settings ([#542](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/542))
+* `resource/cloudflare_zone_settings_override`: Add support for `0rtt` and `http3` settings ([#542](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/542))
 * `resource/cloudflare_load_balancer_monitor`: Allow empty string for `expected_body` ([#539](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/539))
 * `resource/cloudflare_worker_script`: Add support for Worker KV Namespace Bindings ([#544](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/544))
 * `data_source/waf_rules`, `resource/cloudflare_waf_rule`, Support allowed modes for WAF Rules ([#550](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/550))
