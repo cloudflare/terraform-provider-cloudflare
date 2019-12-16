@@ -46,7 +46,7 @@ func resourceCloudflareAccessRule() *schema.Resource {
 						"target": {
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"ip", "ip_range", "asn", "country"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"ip", "ip6", "ip_range", "asn", "country"}, false),
 						},
 						"value": {
 							Type:     schema.TypeString,
