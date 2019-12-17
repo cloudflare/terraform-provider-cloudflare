@@ -5,6 +5,10 @@
 
 * `resource/cloudflare_zone_settings_override`: Renamed `0rtt` to `zero_rtt` to conform to HCL grammar requirements ([#557](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/557))
 
+**Improvements:**
+
+* `resource/cloudflare_access_rule`: Add `ip6` as valid option ([#560](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/560))
+
 ## 2.2.0 (December 05, 2019)
 
 * **New Resource:** `cloudflare_access_group` ([#510](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/510))
