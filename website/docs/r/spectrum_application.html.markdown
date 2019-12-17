@@ -39,7 +39,7 @@ resource "cloudflare_spectrum_application" "ssh_proxy" {
 * `origin_port` - (Optional) If using `origin_dns` this is a required attribute. Origin port to proxy traffice to e.g. `22`.
 * `tls` - (Optional) TLS configuration option for Cloudflare to connect to your origin. Valid values are: `off`, `flexible`, `full` and `strict`. Defaults to `off`.
 * `ip_firewall` - (Optional) Enables the IP Firewall for this application. Defaults to `true`.
-* `proxy_protocol` - (Optional) Enables Proxy Protocol v1 to the origin. Defaults to `false`.
+* `proxy_protocol` - (Optional) Enables a proxy protocol to the origin. Valid values are: `off`, `v1`, `v2`, and `simple`. Defaults to `off`.
 * `traffic_type` - (Optional) Set's application type. Valid values are: `direct`, `http`, `https`.  Defaults to `direct`.
 
 **dns**
