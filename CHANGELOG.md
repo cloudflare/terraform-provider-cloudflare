@@ -8,6 +8,7 @@
 **Improvements:**
 
 * `resource/cloudflare_access_rule`: Add `ip6` as valid option ([#560](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/560))
+* `resource/cloudflare_spectrum_application`: Swap `proxy_protocol` to string field with supporting enum values instead ([#561](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/561))
 
 ## 2.2.0 (December 05, 2019)
 
