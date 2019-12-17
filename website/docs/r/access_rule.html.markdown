@@ -68,7 +68,7 @@ The following arguments are supported:
 
 The **configuration** block supports:
 
-* `target` - (Required) The request property to target. Allowed values: "ip", "ip_range", "asn", "country"
+* `target` - (Required) The request property to target. Allowed values: "ip", "ip6", "ip_range", "asn", "country"
 * `value` - (Required) The value to target. Depends on target's type.
 
 ## Attributes Reference
