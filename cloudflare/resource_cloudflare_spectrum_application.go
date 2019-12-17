@@ -101,9 +101,12 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 			},
 
 			"proxy_protocol": {
-				Type:     schema.TypeBool,
+				Type:     schema.TypeString,
 				Optional: true,
-				Default:  false,
+				Default:  "off",
+				ValidateFunc: validation.StringInSlice([]string{
+					"off", "v1", "v2", "simple",
+				}, false),
 			},
 		},
 	}
@@ -292,7 +295,7 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 	}
 
 	if proxyProtocol, ok := d.GetOk("proxy_protocol"); ok {
-		application.ProxyProtocol = proxyProtocol.(bool)
+		application.ProxyProtocol = cloudflare.ProxyProtocol(proxyProtocol.(string))
 	}
 
 	return application
