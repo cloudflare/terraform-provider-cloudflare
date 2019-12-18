@@ -1,5 +1,6 @@
 ## 2.2.1 (Unreleased)
 
+* **New Resource:** `cloudflare_origin_ca_certificate` ([#547](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/547))
 
 **Fixes:**
 
@@ -9,6 +10,7 @@
 
 * `resource/cloudflare_access_rule`: Add `ip6` as valid option ([#560](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/560))
 * `resource/cloudflare_spectrum_application`: Swap `proxy_protocol` to string field with supporting enum values instead ([#561](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/561))
+* `resource/cloudflare_waf_rule`: Add `package_id` as valid option and export `group_id` ([#552](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/552))
 
 ## 2.2.0 (December 05, 2019)
 
