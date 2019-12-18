@@ -1,4 +1,4 @@
-## 2.2.1 (Unreleased)
+## 2.3.0 (Unreleased)
 
 * **New Resource:** `cloudflare_origin_ca_certificate` ([#547](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/547))
 
