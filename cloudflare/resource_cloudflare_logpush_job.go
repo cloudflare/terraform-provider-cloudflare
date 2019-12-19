@@ -49,9 +49,8 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 
 func getJobFromResource(d *schema.ResourceData) cloudflare.LogpushJob {
 	id, err := strconv.Atoi(d.Id())
-
 	if err != nil {
-		fmt.Errorf("Could not extract Logpush job from resource - invalid identifier: %+v", id)
+		fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %v", d.Id(), err)
 	}
 
 	job := cloudflare.LogpushJob{
@@ -68,9 +67,11 @@ func getJobFromResource(d *schema.ResourceData) cloudflare.LogpushJob {
 func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	jobId, err := strconv.Atoi(d.Id())
+	if err != nil {
+		fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %v", d.Id(), err)
+	}
 
 	job, err := client.LogpushJob(d.Get("zone_id").(string), jobId)
-
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
 			log.Printf("[INFO] Could not find LogpushJob with id: %q", jobId)
@@ -100,11 +101,9 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 	log.Printf("[DEBUG] Creating Cloudflare Logpush Job from struct: %+v", job)
 
 	j, err := client.CreateLogpushJob(d.Get("zone_id").(string), job)
-
 	if err != nil {
-		return fmt.Errorf("error creating logpush job")
+		return fmt.Errorf("error creating logpush job: %v", err)
 	}
-
 	if j.ID == 0 {
 		return fmt.Errorf("failed to find ID in Create response; resource was empty")
 	}
@@ -114,7 +113,6 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 	log.Printf("[INFO] Created Cloudflare Logpush Job ID: %s", d.Id())
 
 	return resourceCloudflareLogpushJobRead(d, meta)
-
 }
 
 func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -145,5 +143,4 @@ func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}
 	}
 
 	return resourceCloudflareLogpushJobRead(d, meta)
-
 }
