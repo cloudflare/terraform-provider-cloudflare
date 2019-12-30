@@ -28,6 +28,9 @@ func TestCloudflareRecordMigrateState(t *testing.T) {
 		t.Fatalf("Error building Cloudflare API: %s", err)
 	}
 
+	// When several records are returned for a single DNS query, they are
+	// matched on ttl, proxied and priority: as the same response is returned
+	// for all testcases, select specific values for each testcase
 	cases := map[string]struct {
 		StateVersion int
 		ID           string
@@ -128,6 +131,30 @@ func TestCloudflareRecordMigrateState(t *testing.T) {
 			},
 			Expected: "222ffe3f93a31231ad6b0c6d09185jjj",
 		},
+		"ttl_122_state_v0_with_v1_fields": {
+			StateVersion: 0,
+			ID:           "12345678901234567890123456789012",
+			Attributes: map[string]string{
+				"created_on":                      "2018-03-07T11:52:02.454564Z",
+				"data.%":                          "0",
+				"hostname":                        "hashicorptest.com",
+				"id":                              "12345678901234567890123456789012",
+				"metadata.%":                      "3",
+				"metadata.auto_added":             "false",
+				"metadata.managed_by_apps":        "false",
+				"metadata.managed_by_argo_tunnel": "false",
+				"modified_on":                     "2018-03-07T11:52:02.454564Z",
+				"name":                            "hashicorptest.com",
+				"priority":                        "0",
+				"proxiable":                       "true",
+				"proxied":                         "true",
+				"ttl":                             "122",
+				"type":                            "A",
+				"value":                           "1.2.3.4",
+				"zone_id":                         "1234567890",
+			},
+			Expected: "12345678901234567890123456789012",
+		},
 	}
 
 	for tn, tc := range cases {
@@ -147,7 +174,7 @@ func TestCloudflareRecordMigrateState(t *testing.T) {
 		}
 
 		if is.ID != tc.Expected {
-			t.Fatalf("bad sg rule id: %s\n\n expected: %s", is.ID, tc.Expected)
+			t.Fatalf("bad record id: %s\n\n expected: %s", is.ID, tc.Expected)
 		}
 	}
 }
@@ -320,14 +347,32 @@ const dnsResponse = `
       "locked": false,
       "zone_id": "1234567890",
       "zone_name": "hashicorptest.com"
-    }
+    },
+    {
+      "id": "12345678901234567890123456789012",
+      "name": "hashicorptest.com",
+	  "content": "1.2.3.4",
+      "proxiable": true,
+      "proxied": true,
+      "ttl": 122,
+      "locked": false,
+      "zone_id": "1234567890",
+      "zone_name": "hashicorptest.com",
+      "modified_on": "2018-03-07T11:52:02.454564Z",
+      "created_on": "2018-03-07T11:52:02.454564Z",
+      "meta": {
+        "auto_added": false,
+        "managed_by_apps": false,
+	    "managed_by_argo_tunnel": false
+	  }
+	}
   ],
   "result_info": {
     "page": 1,
     "per_page": 20,
     "total_pages": 1,
-    "count": 7,
-    "total_count": 7
+    "count": 8,
+    "total_count": 8
   },
   "success": true,
   "errors": [],
