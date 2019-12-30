@@ -1,4 +1,9 @@
 ## 2.3.1 (Unreleased)
+
+**Improvements:**
+
+* `resource/cloudflare_record_migrate`: Use `zone_id` for state migration before attempting to use `domain` ([#566](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/566))
+
 ## 2.3.0 (December 18, 2019)
 
 * **New Resource:** `cloudflare_origin_ca_certificate` ([#547](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/547))
