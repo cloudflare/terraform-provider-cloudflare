@@ -30,10 +30,14 @@ func migrateCloudflareRecordStateV0toV1(is *terraform.InstanceState, meta interf
 	client := meta.(*cloudflare.API)
 
 	// look up new id based on attributes
-	domain := is.Attributes["domain"]
-	zoneId, err := client.ZoneIDByName(domain)
-	if err != nil {
-		return is, fmt.Errorf("Error finding zone %q: %s", domain, err)
+	zoneId := is.Attributes["zone_id"]
+	if zoneId == "" {
+		domain := is.Attributes["domain"]
+		var err error
+		zoneId, err = client.ZoneIDByName(domain)
+		if err != nil {
+			return is, fmt.Errorf("Error finding zone %q: %s", domain, err)
+		}
 	}
 
 	// all other information is ignored in the DNSRecords call
