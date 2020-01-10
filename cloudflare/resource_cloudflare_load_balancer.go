@@ -56,7 +56,7 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "none",
-				ValidateFunc: validation.StringInSlice([]string{"none", "cookie"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"", "none", "cookie", "ip_cookie"}, false),
 			},
 
 			"proxied": {
