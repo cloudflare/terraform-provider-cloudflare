@@ -78,6 +78,27 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 			},
 		},
 	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinityIPCookie(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// explicitly verify that our session_affinity has been set
+					resource.TestCheckResourceAttr(name, "session_affinity", "ip_cookie"),
+					// dont check that other specified values are set, this will be evident by lack
+					// of plan diff some values will get empty values
+					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
+				),
+			},
+		},
+	})
 }
 
 func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
@@ -341,6 +362,17 @@ resource "cloudflare_load_balancer" "%[3]s" {
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
 	session_affinity = "cookie"
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigSessionAffinityIPCookie(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+	session_affinity = "ip_cookie"
 }`, zoneID, zone, id)
 }
 
