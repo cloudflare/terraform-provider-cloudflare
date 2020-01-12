@@ -3,6 +3,7 @@
 **Improvements:**
 
 * `resource/cloudflare_record_migrate`: Use `zone_id` for state migration before attempting to use `domain` ([#566](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/566))
+* `resource/cloudflare_load_balancer`: Update `session_affinity` validation to allow `"ip_cookie"` ([#573](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/573))
 
 ## 2.3.0 (December 18, 2019)
 
