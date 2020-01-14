@@ -6,7 +6,7 @@ require (
 	github.com/cloudflare/cloudflare-go v0.11.0
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk v1.4.1
-	github.com/pkg/errors v0.9.0
+	github.com/pkg/errors v0.9.1
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47 // indirect
