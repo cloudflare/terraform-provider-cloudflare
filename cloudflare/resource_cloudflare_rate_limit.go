@@ -147,6 +147,31 @@ func resourceCloudflareRateLimit() *schema.Resource {
 										Optional: true,
 										Computed: true,
 									},
+
+									"headers": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Computed: true,
+										Elem:     &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"name": {
+													Type:     schema.TypeString,
+													Required: true,
+													Computed: true,
+												},
+												"operand": {
+													Type:     schema.TypeString,
+													Required: true,
+													ValidateFunc: validation.StringInSlice([]string{"ne", "eq"}, true),
+												},
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+													Computed: true,
+												},
+											}
+										}
+									},
 								},
 							},
 						},
@@ -347,6 +372,15 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 			originTraffic := originIface.(bool)
 			responseMatcher.OriginTraffic = &originTraffic
 		}
+
+		if cfgHeaders, ok := matchResp["headers"]; ok {
+			headers := make([]map[string]string, cfgHeaders.(*schema.Set).Len())
+			for i, header := range cfgHeaders.(*schema.Set).List() {
+				headers[i] = header.(map[string]string) 
+			}
+			responseMatcher.Headers = &headers
+		}
+
 		matcher.Response = responseMatcher
 	}
 	return
