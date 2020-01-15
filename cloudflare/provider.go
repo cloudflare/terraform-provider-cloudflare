@@ -105,6 +105,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_access_service_token":   resourceCloudflareAccessServiceToken(),
 			"cloudflare_account_member":         resourceCloudflareAccountMember(),
 			"cloudflare_argo":                   resourceCloudflareArgo(),
+			"cloudflare_custom_hostnames":       resourceCloudflareCustomHostnames(),
 			"cloudflare_custom_pages":           resourceCloudflareCustomPages(),
 			"cloudflare_custom_ssl":             resourceCloudflareCustomSsl(),
 			"cloudflare_filter":                 resourceCloudflareFilter(),
