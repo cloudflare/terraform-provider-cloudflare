@@ -154,17 +154,17 @@ func resourceCloudflareRateLimit() *schema.Resource {
 										Computed: true,
 										Elem:     &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"name": {
+												"Name": {
 													Type:     schema.TypeString,
 													Required: true,
 													Computed: true,
 												},
-												"operand": {
+												"Op": {
 													Type:     schema.TypeString,
 													Required: true,
 													ValidateFunc: validation.StringInSlice([]string{"ne", "eq"}, true),
 												},
-												"value": {
+												"Value": {
 													Type:     schema.TypeString,
 													Required: true,
 													Computed: true,
@@ -374,9 +374,9 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 		}
 
 		if cfgHeaders, ok := matchResp["headers"]; ok {
-			headers := make([]map[string]string, cfgHeaders.(*schema.Set).Len())
+			headers := make([]cloudflare.RateLimitResponseMatcherHeader, cfgHeaders.(*schema.Set).Len())
 			for i, header := range cfgHeaders.(*schema.Set).List() {
-				headers[i] = header.(map[string]string) 
+				headers[i] = header.(cloudflare.RateLimitResponseMatcherHeader) 
 			}
 			responseMatcher.Headers = &headers
 		}
