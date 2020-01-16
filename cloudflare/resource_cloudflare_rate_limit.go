@@ -157,7 +157,6 @@ func resourceCloudflareRateLimit() *schema.Resource {
 												"Name": {
 													Type:     schema.TypeString,
 													Required: true,
-													Computed: true,
 												},
 												"Op": {
 													Type:         schema.TypeString,
@@ -167,7 +166,6 @@ func resourceCloudflareRateLimit() *schema.Resource {
 												"Value": {
 													Type:     schema.TypeString,
 													Required: true,
-													Computed: true,
 												},
 											},
 										},
