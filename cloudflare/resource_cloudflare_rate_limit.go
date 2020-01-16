@@ -169,8 +169,8 @@ func resourceCloudflareRateLimit() *schema.Resource {
 													Required: true,
 													Computed: true,
 												},
-											}
-										}
+											},
+										},
 									},
 								},
 							},
