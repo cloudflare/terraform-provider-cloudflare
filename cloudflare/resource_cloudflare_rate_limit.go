@@ -154,16 +154,16 @@ func resourceCloudflareRateLimit() *schema.Resource {
 										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"Name": {
+												"name": {
 													Type:     schema.TypeString,
 													Required: true,
 												},
-												"Op": {
+												"op": {
 													Type:         schema.TypeString,
 													Required:     true,
 													ValidateFunc: validation.StringInSlice([]string{"ne", "eq"}, true),
 												},
-												"Value": {
+												"value": {
 													Type:     schema.TypeString,
 													Required: true,
 												},
