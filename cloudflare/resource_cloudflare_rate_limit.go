@@ -149,7 +149,7 @@ func resourceCloudflareRateLimit() *schema.Resource {
 									},
 
 									"headers": {
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Optional: true,
 										Computed: true,
 										Elem: &schema.Resource{
