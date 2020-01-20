@@ -371,9 +371,12 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 			responseMatcher.OriginTraffic = &originTraffic
 		}
 
-		if cfgHeaders, ok := matchResp["headers"]; ok {
-			headers := make([]cloudflare.RateLimitResponseMatcherHeader, cfgHeaders.(*schema.Set).Len())
-			for i, cfgHeader := range cfgHeaders.(*schema.Set).List() {
+		if cfgHeadersIface, ok := matchResp["headers"]; ok {
+			headers := make([]cloudflare.RateLimitResponseMatcherHeader, cfgHeadersIface.(*schema.Set).Len())
+
+			for i, cfgHeaderIface := range cfgHeadersIface.(*schema.Set).List() {
+				cfgHeader := cfgHeaderIface.(map[string]interface{})
+
 				if name, ok := cfgHeader["name"]; ok {
 					headers[i].Name = name.(string)
 				}
