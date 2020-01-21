@@ -47,7 +47,7 @@ func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
 			return err
 		}
 
-		for _, n := range resp.Result {
+		for _, n := range resp {
 			if n.ID == rs.Primary.ID {
 				return fmt.Errorf("Namespace still exists")
 			}
@@ -72,7 +72,7 @@ func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *clo
 			return err
 		}
 
-		for _, n := range resp.Result {
+		for _, n := range resp {
 			if n.Title == title {
 				*namespace = n
 				return nil
