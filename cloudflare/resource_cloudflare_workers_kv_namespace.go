@@ -56,7 +56,7 @@ func resourceCloudflareWorkersKVNamespaceCreate(d *schema.ResourceData, meta int
 
 func resourceCloudflareWorkersKVNamespaceRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	namespaceId := d.Id()
+	namespaceID := d.Id()
 
 	resp, err := client.ListWorkersKVNamespaces(context.Background())
 	if err != nil {
@@ -64,8 +64,8 @@ func resourceCloudflareWorkersKVNamespaceRead(d *schema.ResourceData, meta inter
 	}
 
 	var namespace cloudflare.WorkersKVNamespace
-	for _, r := range resp.Result {
-		if r.ID == namespaceId {
+	for _, r := range resp {
+		if r.ID == namespaceID {
 			namespace = r
 			break
 		}
@@ -115,7 +115,7 @@ func resourceCloudflareWorkersKVNamespaceImport(d *schema.ResourceData, meta int
 	namespaces, err := client.ListWorkersKVNamespaces(context.Background())
 	var title string
 
-	for _, n := range namespaces.Result {
+	for _, n := range namespaces {
 		if n.ID == d.Id() {
 			title = n.Title
 		}
