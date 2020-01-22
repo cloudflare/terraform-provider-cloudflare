@@ -2,11 +2,44 @@ package cloudflare
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_filter", &resource.Sweeper{
+		Name: "cloudflare_filter",
+		F:    testSweepCloudflareFilterSweeper,
+	})
+}
+
+func testSweepCloudflareFilterSweeper(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	filters, filtersErr := client.Filters(zoneID, cloudflare.PaginationOptions{})
+
+	if filtersErr != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare filters: %s", filtersErr)
+	}
+
+	for _, filter := range filters {
+		err := client.DeleteFilter(zoneID, filter.ID)
+
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete Cloudflare filter (%s) in zone ID: %s", filter.ID, zoneID)
+		}
+	}
+
+	return nil
+}
 
 func TestAccFilterSimple(t *testing.T) {
 	rnd := generateRandomResourceName()

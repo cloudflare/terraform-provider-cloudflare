@@ -15,6 +15,14 @@ func init() {
 		Name: "cloudflare_firewall_rule",
 		F:    testSweepCloudflareFirewallRuleSweeper,
 	})
+
+	// Defined in the filter test but referenced here as the firewall uses
+	// filters for the expressions and need to be cleaned out with the
+	// firewall_rule resources.
+	resource.AddTestSweepers("cloudflare_filter", &resource.Sweeper{
+		Name: "cloudflare_filter",
+		F:    testSweepCloudflareFilterSweeper,
+	})
 }
 
 func testSweepCloudflareFirewallRuleSweeper(r string) error {
