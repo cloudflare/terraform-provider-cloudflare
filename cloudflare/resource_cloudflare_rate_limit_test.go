@@ -115,6 +115,10 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "disabled", "true"),
 					resource.TestCheckResourceAttr(name, "description", "my fully specified rate limit for a zone"),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.#", "1"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.name", "Cf-Cache-Status")
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.op", "ne")
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.value", "HIT")
+
 				),
 			},
 		},
