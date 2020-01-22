@@ -41,7 +41,7 @@ The following additional attributes are exported:
 * `id` - ID of the application
 * `aud` - Application Audience (AUD) Tag of the application
 * `domain` - Domain of the application
-* `session_duration` - Session duriation of the application
+* `session_duration` - Length of session for the application before prompting for a sign in
 
 ## Import
 
