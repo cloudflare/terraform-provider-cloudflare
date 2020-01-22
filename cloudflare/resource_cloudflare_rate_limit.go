@@ -372,7 +372,7 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 		}
 
 		if cfgHeadersIface, ok := matchResp["headers"]; ok {
-			headers := make([]cloudflare.RateLimitResponseMatcherHeader, len(cfgHeadersIface))
+			headers := make([]cloudflare.RateLimitResponseMatcherHeader, len(cfgHeadersIface.([]interface{})))
 
 			for j, cfgHeaderIface := range cfgHeadersIface.([]interface{}) {
 				cfgHeader := cfgHeaderIface.(map[string]interface{})
