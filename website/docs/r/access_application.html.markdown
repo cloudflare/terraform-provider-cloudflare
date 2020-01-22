@@ -33,6 +33,15 @@ The following arguments are supported:
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
 * `session_duration` - (Optional) How often a user will be forced to
   re-authorise. Must be one of `30m`, `6h`, `12h`, `24h`, `168h`, `730h`.
+  
+## Attributes Reference
+
+The following additional attributes are exported:
+
+* `id` - ID of the application
+* `aud` - Application Audience (AUD) Tag of the application
+* `domain` - Domain of the application
+* `session_duration` - Length of session for the application before prompting for a sign in
 
 ## Import
 
