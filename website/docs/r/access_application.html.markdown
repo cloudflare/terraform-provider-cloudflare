@@ -43,7 +43,6 @@ The following additional attributes are exported:
 * `domain` - Domain of the application
 * `session_duration` - Session duriation of the application
 
-
 ## Import
 
 Access Applications can be imported using a composite ID formed of zone
