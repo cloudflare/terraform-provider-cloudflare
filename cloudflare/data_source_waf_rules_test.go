@@ -24,7 +24,7 @@ func TestAccCloudflareWAFRules_NoFilter(t *testing.T) {
 				Config: testAccCloudflareWAFRulesConfig(zoneID, map[string]string{}, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWAFRulesDataSourceID(name),
-					resource.TestCheckResourceAttr(name, "rules.#", "40"),
+					resource.TestCheckResourceAttrSet(name, "rules.#"),
 				),
 			},
 		},
@@ -45,7 +45,7 @@ func TestAccCloudflareWAFRules_MatchDescription(t *testing.T) {
 				Config: testAccCloudflareWAFRulesConfig(zoneID, map[string]string{"description": "^SLR: .*"}, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWAFRulesDataSourceID(name),
-					resource.TestCheckResourceAttr(name, "rules.#", "20"),
+					resource.TestCheckResourceAttrSet(name, "rules.#"),
 				),
 			},
 		},
