@@ -2,6 +2,8 @@
 
 **Improvements:**
 
+* `resource/access_application`: Add documentation for available attributes ([#587](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/587))
+* `resource/cloudflare_firewall_rule`: Add support for bypassing security configuration rules by URL ([#568](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/568))
 * `resource/cloudflare_record_migrate`: Use `zone_id` for state migration before attempting to use `domain` ([#566](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/566))
 * `resource/cloudflare_load_balancer`: Update `session_affinity` validation to allow `"ip_cookie"` ([#573](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/573))
 
