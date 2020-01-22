@@ -369,7 +369,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
     }
     response {
       statuses = [200, 201, 202, 301, 429]
-      origin_traffic = false
+      origin_traffic = true 
       headers {
 	name  = "Cf-Cache-Status"
 	op    = "ne"
