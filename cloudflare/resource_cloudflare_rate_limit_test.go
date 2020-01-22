@@ -118,7 +118,6 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.name", "Cf-Cache-Status"),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.op", "ne"),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.value", "HIT"),
-
 				),
 			},
 		},
