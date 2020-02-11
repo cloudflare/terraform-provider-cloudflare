@@ -122,50 +122,48 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 }
 
 func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta interface{}) error {
-	// client := meta.(*cloudflare.API)
-	// zoneID := d.Get("zone_id").(string)
-	// appID := d.Get("application_id").(string)
+	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
 
-	// accessPolicy, err := client.AccessPolicy(zoneID, appID, d.Id())
-	// if err != nil {
-	// 	if strings.Contains(err.Error(), "HTTP status 404") {
-	// 		log.Printf("[INFO] Access Policy %s no longer exists", d.Id())
-	// 		d.SetId("")
-	// 		return nil
-	// 	}
-	// 	return fmt.Errorf("Error finding Access Policy %q: %s", d.Id(), err)
-	// }
+	accessIdentityProvider, err := client.AccessIdentityProviderDetails(accountID, d.Id())
+	if err != nil {
+		if strings.Contains(err.Error(), "HTTP status 404") {
+			log.Printf("[INFO] Access Identity Provider %s no longer exists", d.Id())
+			d.SetId("")
+			return nil
+		}
+		return fmt.Errorf("unable to find Access Identity Provider %q: %s", d.Id(), err)
+	}
 
-	// d.Set("name", accessPolicy.Name)
-	// d.Set("decision", accessPolicy.Decision)
-	// d.Set("precedence", accessPolicy.Precedence)
-	// d.Set("require", accessPolicy.Require)
-	// d.Set("exclude", accessPolicy.Exclude)
-	// d.Set("include", accessPolicy.Include)
+	d.SetId(accessIdentityProvider.ID)
+	d.Set("name", accessIdentityProvider.Name)
+	d.Set("type", accessIdentityProvider.Type)
+
+	// d.Set("config", flattenIDPConfigOptions(accessIdentityProvider.Config))
 
 	return nil
 }
 
 func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta interface{}) error {
-	// client := meta.(*cloudflare.API)
-	// appID := d.Get("application_id").(string)
-	// zoneID := d.Get("zone_id").(string)
-	// newAccessPolicy := cloudflare.AccessPolicy{
-	// 	Name:       d.Get("name").(string),
-	// 	Precedence: d.Get("precedence").(int),
-	// 	Decision:   d.Get("decision").(string),
-	// }
+	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
 
-	// newAccessPolicy = appendConditionalAccessPolicyFields(newAccessPolicy, d)
+	IDPConfiguration, err := expandIDPOptions(d)
 
-	// log.Printf("[DEBUG] Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy)
+	identityProvider := cloudflare.AccessIdentityProvider{
+		Name:   d.Get("name").(string),
+		Type:   d.Get("type").(string),
+		Config: IDPConfiguration,
+	}
 
-	// accessPolicy, err := client.CreateAccessPolicy(zoneID, appID, newAccessPolicy)
-	// if err != nil {
-	// 	return fmt.Errorf("error creating Access Policy for ID %q: %s", accessPolicy.ID, err)
-	// }
+	log.Printf("[DEBUG] Creating Cloudflare Access Identity Provider from struct: %+v", identityProvider)
 
-	// d.SetId(accessPolicy.ID)
+	accessPolicy, err := client.CreateAccessIdentityProvider(accountID, identityProvider)
+	if err != nil {
+		return fmt.Errorf("error creating Access Identity Provider for ID %q: %s", d.Id(), err)
+	}
+
+	d.SetId(accessPolicy.ID)
 
 	return nil
 }
@@ -198,18 +196,17 @@ func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta
 }
 
 func resourceCloudflareAccessIdentityProviderDelete(d *schema.ResourceData, meta interface{}) error {
-	// client := meta.(*cloudflare.API)
-	// zoneID := d.Get("zone_id").(string)
-	// appID := d.Get("application_id").(string)
+	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
 
-	// log.Printf("[DEBUG] Deleting Cloudflare Access Policy using ID: %s", d.Id())
+	log.Printf("[DEBUG] Deleting Cloudflare Access Identity Provider using ID: %s", d.Id())
 
-	// err := client.DeleteAccessPolicy(zoneID, appID, d.Id())
-	// if err != nil {
-	// 	return fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err)
-	// }
+	_, err := client.DeleteAccessIdentityProvider(accountID, d.Id())
+	if err != nil {
+		return fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err)
+	}
 
-	// resourceCloudflareAccessIdentityProviderRead(d, meta)
+	resourceCloudflareAccessIdentityProviderRead(d, meta)
 
 	return nil
 }
@@ -233,3 +230,33 @@ func resourceCloudflareAccessIdentityProviderImport(d *schema.ResourceData, meta
 
 	return []*schema.ResourceData{d}, nil
 }
+
+func expandIDPOptions(d *schema.ResourceData) (cloudflare.AccessIdentityProviderConfiguration, error) {
+	tfAction := d.Get("config").([]interface{})[0].(map[string]interface{})
+	IDPConfig := cloudflare.AccessIdentityProviderConfiguration{}
+
+	client_id := tfAction["client_id"].(string)
+	client_secret := tfAction["client_secret"].(string)
+
+	IDPConfig.ClientID = client_id
+	IDPConfig.ClientSecret = client_secret
+
+	return IDPConfig, nil
+}
+
+// func flattenIDPConfigOptions(options cloudflare.AccessIdentityProviderConfiguration) interface{} {
+// 	action := map[string]interface{}{
+// 		"mode":    cfg.Mode,
+// 		"timeout": cfg.Timeout,
+// 	}
+
+// 	if cfg.Response != nil {
+// 		cfgResponse := *cfg.Response
+// 		actionResponse := map[string]interface{}{
+// 			"content_type": cfgResponse.ContentType,
+// 			"body":         cfgResponse.Body,
+// 		}
+// 		action["response"] = []map[string]interface{}{actionResponse}
+// 	}
+// 	return []map[string]interface{}{action}
+// }
