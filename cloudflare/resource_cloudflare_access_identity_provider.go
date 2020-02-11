@@ -21,6 +21,10 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"account_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
