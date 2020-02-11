@@ -32,7 +32,7 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 			"type": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"centrify", "citrix_adc_saml", "facebook", "google-apps", "oidc", "github", "google", "saml", "linkedin", "azureAD", "okta", "onetimepin", "onelogin", "authn", "yandex"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"centrify", "facebook", "google-apps", "oidc", "github", "google", "saml", "linkedin", "azureAD", "okta", "onetimepin", "onelogin", "authn", "yandex"}, false),
 			},
 			"config": {
 				Type:     schema.TypeList,
