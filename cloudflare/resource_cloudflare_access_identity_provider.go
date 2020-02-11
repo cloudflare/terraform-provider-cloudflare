@@ -31,8 +31,87 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"centrify", "citrix_adc_saml", "facebook", "google-apps", "oidc", "github", "google", "saml", "linkedin", "azureAD", "okta", "onetimepin", "onelogin", "authn", "yandex"}, false),
 			},
 			"config": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"apps_domain": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"attributes": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"auth_url": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"centrify_account": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"centrify_app_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"certs_url": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"client_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"client_secret": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"directory_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"email_attribute_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"idp_public_cert": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"issuer_url": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"okta_account": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"onelogin_account": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"sign_request": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"sso_target_url": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"support_groups": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"token_url": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
 			},
 		},
 	}
