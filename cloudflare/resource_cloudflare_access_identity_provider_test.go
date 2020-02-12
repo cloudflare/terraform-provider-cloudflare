@@ -8,6 +8,42 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
+func init() {
+	resource.AddTestSweepers("cloudflare_access_identity_provider", &resource.Sweeper{
+		Name: "cloudflare_access_identity_provider",
+		F:    testSweepCloudflareAccessIdentityProviders,
+	})
+}
+
+func testSweepCloudflareAccessIdentityProviders(r string) error {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	accessIDPs, accessIDPsErr := client.ListZones()
+	if accessIDPsErr != nil {
+		log.Printf("[ERROR] Failed to fetch Access Identity Providers: %s", accessIDPsErr)
+	}
+
+	if len(accessIDPs) == 0 {
+		log.Print("[DEBUG] No Access Identity Providers to sweep")
+		return nil
+	}
+
+	for _, idp := range accessIDPs {
+		log.Printf("[INFO] Deleting Access Identity Provider ID: %s", idp.ID)
+		_, err := client.DeleteAccessIdentityProvider(accountID, idp.ID)
+
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete Access Identity Provider (%s): %s", idp.ID, err)
+		}
+	}
+
+	return nil
+}
+
 func TestAccCloudflareAccessIdentityProviderOneTimePin(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
