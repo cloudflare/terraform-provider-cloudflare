@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -81,13 +82,80 @@ func TestAccCloudflareAccessIdentityProviderOAuth(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessIdentityProviderOPAuth(accountID, rnd),
+				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
 					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessIdentityProviderOAuthWithUpdate(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_access_identity_provider." + rnd
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "type", "github"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
+					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderOAuthUpdatedName(accountID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
+					resource.TestCheckResourceAttr(resourceName, "type", "github"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
+					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessIdentityProviderSAML(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_access_identity_provider." + rnd
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderSAML(accountID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "type", "saml"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.issuer_url", "jumpcloud"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.sso_target_url", "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.sign_request", "false"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.attributes.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.attributes.0", "email"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.attributes.1", "username"),
+					resource.TestCheckResourceAttrSet(resourceName, "config.0.idp_public_cert"),
 				),
 			},
 		},
@@ -103,7 +171,7 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 }`, accountID, name)
 }
 
-func testAccCheckCloudflareAccessIdentityProviderOPAuth(accountID, name string) string {
+func testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[2]s" {
   account_id = "%[1]s"
@@ -113,5 +181,34 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
     client_id = "test"
     client_secret = "secret"
   }
+}`, accountID, name)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderOAuthUpdatedName(accountID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[2]s" {
+  account_id = "%[1]s"
+  name = "%[2]s-updated"
+  type = "github"
+  config {
+    client_id = "test"
+    client_secret = "secret"
+  }
+}`, accountID, name)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderSAML(accountID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[2]s" {
+  account_id = "%[1]s"
+  name = "%[2]s"
+  type = "saml"
+  config {
+    issuer_url = "jumpcloud"
+    sso_target_url = "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"
+    attributes = [ "email", "username" ]
+    sign_request = false
+    idp_public_cert = "MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEG\nA1UEC…..GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"
+	}
 }`, accountID, name)
 }
