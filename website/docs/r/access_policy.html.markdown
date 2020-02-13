@@ -45,6 +45,19 @@ resource "cloudflare_access_policy" "test_policy" {
     ip = [var.office_ip]
   }
 }
+
+# Allowing service to service communication behind Cloudflare Access
+resource "cloudflare_access_policy" "test_policy_for_service_to_service" {
+  application_id = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id        = "d41d8cd98f00b204e9800998ecf8427e"
+  name           = "computers talking to other computers policy"
+  precedence     = "1"
+  decision       = "non_identity"
+
+  include {
+    everyone = true
+  }
+}
 ```
 
 ## Argument Reference
@@ -56,7 +69,7 @@ The following arguments are supported:
 * `zone_id` - (Required) The DNS zone to which the access rule should be
   added.
 * `decision` - (Required) Defines the action Access will take if the policy matches the user.
-  Allowed values: `allow`, `deny`, `bypass`
+  Allowed values: `allow`, `deny`, `bypass`, `non_identity`.
 * `name` - (Required) Friendly name of the Access Application.
 * `precedence` - (Optional) The unique precedence for policies on a single application. Integer.
 * `require` - (Optional) A series of access conditions, see below for
