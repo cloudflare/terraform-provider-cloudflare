@@ -28,7 +28,7 @@ resource "cloudflare_workers_kv" "example" {
 
 The following arguments are supported:
 
-* `namespace_id` - (Required) The id of the namespace in which you want to create the KV pair
+* `namespace_id` - (Required) The ID of the Workers KV namespace in which you want to create the KV pair
 * `key` - (Required) The key name
 * `value` - (Required) The string value to be stored in the key
 
