@@ -19,7 +19,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	resourceName := "cloudflare_workers_kv." + name
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheckAccount(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
@@ -60,7 +60,7 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 func testAccCheckCloudflareWorkersKV(rName string, key string, value string) string {
 	return testAccCheckCloudflareWorkersKVNamespace(rName) + fmt.Sprintf(`
 resource "cloudflare_workers_kv" "%[1]s" {
-	namespace_id = "${cloudflare_workers_kv_namespace.%[1]s.id}"
+	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
 	key = "%[2]s"
 	value = "%[3]s"
 }`, rName, key, value)
