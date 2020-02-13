@@ -28,6 +28,7 @@ func resourceCloudflareWorkerKV() *schema.Resource {
 			},
 			"namespace_id": {
 				Type:     schema.TypeString,
+				ForceNew: true,
 				Required: true,
 			},
 			"value": {
@@ -67,11 +68,11 @@ func resourceCloudflareWorkersKVCreate(d *schema.ResourceData, meta interface{})
 		return errors.Wrap(err, "error creating workers kv")
 	}
 
-	d.SetId(fmt.Sprintf("%s_%s", namespaceID, key))
+	d.SetId(fmt.Sprintf("%s/%s", namespaceID, key))
 
 	log.Printf("[INFO] Cloudflare Workers KV Namespace ID: %s", d.Id())
 
-	return nil
+	return resourceCloudflareWorkersKVRead(d, meta)
 }
 
 func resourceCloudflareWorkersKVUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -82,9 +83,7 @@ func resourceCloudflareWorkersKVUpdate(d *schema.ResourceData, meta interface{})
 
 	_, err := client.WriteWorkersKV(context.Background(), namespaceID, key, []byte(value))
 	if err != nil {
-		if err != nil {
-			return errors.Wrap(err, "error creating workers kv")
-		}
+		return errors.Wrap(err, "error creating workers kv")
 	}
 
 	return resourceCloudflareWorkersKVRead(d, meta)
@@ -105,21 +104,17 @@ func resourceCloudflareWorkersKVDelete(d *schema.ResourceData, meta interface{})
 }
 
 func resourceCloudflareWorkersKVImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
 	namespaceID, key := parseId(d.Id())
-	value, err := client.ReadWorkersKV(context.Background(), namespaceID, key)
 
-	if err != nil {
-		return nil, fmt.Errorf("error finding workers kv namespace %q: %s", d.Id(), err)
-	}
+	d.Set("namespace_id", namespaceID)
+	d.Set("key", key)
 
-	d.Set("value", string(value))
-	d.SetId(d.Id())
+	resourceCloudflareWorkersKVRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
 
 func parseId(id string) (string, string) {
-	parts := strings.SplitN(id, "_", 2)
+	parts := strings.SplitN(id, "/", 2)
 	return parts[0], parts[1]
 }
