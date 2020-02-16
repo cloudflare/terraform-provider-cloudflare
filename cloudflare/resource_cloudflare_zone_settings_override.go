@@ -563,7 +563,7 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 		return errors.Wrap(err, fmt.Sprintf("Error reading settings for zone %q", d.Id()))
 	}
 
-	if err = updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings,d.Id(),client); err != nil {
+	if err = updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings, d.Id(), client); err != nil {
 		return err
 	}
 
@@ -659,9 +659,8 @@ func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *clo
 	for _, indexToCut := range indexesToCut {
 		zoneSettings = append(zoneSettings[:indexToCut], zoneSettings[indexToCut+1:]...)
 	}
-	return zoneSettings,nil
+	return zoneSettings, nil
 }
-
 
 func resourceCloudflareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
@@ -676,7 +675,7 @@ func resourceCloudflareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta i
 
 		log.Printf("[DEBUG] Cloudflare Zone Settings update configuration: %#v", zoneSettings)
 
-		if zoneSettings, err = updateSingleZoneSettings(zoneSettings,client,d.Id()); err !=nil {
+		if zoneSettings, err = updateSingleZoneSettings(zoneSettings, client, d.Id()); err != nil {
 			return err
 		}
 
@@ -785,7 +784,7 @@ func resourceCloudflareZoneSettingsOverrideDelete(d *schema.ResourceData, meta i
 
 		log.Printf("[DEBUG] Reverting Cloudflare Zone Settings to initial settings with update configuration: %#v", zoneSettings)
 
-		if zoneSettings, err = updateSingleZoneSettings(zoneSettings,client,d.Id()); err !=nil {
+		if zoneSettings, err = updateSingleZoneSettings(zoneSettings, client, d.Id()); err != nil {
 			return err
 		}
 

@@ -177,7 +177,7 @@ func testAccGetInitialZoneSettings(t *testing.T, zoneID string, settings map[str
 			t.Fatalf("Zone settings not found")
 		}
 
-		if err = updateZoneSettingsResponseWithSingleZoneSettings(foundZone,zoneID,client); err != nil {
+		if err = updateZoneSettingsResponseWithSingleZoneSettings(foundZone, zoneID, client); err != nil {
 			return err
 		}
 
@@ -201,7 +201,7 @@ func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]i
 			return fmt.Errorf("Zone settings not found")
 		}
 
-		if err = updateZoneSettingsResponseWithSingleZoneSettings(foundZone,zoneID,client); err != nil {
+		if err = updateZoneSettingsResponseWithSingleZoneSettings(foundZone, zoneID, client); err != nil {
 			return err
 		}
 
