@@ -504,12 +504,8 @@ func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 		return errors.Wrap(err, fmt.Sprintf("Error reading initial settings for zone %q", d.Id()))
 	}
 
-	for _, settingName := range fetchAsSingleSetting {
-		singleSeting, err := client.ZoneSingleSetting(d.Id(), settingName)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Error reading initial setting '%q' for zone %q", settingName, d.Id()))
-		}
-		zoneSettings.Result = append(zoneSettings.Result, singleSeting)
+	if err = updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings, d.Id(), client); err != nil {
+		return err
 	}
 
 	log.Printf("[DEBUG] Read CloudflareZone initial settings: %#v", zoneSettings)
