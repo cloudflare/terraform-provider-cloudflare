@@ -8,7 +8,7 @@ description: |-
 
 # cloudflare_workers_kv
 
-Provides a Workers KV Pair
+Provides a Workers KV Pair.  *NOTE:*  This resource uses the Cloudflare account APIs.  This requires setting the `CLOUDFLARE_ACCOUNT_ID` environment variable or `account_id` provider argument.
 
 ## Example Usage
 
