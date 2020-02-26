@@ -1,12 +1,13 @@
-sudo: required
 services:
 - docker
 language: go
+os: linux
+dist: bionic
 env:
   global:
     - GOFLAGS="-mod=vendor"
     - GO111MODULE=on
-matrix:
+jobs:
   fast_finish: true
   include:
     - go: 1.13.x
