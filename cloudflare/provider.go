@@ -123,6 +123,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_waf_rule":               resourceCloudflareWAFRule(),
 			"cloudflare_worker_route":           resourceCloudflareWorkerRoute(),
 			"cloudflare_worker_script":          resourceCloudflareWorkerScript(),
+			"cloudflare_workers_kv":             resourceCloudflareWorkerKV(),
 			"cloudflare_workers_kv_namespace":   resourceCloudflareWorkersKVNamespace(),
 			"cloudflare_zone_lockdown":          resourceCloudflareZoneLockdown(),
 			"cloudflare_zone_settings_override": resourceCloudflareZoneSettingsOverride(),
