@@ -80,7 +80,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 
 ### String Values
 
-* `cache_level`. Allowed values: "aggressive" (default), "basic", "simplified".
+* `cache_level`. Allowed values: "aggressive" (default) - Standard use query string, "basic" - no query string, "simplified" - ignore query string.
 * `cname_flattening`. Allowed values: "flatten_at_root" (default), "flatten_all", "flatten_none".
 * `h2_prioritization`. Allowed values: "on", "off" (default), "custom".
 * `min_tls_version`. Allowed values: "1.0" (default), "1.1", "1.2", "1.3".
