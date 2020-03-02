@@ -1,11 +1,19 @@
 ## 2.3.1 (Unreleased)
 
+* **New Resource:** `cloudflare_workers_kv` ([#595](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/595))
+
 **Improvements:**
 
+* `resource/logpush_job`: Add more verbose error handling ([#564](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/564))
+* `resource/zone_settings_override`: Update documentation for `cache_level` values ([#606](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/606))
 * `resource/access_application`: Add documentation for available attributes ([#587](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/587))
 * `resource/cloudflare_firewall_rule`: Add support for bypassing security configuration rules by URL ([#568](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/568))
 * `resource/cloudflare_record_migrate`: Use `zone_id` for state migration before attempting to use `domain` ([#566](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/566))
 * `resource/cloudflare_load_balancer`: Update `session_affinity` validation to allow `"ip_cookie"` ([#573](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/573))
+
+**Fixes**
+
+* `resource/zone_settings_override`: Handle individual zone settings within `Delete` operations ([#599](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/599))
 
 ## 2.3.0 (December 18, 2019)
 
