@@ -1,4 +1,4 @@
-## 2.3.1 (Unreleased)
+## 2.4.0 (Unreleased)
 
 * **New Resource:** `cloudflare_workers_kv` ([#595](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/595))
 
