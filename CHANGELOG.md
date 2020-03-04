@@ -4,6 +4,7 @@
 
 **Improvements:**
 
+* `resource/cloudflare_record`: Stricter validation for record types ([#610](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/610))
 * `resource/logpush_job`: Add more verbose error handling ([#564](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/564))
 * `resource/zone_settings_override`: Update documentation for `cache_level` values ([#606](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/606))
 * `resource/access_application`: Add documentation for available attributes ([#587](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/587))
