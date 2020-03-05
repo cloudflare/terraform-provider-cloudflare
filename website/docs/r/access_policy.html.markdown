@@ -56,7 +56,7 @@ The following arguments are supported:
 * `zone_id` - (Required) The DNS zone to which the access rule should be
   added.
 * `decision` - (Required) Defines the action Access will take if the policy matches the user.
-  Allowed values: `allow`, `deny`, `bypass`
+  Allowed values: `allow`, `deny`, `non_identity`, `bypass`
 * `name` - (Required) Friendly name of the Access Application.
 * `precedence` - (Optional) The unique precedence for policies on a single application. Integer.
 * `require` - (Optional) A series of access conditions, see below for
@@ -77,6 +77,8 @@ conditions which can be applied. The conditions are:
   `email = ["test@example.com"]`
 * `email_domain` - (Optional) A list of email domains. Example:
   `email_domain = ["example.com"]`
+* `service_token` - A list of service token ids. Example:
+  `service_token = ["${cloudflare_access_service_token.demo.id}"]`
 * `everyone` - (Optional) Boolean indicating permitting access for all
   requests. Example: `everyone = true`
 
