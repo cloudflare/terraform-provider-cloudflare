@@ -56,7 +56,7 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 github.com/bgentry/go-netrc/netrc
 # github.com/bgentry/speakeasy v0.1.0
 github.com/bgentry/speakeasy
-# github.com/cloudflare/cloudflare-go v0.11.3
+# github.com/cloudflare/cloudflare-go v0.11.4
 github.com/cloudflare/cloudflare-go
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
