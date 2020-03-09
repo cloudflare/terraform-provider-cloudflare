@@ -19,7 +19,7 @@ resource "google_compute_firewall" "allow_cloudflare_ingress" {
   name    = "from-cloudflare"
   network = "default"
 
-  source_ranges = ["${data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks}"]
+  source_ranges = data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks
   
   allow {
     ports    = "443"
