@@ -1,3 +1,4 @@
+## 2.5.0 (Unreleased)
 ## 2.4.0 (March 09, 2020)
 
 * **New Resource:** `cloudflare_workers_kv` ([#595](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/595))
