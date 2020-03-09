@@ -16,6 +16,9 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 		Read:   resourceCloudflareLogpushJobRead,
 		Update: resourceCloudflareLogpushJobUpdate,
 		Delete: resourceCloudflareLogpushJobDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudflareLogpushJobImport,
+		},
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
@@ -143,4 +146,24 @@ func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}
 	}
 
 	return resourceCloudflareLogpushJobRead(d, meta)
+}
+
+func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+
+	if len(idAttr) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/logpushJobID\"", d.Id())
+	}
+
+	zoneID, logpushJobID := idAttr[0], idAttr[1]
+
+	log.Printf("[DEBUG] Importing Cloudflare Logpush Job: id %s for zone %s", logpushJobID, zoneID)
+
+	d.Set("zone_id", zoneID)
+	d.SetId(logpushJobID)
+
+	resourceCloudflareLogpushJobRead(d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
