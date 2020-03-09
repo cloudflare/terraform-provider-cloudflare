@@ -1,6 +1,8 @@
 ## 2.4.0 (Unreleased)
 
 * **New Resource:** `cloudflare_workers_kv` ([#595](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/595))
+* **New Resource:** `cloudflare_access_identity_provider` ([#597](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/597))
+
 
 **Improvements:**
 
