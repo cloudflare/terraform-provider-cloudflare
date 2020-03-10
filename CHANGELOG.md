@@ -4,6 +4,10 @@
 
 * `resource/cloudflare_logpush_job`: Support `Import` on the resource ([#618](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/618))
 
+**Fixes:**
+
+* `resource/cloudflare_record`: Missing CAA in DNS validation [GH-619]
+
 ## 2.4.0 (March 09, 2020)
 
 * **New Resource:** `cloudflare_workers_kv` ([#595](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/595))
