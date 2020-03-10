@@ -77,8 +77,10 @@ conditions which can be applied. The conditions are:
   `email = ["test@example.com"]`
 * `email_domain` - (Optional) A list of email domains. Example:
   `email_domain = ["example.com"]`
-* `service_token` - A list of service token ids. Example:
+* `service_token` - (Optional) A list of service token ids. Example:
   `service_token = ["${cloudflare_access_service_token.demo.id}"]`
+* `any_valid_service_tokens` - (Optional) Boolean indicating if allow
+  all tokens to be granted. Example: `any_valid_service_tokens = true`
 * `everyone` - (Optional) Boolean indicating permitting access for all
   requests. Example: `everyone = true`
 

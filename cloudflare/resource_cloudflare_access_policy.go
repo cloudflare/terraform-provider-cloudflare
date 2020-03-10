@@ -93,6 +93,10 @@ var policyOptionElement = &schema.Resource{
 				Type: schema.TypeString,
 			},
 		},
+		"any_valid_service_tokens": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
 		"everyone": {
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -251,6 +255,11 @@ func buildAccessPolicyCondition(options map[string]interface{}) []interface{} {
 			if values == true {
 				log.Printf("[DEBUG] values for everyone %s", values)
 				policy = append(policy, cloudflare.AccessPolicyEveryone{})
+			}
+		} else if accessPolicyType == "any_valid_service_tokens" {
+			if values == true {
+				log.Printf("[DEBUG] values for any_valid_service_tokens %s", values)
+				policy = append(policy, cloudflare.AccessPolicyAnyValidServiceToken{})
 			}
 		} else {
 			for _, value := range values.([]interface{}) {
