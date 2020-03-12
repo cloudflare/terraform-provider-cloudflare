@@ -6,7 +6,7 @@
 
 **Fixes:**
 
-* `resource/cloudflare_record`: Missing CAA in DNS validation [GH-619]
+* `resource/cloudflare_record`: Missing CAA in DNS validation ([#619](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/619))
 
 ## 2.4.0 (March 09, 2020)
 
