@@ -59,7 +59,14 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 
 	rule, err := client.WAFRule(zoneID, packageID, ruleID)
 	if err != nil {
-		return (err)
+		// 1002 is the 'Invalid or missing WAF Package ID' error
+		// 1004 is the 'Invalid or missing WAF Rule ID' error
+		if cloudflareErrorIsOneOfCodes(err, []int{1002, 1004}) {
+			d.SetId("")
+			return nil
+		}
+
+		return err
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed

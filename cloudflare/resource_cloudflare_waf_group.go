@@ -59,7 +59,14 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 
 	group, err := client.WAFGroup(zoneID, packageID, groupID)
 	if err != nil {
-		return (err)
+		// 1002 is the 'Invalid or missing WAF Package ID' error
+		// 1003 is the 'Invalid or missing WAF Rule Set ID' error
+		if cloudflareErrorIsOneOfCodes(err, []int{1002, 1003}) {
+			d.SetId("")
+			return nil
+		}
+
+		return err
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed

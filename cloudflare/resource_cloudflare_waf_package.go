@@ -59,7 +59,13 @@ func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) 
 
 	pkg, err := client.WAFPackage(zoneID, packageID)
 	if err != nil {
-		return (err)
+		// 1002 is the 'Invalid or missing WAF Package ID' error
+		if cloudflareErrorIsCode(err, 1002) {
+			d.SetId("")
+			return nil
+		}
+
+		return err
 	}
 
 	d.Set("sensitivity", pkg.Sensitivity)
