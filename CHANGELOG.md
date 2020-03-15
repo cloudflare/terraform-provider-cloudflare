@@ -1,4 +1,9 @@
 ## 2.5.0 (Unreleased)
+
+**Improvements:**
+
+* `resource/cloudflare_access_policy`: Add support for `service_token` and `any_valid_service_token` ([#612](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/612))
+
 ## 2.4.1 (March 12, 2020)
 
 **Improvements:**
