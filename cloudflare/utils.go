@@ -77,10 +77,6 @@ type CloudflareAPIErrorResponse struct {
 	Errors []CloudflareAPIError `json:"errors"`
 }
 
-func cloudflareErrorIsCode(err error, code int) bool {
-	return cloudflareErrorIsOneOfCodes(err, []int{code})
-}
-
 func cloudflareErrorIsOneOfCodes(err error, codes []int) bool {
 	errorMsg := errors.Cause(err).Error()
 

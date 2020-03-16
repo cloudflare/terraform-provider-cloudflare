@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
+const CLOUDFLARE_INVALID_OR_REMOVED_WAF_RULE_SET_ID_ERROR = 1003
+
 func resourceCloudflareWAFGroup() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareWAFGroupCreate,
@@ -50,6 +52,13 @@ func resourceCloudflareWAFGroup() *schema.Resource {
 	}
 }
 
+func errorIsWAFGroupNotFound(err error) bool {
+	return cloudflareErrorIsOneOfCodes(err, []int{
+		CLOUDFLARE_INVALID_OR_REMOVED_WAF_PACKAGE_ID_ERROR,
+		CLOUDFLARE_INVALID_OR_REMOVED_WAF_RULE_SET_ID_ERROR,
+	})
+}
+
 func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -59,9 +68,7 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 
 	group, err := client.WAFGroup(zoneID, packageID, groupID)
 	if err != nil {
-		// 1002 is the 'Invalid or missing WAF Package ID' error
-		// 1003 is the 'Invalid or missing WAF Rule Set ID' error
-		if cloudflareErrorIsOneOfCodes(err, []int{1002, 1003}) {
+		if errorIsWAFGroupNotFound(err) {
 			d.SetId("")
 			return nil
 		}
