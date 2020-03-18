@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
+const CLOUDFLARE_INVALID_OR_REMOVED_WAF_RULE_SET_ID_ERROR = 1003
+
 func resourceCloudflareWAFGroup() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareWAFGroupCreate,
@@ -50,6 +52,13 @@ func resourceCloudflareWAFGroup() *schema.Resource {
 	}
 }
 
+func errorIsWAFGroupNotFound(err error) bool {
+	return cloudflareErrorIsOneOfCodes(err, []int{
+		CLOUDFLARE_INVALID_OR_REMOVED_WAF_PACKAGE_ID_ERROR,
+		CLOUDFLARE_INVALID_OR_REMOVED_WAF_RULE_SET_ID_ERROR,
+	})
+}
+
 func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -59,7 +68,12 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 
 	group, err := client.WAFGroup(zoneID, packageID, groupID)
 	if err != nil {
-		return (err)
+		if errorIsWAFGroupNotFound(err) {
+			d.SetId("")
+			return nil
+		}
+
+		return err
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed

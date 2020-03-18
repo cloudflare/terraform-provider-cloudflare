@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
+const CLOUDFLARE_INVALID_OR_REMOVED_WAF_RULE_ID_ERROR = 1004
+
 func resourceCloudflareWAFRule() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareWAFRuleCreate,
@@ -50,6 +52,13 @@ func resourceCloudflareWAFRule() *schema.Resource {
 	}
 }
 
+func errorIsWAFRuleNotFound(err error) bool {
+	return cloudflareErrorIsOneOfCodes(err, []int{
+		CLOUDFLARE_INVALID_OR_REMOVED_WAF_PACKAGE_ID_ERROR,
+		CLOUDFLARE_INVALID_OR_REMOVED_WAF_RULE_ID_ERROR,
+	})
+}
+
 func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -59,7 +68,12 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 
 	rule, err := client.WAFRule(zoneID, packageID, ruleID)
 	if err != nil {
-		return (err)
+		if errorIsWAFRuleNotFound(err) {
+			d.SetId("")
+			return nil
+		}
+
+		return err
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed
