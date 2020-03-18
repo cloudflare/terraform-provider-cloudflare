@@ -81,6 +81,8 @@ conditions which can be applied. The conditions are:
   `service_token = cloudflare_access_service_token.demo.id`
 * `any_valid_service_token` - (Optional) Boolean indicating if allow
   all tokens to be granted. Example: `any_valid_service_token = true`
+* `group` - (Optional) A list of access group ids. Example:
+  `group = [cloudflare_access_group.demo.id]`
 * `everyone` - (Optional) Boolean indicating permitting access for all
   requests. Example: `everyone = true`
 
