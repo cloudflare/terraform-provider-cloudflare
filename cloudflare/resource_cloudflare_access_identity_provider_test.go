@@ -23,7 +23,7 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
 	}
 
-	accessIDPs, accessIDPsErr := client.ListZones()
+	accessIDPs, accessIDPsErr := client.AccessIdentityProviders(accountID)
 	if accessIDPsErr != nil {
 		log.Printf("[ERROR] Failed to fetch Access Identity Providers: %s", accessIDPsErr)
 	}
