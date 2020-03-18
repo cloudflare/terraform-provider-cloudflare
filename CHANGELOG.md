@@ -3,6 +3,9 @@
 **Improvements:**
 
 * `resource/cloudflare_access_policy`: Add support for `service_token` and `any_valid_service_token` ([#612](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/612))
+* `resource/cloudflare_waf_group`: Handle WAF group deletions in the API responses ([#623](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/623))
+* `resource/cloudflare_waf_package`: Handle WAF package deletions in the API responses ([#623](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/623))
+* `resource/cloudflare_waf_rule`: Handle WAF rule deletions in the API responses ([#623](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/623))
 
 ## 2.4.1 (March 12, 2020)
 
