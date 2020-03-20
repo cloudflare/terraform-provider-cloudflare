@@ -97,6 +97,13 @@ var policyOptionElement = &schema.Resource{
 			Type:     schema.TypeBool,
 			Optional: true,
 		},
+		"group": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"everyone": {
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -279,6 +286,10 @@ func buildAccessPolicyCondition(options map[string]interface{}) []interface{} {
 				case "service_token":
 					policy = append(policy, cloudflare.AccessPolicyServiceToken{ServiceToken: struct {
 						ID string `json:"token_id"`
+					}{ID: value.(string)}})
+				case "group":
+					policy = append(policy, cloudflare.AccessPolicyAccessGroup{Group: struct {
+						ID string `json:"id"`
 					}{ID: value.(string)}})
 				}
 			}
