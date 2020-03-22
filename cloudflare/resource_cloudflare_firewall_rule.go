@@ -52,7 +52,8 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 			"products": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
-					Type: schema.TypeString,
+					Type:         schema.TypeString,
+					ValidateFunc: validation.StringInSlice([]string{"zoneLockdown", "uaBlock", "bic", "hot", "securityLevel", "rateLimit", "waf"}, false),
 				},
 				Optional: true,
 			},
@@ -88,6 +89,10 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 		newFirewallRule.Filter = cloudflare.Filter{
 			ID: filterID.(string),
 		}
+	}
+
+	if products, ok := d.GetOk("products"); ok {
+		newFirewallRule.Products = expandInterfaceToStringList(products.(*schema.Set).List())
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Firewall Rule from struct: %+v", newFirewallRule)
@@ -131,11 +136,13 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[DEBUG] Cloudflare Firewall Rule read configuration: %#v", firewallRule)
 
+	products := expandStringListToSet(firewallRule.Products)
 	d.Set("paused", firewallRule.Paused)
 	d.Set("description", firewallRule.Description)
 	d.Set("action", firewallRule.Action)
 	d.Set("priority", firewallRule.Priority)
 	d.Set("filter_id", firewallRule.Filter.ID)
+	d.Set("products", products)
 
 	return nil
 }
@@ -167,6 +174,10 @@ func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface
 		newFirewallRule.Filter = cloudflare.Filter{
 			ID: filterID.(string),
 		}
+	}
+
+	if products, ok := d.GetOk("products"); ok {
+		newFirewallRule.Products = expandInterfaceToStringList(products.(*schema.Set).List())
 	}
 
 	log.Printf("[DEBUG] Updating Cloudflare Firewall Rule from struct: %+v", newFirewallRule)
