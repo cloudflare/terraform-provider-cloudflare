@@ -7,6 +7,7 @@
 * `resource/cloudflare_waf_package`: Handle WAF package deletions in the API responses ([#623](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/623))
 * `resource/cloudflare_waf_rule`: Handle WAF rule deletions in the API responses ([#623](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/623))
 * `resource/cloudflare_access_policy`: Add support for `group` ([#626](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/626))
+* `resource/cloudflare_firewall_rule`: Add support for bypassing specific `products` ([#630](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/630))
 
 ## 2.4.1 (March 12, 2020)
 
