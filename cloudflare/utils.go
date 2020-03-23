@@ -21,6 +21,14 @@ func expandInterfaceToStringList(list interface{}) []string {
 	return vs
 }
 
+func expandStringListToSet(list []string) *schema.Set {
+	values := schema.NewSet(schema.HashString, []interface{}{})
+	for _, h := range list {
+		values.Add(h)
+	}
+	return values
+}
+
 func flattenStringList(list []string) []interface{} {
 	vs := make([]interface{}, 0, len(list))
 	for _, v := range list {
