@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"net"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -108,6 +109,27 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 					"off", "v1", "v2", "simple",
 				}, false),
 			},
+
+			"edge_ips": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
+			"edge_ip_connectivity": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "all",
+				ValidateFunc: validation.StringInSlice([]string{
+					"all", "ipv4", "ipv6",
+				}, false),
+			},
+
+			"argo_smart_routing": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 		},
 	}
 }
@@ -186,11 +208,18 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 		}
 	}
 
+	if application.EdgeIPs != nil {
+		if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
+			log.Printf("[WARN] Error setting Edge IPs on spectrum application %q: %s", d.Id(), err)
+		}
+	}
+
 	d.Set("origin_port", application.OriginPort)
 	d.Set("tls", application.TLS)
 	d.Set("traffic_type", application.TrafficType)
 	d.Set("ip_firewall", application.IPFirewall)
 	d.Set("proxy_protocol", application.ProxyProtocol)
+	d.Set("argo_smart_routing", application.ArgoSmartRouting)
 
 	return nil
 }
@@ -263,6 +292,16 @@ func flattenOriginDNS(dns *cloudflare.SpectrumApplicationOriginDNS) []map[string
 	return []map[string]interface{}{flattened}
 }
 
+func flattenEdgeIPs(edgeIPs *cloudflare.SpectrumApplicationEdgeIPs) []string {
+	flattened := make([]string, 0)
+
+	for _, ip := range edgeIPs.IPs {
+		flattened = append(flattened, ip.String())
+	}
+
+	return flattened
+}
+
 func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplication {
 	application := cloudflare.SpectrumApplication{
 		ID:       d.Id(),
@@ -286,8 +325,8 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 		application.TLS = tls.(string)
 	}
 
-	if traffic_type, ok := d.GetOk("traffic_type"); ok {
-		application.TrafficType = traffic_type.(string)
+	if trafficType, ok := d.GetOk("traffic_type"); ok {
+		application.TrafficType = trafficType.(string)
 	}
 
 	if ipFirewall, ok := d.GetOk("ip_firewall"); ok {
@@ -296,6 +335,30 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 
 	if proxyProtocol, ok := d.GetOk("proxy_protocol"); ok {
 		application.ProxyProtocol = cloudflare.ProxyProtocol(proxyProtocol.(string))
+	}
+
+	if argoSmartRouting, ok := d.GetOk("argo_smart_routing"); ok {
+		application.ArgoSmartRouting = argoSmartRouting.(bool)
+	}
+
+	connectivity := cloudflare.SpectrumApplicationConnectivity(cloudflare.SpectrumConnectivityAll)
+	application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{
+		Type:         cloudflare.SpectrumEdgeTypeDynamic,
+		Connectivity: &connectivity,
+	}
+
+	if edgeIPConnectivity, ok := d.GetOk("edge_ip_connectivity"); ok {
+		connectivity = cloudflare.SpectrumApplicationConnectivity(edgeIPConnectivity.(string))
+	}
+
+	if edgeIPs, ok := d.GetOk("edge_ips"); ok {
+		application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{
+			Type: cloudflare.SpectrumEdgeTypeStatic,
+		}
+		// connectivity = cloudflare.SpectrumConnectivityStatic
+		for _, value := range edgeIPs.([]interface{}) {
+			application.EdgeIPs.IPs = append(application.EdgeIPs.IPs, net.ParseIP(value.(string)))
+		}
 	}
 
 	return application
