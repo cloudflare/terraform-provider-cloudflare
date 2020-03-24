@@ -34,6 +34,12 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 	}
 
 	for _, idp := range accessIDPs {
+		// e75d3adf-964b-4b15-acff-e7e20838c33c is a static GitHub integration used
+		// in acceptance tests so we don't want to remove it.
+		if idp.ID == "e75d3adf-964b-4b15-acff-e7e20838c33c" {
+			continue
+		}
+
 		log.Printf("[INFO] Deleting Access Identity Provider ID: %s", idp.ID)
 		_, err := client.DeleteAccessIdentityProvider(accountID, idp.ID)
 
