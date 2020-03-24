@@ -323,131 +323,17 @@ func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface
 func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *schema.ResourceData) cloudflare.AccessPolicy {
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
-		policy.Exclude = buildAccessPolicyCondition(value.(map[string]interface{}))
+		policy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	require := d.Get("require").([]interface{})
 	for _, value := range require {
-		policy.Require = buildAccessPolicyCondition(value.(map[string]interface{}))
+		policy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	include := d.Get("include").([]interface{})
 	for _, value := range include {
-		policy.Include = buildAccessPolicyCondition(value.(map[string]interface{}))
-	}
-
-	return policy
-}
-
-// buildAccessPolicyCondition iterates the provided `map` of values and
-// generates the required (repetitive) structs.
-//
-// Returns the intended combination structure of Access Group structs on the
-// policy.
-func buildAccessPolicyCondition(options map[string]interface{}) []interface{} {
-	var policy []interface{}
-	for accessPolicyType, values := range options {
-		if accessPolicyType == "everyone" {
-			if values == true {
-				policy = append(policy, cloudflare.AccessGroupEveryone{})
-			}
-		} else if accessPolicyType == "any_valid_service_token" {
-			if values == true {
-				policy = append(policy, cloudflare.AccessGroupAnyValidServiceToken{})
-			}
-		} else if accessPolicyType == "certificate" {
-			if values == true {
-				policy = append(policy, cloudflare.AccessGroupCertificate{})
-			}
-		} else if accessPolicyType == "common_name" {
-			if values != "" {
-				policy = append(policy, cloudflare.AccessGroupCertificateCommonName{CommonName: struct {
-					CommonName string `json:"common_name"`
-				}{CommonName: values.(string)}})
-			}
-		} else if accessPolicyType == "gsuite" {
-			for _, v := range values.([]interface{}) {
-				gsuiteCfg := v.(map[string]interface{})
-				policy = append(policy, cloudflare.AccessGroupGSuite{Gsuite: struct {
-					Email              string `json:"email"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					Email:              gsuiteCfg["email"].(string),
-					IdentityProviderID: gsuiteCfg["identity_provider_id"].(string),
-				}})
-			}
-		} else if accessPolicyType == "github" {
-			for _, v := range values.([]interface{}) {
-				githubCfg := v.(map[string]interface{})
-				policy = append(policy, cloudflare.AccessGroupGitHub{GitHubOrganization: struct {
-					Name               string `json:"name"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					Name:               githubCfg["name"].(string),
-					IdentityProviderID: githubCfg["identity_provider_id"].(string),
-				}})
-			}
-		} else if accessPolicyType == "azure" {
-			for _, v := range values.([]interface{}) {
-				azureCfg := v.(map[string]interface{})
-				policy = append(policy, cloudflare.AccessGroupAzure{AzureAD: struct {
-					ID                 string `json:"id"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					ID:                 azureCfg["id"].(string),
-					IdentityProviderID: azureCfg["identity_provider_id"].(string),
-				}})
-			}
-		} else if accessPolicyType == "okta" {
-			for _, v := range values.([]interface{}) {
-				oktaCfg := v.(map[string]interface{})
-				policy = append(policy, cloudflare.AccessGroupOkta{Otka: struct {
-					Name               string `json:"name"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					Name:               oktaCfg["name"].(string),
-					IdentityProviderID: oktaCfg["identity_provider_id"].(string),
-				}})
-			}
-		} else if accessPolicyType == "saml" {
-			for _, v := range values.([]interface{}) {
-				samlCfg := v.(map[string]interface{})
-				policy = append(policy, cloudflare.AccessGroupSAML{Saml: struct {
-					AttributeName      string `json:"attribute_name"`
-					AttributeValue     string `json:"attribute_value"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					AttributeName:      samlCfg["attribute_name"].(string),
-					AttributeValue:     samlCfg["attribute_value"].(string),
-					IdentityProviderID: samlCfg["identity_provider_id"].(string),
-				}})
-			}
-		} else {
-			for _, value := range values.([]interface{}) {
-				switch accessPolicyType {
-				case "email":
-					policy = append(policy, cloudflare.AccessGroupEmail{Email: struct {
-						Email string `json:"email"`
-					}{Email: value.(string)}})
-				case "email_domain":
-					policy = append(policy, cloudflare.AccessGroupEmailDomain{EmailDomain: struct {
-						Domain string `json:"domain"`
-					}{Domain: value.(string)}})
-				case "ip":
-					policy = append(policy, cloudflare.AccessGroupIP{IP: struct {
-						IP string `json:"ip"`
-					}{IP: value.(string)}})
-				case "service_token":
-					policy = append(policy, cloudflare.AccessGroupServiceToken{ServiceToken: struct {
-						ID string `json:"token_id"`
-					}{ID: value.(string)}})
-				case "group":
-					policy = append(policy, cloudflare.AccessGroupAccessGroup{Group: struct {
-						ID string `json:"id"`
-					}{ID: value.(string)}})
-				}
-			}
-		}
+		policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	return policy
