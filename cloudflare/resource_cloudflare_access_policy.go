@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
@@ -107,6 +107,98 @@ var policyOptionElement = &schema.Resource{
 		"everyone": {
 			Type:     schema.TypeBool,
 			Optional: true,
+		},
+		"certificate": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"common_name": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"gsuite": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"email": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"identity_provider_id": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		"github": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"name": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"identity_provider_id": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		"azure": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"id": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"identity_provider_id": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		"okta": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"name": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"identity_provider_id": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		"saml": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"attribute_name": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"attribute_value": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"identity_provider_id": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
 		},
 	},
 }
@@ -231,69 +323,17 @@ func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface
 func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *schema.ResourceData) cloudflare.AccessPolicy {
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
-		policy.Exclude = buildAccessPolicyCondition(value.(map[string]interface{}))
+		policy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	require := d.Get("require").([]interface{})
 	for _, value := range require {
-		policy.Require = buildAccessPolicyCondition(value.(map[string]interface{}))
+		policy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	include := d.Get("include").([]interface{})
 	for _, value := range include {
-		policy.Include = buildAccessPolicyCondition(value.(map[string]interface{}))
-	}
-
-	return policy
-}
-
-// buildAccessPolicyCondition iterates the provided `map` of values and
-// generates the required (repetitive) structs.
-//
-// Returns the intended combination structure of AccessPolicyEmail,
-// AccessPolicyEmailDomain, AccessPolicyIP and AccessPolicyEveryone
-// structs.
-func buildAccessPolicyCondition(options map[string]interface{}) []interface{} {
-	var policy []interface{}
-	for accessPolicyType, values := range options {
-		// Since AccessPolicyEveryone is a single boolean, we don't need to
-		// iterate over the values like the others so we treat it a little differently.
-		if accessPolicyType == "everyone" {
-			if values == true {
-				log.Printf("[DEBUG] values for everyone %s", values)
-				policy = append(policy, cloudflare.AccessPolicyEveryone{})
-			}
-		} else if accessPolicyType == "any_valid_service_token" {
-			if values == true {
-				log.Printf("[DEBUG] values for any_valid_service_token %s", values)
-				policy = append(policy, cloudflare.AccessPolicyAnyValidServiceToken{})
-			}
-		} else {
-			for _, value := range values.([]interface{}) {
-				switch accessPolicyType {
-				case "email":
-					policy = append(policy, cloudflare.AccessPolicyEmail{Email: struct {
-						Email string `json:"email"`
-					}{Email: value.(string)}})
-				case "email_domain":
-					policy = append(policy, cloudflare.AccessPolicyEmailDomain{EmailDomain: struct {
-						Domain string `json:"domain"`
-					}{Domain: value.(string)}})
-				case "ip":
-					policy = append(policy, cloudflare.AccessPolicyIP{IP: struct {
-						IP string `json:"ip"`
-					}{IP: value.(string)}})
-				case "service_token":
-					policy = append(policy, cloudflare.AccessPolicyServiceToken{ServiceToken: struct {
-						ID string `json:"token_id"`
-					}{ID: value.(string)}})
-				case "group":
-					policy = append(policy, cloudflare.AccessPolicyAccessGroup{Group: struct {
-						ID string `json:"id"`
-					}{ID: value.(string)}})
-				}
-			}
-		}
+		policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	return policy

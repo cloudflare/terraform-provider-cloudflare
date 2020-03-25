@@ -197,37 +197,104 @@ func resourceCloudflareAccessGroupImport(d *schema.ResourceData, meta interface{
 func appendConditionalAccessGroupFields(group cloudflare.AccessGroup, d *schema.ResourceData) cloudflare.AccessGroup {
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
-		group.Exclude = buildAccessGroupCondition(value.(map[string]interface{}))
+		group.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	require := d.Get("require").([]interface{})
 	for _, value := range require {
-		group.Require = buildAccessGroupCondition(value.(map[string]interface{}))
+		group.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	include := d.Get("include").([]interface{})
 	for _, value := range include {
-		group.Include = buildAccessGroupCondition(value.(map[string]interface{}))
+		group.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
 	}
 
 	return group
 }
 
-// buildAccessGroupCondition iterates the provided `map` of values and
+// BuildAccessGroupCondition iterates the provided `map` of values and
 // generates the required (repetitive) structs.
 //
-// Returns the intended combination structure of AccessGroupEmail,
-// AccessGroupEmailDomain, AccessGroupIP and AccessGroupEveryone
-// structs.
-func buildAccessGroupCondition(options map[string]interface{}) []interface{} {
+// Returns the intended combination structure of Access Groups to build the
+// desired policy.
+func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 	var group []interface{}
 	for accessGroupType, values := range options {
-		// Since AccessGroupEveryone is a single boolean, we don't need to
-		// iterate over the values like the others so we treat it a little differently.
 		if accessGroupType == "everyone" {
 			if values == true {
-				log.Printf("[DEBUG] values for everyone %s", values)
 				group = append(group, cloudflare.AccessGroupEveryone{})
+			}
+		} else if accessGroupType == "any_valid_service_token" {
+			if values == true {
+				group = append(group, cloudflare.AccessGroupAnyValidServiceToken{})
+			}
+		} else if accessGroupType == "certificate" {
+			if values == true {
+				group = append(group, cloudflare.AccessGroupCertificate{})
+			}
+		} else if accessGroupType == "common_name" {
+			if values != "" {
+				group = append(group, cloudflare.AccessGroupCertificateCommonName{CommonName: struct {
+					CommonName string `json:"common_name"`
+				}{CommonName: values.(string)}})
+			}
+		} else if accessGroupType == "gsuite" {
+			for _, v := range values.([]interface{}) {
+				gsuiteCfg := v.(map[string]interface{})
+				group = append(group, cloudflare.AccessGroupGSuite{Gsuite: struct {
+					Email              string `json:"email"`
+					IdentityProviderID string `json:"identity_provider_id"`
+				}{
+					Email:              gsuiteCfg["email"].(string),
+					IdentityProviderID: gsuiteCfg["identity_provider_id"].(string),
+				}})
+			}
+		} else if accessGroupType == "github" {
+			for _, v := range values.([]interface{}) {
+				githubCfg := v.(map[string]interface{})
+				group = append(group, cloudflare.AccessGroupGitHub{GitHubOrganization: struct {
+					Name               string `json:"name"`
+					IdentityProviderID string `json:"identity_provider_id"`
+				}{
+					Name:               githubCfg["name"].(string),
+					IdentityProviderID: githubCfg["identity_provider_id"].(string),
+				}})
+			}
+		} else if accessGroupType == "azure" {
+			for _, v := range values.([]interface{}) {
+				azureCfg := v.(map[string]interface{})
+				group = append(group, cloudflare.AccessGroupAzure{AzureAD: struct {
+					ID                 string `json:"id"`
+					IdentityProviderID string `json:"identity_provider_id"`
+				}{
+					ID:                 azureCfg["id"].(string),
+					IdentityProviderID: azureCfg["identity_provider_id"].(string),
+				}})
+			}
+		} else if accessGroupType == "okta" {
+			for _, v := range values.([]interface{}) {
+				oktaCfg := v.(map[string]interface{})
+				group = append(group, cloudflare.AccessGroupOkta{Otka: struct {
+					Name               string `json:"name"`
+					IdentityProviderID string `json:"identity_provider_id"`
+				}{
+					Name:               oktaCfg["name"].(string),
+					IdentityProviderID: oktaCfg["identity_provider_id"].(string),
+				}})
+			}
+		} else if accessGroupType == "saml" {
+			for _, v := range values.([]interface{}) {
+				samlCfg := v.(map[string]interface{})
+				group = append(group, cloudflare.AccessGroupSAML{Saml: struct {
+					AttributeName      string `json:"attribute_name"`
+					AttributeValue     string `json:"attribute_value"`
+					IdentityProviderID string `json:"identity_provider_id"`
+				}{
+					AttributeName:      samlCfg["attribute_name"].(string),
+					AttributeValue:     samlCfg["attribute_value"].(string),
+					IdentityProviderID: samlCfg["identity_provider_id"].(string),
+				}})
 			}
 		} else {
 			for _, value := range values.([]interface{}) {
@@ -244,6 +311,10 @@ func buildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					group = append(group, cloudflare.AccessGroupIP{IP: struct {
 						IP string `json:"ip"`
 					}{IP: value.(string)}})
+				case "service_token":
+					group = append(group, cloudflare.AccessGroupServiceToken{ServiceToken: struct {
+						ID string `json:"token_id"`
+					}{ID: value.(string)}})
 				case "group":
 					group = append(group, cloudflare.AccessGroupAccessGroup{Group: struct {
 						ID string `json:"id"`

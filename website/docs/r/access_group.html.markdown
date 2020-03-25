@@ -66,9 +66,73 @@ conditions which can be applied. The conditions are:
   `email = ["test@example.com"]`
 * `email_domain` - (Optional) A list of email domains. Example:
   `email_domain = ["example.com"]`
+* `service_token` - (Optional) A list of service token ids. Example:
+  `service_token = cloudflare_access_service_token.demo.id`
+* `any_valid_service_token` - (Optional) Boolean indicating if allow
+  all tokens to be granted. Example: `any_valid_service_token = true`
+* `group` - (Optional) A list of access group ids. Example:
+  `group = [cloudflare_access_group.demo.id]`
 * `everyone` - (Optional) Boolean indicating permitting access for all
   requests. Example: `everyone = true`
+* `certificate` - (Optional) Whether to use mTLS certificate authentication.
+* `common_name` - (Optional) Use a certificate common name to authenticate with.
+* `gsuite` - (Optional) Use GSuite as the authentication mechanism. Example:
 
+  ```hcl
+  # ... other configuration
+  include {
+    gsuite {
+      email = "admins@example.com"
+      identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
+    }
+  }
+  ```
+* `github` - (Optional) Use a GitHub team as the `include` condition. Example:
+
+  ```hcl
+  # ... other configuration
+  include {
+    github {
+      name = "my-github-team-name"
+      identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
+    }
+  }
+  ```
+* `azure` - (Optional) Use Azure AD as the `include` condition. Example:
+
+  ```hcl
+  # ... other configuration
+  include {
+    azure {
+      id = "86773093-5feb-48dd-814b-7ccd3676ff50e"
+      identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
+    }
+  }
+  ```
+* `okta` - (Optional) Use Okta as the `include` condition. Example:
+
+  ```hcl
+  # ... other configuration
+  include {
+    okta {
+      name = "admins"
+      identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
+    }
+  }
+  ```
+* `saml` - (Optional) Use an external SAML setup as the `include` condition.
+  Example:
+
+  ```hcl
+  # ... other configuration
+  include {
+    saml {
+      attribute_name = "group"
+      attribute_value = "admins"
+      identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
+    }
+  }
+  ```
 
 ## Import
 

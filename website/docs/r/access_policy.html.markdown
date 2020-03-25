@@ -59,32 +59,9 @@ The following arguments are supported:
   Allowed values: `allow`, `deny`, `non_identity`, `bypass`
 * `name` - (Required) Friendly name of the Access Application.
 * `precedence` - (Optional) The unique precedence for policies on a single application. Integer.
-* `require` - (Optional) A series of access conditions, see below for
-  full list.
-* `exclude` - (Optional) A series of access conditions, see below for
-  full list.
-* `include` - (Required) A series of access conditions, see below for
-  full list.
-
-## Conditions
-
-`require`, `exclude` and `include` arguments share the available
-conditions which can be applied. The conditions are:
-
-* `ip` - (Optional) A list of IP addresses or ranges. Example:
-  `ip = ["1.2.3.4", "10.0.0.0/2"]`
-* `email` - (Optional) A list of email addresses. Example:
-  `email = ["test@example.com"]`
-* `email_domain` - (Optional) A list of email domains. Example:
-  `email_domain = ["example.com"]`
-* `service_token` - (Optional) A list of service token ids. Example:
-  `service_token = cloudflare_access_service_token.demo.id`
-* `any_valid_service_token` - (Optional) Boolean indicating if allow
-  all tokens to be granted. Example: `any_valid_service_token = true`
-* `group` - (Optional) A list of access group ids. Example:
-  `group = [cloudflare_access_group.demo.id]`
-* `everyone` - (Optional) Boolean indicating permitting access for all
-  requests. Example: `everyone = true`
+* `require` - (Optional) A series of access conditions, see [Access Groups](/docs/providers/cloudflare/r/access_group.html#conditions).
+* `exclude` - (Optional) A series of access conditions, see [Access Groups](/docs/providers/cloudflare/r/access_group.html#conditions).
+* `include` - (Required) A series of access conditions, see [Access Groups](/docs/providers/cloudflare/r/access_group.html#conditions).
 
 
 ## Import
