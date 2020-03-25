@@ -8,6 +8,7 @@
 * `resource/cloudflare_waf_rule`: Handle WAF rule deletions in the API responses ([#623](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/623))
 * `resource/cloudflare_access_policy`: Add support for `group` ([#626](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/626))
 * `resource/cloudflare_firewall_rule`: Add support for bypassing specific `products` ([#630](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/630))
+* `resource/cloudflare_spectrum_application`: Add support for `edge_ips`, `argo_smart_routing` and `edge_ip_connectivity` ([#631](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/631))
 
 ## 2.4.1 (March 12, 2020)
 
