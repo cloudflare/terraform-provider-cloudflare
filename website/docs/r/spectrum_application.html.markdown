@@ -40,7 +40,10 @@ resource "cloudflare_spectrum_application" "ssh_proxy" {
 * `tls` - (Optional) TLS configuration option for Cloudflare to connect to your origin. Valid values are: `off`, `flexible`, `full` and `strict`. Defaults to `off`.
 * `ip_firewall` - (Optional) Enables the IP Firewall for this application. Defaults to `true`.
 * `proxy_protocol` - (Optional) Enables a proxy protocol to the origin. Valid values are: `off`, `v1`, `v2`, and `simple`. Defaults to `off`.
-* `traffic_type` - (Optional) Set's application type. Valid values are: `direct`, `http`, `https`.  Defaults to `direct`.
+* `traffic_type` - (Optional) Sets application type. Valid values are: `direct`, `http`, `https`.  Defaults to `direct`.
+* `argo_smart_routing` - (Optional). Enables Argo Smart Routing. Defaults to `false`.
+* `edge_ip_connectivity` - (Optional). Choose which types of IP addresses will be provisioned for this subdomain. Valid values are: `all`, `ipv4`, `ipv6`. Defaults to `all`.
+* `edge_ips` - (Optional). A list of edge IPs (IPv4 and/or IPv6) to configure Spectrum application to. Requires [Bring Your Own IP](https://developers.cloudflare.com/spectrum/getting-started/byoip/) provisioned.
 
 **dns**
 
