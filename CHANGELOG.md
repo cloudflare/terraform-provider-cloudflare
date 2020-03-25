@@ -9,6 +9,8 @@
 * `resource/cloudflare_access_policy`: Add support for `group` ([#626](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/626))
 * `resource/cloudflare_firewall_rule`: Add support for bypassing specific `products` ([#630](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/630))
 * `resource/cloudflare_spectrum_application`: Add support for `edge_ips`, `argo_smart_routing` and `edge_ip_connectivity` ([#631](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/631))
+* `resource/cloudflare_access_group`: Add support for using external providers (`gsuite`, `github`, `azure`, `okta`, `saml`, `mTLS certificate`, `common name`
+) ([#633](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/633))
 
 ## 2.4.1 (March 12, 2020)
 
