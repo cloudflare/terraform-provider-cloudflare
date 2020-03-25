@@ -119,7 +119,6 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 			"edge_ip_connectivity": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "all",
 				ValidateFunc: validation.StringInSlice([]string{
 					"all", "ipv4", "ipv6",
 				}, false),
