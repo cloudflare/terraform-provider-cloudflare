@@ -253,6 +253,9 @@ func resourceCloudflareSpectrumApplicationImport(d *schema.ResourceData, meta in
 
 	d.Set("zone_id", zoneID)
 	d.SetId(applicationID)
+
+	resourceCloudflareSpectrumApplicationRead(d, meta)
+
 	return []*schema.ResourceData{d}, nil
 }
 
