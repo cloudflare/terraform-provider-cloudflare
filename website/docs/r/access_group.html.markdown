@@ -75,8 +75,8 @@ conditions which can be applied. The conditions are:
 * `everyone` - (Optional) Boolean indicating permitting access for all
   requests. Example: `everyone = true`
 * `certificate` - (Optional) Whether to use mTLS certificate authentication.
-* `common_name` - (Optional) Use a certificate common name to authenicate with.
-* `gsuite` - (Optional) Use GSuite as the authenication mechanism. Example:
+* `common_name` - (Optional) Use a certificate common name to authenticate with.
+* `gsuite` - (Optional) Use GSuite as the authentication mechanism. Example:
 
   ```hcl
   # ... other configuration
