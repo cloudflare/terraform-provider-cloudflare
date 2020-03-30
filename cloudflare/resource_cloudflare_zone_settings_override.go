@@ -471,7 +471,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 
 	"image_resizing": {
 		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		ValidateFunc: validation.StringInSlice([]string{"on", "off", "open"}, false),
 		Optional:     true,
 		Computed:     true,
 	},
