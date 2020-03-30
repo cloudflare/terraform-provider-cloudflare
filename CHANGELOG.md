@@ -1,4 +1,9 @@
 ## 2.6.0 (Unreleased)
+
+**Improvements:**
+
+* `resource/cloudflare_zone_settings_override`: Update `image_resizing` options to include `"open"` ([#639](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/639))
+
 ## 2.5.0 (March 27, 2020)
 
 **Improvements:**
