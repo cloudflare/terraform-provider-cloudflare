@@ -58,7 +58,6 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `hotlink_protection` (default: `off`)
 * `http2` (default: `off`)
 * `http3` (default: `off`)
-* `image_resizing` (default: `off`)
 * `ip_geolocation` (default: `on`)
 * `ipv6` (default: `off`)
 * `mirage` (default: `off`)
@@ -83,6 +82,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `cache_level`. Allowed values: "aggressive" (default) - delivers a different resource each time the query string changes, "basic" - delivers resources from cache when there is no query string, "simplified" - delivers the same resource to everyone independent of the query string.
 * `cname_flattening`. Allowed values: "flatten_at_root" (default), "flatten_all", "flatten_none".
 * `h2_prioritization`. Allowed values: "on", "off" (default), "custom".
+* `image_resizing`. Allowed values: "on", "off" (default), "open".
 * `min_tls_version`. Allowed values: "1.0" (default), "1.1", "1.2", "1.3".
 * `polish`. Allowed values: "off" (default), "lossless", "lossy".
 * `pseudo_ipv4`. Allowed values: "off" (default), "add_header", "overwrite_header".
