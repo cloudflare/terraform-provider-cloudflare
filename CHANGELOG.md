@@ -4,6 +4,10 @@
 
 * `resource/cloudflare_zone_settings_override`: Update `image_resizing` options to include `"open"` ([#639](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/639))
 
+**Fixes:**
+
+* `resource/cloudflare_access_group`: Fixed misspelt Okta in JSON payload ([cloudflare/cloudflare-go#440](https://github.com/cloudflare/cloudflare-go/issues/440))
+
 ## 2.5.0 (March 27, 2020)
 
 **Improvements:**
