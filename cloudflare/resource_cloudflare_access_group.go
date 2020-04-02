@@ -275,7 +275,7 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 		} else if accessGroupType == "okta" {
 			for _, v := range values.([]interface{}) {
 				oktaCfg := v.(map[string]interface{})
-				group = append(group, cloudflare.AccessGroupOkta{Otka: struct {
+				group = append(group, cloudflare.AccessGroupOkta{Okta: struct {
 					Name               string `json:"name"`
 					IdentityProviderID string `json:"identity_provider_id"`
 				}{
