@@ -1,4 +1,4 @@
-## 2.5.1 (Unreleased)
+## 2.5.1 (April 03, 2020)
 
 **Improvements:**
 
