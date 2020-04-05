@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         go: [1.13, 1.14]
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         make_target: [test, vet]
 
     steps:
