@@ -1,0 +1,32 @@
+name: Acceptance Tests
+on: [push, pull_request]
+
+jobs:
+  acceptance-tests:
+    env:
+      GO_FLAGS: "-mod=vendor"
+      GO111MODULE: "on"
+      CLOUDFLARE_ACCOUNT_ID: "f037e56e89293a057740de681ac9abbe"
+      CLOUDFLARE_EMAIL: "${{ secrets.CLOUDFLARE_EMAIL }}"
+      CLOUDFLARE_TOKEN: "${{ secrets.CLOUDFLARE_TOKEN }}"
+      CLOUDFLARE_API_KEY: "${{ secrets.CLOUDFLARE_API_KEY }}"
+      CLOUDFLARE_DOMAIN: "terraform.cfapi.net"
+      CLOUDFLARE_ZONE_ID: "0da42c8d2132a9ddaf714f9e7c920711"
+      TF_ACC: 1
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Check out code repository source code
+        uses: actions/checkout@v2
+
+      - name: Sweep existing resources
+        run: make sweep
+
+      - name: Run acceptance tests
+        run: make testacc
