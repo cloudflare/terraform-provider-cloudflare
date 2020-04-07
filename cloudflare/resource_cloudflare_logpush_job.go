@@ -8,6 +8,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceCloudflareLogpushJob() *schema.Resource {
@@ -33,6 +34,11 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
+			},
+			"dataset": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"http_requests", "spectrum_events"}, false),
 			},
 			"logpull_options": {
 				Type:     schema.TypeString,
@@ -60,6 +66,7 @@ func getJobFromResource(d *schema.ResourceData) cloudflare.LogpushJob {
 		ID:                 id,
 		Enabled:            d.Get("enabled").(bool),
 		Name:               d.Get("name").(string),
+		Dataset:            d.Get("dataset").(string),
 		LogpullOptions:     d.Get("logpull_options").(string),
 		DestinationConf:    d.Get("destination_conf").(string),
 		OwnershipChallenge: d.Get("ownership_challenge").(string),
