@@ -45,16 +45,6 @@ func TestAccAccessPolicyServiceToken(t *testing.T) {
 }
 
 func TestAccAccessPolicyAnyServiceToken(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -131,16 +121,6 @@ func testAccessPolicyAnyServiceTokenConfig(resourceID, zone, zoneID string) stri
 }
 
 func TestAccessPolicyGroup(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -199,16 +179,6 @@ func testAccessPolicyGroupConfig(resourceID, zone, zoneID, accountID string) str
 }
 
 func TestAccessPolicyMTLS(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -258,16 +228,6 @@ func testAccessPolicyMTLSConfig(resourceID, zone, zoneID, accountID string) stri
 }
 
 func TestAccessPolicyCommonName(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
