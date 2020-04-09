@@ -108,10 +108,15 @@ func TestMain(m *testing.M) {
 			os.Exit(1)
 		}
 	} else {
+		exitCode := m.Run()
+
 		if acctest.TestHelper != nil {
-			defer acctest.TestHelper.Close()
+			err := acctest.TestHelper.Close()
+			if err != nil {
+				log.Printf("Error cleaning up temporary test files: %s", err)
+			}
 		}
-		os.Exit(m.Run())
+		os.Exit(exitCode)
 	}
 }
 
