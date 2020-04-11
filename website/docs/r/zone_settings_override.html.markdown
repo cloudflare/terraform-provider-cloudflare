@@ -94,7 +94,6 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 
 * `browser_cache_ttl` (default: `14400`)
 * `challenge_ttl` (default: `1800`)
-* `edge_cache_ttl` (default: `7200`)
 * `max_upload` (default: `100`)
 
 ### Nested Objects
