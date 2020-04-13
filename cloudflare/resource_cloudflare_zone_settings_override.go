@@ -456,12 +456,6 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed: true,
 	},
 
-	"edge_cache_ttl": {
-		Type:     schema.TypeInt,
-		Optional: true,
-		Computed: true,
-	},
-
 	"h2_prioritization": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off", "custom"}, false),
