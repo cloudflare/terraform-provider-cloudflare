@@ -37,7 +37,7 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 			},
 			"dataset": {
 				Type:         schema.TypeString,
-				Optional:     true,
+				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"http_requests", "spectrum_events"}, false),
 			},
 			"logpull_options": {
