@@ -687,7 +687,7 @@ func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *clo
 }
 
 func updateUniversalSSLSetting(zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
-	var indexToCut int
+	indexToCut := -1
 	for i, setting := range zoneSettings {
 		if setting.ID == "universal_ssl" {
 			_, err := client.EditUniversalSSLSetting(zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
@@ -698,7 +698,10 @@ func updateUniversalSSLSetting(zoneSettings []cloudflare.ZoneSetting, client *cl
 		}
 	}
 
-	zoneSettings = append(zoneSettings[:indexToCut], zoneSettings[indexToCut+1:]...)
+	if indexToCut != -1 {
+		zoneSettings = append(zoneSettings[:indexToCut], zoneSettings[indexToCut+1:]...)
+	}
+
 	return zoneSettings, nil
 }
 
