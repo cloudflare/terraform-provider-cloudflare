@@ -67,7 +67,7 @@ conditions which can be applied. The conditions are:
 * `email_domain` - (Optional) A list of email domains. Example:
   `email_domain = ["example.com"]`
 * `service_token` - (Optional) A list of service token ids. Example:
-  `service_token = cloudflare_access_service_token.demo.id`
+  `service_token = [cloudflare_access_service_token.demo.id]`
 * `any_valid_service_token` - (Optional) Boolean indicating if allow
   all tokens to be granted. Example: `any_valid_service_token = true`
 * `group` - (Optional) A list of access group ids. Example:
