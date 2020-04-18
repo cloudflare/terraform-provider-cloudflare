@@ -335,7 +335,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 				},
 
 				"nosniff": {
-					Type:     schema.TypeBooindexToCutl,
+					Type:     schema.TypeBool,
 					Optional: true,
 					Computed: true,
 				},
@@ -351,7 +351,10 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"server_side_exclude": {
-		Type:         schema.TypeString,indexToCut
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
 	},
 
 	"ssl": {
