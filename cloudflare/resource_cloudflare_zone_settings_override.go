@@ -335,7 +335,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 				},
 
 				"nosniff": {
-					Type:     schema.TypeBool,
+					Type:     schema.TypeBooindexToCutl,
 					Optional: true,
 					Computed: true,
 				},
@@ -351,10 +351,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 	},
 
 	"server_side_exclude": {
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional:     true,
-		Computed:     true,
+		Type:         schema.TypeString,indexToCut
 	},
 
 	"ssl": {
@@ -362,6 +359,13 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Optional:     true,
 		Computed:     true,
 		ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict", "origin_pull"}, false), // depends on plan
+	},
+
+	"universal_ssl": {
+		Type:         schema.TypeString,
+		Optional:     true,
+		Computed:     true,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 	},
 
 	"tls_client_auth": {
@@ -502,11 +506,17 @@ func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 		return err
 	}
 
+	// pulling USSL status and wrapping it into a cloudflare.ZoneSetting that we can set initial_settings
+	if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
+		return err
+	}
+
 	log.Printf("[DEBUG] Read CloudflareZone initial settings: %#v", zoneSettings)
 
 	if err := d.Set("initial_settings", flattenZoneSettings(d, zoneSettings.Result, true)); err != nil {
 		log.Printf("[WARN] Error setting initial_settings for zone %q: %s", d.Id(), err)
 	}
+
 	d.Set("initial_settings_read_at", time.Now().UTC().Format(time.RFC3339Nano))
 
 	// set readonly setting so that update can behave correctly
@@ -527,6 +537,23 @@ func updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings *cloudflare.Z
 		}
 		zoneSettings.Result = append(zoneSettings.Result, singleSetting)
 	}
+	return nil
+}
+
+func updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
+	ussl, err := client.UniversalSSLSettingDetails(zoneId)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Error reading initial Universal SSL settings for zone %q", zoneId))
+	}
+
+	usslToZoneSetting := cloudflare.ZoneSetting{
+		ID:       "universal_ssl",
+		Value:    stringFromBool(ussl.Enabled),
+		Editable: true,
+	}
+
+	zoneSettings.Result = append(zoneSettings.Result, usslToZoneSetting)
+
 	return nil
 }
 
@@ -554,6 +581,10 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 	}
 
 	if err = updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings, d.Id(), client); err != nil {
+		return err
+	}
+
+	if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
 		return err
 	}
 
@@ -652,6 +683,22 @@ func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *clo
 	return zoneSettings, nil
 }
 
+func updateUniversalSSLSetting(zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
+	var indexToCut int
+	for i, setting := range zoneSettings {
+		if setting.ID == "universal_ssl" {
+			_, err := client.EditUniversalSSLSetting(zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
+			if err != nil {
+				return zoneSettings, err
+			}
+			indexToCut = i
+		}
+	}
+
+	zoneSettings = append(zoneSettings[:indexToCut], zoneSettings[indexToCut+1:]...)
+	return zoneSettings, nil
+}
+
 func resourceCloudflareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -666,6 +713,10 @@ func resourceCloudflareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta i
 		log.Printf("[DEBUG] Cloudflare Zone Settings update configuration: %#v", zoneSettings)
 
 		if zoneSettings, err = updateSingleZoneSettings(zoneSettings, client, d.Id()); err != nil {
+			return err
+		}
+
+		if zoneSettings, err = updateUniversalSSLSetting(zoneSettings, client, d.Id()); err != nil {
 			return err
 		}
 
@@ -778,6 +829,10 @@ func resourceCloudflareZoneSettingsOverrideDelete(d *schema.ResourceData, meta i
 			return err
 		}
 
+		if zoneSettings, err = updateUniversalSSLSetting(zoneSettings, client, d.Id()); err != nil {
+			return err
+		}
+
 		if len(zoneSettings) > 0 {
 			_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
 			if err != nil {
@@ -833,4 +888,18 @@ func schemaValueEquals(a, b interface{}) bool {
 	}
 
 	return reflect.DeepEqual(a, b)
+}
+
+func boolFromString(status string) bool {
+	if status == "on" {
+		return true
+	}
+	return false
+}
+
+func stringFromBool(status bool) string {
+	if status {
+		return "on"
+	}
+	return "off"
 }
