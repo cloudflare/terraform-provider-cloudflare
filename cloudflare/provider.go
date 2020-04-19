@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/terraform-providers/terraform-provider-cloudflare/version"
@@ -26,17 +28,19 @@ func Provider() terraform.ResourceProvider {
 			},
 
 			"api_key": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
-				Description: "The API key for operations.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
+				Description:  "The API key for operations.",
+				ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must only contain characters 0-9 and a-f (all lowercased)"),
 			},
 
 			"api_token": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
-				Description: "The API Token for operations.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
+				Description:  "The API Token for operations.",
+				ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must only contain characters a-z, A-Z, 0-9 and underscores"),
 			},
 
 			"api_user_service_key": {
