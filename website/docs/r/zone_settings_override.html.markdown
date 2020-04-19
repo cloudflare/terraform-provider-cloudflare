@@ -72,6 +72,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `sort_query_string_for_cache` (default: `off`)
 * `tls_client_auth` (default: `on`)
 * `true_client_ip_header` (default: `off`)
+* `universal_ssl` (default: `on`)
 * `waf` (default: `off`)
 * `webp` (default: `off`). Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
 * `websockets` (default: `off`)
