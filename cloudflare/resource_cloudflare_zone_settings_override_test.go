@@ -60,6 +60,8 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 						name, "settings.0.h2_prioritization", "on"),
 					resource.TestCheckResourceAttr(
 						name, "settings.0.zero_rtt", "off"),
+					resource.TestCheckResourceAttr(
+						name, "settings.0.universal_ssl", "off"),
 				),
 			},
 		},
@@ -181,6 +183,10 @@ func testAccGetInitialZoneSettings(t *testing.T, zoneID string, settings map[str
 			return err
 		}
 
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(foundZone, zoneID, client); err != nil {
+			return err
+		}
+
 		for _, zs := range foundZone.Result {
 			settings[zs.ID] = zs.Value
 		}
@@ -202,6 +208,10 @@ func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]i
 		}
 
 		if err = updateZoneSettingsResponseWithSingleZoneSettings(foundZone, zoneID, client); err != nil {
+			return err
+		}
+
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(foundZone, zoneID, client); err != nil {
 			return err
 		}
 
@@ -232,6 +242,7 @@ resource "cloudflare_zone_settings_override" "test" {
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"
 		h2_prioritization = "on"
+		universal_ssl = "off"
 		minify {
 			css = "on"
 			js = "off"
