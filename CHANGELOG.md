@@ -7,6 +7,9 @@
 * `resource/cloudflare_zone_settings_override`: Remove `edge_cache_ttl` ([#654](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/654))
 * `resource/cloudflare_access_group`: Allow Access conditions for `include`/`require`/`exclude` to be used consistently between Access Groups and Access Policies ([#646](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/646))
 
+**Fixes:**
+* `resource/cloudflare_logpush_job`: fix for `strconv.Atoi: parsing ""` error while creating Logpush job
+
 ## 2.5.1 (April 03, 2020)
 
 **Improvements:**
