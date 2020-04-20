@@ -2,6 +2,7 @@
 
 **Improvements:**
 
+* `resource/cloudflare_zone_settings_override`: Add `universal_ssl` to control enablement of Universal SSL on a zone ([#658](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/658))
 * provider: API keys and API tokens are now validated to help differentiate incorrect usage before making API calls ([#661](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/661))
 * `resource/cloudflare_logpush_job`: Add support for "firewall_events" dataset parameter ([#660](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/660))
 * `resource/cloudflare_logpush_job`: Add support for "dataset" parameter ([#649](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/649))
