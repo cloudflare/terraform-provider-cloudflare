@@ -57,9 +57,13 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 }
 
 func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, error) {
-	id, err := strconv.Atoi(d.Id())
-	if err != nil {
-		return cloudflare.LogpushJob{}, fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %v", d.Id(), err)
+	id := 0
+
+	if d.Id() != "" {
+		var err error
+		if id, err = strconv.Atoi(d.Id()); err != nil {
+			return cloudflare.LogpushJob{}, fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %v", d.Id(), err)
+		}
 	}
 
 	job := cloudflare.LogpushJob{
