@@ -2,6 +2,7 @@
 
 **Improvements:**
 
+* provider: API keys and API tokens are now validated to help differentiate incorrect usage before making API calls ([#661](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/661))
 * `resource/cloudflare_logpush_job`: Add support for "firewall_events" dataset parameter ([#660](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/660))
 * `resource/cloudflare_logpush_job`: Add support for "dataset" parameter ([#649](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/649))
 * `resource/cloudflare_zone_settings_override`: Remove `edge_cache_ttl` ([#654](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/654))
