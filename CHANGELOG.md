@@ -1,4 +1,4 @@
-## 2.6.0 (Unreleased)
+## 2.6.0 (April 22, 2020)
 
 **Improvements:**
 
