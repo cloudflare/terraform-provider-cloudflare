@@ -509,9 +509,11 @@ func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 		return err
 	}
 
-	// pulling USSL status and wrapping it into a cloudflare.ZoneSetting that we can set initial_settings
-	if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
-		return err
+	if d.Get("universal_ssl") != nil {
+		// pulling USSL status and wrapping it into a cloudflare.ZoneSetting that we can set initial_settings
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
+			return err
+		}
 	}
 
 	log.Printf("[DEBUG] Read CloudflareZone initial settings: %#v", zoneSettings)
@@ -587,8 +589,10 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 		return err
 	}
 
-	if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
-		return err
+	if d.Get("universal_ssl") != nil {
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
+			return err
+		}
 	}
 
 	log.Printf("[DEBUG] Read CloudflareZone Settings: %#v", zoneSettings)
