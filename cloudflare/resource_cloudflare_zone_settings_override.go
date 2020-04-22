@@ -693,10 +693,13 @@ func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *clo
 func updateUniversalSSLSetting(zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
 	indexToCut := -1
 	for i, setting := range zoneSettings {
+		// Skipping USSL Update if value is empty, especially when we are reverting to the initial state and we did not had the information
 		if setting.ID == "universal_ssl" {
-			_, err := client.EditUniversalSSLSetting(zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
-			if err != nil {
-				return zoneSettings, err
+			if setting.Value.(string) != "" {
+				_, err := client.EditUniversalSSLSetting(zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
+				if err != nil {
+					return zoneSettings, err
+				}
 			}
 			indexToCut = i
 		}
