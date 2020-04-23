@@ -13,7 +13,7 @@ func TestAccCloudflareLogpushOwnershipChallenge(t *testing.T) {
 	name := "cloudflare_logpush_ownership_challenge." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	destinationConf := `s3://jacob-tf-provider-testing-cf-logpush?region=us-east-1`
+	destinationConf := `gs://cf-terraform-provider-acct-test/ownership_challenges`
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
