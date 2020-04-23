@@ -112,6 +112,11 @@ func testAccCheckCloudflareZoneSettingsEmpty(n string) resource.TestCheckFunc {
 			return fmt.Errorf("No Zone ID is set")
 		}
 
+		// Test if universal_ssl is not read from the API when it's not provided in the configuration
+		if rs.Primary.Attributes["initial_settings.0.universal_ssl"] != "" {
+			return fmt.Errorf("initial_settings.0.universal_ssl is not empty when it should be")
+		}
+
 		for k, v := range rs.Primary.Attributes {
 			if strings.Contains(k, "initial_settings") && k != "initial_settings_read_at" && !strings.Contains(k, "#") {
 				currentSettingKey := strings.TrimPrefix(k, "initial_")
