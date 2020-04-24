@@ -221,6 +221,9 @@ func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]i
 		}
 
 		for _, zs := range foundZone.Result {
+			if zs.ID == "universal_ssl" {
+				continue
+			}
 			if !reflect.DeepEqual(zs.Value, initialSettings[zs.ID]) {
 				return fmt.Errorf("Final setting for %q: %+v not equal to initial setting: %+v", zs.ID, zs.Value, initialSettings[zs.ID])
 			}
