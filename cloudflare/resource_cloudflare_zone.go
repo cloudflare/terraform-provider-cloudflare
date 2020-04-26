@@ -217,15 +217,15 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	// In the cases where the zone isn't completely setup yet, we need to
-	// check the `status` field and should it be pending, use the `Name`
+	// check the `status` field and should it be pending, use the `LegacyID`
 	// from `zone.PlanPending` instead to account for paid plans.
 	if zone.Status == "pending" && zone.PlanPending.Name != "" {
-		d.Set("plan", zone.PlanPending.Name)
+		d.Set("plan", zone.PlanPending.LegacyID)
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
-		planName := planIDForName(plan.(string))
-		if err := setRatePlan(client, zoneID, planName, false); err != nil {
+		planID := plan.(string)
+		if err := setRatePlan(client, zoneID, planID, false); err != nil {
 			return err
 		}
 	}
