@@ -8,7 +8,7 @@ description: |-
 
 # cloudflare_worker_route
 
-Provides a Cloudflare worker route resource. A route will also require a `cloudflare_worker_script`.
+Provides a Cloudflare worker route resource. A route will also require a `cloudflare_worker_script`. *NOTE:*  This resource uses the Cloudflare account APIs. This requires setting the `CLOUDFLARE_ACCOUNT_ID` environment variable or `account_id` provider argument.
 
 ## Example Usage
 
