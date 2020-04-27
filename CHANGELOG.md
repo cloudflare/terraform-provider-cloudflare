@@ -1,5 +1,10 @@
 ## 2.7.0 (Unreleased)
 
+**Improvements:**
+
+* `resource/cloudflare_worker_route`: Improve documentation to mention using `account_id` for the underlying APIs ([#669](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/669))
+* `resource/cloudflare_worker_script`: Improve documentation to mention using `account_id` for the underlying APIs ([#670](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/670))
+
 **Fixes:**
 * `resource/cloudflare_zone_settings_override`: Fix regression where if you didn't have universal SSL settings defined, it would error when setting them ([#663](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/663))
 
