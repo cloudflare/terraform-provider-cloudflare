@@ -509,9 +509,11 @@ func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 		return err
 	}
 
-	// pulling USSL status and wrapping it into a cloudflare.ZoneSetting that we can set initial_settings
-	if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
-		return err
+	if _, ok := d.GetOk("settings.0.universal_ssl"); ok {
+		// pulling USSL status and wrapping it into a cloudflare.ZoneSetting that we can set initial_settings
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
+			return err
+		}
 	}
 
 	log.Printf("[DEBUG] Read CloudflareZone initial settings: %#v", zoneSettings)
@@ -587,8 +589,10 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 		return err
 	}
 
-	if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
-		return err
+	if _, ok := d.GetOk("settings.0.universal_ssl"); ok {
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
+			return err
+		}
 	}
 
 	log.Printf("[DEBUG] Read CloudflareZone Settings: %#v", zoneSettings)
@@ -689,10 +693,13 @@ func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *clo
 func updateUniversalSSLSetting(zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
 	indexToCut := -1
 	for i, setting := range zoneSettings {
+		// Skipping USSL Update if value is empty, especially when we are reverting to the initial state and we did not had the information
 		if setting.ID == "universal_ssl" {
-			_, err := client.EditUniversalSSLSetting(zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
-			if err != nil {
-				return zoneSettings, err
+			if setting.Value.(string) != "" {
+				_, err := client.EditUniversalSSLSetting(zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
+				if err != nil {
+					return zoneSettings, err
+				}
 			}
 			indexToCut = i
 		}
