@@ -224,8 +224,14 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
+		// If we're upgrading from a free plan, we need to use POST (not PUT) as the
+		// the subscription needs to be created, not modified despite the resource
+		// already existing.
+		existingPlan, _ := d.GetChange("plan")
+		wasFreePlan := existingPlan.(string) == "free"
 		planID := plan.(string)
-		if err := setRatePlan(client, zoneID, planID, false); err != nil {
+
+		if err := setRatePlan(client, zoneID, planID, wasFreePlan); err != nil {
 			return err
 		}
 	}
