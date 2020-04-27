@@ -1,4 +1,8 @@
 ## 2.7.0 (Unreleased)
+
+**Fixes:**
+* `resource/cloudflare_zone_settings_override`: Fix regression where if you didn't have universal SSL settings defined, it would error when setting them ([#663](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/663))
+
 ## 2.6.0 (April 22, 2020)
 
 **Improvements:**
