@@ -3,7 +3,6 @@ package cloudflare
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -93,7 +92,6 @@ func resourceCloudflareIPPrefixUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	if _, ok := d.GetOk("advertisement"); ok && d.HasChange("advertisement") {
-		os.Exit(1)
 		if _, err := client.UpdateAdvertisementStatus(context.Background(), d.Id(), boolFromString(d.Get("advertisement").(string))); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Cannot update prefix advertisement status for %q", d.Id()))
 		}
