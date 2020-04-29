@@ -63,8 +63,6 @@ func resourceCloudflareIPPrefixImport(d *schema.ResourceData, meta interface{}) 
 
 func resourceCloudflareIPPrefixRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	prefixID := d.Get("prefix_id").(string)
-	d.SetId(prefixID)
 
 	prefix, err := client.GetPrefix(context.Background(), d.Id())
 	if err != nil {
