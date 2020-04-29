@@ -42,6 +42,9 @@ func resourceCloudflareIPPrefix() *schema.Resource {
 }
 
 func resourceCloudflareIPPrefixCreate(d *schema.ResourceData, meta interface{}) error {
+	prefixID := d.Get("prefix_id")
+	d.SetId(prefixID.(string))
+
 	if err := resourceCloudflareIPPrefixUpdate(d, meta); err != nil {
 		return err
 	}
@@ -82,8 +85,6 @@ func resourceCloudflareIPPrefixRead(d *schema.ResourceData, meta interface{}) er
 
 func resourceCloudflareIPPrefixUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	prefixID := d.Get("prefix_id").(string)
-	d.SetId(prefixID)
 
 	if _, ok := d.GetOk("description"); ok && d.HasChange("description") {
 		if _, err := client.UpdatePrefixDescription(context.Background(), d.Id(), d.Get("description").(string)); err != nil {
