@@ -42,11 +42,11 @@ func resourceCloudflareIPPrefix() *schema.Resource {
 }
 
 func resourceCloudflareIPPrefixCreate(d *schema.ResourceData, meta interface{}) error {
-	if err := resourceCloudflareIPPrefixRead(d, meta); err != nil {
+	if err := resourceCloudflareIPPrefixUpdate(d, meta); err != nil {
 		return err
 	}
 
-	return resourceCloudflareIPPrefixUpdate(d, meta)
+	return resourceCloudflareIPPrefixRead(d, meta)
 }
 
 func resourceCloudflareIPPrefixImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
