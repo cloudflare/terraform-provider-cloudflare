@@ -1,5 +1,3 @@
-package acctest
-
 // Package acctest provides the ability to opt in to the new binary test driver. The binary
 // test driver allows you to run your acceptance tests with a binary of Terraform instead of
 // an emulated version packaged inside the SDK. This allows for a number of important
@@ -19,6 +17,7 @@ package acctest
 //     acctest.UseBinaryDriver("provider_name", Provider)
 //     resource.TestMain(m)
 //   }
+//
 // Where `Provider` is the function that returns the instance of a configured `terraform.ResourceProvider`
 // Some providers already have a TestMain defined, usually for the purpose of enabling test
 // sweepers. These additional occurrences should be removed.
@@ -29,3 +28,4 @@ package acctest
 //
 // It is no longer necessary to import other Terraform providers as Go modules: these
 // imports should be removed.
+package acctest
