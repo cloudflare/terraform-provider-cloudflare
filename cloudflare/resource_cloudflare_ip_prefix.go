@@ -10,14 +10,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-func resourceCloudflareIPPrefix() *schema.Resource {
+func resourceCloudflareBYOIPPrefix() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareIPPrefixCreate,
-		Read:   resourceCloudflareIPPrefixRead,
-		Update: resourceCloudflareIPPrefixUpdate,
-		Delete: resourceCloudflareIPPrefixDelete,
+		Create: resourceCloudflareBYOIPPrefixCreate,
+		Read:   resourceCloudflareBYOIPPrefixRead,
+		Update: resourceCloudflareBYOIPPrefixUpdate,
+		Delete: resourceCloudflareBYOIPPrefixDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareIPPrefixImport,
+			State: resourceCloudflareBYOIPPrefixImport,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -41,27 +41,27 @@ func resourceCloudflareIPPrefix() *schema.Resource {
 	}
 }
 
-func resourceCloudflareIPPrefixCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareBYOIPPrefixCreate(d *schema.ResourceData, meta interface{}) error {
 	prefixID := d.Get("prefix_id")
 	d.SetId(prefixID.(string))
 
-	if err := resourceCloudflareIPPrefixUpdate(d, meta); err != nil {
+	if err := resourceCloudflareBYOIPPrefixUpdate(d, meta); err != nil {
 		return err
 	}
 
-	return resourceCloudflareIPPrefixRead(d, meta)
+	return resourceCloudflareBYOIPPrefixRead(d, meta)
 }
 
-func resourceCloudflareIPPrefixImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareBYOIPPrefixImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	prefixID := d.Id()
 	d.Set("prefix_id", prefixID)
 
-	resourceCloudflareIPPrefixRead(d, meta)
+	resourceCloudflareBYOIPPrefixRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourceCloudflareIPPrefixRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareBYOIPPrefixRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	prefix, err := client.GetPrefix(context.Background(), d.Id())
@@ -81,7 +81,7 @@ func resourceCloudflareIPPrefixRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudflareIPPrefixUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareBYOIPPrefixUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	if _, ok := d.GetOk("description"); ok && d.HasChange("description") {
@@ -100,6 +100,6 @@ func resourceCloudflareIPPrefixUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 // Deletion of prefixes is not really supported, so we keep this as a dummy
-func resourceCloudflareIPPrefixDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareBYOIPPrefixDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }

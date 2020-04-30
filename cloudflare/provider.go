@@ -114,7 +114,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_custom_ssl":                  resourceCloudflareCustomSsl(),
 			"cloudflare_filter":                      resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":               resourceCloudflareFirewallRule(),
-			"cloudflare_ip_prefix":                   resourceCloudflareIPPrefix(),
+			"cloudflare_byo_ip_prefix":               resourceCloudflareBYOIPPrefix(),
 			"cloudflare_load_balancer_monitor":       resourceCloudflareLoadBalancerMonitor(),
 			"cloudflare_load_balancer_pool":          resourceCloudflareLoadBalancerPool(),
 			"cloudflare_load_balancer":               resourceCloudflareLoadBalancer(),
