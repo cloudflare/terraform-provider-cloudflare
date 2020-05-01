@@ -7,6 +7,7 @@
 
 **Fixes:**
 * `resource/cloudflare_zone_settings_override`: Fix regression where if you didn't have universal SSL settings defined, it would error when setting them ([#663](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/663))
+* `resource/cloudflare_zone`: Handle changing zone rate plan from "free" to "enterprise" ([#668](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/668))
 
 ## 2.6.0 (April 22, 2020)
 
