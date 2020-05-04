@@ -1,5 +1,7 @@
 ## 2.7.0 (Unreleased)
 
+* **New Resource:** `cloudflare_byo_ip_prefix` ([#671](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/671))
+
 **Improvements:**
 
 * `resource/cloudflare_worker_route`: Improve documentation to mention using `account_id` for the underlying APIs ([#669](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/669))
