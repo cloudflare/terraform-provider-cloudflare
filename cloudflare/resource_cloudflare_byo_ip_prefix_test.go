@@ -16,10 +16,10 @@ func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_byo_ip_prefix.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() {
+		PreCheck: func() {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
-			testAccPreCheckBYOIPPrefix(t) 
+			testAccPreCheckBYOIPPrefix(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
