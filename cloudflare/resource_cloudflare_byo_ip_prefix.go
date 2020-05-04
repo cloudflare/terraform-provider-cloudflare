@@ -66,14 +66,14 @@ func resourceCloudflareBYOIPPrefixRead(d *schema.ResourceData, meta interface{})
 
 	prefix, err := client.GetPrefix(context.Background(), d.Id())
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Error reading IP prefix information for %q", d.Id()))
+		return errors.Wrap(err, fmt.Sprintf("error reading IP prefix information for %q", d.Id()))
 	}
 
 	d.Set("description", prefix.Description)
 
 	advertisementStatus, err := client.GetAdvertisementStatus(context.Background(), d.Id())
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Error reading advertisement status of IP prefix for %q", d.Id()))
+		return errors.Wrap(err, fmt.Sprintf("error reading advertisement status of IP prefix for %q", d.Id()))
 	}
 
 	d.Set("advertisement", stringFromBool(advertisementStatus.Advertised))
@@ -86,13 +86,13 @@ func resourceCloudflareBYOIPPrefixUpdate(d *schema.ResourceData, meta interface{
 
 	if _, ok := d.GetOk("description"); ok && d.HasChange("description") {
 		if _, err := client.UpdatePrefixDescription(context.Background(), d.Id(), d.Get("description").(string)); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Cannot update prefix description for %q", d.Id()))
+			return errors.Wrap(err, fmt.Sprintf("cannot update prefix description for %q", d.Id()))
 		}
 	}
 
 	if _, ok := d.GetOk("advertisement"); ok && d.HasChange("advertisement") {
 		if _, err := client.UpdateAdvertisementStatus(context.Background(), d.Id(), boolFromString(d.Get("advertisement").(string))); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Cannot update prefix advertisement status for %q", d.Id()))
+			return errors.Wrap(err, fmt.Sprintf("cannot update prefix advertisement status for %q", d.Id()))
 		}
 	}
 
