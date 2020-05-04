@@ -902,17 +902,3 @@ func schemaValueEquals(a, b interface{}) bool {
 
 	return reflect.DeepEqual(a, b)
 }
-
-func boolFromString(status string) bool {
-	if status == "on" {
-		return true
-	}
-	return false
-}
-
-func stringFromBool(status bool) string {
-	if status {
-		return "on"
-	}
-	return "off"
-}

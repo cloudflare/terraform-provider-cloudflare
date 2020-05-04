@@ -112,3 +112,17 @@ func cloudflareErrorIsOneOfCodes(err error, codes []int) bool {
 
 	return false
 }
+
+func boolFromString(status string) bool {
+	if status == "on" {
+		return true
+	}
+	return false
+}
+
+func stringFromBool(status bool) string {
+	if status {
+		return "on"
+	}
+	return "off"
+}

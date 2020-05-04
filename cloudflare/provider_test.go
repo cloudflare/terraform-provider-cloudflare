@@ -74,6 +74,12 @@ func testAccPreCheckLogpushToken(t *testing.T) {
 	}
 }
 
+func testAccPreCheckBYOIPPrefix(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_BYO_IP_PREFIX_ID is not set")
+	}
+}
+
 func generateRandomResourceName() string {
 	return acctest.RandStringFromCharSet(10, acctest.CharSetAlpha)
 }
