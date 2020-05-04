@@ -43,8 +43,8 @@ func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 
 func testAccCheckCloudflareBYOIPPrefixConfig(prefixID, description, name string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_byo_ip_prefix" "%[3]s" {
-	prefix_id = "%[1]s"    
-	description = "%[2]s"
-}`, prefixID, description, name)
+  resource "cloudflare_byo_ip_prefix" "%[3]s" {
+	  prefix_id = "%[1]s"
+	  description = "%[2]s"
+  }`, prefixID, description, name)
 }
