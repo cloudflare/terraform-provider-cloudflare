@@ -75,18 +75,6 @@ func testAccPreCheckLogpushToken(t *testing.T) {
 }
 
 func testAccPreCheckBYOIPPrefix(t *testing.T) {
-	if v := os.Getenv("CLOUDFLARE_EMAIL"); v == "" {
-		t.Fatal("CLOUDFLARE_EMAIL must be set for acceptance tests")
-	}
-
-	if v := os.Getenv("CLOUDFLARE_API_KEY"); v == "" {
-		t.Fatal("CLOUDFLARE_API_KEY must be set for acceptance tests")
-	}
-
-	if v := os.Getenv("CLOUDFLARE_ACCOUNT_ID"); v == "" {
-		t.Fatal("CLOUDFLARE_ACCOUNT_ID must be set for this acceptance test")
-	}
-
 	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
 		t.Fatal("CLOUDFLARE_BYO_IP_PREFIX_ID must be set for this acceptance test")
 	}

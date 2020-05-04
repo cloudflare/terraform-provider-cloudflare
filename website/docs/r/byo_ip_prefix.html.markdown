@@ -26,8 +26,7 @@ The following arguments are supported:
 
 * `prefix_id` - (Required) The assigned Bring-Your-Own-IP prefix ID.
 * `description` - (Optional) The description of the prefix.
-* `advertisement` - (Optional) Whether or not the prefix shall be announced. A prefix can be activated or deactivated once every 15 minutes. Valid values: `on` or `off`.
-
+* `advertisement` - (Optional) Whether or not the prefix shall be announced. A prefix can be activated or deactivated once every 15 minutes (attempting more regular updates will trigger rate limiting). Valid values: `on` or `off`.
 
 ## Import
 
