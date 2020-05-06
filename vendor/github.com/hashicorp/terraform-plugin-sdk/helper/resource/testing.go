@@ -261,6 +261,7 @@ func runSweeperWithRegion(region string, s *Sweeper, sweepers map[string]*Sweepe
 }
 
 const TestEnvVar = "TF_ACC"
+const TestDisableBinaryTestingFlagEnvVar = "TF_DISABLE_BINARY_TESTING"
 
 // TestProvider can be implemented by any ResourceProvider to provide custom
 // reset functionality at the start of an acceptance test.
@@ -548,6 +549,14 @@ func Test(t TestT, c TestCase) {
 			"Acceptance tests skipped unless env '%s' set",
 			TestEnvVar))
 		return
+	}
+	if v := os.Getenv(TestDisableBinaryTestingFlagEnvVar); v != "" {
+		b, err := strconv.ParseBool(v)
+		if err != nil {
+			t.Error(fmt.Errorf("Error parsing EnvVar %q value %q: %s", TestDisableBinaryTestingFlagEnvVar, v, err))
+		}
+
+		c.DisableBinaryDriver = b
 	}
 
 	logWriter, err := LogOutput(t)
