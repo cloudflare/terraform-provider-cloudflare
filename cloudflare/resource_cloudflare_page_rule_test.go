@@ -386,6 +386,58 @@ func TestAccCloudflarePageRuleEdgeCacheTTLNotClobbered(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRuleCacheKeyFieldsBasic(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	target := fmt.Sprintf("test-cache-key-fields.%s", domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.cookie.0.check_presence.0", "cookie_presence"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.cookie.0.include.0", "cookie_include"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.check_presence.0", "header_presence"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.include.0", "header_include"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.query_string.0.exclude.0", "qs_exclude"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRuleCacheKeyFields2(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	target := fmt.Sprintf("test-cache-key-fields.%s", domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields2(zoneID, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.exclude.0", "origin"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.host.0.resolved", "false"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.user.0.device_type", "true"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.user.0.geo", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
@@ -662,6 +714,55 @@ resource "cloudflare_page_rule" "test" {
 	actions {
 		always_online = "on"
 		edge_cache_ttl = 10
+	}
+}`, zoneID, target)
+}
+
+func testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone_id = "%s"
+	target = "%s"
+	actions {
+		cache_key_fields {
+			cookie {
+				check_presence = ["cookie_presence"]
+				include = ["cookie_include"]
+			}
+			header {
+				check_presence = ["header_presence"]
+				include = ["header_include"]
+			}
+			host {
+				resolved = true
+			}
+			query_string {
+				exclude = ["qs_exclude"]
+			}
+			user {}
+		}
+	}
+}`, zoneID, target)
+}
+
+func testAccCheckCloudflarePageRuleConfigCacheKeyFields2(zoneID, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone_id = "%s"
+	target = "%s"
+	actions {
+		cache_key_fields {
+			cookie {}
+			header {
+				exclude = ["origin"]
+			}
+			host {}
+			query_string {}
+			user {
+				device_type = true
+				geo = true
+			}
+		}
 	}
 }`, zoneID, target)
 }

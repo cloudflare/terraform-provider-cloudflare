@@ -293,6 +293,151 @@ func resourceCloudflarePageRule() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict", "origin_pull"}, false),
 						},
+
+						"cache_key_fields": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"cookie": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"check_presence": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+
+									"header": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"check_presence": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"exclude": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+
+									"host": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"resolved": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+											},
+										},
+									},
+
+									"query_string": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"exclude": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"ignore": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+											},
+										},
+									},
+
+									"user": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"device_type": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+												"geo": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+												"lang": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -569,6 +714,43 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
 		break
 
+	case pageRuleAction.ID == "cache_key_fields":
+		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
+
+		value.([]interface{})[0].(map[string]interface{})["cookie"] = []interface{}{
+			pageRuleAction.Value.(map[string]interface{})["cookie"],
+		}
+
+		value.([]interface{})[0].(map[string]interface{})["header"] = []interface{}{
+			pageRuleAction.Value.(map[string]interface{})["header"],
+		}
+
+		value.([]interface{})[0].(map[string]interface{})["host"] = []interface{}{
+			pageRuleAction.Value.(map[string]interface{})["host"],
+		}
+
+		value.([]interface{})[0].(map[string]interface{})["user"] = []interface{}{
+			pageRuleAction.Value.(map[string]interface{})["user"],
+		}
+
+		queryString := pageRuleAction.Value.(map[string]interface{})["query_string"]
+		value.([]interface{})[0].(map[string]interface{})["query_string"] = []interface{}{
+			map[string]interface{}{
+				"exclude": queryString.(map[string]interface{})["exclude"],
+				"include": queryString.(map[string]interface{})["include"],
+			},
+		}
+		if queryString.(map[string]interface{})["exclude"] == "*" {
+			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["ignore"] = true
+			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["exclude"] = []interface{}{}
+		}
+		if queryString.(map[string]interface{})["include"] == "*" {
+			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["ignore"] = false
+			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["include"] = []interface{}{}
+		}
+
+		break
+
 	default:
 		// User supplied ID is already validated, so this is always an internal error
 		err = fmt.Errorf("Unimplemented action ID %q - this is always an internal error", pageRuleAction.ID)
@@ -636,6 +818,81 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 				"css":  minify["css"].(string),
 				"js":   minify["js"].(string),
 				"html": minify["html"].(string),
+			}
+		}
+	} else if id == "cache_key_fields" {
+		cacheKeyActionSchema := value.([]interface{})
+
+		log.Printf("[DEBUG] cache_key_fields action to be applied: %#v", cacheKeyActionSchema)
+
+		if len(cacheKeyActionSchema) != 0 {
+			cache := cacheKeyActionSchema[0].(map[string]interface{})
+
+			pageRuleAction.Value = map[string]interface{}{}
+
+			cookie := cache["cookie"].([]interface{})
+			if len(cookie) != 0 {
+				cookie := cookie[0].(map[string]interface{})
+				pageRuleAction.Value.(map[string]interface{})["cookie"] = map[string]interface{}{
+					"check_presence": cookie["check_presence"],
+					"include":        cookie["include"],
+				}
+			}
+
+			header := cache["header"].([]interface{})
+			if len(header) != 0 {
+				header := header[0].(map[string]interface{})
+				pageRuleAction.Value.(map[string]interface{})["header"] = map[string]interface{}{
+					"check_presence": header["check_presence"],
+					"exclude":        header["exclude"],
+					"include":        header["include"],
+				}
+			}
+
+			host := cache["host"].([]interface{})
+			if len(host) != 0 {
+				host := host[0].(map[string]interface{})
+				pageRuleAction.Value.(map[string]interface{})["host"] = map[string]bool{
+					"resolved": host["resolved"].(bool),
+				}
+			}
+
+			queryString := cache["query_string"].([]interface{})
+			if len(queryString) != 0 {
+				queryString := queryString[0].(map[string]interface{})
+				pageRuleAction.Value.(map[string]interface{})["query_string"] = map[string]interface{}{
+					"exclude": queryString["exclude"],
+					"include": queryString["include"],
+				}
+
+				queryKey := "include"
+				if queryString["ignore"].(bool) {
+					queryKey = "exclude"
+				}
+
+				if len(queryString["exclude"].([]interface{})) == 0 && len(queryString["include"].([]interface{})) == 0 {
+					pageRuleAction.Value.(map[string]interface{})["query_string"].(map[string]interface{})[queryKey] = "*"
+				}
+			} else {
+				pageRuleAction.Value.(map[string]interface{})["query_string"] = map[string]interface{}{
+					"include": "*",
+				}
+			}
+
+			user := cache["user"].([]interface{})
+			if len(user) != 0 {
+				user := user[0].(map[string]interface{})
+				pageRuleAction.Value.(map[string]interface{})["user"] = map[string]bool{
+					"device_type": user["device_type"].(bool),
+					"geo":         user["geo"].(bool),
+					"lang":        user["lang"].(bool),
+				}
+			} else {
+				pageRuleAction.Value.(map[string]interface{})["user"] = map[string]bool{
+					"device_type": false,
+					"geo":         false,
+					"lang":        false,
+				}
 			}
 		}
 	} else {

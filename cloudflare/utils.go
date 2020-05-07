@@ -76,6 +76,17 @@ func contains(slice []string, item string) bool {
 	return ok
 }
 
+// findIndex returns the smallest index i at which x == a[i],
+// or (0, false) if there is no such index.
+func findIndex(a []interface{}, x interface{}) (int, bool) {
+	for i, n := range a {
+		if x == n {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
 type CloudflareAPIError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
