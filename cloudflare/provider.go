@@ -120,6 +120,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_load_balancer":               resourceCloudflareLoadBalancer(),
 			"cloudflare_logpush_ownership_challenge": resourceCloudflareLogpushOwnershipChallenge(),
 			"cloudflare_logpush_job":                 resourceCloudflareLogpushJob(),
+			"cloudflare_logpull_retention":           resourceCloudflareLogpullRetention(),
 			"cloudflare_origin_ca_certificate":       resourceCloudflareOriginCACertificate(),
 			"cloudflare_page_rule":                   resourceCloudflarePageRule(),
 			"cloudflare_rate_limit":                  resourceCloudflareRateLimit(),
