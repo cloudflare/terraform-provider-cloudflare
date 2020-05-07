@@ -66,7 +66,7 @@ The following attributes are exported:
 
 ## Import
 
-Records can be imported using a composite ID formed of zone name and record ID, e.g.
+Records can be imported using a composite ID formed of zone ID and record ID, e.g.
 
 ```
 $ terraform import cloudflare_record.default ae36f999674d196762efcc5abb06b345/d41d8cd98f00b204e9800998ecf8427e
