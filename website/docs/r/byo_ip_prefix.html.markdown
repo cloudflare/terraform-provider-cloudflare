@@ -1,7 +1,7 @@
 ---
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_byo_ip_prefix"
-sidebar_current: "docs-cloudflare-resource-universal-ssl"
+sidebar_current: "docs-cloudflare-resource-byo-ip-prefix"
 description: |-
   Provides the ability to manage Bring-Your-Own-IP prefixes (BYOIP) which are used with or without Magic Transit.
 ---
