@@ -24,7 +24,7 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, "tcp-test-healthcheck", rnd),
+				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
 					resource.TestCheckResourceAttr(name, "description", ""),
@@ -50,17 +50,17 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, "tcp-test-healthcheck-update", rnd),
+				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
-					resource.TestCheckResourceAttr(name, "name", "tcp-test-healthcheck-update"),
+					resource.TestCheckResourceAttr(name, "name", rnd),
 				),
 			},
 			{
 				PreConfig: func() {
 					initialID = healthcheck.ID
 				},
-				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, "tcp-test-healthcheck-updated", rnd),
+				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd+"-updated", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
 					func(state *terraform.State) error {
@@ -70,7 +70,7 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 						}
 						return nil
 					},
-					resource.TestCheckResourceAttr(name, "name", "tcp-test-healthcheck-updated"),
+					resource.TestCheckResourceAttr(name, "name", rnd+"-updated"),
 				),
 			},
 		},
@@ -90,7 +90,7 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHealthcheckHTTP(zoneID, "http-test-healthcheck", rnd),
+				Config: testAccCheckCloudflareHealthcheckHTTP(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
 					resource.TestCheckResourceAttr(name, "description", ""),
@@ -156,9 +156,9 @@ func testAccCheckCloudflareHealthcheckTCP(zoneID, name, ID string) string {
   }`, zoneID, name, ID)
 }
 
-func testAccCheckCloudflareHealthcheckHTTP(zoneID, name, ID string) string {
+func testAccCheckCloudflareHealthcheckHTTP(zoneID, ID string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_healthcheck" "%[3]s" {
+  resource "cloudflare_healthcheck" "%[2]s" {
     zone_id = "%[1]s"
     name = "%[2]s"
     address = "example.com"
@@ -166,7 +166,7 @@ func testAccCheckCloudflareHealthcheckHTTP(zoneID, name, ID string) string {
     expected_codes = [
       "200"
     ]
-  }`, zoneID, name, ID)
+  }`, zoneID, ID)
 }
 
 func testAccCheckHealthcheckConfigMissingRequired(zoneID, ID string) string {
