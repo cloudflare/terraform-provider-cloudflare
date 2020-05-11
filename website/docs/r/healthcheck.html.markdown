@@ -15,6 +15,7 @@ Standalone Health Checks provide a way to monitor origin servers without needing
 The resource supports HTTP, HTTPS and TCP type health checks.
 
 ### HTTPS Health Check
+
 ```hcl
 resource "cloudflare_healthcheck" "http_health_check" {
   zone_id = var.cloudflare_zone_id
@@ -54,6 +55,7 @@ resource "cloudflare_healthcheck" "http_health_check" {
 ```
 
 ### TCP Monitor
+
 ```hcl
 resource "cloudflare_healthcheck" "tcp_health_check" {
   zone_id = var.cloudflare_zone_id
@@ -100,6 +102,7 @@ The following arguments are supported:
 * `consecutive_fails` - (Optional) The number of consecutive fails required from a health check before changing the health to unhealthy. (Default: `1`)
 * `consecutive_successes` - (Optional) The number of consecutive successes required from a health check before changing the health to healthy. (Default: `1`)
 
+
 ### HTTP/HTTPS specific arguments
 * `method` - (Optional) The HTTP method to use for the health check. Valid values: `GET` or `HEAD` (Default: `GET`).
 * `path` - (Optional) The endpoint path to health check against. (Default: `/`)
@@ -113,6 +116,7 @@ The following arguments are supported:
 
 * `header` - (Required) The header name.
 * `values` - (Required) A list of string values for the header.
+
 
 ### TCP specific arguments
 * `method` - (Optional) The TCP connection method to use for the health check. Valid values: `connection_established` (Default: `connection_established`).
