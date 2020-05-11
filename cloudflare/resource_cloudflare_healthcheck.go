@@ -12,14 +12,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-func resourceCloudflareStandaloneHealthcheck() *schema.Resource {
+func resourceCloudflareHealthcheck() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareStandaloneHealthcheckCreate,
-		Read:   resourceCloudflareStandaloneHealthcheckRead,
-		Update: resourceCloudflareStandaloneHealthcheckUpdate,
-		Delete: resourceCloudflareStandaloneHealthcheckDelete,
+		Create: resourceCloudflareHealthcheckCreate,
+		Read:   resourceCloudflareHealthcheckRead,
+		Update: resourceCloudflareHealthcheckUpdate,
+		Delete: resourceCloudflareHealthcheckDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareStandaloneHealthcheckImport,
+			State: resourceCloudflareHealthcheckImport,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -31,7 +31,6 @@ func resourceCloudflareStandaloneHealthcheck() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -166,7 +165,7 @@ func resourceCloudflareStandaloneHealthcheck() *schema.Resource {
 	}
 }
 
-func resourceCloudflareStandaloneHealthcheckRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -189,7 +188,7 @@ func resourceCloudflareStandaloneHealthcheckRead(d *schema.ResourceData, meta in
 		d.Set("allow_insecure", healthcheck.HTTPConfig.AllowInsecure)
 		d.Set("notification_email_addresses", healthcheck.Notification.EmailAddresses)
 
-		if err := d.Set("header", flattenStandaloneHealthcheckHeader(healthcheck.HTTPConfig.Header)); err != nil {
+		if err := d.Set("header", flattenHealthcheckHeader(healthcheck.HTTPConfig.Header)); err != nil {
 			log.Printf("[WARN] Error setting header for standalone healthcheck %q: %s", d.Id(), err)
 		}
 	}
@@ -212,7 +211,7 @@ func resourceCloudflareStandaloneHealthcheckRead(d *schema.ResourceData, meta in
 	return nil
 }
 
-func resourceCloudflareStandaloneHealthcheckCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -228,10 +227,10 @@ func resourceCloudflareStandaloneHealthcheckCreate(d *schema.ResourceData, meta 
 
 	d.SetId(hc.ID)
 
-	return resourceCloudflareStandaloneHealthcheckRead(d, meta)
+	return resourceCloudflareHealthcheckRead(d, meta)
 }
 
-func resourceCloudflareStandaloneHealthcheckUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -245,10 +244,10 @@ func resourceCloudflareStandaloneHealthcheckUpdate(d *schema.ResourceData, meta 
 		return errors.Wrap(err, fmt.Sprintf("error creating healthcheck"))
 	}
 
-	return resourceCloudflareStandaloneHealthcheckRead(d, meta)
+	return resourceCloudflareHealthcheckRead(d, meta)
 }
 
-func resourceCloudflareStandaloneHealthcheckDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -260,19 +259,19 @@ func resourceCloudflareStandaloneHealthcheckDelete(d *schema.ResourceData, meta 
 	return nil
 }
 
-func resourceCloudflareStandaloneHealthcheckImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareHealthcheckImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/standaloneHealthcheckId\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/HealthcheckId\"", d.Id())
 	}
 
-	zoneID, standaloneHealthcheckID := attributes[0], attributes[1]
+	zoneID, HealthcheckID := attributes[0], attributes[1]
 
 	d.Set("zone_id", zoneID)
-	d.SetId(standaloneHealthcheckID)
+	d.SetId(HealthcheckID)
 
-	resourceCloudflareStandaloneHealthcheckRead(d, meta)
+	resourceCloudflareHealthcheckRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -364,7 +363,7 @@ func healthcheckSetStruct(d *schema.ResourceData) (cloudflare.Healthcheck, error
 		}
 
 		if header, ok := d.GetOk("header"); ok {
-			httpConfig.Header = expandStandaloneHealthcheckHeader(header)
+			httpConfig.Header = expandHealthcheckHeader(header)
 		}
 
 		healthcheck.HTTPConfig = httpConfig
@@ -373,7 +372,7 @@ func healthcheckSetStruct(d *schema.ResourceData) (cloudflare.Healthcheck, error
 	return healthcheck, nil
 }
 
-func flattenStandaloneHealthcheckHeader(header map[string][]string) *schema.Set {
+func flattenHealthcheckHeader(header map[string][]string) *schema.Set {
 	flattened := make([]interface{}, 0)
 	for k, v := range header {
 		cfg := map[string]interface{}{
@@ -385,7 +384,7 @@ func flattenStandaloneHealthcheckHeader(header map[string][]string) *schema.Set 
 	return schema.NewSet(HashByMapKey("header"), flattened)
 }
 
-func expandStandaloneHealthcheckHeader(cfgSet interface{}) map[string][]string {
+func expandHealthcheckHeader(cfgSet interface{}) map[string][]string {
 	header := make(map[string][]string)
 	cfgList := cfgSet.(*schema.Set).List()
 	for _, item := range cfgList {

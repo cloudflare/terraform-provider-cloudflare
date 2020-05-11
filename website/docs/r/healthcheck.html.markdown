@@ -1,12 +1,12 @@
 ---
 layout: "cloudflare"
-page_title: "Cloudflare: cloudflare_standalone_healthcheck"
-sidebar_current: "docs-cloudflare-resource-standalone-healthcheck"
+page_title: "Cloudflare: cloudflare_healthcheck"
+sidebar_current: "docs-cloudflare-resource-healthcheck"
 description: |-
   Provides the ability to create a Standalone Health Check without needing a Cloudflare Load Balancer.
 ---
 
-# cloudflare_standalone_healthcheck
+# cloudflare_healthcheck
 
 Standalone Health Checks provide a way to monitor origin servers without needing a Cloudflare Load Balancer. 
 
@@ -16,7 +16,7 @@ The resource supports HTTP, HTTPS and TCP type health checks.
 
 ### HTTPS Health Check
 ```hcl
-resource "cloudflare_standalone_healthcheck" "http_health_check" {
+resource "cloudflare_healthcheck" "http_health_check" {
   zone_id = var.cloudflare_zone_id
   name = "http-health-check"
   description = "example http health check"
@@ -55,7 +55,7 @@ resource "cloudflare_standalone_healthcheck" "http_health_check" {
 
 ### TCP Monitor
 ```hcl
-resource "cloudflare_standalone_healthcheck" "tcp_health_check" {
+resource "cloudflare_healthcheck" "tcp_health_check" {
   zone_id = var.cloudflare_zone_id
   name = "tcp-health-check"
   description = "example tcp health check"
