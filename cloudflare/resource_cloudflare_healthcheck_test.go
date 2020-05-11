@@ -2,16 +2,26 @@ package cloudflare
 
 import (
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"os"
 	"regexp"
 	"testing"
+
+	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
+	// service does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -37,6 +47,15 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 }
 
 func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
+	// service does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -78,6 +97,15 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
+	// service does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
