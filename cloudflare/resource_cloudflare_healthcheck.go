@@ -93,6 +93,7 @@ func resourceCloudflareHealthcheck() *schema.Resource {
 			"port": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				Default:      80,
 				ValidateFunc: validation.IntBetween(0, 65535),
 			},
 			"path": {
@@ -103,7 +104,6 @@ func resourceCloudflareHealthcheck() *schema.Resource {
 			"expected_codes": {
 				Type:     schema.TypeList,
 				Optional: true,
-				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
