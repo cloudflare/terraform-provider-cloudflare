@@ -2,6 +2,7 @@
 
 * **New Resource:** `cloudflare_byo_ip_prefix` ([#671](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/671))
 * **New Resource:** `cloudflare_logpull_retention` ([#678](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/678))
+* **New Resource:** `cloudflare_healthcheck` ([#680](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/680))
 
 **Improvements:**
 
