@@ -346,11 +346,11 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 			for _, v := range values.([]interface{}) {
 				gsuiteCfg := v.(map[string]interface{})
 				group = append(group, cloudflare.AccessGroupGSuite{Gsuite: struct {
-					Email              string `json:"email"`
-					IdentityProviderID string `json:"identity_provider_id"`
+					Email        string `json:"email"`
+					ConnectionID string `json:"connection_id"`
 				}{
-					Email:              gsuiteCfg["email"].(string),
-					IdentityProviderID: gsuiteCfg["identity_provider_id"].(string),
+					Email:        gsuiteCfg["email"].(string),
+					ConnectionID: gsuiteCfg["identity_provider_id"].(string),
 				}})
 			}
 		} else if accessGroupType == "github" {
@@ -379,11 +379,11 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 			for _, v := range values.([]interface{}) {
 				oktaCfg := v.(map[string]interface{})
 				group = append(group, cloudflare.AccessGroupOkta{Okta: struct {
-					Name               string `json:"name"`
-					IdentityProviderID string `json:"identity_provider_id"`
+					Name         string `json:"name"`
+					ConnectionID string `json:"connection_id"`
 				}{
-					Name:               oktaCfg["name"].(string),
-					IdentityProviderID: oktaCfg["identity_provider_id"].(string),
+					Name:         oktaCfg["name"].(string),
+					ConnectionID: oktaCfg["identity_provider_id"].(string),
 				}})
 			}
 		} else if accessGroupType == "saml" {
