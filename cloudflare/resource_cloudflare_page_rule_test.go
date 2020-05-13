@@ -251,6 +251,34 @@ func TestAccCloudflarePageRuleMinifyAction(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRuleCacheKeyFieldsAction(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	target := fmt.Sprintf("test-action-cache-key-fields.%s", domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.cookie.0.include.0", "some_cookie"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.check_presence.0", "something"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.host.0.resolved", "off"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.query_string.0.parameters", "ignore"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.user.0.device_type", "off"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.user.0.geo", "on"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.user.0.lang", "off"),
+				),
+			},
+		},
+	})
+}
+
 func TestTranformForwardingURL(t *testing.T) {
 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
 		ID: "forwarding_url",
@@ -558,6 +586,44 @@ resource "cloudflare_page_rule" "test" {
 			js = "off"
 			css = "on"
 			html = "on"
+		}
+	}
+}`, zoneID, target)
+}
+
+func testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone_id = "%s"
+	target = "%s"
+	actions {
+		cache_key_fields {
+			cookie {
+				check_presence = []
+				include        = [
+					"some_cookie",
+				]
+			}
+			header {
+				check_presence = [
+					"something",
+				]
+				exclude        = []
+				include        = []
+			}
+			host {
+				resolved = "off"
+			}
+			query_string {
+				exclude    = []
+				include    = []
+				parameters = "ignore"
+			}
+			user {
+				device_type = "off"
+				geo         = "on"
+				lang        = "off"
+			}
 		}
 	}
 }`, zoneID, target)

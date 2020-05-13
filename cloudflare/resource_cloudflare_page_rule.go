@@ -217,6 +217,152 @@ func resourceCloudflarePageRule() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"bypass", "basic", "simplified", "aggressive", "cache_everything"}, false),
 						},
 
+						"cache_key_fields": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MinItems: 1,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								SchemaVersion: 1,
+								Schema: map[string]*schema.Schema{
+									"query_string": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											SchemaVersion: 1,
+											Schema: map[string]*schema.Schema{
+												"parameters": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice([]string{"all", "ignore", "custom"}, false),
+													Default:      "all",
+												},
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"exclude": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+									"header": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											SchemaVersion: 1,
+											Schema: map[string]*schema.Schema{
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"exclude": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"check_presence": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+									"host": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											SchemaVersion: 1,
+											Schema: map[string]*schema.Schema{
+												"resolved": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+													Default:      "off",
+												},
+											},
+										},
+									},
+									"cookie": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											SchemaVersion: 1,
+											Schema: map[string]*schema.Schema{
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"check_presence": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+									"user": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											SchemaVersion: 1,
+											Schema: map[string]*schema.Schema{
+												"lang": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+													Default:      "off",
+												},
+												"geo": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+													Default:      "off",
+												},
+												"device_type": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+													Default:      "off",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+
 						"forwarding_url": {
 							Type:     schema.TypeList,
 							Optional: true,
@@ -569,11 +715,62 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
 		break
 
+	case pageRuleAction.ID == "cache_key_fields":
+		cacheKeyFields := pageRuleAction.Value.(map[string]interface{})
+		value = transformCacheKeyFieldsFromCloudflarePageRuleAction(cacheKeyFields)
+		break
+
 	default:
 		// User supplied ID is already validated, so this is always an internal error
 		err = fmt.Errorf("Unimplemented action ID %q - this is always an internal error", pageRuleAction.ID)
 	}
 	return
+}
+
+func transformCacheKeyFieldsFromCloudflarePageRuleAction(cacheKeyFields map[string]interface{}) []interface{} {
+	output := make(map[string]interface{})
+
+	for sectionID, sectionIntf := range cacheKeyFields {
+		sectionOutput := make(map[string]interface{})
+		if sectionID == "query_string" {
+			sectionOutput["parameters"] = "custom"
+		}
+
+		section := sectionIntf.(map[string]interface{})
+
+		for id, value := range section {
+			if id == "include" || id == "exclude" || id == "check_presence" {
+				switch value.(type) {
+				case string:
+					if id == "include" {
+						sectionOutput["parameters"] = "all"
+					} else if id == "exclude" {
+						sectionOutput["parameters"] = "ignore"
+					}
+					output[id] = []string{}
+					break
+				default:
+					valueList := value.([]interface{})
+					valueListStr := make([]string, len(valueList))
+					for i, v := range valueList {
+						valueListStr[i] = v.(string)
+					}
+					sectionOutput[id] = valueListStr
+				}
+			} else if id == "resolved" || id == "device_type" || id == "geo" || id == "lang" {
+				if value.(bool) {
+					sectionOutput[id] = "on"
+				} else {
+					sectionOutput[id] = "off"
+				}
+			}
+		}
+
+		log.Printf("[DEBUG] Converted cache_key_field section %s from Cloudflare Page Rule Action: %#v", sectionID, sectionOutput)
+		output[sectionID] = []interface{}{sectionOutput}
+	}
+
+	return []interface{}{output}
 }
 
 func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
@@ -638,6 +835,15 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 				"html": minify["html"].(string),
 			}
 		}
+	} else if id == "cache_key_fields" {
+		cacheKeyFieldsActionSchema := value.([]interface{})
+
+		log.Printf("[DEBUG] cache key fields action to be applied: %#v", cacheKeyFieldsActionSchema)
+
+		if len(cacheKeyFieldsActionSchema) != 0 {
+			cacheKeyFields := cacheKeyFieldsActionSchema[0].(map[string]interface{})
+			pageRuleAction.Value = transformCacheKeyFieldsToCloudflarePageRuleAction(cacheKeyFields)
+		}
 	} else {
 		err = fmt.Errorf("Bad value for %s: %s", id, value)
 	}
@@ -645,6 +851,43 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	log.Printf("[DEBUG] Page Rule Action to be applied: %#v", pageRuleAction)
 
 	return
+}
+
+func transformCacheKeyFieldsToCloudflarePageRuleAction(cacheKeyFields map[string]interface{}) map[string]interface{} {
+	output := make(map[string]interface{})
+
+	for sectionID, sectionListIntf := range cacheKeyFields {
+		sectionOutput := make(map[string]interface{})
+
+		sectionList := sectionListIntf.([]interface{})
+		section := sectionList[0].(map[string]interface{})
+
+		for id, value := range section {
+			if id == "include" || id == "exclude" || id == "check_presence" {
+				if sectionOutput[id] != "*" {
+					valueList := value.([]interface{})
+					valueListStr := make([]string, len(valueList))
+					for i, v := range valueList {
+						valueListStr[i] = v.(string)
+					}
+					sectionOutput[id] = valueListStr
+				}
+			} else if id == "parameters" {
+				if value.(string) == "all" {
+					sectionOutput["include"] = "*"
+				} else if value.(string) == "ignore" {
+					sectionOutput["exclude"] = "*"
+				}
+			} else if id == "resolved" || id == "device_type" || id == "geo" || id == "lang" {
+				sectionOutput[id] = (value.(string) == "on")
+			}
+		}
+
+		log.Printf("[DEBUG] Converted cache_key_field section %s to Cloudflare Page Rule Action: %#v", sectionID, sectionOutput)
+		output[sectionID] = sectionOutput
+	}
+
+	return output
 }
 
 func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {

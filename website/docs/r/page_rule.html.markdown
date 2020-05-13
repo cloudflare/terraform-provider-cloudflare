@@ -51,6 +51,7 @@ Action blocks support the following:
 * `bypass_cache_on_cookie` - (Optional) String value of cookie name to conditionally bypass cache the page.
 * `cache_by_device_type` - (Optional) Whether this action is `"on"` or `"off"`.
 * `cache_deception_armor` - (Optional) Whether this action is `"on"` or `"off"`.
+* `cache_key_fields` - (Optional) The configuration for the fields to consider for the cache key. See below.
 * `cache_level` - (Optional) Whether to set the cache level to `"bypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `cache_on_cookie` - (Optional) String value of cookie name to conditionally cache the page.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
@@ -79,6 +80,30 @@ Action blocks support the following:
 * `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, `"strict"`, or `"origin_pull"`.
 * `true_client_ip_header` - (Optional) Whether this action is `"on"` or `"off"`.
 * `waf` - (Optional) Whether this action is `"on"` or `"off"`.
+
+Cache key fields actions support the following:
+
+* `cookie` - (Required) Block to configure which cookies to consider in the Cache Key.
+   * `check_presence` - (Optional) The list of cookies to check for the presence of without including their actual value.
+   * `include` - (Optional) The list of cookies to include the actual value of.
+
+* `header` - (Required) Block to configure which headers to consider in the Cache Key.
+   * `check_presence` - (Optional) The list of headers to check for the presence of without including their actual value.
+   * `include` - (Optional) The list of headers to include the actual value of.
+   * `exclude` - (Optional) The list of headers to exclude the actual value of. The only available value for this at the moment is `"origin"` to exclude the _Origin_ header. The _Origin_ header is always included unless explicitly excluded.
+
+* `host` - (Required) Block to configure which host header to include in the Cache Key.
+   * `resolved` - (Optional) Set to `"off"` (default) to include the _Host_ header in the HTTP request sent to the origin, or to `"on"` to include the _Host_ header that was resolved to get the origin IP for the request.
+
+* `query_string` - (Required) Block to configure which query string parameters to consider in the Cache Key.
+   * `parameters` - (Optional) Set to `"all"` (default) to include all the query string parameters, `"ignore"` to ignore all the query string parameters, or `"custom"` to define using `include` (*or* `exclude`) which query string parameters to consider (or ignore)
+   * `include` - (Optional) The list of query string parameters to include in the cache key
+   * `exclude` - (Optional) The list of query string parameters to exclude from the cache key
+
+* `user` - (Required) Block to add features about the end-user (client) into the Cache Key.
+   * `device_type` - (Optional) Set to `"on"` to classify a request as "mobile", "desktop", or "tablet" based on the _User Agent_ (default to `"off"`)
+   * `geo` - (Optional) Set to `"on"` to include the client's country, derived from the IP address (default to `"off"`)
+   * `lang` - (Optional) Set to `"on"` to include the first language code contained in the _Accept-Language_ header sent by the client (default to `"off"`)
 
 Forwarding URL actions support the following:
 
