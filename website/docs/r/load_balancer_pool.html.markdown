@@ -43,7 +43,7 @@ The following arguments are supported:
 * `enabled` - (Optional) Whether to enable (the default) this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
 * `minimum_origins` - (Optional) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next available pool. Default: 1.
 * `monitor` - (Optional) The ID of the Monitor to use for health checking origins within this pool.
-* `notification_email` - (Optional) The email address to send health status notifications to. This can be an individual mailbox or a mailing list.
+* `notification_email` - (Optional) The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
 
 The **origins** block supports:
 
