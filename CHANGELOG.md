@@ -1,4 +1,4 @@
-## 2.7.0 (Unreleased)
+## 2.7.0 (May 20, 2020)
 
 * **New Resource:** `cloudflare_byo_ip_prefix` ([#671](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/671))
 * **New Resource:** `cloudflare_logpull_retention` ([#678](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/678))
