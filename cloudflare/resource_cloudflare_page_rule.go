@@ -293,6 +293,151 @@ func resourceCloudflarePageRule() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict", "origin_pull"}, false),
 						},
+
+						"cache_key_fields": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"cookie": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"check_presence": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+
+									"header": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"check_presence": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"exclude": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+
+									"host": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"resolved": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+											},
+										},
+									},
+
+									"query_string": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"exclude": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"include": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"ignore": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+											},
+										},
+									},
+
+									"user": {
+										Type:     schema.TypeList,
+										Required: true,
+										MinItems: 1,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"device_type": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+												"geo": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+												"lang": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													Computed: true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -569,6 +714,38 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
 		break
 
+	case pageRuleAction.ID == "cache_key_fields":
+		output := make(map[string]interface{})
+
+		for sectionID, sectionValue := range pageRuleAction.Value.(map[string]interface{}) {
+			switch sectionID {
+			case "cookie", "header", "host", "user":
+				output[sectionID] = []interface{}{sectionValue}
+
+			case "query_string":
+				fieldOutput := map[string]interface{}{}
+
+				for fieldID, fieldValue := range sectionValue.(map[string]interface{}) {
+					fieldOutput[fieldID] = fieldValue
+				}
+
+				if fieldOutput["exclude"] == "*" {
+					fieldOutput["exclude"] = []interface{}{}
+					fieldOutput["ignore"] = true
+				}
+
+				if fieldOutput["include"] == "*" {
+					fieldOutput["include"] = []interface{}{}
+					fieldOutput["ignore"] = false
+				}
+
+				output[sectionID] = []interface{}{fieldOutput}
+			}
+		}
+
+		value = []interface{}{output}
+		break
+
 	default:
 		// User supplied ID is already validated, so this is always an internal error
 		err = fmt.Errorf("Unimplemented action ID %q - this is always an internal error", pageRuleAction.ID)
@@ -637,6 +814,38 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 				"js":   minify["js"].(string),
 				"html": minify["html"].(string),
 			}
+		}
+	} else if id == "cache_key_fields" {
+		cacheKeyActionSchema := value.([]interface{})
+
+		log.Printf("[DEBUG] cache_key_fields action to be applied: %#v", cacheKeyActionSchema)
+
+		if len(cacheKeyActionSchema) != 0 {
+			output := make(map[string]interface{})
+
+			for sectionID, sectionValue := range cacheKeyActionSchema[0].(map[string]interface{}) {
+				sectionOutput := map[string]interface{}{}
+
+				for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+					sectionOutput[fieldID] = fieldValue
+				}
+
+				if sectionID == "query_string" {
+					queryKey := "include"
+					if sectionOutput["ignore"].(bool) {
+						queryKey = "exclude"
+					}
+					delete(sectionOutput, "ignore")
+
+					if len(sectionOutput["exclude"].([]interface{})) == 0 && len(sectionOutput["include"].([]interface{})) == 0 {
+						sectionOutput[queryKey] = "*"
+					}
+				}
+
+				output[sectionID] = sectionOutput
+			}
+
+			pageRuleAction.Value = output
 		}
 	} else {
 		err = fmt.Errorf("Bad value for %s: %s", id, value)

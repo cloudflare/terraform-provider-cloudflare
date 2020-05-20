@@ -51,6 +51,7 @@ Action blocks support the following:
 * `bypass_cache_on_cookie` - (Optional) String value of cookie name to conditionally bypass cache the page.
 * `cache_by_device_type` - (Optional) Whether this action is `"on"` or `"off"`.
 * `cache_deception_armor` - (Optional) Whether this action is `"on"` or `"off"`.
+* `cache_key_fields` - (Optional) Controls how Cloudflare creates Cache Keys used to identify files in cache. See below for full description.
 * `cache_level` - (Optional) Whether to set the cache level to `"bypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `cache_on_cookie` - (Optional) String value of cookie name to conditionally cache the page.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
@@ -90,6 +91,97 @@ Minify actions support the following:
 * `html` - (Required) Whether HTML should be minified. Valid values are `"on"` or `"off"`.
 * `css` - (Required) Whether CSS should be minified. Valid values are `"on"` or `"off"`.
 * `js` - (Required) Whether Javascript should be minified. Valid values are `"on"` or `"off"`.
+
+### Cache Key Fields
+
+-> This setting is available to Enterprise customers only.
+
+A Cache Key is an identifier that Cloudflare uses for a file in a cache. The Cache Key Template defines this identifier for a given HTTP request.
+
+For detailed description of use cases and semantics for the particular setting please refer to [Cloudflare Support article](https://support.cloudflare.com/hc/en-us/articles/115004290387-Creating-Cache-Keys).
+
+Example:
+
+```hcl
+# Cache JavaScript files:
+# - ignore CORS Origin header (one copy regardless of requesting Host)
+# - ignore API key query string
+# - include browser language preference (e.g. string translations)
+resource "cloudflare_page_rule" "foobar" {
+  zone_id = var.cloudflare_zone_id
+  target = "embed.${var.cloudflare_zone}/*.js"
+  priority = 1
+
+  actions {
+    cache_key_fields {
+      header {
+        exclude = ["origin"]
+      }
+      query_string {
+        exclude = ["api_token"]
+      }
+      user {
+        lang = true
+      }
+      cookie {}
+      host {}
+    }
+  }
+}
+```
+
+* `cookie` - (Required, but allowed to be empty) Controls what cookies go into Cache Key:
+  * `check_presence` - (Optional, Array) Check for presence of specified cookies, without including their actual values.
+  * `include` - (Optional, Array) Use values of specified cookies in Cache Key.
+* `header` - (Required, but allowed to be empty) Controls what HTTP headers go into Cache Key:
+  * `check_presence` - (Optional, Array) Check for presence of specified HTTP headers, without including their actual values.
+  * `exclude` - (Optional, Array) Exclude these HTTP headers from Cache Key. Currently, only the `Origin` header can be excluded.
+  * `include` - (Optional, Array) Use values of specified HTTP headers in Cache Key. Please refer to [Support article](https://support.cloudflare.com/hc/en-us/articles/115004290387-Creating-Cache-Keys) for the list of HTTP headers that cannot be included. The `Origin` header is always included unless explicitly excluded.
+* `host` - (Required, but allowed to be empty) Controls which Host header goes into Cache Key:
+  * `resolved` - (Optional, Boolean) `false` (default) - includes the Host header in the HTTP request sent to the origin; `true` - includes the Host header that was resolved to get the origin IP for the request (e.g. changed with Resolve Override Page Rule).
+* `query_string` - (Required, but allowed to be empty) Controls which URL query string parameters go into the Cache Key.
+  * `exclude` - (Optional, Array) Exclude these query string parameters from Cache Key.
+  * `include` - (Optional, Array) Only use values of specified query string parameters in Cache Key.
+  * `ignore` - (Optional, Boolean) `false` (default) - all query string parameters are used for Cache Key, unless explicitly excluded; `true` - all query string parameters are ignored; value is ignored if any of `exclude` or `include` is non-empty.
+* `user` - (Required, but allowed to be empty) Controls which end user-related features go into the Cache Key.
+  * `device_type` - (Optional, Boolean) `true` - classifies a request as “mobile”, “desktop”, or “tablet” based on the User Agent; defaults to `false`.
+  * `geo` - (Optional, Boolean) `true` - includes the client’s country, derived from the IP address; defaults to `false`.
+  * `lang` - (Optional, Boolean) `true` - includes the first language code contained in the `Accept-Language` header sent by the client; defaults to `false`.
+
+Example:
+
+```hcl
+# Unrealistic example with all features used
+resource "cloudflare_page_rule" "foobar" {
+  zone_id = var.cloudflare_zone_id
+  target = "${var.cloudflare_zone}/app/*"
+  priority = 1
+
+  actions {
+    cache_key_fields {
+      cookie {
+        check_presence = ["wordpress_test_cookie"]
+      }
+      header {
+        check_presence = ["header_present"]
+        exclude = ["origin"]
+        include = ["api-key", "dnt"]
+      }
+      host {
+        resolved = true
+      }
+      query_string {
+        ignore = true
+      }
+      user {
+        device_type = false
+        geo = true
+        lang = true
+      }
+    }
+  }
+}
+```
 
 ## Attributes Reference
 
