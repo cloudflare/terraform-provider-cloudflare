@@ -9,6 +9,7 @@
 * `resource/cloudflare_worker_route`: Improve documentation to mention using `account_id` for the underlying APIs ([#669](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/669))
 * `resource/cloudflare_worker_script`: Improve documentation to mention using `account_id` for the underlying APIs ([#670](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/670))
 * `resource/cloudflare_load_balancer_pool`: Improve documentation to mention `notification_email` accepts a comma delimited list of emails ([#687](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/687))
+* `resource/cloudflare_page_rule`: Add support for `cache_key_fields` Page Rule action ([#662](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/662))
 
 **Fixes:**
 * `resource/cloudflare_zone_settings_override`: Fix regression where if you didn't have universal SSL settings defined, it would error when setting them ([#663](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/663))
