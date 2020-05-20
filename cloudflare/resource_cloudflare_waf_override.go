@@ -96,6 +96,19 @@ func resourceCloudflareWAFOverrideCreate(d *schema.ResourceData, meta interface{
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	newOverride := cloudflare.WAFOverride{}
+func resourceCloudflareWAFOverrideDelete(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+	overrideID := d.Get("override_id").(string)
+	zoneID := d.Get("zone_id").(string)
+
+	err := client.DeleteWAFOverride(zoneID, overrideID)
+	if err != nil {
+		return fmt.Errorf("failed to delete WAF override ID %s: %s", overrideID, err)
+	}
+
+	return resourceCloudflareWAFOverrideRead(d, meta)
+}
+
 func resourceCloudflareWAFOverrideImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
