@@ -5,10 +5,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-func TestAccCloudflareWAFOverride(t *testing.T) {
+func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -17,8 +19,9 @@ func TestAccCloudflareWAFOverride(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waf_override.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareWAFOverrideDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFOverrideBasicConfig(zoneID, zoneName, rnd),
@@ -27,6 +30,18 @@ func TestAccCloudflareWAFOverride(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "urls.#", "2"),
 					resource.TestCheckResourceAttr(name, "urls.0", fmt.Sprintf("%s/basic-waf-override", zoneName)),
 					resource.TestCheckResourceAttr(name, "urls.1", fmt.Sprintf("%s/another-basic-waf-override", zoneName)),
+					resource.TestCheckResourceAttr(name, "rules.100015", "disable"),
+					resource.TestCheckResourceAttr(name, "groups.ea8687e59929c1fd05ba97574ad43f77", "default"),
+					resource.TestCheckResourceAttr(name, "rewrite_action.default", "block"),
+					resource.TestCheckResourceAttr(name, "rewrite_action.challenge", "block"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareWAFOverrideBasicConfigUpdated(zoneID, zoneName, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "urls.#", "1"),
+					resource.TestCheckResourceAttr(name, "urls.0", fmt.Sprintf("%s/basic-waf-override", zoneName)),
 					resource.TestCheckResourceAttr(name, "rules.100015", "disable"),
 					resource.TestCheckResourceAttr(name, "groups.ea8687e59929c1fd05ba97574ad43f77", "default"),
 					resource.TestCheckResourceAttr(name, "rewrite_action.default", "block"),
@@ -53,4 +68,39 @@ func testAccCheckCloudflareWAFOverrideBasicConfig(zoneID, zoneName, name string)
   			"challenge": "block",
 			}
 		}`, zoneID, zoneName, name)
+}
+
+func testAccCheckCloudflareWAFOverrideBasicConfigUpdated(zoneID, zoneName, name string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_waf_override" "%[3]s" {
+			zone_id = "%[1]s"
+			urls = ["%[2]s/basic-waf-override"]
+			rules = {
+				"100015": "disable"
+			}
+			groups = {
+				"ea8687e59929c1fd05ba97574ad43f77": "default"
+			}
+			rewrite_action = {
+				"default": "block",
+  			"challenge": "block",
+			}
+		}`, zoneID, zoneName, name)
+}
+
+func testAccCheckCloudflareWAFOverrideDestroy(s *terraform.State) error {
+	client := testAccProvider.Meta().(*cloudflare.API)
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_waf_override" {
+			continue
+		}
+
+		_, err := client.WAFOverride(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("WAFOverride still exists")
+		}
+	}
+
+	return nil
 }
