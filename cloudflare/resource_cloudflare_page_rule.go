@@ -715,40 +715,35 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		break
 
 	case pageRuleAction.ID == "cache_key_fields":
-		value = []interface{}{pageRuleAction.Value.(map[string]interface{})}
+		output := make(map[string]interface{})
 
-		value.([]interface{})[0].(map[string]interface{})["cookie"] = []interface{}{
-			pageRuleAction.Value.(map[string]interface{})["cookie"],
-		}
+		for sectionID, sectionValue := range pageRuleAction.Value.(map[string]interface{}) {
+			switch sectionID {
+			case "cookie", "header", "host", "user":
+				output[sectionID] = []interface{}{sectionValue}
 
-		value.([]interface{})[0].(map[string]interface{})["header"] = []interface{}{
-			pageRuleAction.Value.(map[string]interface{})["header"],
-		}
+			case "query_string":
+				fieldOutput := map[string]interface{}{}
 
-		value.([]interface{})[0].(map[string]interface{})["host"] = []interface{}{
-			pageRuleAction.Value.(map[string]interface{})["host"],
-		}
+				for fieldID, fieldValue := range sectionValue.(map[string]interface{}) {
+					fieldOutput[fieldID] = fieldValue
+				}
 
-		value.([]interface{})[0].(map[string]interface{})["user"] = []interface{}{
-			pageRuleAction.Value.(map[string]interface{})["user"],
-		}
+				if fieldOutput["exclude"] == "*" {
+					fieldOutput["exclude"] = []interface{}{}
+					fieldOutput["ignore"] = true
+				}
 
-		queryString := pageRuleAction.Value.(map[string]interface{})["query_string"]
-		value.([]interface{})[0].(map[string]interface{})["query_string"] = []interface{}{
-			map[string]interface{}{
-				"exclude": queryString.(map[string]interface{})["exclude"],
-				"include": queryString.(map[string]interface{})["include"],
-			},
-		}
-		if queryString.(map[string]interface{})["exclude"] == "*" {
-			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["ignore"] = true
-			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["exclude"] = []interface{}{}
-		}
-		if queryString.(map[string]interface{})["include"] == "*" {
-			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["ignore"] = false
-			value.([]interface{})[0].(map[string]interface{})["query_string"].([]interface{})[0].(map[string]interface{})["include"] = []interface{}{}
+				if fieldOutput["include"] == "*" {
+					fieldOutput["include"] = []interface{}{}
+					fieldOutput["ignore"] = false
+				}
+
+				output[sectionID] = []interface{}{fieldOutput}
+			}
 		}
 
+		value = []interface{}{output}
 		break
 
 	default:
@@ -826,74 +821,31 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 		log.Printf("[DEBUG] cache_key_fields action to be applied: %#v", cacheKeyActionSchema)
 
 		if len(cacheKeyActionSchema) != 0 {
-			cache := cacheKeyActionSchema[0].(map[string]interface{})
+			output := make(map[string]interface{})
 
-			pageRuleAction.Value = map[string]interface{}{}
+			for sectionID, sectionValue := range cacheKeyActionSchema[0].(map[string]interface{}) {
+				sectionOutput := map[string]interface{}{}
 
-			cookie := cache["cookie"].([]interface{})
-			if len(cookie) != 0 {
-				cookie := cookie[0].(map[string]interface{})
-				pageRuleAction.Value.(map[string]interface{})["cookie"] = map[string]interface{}{
-					"check_presence": cookie["check_presence"],
-					"include":        cookie["include"],
+				for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+					sectionOutput[fieldID] = fieldValue
 				}
+
+				if sectionID == "query_string" {
+					queryKey := "include"
+					if sectionOutput["ignore"].(bool) {
+						queryKey = "exclude"
+					}
+					delete(sectionOutput, "ignore")
+
+					if len(sectionOutput["exclude"].([]interface{})) == 0 && len(sectionOutput["include"].([]interface{})) == 0 {
+						sectionOutput[queryKey] = "*"
+					}
+				}
+
+				output[sectionID] = sectionOutput
 			}
 
-			header := cache["header"].([]interface{})
-			if len(header) != 0 {
-				header := header[0].(map[string]interface{})
-				pageRuleAction.Value.(map[string]interface{})["header"] = map[string]interface{}{
-					"check_presence": header["check_presence"],
-					"exclude":        header["exclude"],
-					"include":        header["include"],
-				}
-			}
-
-			host := cache["host"].([]interface{})
-			if len(host) != 0 {
-				host := host[0].(map[string]interface{})
-				pageRuleAction.Value.(map[string]interface{})["host"] = map[string]bool{
-					"resolved": host["resolved"].(bool),
-				}
-			}
-
-			queryString := cache["query_string"].([]interface{})
-			if len(queryString) != 0 {
-				queryString := queryString[0].(map[string]interface{})
-				pageRuleAction.Value.(map[string]interface{})["query_string"] = map[string]interface{}{
-					"exclude": queryString["exclude"],
-					"include": queryString["include"],
-				}
-
-				queryKey := "include"
-				if queryString["ignore"].(bool) {
-					queryKey = "exclude"
-				}
-
-				if len(queryString["exclude"].([]interface{})) == 0 && len(queryString["include"].([]interface{})) == 0 {
-					pageRuleAction.Value.(map[string]interface{})["query_string"].(map[string]interface{})[queryKey] = "*"
-				}
-			} else {
-				pageRuleAction.Value.(map[string]interface{})["query_string"] = map[string]interface{}{
-					"include": "*",
-				}
-			}
-
-			user := cache["user"].([]interface{})
-			if len(user) != 0 {
-				user := user[0].(map[string]interface{})
-				pageRuleAction.Value.(map[string]interface{})["user"] = map[string]bool{
-					"device_type": user["device_type"].(bool),
-					"geo":         user["geo"].(bool),
-					"lang":        user["lang"].(bool),
-				}
-			} else {
-				pageRuleAction.Value.(map[string]interface{})["user"] = map[string]bool{
-					"device_type": false,
-					"geo":         false,
-					"lang":        false,
-				}
-			}
+			pageRuleAction.Value = output
 		}
 	} else {
 		err = fmt.Errorf("Bad value for %s: %s", id, value)

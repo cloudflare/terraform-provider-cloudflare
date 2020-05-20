@@ -98,9 +98,10 @@ Minify actions support the following:
 
 A Cache Key is an identifier that Cloudflare uses for a file in a cache. The Cache Key Template defines this identifier for a given HTTP request.
 
-For detailed description of use cases and semantics for the particular setting please refer to [ Cloudflare Support article](https://support.cloudflare.com/hc/en-us/articles/115004290387-Creating-Cache-Keys).
+For detailed description of use cases and semantics for the particular setting please refer to [Cloudflare Support article](https://support.cloudflare.com/hc/en-us/articles/115004290387-Creating-Cache-Keys).
 
 Example:
+
 ```hcl
 # Cache JavaScript files:
 # - ignore CORS Origin header (one copy regardless of requesting Host)
@@ -148,6 +149,7 @@ resource "cloudflare_page_rule" "foobar" {
   * `lang` - (Optional, Boolean) `true` - includes the first language code contained in the `Accept-Language` header sent by the client; defaults to `false`.
 
 Example:
+
 ```hcl
 # Unrealistic example with all features used
 resource "cloudflare_page_rule" "foobar" {
