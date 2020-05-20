@@ -67,6 +67,10 @@ func resourceCloudflareWAFOverride() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"override_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -92,6 +96,25 @@ func resourceCloudflareWAFOverrideCreate(d *schema.ResourceData, meta interface{
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	newOverride := cloudflare.WAFOverride{}
+func resourceCloudflareWAFOverrideImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+
+	if len(idAttr) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/WAFOverrideID\"", d.Id())
+	}
+
+	zoneID, WAFOverrideID := idAttr[0], idAttr[1]
+
+	log.Printf("[DEBUG] Importing WAF override: id %s for zone %s", WAFOverrideID, zoneID)
+
+	d.Set("zone_id", zoneID)
+	d.Set("override_id", WAFOverrideID)
+	d.SetId(WAFOverrideID)
+
+	resourceCloudflareWAFOverrideRead(d, meta)
+
+	return []*schema.ResourceData{d}, nil
+}
 
 	urls := d.Get("urls").([]interface{})
 	for _, url := range urls {
