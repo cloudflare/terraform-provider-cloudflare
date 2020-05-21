@@ -44,6 +44,16 @@ The following arguments are supported:
 
 The **settings** block supports settings that may be applied to the zone. These may be on/off values, unitary fields, string values, integers or nested objects.
 
+### Plan-Dependent Settings
+
+Note that some settings are only available on certain plans. Setting an argument for a feature that is not available on the plan
+configured for the zone will result in an error:
+
+> Error: invalid zone setting "\<argument\>" (value: \<value\>) found - cannot be set as it is read only
+
+This is true even when setting the argument to its default value. These values should either be omitted or set to `null` for zones
+with plans that don't support the feature. 
+
 ### On/Off Values
 
 These can be specified as "on" or "off" string. Similar to boolean values, but here the empty string also means to use the existing value. Attributes available:
