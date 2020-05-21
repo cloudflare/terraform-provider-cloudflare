@@ -52,7 +52,8 @@ configured for the zone will result in an error:
 > Error: invalid zone setting "\<argument\>" (value: \<value\>) found - cannot be set as it is read only
 
 This is true even when setting the argument to its default value. These values should either be omitted or set to `null` for zones
-with plans that don't support the feature. 
+with plans that don't support the feature. See the [plan feature matrices](https://www.cloudflare.com/plans/) for details on
+feature support by plan.
 
 ### On/Off Values
 
