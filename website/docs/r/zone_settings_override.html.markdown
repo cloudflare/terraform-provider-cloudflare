@@ -17,7 +17,6 @@ resource "cloudflare_zone_settings_override" "test" {
 	zone_id = var.cloudflare_zone_id
 	settings {
 		brotli = "on"
-		challenge_ttl = 2700
 		security_level = "high"
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"
@@ -101,12 +100,6 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `security_level`. Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium" (default), "high", "under_attack".
 * `ssl`. Allowed values: "off" (default), "flexible", "full", "strict", "origin_pull".
 * `tls_1_3`. Allowed values: "off" (default), "on", "zrt".
-
-### Integer Values
-
-* `browser_cache_ttl` (default: `14400`)
-* `challenge_ttl` (default: `1800`)
-* `max_upload` (default: `100`)
 
 ### Nested Objects
 
