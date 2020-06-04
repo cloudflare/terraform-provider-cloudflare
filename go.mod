@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/cloudflare/cloudflare-go v0.11.7
 	github.com/hashicorp/go-cleanhttp v0.5.1
-	github.com/hashicorp/terraform-plugin-sdk v1.13.0
+	github.com/hashicorp/terraform-plugin-sdk v1.13.1
 	github.com/pkg/errors v0.9.1
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
 	golang.org/x/net v0.0.0-20200425230154-ff2c4b7c35a0
