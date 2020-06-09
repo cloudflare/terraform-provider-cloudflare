@@ -25,8 +25,8 @@ resource "cloudflare_argo" "example" {
 The following arguments are supported:
 
 * `zone_id` - (Required) The DNS zone ID that you wish to manage Argo on.
-* `tiered_caching` - (Optional) Whether tiered caching is enabled. Valid values: `on` or `off`. Defaults to `off`.
-* `smart_routing` - (Optional) Whether smart routing is enabled. Valid values: `on` or `off`. Defaults to `off`.
+* `tiered_caching` - (Optional) Whether tiered caching is enabled. Valid values: `on` or `off`.
+* `smart_routing` - (Optional) Whether smart routing is enabled. Valid values: `on` or `off`.
 
 
 ## Import
