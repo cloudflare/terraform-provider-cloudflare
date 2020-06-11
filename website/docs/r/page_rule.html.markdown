@@ -51,9 +51,10 @@ Action blocks support the following:
 * `bypass_cache_on_cookie` - (Optional) String value of cookie name to conditionally bypass cache the page.
 * `cache_by_device_type` - (Optional) Whether this action is `"on"` or `"off"`.
 * `cache_deception_armor` - (Optional) Whether this action is `"on"` or `"off"`.
-* `cache_key_fields` - (Optional) Controls how Cloudflare creates Cache Keys used to identify files in cache. See below for full description.
+* `cache_key_fields` - (Optional) Controls how Cloudflare creates Cache Keys used to identify files in cache. [See below](#cache-key-fields) for full description.
 * `cache_level` - (Optional) Whether to set the cache level to `"bypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
 * `cache_on_cookie` - (Optional) String value of cookie name to conditionally cache the page.
+* `cache_ttl_by_status` - (Optional) Set cache TTL based on the response status from the origin web server. Can be specified multiple times. [See below](#cache-ttl-by-status) for full description.
 * `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_railgun` - (Optional) Boolean of whether this action is enabled. Default: false.
@@ -180,6 +181,57 @@ resource "cloudflare_page_rule" "foobar" {
       }
     }
   }
+}
+```
+
+### Cache TTL by status
+
+-> This setting is available to Enterprise customers only.
+
+Set cache TTL based on the response status from the origin web server. Cache TTL (time-to-live) refers to the duration a resource lives in the Cloudflare network before it is marked as stale or discarded from cache. Status codes are returned by a resource’s origin. 
+
+For detailed description please refer to [Cloudflare Support article](https://support.cloudflare.com/hc/en-us/articles/360043842472-Configuring-cache-TTL-by-status-code).
+
+* `codes` - (Required) A HTTP code (e.g. `404`) or range of codes (e.g. `400-499`)
+* `ttl` - (Required) Duration a resource lives in the Cloudflare cache.
+  * positive number - cache for specified duration in seconds
+  * `0` - sets `no-cache`, saved to cache, but expired immediately (revalidate from origin every time)
+  * `-1` - sets `no-store`, never save to cache
+
+Example:
+
+```hcl
+resource "cloudflare_page_rule" "test" {
+	zone_id = var.cloudflare_zone_id
+	target = "${var.cloudflare_zone}/app/*"
+	priority = 1
+
+	actions {
+		cache_ttl_by_status {
+			codes = "200-299"
+			ttl = 300
+		}
+		cache_ttl_by_status {
+			codes = "300-399"
+			ttl = 60
+		}
+		cache_ttl_by_status {
+			codes = "400-403"
+			ttl = -1
+		}
+		cache_ttl_by_status {
+			codes = "404"
+			ttl = 30
+		}
+		cache_ttl_by_status {
+			codes = "405-499"
+			ttl = -1
+		}
+		cache_ttl_by_status {
+			codes = "500-599"
+			ttl = 0
+		}
+	}
 }
 ```
 
