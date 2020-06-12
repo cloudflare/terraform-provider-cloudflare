@@ -1,9 +1,9 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
-	"regexp"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -65,25 +65,20 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	zones, err := client.ListZones()
+	zoneFilter := cloudflare.WithZoneFilters(
+		fmt.Sprintf("contains:%s", filter.name),
+		"",
+		filter.status,
+	)
+
+	zones, err := client.ListZonesContext(context.TODO(), zoneFilter)
 	if err != nil {
 		return fmt.Errorf("error listing Zone: %s", err)
 	}
 
 	zoneDetails := make([]interface{}, 0)
-	for _, v := range zones {
-
-		if filter.name != nil {
-			if !filter.name.Match([]byte(v.Name)) {
-				continue
-			}
-		}
-
+	for _, v := range zones.Result {
 		if filter.paused != v.Paused {
-			continue
-		}
-
-		if filter.status != "" && filter.status != v.Status {
 			continue
 		}
 
@@ -109,12 +104,7 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 	m := cfg[0].(map[string]interface{})
 	name, ok := m["name"]
 	if ok {
-		match, err := regexp.Compile(name.(string))
-		if err != nil {
-			return nil, err
-		}
-
-		filter.name = match
+		filter.name = name.(string)
 	}
 
 	paused, ok := m["paused"]
@@ -131,7 +121,7 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 }
 
 type searchFilter struct {
-	name   *regexp.Regexp
+	name   string
 	status string
 	paused bool
 }
