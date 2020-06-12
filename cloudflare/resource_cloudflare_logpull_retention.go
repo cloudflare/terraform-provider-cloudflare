@@ -52,7 +52,7 @@ func resourceCloudflareLogpullRetentionRead(d *schema.ResourceData, meta interfa
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	logpullConf, err := client.SetLogpullRetentionFlag(zoneID)
+	logpullConf, err := client.GetLogpullRetentionFlag(zoneID)
 	if err != nil {
 		return fmt.Errorf("error getting Logpull Retention for zone ID %q: %s", zoneID, err)
 	}
