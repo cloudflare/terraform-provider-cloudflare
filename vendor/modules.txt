@@ -56,7 +56,7 @@ github.com/aws/aws-sdk-go/private/protocol/query/queryutil
 github.com/bgentry/go-netrc/netrc
 # github.com/bgentry/speakeasy v0.1.0
 github.com/bgentry/speakeasy
-# github.com/cloudflare/cloudflare-go v0.11.7
+# github.com/cloudflare/cloudflare-go v0.12.0
 github.com/cloudflare/cloudflare-go
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
@@ -269,7 +269,7 @@ golang.org/x/crypto/openpgp/elgamal
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
-# golang.org/x/net v0.0.0-20200425230154-ff2c4b7c35a0
+# golang.org/x/net v0.0.0-20200602114024-627f9648deb9
 golang.org/x/net/idna
 golang.org/x/net/context
 golang.org/x/net/trace
