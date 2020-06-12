@@ -1,11 +1,14 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -24,17 +27,19 @@ func testSweepCloudflareZones(r string) error {
 		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
 	}
 
-	zones, zoneErr := client.ListZones()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneFilter := cloudflare.WithZoneFilters("", accountID, "")
+	zones, zoneErr := client.ListZonesContext(context.TODO(), zoneFilter)
 	if zoneErr != nil {
 		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
 	}
 
-	if len(zones) == 0 {
+	if len(zones.Result) == 0 {
 		log.Print("[DEBUG] No Cloudflare Zones to sweep")
 		return nil
 	}
 
-	for _, zone := range zones {
+	for _, zone := range zones.Result {
 		// Don't try and sweep the static domains.
 		if zone.Name == "terraform.cfapi.net" || zone.Name == "terraform2.cfapi.net" {
 			continue
