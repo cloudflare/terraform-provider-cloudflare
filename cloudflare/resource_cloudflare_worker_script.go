@@ -27,10 +27,35 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-
 			"content": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"binding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"kv_namespace_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"plain_text": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"secret_text": {
+							Type:      schema.TypeString,
+							Sensitive: true,
+							Optional:  true,
+						},
+					},
+				},
+				Set: resourceCloudflareWorkerScriptBindingHash,
 			},
 			"kv_namespace_binding": {
 				Type:     schema.TypeSet,
@@ -51,6 +76,28 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 			},
 		},
 	}
+}
+
+func resourceCloudflareWorkerScriptBindingHash(v interface{}) int {
+	m := v.(map[string]interface{})
+	name := m["name"].(string)
+
+	kvNamespaceID, ok := m["kv_namespace_id"]
+	if ok {
+		return hashcode.String(fmt.Sprintf("%s-%s", name, kvNamespaceID.(string)))
+	}
+
+	plainText, ok := m["plain_text"]
+	if ok {
+		return hashcode.String(fmt.Sprintf("%s-%s", name, plainText.(string)))
+	}
+
+	secretText, ok := m["secret_text"]
+	if ok {
+		return hashcode.String(fmt.Sprintf("%s-%s", name, secretText.(string)))
+	}
+
+	return 0
 }
 
 func resourceCloudflareWorkerScriptKvNamespaceBindingHash(v interface{}) int {
@@ -96,13 +143,43 @@ func getWorkerScriptBindings(scriptName string, client *cloudflare.API) (ScriptB
 	return bindings, nil
 }
 
-func parseWorkerKvNamespaceBindings(d *schema.ResourceData, bindings ScriptBindings) {
+func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
+	for _, rawData := range d.Get("binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = parseWorkerBinding(data)
+	}
+
 	for _, rawData := range d.Get("kv_namespace_binding").(*schema.Set).List() {
 		data := rawData.(map[string]interface{})
 		bindings[data["name"].(string)] = cloudflare.WorkerKvNamespaceBinding{
 			NamespaceID: data["namespace_id"].(string),
 		}
 	}
+}
+
+func parseWorkerBinding(data map[string]interface{}) cloudflare.WorkerBinding {
+	kvNamespaceID, ok := data["kv_namespace_id"]
+	if ok {
+		return cloudflare.WorkerKvNamespaceBinding{
+			NamespaceID: kvNamespaceID.(string),
+		}
+	}
+
+	plainText, ok := data["plain_text"]
+	if ok {
+		return cloudflare.WorkerPlainTextBinding{
+			Text: plainText.(string),
+		}
+	}
+
+	secretText, ok := data["secret_text"]
+	if ok {
+		return cloudflare.WorkerSecretTextBinding{
+			Text: secretText.(string),
+		}
+	}
+
+	return nil
 }
 
 func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface{}) error {
@@ -128,7 +205,7 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 
 	bindings := make(ScriptBindings)
 
-	parseWorkerKvNamespaceBindings(d, bindings)
+	parseWorkerBindings(d, bindings)
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
@@ -163,7 +240,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		}
 
 		return errors.Wrap(err,
-			fmt.Sprintf("Error reading worker script from API for resouce %+v", &scriptData.Params))
+			fmt.Sprintf("Error reading worker script from API for resource %+v", &scriptData.Params))
 	}
 
 	bindings, err := getWorkerScriptBindings(d.Get("name").(string), client)
@@ -171,24 +248,34 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	kvNamespaceBindings := &schema.Set{
-		F: resourceCloudflareWorkerScriptKvNamespaceBindingHash,
+	workerBindings := &schema.Set{
+		F: resourceCloudflareWorkerScriptBindingHash,
 	}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
 		case cloudflare.WorkerKvNamespaceBinding:
-			kvNamespaceBindings.Add(map[string]interface{}{
-				"name":         name,
-				"namespace_id": v.NamespaceID,
+			workerBindings.Add(map[string]interface{}{
+				"name":            name,
+				"kv_namespace_id": v.NamespaceID,
+			})
+		case cloudflare.WorkerPlainTextBinding:
+			workerBindings.Add(map[string]interface{}{
+				"name":       name,
+				"plain_text": v.Text,
+			})
+		case cloudflare.WorkerSecretTextBinding:
+			workerBindings.Add(map[string]interface{}{
+				"name":        name,
+				"secret_text": v.Text,
 			})
 		}
 	}
 
 	_ = d.Set("content", r.Script)
 
-	if err := d.Set("kv_namespace_binding", kvNamespaceBindings); err != nil {
-		return fmt.Errorf("cannot set kv_namespace bindings for firewall policy (%s): %v", d.Id(), err)
+	if err := d.Set("binding", workerBindings); err != nil {
+		return fmt.Errorf("cannot set bindings (%s): %v", d.Id(), err)
 	}
 
 	return nil
@@ -211,7 +298,7 @@ func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface
 
 	bindings := make(ScriptBindings)
 
-	parseWorkerKvNamespaceBindings(d, bindings)
+	parseWorkerBindings(d, bindings)
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,

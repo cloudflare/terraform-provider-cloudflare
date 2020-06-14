@@ -47,6 +47,14 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"KV_NAMESPACE", "PLAIN_TEXT", "SECRET_TEXT"}),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "content", scriptContent2),
+				),
+			},
+			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateKvNamespaceBinding(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{rnd, fmt.Sprintf("%s-copy", rnd)}),
@@ -74,10 +82,37 @@ resource "cloudflare_worker_script" "%[1]s" {
 }`, rnd, scriptContent2)
 }
 
+func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_workers_kv_namespace" "%[1]s" {
+  title = "%[1]s"
+}
+
+resource "cloudflare_worker_script" "%[1]s" {
+  name = "%[1]s"
+  content = "%[2]s"
+
+  binding {
+    name = "KV_NAMESPACE"
+    kv_namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
+  }
+
+  binding {
+    name = "PLAIN_TEXT"
+    plain_text = "%[1]s"
+  }
+
+  binding {
+    name = "SECRET_TEXT"
+    secret_text = "%[1]s"
+  }
+}`, rnd, scriptContent2)
+}
+
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateKvNamespaceBinding(rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_workers_kv_namespace" "%[1]s" {
- title = "%[1]s"
+  title = "%[1]s"
 }
 
 resource "cloudflare_worker_script" "%[1]s" {
