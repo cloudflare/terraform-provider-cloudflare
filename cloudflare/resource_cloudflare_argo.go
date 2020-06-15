@@ -31,13 +31,11 @@ func resourceCloudflareArgo() *schema.Resource {
 			"tiered_caching": {
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-				Default:      "off",
 				Optional:     true,
 			},
 			"smart_routing": {
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-				Default:      "off",
 				Optional:     true,
 			},
 		},
@@ -50,22 +48,27 @@ func resourceCloudflareArgoRead(d *schema.ResourceData, meta interface{}) error 
 
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
-	tieredCaching, err := client.ArgoTieredCaching(zoneID)
-	if err != nil {
-		return errors.Wrap(err, "failed to get tiered caching setting")
-	}
-
-	smartRouting, err := client.ArgoSmartRouting(zoneID)
-	if err != nil {
-		return errors.Wrap(err, "failed to get smart routing setting")
-	}
-
 	checksum := stringChecksum(fmt.Sprintf("%s/argo", zoneID))
 	d.SetId(checksum)
-
 	d.Set("zone_id", zoneID)
-	d.Set("tiered_caching", tieredCaching.Value)
-	d.Set("smart_routing", smartRouting.Value)
+
+	if _, ok := d.GetOk("tiered_caching"); ok {
+		tieredCaching, err := client.ArgoTieredCaching(zoneID)
+		if err != nil {
+			return errors.Wrap(err, "failed to get tiered caching setting")
+		}
+
+		d.Set("tiered_caching", tieredCaching.Value)
+	}
+
+	if _, ok := d.GetOk("smart_routing"); ok {
+		smartRouting, err := client.ArgoSmartRouting(zoneID)
+		if err != nil {
+			return errors.Wrap(err, "failed to get smart routing setting")
+		}
+
+		d.Set("smart_routing", smartRouting.Value)
+	}
 
 	return nil
 }
@@ -76,17 +79,21 @@ func resourceCloudflareArgoUpdate(d *schema.ResourceData, meta interface{}) erro
 	tieredCaching := d.Get("tiered_caching").(string)
 	smartRouting := d.Get("smart_routing").(string)
 
-	argoSmartRouting, err := client.UpdateArgoSmartRouting(zoneID, smartRouting)
-	if err != nil {
-		return errors.Wrap(err, "failed to update smart routing setting")
+	if smartRouting != "" {
+		argoSmartRouting, err := client.UpdateArgoSmartRouting(zoneID, smartRouting)
+		if err != nil {
+			return errors.Wrap(err, "failed to update smart routing setting")
+		}
+		log.Printf("[DEBUG] Argo Smart Routing set to: %s", argoSmartRouting.Value)
 	}
-	log.Printf("[DEBUG] Argo Smart Routing set to: %s", argoSmartRouting.Value)
 
-	argoTieredCaching, err := client.UpdateArgoTieredCaching(zoneID, tieredCaching)
-	if err != nil {
-		return errors.Wrap(err, "failed to update tiered caching setting")
+	if tieredCaching != "" {
+		argoTieredCaching, err := client.UpdateArgoTieredCaching(zoneID, tieredCaching)
+		if err != nil {
+			return errors.Wrap(err, "failed to update tiered caching setting")
+		}
+		log.Printf("[DEBUG] Argo Tiered Caching set to: %s", argoTieredCaching.Value)
 	}
-	log.Printf("[DEBUG] Argo Tiered Caching set to: %s", argoTieredCaching.Value)
 
 	return resourceCloudflareArgoRead(d, meta)
 }
