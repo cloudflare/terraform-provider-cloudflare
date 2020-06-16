@@ -46,7 +46,7 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						resourceName, "ttl", "3600"),
 					resource.TestCheckResourceAttr(
-						resourceName, "metadata.%", "3"),
+						resourceName, "metadata.%", "4"),
 					resource.TestCheckResourceAttr(
 						resourceName, "metadata.auto_added", "false"),
 				),
