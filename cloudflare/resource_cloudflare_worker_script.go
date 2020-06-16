@@ -72,7 +72,8 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 						},
 					},
 				},
-				Set: resourceCloudflareWorkerScriptKvNamespaceBindingHash,
+				Set:        resourceCloudflareWorkerScriptKvNamespaceBindingHash,
+				Deprecated: "`kv_namespace_binding` has been deprecated in favour of using `binding.kv_namespace_id` instead.",
 			},
 		},
 	}
