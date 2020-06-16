@@ -6,10 +6,31 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/pkg/errors"
 )
+
+var bindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"kv_namespace_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"plain_text": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"secret_text": {
+			Type:      schema.TypeString,
+			Sensitive: true,
+			Optional:  true,
+		},
+	},
+}
 
 func resourceCloudflareWorkerScript() *schema.Resource {
 	return &schema.Resource{
@@ -34,28 +55,7 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 			"binding": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"kv_namespace_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"plain_text": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"secret_text": {
-							Type:      schema.TypeString,
-							Sensitive: true,
-							Optional:  true,
-						},
-					},
-				},
-				Set: resourceCloudflareWorkerScriptBindingHash,
+				Elem:     bindingResource,
 			},
 			"kv_namespace_binding": {
 				Type:     schema.TypeSet,
@@ -72,32 +72,10 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 						},
 					},
 				},
-				Set:        resourceCloudflareWorkerScriptKvNamespaceBindingHash,
 				Deprecated: "`kv_namespace_binding` has been deprecated in favour of using `binding.kv_namespace_id` instead.",
 			},
 		},
 	}
-}
-
-func resourceCloudflareWorkerScriptBindingHash(v interface{}) int {
-	m := v.(map[string]interface{})
-	name := m["name"].(string)
-	if v := m["kv_namespace_id"].(string); v != "" {
-		return hashcode.String(fmt.Sprintf("kv_namespace_id-%s-%s", name, v))
-	}
-	if v := m["plain_text"].(string); v != "" {
-		return hashcode.String(fmt.Sprintf("plain_text-%s-%s", name, v))
-	}
-	if v := m["secret_text"].(string); v != "" {
-		return hashcode.String(fmt.Sprintf("secret_text-%s-%s", name, v))
-	}
-	return 0
-}
-
-func resourceCloudflareWorkerScriptKvNamespaceBindingHash(v interface{}) int {
-	m := v.(map[string]interface{})
-
-	return hashcode.String(fmt.Sprintf("%s-%s", m["name"].(string), m["namespace_id"].(string)))
 }
 
 type ScriptData struct {
@@ -247,7 +225,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 	}
 
 	workerBindings := &schema.Set{
-		F: resourceCloudflareWorkerScriptBindingHash,
+		F: schema.HashResource(bindingResource),
 	}
 
 	for name, binding := range bindings {
