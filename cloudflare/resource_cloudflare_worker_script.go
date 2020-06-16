@@ -81,22 +81,15 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 func resourceCloudflareWorkerScriptBindingHash(v interface{}) int {
 	m := v.(map[string]interface{})
 	name := m["name"].(string)
-
-	kvNamespaceID, ok := m["kv_namespace_id"]
-	if ok {
-		return hashcode.String(fmt.Sprintf("%s-%s", name, kvNamespaceID.(string)))
+	if v := m["kv_namespace_id"].(string); v != "" {
+		return hashcode.String(fmt.Sprintf("%s-%s", name, v))
 	}
-
-	plainText, ok := m["plain_text"]
-	if ok {
-		return hashcode.String(fmt.Sprintf("%s-%s", name, plainText.(string)))
+	if v := m["plain_text"].(string); v != "" {
+		return hashcode.String(fmt.Sprintf("%s-%s", name, v))
 	}
-
-	secretText, ok := m["secret_text"]
-	if ok {
-		return hashcode.String(fmt.Sprintf("%s-%s", name, secretText.(string)))
+	if v := m["secret_text"].(string); v != "" {
+		return hashcode.String(fmt.Sprintf("%s-%s", name, v))
 	}
-
 	return 0
 }
 
@@ -158,27 +151,21 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 }
 
 func parseWorkerBinding(data map[string]interface{}) cloudflare.WorkerBinding {
-	kvNamespaceID, ok := data["kv_namespace_id"]
-	if ok {
+	if v := data["kv_namespace_id"].(string); v != "" {
 		return cloudflare.WorkerKvNamespaceBinding{
-			NamespaceID: kvNamespaceID.(string),
+			NamespaceID: v,
 		}
 	}
-
-	plainText, ok := data["plain_text"]
-	if ok {
+	if v := data["plain_text"].(string); v != "" {
 		return cloudflare.WorkerPlainTextBinding{
-			Text: plainText.(string),
+			Text: v,
 		}
 	}
-
-	secretText, ok := data["secret_text"]
-	if ok {
+	if v := data["secret_text"].(string); v != "" {
 		return cloudflare.WorkerSecretTextBinding{
-			Text: secretText.(string),
+			Text: v,
 		}
 	}
-
 	return nil
 }
 
