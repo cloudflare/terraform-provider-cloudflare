@@ -83,13 +83,13 @@ func resourceCloudflareWorkerScriptBindingHash(v interface{}) int {
 	m := v.(map[string]interface{})
 	name := m["name"].(string)
 	if v := m["kv_namespace_id"].(string); v != "" {
-		return hashcode.String(fmt.Sprintf("%s-%s", name, v))
+		return hashcode.String(fmt.Sprintf("kv_namespace_id-%s-%s", name, v))
 	}
 	if v := m["plain_text"].(string); v != "" {
-		return hashcode.String(fmt.Sprintf("%s-%s", name, v))
+		return hashcode.String(fmt.Sprintf("plain_text-%s-%s", name, v))
 	}
 	if v := m["secret_text"].(string); v != "" {
-		return hashcode.String(fmt.Sprintf("%s-%s", name, v))
+		return hashcode.String(fmt.Sprintf("secret_text-%s-%s", name, v))
 	}
 	return 0
 }
@@ -137,10 +137,15 @@ func getWorkerScriptBindings(scriptName string, client *cloudflare.API) (ScriptB
 	return bindings, nil
 }
 
-func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
+func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) error {
 	for _, rawData := range d.Get("binding").(*schema.Set).List() {
 		data := rawData.(map[string]interface{})
-		bindings[data["name"].(string)] = parseWorkerBinding(data)
+		name := data["name"].(string)
+		binding, err := parseWorkerBinding(data, name)
+		if err != nil {
+			return err
+		}
+		bindings[name] = binding
 	}
 
 	for _, rawData := range d.Get("kv_namespace_binding").(*schema.Set).List() {
@@ -149,25 +154,27 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			NamespaceID: data["namespace_id"].(string),
 		}
 	}
+
+	return nil
 }
 
-func parseWorkerBinding(data map[string]interface{}) cloudflare.WorkerBinding {
+func parseWorkerBinding(data map[string]interface{}, name string) (cloudflare.WorkerBinding, error) {
 	if v := data["kv_namespace_id"].(string); v != "" {
 		return cloudflare.WorkerKvNamespaceBinding{
 			NamespaceID: v,
-		}
+		}, nil
 	}
 	if v := data["plain_text"].(string); v != "" {
 		return cloudflare.WorkerPlainTextBinding{
 			Text: v,
-		}
+		}, nil
 	}
 	if v := data["secret_text"].(string); v != "" {
 		return cloudflare.WorkerSecretTextBinding{
 			Text: v,
-		}
+		}, nil
 	}
-	return nil
+	return nil, fmt.Errorf("unknown worker script binding type: %s", name)
 }
 
 func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface{}) error {
@@ -193,7 +200,10 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 
 	bindings := make(ScriptBindings)
 
-	parseWorkerBindings(d, bindings)
+	err = parseWorkerBindings(d, bindings)
+	if err != nil {
+		return err
+	}
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
@@ -245,22 +255,31 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		case cloudflare.WorkerKvNamespaceBinding:
 			workerBindings.Add(map[string]interface{}{
 				"name":            name,
+				"plain_text":      "",
+				"secret_text":     "",
 				"kv_namespace_id": v.NamespaceID,
 			})
 		case cloudflare.WorkerPlainTextBinding:
 			workerBindings.Add(map[string]interface{}{
-				"name":       name,
-				"plain_text": v.Text,
+				"name":            name,
+				"plain_text":      v.Text,
+				"secret_text":     "",
+				"kv_namespace_id": "",
 			})
 		case cloudflare.WorkerSecretTextBinding:
 			workerBindings.Add(map[string]interface{}{
-				"name":        name,
-				"secret_text": v.Text,
+				"name":            name,
+				"plain_text":      "",
+				"secret_text":     v.Text,
+				"kv_namespace_id": "",
 			})
 		}
 	}
 
-	_ = d.Set("content", r.Script)
+	err = d.Set("content", r.Script)
+	if err != nil {
+		return fmt.Errorf("cannot set content: %v", err)
+	}
 
 	if err := d.Set("binding", workerBindings); err != nil {
 		return fmt.Errorf("cannot set bindings (%s): %v", d.Id(), err)
@@ -286,7 +305,10 @@ func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface
 
 	bindings := make(ScriptBindings)
 
-	parseWorkerBindings(d, bindings)
+	err = parseWorkerBindings(d, bindings)
+	if err != nil {
+		return err
+	}
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
