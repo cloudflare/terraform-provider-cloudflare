@@ -119,9 +119,9 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) error 
 	for _, rawData := range d.Get("binding").(*schema.Set).List() {
 		data := rawData.(map[string]interface{})
 		name := data["name"].(string)
-		binding, err := parseWorkerBinding(data, name)
-		if err != nil {
-			return err
+		binding := parseWorkerBinding(data)
+		if binding == nil {
+			return fmt.Errorf("binding must specify `kv_namespace_id`, `plain_text` or `secret_text`: %s", name)
 		}
 		bindings[name] = binding
 	}
@@ -136,23 +136,35 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) error 
 	return nil
 }
 
-func parseWorkerBinding(data map[string]interface{}, name string) (cloudflare.WorkerBinding, error) {
+func parseWorkerBinding(data map[string]interface{}) cloudflare.WorkerBinding {
 	if v := data["kv_namespace_id"].(string); v != "" {
 		return cloudflare.WorkerKvNamespaceBinding{
 			NamespaceID: v,
-		}, nil
+		}
 	}
 	if v := data["plain_text"].(string); v != "" {
 		return cloudflare.WorkerPlainTextBinding{
 			Text: v,
-		}, nil
+		}
 	}
 	if v := data["secret_text"].(string); v != "" {
 		return cloudflare.WorkerSecretTextBinding{
 			Text: v,
-		}, nil
+		}
 	}
-	return nil, fmt.Errorf("unknown worker script binding type: %s", name)
+	return nil
+}
+
+func readExistingBinding(d *schema.ResourceData, bindingName string) cloudflare.WorkerBinding {
+	for _, rawData := range d.Get("binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		name := data["name"].(string)
+		if name != bindingName {
+			continue
+		}
+		return parseWorkerBinding(data)
+	}
+	return nil
 }
 
 func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface{}) error {
@@ -241,9 +253,17 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 				"plain_text": v.Text,
 			})
 		case cloudflare.WorkerSecretTextBinding:
+			text := v.Text
+			// Read `secret_text` from existing binding because the read response
+			// does not contain any `Text` value. Without this, the resource will
+			// always generate a change to update the worker script.
+			switch v := readExistingBinding(d, name).(type) {
+			case cloudflare.WorkerSecretTextBinding:
+				text = v.Text
+			}
 			workerBindings.Add(map[string]interface{}{
 				"name":        name,
-				"secret_text": v.Text,
+				"secret_text": text,
 			})
 		}
 	}
