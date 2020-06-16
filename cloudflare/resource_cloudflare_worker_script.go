@@ -233,23 +233,17 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		case cloudflare.WorkerKvNamespaceBinding:
 			workerBindings.Add(map[string]interface{}{
 				"name":            name,
-				"plain_text":      "",
-				"secret_text":     "",
 				"kv_namespace_id": v.NamespaceID,
 			})
 		case cloudflare.WorkerPlainTextBinding:
 			workerBindings.Add(map[string]interface{}{
-				"name":            name,
-				"plain_text":      v.Text,
-				"secret_text":     "",
-				"kv_namespace_id": "",
+				"name":       name,
+				"plain_text": v.Text,
 			})
 		case cloudflare.WorkerSecretTextBinding:
 			workerBindings.Add(map[string]interface{}{
-				"name":            name,
-				"plain_text":      "",
-				"secret_text":     v.Text,
-				"kv_namespace_id": "",
+				"name":        name,
+				"secret_text": v.Text,
 			})
 		}
 	}
