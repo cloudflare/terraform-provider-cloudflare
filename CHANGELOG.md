@@ -2,6 +2,10 @@
 
 * **New Resource:** `cloudflare_waf_override` ([#691](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/691))
 
+**Improvements**
+
+* `resource/cloudflare_page_rule`: Add support for `cache_ttl_by_status` ([#706](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/706)) 
+
 ## 2.7.0 (May 20, 2020)
 
 * **New Resource:** `cloudflare_byo_ip_prefix` ([#671](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/671))
