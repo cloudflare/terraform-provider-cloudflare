@@ -4,7 +4,13 @@
 
 **Improvements**
 
+* `resource/cloudflare_argo`: Allow `tiered_caching` and `smart_routing` to be toggled individually allowing for entitlement differences ([#703](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/703)) 
 * `resource/cloudflare_page_rule`: Add support for `cache_ttl_by_status` ([#706](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/706)) 
+
+**Fixes**
+
+* `resource/cloudflare_record`: Update `TestAccCloudflareRecord_LOC` test asserted value to use less precise floats and match the API responses ([#712](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/712))
+* `resource/cloudflare_record`: Update `TestAccCloudflareRecord_Basic` test `metadata` attributes to match updated API payload ([#713](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/713))
 
 ## 2.7.0 (May 20, 2020)
 
