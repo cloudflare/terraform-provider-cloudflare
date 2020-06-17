@@ -438,6 +438,30 @@ func TestAccCloudflarePageRuleCacheKeyFields2(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRuleCacheTTLByStatus(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
+	target := fmt.Sprintf("test-cache-ttl-by-status.%s", domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(name, &pageRule),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
@@ -767,6 +791,39 @@ resource "cloudflare_page_rule" "test" {
 }`, zoneID, target)
 }
 
+func testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "%[3]s" {
+	zone_id = "%[1]s"
+	target = "%[2]s"
+	actions {
+		cache_ttl_by_status {
+			codes = "200-299"
+			ttl = 300
+		}
+		cache_ttl_by_status {
+			codes = "300-399"
+			ttl = 60
+		}
+		cache_ttl_by_status {
+			codes = "400-403"
+			ttl = -1
+		}
+		cache_ttl_by_status {
+			codes = "404"
+			ttl = 30
+		}
+		cache_ttl_by_status {
+			codes = "405-499"
+			ttl = -1
+		}
+		cache_ttl_by_status {
+			codes = "500-599"
+			ttl = 0
+		}
+	}
+}`, zoneID, target, rnd)
+}
 func buildPageRuleConfig(resourceName string, actions string) string {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

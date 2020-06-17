@@ -438,6 +438,22 @@ func resourceCloudflarePageRule() *schema.Resource {
 								},
 							},
 						},
+						"cache_ttl_by_status": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"codes": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"ttl": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -746,6 +762,30 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 		value = []interface{}{output}
 		break
 
+	case pageRuleAction.ID == "cache_ttl_by_status":
+		output := make([]map[string]interface{}, 0)
+
+		for key, value := range pageRuleAction.Value.(map[string]interface{}) {
+			entry := map[string]interface{}{"codes": key}
+
+			switch value := value.(type) {
+			case float64:
+				entry["ttl"] = int32(value)
+			case string:
+				switch value {
+				case "no-cache":
+					entry["ttl"] = 0
+				case "no-store":
+					entry["ttl"] = -1
+				}
+			}
+
+			output = append(output, entry)
+		}
+
+		value = output
+		break
+
 	default:
 		// User supplied ID is already validated, so this is always an internal error
 		err = fmt.Errorf("Unimplemented action ID %q - this is always an internal error", pageRuleAction.ID)
@@ -843,6 +883,21 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 				}
 
 				output[sectionID] = sectionOutput
+			}
+
+			pageRuleAction.Value = output
+		}
+	} else if id == "cache_ttl_by_status" {
+		cacheTTLActionSchema := value.(*schema.Set)
+
+		log.Printf("[DEBUG] cache_ttl_by_status action to be applied: %#v", cacheTTLActionSchema)
+
+		if cacheTTLActionSchema.Len() != 0 {
+			output := make(map[string]int)
+
+			for _, code := range cacheTTLActionSchema.List() {
+				code := code.(map[string]interface{})
+				output[code["codes"].(string)] = code["ttl"].(int)
 			}
 
 			pageRuleAction.Value = output
