@@ -442,6 +442,9 @@ func TestAccCloudflarePageRuleCacheTTLByStatus(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 	target := fmt.Sprintf("test-cache-ttl-by-status.%s", domain)
 
 	resource.Test(t, resource.TestCase{
@@ -450,9 +453,9 @@ func TestAccCloudflarePageRuleCacheTTLByStatus(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target),
+				Config: testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					testAccCheckCloudflarePageRuleExists(name, &pageRule),
 				),
 			},
 		},
@@ -788,11 +791,11 @@ resource "cloudflare_page_rule" "test" {
 }`, zoneID, target)
 }
 
-func testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target string) string {
+func testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "test" {
-	zone_id = "%s"
-	target = "%s"
+resource "cloudflare_page_rule" "%[3]s" {
+	zone_id = "%[1]s"
+	target = "%[2]s"
 	actions {
 		cache_ttl_by_status {
 			codes = "200-299"
@@ -819,7 +822,7 @@ resource "cloudflare_page_rule" "test" {
 			ttl = 0
 		}
 	}
-}`, zoneID, target)
+}`, zoneID, target, rnd)
 }
 func buildPageRuleConfig(resourceName string, actions string) string {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
