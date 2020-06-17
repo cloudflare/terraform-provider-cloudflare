@@ -63,12 +63,13 @@ github.com/davecgh/go-spew/spew
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
 # github.com/golang/protobuf v1.3.4
+github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/proto
+github.com/golang/protobuf/protoc-gen-go/descriptor
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-github.com/golang/protobuf/protoc-gen-go/descriptor
 # github.com/google/go-cmp v0.3.1
 github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
@@ -90,7 +91,7 @@ github.com/hashicorp/go-getter/helper/url
 github.com/hashicorp/go-hclog
 # github.com/hashicorp/go-multierror v1.0.0
 github.com/hashicorp/go-multierror
-# github.com/hashicorp/go-plugin v1.0.1
+# github.com/hashicorp/go-plugin v1.2.0
 github.com/hashicorp/go-plugin
 github.com/hashicorp/go-plugin/internal/plugin
 # github.com/hashicorp/go-safetemp v1.0.0
@@ -128,7 +129,7 @@ github.com/hashicorp/logutils
 github.com/hashicorp/terraform-config-inspect/tfconfig
 # github.com/hashicorp/terraform-json v0.4.0
 github.com/hashicorp/terraform-json
-# github.com/hashicorp/terraform-plugin-sdk v1.13.1
+# github.com/hashicorp/terraform-plugin-sdk v1.14.0
 github.com/hashicorp/terraform-plugin-sdk/plugin
 github.com/hashicorp/terraform-plugin-sdk/helper/hashcode
 github.com/hashicorp/terraform-plugin-sdk/helper/logging
@@ -327,10 +328,11 @@ google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/type/expr
 # google.golang.org/grpc v1.27.1
 google.golang.org/grpc
+google.golang.org/grpc/codes
 google.golang.org/grpc/credentials
 google.golang.org/grpc/health
 google.golang.org/grpc/health/grpc_health_v1
-google.golang.org/grpc/codes
+google.golang.org/grpc/reflection
 google.golang.org/grpc/status
 google.golang.org/grpc/backoff
 google.golang.org/grpc/balancer
@@ -362,6 +364,7 @@ google.golang.org/grpc/stats
 google.golang.org/grpc/tap
 google.golang.org/grpc/test/bufconn
 google.golang.org/grpc/credentials/internal
+google.golang.org/grpc/reflection/grpc_reflection_v1alpha
 google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
 google.golang.org/grpc/attributes
