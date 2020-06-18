@@ -101,3 +101,40 @@ func testAccCheckCloudflareCustomSSLExists(n string, customSSL *cloudflare.ZoneC
 		return nil
 	}
 }
+
+func TestFlattenCustomSSLOptionsOmitsEmptyGeoRestrictions(t *testing.T) {
+	customSSLOptions := cloudflare.ZoneCustomSSLOptions{
+		Certificate:     "cert",
+		PrivateKey:      "key",
+		BundleMethod:    "method",
+		GeoRestrictions: nil,
+		Type:            "type",
+	}
+
+	flattenedSettings := flattenCustomSSLOptions(customSSLOptions)
+	if _, ok := flattenedSettings["geo_restrictions"]; ok {
+		t.Error("Expected flattenCustomSSLOptions to omit geo_restrictions when nil")
+	}
+}
+
+func TestFlattenCustomSSLOptionsIncludesGeoRestrictions(t *testing.T) {
+	customSSLOptions := cloudflare.ZoneCustomSSLOptions{
+		Certificate:  "cert",
+		PrivateKey:   "key",
+		BundleMethod: "method",
+		GeoRestrictions: &cloudflare.ZoneCustomSSLGeoRestrictions{
+			Label: "label",
+		},
+		Type: "type",
+	}
+
+	flattenedSettings := flattenCustomSSLOptions(customSSLOptions)
+	geoRestrictions, ok := flattenedSettings["geo_restrictions"]
+	if !ok {
+		t.Error("Expected flattenCustomSSLOptions to include geo_restrictions when not nil")
+	}
+
+	if geoRestrictions != "label" {
+		t.Error("Expected value of geo_restrictions to match the Label property of provided ZoneCustomSSLGeoRestrictions struct")
+	}
+}
