@@ -10,24 +10,47 @@ import (
 	"github.com/pkg/errors"
 )
 
-var bindingResource = &schema.Resource{
+const concealedString = "**********************************"
+
+var kvNamespaceBindingResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"kv_namespace_id": {
+		"namespace_id": {
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
 		},
-		"plain_text": {
+	},
+}
+
+var plainTextBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
 		},
-		"secret_text": {
+		"text": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	},
+}
+
+var secretTextBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"text": {
 			Type:      schema.TypeString,
+			Required:  true,
 			Sensitive: true,
-			Optional:  true,
+			StateFunc: func(val interface{}) string {
+				return concealedString
+			},
 		},
 	},
 }
@@ -52,27 +75,20 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"binding": {
+			"plain_text_binding": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem:     bindingResource,
+				Elem:     plainTextBindingResource,
+			},
+			"secret_text_binding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     secretTextBindingResource,
 			},
 			"kv_namespace_binding": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"namespace_id": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
-				},
-				Deprecated: "`kv_namespace_binding` has been deprecated in favour of using `binding.kv_namespace_id` instead.",
+				Elem:     kvNamespaceBindingResource,
 			},
 		},
 	}
@@ -116,16 +132,6 @@ func getWorkerScriptBindings(scriptName string, client *cloudflare.API) (ScriptB
 }
 
 func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) error {
-	for _, rawData := range d.Get("binding").(*schema.Set).List() {
-		data := rawData.(map[string]interface{})
-		name := data["name"].(string)
-		binding := parseWorkerBinding(data)
-		if binding == nil {
-			return fmt.Errorf("binding must specify `kv_namespace_id`, `plain_text` or `secret_text`: %s", name)
-		}
-		bindings[name] = binding
-	}
-
 	for _, rawData := range d.Get("kv_namespace_binding").(*schema.Set).List() {
 		data := rawData.(map[string]interface{})
 		bindings[data["name"].(string)] = cloudflare.WorkerKvNamespaceBinding{
@@ -133,37 +139,20 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) error 
 		}
 	}
 
-	return nil
-}
-
-func parseWorkerBinding(data map[string]interface{}) cloudflare.WorkerBinding {
-	if v := data["kv_namespace_id"].(string); v != "" {
-		return cloudflare.WorkerKvNamespaceBinding{
-			NamespaceID: v,
-		}
-	}
-	if v := data["plain_text"].(string); v != "" {
-		return cloudflare.WorkerPlainTextBinding{
-			Text: v,
-		}
-	}
-	if v := data["secret_text"].(string); v != "" {
-		return cloudflare.WorkerSecretTextBinding{
-			Text: v,
-		}
-	}
-	return nil
-}
-
-func readExistingBinding(d *schema.ResourceData, bindingName string) cloudflare.WorkerBinding {
-	for _, rawData := range d.Get("binding").(*schema.Set).List() {
+	for _, rawData := range d.Get("plain_text_binding").(*schema.Set).List() {
 		data := rawData.(map[string]interface{})
-		name := data["name"].(string)
-		if name != bindingName {
-			continue
+		bindings[data["name"].(string)] = cloudflare.WorkerPlainTextBinding{
+			Text: data["text"].(string),
 		}
-		return parseWorkerBinding(data)
 	}
+
+	for _, rawData := range d.Get("secret_text_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerSecretTextBinding{
+			Text: data["text"].(string),
+		}
+	}
+
 	return nil
 }
 
@@ -236,45 +225,44 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	workerBindings := &schema.Set{
-		F: schema.HashResource(bindingResource),
-	}
+	kvNamespaceBindings := &schema.Set{F: schema.HashResource(kvNamespaceBindingResource)}
+	plainTextBindings := &schema.Set{F: schema.HashResource(plainTextBindingResource)}
+	secretTextBindings := &schema.Set{F: schema.HashResource(secretTextBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
 		case cloudflare.WorkerKvNamespaceBinding:
-			workerBindings.Add(map[string]interface{}{
+			kvNamespaceBindings.Add(map[string]interface{}{
 				"name":            name,
 				"kv_namespace_id": v.NamespaceID,
 			})
 		case cloudflare.WorkerPlainTextBinding:
-			workerBindings.Add(map[string]interface{}{
-				"name":       name,
-				"plain_text": v.Text,
+			plainTextBindings.Add(map[string]interface{}{
+				"name": name,
+				"text": v.Text,
 			})
 		case cloudflare.WorkerSecretTextBinding:
-			text := v.Text
-			// Read `secret_text` from existing binding because the read response
-			// does not contain any `Text` value. Without this, the resource will
-			// always generate a change to update the worker script.
-			switch v := readExistingBinding(d, name).(type) {
-			case cloudflare.WorkerSecretTextBinding:
-				text = v.Text
-			}
-			workerBindings.Add(map[string]interface{}{
-				"name":        name,
-				"secret_text": text,
+			secretTextBindings.Add(map[string]interface{}{
+				"name": name,
+				"text": v.Text,
 			})
 		}
 	}
 
-	err = d.Set("content", r.Script)
-	if err != nil {
+	if err := d.Set("content", r.Script); err != nil {
 		return fmt.Errorf("cannot set content: %v", err)
 	}
 
-	if err := d.Set("binding", workerBindings); err != nil {
-		return fmt.Errorf("cannot set bindings (%s): %v", d.Id(), err)
+	if err := d.Set("kv_namespace_binding", kvNamespaceBindings); err != nil {
+		return fmt.Errorf("cannot set kv namespace bindings (%s): %v", d.Id(), err)
+	}
+
+	if err := d.Set("plain_text_binding", plainTextBindings); err != nil {
+		return fmt.Errorf("cannot set plain text bindings (%s): %v", d.Id(), err)
+	}
+
+	if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
+		return fmt.Errorf("cannot set secret text bindings (%s): %v", d.Id(), err)
 	}
 
 	return nil
