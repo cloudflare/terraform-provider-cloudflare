@@ -49,7 +49,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"KV_NAMESPACE", "PLAIN_TEXT", "SECRET_TEXT"}),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -85,17 +85,17 @@ resource "cloudflare_worker_script" "%[1]s" {
   content = "%[2]s"
 
   kv_namespace_binding {
-    name         = "KV_NAMESPACE"
+    name         = "MY_KV_NAMESPACE"
     namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
   }
 
   plain_text_binding {
-    name = "PLAIN_TEXT"
+    name = "MY_PLAIN_TEXT"
     text = "%[1]s"
   }
 
   secret_text_binding {
-    name = "SECRET_TEXT"
+    name = "MY_SECRET_TEXT"
     text = "%[1]s"
   }
 }`, rnd, scriptContent2)

@@ -23,18 +23,18 @@ resource "cloudflare_worker_script" "my_script" {
   content = file("script.js")
 
   kv_namespace_binding {
-    name = "DB"
+    name         = "MY_EXAMPLE_KV_NAMESPACE"
     namespace_id = cloudflare_workers_kv_namespace.my_namespace.id
   }
 
   plain_text_binding {
-    name = "ENVIRONMENT"
-    text = "staging"
+    name = "MY_EXAMPLE_PLAIN_TEXT"
+    text = "foobar"
   }
 
   secret_text_binding {
-    name = "SENTRY_DSN"
-    text = var.sentry_dsn
+    name = "MY_EXAMPLE_SECRET_TEXT"
+    text = var.secret_foo_value
   }
 }
 ```
