@@ -21,10 +21,20 @@ resource "cloudflare_workers_kv_namespace" "my_namespace" {
 resource "cloudflare_worker_script" "my_script" {
   name = "script_1"
   content = file("script.js")
-  
+
   kv_namespace_binding {
-    name = "my_binding"
+    name         = "MY_EXAMPLE_KV_NAMESPACE"
     namespace_id = cloudflare_workers_kv_namespace.my_namespace.id
+  }
+
+  plain_text_binding {
+    name = "MY_EXAMPLE_PLAIN_TEXT"
+    text = "foobar"
+  }
+
+  secret_text_binding {
+    name = "MY_EXAMPLE_SECRET_TEXT"
+    text = var.secret_foo_value
   }
 }
 ```
@@ -36,10 +46,20 @@ The following arguments are supported:
 * `name` - (Required) The name for the script.
 * `content` - (Required) The script content.
 
-**kv_namespace_binding** (optional) block supports:
+**kv_namespace_binding** supports:
 
-* `name` - (Required) The name for the binding.
-* `namespace_id` - (Required) ID of KV namespace.
+* `name` - (Required) The global variable for the binding in your Worker code.
+* `kv_namespace_id` - (Required) ID of the KV namespace you want to use.
+
+**plain_text_binding** supports:
+
+* `name` - (Required) The global variable for the binding in your Worker code.
+* `text` - (Required) The plain text you want to store.
+
+**secret_text_binding** supports:
+
+* `name` - (Required) The global variable for the binding in your Worker code.
+* `text` - (Required) The secret text you want to store.
 
 ## Import
 

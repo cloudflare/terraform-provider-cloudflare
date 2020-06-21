@@ -6,10 +6,49 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/pkg/errors"
 )
+
+var kvNamespaceBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"namespace_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	},
+}
+
+var plainTextBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"text": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	},
+}
+
+var secretTextBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"text": {
+			Type:      schema.TypeString,
+			Required:  true,
+			Sensitive: true,
+		},
+	},
+}
 
 func resourceCloudflareWorkerScript() *schema.Resource {
 	return &schema.Resource{
@@ -27,36 +66,27 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-
 			"content": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"plain_text_binding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     plainTextBindingResource,
+			},
+			"secret_text_binding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     secretTextBindingResource,
+			},
 			"kv_namespace_binding": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"namespace_id": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
-				},
-				Set: resourceCloudflareWorkerScriptKvNamespaceBindingHash,
+				Elem:     kvNamespaceBindingResource,
 			},
 		},
 	}
-}
-
-func resourceCloudflareWorkerScriptKvNamespaceBindingHash(v interface{}) int {
-	m := v.(map[string]interface{})
-
-	return hashcode.String(fmt.Sprintf("%s-%s", m["name"].(string), m["namespace_id"].(string)))
 }
 
 type ScriptData struct {
@@ -96,11 +126,25 @@ func getWorkerScriptBindings(scriptName string, client *cloudflare.API) (ScriptB
 	return bindings, nil
 }
 
-func parseWorkerKvNamespaceBindings(d *schema.ResourceData, bindings ScriptBindings) {
+func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 	for _, rawData := range d.Get("kv_namespace_binding").(*schema.Set).List() {
 		data := rawData.(map[string]interface{})
 		bindings[data["name"].(string)] = cloudflare.WorkerKvNamespaceBinding{
 			NamespaceID: data["namespace_id"].(string),
+		}
+	}
+
+	for _, rawData := range d.Get("plain_text_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerPlainTextBinding{
+			Text: data["text"].(string),
+		}
+	}
+
+	for _, rawData := range d.Get("secret_text_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerSecretTextBinding{
+			Text: data["text"].(string),
 		}
 	}
 }
@@ -128,7 +172,7 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 
 	bindings := make(ScriptBindings)
 
-	parseWorkerKvNamespaceBindings(d, bindings)
+	parseWorkerBindings(d, bindings)
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
@@ -163,17 +207,21 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		}
 
 		return errors.Wrap(err,
-			fmt.Sprintf("Error reading worker script from API for resouce %+v", &scriptData.Params))
+			fmt.Sprintf("Error reading worker script from API for resource %+v", &scriptData.Params))
 	}
+
+	existingBindings := make(ScriptBindings)
+
+	parseWorkerBindings(d, existingBindings)
 
 	bindings, err := getWorkerScriptBindings(d.Get("name").(string), client)
 	if err != nil {
 		return err
 	}
 
-	kvNamespaceBindings := &schema.Set{
-		F: resourceCloudflareWorkerScriptKvNamespaceBindingHash,
-	}
+	kvNamespaceBindings := &schema.Set{F: schema.HashResource(kvNamespaceBindingResource)}
+	plainTextBindings := &schema.Set{F: schema.HashResource(plainTextBindingResource)}
+	secretTextBindings := &schema.Set{F: schema.HashResource(secretTextBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -182,13 +230,38 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 				"name":         name,
 				"namespace_id": v.NamespaceID,
 			})
+		case cloudflare.WorkerPlainTextBinding:
+			plainTextBindings.Add(map[string]interface{}{
+				"name": name,
+				"text": v.Text,
+			})
+		case cloudflare.WorkerSecretTextBinding:
+			value := v.Text
+			switch v := existingBindings[name].(type) {
+			case cloudflare.WorkerSecretTextBinding:
+				value = v.Text
+			}
+			secretTextBindings.Add(map[string]interface{}{
+				"name": name,
+				"text": value,
+			})
 		}
 	}
 
-	_ = d.Set("content", r.Script)
+	if err := d.Set("content", r.Script); err != nil {
+		return fmt.Errorf("cannot set content: %v", err)
+	}
 
 	if err := d.Set("kv_namespace_binding", kvNamespaceBindings); err != nil {
-		return fmt.Errorf("cannot set kv_namespace bindings for firewall policy (%s): %v", d.Id(), err)
+		return fmt.Errorf("cannot set kv namespace bindings (%s): %v", d.Id(), err)
+	}
+
+	if err := d.Set("plain_text_binding", plainTextBindings); err != nil {
+		return fmt.Errorf("cannot set plain text bindings (%s): %v", d.Id(), err)
+	}
+
+	if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
+		return fmt.Errorf("cannot set secret text bindings (%s): %v", d.Id(), err)
 	}
 
 	return nil
@@ -211,7 +284,7 @@ func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface
 
 	bindings := make(ScriptBindings)
 
-	parseWorkerKvNamespaceBindings(d, bindings)
+	parseWorkerBindings(d, bindings)
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
