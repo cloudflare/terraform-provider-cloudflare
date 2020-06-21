@@ -6,7 +6,7 @@
 
 * `resource/cloudflare_argo`: Allow `tiered_caching` and `smart_routing` to be toggled individually allowing for entitlement differences ([#703](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/703)) 
 * `resource/cloudflare_page_rule`: Add support for `cache_ttl_by_status` ([#706](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/706)) 
-* `resource/cloudflare_worker_script `: Add support for `plain_text` and `secret_text` bindings ([#710](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/710)) 
+* `resource/cloudflare_worker_script`: Add support for `plain_text` and `secret_text` bindings ([#710](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/710)) 
 
 **Fixes**
 
