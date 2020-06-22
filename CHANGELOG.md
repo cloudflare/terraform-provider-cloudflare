@@ -1,4 +1,4 @@
-## 2.8.0 (Unreleased)
+## 2.8.0 (June 22, 2020)
 
 * **New Resource:** `cloudflare_waf_override` ([#691](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/691))
 
