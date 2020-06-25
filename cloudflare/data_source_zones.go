@@ -134,7 +134,6 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 	match, ok := m["match"]
 	if ok {
 		match, err := regexp.Compile(match.(string))
-		filter.regexValue = match
 		if err != nil {
 			return nil, err
 		}
