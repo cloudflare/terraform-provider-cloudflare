@@ -19,7 +19,7 @@ Given you have the following zones in Cloudflare.
 - not-example.com
 
 ```hcl
-# Look for a single domain that you know exists using an exact match.
+# Look for a single zone that you know exists using an exact match.
 # API request will be for zones?name=example.com. Will not match not-example.com
 # or example.net.
 data "cloudflare_zones" "example" {
@@ -44,7 +44,7 @@ data "cloudflare_zones" "example" {
 ```hcl
 # Look for all zones which include "example" but start with "not-".
 # API request will be for zones?name=contains:example. Will perform client side
-# filtering using the provided regex and will only match the single domain,
+# filtering using the provided regex and will only match the single zone,
 # not-example.com.
 data "cloudflare_zones" "example" {
   filter {
