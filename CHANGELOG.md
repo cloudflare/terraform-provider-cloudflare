@@ -1,4 +1,10 @@
 ## 2.9.0 (Unreleased)
+
+**Improvements**
+
+* `resource/cloudflare_custom_ssl`: Allow `geo_restrictions` to be `nil` and not included in the request payload ([#714](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/714)) 
+ 
+
 ## 2.8.0 (June 22, 2020)
 
 * **New Resource:** `cloudflare_waf_override` ([#691](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/691))
