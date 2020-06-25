@@ -44,7 +44,8 @@ data "cloudflare_zones" "example" {
 ```hcl
 # Look for all zones which include "example" but start with "not-".
 # API request will be for zones?name=contains:example. Will perform client side
-# filtering using the provided regex and will only match one domain.
+# filtering using the provided regex and will only match the single domain,
+# not-example.com.
 data "cloudflare_zones" "example" {
   filter {
     name        = "example"
