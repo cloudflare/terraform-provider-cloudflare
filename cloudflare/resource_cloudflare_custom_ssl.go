@@ -352,10 +352,14 @@ func expandToZoneCustomSSLOptions(d *schema.ResourceData) (cloudflare.ZoneCustom
 
 func flattenCustomSSLOptions(sslopt cloudflare.ZoneCustomSSLOptions) map[string]interface{} {
 	data := map[string]interface{}{
-		"certificate":      sslopt.Certificate,
-		"private_key":      sslopt.PrivateKey,
-		"bundle_method":    sslopt.BundleMethod,
-		"geo_restrictions": sslopt.GeoRestrictions.Label,
+		"certificate":   sslopt.Certificate,
+		"private_key":   sslopt.PrivateKey,
+		"bundle_method": sslopt.BundleMethod,
 	}
+
+	if sslopt.GeoRestrictions != nil {
+		data["geo_restrictions"] = sslopt.GeoRestrictions.Label
+	}
+
 	return data
 }
