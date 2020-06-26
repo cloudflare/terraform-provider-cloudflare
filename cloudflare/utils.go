@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	errors "github.com/pkg/errors"
 )
@@ -136,4 +137,17 @@ func stringFromBool(status bool) string {
 		return "on"
 	}
 	return "off"
+}
+
+func getAccountIDFromZoneID(d *schema.ResourceData, client *cloudflare.API) (string, error) {
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		zoneID := d.Get("zone_id").(string)
+		zone, err := client.ZoneDetails(zoneID)
+		if err != nil {
+			return "", fmt.Errorf("error retrieving zone for zone_id %q: %s", zoneID, err)
+		}
+		accountID = zone.Account.ID
+	}
+	return accountID, nil
 }
