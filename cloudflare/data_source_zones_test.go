@@ -61,15 +61,22 @@ func testSweepCloudflareZones(r string) error {
 }
 
 func TestAccCloudflareZonesMatchName(t *testing.T) {
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareZonesConfigMatchName(),
+				Config: testAccCloudflareZonesConfigMatchName(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZonesDataSourceID("data.cloudflare_zones.examples_domains"),
-					resource.TestCheckResourceAttr("data.cloudflare_zones.examples_domains", "zones.#", "2"),
+					testAccCheckCloudflareZonesDataSourceID(name),
+					resource.TestCheckResourceAttr(name, "filter.0.name", "baa-com.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "filter.0.paused", "false"),
+					resource.TestCheckResourceAttr(name, "zones.#", "1"),
 				),
 			},
 		},
@@ -77,33 +84,63 @@ func TestAccCloudflareZonesMatchName(t *testing.T) {
 }
 
 func TestAccCloudflareZonesMatchPaused(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareZonesConfigMatchPaused(),
+				Config: testAccCloudflareZonesConfigMatchPaused(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZonesDataSourceID("data.cloudflare_zones.examples_domains"),
-					resource.TestCheckResourceAttrSet("data.cloudflare_zones.examples_domains", "zones.#"),
+					resource.TestCheckResourceAttr(name, "filter.0.name", "baa-org.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "filter.0.paused", "true"),
+					resource.TestCheckResourceAttr(name, "zones.#", "1"),
 				),
 			},
 		},
 	})
 }
 
-func TestAccCloudflareZonesMatchStatus(t *testing.T) {
+func TestAccCloudflareZonesMatchRegexFilter(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareZonesConfigMatchStatus(),
+				Config: testAccCloudflareZonesConfigMatchRegex(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZonesDataSourceID("data.cloudflare_zones.examples_domains"),
-					testAccCheckCloudflareZonesReturned("data.cloudflare_zones.examples_domains", "zones.#", func(i int) bool {
-						return i > 0
-					}),
+					testAccCheckCloudflareZonesDataSourceID(name),
+					resource.TestCheckResourceAttr(name, "filter.0.match", "baa-*"),
+					resource.TestCheckResourceAttr(name, "zones.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareZonesMatchFuzzyLookup(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareZonesMatchFuzzyLookup(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareZonesDataSourceID(name),
+					resource.TestCheckResourceAttr(name, "filter.0.name", "foo-net"),
+					resource.TestCheckResourceAttr(name, "filter.0.lookup_type", "contains"),
+					resource.TestCheckResourceAttr(name, "zones.#", "1"),
 				),
 			},
 		},
@@ -145,43 +182,63 @@ func testAccCheckCloudflareZonesReturned(n string, a string, check func(int) boo
 	}
 }
 
-func testAccCloudflareZonesConfigMatchName() string {
+func testAccCloudflareZonesConfigMatchName(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_zones" "examples_domains" {
+data "cloudflare_zones" "%[2]s" {
   filter {
-    name   = "baa.*"
-    paused = "${cloudflare_zone.foo_net.paused}" // true
+    name   = "baa-com.cfapi.net"
+    // This is an ordering fix to ensure that the test suite doesn't assert
+    // state before all the resources are available.
+    paused = "${cloudflare_zone.foo_net.paused}"
   }
 }
 
-%s
-`, testZones)
+%[1]s
+`, testZones, rnd)
 }
 
-func testAccCloudflareZonesConfigMatchPaused() string {
+func testAccCloudflareZonesConfigMatchPaused(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_zones" "examples_domains" {
+data "cloudflare_zones" "%[2]s" {
   filter {
-    name   = "baa.*"
-    paused = "${cloudflare_zone.baa_com.paused}" // false
+    name   = "baa-org.cfapi.net"
+    paused = "${cloudflare_zone.baa_org.paused}"
   }
 }
 
-%s
-`, testZones)
+%[1]s
+`, testZones, rnd)
 }
 
-func testAccCloudflareZonesConfigMatchStatus() string {
+func testAccCloudflareZonesConfigMatchRegex(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_zones" "examples_domains" {
+data "cloudflare_zones" "%[2]s" {
   filter {
-    status = "active"
-    paused = "${cloudflare_zone.baa_com.paused}" // false
+    match  = "baa-*"
+    // This is an ordering fix to ensure that the test suite doesn't assert
+    // state before all the resources are available.
+    paused = "${cloudflare_zone.foo_net.paused}"
   }
 }
 
-%s
-`, testZones)
+%[1]s
+`, testZones, rnd)
+}
+
+func testAccCloudflareZonesMatchFuzzyLookup(rnd string) string {
+	return fmt.Sprintf(`
+data "cloudflare_zones" "%[2]s" {
+  filter {
+    name = "foo-net"
+    lookup_type = "contains"
+    // This is an ordering fix to ensure that the test suite doesn't assert
+    // state before all the resources are available.
+    paused = "${cloudflare_zone.foo_net.paused}"
+  }
+}
+
+%[1]s
+`, testZones, rnd)
 }
 
 const testZones = `resource "cloudflare_zone" "baa_com" {
@@ -204,7 +261,7 @@ resource "cloudflare_zone" "baa_net" {
 
 resource "cloudflare_zone" "foo_net" {
   zone       = "foo-net.cfapi.net"
-  paused     = true
+  paused     = false
   jump_start = false
   depends_on = ["cloudflare_zone.baa_net", "cloudflare_zone.baa_org", "cloudflare_zone.baa_com"]
 }`

@@ -10,17 +10,64 @@ description: |-
 
 Use this data source to look up [Zone][1] records.
 
-## Example Usage
+## Example usage
 
-The example below matches all `active` zones that begin with `example.` and are not paused. The matched zones are then
-locked down using the `cloudflare_zone_lockdown` resource.
+Given you have the following zones in Cloudflare.
+
+- example.com
+- example.net
+- not-example.com
+
+```hcl
+# Look for a single zone that you know exists using an exact match.
+# API request will be for zones?name=example.com. Will not match not-example.com
+# or example.net.
+data "cloudflare_zones" "example" {
+  filter {
+    name = "example.com"
+  }
+}
+```
+
+```hcl
+# Look for all zones which include "example".
+# API request will be for zones?name=contains:example. Will return all three
+# zones.
+data "cloudflare_zones" "example" {
+  filter {
+    name        = "example"
+    lookup_type = "contains"
+  }
+}
+```
+
+```hcl
+# Look for all zones which include "example" but start with "not-".
+# API request will be for zones?name=contains:example. Will perform client side
+# filtering using the provided regex and will only match the single zone,
+# not-example.com.
+data "cloudflare_zones" "example" {
+  filter {
+    name        = "example"
+    lookup_type = "contains"
+    match       = "^not-"
+  }
+}
+```
+
+### Example usage with other resources
+
+The example below matches all zones which have "example" in their value, end
+with ".com" and are active. The matched zone is then referenced in the zone
+lockdown resource.
 
 ```hcl
 data "cloudflare_zones" "test" {
   filter {
-    name   = "example.*"
-    status = "active"
-    paused = false
+    name        = "example"
+    lookup_type = "contains"
+    match       = ".com$"
+    status      = "active"
   }
 }
 
@@ -44,9 +91,18 @@ values must match in order to be included, see below for full list.
 
 **filter**
 
-- `name` - (Optional) A regular expression matching the zone to lookup.
-- `status` - (Optional) Status of the zone to lookup. Valid values: active, pending, initializing, moved, deleted, deactivated and read only.
-- `paused` - (Optional) Paused status of the zone to lookup. Valid values are `true` or `false`.
+- `name` - (Optional) A string value to search for.
+- `lookup_type` - (Optional) The type of search to perform for the `name` value
+  when querying the zone API. Valid values: `"exact"` and `"contains"`. Defaults
+  to `"exact"`.
+- `match` - (Optional) A RE2 compatible regular expression to filter the
+  results. This is performed client side whereas the `name` and `lookup_type`
+  are performed on the Cloudflare server side.
+- `status` - (Optional) Status of the zone to lookup. Valid values: `"active"`,
+  `"pending"`, `"initializing"`, `"moved"`, `"deleted"`, `"deactivated"` and
+  `"read only"`.
+- `paused` - (Optional) Paused status of the zone to lookup. Valid values are
+  `true` or `false`.
 
 ## Attributes Reference
 

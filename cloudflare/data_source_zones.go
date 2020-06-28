@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"regexp"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func dataSourceCloudflareZones() *schema.Resource {
@@ -24,6 +26,16 @@ func dataSourceCloudflareZones() *schema.Resource {
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
+						},
+						"match": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"lookup_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"contains", "exact"}, false),
+							Default:      "exact",
 						},
 						"status": {
 							Type:     schema.TypeString,
@@ -65,25 +77,31 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	zones, err := client.ListZones()
+	zoneLookupValue := filter.name
+	if filter.lookupType == "contains" {
+		zoneLookupValue = "contains:" + zoneLookupValue
+	}
+
+	zoneFilter := cloudflare.WithZoneFilters(
+		zoneLookupValue,
+		"",
+		filter.status,
+	)
+
+	zones, err := client.ListZonesContext(context.TODO(), zoneFilter)
 	if err != nil {
 		return fmt.Errorf("error listing Zone: %s", err)
 	}
 
 	zoneDetails := make([]interface{}, 0)
-	for _, v := range zones {
-
-		if filter.name != nil {
-			if !filter.name.Match([]byte(v.Name)) {
+	for _, v := range zones.Result {
+		if filter.regexValue != nil {
+			if !filter.regexValue.Match([]byte(v.Name)) {
 				continue
 			}
 		}
 
 		if filter.paused != v.Paused {
-			continue
-		}
-
-		if filter.status != "" && filter.status != v.Status {
 			continue
 		}
 
@@ -99,6 +117,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	d.SetId(time.Now().UTC().String())
+
 	return nil
 }
 
@@ -109,12 +128,22 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 	m := cfg[0].(map[string]interface{})
 	name, ok := m["name"]
 	if ok {
-		match, err := regexp.Compile(name.(string))
+		filter.name = name.(string)
+	}
+
+	match, ok := m["match"]
+	if ok {
+		match, err := regexp.Compile(match.(string))
 		if err != nil {
 			return nil, err
 		}
 
-		filter.name = match
+		filter.regexValue = match
+	}
+
+	lookupType, ok := m["lookup_type"]
+	if ok {
+		filter.lookupType = lookupType.(string)
 	}
 
 	paused, ok := m["paused"]
@@ -131,7 +160,9 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 }
 
 type searchFilter struct {
-	name   *regexp.Regexp
-	status string
-	paused bool
+	name       string
+	regexValue *regexp.Regexp
+	lookupType string
+	status     string
+	paused     bool
 }
