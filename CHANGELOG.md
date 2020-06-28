@@ -3,6 +3,7 @@
 **Improvements**
 
 * `resource/cloudflare_custom_ssl`: Allow `geo_restrictions` to be `nil` and not included in the request payload ([#714](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/714)) 
+* `datasource/cloudflare_zones`: Filtering is now performed on the server side and the `name` parameter is no longer a regex. Instead, `name` is a string to match on and `match` is a regex. See the website documentation for more examples and updated references ([#708](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/708)) 
  
 
 ## 2.8.0 (June 22, 2020)
