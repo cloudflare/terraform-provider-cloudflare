@@ -43,6 +43,56 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Default:      "24h",
 				ValidateFunc: validation.StringInSlice([]string{"30m", "6h", "12h", "24h", "168h", "730h"}, false),
 			},
+			"cors_headers": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"allowed_methods": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"allowed_origins": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"allowed_headers": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"allow_all_methods": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"allow_all_origins": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"allow_all_headers": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"allow_credentials": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"max_age": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							ValidateFunc: validation.IntBetween(-1, 86400),
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -50,10 +100,16 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+
 	newAccessApplication := cloudflare.AccessApplication{
 		Name:            d.Get("name").(string),
 		Domain:          d.Get("domain").(string),
 		SessionDuration: d.Get("session_duration").(string),
+	}
+
+	if _, ok := d.GetOk("cors_headers"); ok {
+		CORSConfig, _ := convertCORSSchemaToStruct(d)
+		newAccessApplication.CorsHeaders = CORSConfig
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Access Application from struct: %+v", newAccessApplication)
@@ -86,17 +142,28 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
 
+	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
+	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
+		return fmt.Errorf("error setting Access Application CORS header configuration: %s", corsConfigErr)
+	}
+
 	return nil
 }
 
 func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+
 	updatedAccessApplication := cloudflare.AccessApplication{
 		ID:              d.Id(),
 		Name:            d.Get("name").(string),
 		Domain:          d.Get("domain").(string),
 		SessionDuration: d.Get("session_duration").(string),
+	}
+
+	if _, ok := d.GetOk("cors_headers"); ok {
+		CORSConfig, _ := convertCORSSchemaToStruct(d)
+		updatedAccessApplication.CorsHeaders = CORSConfig
 	}
 
 	log.Printf("[DEBUG] Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication)
@@ -147,4 +214,50 @@ func resourceCloudflareAccessApplicationImport(d *schema.ResourceData, meta inte
 	resourceCloudflareAccessApplicationRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplicationCorsHeaders, error) {
+	CORSConfig := cloudflare.AccessApplicationCorsHeaders{}
+
+	if _, ok := d.GetOk("cors_headers"); ok {
+		if allowedMethods, ok := d.GetOk("cors_headers.0.allowed_methods"); ok {
+			CORSConfig.AllowedMethods = expandInterfaceToStringList(allowedMethods.(*schema.Set).List())
+		}
+
+		if allowedHeaders, ok := d.GetOk("cors_headers.0.allowed_headers"); ok {
+			CORSConfig.AllowedHeaders = expandInterfaceToStringList(allowedHeaders.(*schema.Set).List())
+		}
+
+		if allowedOrigins, ok := d.GetOk("cors_headers.0.allowed_origins"); ok {
+			CORSConfig.AllowedOrigins = expandInterfaceToStringList(allowedOrigins.(*schema.Set).List())
+		}
+
+		CORSConfig.AllowAllMethods = d.Get("cors_headers.0.allow_all_methods").(bool)
+		CORSConfig.AllowAllHeaders = d.Get("cors_headers.0.allow_all_headers").(bool)
+		CORSConfig.AllowAllOrigins = d.Get("cors_headers.0.allow_all_origins").(bool)
+		CORSConfig.AllowCredentials = d.Get("cors_headers.0.allow_credentials").(bool)
+		CORSConfig.MaxAge = d.Get("cors_headers.0.max_age").(int)
+	}
+
+	return &CORSConfig, nil
+}
+
+func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.AccessApplicationCorsHeaders) []interface{} {
+	if _, ok := d.GetOk("cors_headers"); !ok {
+		return []interface{}{}
+	}
+
+	m := map[string]interface{}{
+		"allow_all_methods": headers.AllowAllMethods,
+		"allow_all_headers": headers.AllowAllHeaders,
+		"allow_all_origins": headers.AllowAllOrigins,
+		"allow_credentials": headers.AllowCredentials,
+		"max_age":           headers.MaxAge,
+	}
+
+	m["allowed_methods"] = flattenStringList(headers.AllowedMethods)
+	m["allowed_headers"] = flattenStringList(headers.AllowedHeaders)
+	m["allowed_origins"] = flattenStringList(headers.AllowedOrigins)
+
+	return []interface{}{m}
 }
