@@ -90,6 +90,11 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.IntBetween(-1, 86400),
 						},
+						"auto_redirect_to_identity": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
 					},
 				},
 			},
@@ -102,9 +107,10 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	zoneID := d.Get("zone_id").(string)
 
 	newAccessApplication := cloudflare.AccessApplication{
-		Name:            d.Get("name").(string),
-		Domain:          d.Get("domain").(string),
-		SessionDuration: d.Get("session_duration").(string),
+		Name:                   d.Get("name").(string),
+		Domain:                 d.Get("domain").(string),
+		SessionDuration:        d.Get("session_duration").(string),
+		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
@@ -141,6 +147,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
+	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -155,10 +162,11 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 	zoneID := d.Get("zone_id").(string)
 
 	updatedAccessApplication := cloudflare.AccessApplication{
-		ID:              d.Id(),
-		Name:            d.Get("name").(string),
-		Domain:          d.Get("domain").(string),
-		SessionDuration: d.Get("session_duration").(string),
+		ID:                     d.Id(),
+		Name:                   d.Get("name").(string),
+		Domain:                 d.Get("domain").(string),
+		SessionDuration:        d.Get("session_duration").(string),
+		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {

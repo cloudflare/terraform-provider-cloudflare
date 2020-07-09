@@ -34,6 +34,7 @@ func TestAccCloudflareAccessApplicationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 				),
 			},
 		},
@@ -62,6 +63,32 @@ func TestAccCloudflareAccessApplicationWithCORS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.0.allowed_methods.#", "3"),
 					resource.TestCheckResourceAttr(name, "cors_headers.0.allowed_origins.#", "1"),
 					resource.TestCheckResourceAttr(name, "cors_headers.0.max_age", "10"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationWithAutoRedirectToIdentity(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "true"),
 				),
 			},
 		},
@@ -71,10 +98,11 @@ func TestAccCloudflareAccessApplicationWithCORS(t *testing.T) {
 func testAccCloudflareAccessApplicationConfigBasic(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
-  zone_id          = "%[2]s"
-  name             = "%[1]s"
-  domain           = "%[1]s.%[3]s"
-  session_duration = "24h"
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
 }
 `, rnd, zoneID, domain)
 }
@@ -92,6 +120,19 @@ resource "cloudflare_access_application" "%[1]s" {
     allow_credentials = true
     max_age = 10
   }
+  auto_redirect_to_identity = false
+}
+`, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  session_duration          = "24h"
+  auto_redirect_to_identity = true
 }
 `, rnd, zoneID, domain)
 }
