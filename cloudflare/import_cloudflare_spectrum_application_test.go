@@ -12,7 +12,7 @@ import (
 func TestAccCloudflareSpectrumApplication_Import(t *testing.T) {
 	t.Parallel()
 	var application cloudflare.SpectrumApplication
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
@@ -22,7 +22,7 @@ func TestAccCloudflareSpectrumApplication_Import(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &application),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),

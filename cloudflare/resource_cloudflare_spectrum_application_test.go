@@ -59,7 +59,8 @@ func testSweepCloudflareSpectrumApplications(r string) error {
 
 func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
@@ -69,7 +70,7 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
@@ -85,7 +86,8 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 
 func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
@@ -95,13 +97,13 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zone, rnd),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "protocol", "tcp/22"),
 					resource.TestCheckResourceAttr(name, "origin_dns.#", "1"),
-					resource.TestCheckResourceAttr(name, "origin_dns.0.name", fmt.Sprintf("ssh.origin.%s", zone)),
+					resource.TestCheckResourceAttr(name, "origin_dns.0.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
 			},
@@ -111,8 +113,9 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 
 func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
-	var initialId string
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	var initialID string
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
@@ -122,7 +125,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
@@ -131,17 +134,17 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					initialId = spectrumApp.ID
+					initialID = spectrumApp.ID
 				},
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zone, rnd),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					func(state *terraform.State) error {
-						if initialId != spectrumApp.ID {
+						if initialID != spectrumApp.ID {
 							// want in place update
 							return fmt.Errorf("spectrum application id is different after second config applied ( %s -> %s )",
-								initialId, spectrumApp.ID)
+								initialID, spectrumApp.ID)
 						}
 						return nil
 					},
@@ -154,8 +157,9 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 
 func TestAccCloudflareSpectrumApplication_CreateAfterManualDestroy(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
-	var initialId string
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	var initialID string
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
@@ -165,21 +169,21 @@ func TestAccCloudflareSpectrumApplication_CreateAfterManualDestroy(t *testing.T)
 		CheckDestroy: testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					testAccManuallyDeleteSpectrumApplication(name, &spectrumApp, &initialId),
+					testAccManuallyDeleteSpectrumApplication(name, &spectrumApp, &initialID),
 				),
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zone, rnd),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					func(state *terraform.State) error {
-						if initialId == spectrumApp.ID {
+						if initialID == spectrumApp.ID {
 							return fmt.Errorf("spectrum application id is unchanged even after we thought we deleted it ( %s )",
 								spectrumApp.ID)
 						}
@@ -246,18 +250,18 @@ func testAccCheckCloudflareSpectrumApplicationIDIsValid(n string) resource.TestC
 			return fmt.Errorf("invalid id %q, should be a string of length 32", rs.Primary.ID)
 		}
 
-		if zoneId, ok := rs.Primary.Attributes["zone_id"]; !ok || len(zoneId) < 1 {
+		if zoneID, ok := rs.Primary.Attributes["zone_id"]; !ok || len(zoneID) < 1 {
 			return errors.New("zone_id is unset, should always be set with id")
 		}
 		return nil
 	}
 }
 
-func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudflare.SpectrumApplication, initialId *string) resource.TestCheckFunc {
+func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudflare.SpectrumApplication, initialID *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
-		*initialId = spectrumApp.ID
+		*initialID = spectrumApp.ID
 		err := client.DeleteSpectrumApplication(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -266,72 +270,53 @@ func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudfla
 	}
 }
 
-func testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneName, ID string) string {
+func testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, zoneName, ID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[2]s" {
-  zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
+resource "cloudflare_spectrum_application" "%[3]s" {
+  zone_id  = "%[1]s"
   protocol = "tcp/22"
 
   dns {
     type = "CNAME"
-    name = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+    name = "%[3]s.%[2]s"
   }
 
   origin_direct = ["tcp://1.2.3.4:23"]
   origin_port   = 22
 }
-
-data "cloudflare_zones" "test" {
-  filter {
-		name = "%[1]s.*"
-	}
-}
-`, zoneName, ID)
+`, zoneID, zoneName, ID)
 }
 
-func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneName, ID string) string {
+func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneID, zoneName, ID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[2]s" {
-  zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
+resource "cloudflare_spectrum_application" "%[3]s" {
+  zone_id  = "%[1]s"
   protocol = "tcp/22"
 
   dns {
     type = "CNAME"
-    name = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+    name = "%[3]s.%[2]s"
   }
 
   origin_dns {
-    name = "ssh.origin.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+    name = "%[3]s.origin.%[2]s"
   }
   origin_port   = 22
+}`, zoneID, zoneName, ID)
 }
 
-data "cloudflare_zones" "test" {
-  filter {
-		name = "%[1]s.*"
-	}
-}
-`, zoneName, ID)
-}
-
-func testAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zoneName, ID string) string {
+func testAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zoneID, zoneName, ID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[2]s" {
-  zone_id  = "${lookup(data.cloudflare_zones.test.zones[0], "id")}"
+resource "cloudflare_spectrum_application" "%[3]s" {
+  zone_id  = "%[1]s"
   protocol = "tcp/22"
 
   dns {
 		type = "CNAME"
-		name = "ssh.${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+		name = "%[3]s.%[2]s"
   }
 
   origin_direct = ["tcp://1.2.3.4:23"]
   origin_port   = 22
-}
-
-data "cloudflare_zones" "test" {
-	filter {
-		name = "%[1]s.*"
-	}
-}`, zoneName, ID)
+}`, zoneID, zoneName, ID)
 }
