@@ -133,7 +133,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(
-						resourceName, "value", "37 46 46.000 N 122 23 35.000 W 0.00m 100.00m 0.00m 0.00m"),
+						resourceName, "value", "37 46 46.000 N 122 23 35.000 W 0.00 100.00 0.00 0.00"),
 					resource.TestCheckResourceAttr(
 						resourceName, "proxiable", "false"),
 					resource.TestCheckResourceAttr(
