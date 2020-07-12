@@ -5,7 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 var (
@@ -22,7 +24,7 @@ func TestAccCloudflareAccessApplicationBasic(t *testing.T) {
 			testAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, zoneID, domain),
@@ -47,7 +49,7 @@ func TestAccCloudflareAccessApplicationWithCORS(t *testing.T) {
 			testAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain),
@@ -92,4 +94,21 @@ resource "cloudflare_access_application" "%[1]s" {
   }
 }
 `, rnd, zoneID, domain)
+}
+
+func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
+	client := testAccProvider.Meta().(*cloudflare.API)
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_access_application" {
+			continue
+		}
+
+		_, err := client.AccessApplication(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("AccessApplication still exists")
+		}
+	}
+
+	return nil
 }
