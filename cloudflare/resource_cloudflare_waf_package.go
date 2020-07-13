@@ -11,6 +11,11 @@ import (
 
 const CLOUDFLARE_INVALID_OR_REMOVED_WAF_PACKAGE_ID_ERROR = 1002
 
+var (
+	defaultSensitivity = "high"
+	defaultActionMode  = "challenge"
+)
+
 func resourceCloudflareWAFPackage() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareWAFPackageCreate,
@@ -39,14 +44,12 @@ func resourceCloudflareWAFPackage() *schema.Resource {
 			"sensitivity": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Default:      "high",
 				ValidateFunc: validation.StringInSlice([]string{"high", "medium", "low", "off"}, false),
 			},
 
 			"action_mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Default:      "challenge",
 				ValidateFunc: validation.StringInSlice([]string{"simulate", "block", "challenge"}, false),
 			},
 		},
@@ -75,8 +78,16 @@ func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	d.Set("sensitivity", pkg.Sensitivity)
-	d.Set("action_mode", pkg.ActionMode)
+	if pkg.DetectionMode == "anomaly" {
+		if pkg.Sensitivity != "" {
+			d.Set("sensitivity", pkg.Sensitivity)
+		}
+
+		if pkg.ActionMode != "" {
+			d.Set("action_mode", pkg.ActionMode)
+		}
+	}
+
 	d.SetId(pkg.ID)
 
 	return nil
@@ -97,8 +108,6 @@ func resourceCloudflareWAFPackageCreate(d *schema.ResourceData, meta interface{}
 
 	d.Set("zone_id", zoneID)
 	d.Set("package_id", packageID)
-	d.Set("sensitivity", sensitivity)
-	d.Set("action_mode", actionMode)
 
 	// Set the ID to the package_id parameter passed in from the user.
 	// All WAF packages already exist so we already know the package_id.
@@ -107,11 +116,21 @@ func resourceCloudflareWAFPackageCreate(d *schema.ResourceData, meta interface{}
 	// only associating it with our terraform config for future updates.
 	d.SetId(packageID)
 
-	if pkg.Sensitivity != sensitivity || pkg.ActionMode != actionMode {
-		err = resourceCloudflareWAFPackageUpdate(d, meta)
-		if err != nil {
-			d.SetId("")
-			return err
+	if pkg.DetectionMode == "anomaly" {
+		if sensitivity != "" {
+			d.Set("sensitivity", sensitivity)
+		}
+
+		if actionMode != "" {
+			d.Set("action_mode", actionMode)
+		}
+
+		if pkg.Sensitivity != sensitivity || pkg.ActionMode != actionMode {
+			err = resourceCloudflareWAFPackageUpdate(d, meta)
+			if err != nil {
+				d.SetId("")
+				return err
+			}
 		}
 	}
 
@@ -129,20 +148,18 @@ func resourceCloudflareWAFPackageDelete(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	// Can't delete WAF Package so instead reset it to default
-	schema := resourceCloudflareWAFPackage().Schema
-	defaultSensitivity := schema["sensitivity"].Default.(string)
-	defaultActionMode := schema["action_mode"].Default.(string)
+	if pkg.DetectionMode == "anomaly" {
+		// Can't "delete" WAF Package so instead reset it to default
+		if pkg.Sensitivity != defaultSensitivity || pkg.ActionMode != defaultActionMode {
+			options := cloudflare.WAFPackageOptions{
+				Sensitivity: defaultSensitivity,
+				ActionMode:  defaultActionMode,
+			}
 
-	if pkg.Sensitivity != defaultSensitivity || pkg.ActionMode != defaultActionMode {
-		options := cloudflare.WAFPackageOptions{
-			Sensitivity: defaultSensitivity,
-			ActionMode:  defaultActionMode,
-		}
-
-		_, err = client.UpdateWAFPackage(zoneID, packageID, options)
-		if err != nil {
-			return err
+			_, err = client.UpdateWAFPackage(zoneID, packageID, options)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -156,10 +173,14 @@ func resourceCloudflareWAFPackageUpdate(d *schema.ResourceData, meta interface{}
 	zoneID := d.Get("zone_id").(string)
 	sensitivity := d.Get("sensitivity").(string)
 	actionMode := d.Get("action_mode").(string)
+	options := cloudflare.WAFPackageOptions{}
 
-	options := cloudflare.WAFPackageOptions{
-		Sensitivity: sensitivity,
-		ActionMode:  actionMode,
+	if sensitivity != "" {
+		options.Sensitivity = sensitivity
+	}
+
+	if actionMode != "" {
+		options.ActionMode = actionMode
 	}
 
 	_, err := client.UpdateWAFPackage(zoneID, packageID, options)
@@ -191,8 +212,14 @@ func resourceCloudflareWAFPackageImport(d *schema.ResourceData, meta interface{}
 
 	d.Set("package_id", pkg.ID)
 	d.Set("zone_id", zoneID)
-	d.Set("sensitivity", pkg.Sensitivity)
-	d.Set("action_mode", pkg.ActionMode)
+
+	if pkg.Sensitivity != "" {
+		d.Set("sensitivity", pkg.Sensitivity)
+	}
+
+	if pkg.ActionMode != "" {
+		d.Set("action_mode", pkg.ActionMode)
+	}
 
 	d.SetId(pkg.ID)
 
