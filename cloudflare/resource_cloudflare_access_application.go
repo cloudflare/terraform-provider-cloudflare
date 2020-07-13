@@ -90,13 +90,13 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.IntBetween(-1, 86400),
 						},
-						"auto_redirect_to_identity": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-						},
 					},
 				},
+			},
+			"auto_redirect_to_identity": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 		},
 	}
