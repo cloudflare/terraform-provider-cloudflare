@@ -16,10 +16,11 @@ authorisation gateway managed by Cloudflare.
 
 ```hcl
 resource "cloudflare_access_application" "staging_app" {
-  zone_id          = "1d5fdc9e88c8a8c4518b068cd94331fe"
-  name             = "staging application"
-  domain           = "staging.example.com"
-  session_duration = "24h"
+  zone_id                   = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  name                      = "staging application"
+  domain                    = "staging.example.com"
+  session_duration          = "24h"
+  auto_redirect_to_identity = false 
 }
 
 # With CORS configuration
@@ -66,7 +67,10 @@ The following arguments are supported:
   requests.
 * `max_age` - (Optional) Integer representing the maximum time a preflight
   request will be cached.
-
+* `auto_redirect_to_identity` - (Optional) Option to skip identity provider
+  selection if only one is configured in allowed_idps. Defaults to `false`
+  (disabled).
+  
 ## Attributes Reference
 
 The following additional attributes are exported:
@@ -75,6 +79,7 @@ The following additional attributes are exported:
 * `aud` - Application Audience (AUD) Tag of the application
 * `domain` - Domain of the application
 * `session_duration` - Length of session for the application before prompting for a sign in
+* `auto_redirect_to_identity` - If the IdP selection page is skipped or not
 
 ## Import
 
