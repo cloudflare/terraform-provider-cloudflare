@@ -20,7 +20,7 @@ resource "cloudflare_access_application" "staging_app" {
   name                      = "staging application"
   domain                    = "staging.example.com"
   session_duration          = "24h"
-  auto_redirect_to_identity = false 
+  auto_redirect_to_identity = false
 }
 
 # With CORS configuration
@@ -50,6 +50,8 @@ The following arguments are supported:
   re-authorise. Must be one of `30m`, `6h`, `12h`, `24h`, `168h`, `730h`.
 * `cors_headers` - (Optional) CORS configuration for the Access Application. See
   below for reference structure.
+* `allowed_idps` - (Optional) The identity providers selected for the application.
+
 
 **cors_headers** allows the following:
 
@@ -80,6 +82,7 @@ The following additional attributes are exported:
 * `domain` - Domain of the application
 * `session_duration` - Length of session for the application before prompting for a sign in
 * `auto_redirect_to_identity` - If the IdP selection page is skipped or not
+* `allowed_idps` - The identity providers selected for the application
 
 ## Import
 

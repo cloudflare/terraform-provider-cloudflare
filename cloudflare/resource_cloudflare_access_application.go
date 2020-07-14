@@ -98,6 +98,13 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
+			"allowed_idps": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 }
@@ -111,6 +118,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		Domain:                 d.Get("domain").(string),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
+		AllowedIdps:            d.Get("allowed_idps").([]string),
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
@@ -167,6 +175,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		Domain:                 d.Get("domain").(string),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
+		AllowedIdps:            d.Get("allowed_idps").([]string),
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
