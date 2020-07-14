@@ -115,7 +115,7 @@ func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "true"),
-					resource.TestCheckResourceAttr(name, "allowed_idps.#", "1"),
+					resource.TestCheckResourceAttrSet(name, "allowed_idps"),
 				),
 			},
 		},
