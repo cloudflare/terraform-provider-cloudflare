@@ -112,13 +112,17 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
 
 	newAccessApplication := cloudflare.AccessApplication{
 		Name:                   d.Get("name").(string),
 		Domain:                 d.Get("domain").(string),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
-		AllowedIdps:            d.Get("allowed_idps").([]string),
+	}
+
+	if len(allowedIDPList) > 0 {
+		newAccessApplication.AllowedIdps = allowedIDPList
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
@@ -156,6 +160,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
+	d.Set("allowed_idps", accessApplication.AllowedIdps)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -168,6 +173,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
 
 	updatedAccessApplication := cloudflare.AccessApplication{
 		ID:                     d.Id(),
@@ -175,7 +181,10 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		Domain:                 d.Get("domain").(string),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
-		AllowedIdps:            d.Get("allowed_idps").([]string),
+	}
+
+	if len(allowedIDPList) > 0 {
+		updatedAccessApplication.AllowedIdps = allowedIDPList
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
