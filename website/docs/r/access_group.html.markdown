@@ -82,18 +82,19 @@ conditions which can be applied. The conditions are:
   # ... other configuration
   include {
     gsuite {
-      email = "admins@example.com"
+      email = ["admins@example.com"]
       identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
     }
   }
   ```
-* `github` - (Optional) Use a GitHub team as the `include` condition. Example:
+* `github` - (Optional) Use a GitHub organization as the `include` condition. Example:
 
   ```hcl
   # ... other configuration
   include {
     github {
-      name = "my-github-team-name"
+      name = "my-github-org-name" # (Required) GitHub organization name
+      team = ["my-github-team-name"] # (Optional) GitHub teams
       identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
     }
   }
@@ -104,7 +105,7 @@ conditions which can be applied. The conditions are:
   # ... other configuration
   include {
     azure {
-      id = "86773093-5feb-48dd-814b-7ccd3676ff50e"
+      id = ["86773093-5feb-48dd-814b-7ccd3676ff50e"]
       identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
     }
   }
@@ -115,7 +116,7 @@ conditions which can be applied. The conditions are:
   # ... other configuration
   include {
     okta {
-      name = "admins"
+      name = ["admins"]
       identity_provider_id = "ca298b82-93b5-41bf-bc2d-10493f09b761"
     }
   }
