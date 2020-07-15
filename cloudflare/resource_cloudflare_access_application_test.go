@@ -95,6 +95,33 @@ func TestAccCloudflareAccessApplicationWithAutoRedirectToIdentity(t *testing.T) 
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "true"),
+					resource.TestCheckResourceAttr(name, "allowed_idps.#", "1"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigBasic(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
@@ -135,6 +162,24 @@ resource "cloudflare_access_application" "%[1]s" {
   auto_redirect_to_identity = true
 }
 `, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain string, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[1]s" {
+  account_id = "%[4]s"
+  name = "%[1]s"
+  type = "onetimepin"
+}
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  session_duration          = "24h"
+  auto_redirect_to_identity = true
+  allowed_idps              = [cloudflare_access_identity_provider.%[1]s.id]
+}
+`, rnd, zoneID, domain, accountID)
 }
 
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
