@@ -2,6 +2,7 @@
 
 **Improvements**
 
+* `resource/access_application`: Add support for `allowed_idps` and restricting which Identity Providers are associated with an Application ([#734](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/734)) 
 * `resource/access_application`: Add support for `auto_redirect_to_identity` ([#730](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/730)) 
 * `resource/access_application`: Add CORS support ([#725](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/725)) 
 * `resource/cloudflare_custom_ssl`: Allow `geo_restrictions` to be `nil` and not included in the request payload ([#714](https://github.com/terraform-providers/terraform-provider-cloudflare/issues/714)) 
