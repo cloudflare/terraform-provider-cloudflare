@@ -48,6 +48,11 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"dv"}, false),
 						},
+						"certificate_authority": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"lets_encrypt", "digicert"}, false),
+						},
 						"cname_target": {
 							Type:     schema.TypeString,
 							Optional: true,
