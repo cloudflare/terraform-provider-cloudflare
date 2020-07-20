@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceCloudflareCustomHostname() *schema.Resource {
@@ -17,12 +18,13 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
 			"hostname": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringLenBetween(0, 255),
 			},
 			"custom_origin_servver": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"ssl": {
 				Type:     schema.TypeList,
@@ -37,12 +39,14 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 							Optional: true,
 						},
 						"method": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"http", "txt", "email"}, false),
 						},
 						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"dv"}, false),
 						},
 						"cname_target": {
 							Type:     schema.TypeString,
@@ -73,16 +77,19 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 								SchemaVersion: 1,
 								Schema: map[string]*schema.Schema{
 									"http2": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 									},
 									"tls13": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 									},
 									"min_tls_version": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"1.0", "1.1", "1.2", "1.3"}, false),
 									},
 									"ciphers": {
 										Type:     schema.TypeList,
