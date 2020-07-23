@@ -17,20 +17,23 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 
 		SchemaVersion: 0,
 		Schema: map[string]*schema.Schema{
+			"zone_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"hostname": {
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringLenBetween(0, 255),
 			},
-			"custom_origin_servver": {
+			"custom_origin_server": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"ssl": {
 				Type:     schema.TypeList,
 				Required: true,
-				MinItems: 1,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					SchemaVersion: 1,
 					Schema: map[string]*schema.Schema{
@@ -46,6 +49,7 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 						"type": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							Default:      "dv",
 							ValidateFunc: validation.StringInSlice([]string{"dv"}, false),
 						},
 						"certificate_authority": {
@@ -75,9 +79,7 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 						},
 						"settings": {
 							Type:     schema.TypeList,
-							Required: true,
-							MinItems: 1,
-							MaxItems: 1,
+							Optional: true,
 							Elem: &schema.Resource{
 								SchemaVersion: 1,
 								Schema: map[string]*schema.Schema{
@@ -114,10 +116,8 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 				Computed: true,
 			},
 			"ownership_verification": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeMap,
 				Computed: true,
-				MinItems: 1,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					SchemaVersion: 1,
 					Schema: map[string]*schema.Schema{
@@ -137,10 +137,8 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 				},
 			},
 			"ownership_verification_http": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeMap,
 				Computed: true,
-				MinItems: 1,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					SchemaVersion: 1,
 					Schema: map[string]*schema.Schema{
