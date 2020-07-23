@@ -158,6 +158,42 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 }
 
 func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+	zoneID := d.Get("zone_id").(string)
+	hostnameID := d.Id()
+
+	customHostname, err := client.CustomHostname(zoneID, hostnameID)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("error reading custom hostname %q", hostnameID))
+	}
+
+	d.Set("ssl.custom_origin_server", customHostname.CustomOriginServer)
+
+	d.Set("ssl.0.type", customHostname.SSL.Type)
+	d.Set("ssl.0.method", customHostname.SSL.Method)
+	d.Set("ssl.0.wildcard", customHostname.SSL.Wildcard)
+	d.Set("ssl.0.status", customHostname.SSL.Status)
+	d.Set("ssl.0.cname_target", customHostname.SSL.CnameTarget)
+	d.Set("ssl.0.cname_name", customHostname.SSL.CnameName)
+	d.Set("ssl.0.custom_certificate", customHostname.SSL.CustomCertificate)
+	d.Set("ssl.0.custom_key", customHostname.SSL.CustomKey)
+
+	d.Set("ssl.0.settings.0.http2", customHostname.SSL.Settings.HTTP2)
+	d.Set("ssl.0.settings.0.tls13", customHostname.SSL.Settings.TLS13)
+	d.Set("ssl.0.settings.0.min_tls_version", customHostname.SSL.Settings.MinTLSVersion)
+	d.Set("ssl.0.settings.0.ciphers", flattenStringList(customHostname.SSL.Settings.Ciphers))
+
+	ownershipVerificationCfg := map[string]interface{}{}
+	ownershipVerificationCfg["type"] = customHostname.OwnershipVerification.Type
+	ownershipVerificationCfg["value"] = customHostname.OwnershipVerification.Value
+	ownershipVerificationCfg["name"] = customHostname.OwnershipVerification.Name
+	d.Set("ownership_verification", ownershipVerificationCfg)
+
+	ownershipVerificationHTTPCfg := map[string]interface{}{}
+	ownershipVerificationHTTPCfg["http_body"] = customHostname.OwnershipVerificationHTTP.HTTPBody
+	ownershipVerificationHTTPCfg["http_url"] = customHostname.OwnershipVerificationHTTP.HTTPUrl
+	d.Set("ownership_verification_http", ownershipVerificationHTTPCfg)
+
 	return nil
 }
 
