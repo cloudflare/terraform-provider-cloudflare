@@ -1,8 +1,14 @@
 package cloudflare
 
 import (
+	"fmt"
+	"log"
+	"strings"
+
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/pkg/errors"
 )
 
 func resourceCloudflareCustomHostname() *schema.Resource {
@@ -198,17 +204,85 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 }
 
 func resourceCloudflareCustomHostnameDelete(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+	zoneID := d.Get("zone_id").(string)
+	hostnameID := d.Id()
+
+	err := client.DeleteCustomHostname(zoneID, hostnameID)
+	if err != nil {
+		return errors.Wrap(err, "failed to delete custom hostname certificate")
+	}
+
 	return nil
 }
 
 func resourceCloudflareCustomHostnameCreate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+	zoneID := d.Get("zone_id").(string)
+
+	certificate := buildCustomHostname(d)
+
+	newCertificate, err := client.CreateCustomHostname(zoneID, certificate)
+	if err != nil {
+		return errors.Wrap(err, "failed to create custom hostname certificate")
+	}
+
+	d.SetId(newCertificate.Result.ID)
+
 	return resourceCloudflareCustomHostnameRead(d, meta)
 }
 
 func resourceCloudflareCustomHostnameUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+	zoneID := d.Get("zone_id").(string)
+	hostnameID := d.Id()
+	certificate := buildCustomHostname(d)
+
+	_, err := client.UpdateCustomHostname(zoneID, hostnameID, certificate)
+	if err != nil {
+		return errors.Wrap(err, "failed to update custom hostname certificate")
+	}
+
 	return resourceCloudflareCustomHostnameRead(d, meta)
 }
 
 func resourceCloudflareCustomHostnameImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+
+	if len(idAttr) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/customHostnameID\"", d.Id())
+	}
+
+	zoneID, hostnameID := idAttr[0], idAttr[1]
+
+	log.Printf("[DEBUG] Importing Cloudflare Custom Hostname: id %s for zone %s", hostnameID, zoneID)
+
+	d.Set("zone_id", zoneID)
+	d.SetId(hostnameID)
+
 	return []*schema.ResourceData{d}, nil
+}
+
+// buildCustomHostname takes the existing schema and returns a
+// `cloudflare.CustomHostname`.
+func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
+	return cloudflare.CustomHostname{
+		Hostname:           d.Get("hostname").(string),
+		CustomOriginServer: d.Get("custom_origin_server").(string),
+		SSL: cloudflare.CustomHostnameSSL{
+			Method:            d.Get("ssl.0.method").(string),
+			Type:              d.Get("ssl.0.type").(string),
+			Wildcard:          d.Get("ssl.0.wildcard").(bool),
+			CnameTarget:       d.Get("ssl.0.cname_target").(string),
+			CnameName:         d.Get("ssl.0.cname_name").(string),
+			CustomCertificate: d.Get("ssl.0.custom_certificate").(string),
+			CustomKey:         d.Get("ssl.0.custom_key").(string),
+			Settings: cloudflare.CustomHostnameSSLSettings{
+				HTTP2:         d.Get("ssl.0.settings.0.http2").(string),
+				TLS13:         d.Get("ssl.0.settings.0.tls13").(string),
+				MinTLSVersion: d.Get("ssl.0.settings.0.min_tls_version").(string),
+				Ciphers:       expandInterfaceToStringList(d.Get("ssl.0.settings.0.ciphers").([]interface{})),
+			},
+		},
+	}
 }
