@@ -44,7 +44,7 @@ The following arguments are supported:
 **settings** block supports:
 
 * `http2` - (Optional) Whether or not HTTP2 should be supported. Valid values are `"on"` or `"off"`.
-* `tls12` - (Optional) Whether or not TLSv1.3 should be supported. Valid values are `"on"` or `"off"`.
+* `tls13` - (Optional) Whether or not TLSv1.3 should be supported. Valid values are `"on"` or `"off"`.
 * `min_tls_version` - (Optional) Lowest version of TLS this certificate should
   support. Valid values are `"1.0"`, `"1.1"`, `"1.2"` and `"1.3"`.
 * `ciphers` - (Optional) List of SSL/TLS ciphers to associate with this certificate.
