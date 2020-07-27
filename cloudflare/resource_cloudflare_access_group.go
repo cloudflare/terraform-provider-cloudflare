@@ -358,6 +358,7 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 				githubCfg := v.(map[string]interface{})
 				group = append(group, cloudflare.AccessGroupGitHub{GitHubOrganization: struct {
 					Name               string `json:"name"`
+					Team               string `json:"team,omitempty"`
 					IdentityProviderID string `json:"identity_provider_id"`
 				}{
 					Name:               githubCfg["name"].(string),

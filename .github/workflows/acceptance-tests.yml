@@ -1,0 +1,49 @@
+name: Acceptance Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    env:
+      CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
+      CLOUDFLARE_ALT_DOMAIN: terraform2.cfapi.net
+      CLOUDFLARE_ALT_ZONE_ID: b72110c08e3382597095c29ba7e661ea
+      CLOUDFLARE_DOMAIN: terraform.cfapi.net
+      CLOUDFLARE_EMAIL: terraform-acceptance-test@cfapi.net
+      CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
+
+      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN: ${{ secrets.CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN }}
+
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.14
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Vendor Replace Hack
+      run: grep 'replace .* => \./' go.mod && go mod vendor; exit 0
+
+    - name: Pre-Sweeper
+      run: go test ./cloudflare -v -sweep="1"
+
+    - name: Run acceptance tests
+      run: make testacc
+
+    - name: Post-Sweeper
+      if: ${{ always() }}
+      run: go test ./cloudflare -v -sweep="1"
