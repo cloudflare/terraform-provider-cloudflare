@@ -7,7 +7,7 @@ VERSION=$(shell git describe --tags --always)
 default: build
 
 build: fmtcheck
-	go install -ldflags="-X github.com/terraform-providers/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
+	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."

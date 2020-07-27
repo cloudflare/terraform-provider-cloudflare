@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/cloudflare"
 	"github.com/hashicorp/terraform-plugin-sdk/plugin"
-	"github.com/terraform-providers/terraform-provider-cloudflare/cloudflare"
 )
 
 func main() {
