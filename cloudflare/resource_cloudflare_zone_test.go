@@ -74,6 +74,9 @@ func TestAccCloudflareZonePartialSetup(t *testing.T) {
 }
 
 func TestAccCloudflareZonePartialSetupEnterprise(t *testing.T) {
+	t.Skip("Partial zone under full zone is unsupported")
+	return
+
 	name := "cloudflare_zone.tf-acc-partial-setup-zone"
 	resourceName := strings.Split(name, ".")[1]
 
