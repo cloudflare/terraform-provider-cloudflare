@@ -3,11 +3,11 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/pkg/errors"
 )
 
 func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
@@ -33,6 +33,16 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 				Sensitive: true,
 				ForceNew:  true,
 			},
+			"expires_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
 			"type": {
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice([]string{"per-zone", "per-hostname"}, false),
@@ -56,10 +66,9 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 		}
 		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(zoneID, perZoneAOPCert)
 		if err != nil {
-			return fmt.Errorf("error creating AOP cert for zone %q: %s", zoneID, err)
+			return fmt.Errorf("Error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
-		return resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
 	case aopType == "per-hostname":
 		perHostnameAOPCert := cloudflare.PerHostnameAuthenticatedOriginPullsCertificateParams{
 			Certificate: d.Get("certificate").(string),
@@ -67,13 +76,11 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 		}
 		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(zoneID, perHostnameAOPCert)
 		if err != nil {
-			return fmt.Errorf("error uploading per zone AOP cert")
+			return fmt.Errorf("Error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
-		return resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
-	default:
-		return errors.New("unknown error")
 	}
+	return resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
 }
 
 func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.ResourceData, meta interface{}) error {
@@ -86,25 +93,23 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 	case aopType == "per-zone":
 		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(zoneID, certID)
 		if err != nil {
-			log.Printf("[WARN] Removing record from state because it's not found in API")
+			log.Printf("[WARN] Removing certificate from state because it was not found in API.")
 			d.SetId("")
 			return nil
 		}
-		d.Set("certificate", record.Certificate)
-		return nil
-
+		d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
+		d.Set("status", record.Status)
 	case aopType == "per-hostname":
 		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, certID)
 		if err != nil {
-			log.Printf("[WARN] Removing record from state because it's not found in API")
+			log.Printf("[WARN] Removing certificate from state because it was not found in API.")
 			d.SetId("")
 			return nil
 		}
-		d.Set("certificate", record.Certificate)
-		return nil
-	default:
-		return errors.New("unknown error")
+		d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
+		d.Set("status", record.Status)
 	}
+	return nil
 }
 
 func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.ResourceData, meta interface{}) error {
@@ -117,20 +122,13 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.Resou
 	case aopType == "per-zone":
 		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("Error deleting: %s", err)
+			return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
-
-		return nil
-
 	case aopType == "per-hostname":
 		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(zoneID, certID)
 		if err != nil {
-			log.Printf("[WARN] Removing record from state because it's not found in API")
-			d.SetId("")
-			return nil
+			return fmt.Errorf("Error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}
-		return nil
-	default:
-		return errors.New("unknown error")
 	}
+	return nil
 }

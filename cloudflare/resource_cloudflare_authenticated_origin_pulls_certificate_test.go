@@ -10,9 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-var testCertificate = `-----BEGIN CERTIFICATE-----\nMIIDtTCCAp2gAwIBAgIJAMHAwfXZ5/PWMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTYwODI0MTY0MzAxWhcNMTYxMTIyMTY0MzAxWjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECBMKU29tZS1TdGF0ZTEhMB8GA1UEChMYSW50\nZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB\nCgKCAQEAwQHoetcl9+5ikGzV6cMzWtWPJHqXT3wpbEkRU9Yz7lgvddmGdtcGbg/1\nCGZu0jJGkMoppoUo4c3dts3iwqRYmBikUP77wwY2QGmDZw2FvkJCJlKnabIRuGvB\nKwzESIXgKk2016aTP6/dAjEHyo6SeoK8lkIySUvK0fyOVlsiEsCmOpidtnKX/a+5\n0GjB79CJH4ER2lLVZnhePFR/zUOyPxZQQ4naHf7yu/b5jhO0f8fwt+pyFxIXjbEI\ndZliWRkRMtzrHOJIhrmJ2A1J7iOrirbbwillwjjNVUWPf3IJ3M12S9pEewooaeO2\nizNTERcG9HzAacbVRn2Y2SWIyT/18QIDAQABo4GnMIGkMB0GA1UdDgQWBBT/LbE4\n9rWf288N6sJA5BRb6FJIGDB1BgNVHSMEbjBsgBT/LbE49rWf288N6sJA5BRb6FJI\nGKFJpEcwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgTClNvbWUtU3RhdGUxITAfBgNV\nBAoTGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZIIJAMHAwfXZ5/PWMAwGA1UdEwQF\nMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAHHFwl0tH0quUYZYO0dZYt4R7SJ0pCm2\n2satiyzHl4OnXcHDpekAo7/a09c6Lz6AU83cKy/+x3/djYHXWba7HpEu0dR3ugQP\nMlr4zrhd9xKZ0KZKiYmtJH+ak4OM4L3FbT0owUZPyjLSlhMtJVcoRp5CJsjAMBUG\nSvD8RX+T01wzox/Qb+lnnNnOlaWpqu8eoOenybxKp1a9ULzIVvN/LAcc+14vioFq\n2swRWtmocBAs8QR9n4uvbpiYvS8eYueDCWMM4fvFfBhaDZ3N9IbtySh3SpFdQDhw\nYbjM2rxXiyLGxB4Bol7QTv4zHif7Zt89FReT/NBy4rzaskDJY5L6xmY=\n-----END CERTIFICATE-----\n`
-
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
+	t.Parallel()
+	var perZoneAOP cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls_certificate.%s", rnd)
@@ -26,14 +26,104 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType, testCertificate),
+				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
 				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(name, &perZoneAOP),
 					resource.TestCheckResourceAttr(
 						name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(
+						name, "status", "pending_deployment"),
+					resource.TestCheckResourceAttr(
+						name, "type", aopType),
 				),
 			},
 		},
 	})
+}
+
+func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.T) {
+	t.Parallel()
+	var perZoneAOP cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls_certificate.%s", rnd)
+	aopType := "per-hostname"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(name, &perZoneAOP),
+					resource.TestCheckResourceAttr(
+						name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(
+						name, "status", "pending_deployment"),
+					resource.TestCheckResourceAttr(
+						name, "type", aopType),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n string, customSSL *cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No cert ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		foundCustomSSL, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if foundCustomSSL.ID != rs.Primary.ID {
+			return fmt.Errorf("cert not found")
+		}
+
+		*customSSL = foundCustomSSL
+
+		return nil
+	}
+}
+
+func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(n string, customSSL *cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No cert ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		foundCustomSSL, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if foundCustomSSL.ID != rs.Primary.ID {
+			return fmt.Errorf("cert not found")
+		}
+
+		*customSSL = foundCustomSSL
+
+		return nil
+	}
 }
 
 func testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, name, aopType string) string {
@@ -48,13 +138,18 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, nam
 
 func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
-
 	for _, rs := range s.RootModule().Resources {
-		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
-		if err == nil {
-			return fmt.Errorf("cert still exists")
+		if rs.Primary.Attributes["type"] == "per-zone" {
+			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			if err == nil {
+				return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			}
+		} else if rs.Primary.Attributes["type"] == "per-hostname" {
+			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			if err == nil {
+				return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			}
 		}
 	}
-
 	return nil
 }
