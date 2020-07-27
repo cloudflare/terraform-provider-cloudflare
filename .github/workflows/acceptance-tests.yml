@@ -45,4 +45,5 @@ jobs:
       run: make testacc
 
     - name: Post-Sweeper
+      if: ${{ always() }}
       run: go test ./cloudflare -v -sweep="1"
