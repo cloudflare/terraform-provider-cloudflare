@@ -73,31 +73,6 @@ func TestAccCloudflareZonePartialSetup(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZonePartialSetupEnterprise(t *testing.T) {
-	t.Skip("Partial zone under full zone is unsupported")
-	return
-
-	name := "cloudflare_zone.tf-acc-partial-setup-zone"
-	resourceName := strings.Split(name, ".")[1]
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testZoneConfigWithPartialSetup(resourceName, "tf-acc-partial-enterprise.cfapi.net", "false", "false", "enterprise"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "tf-acc-partial-enterprise.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "paused", "false"),
-					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
-					resource.TestCheckResourceAttr(name, "type", "partial"),
-					resource.TestCheckResourceAttrSet(name, "verification_key"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareZoneFullSetup(t *testing.T) {
 	name := "cloudflare_zone.tf-acc-full-setup-zone"
 	resourceName := strings.Split(name, ".")[1]
