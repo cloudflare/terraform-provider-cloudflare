@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
@@ -33,6 +34,21 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 				Sensitive: true,
 				ForceNew:  true,
 			},
+			"issuer": {
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
+			"signature": {
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
+			"serial_number": {
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
 			"expires_on": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -43,12 +59,20 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 			},
+			"uploaded_on": {
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
 			"type": {
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice([]string{"per-zone", "per-hostname"}, false),
 				Required:     true,
 				ForceNew:     true,
 			},
+		},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(1 * time.Minute),
 		},
 	}
 }
@@ -69,6 +93,19 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 			return fmt.Errorf("Error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
+
+		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(zoneID, record.ID)
+			if err != nil {
+				return resource.NonRetryableError(fmt.Errorf("Error reading Per Zone AOP certificate details: %s", err))
+			}
+
+			if resp.Status != "active" {
+				return resource.RetryableError(fmt.Errorf("Expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
+			}
+
+			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))
+		})
 	case aopType == "per-hostname":
 		perHostnameAOPCert := cloudflare.PerHostnameAuthenticatedOriginPullsCertificateParams{
 			Certificate: d.Get("certificate").(string),
@@ -79,8 +116,21 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 			return fmt.Errorf("Error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
+
+		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, record.ID)
+			if err != nil {
+				return resource.NonRetryableError(fmt.Errorf("Error reading Per Hostname AOP certificate details: %s", err))
+			}
+
+			if resp.Status != "active" {
+				return resource.RetryableError(fmt.Errorf("Expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
+			}
+
+			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))
+		})
 	}
-	return resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+	return nil
 }
 
 func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.ResourceData, meta interface{}) error {
@@ -97,8 +147,11 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 			d.SetId("")
 			return nil
 		}
+		d.Set("issuer", record.Issuer)
+		d.Set("signature", record.Signature)
 		d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
 		d.Set("status", record.Status)
+		d.Set("uploaded_on", record.UploadedOn)
 	case aopType == "per-hostname":
 		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, certID)
 		if err != nil {
@@ -106,8 +159,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 			d.SetId("")
 			return nil
 		}
+		d.Set("issuer", record.Issuer)
+		d.Set("signature", record.Signature)
+		d.Set("serial_number", record.SerialNumber)
 		d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
 		d.Set("status", record.Status)
+		d.Set("uploaded_on", record.UploadedOn)
 	}
 	return nil
 }

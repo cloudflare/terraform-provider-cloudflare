@@ -32,8 +32,6 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(
-						name, "status", "pending_deployment"),
-					resource.TestCheckResourceAttr(
 						name, "type", aopType),
 				),
 			},
@@ -63,8 +61,6 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.
 					resource.TestCheckResourceAttr(
 						name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(
-						name, "status", "pending_deployment"),
-					resource.TestCheckResourceAttr(
 						name, "type", aopType),
 				),
 			},
@@ -72,56 +68,46 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.
 	})
 }
 
-func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n string, customSSL *cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails) resource.TestCheckFunc {
+func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n string, perZoneAOPCert *cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
 		}
-
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundCustomSSL, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
-
-		if foundCustomSSL.ID != rs.Primary.ID {
+		if foundPerZoneAOPCert.ID != rs.Primary.ID {
 			return fmt.Errorf("cert not found")
 		}
-
-		*customSSL = foundCustomSSL
-
+		*perZoneAOPCert = foundPerZoneAOPCert
 		return nil
 	}
 }
 
-func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(n string, customSSL *cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails) resource.TestCheckFunc {
+func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(n string, perHostnameAOPCert *cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
 		}
-
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundCustomSSL, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
-
-		if foundCustomSSL.ID != rs.Primary.ID {
+		if foundPerHostnameAOPCert.ID != rs.Primary.ID {
 			return fmt.Errorf("cert not found")
 		}
-
-		*customSSL = foundCustomSSL
-
+		*perHostnameAOPCert = foundPerHostnameAOPCert
 		return nil
 	}
 }
