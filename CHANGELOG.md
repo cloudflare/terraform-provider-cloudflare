@@ -1,4 +1,6 @@
-## 2.9.0 (Unreleased)
+## 2.10.0 (Unreleased)
+
+## 2.9.0 (July 30th, 2020)
 
 **Improvements**
 
