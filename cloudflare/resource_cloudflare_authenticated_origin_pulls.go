@@ -132,19 +132,19 @@ func resourceCloudflareAuthenticatedOriginPullsDelete(d *schema.ResourceData, me
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(zoneID, conf)
 		if err != nil {
-			return fmt.Errorf("Error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
 	} else if aopCert != "" {
 		// Per Zone AOP
 		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(zoneID, false)
 		if err != nil {
-			return fmt.Errorf("Error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
 	} else {
 		// Global AOP
 		_, err := client.SetAuthenticatedOriginPullsStatus(zoneID, false)
 		if err != nil {
-			return fmt.Errorf("Error disabling Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error disabling Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
 	}
 	return nil
