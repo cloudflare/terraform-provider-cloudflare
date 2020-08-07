@@ -36,6 +36,8 @@ github.com/cheggaaa/pb v1.0.27/go.mod h1:pQciLPpbU0oxA0h+VJYYLxO+XeDQb5pZijXscXH
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cloudflare/cloudflare-go v0.12.2 h1:PZET7oOmNpTafKNv2WPiyzcjkKyEThgvTrMK3oqqn9I=
 github.com/cloudflare/cloudflare-go v0.12.2/go.mod h1:6rZ6s/XWxP8WIWMATgDM7aUop0Z0ZOAfcm/4rEd0lOY=
+github.com/cloudflare/cloudflare-go v0.13.0 h1:Mx2gNz/r4H0eHETENq5ZPtc/kOX/uzEfT2UFuA+/XAU=
+github.com/cloudflare/cloudflare-go v0.13.0/go.mod h1:6rZ6s/XWxP8WIWMATgDM7aUop0Z0ZOAfcm/4rEd0lOY=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

@@ -320,7 +320,7 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 	}
 
 	if originPort, ok := d.GetOk("origin_port"); ok {
-		application.OriginPort = originPort.(int)
+		application.OriginPort = &cloudflare.SpectrumApplicationOriginPort{Port: originPort.(uint16)}
 	}
 
 	if tls, ok := d.GetOk("tls"); ok {
