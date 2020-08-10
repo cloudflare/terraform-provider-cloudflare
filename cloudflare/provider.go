@@ -113,7 +113,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_byo_ip_prefix":                   resourceCloudflareBYOIPPrefix(),
 			"cloudflare_custom_pages":                    resourceCloudflareCustomPages(),
 			"cloudflare_custom_hostname":                 resourceCloudflareCustomHostname(),
-			"cloudflare_custom_hostname_fallback_origin": resourceCloudflareCustomHostname(),
+			"cloudflare_custom_hostname_fallback_origin": resourceCloudflareCustomHostnameFallbackOrigin(),
 			"cloudflare_custom_ssl":                      resourceCloudflareCustomSsl(),
 			"cloudflare_filter":                          resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":                   resourceCloudflareFirewallRule(),
