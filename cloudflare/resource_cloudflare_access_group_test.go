@@ -135,7 +135,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupWithIDP(accountID, idpName, groupName, team),
+				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, team),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(groupName, &accessGroup),
 					resource.TestCheckResourceAttr(groupName, "account_id", accountID),
@@ -292,7 +292,7 @@ resource "cloudflare_access_group" "%[1]s" {
 }`, resourceName, accountID, email)
 }
 
-func testAccCloudflareAccessGroupWithIDP(accountID, idpName, groupName, team string) string {
+func testAccCloudflareAccessGroupWithIDP(accountID, rnd, team string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[2]s" {
   account_id = "%[1]s"
@@ -304,18 +304,18 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
   }
 }
 
-resource "cloudflare_access_group" "%[3]s" {
+resource "cloudflare_access_group" "%[2]s" {
   account_id = "%[1]s"
-  name = "%[3]s"
+  name = "%[2]s"
 
   include {
     github {
-      name                 = "%[3]s"
-      teams                = ["%[4]s"]
+      name                 = "%[2]s"
+      teams                = ["%[3]s"]
       identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
     }
   }
-}`, accountID, idpName, groupName, team)
+}`, accountID, rnd, team)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
