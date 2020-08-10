@@ -36,7 +36,8 @@ resource "cloudflare_spectrum_application" "ssh_proxy" {
 * `dns` - (Required) The name and type of DNS record for the Spectrum application. Fields documented below.
 * `origin_direct` - (Optional) A list of destination addresses to the origin. e.g. `tcp://192.0.2.1:22`.
 * `origin_dns` - (Optional) A destination DNS addresses to the origin. Fields documented below.
-* `origin_port` - (Optional) If using `origin_dns` this is a required attribute. Origin port to proxy traffice to e.g. `22`.
+* `origin_port` - (Optional) If using `origin_dns` and not `origin_port_range`, this is a required attribute. Origin port to proxy traffice to e.g. `22`.
+* `origin_port_range` - (Optional) If using `origin_dns` and not `origin_port`, this is a required attribute. Origin port range to proxy traffice to.  When using a range, the protocol field must also specify a range, e.g. `tcp/22-23`. Fields documented below.
 * `tls` - (Optional) TLS configuration option for Cloudflare to connect to your origin. Valid values are: `off`, `flexible`, `full` and `strict`. Defaults to `off`.
 * `ip_firewall` - (Optional) Enables the IP Firewall for this application. Defaults to `true`.
 * `proxy_protocol` - (Optional) Enables a proxy protocol to the origin. Valid values are: `off`, `v1`, `v2`, and `simple`. Defaults to `off`.
@@ -53,6 +54,11 @@ resource "cloudflare_spectrum_application" "ssh_proxy" {
 **origin_dns**
 
 * `name` - (Required) Fully qualified domain name of the origin e.g. origin-ssh.example.com.
+
+**origin_port_range**
+
+* `start` - (Required) Lower bound of the origin port range, e.g. `1000`
+* `end` - (Required) Upper bound of the origin port range, e.g. `2000`
 
 ## Attributes Reference
 
