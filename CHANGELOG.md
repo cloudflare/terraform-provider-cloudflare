@@ -1,6 +1,12 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/spectrum_application`: Add support for port ranges ([#745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/745)) 
+
 ## 2.9.0 (July 30th, 2020)
+
+* **New Resource:** `cloudflare_custom_hostname` (SSL for SaaS) ([#746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/746))
 
 **Improvements**
 
