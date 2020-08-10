@@ -24,6 +24,7 @@ func resourceCloudflareCustomHostnameFallbackOrigin() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
 				Type:     schema.TypeString,
+				ForceNew: true,
 				Required: true,
 			},
 			"origin": {
