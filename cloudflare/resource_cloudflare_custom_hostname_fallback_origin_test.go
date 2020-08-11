@@ -48,7 +48,6 @@ resource "cloudflare_record" "%[2]s" {
 func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
 	rndUpdate := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
