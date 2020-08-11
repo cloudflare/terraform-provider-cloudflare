@@ -81,7 +81,7 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 	}
 
 	id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
-	d.SetId(id))
+	d.SetId(id)
 
 	return resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
 }
