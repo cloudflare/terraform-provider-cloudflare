@@ -80,7 +80,8 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		return errors.Wrap(err, "failed to create custom hostname fallback origin")
 	}
 
-	d.SetId(zoneID + "-custom_hostname_fallback_origin")
+	id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
+	d.SetId(id))
 
 	return resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
 }
@@ -99,8 +100,6 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 		return errors.Wrap(err, "failed to update custom hostname fallback origin")
 	}
 
-	d.SetId(zoneID + "-custom_hostname_fallback_origin")
-
 	return resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
 }
 
@@ -117,7 +116,9 @@ func resourceCloudflareCustomHostnameFallbackOriginImport(d *schema.ResourceData
 
 	d.Set("zone_id", zoneID)
 	d.Set("origin", origin)
-	d.SetId(zoneID + "-custom_hostname_fallback_origin")
+
+	id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
+	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
 }
