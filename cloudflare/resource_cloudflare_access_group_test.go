@@ -142,7 +142,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 					resource.TestCheckResourceAttr(groupName, "name", rnd),
 					resource.TestCheckResourceAttr(groupName, "include.0.github.account_id", accountID),
 					resource.TestCheckResourceAttr(groupName, "include.0.github.name", idpName),
-					resource.TestCheckResourceAttr(groupName, "include.0.github.team.0", team),
+					resource.TestCheckResourceAttr(groupName, "include.0.github.teams.0", team),
 				),
 			},
 		},

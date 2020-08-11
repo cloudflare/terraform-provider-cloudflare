@@ -131,6 +131,13 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 						Type:     schema.TypeString,
 						Optional: true,
 					},
+					"teams": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
 					"identity_provider_id": {
 						Type:     schema.TypeString,
 						Optional: true,
