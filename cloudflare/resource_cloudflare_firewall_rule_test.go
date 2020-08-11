@@ -131,3 +131,49 @@ func testFirewallRuleBypassConfig(resourceID, zoneID, paused, description, expre
 		}
 		`, resourceID, zoneID, paused, description, expression)
 }
+
+func TestAccFirewallRuleWithUnicodeAndHTMLEntity(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_firewall_rule." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	expression := `(http.host eq \"` + domain + `\")`
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirewallRuleWithUnicodeAndHTMLEntityConfig(rnd, zoneID, "true", "this is a 'test'", expression, "allow", "1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "description", "this is a \u0026#39;test\u0026#39;"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "action", "allow"),
+					resource.TestCheckResourceAttr(name, "priority", "1"),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+				),
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
+func testAccFirewallRuleWithUnicodeAndHTMLEntityConfig(resourceID, zoneID, paused, description, expression, action, priority string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_filter" "%[1]s" {
+		  zone_id = "%[2]s"
+		  paused = "%[3]s"
+		  description = "%[4]s"
+		  expression = "%[5]s"
+		}
+		resource "cloudflare_firewall_rule" "%[1]s" {
+		  zone_id = "%[2]s"
+		  paused = "%[3]s"
+		  description = "%[4]s"
+		  filter_id = "${cloudflare_filter.%[1]s.id}"
+		  action = "%[6]s"
+		  priority = %[7]s
+		}
+		`, resourceID, zoneID, paused, description, expression, action, priority)
+}
