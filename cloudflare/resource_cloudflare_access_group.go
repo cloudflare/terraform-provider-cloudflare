@@ -103,6 +103,10 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"auth_method": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
 		"gsuite": {
 			Type:     schema.TypeList,
 			Optional: true,
@@ -341,6 +345,12 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 				group = append(group, cloudflare.AccessGroupCertificateCommonName{CommonName: struct {
 					CommonName string `json:"common_name"`
 				}{CommonName: values.(string)}})
+			}
+		} else if accessGroupType == "auth_method" {
+			if values != "" {
+				group = append(group, cloudflare.AccessGroupAuthMethod{Group: struct {
+					AuthMethod string `json:"auth_method"`
+				}{AuthMethod: values.(string)}})
 			}
 		} else if accessGroupType == "gsuite" {
 			for _, v := range values.([]interface{}) {

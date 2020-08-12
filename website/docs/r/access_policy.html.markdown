@@ -59,9 +59,9 @@ The following arguments are supported:
   Allowed values: `allow`, `deny`, `non_identity`, `bypass`
 * `name` - (Required) Friendly name of the Access Application.
 * `precedence` - (Optional) The unique precedence for policies on a single application. Integer.
-* `require` - (Optional) A series of access conditions, see [Access Groups](/docs/providers/cloudflare/r/access_group.html#conditions).
-* `exclude` - (Optional) A series of access conditions, see [Access Groups](/docs/providers/cloudflare/r/access_group.html#conditions).
-* `include` - (Required) A series of access conditions, see [Access Groups](/docs/providers/cloudflare/r/access_group.html#conditions).
+* `require` - (Optional) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
+* `exclude` - (Optional) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
+* `include` - (Required) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
 
 
 ## Import
