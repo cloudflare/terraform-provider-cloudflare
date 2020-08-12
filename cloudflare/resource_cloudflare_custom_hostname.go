@@ -26,6 +26,7 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 			"zone_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"hostname": {
 				Type:         schema.TypeString,
