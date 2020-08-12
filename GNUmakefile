@@ -52,6 +52,8 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 	echo "$(WEBSITE_REPO) not found in your GOPATH (necessary for layouts and assets), get-ting..."
 	git clone https://$(WEBSITE_REPO) $(GOPATH)/src/$(WEBSITE_REPO)
 endif
+	ln -sf ../../../../ext/providers/cloudflare/website/docs $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/docs/providers/cloudflare
+	ln -sf ../../../ext/providers/cloudflare/website/cloudflare.erb $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/layouts/cloudflare.erb
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
 website-test:
@@ -59,6 +61,8 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 	echo "$(WEBSITE_REPO) not found in your GOPATH (necessary for layouts and assets), get-ting..."
 	git clone https://$(WEBSITE_REPO) $(GOPATH)/src/$(WEBSITE_REPO)
 endif
+	ln -sf ../../../../ext/providers/cloudflare/website/docs $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/docs/providers/cloudflare
+	ln -sf ../../../ext/providers/cloudflare/website/cloudflare.erb $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/layouts/cloudflare.erb
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
 .PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test
