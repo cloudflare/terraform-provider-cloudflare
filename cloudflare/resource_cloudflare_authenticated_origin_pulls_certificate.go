@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -141,9 +142,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 	case aopType == "per-zone":
 		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(zoneID, certID)
 		if err != nil {
-			log.Printf("[WARN] Removing certificate from state because it was not found in API.")
-			d.SetId("")
-			return nil
+			if strings.Contains(err.Error(), "HTTP status 404") {
+				log.Printf("[INFO] Per-Zone Authenticated Origin Pull certificate %s no longer exists", d.Id())
+				d.SetId("")
+				return nil
+			}
+			return fmt.Errorf("Error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err)
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -153,9 +157,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 	case aopType == "per-hostname":
 		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, certID)
 		if err != nil {
-			log.Printf("[WARN] Removing certificate from state because it was not found in API.")
-			d.SetId("")
-			return nil
+			if strings.Contains(err.Error(), "HTTP status 404") {
+				log.Printf("[INFO] Per-Hostname Authenticated Origin Pull certificate %s no longer exists", d.Id())
+				d.SetId("")
+				return nil
+			}
+			return fmt.Errorf("Error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err)
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
