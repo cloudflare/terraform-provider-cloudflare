@@ -61,3 +61,16 @@ The following arguments are supported:
 - `enabled` - (Required) Whether or not to enable Authenticated Origin Pulls on the given zone or hostname.
 
 ## Import
+
+Authenticated Origin Pull configuration can be imported using a composite ID formed of the zone ID, the form of Authenticated Origin Pulls, and the certificate ID, with each section filled or left blank e.g.
+
+```
+# Import Authenticated Origin Pull configuration
+$ terraform import cloudflare_authenticated_origin_pulls_certificate.my_aop 023e105f4ecef8ad9ca31a8372d0c353//
+
+# Import Per-Zone Authenticated Origin Pull configuration
+$ terraform import cloudflare_authenticated_origin_pulls_certificate.my_per_zone_aop 023e105f4ecef8ad9ca31a8372d0c353/2458ce5a-0c35-4c7f-82c7-8e9487d3ff60/
+
+# Import Per-Hostname Authenticated Origin Pull configuration
+$ terraform import cloudflare_authenticated_origin_pulls_certificate.my_per_hostname_aop 023e105f4ecef8ad9ca31a8372d0c353/2458ce5a-0c35-4c7f-82c7-8e9487d3ff60/aop.example.com
+```

@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -15,7 +16,9 @@ func resourceCloudflareAuthenticatedOriginPulls() *schema.Resource {
 		Read:   resourceCloudflareAuthenticatedOriginPullsRead,
 		Update: resourceCloudflareAuthenticatedOriginPullsCreate,
 		Delete: resourceCloudflareAuthenticatedOriginPullsDelete,
-
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudflareAuthenticatedOriginPullsImport,
+		},
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -145,4 +148,31 @@ func resourceCloudflareAuthenticatedOriginPullsDelete(d *schema.ResourceData, me
 		}
 	}
 	return nil
+}
+
+func resourceCloudflareAuthenticatedOriginPullsImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 3)
+
+	if len(idAttr) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/certID/hostname\"", d.Id())
+	}
+	zoneID, certID, hostname := idAttr[0], idAttr[1], idAttr[2]
+	d.Set("zone_id", zoneID)
+
+	// Set attributes based on inputs which informs which form of AOP to use
+	var checksum string
+	if hostname != "" && certID != "" {
+		d.Set("hostname", hostname)
+		d.Set("authenticated_origin_pulls_certificate", certID)
+		checksum = stringChecksum(fmt.Sprintf("PerHostnameAOP/%s/%s/%s", zoneID, hostname, certID))
+	} else if certID != "" {
+		d.Set("authenticated_origin_pulls_certificate", certID)
+		checksum = stringChecksum(fmt.Sprintf("PerZoneAOP/%s/%s", zoneID, certID))
+	} else {
+		checksum = stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
+	}
+	d.SetId(checksum)
+	resourceCloudflareAuthenticatedOriginPullsRead(d, meta)
+	return []*schema.ResourceData{d}, nil
 }

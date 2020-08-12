@@ -18,6 +18,10 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 		Create: resourceCloudflareAuthenticatedOriginPullsCertificateCreate,
 		Read:   resourceCloudflareAuthenticatedOriginPullsCertificateRead,
 		Delete: resourceCloudflareAuthenticatedOriginPullsCertificateDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudflareAuthenticatedOriginPullsCertificateImport,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -192,4 +196,20 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.Resou
 		}
 	}
 	return nil
+}
+
+func resourceCloudflareAuthenticatedOriginPullsCertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 3)
+
+	if len(idAttr) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/type/certID\"", d.Id())
+	}
+	zoneID, aopType, certID := idAttr[0], idAttr[1], idAttr[2]
+	d.Set("zone_id", zoneID)
+	d.Set("type", aopType)
+	d.SetId(certID)
+
+	resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+	return []*schema.ResourceData{d}, nil
 }

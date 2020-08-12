@@ -40,3 +40,13 @@ The following arguments are supported:
 - `type` - (Required) The form of Authenticated Origin Pulls to upload the certificate to.
 
 ## Import
+
+Authenticated Origin Pull certificates can be imported using a composite ID formed of the zone ID, the form of Authenticated Origin Pulls, and the certificate ID, e.g.
+
+```
+# Import Per-Zone Authenticated Origin Pull certificate
+$ terraform import cloudflare_authenticated_origin_pulls_certificate.2458ce5a-0c35-4c7f-82c7-8e9487d3ff60 023e105f4ecef8ad9ca31a8372d0c353/per-zone/2458ce5a-0c35-4c7f-82c7-8e9487d3ff60
+
+# Import Per-Hostname Authenticated Origin Pull certificate
+$ terraform import cloudflare_authenticated_origin_pulls_certificate.2458ce5a-0c35-4c7f-82c7-8e9487d3ff60 023e105f4ecef8ad9ca31a8372d0c353/per-hostname/2458ce5a-0c35-4c7f-82c7-8e9487d3ff60
+```
