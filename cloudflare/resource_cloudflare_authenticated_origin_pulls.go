@@ -2,7 +2,6 @@ package cloudflare
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -43,7 +42,6 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(d *schema.ResourceData, me
 	zoneID := d.Get("zone_id").(string)
 	hostname := d.Get("hostname").(string)
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	switch isEnabled, ok := d.GetOk("enabled"); ok {
 	case hostname != "" && aopCert != "":
@@ -84,7 +82,6 @@ func resourceCloudflareAuthenticatedOriginPullsRead(d *schema.ResourceData, meta
 	zoneID := d.Get("zone_id").(string)
 	hostname := d.Get("hostname").(string)
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	if hostname != "" && aopCert != "" {
 		// Per Hostname AOP
@@ -120,7 +117,6 @@ func resourceCloudflareAuthenticatedOriginPullsDelete(d *schema.ResourceData, me
 	zoneID := d.Get("zone_id").(string)
 	hostname := d.Get("hostname").(string)
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	if hostname != "" && aopCert != "" {
 		// Per Hostname AOP

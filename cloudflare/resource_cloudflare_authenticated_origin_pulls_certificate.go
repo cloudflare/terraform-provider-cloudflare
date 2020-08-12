@@ -80,7 +80,6 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
@@ -137,7 +136,6 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
@@ -173,7 +171,6 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.Resou
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
