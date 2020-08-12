@@ -14,7 +14,7 @@
 * `resource/access_application`: Add support for `auto_redirect_to_identity` ([#730](https://github.com/cloudflare/terraform-provider-cloudflare/issues/730)) 
 * `resource/access_application`: Add CORS support ([#725](https://github.com/cloudflare/terraform-provider-cloudflare/issues/725)) 
 * `resource/cloudflare_custom_ssl`: Allow `geo_restrictions` to be `nil` and not included in the request payload ([#714](https://github.com/cloudflare/terraform-provider-cloudflare/issues/714)) 
-* `datasource/cloudflare_zones`: Filtering is now performed on the server side and the `name` parameter is no longer a regex. Instead, `name` is a string to match on and `match` is a regex. See the website documentation for more examples and updated references ([#708](https://github.com/cloudflare/terraform-provider-cloudflare/issues/708)) 
+* `datasource/cloudflare_zones`: Filtering is now performed on the server side and the `name` parameter is no longer a regex. Instead, `name` is a string to match on and `match` is a regex. See the website documentation for more examples and updated references ([#708](https://github.com/cloudflare/terraform-provider-cloudflare/issues/708)) in order to make your code compatible with this release.
  
 
 ## 2.8.0 (June 22, 2020)
