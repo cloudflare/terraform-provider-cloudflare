@@ -29,10 +29,8 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(name, &perZoneAOP),
-					resource.TestCheckResourceAttr(
-						name, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(
-						name, "type", aopType),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "type", aopType),
 				),
 			},
 		},
@@ -58,10 +56,8 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(name, &perZoneAOP),
-					resource.TestCheckResourceAttr(
-						name, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(
-						name, "type", aopType),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "type", aopType),
 				),
 			},
 		},

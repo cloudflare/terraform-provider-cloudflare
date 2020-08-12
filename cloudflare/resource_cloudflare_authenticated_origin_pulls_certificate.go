@@ -89,18 +89,18 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 		}
 		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(zoneID, perZoneAOPCert)
 		if err != nil {
-			return fmt.Errorf("Error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
 
 		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("Error reading Per Zone AOP certificate details: %s", err))
+				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %s", err))
 			}
 
 			if resp.Status != "active" {
-				return resource.RetryableError(fmt.Errorf("Expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
+				return resource.RetryableError(fmt.Errorf("expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
 			}
 
 			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))
@@ -112,18 +112,18 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 		}
 		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(zoneID, perHostnameAOPCert)
 		if err != nil {
-			return fmt.Errorf("Error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
 
 		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("Error reading Per Hostname AOP certificate details: %s", err))
+				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %s", err))
 			}
 
 			if resp.Status != "active" {
-				return resource.RetryableError(fmt.Errorf("Expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
+				return resource.RetryableError(fmt.Errorf("expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
 			}
 
 			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))

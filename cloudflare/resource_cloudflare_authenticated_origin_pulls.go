@@ -43,6 +43,7 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(d *schema.ResourceData, me
 	hostname := d.Get("hostname").(string)
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
 
+	var checksum string
 	switch isEnabled, ok := d.GetOk("enabled"); ok {
 	case hostname != "" && aopCert != "":
 		// Per Hostname AOP
@@ -53,27 +54,28 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(d *schema.ResourceData, me
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(zoneID, conf)
 		if err != nil {
-			return fmt.Errorf("Error creating Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error creating Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
-		checksum := stringChecksum(fmt.Sprintf("PerHostnameAOP/%s/%s/%s", zoneID, hostname, aopCert))
-		d.SetId(checksum)
+		checksum = stringChecksum(fmt.Sprintf("PerHostnameAOP/%s/%s/%s", zoneID, hostname, aopCert))
+
 	case aopCert != "":
 		// Per Zone AOP
 		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(zoneID, isEnabled.(bool))
 		if err != nil {
-			return fmt.Errorf("Error creating Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error creating Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
-		checksum := stringChecksum(fmt.Sprintf("PerZoneAOP/%s/%s", zoneID, aopCert))
-		d.SetId(checksum)
+		checksum = stringChecksum(fmt.Sprintf("PerZoneAOP/%s/%s", zoneID, aopCert))
+
 	default:
 		// Global AOP
 		_, err := client.SetAuthenticatedOriginPullsStatus(zoneID, isEnabled.(bool))
 		if err != nil {
-			return fmt.Errorf("Error creating Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error creating Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
-		checksum := stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
-		d.SetId(checksum)
+		checksum = stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
 	}
+
+	d.SetId(checksum)
 	return resourceCloudflareAuthenticatedOriginPullsRead(d, meta)
 }
 
@@ -127,19 +129,19 @@ func resourceCloudflareAuthenticatedOriginPullsDelete(d *schema.ResourceData, me
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(zoneID, conf)
 		if err != nil {
-			return fmt.Errorf("Error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
 	} else if aopCert != "" {
 		// Per Zone AOP
 		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(zoneID, false)
 		if err != nil {
-			return fmt.Errorf("Error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
 	} else {
 		// Global AOP
 		_, err := client.SetAuthenticatedOriginPullsStatus(zoneID, false)
 		if err != nil {
-			return fmt.Errorf("Error disabling Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error disabling Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
 		}
 	}
 	return nil
