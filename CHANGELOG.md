@@ -2,7 +2,12 @@
 
 **Improvements**
 
-* `resource/spectrum_application`: Add support for port ranges ([#745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/745)) 
+* `resource/cloudflare_spectrum_application`: Add support for port ranges ([#745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/745)) 
+
+**Fixes**
+
+* `resource/cloudflare_firewall_rule`: Compare descriptions after converting unicode + HTML entities to prevent unnecessary diffs ([#758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/758))
+* `resource/cloudflare_filter`: Compare descriptions after converting unicode + HTML entities to prevent unnecessary diffs ([#758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/758))
 
 ## 2.9.0 (July 30th, 2020)
 
