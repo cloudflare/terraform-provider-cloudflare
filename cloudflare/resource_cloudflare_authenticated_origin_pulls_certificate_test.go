@@ -11,7 +11,6 @@ import (
 )
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
-	t.Parallel()
 	var perZoneAOP cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -38,7 +37,6 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.T) {
-	t.Parallel()
 	var perZoneAOP cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
