@@ -107,5 +107,5 @@ func testAccCheckCloudflareAuthenticatedOriginPullsConfig(zoneID, name, aopType,
 		  authenticated_origin_pulls_certificate = "${cloudflare_authenticated_origin_pulls_certificate.%[1]s.id}"
 		  hostname = "%[4]s"
 		  enabled = true
-		}`, name, zoneID, aopType, hostname)
+		}`, name, zoneID, aopType, name+"."+hostname)
 }
