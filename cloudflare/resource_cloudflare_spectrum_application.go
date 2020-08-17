@@ -82,8 +82,31 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 			},
 
 			"origin_port": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Type:          schema.TypeInt,
+				Optional:      true,
+				ConflictsWith: []string{"origin_port_range"},
+				ValidateFunc:  validation.IntBetween(0, 65535),
+			},
+
+			"origin_port_range": {
+				Type:          schema.TypeList,
+				Optional:      true,
+				MaxItems:      1,
+				ConflictsWith: []string{"origin_port"},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"start": {
+							Type:         schema.TypeInt,
+							Required:     true,
+							ValidateFunc: validation.IntBetween(0, 65535),
+						},
+						"end": {
+							Type:         schema.TypeInt,
+							Required:     true,
+							ValidateFunc: validation.IntBetween(0, 65535),
+						},
+					},
+				},
 			},
 
 			"tls": {
@@ -207,13 +230,22 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 		}
 	}
 
+	if application.OriginPort != nil {
+		if application.OriginPort.Port > 0 {
+			d.Set("origin_port", application.OriginPort.Port)
+		} else {
+			if err := d.Set("origin_port_range", flattenOriginPortRange(application.OriginPort)); err != nil {
+				log.Printf("[WARN] Error setting origin port range on spectrum application %q: %s", d.Id(), err)
+			}
+		}
+	}
+
 	if application.EdgeIPs != nil {
 		if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
 			log.Printf("[WARN] Error setting Edge IPs on spectrum application %q: %s", d.Id(), err)
 		}
 	}
 
-	d.Set("origin_port", application.OriginPort)
 	d.Set("tls", application.TLS)
 	d.Set("traffic_type", application.TrafficType)
 	d.Set("ip_firewall", application.IPFirewall)
@@ -279,6 +311,17 @@ func expandOriginDNS(d interface{}) *cloudflare.SpectrumApplicationOriginDNS {
 	return dns
 }
 
+func expandOriginPortRange(d interface{}) *cloudflare.SpectrumApplicationOriginPort {
+	cfg := d.([]interface{})
+	port := &cloudflare.SpectrumApplicationOriginPort{}
+
+	m := cfg[0].(map[string]interface{})
+	port.Start = uint16(m["start"].(int))
+	port.End = uint16(m["end"].(int))
+
+	return port
+}
+
 func flattenDNS(dns cloudflare.SpectrumApplicationDNS) []map[string]interface{} {
 	flattened := map[string]interface{}{}
 	flattened["type"] = dns.Type
@@ -290,6 +333,14 @@ func flattenDNS(dns cloudflare.SpectrumApplicationDNS) []map[string]interface{} 
 func flattenOriginDNS(dns *cloudflare.SpectrumApplicationOriginDNS) []map[string]interface{} {
 	flattened := map[string]interface{}{}
 	flattened["name"] = dns.Name
+
+	return []map[string]interface{}{flattened}
+}
+
+func flattenOriginPortRange(port *cloudflare.SpectrumApplicationOriginPort) []map[string]interface{} {
+	flattened := map[string]interface{}{}
+	flattened["start"] = port.Start
+	flattened["end"] = port.End
 
 	return []map[string]interface{}{flattened}
 }
@@ -320,7 +371,9 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 	}
 
 	if originPort, ok := d.GetOk("origin_port"); ok {
-		application.OriginPort = &cloudflare.SpectrumApplicationOriginPort{Port: originPort.(uint16)}
+		application.OriginPort = &cloudflare.SpectrumApplicationOriginPort{Port: uint16(originPort.(int))}
+	} else if originPortRange, ok := d.GetOk("origin_port_range"); ok {
+		application.OriginPort = expandOriginPortRange(originPortRange)
 	}
 
 	if tls, ok := d.GetOk("tls"); ok {

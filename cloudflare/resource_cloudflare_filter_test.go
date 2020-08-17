@@ -103,3 +103,36 @@ func TestAccFilterWhitespace(t *testing.T) {
 		},
 	})
 }
+
+func TestAccFilterHTMLEntity(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_filter." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	filter := `(http.host eq \"` + domain + `\")`
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testFilterWithHTMLEntityConfig(rnd, zoneID, "true", "this is a 'test'", filter),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "description", "this is a \u0026#39;test\u0026#39;"),
+				),
+				ExpectNonEmptyPlan: false,
+			},
+		},
+	})
+}
+
+func testFilterWithHTMLEntityConfig(resourceID, zoneID, paused, description, expression string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_filter" "%[1]s" {
+		  zone_id = "%[2]s"
+		  paused = "%[3]s"
+		  description = "%[4]s"
+		  expression = "%[5]s"
+		}
+		`, resourceID, zoneID, paused, description, expression)
+}

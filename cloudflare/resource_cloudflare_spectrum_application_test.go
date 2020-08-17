@@ -111,6 +111,35 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareSpectrumApplication_OriginPortRange(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareSpectrumApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, domain, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "protocol", "tcp/22-23"),
+					resource.TestCheckResourceAttr(name, "origin_dns.#", "1"),
+					resource.TestCheckResourceAttr(name, "origin_dns.0.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "origin_port_range.#", "1"),
+					resource.TestCheckResourceAttr(name, "origin_port_range.0.start", "2022"),
+					resource.TestCheckResourceAttr(name, "origin_port_range.0.end", "2023"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	var initialID string
@@ -302,6 +331,27 @@ resource "cloudflare_spectrum_application" "%[3]s" {
     name = "%[3]s.origin.%[2]s"
   }
   origin_port   = 22
+}`, zoneID, zoneName, ID)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, zoneName, ID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_spectrum_application" "%[3]s" {
+  zone_id  = "%[1]s"
+  protocol = "tcp/22-23"
+
+  dns {
+    type = "CNAME"
+    name = "%[3]s.%[2]s"
+  }
+
+  origin_dns {
+    name = "%[3]s.origin.%[2]s"
+  }
+  origin_port_range {
+    start = 2022
+    end   = 2023
+  }
 }`, zoneID, zoneName, ID)
 }
 

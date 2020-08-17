@@ -1,6 +1,17 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/cloudflare_spectrum_application`: Add support for port ranges ([#745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/745)) 
+
+**Fixes**
+
+* `resource/cloudflare_firewall_rule`: Compare descriptions after converting unicode + HTML entities to prevent unnecessary diffs ([#758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/758))
+* `resource/cloudflare_filter`: Compare descriptions after converting unicode + HTML entities to prevent unnecessary diffs ([#758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/758))
+
 ## 2.9.0 (July 30th, 2020)
+
+* **New Resource:** `cloudflare_custom_hostname` (SSL for SaaS) ([#746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/746))
 
 **Improvements**
 
@@ -8,7 +19,7 @@
 * `resource/access_application`: Add support for `auto_redirect_to_identity` ([#730](https://github.com/cloudflare/terraform-provider-cloudflare/issues/730)) 
 * `resource/access_application`: Add CORS support ([#725](https://github.com/cloudflare/terraform-provider-cloudflare/issues/725)) 
 * `resource/cloudflare_custom_ssl`: Allow `geo_restrictions` to be `nil` and not included in the request payload ([#714](https://github.com/cloudflare/terraform-provider-cloudflare/issues/714)) 
-* `datasource/cloudflare_zones`: Filtering is now performed on the server side and the `name` parameter is no longer a regex. Instead, `name` is a string to match on and `match` is a regex. See the website documentation for more examples and updated references ([#708](https://github.com/cloudflare/terraform-provider-cloudflare/issues/708)) 
+* `datasource/cloudflare_zones`: Filtering is now performed on the server side and the `name` parameter is no longer a regex. Instead, `name` is a string to match on and `match` is a regex. See the website documentation for more examples and updated references ([#708](https://github.com/cloudflare/terraform-provider-cloudflare/issues/708)) in order to make your code compatible with this release.
  
 
 ## 2.8.0 (June 22, 2020)

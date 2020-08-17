@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"html"
 	"log"
 	"strings"
 
@@ -44,6 +45,12 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(0, 500),
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					if html.UnescapeString(old) == html.UnescapeString(new) {
+						return true
+					}
+					return false
+				},
 			},
 			"paused": {
 				Type:     schema.TypeBool,
