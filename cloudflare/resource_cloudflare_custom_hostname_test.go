@@ -257,7 +257,10 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 	resourceName := "cloudflare_custom_hostname." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAltZoneID(t)
+		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
