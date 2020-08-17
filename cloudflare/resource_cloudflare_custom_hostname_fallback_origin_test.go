@@ -21,7 +21,7 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rnd),
+				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)),
@@ -31,28 +31,29 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resource, rnd string) string {
+func testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, subdomain, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_custom_hostname_fallback_origin" "%[2]s" {
   zone_id = "%[1]s"
-  origin = "fallback-origin.%[3]s.terraform.cfapi.net"
+  origin = "fallback-origin.%[3]s.%[4]s"
 }
 
 resource "cloudflare_record" "%[2]s" {
   zone_id = "%[1]s"
-  name    = "fallback-origin.%[3]s.terraform.cfapi.net"
-  value   = "1.1.1.1"
-  type    = "A"
-  proxoed = true
-  ttl     = 3600
-}`, zoneID, rnd, domain)
+  name    = "fallback-origin.%[2]s.%[4]s"
+  value   = "example.com"
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+  depends_on = [cloudflare_custom_hostname_fallback_origin.%[2]s]
+}`, zoneID, rnd, subdomain, domain)
 }
 
 func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
-	rndUpdate := generateRandomResourceName()
+	rndUpdate := rnd + "-updated"
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -60,14 +61,14 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rnd),
+				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rndUpdate),
+				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rndUpdate, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rndUpdate, domain)),
