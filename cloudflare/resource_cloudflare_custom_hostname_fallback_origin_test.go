@@ -5,7 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
@@ -83,7 +85,7 @@ func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.Stat
 			continue
 		}
 
-		_, err := client.DNSRecord(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.CustomHostnameFallbackOrigin(rs.Primary.Attributes["zone_id"])
 		if err == nil {
 			return fmt.Errorf("Fallback Origin still exists")
 		}
