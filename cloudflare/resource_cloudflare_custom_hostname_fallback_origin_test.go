@@ -14,8 +14,9 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rnd),
@@ -52,8 +53,9 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 	rndUpdate := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rnd),
@@ -71,4 +73,21 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.State) error {
+	client := testAccProvider.Meta().(*cloudflare.API)
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_custom_hostname_fallback_origin" {
+			continue
+		}
+
+		_, err := client.DNSRecord(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("Fallback Origin still exists")
+		}
+	}
+
+	return nil
 }
