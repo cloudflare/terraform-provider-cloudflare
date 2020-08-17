@@ -83,8 +83,11 @@ func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.Stat
 			continue
 		}
 
-		_, err := client.CustomHostnameFallbackOrigin(rs.Primary.Attributes["zone_id"])
-		if err == nil {
+		fallbackOrigin, err := client.CustomHostnameFallbackOrigin(rs.Primary.Attributes["zone_id"])
+
+		// If the fallback origin is in the process of being deleted, that's fine to
+		// say it's been deleted as the remote API will take care of it.
+		if fallbackOrigin.Status != "pending_deletion" && err == nil {
 			return fmt.Errorf("Fallback Origin still exists")
 		}
 	}
