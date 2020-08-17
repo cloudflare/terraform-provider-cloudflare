@@ -12,6 +12,7 @@ import (
 
 func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
@@ -23,7 +24,7 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.terraform.cfapi.net", rnd)),
+					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)),
 				),
 			},
 		},
@@ -49,6 +50,7 @@ resource "cloudflare_record" "%[2]s" {
 
 func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
 	rndUpdate := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
@@ -61,14 +63,14 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.terraform.cfapi.net", rnd)),
+					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, resourceName, rndUpdate),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.terraform.cfapi.net", rndUpdate)),
+					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rndUpdate, domain)),
 				),
 			},
 		},
