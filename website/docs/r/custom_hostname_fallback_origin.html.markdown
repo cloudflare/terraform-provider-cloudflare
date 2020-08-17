@@ -1,7 +1,7 @@
 ---
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_custom_hostname_fallback_origin"
-sidebar_current: "docs-ccloudflare_custom_hostname_fallback_origin"
+sidebar_current: "docs-cloudflare_custom_hostname_fallback_origin"
 description: !-
   Provides a Cloudflare custom hostname fallback origin resource.
 ---
@@ -15,7 +15,7 @@ Provides a Cloudflare custom hostname fallback origin resource.
 ```hcl
 resource "cloudflare_custom_hostname_fallback_origin" "fallback_origin" {
   zone_id  = "d41d8cd98f00b204e9800998ecf8427e"
-  origin = "fallback.example.com"
+  origin   = "fallback.example.com"
 }
 ```
 
@@ -24,7 +24,7 @@ resource "cloudflare_custom_hostname_fallback_origin" "fallback_origin" {
 The following arguments are supported:
 
 * `zone_id` - (Required) The DNS zone ID where the custom hostname should be assigned.
-* `origin` - (Required) Hostname you intend to fallback requests too. Origin should be a proxied A/AAAA/CNAME dns record within Clouldflare.
+* `origin` - (Required) Hostname you intend to fallback requests to. Origin must be a proxied A/AAAA/CNAME DNS record within Clouldflare.
 
 ## Attributes Reference
 
