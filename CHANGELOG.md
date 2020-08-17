@@ -3,6 +3,7 @@
 **Improvements**
 
 * `resource/cloudflare_spectrum_application`: Add support for port ranges ([#745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/745)) 
+* `resource/cloudflare_custom_hostname`: Force creation of a new resource if the `zone_id` value changes ([#761](https://github.com/cloudflare/terraform-provider-cloudflare/issues/761)) 
 
 **Fixes**
 
