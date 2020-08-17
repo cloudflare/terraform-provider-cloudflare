@@ -1,5 +1,6 @@
 ## Unreleased
 
+* **New Resource:** `cloudflare_custom_hostname_origin_fallback` ([#757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/757))
 * **New Resource:** `cloudflare_authenticated_origin_pulls` ([#749](https://github.com/cloudflare/terraform-provider-cloudflare/issues/749))
 * **New Resource:** `cloudflare_authenticated_origin_pulls_certificate` ([#749](https://github.com/cloudflare/terraform-provider-cloudflare/issues/749))
 
