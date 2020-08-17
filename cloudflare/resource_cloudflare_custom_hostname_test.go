@@ -267,10 +267,10 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudflareCustomHostnameBasic(altZoneID, rnd, altDomain),
+				ExpectNonEmptyPlan: true,
+				Config:             testAccCheckCloudflareCustomHostnameBasic(altZoneID, rnd, altDomain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareCustomHostnameExists(resourceName, &after),
 					testAccCheckCloudflareCustomHostnameRecreated(&before, &after),
