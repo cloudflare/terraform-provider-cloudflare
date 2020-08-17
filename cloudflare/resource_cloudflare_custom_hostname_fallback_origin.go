@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -80,10 +81,27 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		return errors.Wrap(err, "failed to create custom hostname fallback origin")
 	}
 
-	id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
-	d.SetId(id)
+	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
+		fallbackHostname, err := client.CustomHostnameFallbackOrigin(zoneID)
 
-	return resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %s", err))
+		}
+
+		// Address an eventual consistency issue where deleting a fallback hostname
+		// and then adding it _may_ cause some issues. We don't expect "active" here
+		// as some resources (such as DNS records) will be created while the
+		// deployment is in progress.
+		if fallbackHostname.Status != "pending_deployment" {
+			return resource.RetryableError(fmt.Errorf("expected custom hostname fallback to be created but was %s", fallbackHostname.Status))
+		}
+
+		id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
+		d.SetId(id)
+
+		return resource.NonRetryableError(resourceCloudflareCustomHostnameFallbackOriginRead(d, meta))
+	})
+
 }
 
 func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData, meta interface{}) error {
