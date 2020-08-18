@@ -41,7 +41,7 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "24h",
-				ValidateFunc: validation.StringInSlice([]string{"30m", "6h", "12h", "24h", "168h", "730h"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"0s", "15m", "30m", "6h", "12h", "24h", "168h", "730h"}, false),
 			},
 			"cors_headers": {
 				Type:     schema.TypeList,
