@@ -7,9 +7,9 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2
         with:
-          go-version: '^1.15'
+          go-version: ^1.15
         id: go
 
       # https://help.github.com/en/actions/reference/workflow-commands-for-github-actions
