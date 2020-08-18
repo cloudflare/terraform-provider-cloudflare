@@ -33,9 +33,6 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: Vendor Replace Hack
-      run: grep 'replace .* => \./' go.mod; exit 0
-
     - name: Pre-Sweeper
       run: go test ./cloudflare -v -sweep="1"
 
