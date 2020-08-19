@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/pkg/errors"
 	"regexp"
+	"strings"
 )
 
 func resourceCloudflareIPList() *schema.Resource {
@@ -84,8 +85,16 @@ func resourceCloudflareIPListCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceCloudflareIPListImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	listID := d.Id()
+	client := meta.(*cloudflare.API)
+	attributes := strings.SplitN(d.Id(), "/", 2)
+
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/listID\"", d.Id())
+	}
+
+	accountID, listID := attributes[0], attributes[1]
 	d.SetId(listID)
+	client.AccountID = accountID
 
 	resourceCloudflareIPListRead(d, meta)
 
