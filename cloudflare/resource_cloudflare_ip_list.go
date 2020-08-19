@@ -22,6 +22,10 @@ func resourceCloudflareIPList() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"account_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"name": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -65,6 +69,7 @@ var listItemElem = &schema.Resource{
 
 func resourceCloudflareIPListCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	client.AccountID = d.Get("account_id").(string)
 
 	list, err := client.CreateIPList(context.Background(), d.Get("name").(string), d.Get("description").(string), d.Get("kind").(string))
 	if err != nil {
@@ -103,6 +108,7 @@ func resourceCloudflareIPListImport(d *schema.ResourceData, meta interface{}) ([
 
 func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	client.AccountID = d.Get("account_id").(string)
 
 	list, err := client.GetIPList(context.Background(), d.Id())
 	if err != nil {
@@ -137,6 +143,7 @@ func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) erro
 
 func resourceCloudflareIPListUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	client.AccountID = d.Get("account_id").(string)
 
 	_, err := client.UpdateIPList(context.Background(), d.Id(), d.Get("description").(string))
 	if err != nil {
@@ -156,6 +163,7 @@ func resourceCloudflareIPListUpdate(d *schema.ResourceData, meta interface{}) er
 
 func resourceCloudflareIPListDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	client.AccountID = d.Get("account_id").(string)
 
 	_, err := client.DeleteIPList(context.Background(), d.Id())
 	if err != nil {
