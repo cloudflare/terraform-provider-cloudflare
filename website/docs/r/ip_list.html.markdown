@@ -1,7 +1,7 @@
 ---
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_ip_list"
-sidebar_current: "docs-cloudflare-resource-ip_list"
+sidebar_current: "docs-cloudflare-resource-ip-list"
 description: |-
   Provides IP Lists to be used in Firewall Rules across all zones within the same account. 
 ---
