@@ -205,6 +205,7 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 			testAccPreCheckAltDomain(t)
+			testAccPreCheckAltZoneID(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

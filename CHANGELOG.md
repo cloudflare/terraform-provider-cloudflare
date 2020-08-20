@@ -1,8 +1,14 @@
 ## Unreleased
 
+* **New Resource:** `cloudflare_custom_hostname_origin_fallback` ([#757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/757))
+* **New Resource:** `cloudflare_authenticated_origin_pulls` ([#749](https://github.com/cloudflare/terraform-provider-cloudflare/issues/749))
+* **New Resource:** `cloudflare_authenticated_origin_pulls_certificate` ([#749](https://github.com/cloudflare/terraform-provider-cloudflare/issues/749))
+
 **Improvements**
 
 * `resource/cloudflare_spectrum_application`: Add support for port ranges ([#745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/745)) 
+* `resource/cloudflare_custom_hostname`: Force creation of a new resource if the `zone_id` value changes ([#761](https://github.com/cloudflare/terraform-provider-cloudflare/issues/761)) 
+* `resource/cloudflare_record`: Retry record creation/update if the response includes an "already exists" exception for handling race conditions ([#773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/773)) 
 
 **Fixes**
 

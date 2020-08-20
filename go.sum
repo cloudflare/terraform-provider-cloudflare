@@ -34,8 +34,6 @@ github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kB
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cheggaaa/pb v1.0.27/go.mod h1:pQciLPpbU0oxA0h+VJYYLxO+XeDQb5pZijXscXHm81s=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/cloudflare/cloudflare-go v0.12.2 h1:PZET7oOmNpTafKNv2WPiyzcjkKyEThgvTrMK3oqqn9I=
-github.com/cloudflare/cloudflare-go v0.12.2/go.mod h1:6rZ6s/XWxP8WIWMATgDM7aUop0Z0ZOAfcm/4rEd0lOY=
 github.com/cloudflare/cloudflare-go v0.13.0 h1:Mx2gNz/r4H0eHETENq5ZPtc/kOX/uzEfT2UFuA+/XAU=
 github.com/cloudflare/cloudflare-go v0.13.0/go.mod h1:6rZ6s/XWxP8WIWMATgDM7aUop0Z0ZOAfcm/4rEd0lOY=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=

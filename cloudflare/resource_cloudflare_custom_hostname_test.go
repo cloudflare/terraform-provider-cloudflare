@@ -5,7 +5,9 @@ import (
 	"os"
 	"testing"
 
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccCloudflareCustomHostnameBasic(t *testing.T) {
@@ -241,4 +243,80 @@ resource "cloudflare_custom_hostname" "%[2]s" {
   }
 }
 `, zoneID, rnd, domain)
+}
+
+func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T) {
+	t.Parallel()
+
+	var before, after cloudflare.CustomHostname
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	altZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	altDomain := os.Getenv("CLOUDFLARE_ALT_DOMAIN")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAltZoneID(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareCustomHostnameExists(resourceName, &before),
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+				),
+			},
+			{
+				ExpectNonEmptyPlan: true,
+				Config:             testAccCheckCloudflareCustomHostnameBasic(altZoneID, rnd, altDomain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareCustomHostnameExists(resourceName, &after),
+					testAccCheckCloudflareCustomHostnameRecreated(&before, &after),
+					resource.TestCheckResourceAttr(resourceName, "zone_id", altZoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, altDomain)),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareCustomHostnameRecreated(before, after *cloudflare.CustomHostname) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if before.ID == after.ID {
+			return fmt.Errorf("Expected change of CustomHostname Ids, but both were %v", before.ID)
+		}
+		return nil
+	}
+}
+
+func testAccCheckCloudflareCustomHostnameExists(n string, customHostname *cloudflare.CustomHostname) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No CustomHostname ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		foundCustomHostname, err := client.CustomHostname(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		if foundCustomHostname.ID != rs.Primary.ID {
+			return fmt.Errorf("CustomHostname not found")
+		}
+
+		*customHostname = foundCustomHostname
+
+		return nil
+	}
 }
