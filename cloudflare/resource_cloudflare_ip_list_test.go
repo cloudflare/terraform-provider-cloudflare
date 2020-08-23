@@ -3,16 +3,15 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"os"
-	"testing"
 )
 
 func TestAccCloudflareIPListExists(t *testing.T) {
-	t.Parallel()
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ip_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -36,8 +35,6 @@ func TestAccCloudflareIPListExists(t *testing.T) {
 }
 
 func TestAccCloudflareIPListUpdateDescription(t *testing.T) {
-	t.Parallel()
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ip_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -79,8 +76,6 @@ func TestAccCloudflareIPListUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareIPListUpdate(t *testing.T) {
-	t.Parallel()
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ip_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
