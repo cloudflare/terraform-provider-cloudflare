@@ -120,6 +120,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_filter":                                 resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
 			"cloudflare_healthcheck":                            resourceCloudflareHealthcheck(),
+			"cloudflare_ip_list":                                resourceCloudflareIPList(),
 			"cloudflare_load_balancer_monitor":                  resourceCloudflareLoadBalancerMonitor(),
 			"cloudflare_load_balancer_pool":                     resourceCloudflareLoadBalancerPool(),
 			"cloudflare_load_balancer":                          resourceCloudflareLoadBalancer(),
