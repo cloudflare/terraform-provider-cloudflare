@@ -7,26 +7,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [1.13, 1.14]
         os: [ubuntu-latest, macos-latest]
         make_target: [test, vet]
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.go }}
+          go-version: ^1.15
         id: go
 
       - name: Check out code repository source code
         uses: actions/checkout@v2
 
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       # https://help.github.com/en/actions/reference/workflow-commands-for-github-actions
       - name: Set build variables
         run: |
           echo "::set-env name=MAKE_TARGET::${{ matrix.make_target }}"
-          echo "::set-env name=GO_FLAGS::-mod=vendor"
-          echo "::set-env name=GO111MODULE::on"
       - name: Run ${{matrix.make_target}}
         run: |
           make $MAKE_TARGET

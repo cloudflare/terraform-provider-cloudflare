@@ -8,6 +8,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
@@ -270,6 +271,10 @@ func resourceCloudflareRecord() *schema.Resource {
 				Computed: true,
 			},
 		},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(30 * time.Second),
+			Update: schema.DefaultTimeout(30 * time.Second),
+		},
 	}
 }
 
@@ -337,22 +342,28 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
 
-	r, err := client.CreateDNSRecord(newRecord.ZoneID, newRecord)
-	if err != nil {
-		return fmt.Errorf("Failed to create record: %s", err)
-	}
+	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		r, err := client.CreateDNSRecord(newRecord.ZoneID, newRecord)
+		if err != nil {
+			if strings.Contains(err.Error(), "already exist") {
+				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
+			}
 
-	// In the Event that the API returns an empty DNS Record, we verify that the
-	// ID returned is not the default ""
-	if r.Result.ID == "" {
-		return fmt.Errorf("Failed to find record in Create response; Record was empty")
-	}
+			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %s", err))
+		}
 
-	d.SetId(r.Result.ID)
+		// In the event that the API returns an empty DNS Record, we verify that the
+		// ID returned is not the default ""
+		if r.Result.ID == "" {
+			return resource.NonRetryableError(fmt.Errorf("Failed to find record in Create response; Record was empty"))
+		}
 
-	log.Printf("[INFO] Cloudflare Record ID: %s", d.Id())
+		d.SetId(r.Result.ID)
 
-	return resourceCloudflareRecordRead(d, meta)
+		log.Printf("[INFO] Cloudflare Record ID: %s", d.Id())
+
+		return resource.NonRetryableError(resourceCloudflareRecordRead(d, meta))
+	})
 }
 
 func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) error {
@@ -456,12 +467,19 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	log.Printf("[DEBUG] Cloudflare Record update configuration: %#v", updateRecord)
-	err := client.UpdateDNSRecord(zoneID, d.Id(), updateRecord)
-	if err != nil {
-		return fmt.Errorf("Failed to update Cloudflare Record: %s", err)
-	}
 
-	return resourceCloudflareRecordRead(d, meta)
+	return resource.Retry(d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
+		err := client.UpdateDNSRecord(zoneID, d.Id(), updateRecord)
+		if err != nil {
+			if strings.Contains(err.Error(), "already exist") {
+				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
+			}
+
+			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %s", err))
+		}
+
+		return resource.NonRetryableError(resourceCloudflareRecordRead(d, meta))
+	})
 }
 
 func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) error {

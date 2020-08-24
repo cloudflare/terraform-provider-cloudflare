@@ -7,9 +7,9 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: ^1.15
         id: go
 
       # https://help.github.com/en/actions/reference/workflow-commands-for-github-actions
@@ -28,6 +28,4 @@ jobs:
         run: |
           cd $GOPATH/src/github.com/${{ github.repository }}
           export MAKE_TARGET=${{ matrix.make_target }}
-          export GOFLAGS=-mod=vendor
-          export GO111MODULE=on
           make website-test

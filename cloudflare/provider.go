@@ -7,13 +7,13 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/version"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-cloudflare/version"
 )
 
 // Provider returns a terraform.ResourceProvider.
@@ -102,42 +102,47 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"cloudflare_access_application":          resourceCloudflareAccessApplication(),
-			"cloudflare_access_policy":               resourceCloudflareAccessPolicy(),
-			"cloudflare_access_group":                resourceCloudflareAccessGroup(),
-			"cloudflare_access_rule":                 resourceCloudflareAccessRule(),
-			"cloudflare_access_service_token":        resourceCloudflareAccessServiceToken(),
-			"cloudflare_access_identity_provider":    resourceCloudflareAccessIdentityProvider(),
-			"cloudflare_account_member":              resourceCloudflareAccountMember(),
-			"cloudflare_argo":                        resourceCloudflareArgo(),
-			"cloudflare_byo_ip_prefix":               resourceCloudflareBYOIPPrefix(),
-			"cloudflare_custom_pages":                resourceCloudflareCustomPages(),
-			"cloudflare_custom_ssl":                  resourceCloudflareCustomSsl(),
-			"cloudflare_filter":                      resourceCloudflareFilter(),
-			"cloudflare_firewall_rule":               resourceCloudflareFirewallRule(),
-			"cloudflare_healthcheck":                 resourceCloudflareHealthcheck(),
-			"cloudflare_load_balancer_monitor":       resourceCloudflareLoadBalancerMonitor(),
-			"cloudflare_load_balancer_pool":          resourceCloudflareLoadBalancerPool(),
-			"cloudflare_load_balancer":               resourceCloudflareLoadBalancer(),
-			"cloudflare_logpush_ownership_challenge": resourceCloudflareLogpushOwnershipChallenge(),
-			"cloudflare_logpush_job":                 resourceCloudflareLogpushJob(),
-			"cloudflare_logpull_retention":           resourceCloudflareLogpullRetention(),
-			"cloudflare_origin_ca_certificate":       resourceCloudflareOriginCACertificate(),
-			"cloudflare_page_rule":                   resourceCloudflarePageRule(),
-			"cloudflare_rate_limit":                  resourceCloudflareRateLimit(),
-			"cloudflare_record":                      resourceCloudflareRecord(),
-			"cloudflare_spectrum_application":        resourceCloudflareSpectrumApplication(),
-			"cloudflare_waf_group":                   resourceCloudflareWAFGroup(),
-			"cloudflare_waf_package":                 resourceCloudflareWAFPackage(),
-			"cloudflare_waf_rule":                    resourceCloudflareWAFRule(),
-			"cloudflare_waf_override":                resourceCloudflareWAFOverride(),
-			"cloudflare_worker_route":                resourceCloudflareWorkerRoute(),
-			"cloudflare_worker_script":               resourceCloudflareWorkerScript(),
-			"cloudflare_workers_kv":                  resourceCloudflareWorkerKV(),
-			"cloudflare_workers_kv_namespace":        resourceCloudflareWorkersKVNamespace(),
-			"cloudflare_zone_lockdown":               resourceCloudflareZoneLockdown(),
-			"cloudflare_zone_settings_override":      resourceCloudflareZoneSettingsOverride(),
-			"cloudflare_zone":                        resourceCloudflareZone(),
+			"cloudflare_access_application":                     resourceCloudflareAccessApplication(),
+			"cloudflare_access_policy":                          resourceCloudflareAccessPolicy(),
+			"cloudflare_access_group":                           resourceCloudflareAccessGroup(),
+			"cloudflare_access_rule":                            resourceCloudflareAccessRule(),
+			"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
+			"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
+			"cloudflare_account_member":                         resourceCloudflareAccountMember(),
+			"cloudflare_argo":                                   resourceCloudflareArgo(),
+			"cloudflare_authenticated_origin_pulls":             resourceCloudflareAuthenticatedOriginPulls(),
+			"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),
+			"cloudflare_byo_ip_prefix":                          resourceCloudflareBYOIPPrefix(),
+			"cloudflare_custom_hostname":                        resourceCloudflareCustomHostname(),
+			"cloudflare_custom_hostname_fallback_origin":        resourceCloudflareCustomHostnameFallbackOrigin(),
+			"cloudflare_custom_pages":                           resourceCloudflareCustomPages(),
+			"cloudflare_custom_ssl":                             resourceCloudflareCustomSsl(),
+			"cloudflare_filter":                                 resourceCloudflareFilter(),
+			"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
+			"cloudflare_healthcheck":                            resourceCloudflareHealthcheck(),
+			"cloudflare_ip_list":                                resourceCloudflareIPList(),
+			"cloudflare_load_balancer_monitor":                  resourceCloudflareLoadBalancerMonitor(),
+			"cloudflare_load_balancer_pool":                     resourceCloudflareLoadBalancerPool(),
+			"cloudflare_load_balancer":                          resourceCloudflareLoadBalancer(),
+			"cloudflare_logpush_ownership_challenge":            resourceCloudflareLogpushOwnershipChallenge(),
+			"cloudflare_logpush_job":                            resourceCloudflareLogpushJob(),
+			"cloudflare_logpull_retention":                      resourceCloudflareLogpullRetention(),
+			"cloudflare_origin_ca_certificate":                  resourceCloudflareOriginCACertificate(),
+			"cloudflare_page_rule":                              resourceCloudflarePageRule(),
+			"cloudflare_rate_limit":                             resourceCloudflareRateLimit(),
+			"cloudflare_record":                                 resourceCloudflareRecord(),
+			"cloudflare_spectrum_application":                   resourceCloudflareSpectrumApplication(),
+			"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
+			"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
+			"cloudflare_waf_rule":                               resourceCloudflareWAFRule(),
+			"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
+			"cloudflare_worker_route":                           resourceCloudflareWorkerRoute(),
+			"cloudflare_worker_script":                          resourceCloudflareWorkerScript(),
+			"cloudflare_workers_kv":                             resourceCloudflareWorkerKV(),
+			"cloudflare_workers_kv_namespace":                   resourceCloudflareWorkersKVNamespace(),
+			"cloudflare_zone_lockdown":                          resourceCloudflareZoneLockdown(),
+			"cloudflare_zone_settings_override":                 resourceCloudflareZoneSettingsOverride(),
+			"cloudflare_zone":                                   resourceCloudflareZone(),
 		},
 	}
 
