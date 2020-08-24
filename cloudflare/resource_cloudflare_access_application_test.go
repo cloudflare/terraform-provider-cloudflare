@@ -211,7 +211,7 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := "cloudflare_access_application" + rnd
+	name := "cloudflare_access_application." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
