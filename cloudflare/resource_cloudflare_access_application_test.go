@@ -255,7 +255,7 @@ func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 func testAccessApplicationWithZoneIDUpdated(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_access_application" "%[1]s" {
-			name    = "%[1]s"
+			name    = "%[1]s-updated"
 			zone_id = "%[3]s"
 			domain  = "%[1]s.%[2]s"
 		}
