@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 2.10.1 (August 24th, 2020)
+
+**Fixes**
+
+* `resource/cloudflare_access_application`: Handle the `zone_id` => `account_id` move internally ([#724](https://github.com/cloudflare/terraform-provider-cloudflare/issues/724)) 
+
 ## 2.10.0 (August 24th, 2020)
 
 * **New Resource:** `cloudflare_custom_hostname_origin_fallback` ([#757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/757))
