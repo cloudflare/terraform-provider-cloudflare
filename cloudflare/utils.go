@@ -149,5 +149,7 @@ func getAccountIDFromZoneID(d *schema.ResourceData, client *cloudflare.API) (str
 		}
 		accountID = zone.Account.ID
 	}
+
+	d.Set("account_id", accountID)
 	return accountID, nil
 }

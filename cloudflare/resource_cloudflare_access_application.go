@@ -24,11 +24,13 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			"account_id": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"zone_id": {
 				Deprecated: "This field will be removed in version 3 and replaced with the account_id field.",
 				Type:       schema.TypeString,
 				Optional:   true,
+				Computed:   true,
 			},
 			"aud": {
 				Type:     schema.TypeString,
@@ -120,6 +122,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return err
 	}
+
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
 
 	newAccessApplication := cloudflare.AccessApplication{
@@ -146,6 +149,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	}
 
 	d.SetId(accessApplication.ID)
+	d.Set("account_id", accountID)
 
 	return resourceCloudflareAccessApplicationRead(d, meta)
 }
