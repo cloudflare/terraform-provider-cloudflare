@@ -348,7 +348,7 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 			}
 		} else if accessGroupType == "auth_method" {
 			if values != "" {
-				group = append(group, cloudflare.AccessGroupAuthMethod{Group: struct {
+				group = append(group, cloudflare.AccessGroupAuthMethod{AuthMethod: struct {
 					AuthMethod string `json:"auth_method"`
 				}{AuthMethod: values.(string)}})
 			}
