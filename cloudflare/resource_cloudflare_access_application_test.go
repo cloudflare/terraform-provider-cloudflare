@@ -198,3 +198,66 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 
 	return nil
 }
+
+func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_application." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	updatedName := fmt.Sprintf("%s-updated", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessApplicationWithZoneID(rnd, zone, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+				),
+			},
+			{
+				Config: testAccessApplicationWithZoneIDUpdated(rnd, zone, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", updatedName),
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+				),
+			},
+		},
+	})
+}
+
+func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_access_application" "%[1]s" {
+			name    = "%[1]s"
+			zone_id = "%[3]s"
+			domain  = "%[1]s.%[2]s"
+		}
+	`, resourceID, zone, zoneID)
+}
+
+func testAccessApplicationWithZoneIDUpdated(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_access_application" "%[1]s" {
+			name    = "%[1]s-updated"
+			zone_id = "%[3]s"
+			domain  = "%[1]s.%[2]s"
+		}
+	`, resourceID, zone, zoneID)
+}

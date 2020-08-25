@@ -21,9 +21,16 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zone_id": {
+			"account_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
+			},
+			"zone_id": {
+				Deprecated: "This field will be removed in version 3 and replaced with the account_id field.",
+				Type:       schema.TypeString,
+				Optional:   true,
+				Computed:   true,
 			},
 			"aud": {
 				Type:     schema.TypeString,
@@ -111,7 +118,11 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 
 func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
+
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
 
 	newAccessApplication := cloudflare.AccessApplication{
@@ -132,21 +143,25 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 
 	log.Printf("[DEBUG] Creating Cloudflare Access Application from struct: %+v", newAccessApplication)
 
-	accessApplication, err := client.CreateAccessApplication(zoneID, newAccessApplication)
+	accessApplication, err := client.CreateAccessApplication(accountID, newAccessApplication)
 	if err != nil {
-		return fmt.Errorf("error creating Access Application for zone %q: %s", zoneID, err)
+		return fmt.Errorf("error creating Access Application for account %q: %s", accountID, err)
 	}
 
 	d.SetId(accessApplication.ID)
+	d.Set("account_id", accountID)
 
 	return resourceCloudflareAccessApplicationRead(d, meta)
 }
 
 func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
 
-	accessApplication, err := client.AccessApplication(zoneID, d.Id())
+	accessApplication, err := client.AccessApplication(accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Access Application %s no longer exists", d.Id())
@@ -172,7 +187,10 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 
 func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
 
 	updatedAccessApplication := cloudflare.AccessApplication{
@@ -194,9 +212,9 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 
 	log.Printf("[DEBUG] Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication)
 
-	accessApplication, err := client.UpdateAccessApplication(zoneID, updatedAccessApplication)
+	accessApplication, err := client.UpdateAccessApplication(accountID, updatedAccessApplication)
 	if err != nil {
-		return fmt.Errorf("error updating Access Application for zone %q: %s", zoneID, err)
+		return fmt.Errorf("error updating Access Application for account %q: %s", accountID, err)
 	}
 
 	if accessApplication.ID == "" {
@@ -208,14 +226,17 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 
 func resourceCloudflareAccessApplicationDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
 	appID := d.Id()
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Application using ID: %s", appID)
 
-	err := client.DeleteAccessApplication(zoneID, appID)
+	err = client.DeleteAccessApplication(accountID, appID)
 	if err != nil {
-		return fmt.Errorf("error deleting Access Application for zone %q: %s", zoneID, err)
+		return fmt.Errorf("error deleting Access Application for account %q: %s", accountID, err)
 	}
 
 	resourceCloudflareAccessApplicationRead(d, meta)
@@ -227,14 +248,14 @@ func resourceCloudflareAccessApplicationImport(d *schema.ResourceData, meta inte
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/accessApplicationID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/accessApplicationID\"", d.Id())
 	}
 
-	zoneID, accessApplicationID := attributes[0], attributes[1]
+	accountID, accessApplicationID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Application: id %s for zone %s", accessApplicationID, zoneID)
+	log.Printf("[DEBUG] Importing Cloudflare Access Application: id %s for account %s", accessApplicationID, accountID)
 
-	d.Set("zone_id", zoneID)
+	d.Set("account_id", accountID)
 	d.SetId(accessApplicationID)
 
 	resourceCloudflareAccessApplicationRead(d, meta)

@@ -25,9 +25,15 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"account_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 			"zone_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -63,10 +69,13 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 
 func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
 	appID := d.Get("application_id").(string)
 
-	accessPolicy, err := client.AccessPolicy(zoneID, appID, d.Id())
+	accessPolicy, err := client.AccessPolicy(accountID, appID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Access Policy %s no longer exists", d.Id())
@@ -89,7 +98,10 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
 	newAccessPolicy := cloudflare.AccessPolicy{
 		Name:       d.Get("name").(string),
 		Precedence: d.Get("precedence").(int),
@@ -100,7 +112,7 @@ func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy)
 
-	accessPolicy, err := client.CreateAccessPolicy(zoneID, appID, newAccessPolicy)
+	accessPolicy, err := client.CreateAccessPolicy(accountID, appID, newAccessPolicy)
 	if err != nil {
 		return fmt.Errorf("error creating Access Policy for ID %q: %s", accessPolicy.ID, err)
 	}
@@ -112,7 +124,10 @@ func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface
 
 func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
 	appID := d.Get("application_id").(string)
 	updatedAccessPolicy := cloudflare.AccessPolicy{
 		Name:       d.Get("name").(string),
@@ -125,7 +140,7 @@ func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Updating Cloudflare Access Policy from struct: %+v", updatedAccessPolicy)
 
-	accessPolicy, err := client.UpdateAccessPolicy(zoneID, appID, updatedAccessPolicy)
+	accessPolicy, err := client.UpdateAccessPolicy(accountID, appID, updatedAccessPolicy)
 	if err != nil {
 		return fmt.Errorf("error updating Access Policy for ID %q: %s", d.Id(), err)
 	}
@@ -139,12 +154,15 @@ func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface
 
 func resourceCloudflareAccessPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	accountID, err := getAccountIDFromZoneID(d, client)
+	if err != nil {
+		return err
+	}
 	appID := d.Get("application_id").(string)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Policy using ID: %s", d.Id())
 
-	err := client.DeleteAccessPolicy(zoneID, appID, d.Id())
+	err = client.DeleteAccessPolicy(accountID, appID, d.Id())
 	if err != nil {
 		return fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err)
 	}
@@ -158,14 +176,14 @@ func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface
 	attributes := strings.SplitN(d.Id(), "/", 3)
 
 	if len(attributes) != 3 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/accessApplicationID/accessPolicyID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/accessApplicationID/accessPolicyID\"", d.Id())
 	}
 
-	zoneID, accessAppID, accessPolicyID := attributes[0], attributes[1], attributes[2]
+	accountID, accessAppID, accessPolicyID := attributes[0], attributes[1], attributes[2]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Policy: zoneID %q, appID %q, accessPolicyID %q", zoneID, accessAppID, accessPolicyID)
+	log.Printf("[DEBUG] Importing Cloudflare Access Policy: accountID %q, appID %q, accessPolicyID %q", accountID, accessAppID, accessPolicyID)
 
-	d.Set("zone_id", zoneID)
+	d.Set("account_id", accountID)
 	d.Set("application_id", accessAppID)
 	d.SetId(accessPolicyID)
 
