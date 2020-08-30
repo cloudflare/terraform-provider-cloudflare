@@ -13,6 +13,7 @@ import (
 const (
 	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
+	encodedWasm    = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 )
 
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
@@ -49,7 +50,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT"}),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -98,7 +99,12 @@ resource "cloudflare_worker_script" "%[1]s" {
     name = "MY_SECRET_TEXT"
     text = "%[1]s"
   }
-}`, rnd, scriptContent2)
+
+  webassembly_binding {
+    name = "MY_WASM"
+    module = "%[3]s"
+  }
+}`, rnd, scriptContent2, encodedWasm)
 }
 
 func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.WorkerRequestParams {
