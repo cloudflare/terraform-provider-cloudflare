@@ -123,7 +123,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 	rnd := generateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	githubOrg := "Terraform-Cloudflare-Provider-Test-Org"
 	team := "test-team-1"
 
 	resource.Test(t, resource.TestCase{
@@ -135,14 +135,14 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, team),
+				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(groupName, &accessGroup),
 					resource.TestCheckResourceAttr(groupName, "account_id", accountID),
 					resource.TestCheckResourceAttr(groupName, "name", rnd),
-					resource.TestCheckResourceAttrSet(groupName, "include.0.github.identity_provider_id"),
-					resource.TestCheckResourceAttr(groupName, "include.0.github.name", idpName),
-					resource.TestCheckResourceAttr(groupName, "include.0.github.teams.0", team),
+					resource.TestCheckResourceAttrSet(groupName, "include.0.github.0.identity_provider_id"),
+					resource.TestCheckResourceAttr(groupName, "include.0.github.0.name", githubOrg),
+					resource.TestCheckResourceAttr(groupName, "include.0.github.0.teams.0", team),
 				),
 			},
 		},
@@ -292,7 +292,7 @@ resource "cloudflare_access_group" "%[1]s" {
 }`, resourceName, accountID, email)
 }
 
-func testAccCloudflareAccessGroupWithIDP(accountID, rnd, team string) string {
+func testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[2]s" {
   account_id = "%[1]s"
@@ -310,12 +310,12 @@ resource "cloudflare_access_group" "%[2]s" {
 
   include {
     github {
-      name                 = "Terraform-Cloudflare-Provider-Test-Org"
-      teams                = ["%[3]s"]
+      name                 = "%[3]s"
+      teams                = ["%[4]s"]
       identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
     }
   }
-}`, accountID, rnd, team)
+}`, accountID, rnd, githubOrg, team)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
