@@ -113,8 +113,11 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"email": {
-						Type:     schema.TypeString,
+						Type:     schema.TypeList,
 						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
 					},
 					"identity_provider_id": {
 						Type:     schema.TypeString,
@@ -132,6 +135,13 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 						Type:     schema.TypeString,
 						Optional: true,
 					},
+					"teams": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
 					"identity_provider_id": {
 						Type:     schema.TypeString,
 						Optional: true,
@@ -145,8 +155,11 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"id": {
-						Type:     schema.TypeString,
+						Type:     schema.TypeList,
 						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
 					},
 					"identity_provider_id": {
 						Type:     schema.TypeString,
@@ -161,8 +174,11 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"name": {
-						Type:     schema.TypeString,
+						Type:     schema.TypeList,
 						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
 					},
 					"identity_provider_id": {
 						Type:     schema.TypeString,
@@ -355,47 +371,56 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 		} else if accessGroupType == "gsuite" {
 			for _, v := range values.([]interface{}) {
 				gsuiteCfg := v.(map[string]interface{})
-				group = append(group, cloudflare.AccessGroupGSuite{Gsuite: struct {
-					Email              string `json:"email"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					Email:              gsuiteCfg["email"].(string),
-					IdentityProviderID: gsuiteCfg["identity_provider_id"].(string),
-				}})
+				for _, email := range gsuiteCfg["email"].([]interface{}) {
+					group = append(group, cloudflare.AccessGroupGSuite{Gsuite: struct {
+						Email              string `json:"email"`
+						IdentityProviderID string `json:"identity_provider_id"`
+					}{
+						Email:              email.(string),
+						IdentityProviderID: gsuiteCfg["identity_provider_id"].(string),
+					}})
+				}
 			}
 		} else if accessGroupType == "github" {
 			for _, v := range values.([]interface{}) {
 				githubCfg := v.(map[string]interface{})
-				group = append(group, cloudflare.AccessGroupGitHub{GitHubOrganization: struct {
-					Name               string `json:"name"`
-					Team               string `json:"team,omitempty"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					Name:               githubCfg["name"].(string),
-					IdentityProviderID: githubCfg["identity_provider_id"].(string),
-				}})
+				for _, team := range githubCfg["teams"].([]interface{}) {
+					group = append(group, cloudflare.AccessGroupGitHub{GitHubOrganization: struct {
+						Name               string `json:"name"`
+						Team               string `json:"team,omitempty"`
+						IdentityProviderID string `json:"identity_provider_id"`
+					}{
+						Name:               githubCfg["name"].(string),
+						Team:               team.(string),
+						IdentityProviderID: githubCfg["identity_provider_id"].(string),
+					}})
+				}
 			}
 		} else if accessGroupType == "azure" {
 			for _, v := range values.([]interface{}) {
 				azureCfg := v.(map[string]interface{})
-				group = append(group, cloudflare.AccessGroupAzure{AzureAD: struct {
-					ID                 string `json:"id"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					ID:                 azureCfg["id"].(string),
-					IdentityProviderID: azureCfg["identity_provider_id"].(string),
-				}})
+				for _, id := range azureCfg["id"].([]interface{}) {
+					group = append(group, cloudflare.AccessGroupAzure{AzureAD: struct {
+						ID                 string `json:"id"`
+						IdentityProviderID string `json:"identity_provider_id"`
+					}{
+						ID:                 id.(string),
+						IdentityProviderID: azureCfg["identity_provider_id"].(string),
+					}})
+				}
 			}
 		} else if accessGroupType == "okta" {
 			for _, v := range values.([]interface{}) {
 				oktaCfg := v.(map[string]interface{})
-				group = append(group, cloudflare.AccessGroupOkta{Okta: struct {
-					Name               string `json:"name"`
-					IdentityProviderID string `json:"identity_provider_id"`
-				}{
-					Name:               oktaCfg["name"].(string),
-					IdentityProviderID: oktaCfg["identity_provider_id"].(string),
-				}})
+				for _, name := range oktaCfg["name"].([]interface{}) {
+					group = append(group, cloudflare.AccessGroupOkta{Okta: struct {
+						Name               string `json:"name"`
+						IdentityProviderID string `json:"identity_provider_id"`
+					}{
+						Name:               name.(string),
+						IdentityProviderID: oktaCfg["identity_provider_id"].(string),
+					}})
+				}
 			}
 		} else if accessGroupType == "saml" {
 			for _, v := range values.([]interface{}) {
