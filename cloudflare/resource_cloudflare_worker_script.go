@@ -1,7 +1,9 @@
 package cloudflare
 
 import (
+	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strings"
 
@@ -50,6 +52,19 @@ var secretTextBindingResource = &schema.Resource{
 	},
 }
 
+var webAssemblyBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"module": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	},
+}
+
 func resourceCloudflareWorkerScript() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareWorkerScriptCreate,
@@ -84,6 +99,11 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     kvNamespaceBindingResource,
+			},
+			"webassembly_binding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     webAssemblyBindingResource,
 			},
 		},
 	}
@@ -145,6 +165,14 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 		data := rawData.(map[string]interface{})
 		bindings[data["name"].(string)] = cloudflare.WorkerSecretTextBinding{
 			Text: data["text"].(string),
+		}
+	}
+
+	for _, rawData := range d.Get("webassembly_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		module := base64.NewDecoder(base64.StdEncoding, strings.NewReader(data["module"].(string)))
+		bindings[data["name"].(string)] = cloudflare.WorkerWebAssemblyBinding{
+			Module: module,
 		}
 	}
 }
@@ -222,6 +250,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 	kvNamespaceBindings := &schema.Set{F: schema.HashResource(kvNamespaceBindingResource)}
 	plainTextBindings := &schema.Set{F: schema.HashResource(plainTextBindingResource)}
 	secretTextBindings := &schema.Set{F: schema.HashResource(secretTextBindingResource)}
+	webAssemblyBindings := &schema.Set{F: schema.HashResource(webAssemblyBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -245,6 +274,15 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 				"name": name,
 				"text": value,
 			})
+		case cloudflare.WorkerWebAssemblyBinding:
+			module, err := ioutil.ReadAll(v.Module)
+			if err != nil {
+				return errors.Wrap(err, fmt.Sprintf("cannot read contents of wasm bindings (%s)", name))
+			}
+			webAssemblyBindings.Add(map[string]interface{}{
+				"name":   name,
+				"module": base64.StdEncoding.EncodeToString(module),
+			})
 		}
 	}
 
@@ -262,6 +300,10 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 
 	if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
 		return fmt.Errorf("cannot set secret text bindings (%s): %v", d.Id(), err)
+	}
+
+	if err := d.Set("webassembly_binding", webAssemblyBindings); err != nil {
+		return fmt.Errorf("cannot set webassembly bindings (%s): %v", d.Id(), err)
 	}
 
 	return nil

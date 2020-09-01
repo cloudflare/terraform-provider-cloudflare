@@ -36,6 +36,11 @@ resource "cloudflare_worker_script" "my_script" {
     name = "MY_EXAMPLE_SECRET_TEXT"
     text = var.secret_foo_value
   }
+
+  webassembly_binding {
+    name = "MY_EXAMPLE_WASM"
+    module = filebase64("example.wasm")
+  }
 }
 ```
 
@@ -60,6 +65,11 @@ The following arguments are supported:
 
 * `name` - (Required) The global variable for the binding in your Worker code.
 * `text` - (Required) The secret text you want to store.
+
+**webassembly_binding** supports:
+
+* `name` - (Required) The global variable for the binding in your Worker code.
+* `module` - (Required) The base64 encoded wasm module you want to store.
 
 ## Import
 
