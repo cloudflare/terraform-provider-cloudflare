@@ -1,5 +1,9 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/cloudflare_access_group`: Add support for `auth_method` ([#762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/762)) 
+
 ## 2.10.1 (August 24th, 2020)
 
 **Fixes**
