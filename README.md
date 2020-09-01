@@ -9,7 +9,7 @@
 ## Requirements
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.12.x
--	[Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
+-	[Go](https://golang.org/doc/install) 1.15 (to build the provider plugin)
 
 ## Building The Provider
 
@@ -61,7 +61,7 @@ comment it/remove it when it's not in use to avoid tripping yourself up.
 ## Developing the Provider
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org)
-installed on your machine (version 1.11+ is *required*). You'll also need to
+installed on your machine (version 1.15+ is *required*). You'll also need to
 correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well
 as adding `$GOPATH/bin` to your `$PATH`.
 
@@ -88,12 +88,8 @@ dependencies. To add or update a dependency, you would run the
 following (`v1.2.3` of `foo` is a new package we want to add):
 
 ```
-# Depending on your environment, you may need to `export GO111MODULE=on`
-# before using these commands.
-
 $ go get foo@v1.2.3
 $ go mod tidy
-$ go mod vendor
 ```
 
 Stepping through the above commands:
@@ -102,9 +98,6 @@ Stepping through the above commands:
     needed) and adds it to the `go.mod` file for use.
 - `go mod tidy` cleans up any dangling dependencies or references that
   aren't defined in your module file.
-- `go mod vendor` manages the `vendor` directory of the project. This is
-  done to maintain backwards compatibility with older versions of Go
-  that don't support Go modules.
 
 (The example above will also work if you'd like to upgrade to `v1.2.3`)
 
