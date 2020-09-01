@@ -10,15 +10,6 @@ import (
 
 func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
 	t.Parallel()
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the AOP API
-	// does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
@@ -41,15 +32,6 @@ func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
 
 func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
 	t.Parallel()
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the AOP API
-	// does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
@@ -70,15 +52,6 @@ func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
 
 func TestAccCloudflareAuthenticatedOriginPullsPerHostname(t *testing.T) {
 	t.Parallel()
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the AOP API
-	// does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
