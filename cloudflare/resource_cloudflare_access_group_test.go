@@ -124,7 +124,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 	rnd := generateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
-	team := "Test Team"
+	team := "test-team-1"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -310,7 +310,7 @@ resource "cloudflare_access_group" "%[2]s" {
 
   include {
     github {
-      name                 = "%[2]s"
+      name                 = "Terraform-Cloudflare-Provider-Test-Org"
       teams                = ["%[3]s"]
       identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
     }
