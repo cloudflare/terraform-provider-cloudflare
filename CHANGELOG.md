@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **New Resource:** `cloudflare_certificate_pack` ([#778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/778))
+
 **Improvements**
 
 * `resource/cloudflare_access_group`: Add support for `auth_method` ([#762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/762)) 
