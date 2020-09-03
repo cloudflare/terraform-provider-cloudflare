@@ -171,6 +171,11 @@ func resourceCloudflareHealthcheckRead(d *schema.ResourceData, meta interface{})
 
 	healthcheck, err := client.Healthcheck(zoneID, d.Id())
 	if err != nil {
+		if strings.Contains(err.Error(), "object does not exist") {
+			log.Printf("[INFO] Healthcheck %s no longer exists", d.Id())
+			d.SetId("")
+			return nil
+		}
 		return errors.Wrap(err, fmt.Sprintf("error reading healthcheck information for %q", d.Id()))
 	}
 
