@@ -8,6 +8,10 @@
 * `resource/cloudflare_access_group`: De-duplicate blocks in groups by accepting lists instead ([#739](https://github.com/cloudflare/terraform-provider-cloudflare/issues/739)) 
 * `resource/cloudflare_worker_script`: Adds support for `webassembly_binding` ([#780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/780))
 
+**Fixes**
+
+* `resource/cloudflare_healthcheck`: Handle resource deletion outside of Terraform ([#787](https://github.com/cloudflare/terraform-provider-cloudflare/issues/787)) 
+
 ## 2.10.1 (August 24th, 2020)
 
 **Fixes**
