@@ -2,10 +2,12 @@ package cloudflare
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -162,6 +164,9 @@ func resourceCloudflareHealthcheck() *schema.Resource {
 				Computed: true,
 			},
 		},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(30 * time.Second),
+		},
 	}
 }
 
@@ -225,14 +230,20 @@ func resourceCloudflareHealthcheckCreate(d *schema.ResourceData, meta interface{
 		return errors.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
 	}
 
-	hc, err := client.CreateHealthcheck(zoneID, healthcheck)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating standalone healthcheck"))
-	}
+	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		hc, err := client.CreateHealthcheck(zoneID, healthcheck)
+		if err != nil {
+			if strings.Contains(err.Error(), "no such host") {
+				return resource.RetryableError(fmt.Errorf("hostname resolution failed"))
+			}
 
-	d.SetId(hc.ID)
+			return resource.NonRetryableError(errors.Wrap(err, fmt.Sprintf("error creating standalone healthcheck")))
+		}
 
-	return resourceCloudflareHealthcheckRead(d, meta)
+		d.SetId(hc.ID)
+
+		return resource.NonRetryableError(resourceCloudflareHealthcheckRead(d, meta))
+	})
 }
 
 func resourceCloudflareHealthcheckUpdate(d *schema.ResourceData, meta interface{}) error {
