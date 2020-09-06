@@ -285,6 +285,32 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 	})
 }
 
+func TestAccCloudflareCustomHostnameImport(t *testing.T) {
+	t.Parallel()
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"ssl.#", "ssl.0.certificate_authority", "ssl.0.cname_name", "ssl.0.cname_target", "ssl.0.custom_certificate", "ssl.0.custom_key", "ssl.0.method", "ssl.0.status", "ssl.0.type", "ssl.0.wildcard"},
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareCustomHostnameRecreated(before, after *cloudflare.CustomHostname) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {

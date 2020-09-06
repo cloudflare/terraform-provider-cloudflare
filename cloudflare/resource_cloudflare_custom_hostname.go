@@ -174,6 +174,7 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 		return errors.Wrap(err, fmt.Sprintf("error reading custom hostname %q", hostnameID))
 	}
 
+	d.Set("hostname", customHostname.Hostname)
 	d.Set("ssl.custom_origin_server", customHostname.CustomOriginServer)
 
 	d.Set("ssl.0.type", customHostname.SSL.Type)
