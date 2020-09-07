@@ -11,6 +11,7 @@
 **Fixes**
 
 * `resource/cloudflare_healthcheck`: Handle resource deletion outside of Terraform ([#787](https://github.com/cloudflare/terraform-provider-cloudflare/issues/787)) 
+* `resource/cloudflare_custom_hostname`: Ensure `Import` sets hostname to prevent recreation ([#788](https://github.com/cloudflare/terraform-provider-cloudflare/issues/788)) 
 
 ## 2.10.1 (August 24th, 2020)
 
