@@ -6,7 +6,7 @@ description: !-
   Provides a Cloudflare custom hostname fallback origin resource.
 ---
 
-# cloudflare_custom_hostname
+# cloudflare_custom_hostname_fallback_origin
 
 Provides a Cloudflare custom hostname fallback origin resource.
 
