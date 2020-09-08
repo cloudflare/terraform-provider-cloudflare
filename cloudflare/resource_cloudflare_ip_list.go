@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/pkg/errors"
+	"log"
 	"regexp"
 	"strings"
 )
@@ -112,6 +113,11 @@ func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) erro
 
 	list, err := client.GetIPList(context.Background(), d.Id())
 	if err != nil {
+		if strings.Contains(err.Error(), "could not find list") {
+			log.Printf("[INFO] IP List %s no longer exists", d.Id())
+			d.SetId("")
+			return nil
+		}
 		return errors.Wrap(err, fmt.Sprintf("error reading IP List with ID %q", d.Id()))
 	}
 
