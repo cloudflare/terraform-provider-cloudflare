@@ -8,6 +8,7 @@
 * `resource/cloudflare_access_group`: De-duplicate blocks in groups by accepting lists instead ([#739](https://github.com/cloudflare/terraform-provider-cloudflare/issues/739)) 
 * `resource/cloudflare_worker_script`: Adds support for `webassembly_binding` ([#780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/780))
 * `resource/cloudflare_healthcheck`: Retry hostname resolution errors when encountering "no such host" responses ([#789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/789))
+* `resource/cloudflare_access_application`: Better validation for allowed methods and origin combinations to prevent getting state into an unrecoverable state ([#793](https://github.com/cloudflare/terraform-provider-cloudflare/issues/793))
 
 **Fixes**
 
