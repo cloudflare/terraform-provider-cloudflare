@@ -90,6 +90,7 @@ func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) 
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
 			log.Printf("[INFO] Could not find LogpushJob with id: %q", jobID)
+			d.SetId("")
 			return nil
 		}
 		return fmt.Errorf("error finding logpush job %q: %s", jobID, err)
