@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -242,22 +243,110 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithMissingCORSMethods(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile("must set allowed_methods or allow_all_methods"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithMissingCORSOrigins(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile("must set allowed_origins or allow_all_origins"),
+			},
+		},
+	})
+}
+
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_access_application" "%[1]s" {
-			name    = "%[1]s"
-			zone_id = "%[3]s"
-			domain  = "%[1]s.%[2]s"
-		}
-	`, resourceID, zone, zoneID)
+    resource "cloudflare_access_application" "%[1]s" {
+      name    = "%[1]s"
+      zone_id = "%[3]s"
+      domain  = "%[1]s.%[2]s"
+    }
+  `, resourceID, zone, zoneID)
 }
 
 func testAccessApplicationWithZoneIDUpdated(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_access_application" "%[1]s" {
-			name    = "%[1]s-updated"
-			zone_id = "%[3]s"
-			domain  = "%[1]s.%[2]s"
-		}
-	`, resourceID, zone, zoneID)
+    resource "cloudflare_access_application" "%[1]s" {
+      name    = "%[1]s-updated"
+      zone_id = "%[3]s"
+      domain  = "%[1]s.%[2]s"
+    }
+  `, resourceID, zone, zoneID)
+}
+
+func testAccessApplicationWithMissingCORSMethods(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name    = "%[1]s-updated"
+      zone_id = "%[3]s"
+      domain  = "%[1]s.%[2]s"
+
+    cors_headers {
+      allow_all_origins = true
+    }
+  }
+  `, resourceID, zone, zoneID)
+}
+
+func testAccessApplicationWithMissingCORSOrigins(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name    = "%[1]s-updated"
+      zone_id = "%[3]s"
+      domain  = "%[1]s.%[2]s"
+
+    cors_headers {
+      allow_all_methods = true
+    }
+  }
+  `, resourceID, zone, zoneID)
 }

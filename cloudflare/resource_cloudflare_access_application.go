@@ -8,6 +8,7 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/pkg/errors"
 )
 
 func resourceCloudflareAccessApplication() *schema.Resource {
@@ -137,7 +138,10 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
-		CORSConfig, _ := convertCORSSchemaToStruct(d)
+		CORSConfig, err := convertCORSSchemaToStruct(d)
+		if err != nil {
+			return err
+		}
 		newAccessApplication.CorsHeaders = CORSConfig
 	}
 
@@ -206,7 +210,10 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
-		CORSConfig, _ := convertCORSSchemaToStruct(d)
+		CORSConfig, err := convertCORSSchemaToStruct(d)
+		if err != nil {
+			return err
+		}
 		updatedAccessApplication.CorsHeaders = CORSConfig
 	}
 
@@ -269,6 +276,7 @@ func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplic
 	if _, ok := d.GetOk("cors_headers"); ok {
 		if allowedMethods, ok := d.GetOk("cors_headers.0.allowed_methods"); ok {
 			CORSConfig.AllowedMethods = expandInterfaceToStringList(allowedMethods.(*schema.Set).List())
+
 		}
 
 		if allowedHeaders, ok := d.GetOk("cors_headers.0.allowed_headers"); ok {
@@ -284,6 +292,24 @@ func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplic
 		CORSConfig.AllowAllOrigins = d.Get("cors_headers.0.allow_all_origins").(bool)
 		CORSConfig.AllowCredentials = d.Get("cors_headers.0.allow_credentials").(bool)
 		CORSConfig.MaxAge = d.Get("cors_headers.0.max_age").(int)
+
+		// Ensure that should someone forget to set allowed methods (either
+		// individually or *), we throw an error to prevent getting into an
+		// unrecoverable state.
+		if CORSConfig.AllowAllOrigins || len(CORSConfig.AllowedOrigins) > 1 {
+			if CORSConfig.AllowAllMethods == false && len(CORSConfig.AllowedMethods) == 0 {
+				return nil, errors.New("must set allowed_methods or allow_all_methods")
+			}
+		}
+
+		// Ensure that should someone forget to set allowed origins (either
+		// individually or *), we throw an error to prevent getting into an
+		// unrecoverable state.
+		if CORSConfig.AllowAllMethods || len(CORSConfig.AllowedMethods) > 1 {
+			if CORSConfig.AllowAllOrigins == false && len(CORSConfig.AllowedOrigins) == 0 {
+				return nil, errors.New("must set allowed_origins or allow_all_origins")
+			}
+		}
 	}
 
 	return &CORSConfig, nil
