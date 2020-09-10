@@ -3,13 +3,14 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"log"
+	"regexp"
+	"strings"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/pkg/errors"
-	"log"
-	"regexp"
-	"strings"
 )
 
 func resourceCloudflareIPList() *schema.Resource {
@@ -53,10 +54,6 @@ func resourceCloudflareIPList() *schema.Resource {
 
 var listItemElem = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"id": {
-			Type:     schema.TypeString,
-			Computed: true,
-		},
 		"value": {
 			Type:     schema.TypeString,
 			Required: true,
