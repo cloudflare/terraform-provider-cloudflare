@@ -35,7 +35,7 @@ func resourceCloudflareCertificatePack() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"custom", "dedicated_custom", "advanced"}, false),
 			},
 			"hosts": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				ForceNew: true,
 				Elem: &schema.Schema{
@@ -73,7 +73,7 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certificatePackType := d.Get("type").(string)
-	certificateHostnames := expandInterfaceToStringList(d.Get("hosts").([]interface{}))
+	certificateHostSet := d.Get("hosts").(*schema.Set)
 	certificatePackID := ""
 
 	if certificatePackType == "advanced" {
@@ -84,7 +84,7 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 
 		cert := cloudflare.CertificatePackAdvancedCertificate{
 			Type:                 "advanced",
-			Hosts:                certificateHostnames,
+			Hosts:                expandInterfaceToStringList(certificateHostSet.List()),
 			ValidationMethod:     validationMethod,
 			ValidityDays:         validityDays,
 			CertificateAuthority: ca,
@@ -98,7 +98,7 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 	} else {
 		cert := cloudflare.CertificatePackRequest{
 			Type:  certificatePackType,
-			Hosts: certificateHostnames,
+			Hosts: expandInterfaceToStringList(certificateHostSet.List()),
 		}
 		certPackResponse, err := client.CreateCertificatePack(zoneID, cert)
 		if err != nil {
@@ -122,7 +122,7 @@ func resourceCloudflareCertificatePackRead(d *schema.ResourceData, meta interfac
 	}
 
 	d.Set("type", certificatePack.Type)
-	d.Set("hosts", flattenStringList(certificatePack.Hosts))
+	d.Set("hosts", expandStringListToSet(certificatePack.Hosts))
 
 	return nil
 }
