@@ -164,10 +164,17 @@ func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}
 
 	deleteErr := client.DeleteLogpushJob(d.Get("zone_id").(string), job.ID)
 	if deleteErr != nil {
+		if strings.Contains(err.Error(), "job not found") {
+			log.Printf("[INFO] Could not find logpush job with id: %q", job.ID)
+			d.SetId("")
+			return nil
+		}
 		return fmt.Errorf("error deleting logpush job: %+v", job.ID)
 	}
 
-	return resourceCloudflareLogpushJobRead(d, meta)
+	d.SetId("")
+
+	return nil
 }
 
 func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
