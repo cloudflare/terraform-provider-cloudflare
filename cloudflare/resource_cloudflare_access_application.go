@@ -106,6 +106,11 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
+			"enable_binding_cookie": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"allowed_idps": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -131,6 +136,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		Domain:                 d.Get("domain").(string),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
+		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -179,6 +185,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
+	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
@@ -203,6 +210,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		Domain:                 d.Get("domain").(string),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
+		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {

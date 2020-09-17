@@ -96,6 +96,31 @@ func TestAccCloudflareAccessApplicationWithAutoRedirectToIdentity(t *testing.T) 
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithEnableBindingCookie(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "enable_binding_cookie", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
@@ -161,6 +186,18 @@ resource "cloudflare_access_application" "%[1]s" {
   domain                    = "%[1]s.%[3]s"
   session_duration          = "24h"
   auto_redirect_to_identity = true
+}
+`, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  session_duration          = "24h"
+  enable_binding_cookie     = true
 }
 `, rnd, zoneID, domain)
 }
