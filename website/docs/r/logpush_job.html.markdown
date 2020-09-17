@@ -85,4 +85,3 @@ The following arguments are supported:
 * `dataset` - (Required) Which type of dataset resource to use. Available values are `"firewall_events"`, `"http_requests"`, and `"spectrum_events"`.
 * `logpull_options` - (Optional) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpull options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
 * `enabled` - (Optional) Whether to enable the job.
-
