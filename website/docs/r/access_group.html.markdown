@@ -79,6 +79,7 @@ conditions which can be applied. The conditions are:
 * `auth_method` - (Optional) A string identifying the authentication
   method code. The list of codes are listed here: https://tools.ietf.org/html/rfc8176#section-2.
   Custom values are also supported.
+* `geo` - (Optional) A list of country codes. Example: `geo = ["US"]`
 * `gsuite` - (Optional) Use GSuite as the authentication mechanism. Example:
 
   ```hcl
