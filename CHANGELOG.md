@@ -1,5 +1,9 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/cloudflare_certificate_pack`: Swap internal representation of `hosts` to remove inconsistent ordering issues ([#800](https://github.com/cloudflare/terraform-provider-cloudflare/issues/800)) 
+
 ## 2.11.0 (September 11th, 2020)
 
 * **New Resource:** `cloudflare_certificate_pack` ([#778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/778))
