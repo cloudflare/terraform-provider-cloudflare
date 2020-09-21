@@ -23,8 +23,7 @@ func TestAccCertificatePackAdvancedDigicert(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "type", "advanced"),
-					resource.TestCheckResourceAttr(name, "hosts.0", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(name, "hosts.1", domain),
+					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 					resource.TestCheckResourceAttr(name, "validation_method", "http"),
 					resource.TestCheckResourceAttr(name, "validity_days", "365"),
 					resource.TestCheckResourceAttr(name, "certificate_authority", "digicert"),
@@ -66,8 +65,7 @@ func TestAccCertificatePackAdvancedLetsEncrypt(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "type", "advanced"),
-					resource.TestCheckResourceAttr(name, "hosts.0", fmt.Sprintf("*.%s", domain)),
-					resource.TestCheckResourceAttr(name, "hosts.1", domain),
+					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 					resource.TestCheckResourceAttr(name, "validation_method", "txt"),
 					resource.TestCheckResourceAttr(name, "validity_days", "90"),
 					resource.TestCheckResourceAttr(name, "certificate_authority", "lets_encrypt"),
@@ -109,8 +107,7 @@ func TestAccCertificatePackDedicatedCustom(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "type", "dedicated_custom"),
-					resource.TestCheckResourceAttr(name, "hosts.0", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(name, "hosts.1", domain),
+					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 				),
 			},
 		},
