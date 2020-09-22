@@ -3,6 +3,7 @@
 **Improvements**
 
 * `resource/cloudflare_certificate_pack`: Swap internal representation of `hosts` to remove inconsistent ordering issues ([#800](https://github.com/cloudflare/terraform-provider-cloudflare/issues/800)) 
+* `resource/cloudflare_logpush_job`: Handle deletion outside of Terraform ([#798](https://github.com/cloudflare/terraform-provider-cloudflare/issues/798)) 
 
 ## 2.11.0 (September 11th, 2020)
 
