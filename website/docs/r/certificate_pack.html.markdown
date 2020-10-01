@@ -47,7 +47,7 @@ resource "cloudflare_certificate_pack" "advanced_example_for_lets_encrypt" {
   hosts                 = ["example.com", "*.example.com"]
   validation_method     = "http"
   validity_days         = 90
-  certificate_authority = "lets_encrypot"
+  certificate_authority = "lets_encrypt"
   cloudflare_branding   = false
 }
 ```
