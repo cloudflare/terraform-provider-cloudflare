@@ -4,6 +4,8 @@
 
 * `resource/cloudflare_certificate_pack`: Swap internal representation of `hosts` to remove inconsistent ordering issues ([#800](https://github.com/cloudflare/terraform-provider-cloudflare/issues/800)) 
 * `resource/cloudflare_logpush_job`: Handle deletion outside of Terraform ([#798](https://github.com/cloudflare/terraform-provider-cloudflare/issues/798)) 
+* `resource/cloudflare_access_group`: Add support for `geo` conditionals ([#803](https://github.com/cloudflare/terraform-provider-cloudflare/issues/803)) 
+* `resource/cloudflare_access_application`: Add support for `enable_binding_cookie` ([#802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/802)) 
 
 ## 2.11.0 (September 11th, 2020)
 
