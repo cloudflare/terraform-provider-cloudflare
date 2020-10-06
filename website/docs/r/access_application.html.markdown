@@ -72,6 +72,8 @@ The following arguments are supported:
 * `auto_redirect_to_identity` - (Optional) Option to skip identity provider
   selection if only one is configured in allowed_idps. Defaults to `false`
   (disabled).
+* `enable_binding_cookie` - (Optional) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
+
   
 ## Attributes Reference
 
