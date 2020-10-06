@@ -107,6 +107,13 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"geo": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"gsuite": {
 			Type:     schema.TypeList,
 			Optional: true,
@@ -367,6 +374,12 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 				group = append(group, cloudflare.AccessGroupAuthMethod{AuthMethod: struct {
 					AuthMethod string `json:"auth_method"`
 				}{AuthMethod: values.(string)}})
+			}
+		} else if accessGroupType == "geo" {
+			if values != "" {
+				group = append(group, cloudflare.AccessGroupGeo{Geo: struct {
+					CountryCode string `json:"country_code"`
+				}{CountryCode: values.(string)}})
 			}
 		} else if accessGroupType == "gsuite" {
 			for _, v := range values.([]interface{}) {
