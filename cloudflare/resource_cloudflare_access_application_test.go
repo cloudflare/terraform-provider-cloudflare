@@ -22,15 +22,37 @@ func TestAccCloudflareAccessApplicationBasic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, zoneID, domain),
+				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+				),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
@@ -48,7 +70,7 @@ func TestAccCloudflareAccessApplicationWithCORS(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
@@ -77,7 +99,7 @@ func TestAccCloudflareAccessApplicationWithAutoRedirectToIdentity(t *testing.T) 
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
@@ -102,7 +124,7 @@ func TestAccCloudflareAccessApplicationWithEnableBindingCookie(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
@@ -122,13 +144,12 @@ func TestAccCloudflareAccessApplicationWithEnableBindingCookie(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
@@ -148,16 +169,16 @@ func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
 	})
 }
 
-func testAccCloudflareAccessApplicationConfigBasic(rnd, zoneID, domain string) string {
+func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  session_duration          = "24h"
-  auto_redirect_to_identity = false
+	%[3]s_id                  = "%[4]s"
+	name                      = "%[1]s"
+	domain                    = "%[1]s.%[2]s"
+	session_duration          = "24h"
+	auto_redirect_to_identity = false
 }
-`, rnd, zoneID, domain)
+`, rnd, domain, identifier.Type, identifier.Value)
 }
 
 func testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain string) string {
@@ -232,6 +253,11 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 		if err == nil {
 			return fmt.Errorf("AccessApplication still exists")
 		}
+
+		_, err = client.AccessApplication(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("AccessApplication still exists")
+		}
 	}
 
 	return nil
@@ -251,13 +277,12 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_application." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	updatedName := fmt.Sprintf("%s-updated", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -297,7 +322,7 @@ func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -327,7 +352,7 @@ func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,

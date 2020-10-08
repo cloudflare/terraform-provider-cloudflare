@@ -26,7 +26,7 @@ func TestAccAccessPolicyServiceToken(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -51,7 +51,7 @@ func TestAccAccessPolicyAnyServiceToken(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -72,14 +72,11 @@ func TestAccAccessPolicyWithZoneID(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	updatedName := fmt.Sprintf("%s-updated", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			testAccessAccPreCheck(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -87,7 +84,7 @@ func TestAccAccessPolicyWithZoneID(t *testing.T) {
 				Config: testAccessPolicyWithZoneID(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 				),
 			},
@@ -95,7 +92,7 @@ func TestAccAccessPolicyWithZoneID(t *testing.T) {
 				Config: testAccessPolicyWithZoneIDUpdated(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", updatedName),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 				),
 			},
@@ -208,7 +205,7 @@ func TestAccessPolicyGroup(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -265,7 +262,7 @@ func TestAccessPolicyMTLS(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -313,7 +310,7 @@ func TestAccessPolicyCommonName(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,

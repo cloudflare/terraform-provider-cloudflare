@@ -20,8 +20,14 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"zone_id"},
+			},
+			"zone_id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"account_id"},
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -42,12 +48,21 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 
 func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
 
 	// The Cloudflare API doesn't support fetching a single service token
 	// so instead we loop over all the service tokens and only continue
 	// when we have a match.
-	serviceTokens, _, err := client.AccessServiceTokens(accountID)
+	var serviceTokens []cloudflare.AccessServiceToken
+	if identifier.Type == AccountType {
+		serviceTokens, _, err = client.AccessServiceTokens(identifier.Value)
+	} else {
+		serviceTokens, _, err = client.ZoneLevelAccessServiceTokens(identifier.Value)
+	}
 	if err != nil {
 		return fmt.Errorf("error fetching access service tokens: %s", err)
 	}
@@ -63,10 +78,19 @@ func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta inter
 
 func resourceCloudflareAccessServiceTokenCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 	tokenName := d.Get("name").(string)
 
-	serviceToken, err := client.CreateAccessServiceToken(accountID, tokenName)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var serviceToken cloudflare.AccessServiceTokenCreateResponse
+	if identifier.Type == AccountType {
+		serviceToken, err = client.CreateAccessServiceToken(identifier.Value, tokenName)
+	} else {
+		serviceToken, err = client.CreateZoneLevelAccessServiceToken(identifier.Value, tokenName)
+	}
 	if err != nil {
 		return fmt.Errorf("error creating access service token: %s", err)
 	}
@@ -83,10 +107,19 @@ func resourceCloudflareAccessServiceTokenCreate(d *schema.ResourceData, meta int
 
 func resourceCloudflareAccessServiceTokenUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 	tokenName := d.Get("name").(string)
 
-	serviceToken, err := client.UpdateAccessServiceToken(accountID, d.Id(), tokenName)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var serviceToken cloudflare.AccessServiceTokenUpdateResponse
+	if identifier.Type == AccountType {
+		serviceToken, err = client.UpdateAccessServiceToken(identifier.Value, d.Id(), tokenName)
+	} else {
+		serviceToken, err = client.UpdateZoneLevelAccessServiceToken(identifier.Value, d.Id(), tokenName)
+	}
 	if err != nil {
 		return fmt.Errorf("error updating access service token: %s", err)
 	}
@@ -98,9 +131,17 @@ func resourceCloudflareAccessServiceTokenUpdate(d *schema.ResourceData, meta int
 
 func resourceCloudflareAccessServiceTokenDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 
-	_, err := client.DeleteAccessServiceToken(accountID, d.Id())
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	if identifier.Type == AccountType {
+		_, err = client.DeleteAccessServiceToken(identifier.Value, d.Id())
+	} else {
+		_, err = client.DeleteAccessServiceToken(identifier.Value, d.Id())
+	}
 	if err != nil {
 		return fmt.Errorf("error deleting access service token: %s", err)
 	}

@@ -26,14 +26,16 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 				Required: true,
 			},
 			"account_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"zone_id"},
 			},
 			"zone_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"account_id"},
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -69,13 +71,19 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 
 func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID, err := getAccountIDFromZoneID(d, client)
+	appID := d.Get("application_id").(string)
+
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return err
 	}
-	appID := d.Get("application_id").(string)
 
-	accessPolicy, err := client.AccessPolicy(accountID, appID, d.Id())
+	var accessPolicy cloudflare.AccessPolicy
+	if identifier.Type == AccountType {
+		accessPolicy, err = client.AccessPolicy(identifier.Value, appID, d.Id())
+	} else {
+		accessPolicy, err = client.ZoneLevelAccessPolicy(identifier.Value, appID, d.Id())
+	}
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Access Policy %s no longer exists", d.Id())
@@ -98,10 +106,6 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
-	accountID, err := getAccountIDFromZoneID(d, client)
-	if err != nil {
-		return err
-	}
 	newAccessPolicy := cloudflare.AccessPolicy{
 		Name:       d.Get("name").(string),
 		Precedence: d.Get("precedence").(int),
@@ -112,7 +116,17 @@ func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy)
 
-	accessPolicy, err := client.CreateAccessPolicy(accountID, appID, newAccessPolicy)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessPolicy cloudflare.AccessPolicy
+	if identifier.Type == AccountType {
+		accessPolicy, err = client.CreateAccessPolicy(identifier.Value, appID, newAccessPolicy)
+	} else {
+		accessPolicy, err = client.CreateZoneLevelAccessPolicy(identifier.Value, appID, newAccessPolicy)
+	}
 	if err != nil {
 		return fmt.Errorf("error creating Access Policy for ID %q: %s", accessPolicy.ID, err)
 	}
@@ -124,10 +138,6 @@ func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface
 
 func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID, err := getAccountIDFromZoneID(d, client)
-	if err != nil {
-		return err
-	}
 	appID := d.Get("application_id").(string)
 	updatedAccessPolicy := cloudflare.AccessPolicy{
 		Name:       d.Get("name").(string),
@@ -140,7 +150,17 @@ func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Updating Cloudflare Access Policy from struct: %+v", updatedAccessPolicy)
 
-	accessPolicy, err := client.UpdateAccessPolicy(accountID, appID, updatedAccessPolicy)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessPolicy cloudflare.AccessPolicy
+	if identifier.Type == AccountType {
+		accessPolicy, err = client.UpdateAccessPolicy(identifier.Value, appID, updatedAccessPolicy)
+	} else {
+		accessPolicy, err = client.UpdateZoneLevelAccessPolicy(identifier.Value, appID, updatedAccessPolicy)
+	}
 	if err != nil {
 		return fmt.Errorf("error updating Access Policy for ID %q: %s", d.Id(), err)
 	}
@@ -154,15 +174,20 @@ func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface
 
 func resourceCloudflareAccessPolicyDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID, err := getAccountIDFromZoneID(d, client)
-	if err != nil {
-		return err
-	}
 	appID := d.Get("application_id").(string)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Policy using ID: %s", d.Id())
 
-	err = client.DeleteAccessPolicy(accountID, appID, d.Id())
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	if identifier.Type == AccountType {
+		err = client.DeleteAccessPolicy(identifier.Value, appID, d.Id())
+	} else {
+		err = client.DeleteZoneLevelAccessPolicy(identifier.Value, appID, d.Id())
+	}
 	if err != nil {
 		return fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err)
 	}
