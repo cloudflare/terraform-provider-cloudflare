@@ -62,7 +62,7 @@ Action blocks support the following:
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
 * `email_obfuscation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `explicit_cache_control` - (Optional) Whether origin Cache-Control action is `"on"` or `"off"`.
-* `forwarding_url` - (Optional) The URL to forward to, and with what status. See below.
+* `forwarding_url` - (Optional) The URL to forward to, and with what status. [See below](#forwarding-url).
 * `host_header_override` - (Optional) Value of the Host header to send.
 * `ip_geolocation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `minify` - (Optional) The configuration for HTML, CSS and JS minification. See below for full list of options.
@@ -179,6 +179,32 @@ resource "cloudflare_page_rule" "foobar" {
         geo = true
         lang = true
       }
+    }
+  }
+}
+```
+
+## Forwarding URL
+
+This setting allows you to redirect the target to a page that you specify
+
+* `url` - (Required) A URL that you would like to redirect to
+* `status_cdoe` - (Required) A HTTP status code that Cloudflare should respond as, as part of the redirect
+  * `301` - Permanent redirect
+  * `302` - Temporary redirect
+  
+Example:
+
+```hcl
+resource "cloudflare_page_rule" "test" {
+  zone_id = cloudflare_zone.test.id
+  target = "*website.com/*"
+  priority = 1
+
+  actions {
+    forwarding_url {
+      url = "https://nextwebsite.com"
+      status_code = 301
     }
   }
 }
