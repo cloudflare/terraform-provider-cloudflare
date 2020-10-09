@@ -82,11 +82,6 @@ Action blocks support the following:
 * `true_client_ip_header` - (Optional) Whether this action is `"on"` or `"off"`.
 * `waf` - (Optional) Whether this action is `"on"` or `"off"`.
 
-Forwarding URL actions support the following:
-
-* `url` - (Required) The URL to which the page rule should forward.
-* `status_code` - (Required) The status code to use for the redirection.
-
 Minify actions support the following:
 
 * `html` - (Required) Whether HTML should be minified. Valid values are `"on"` or `"off"`.
