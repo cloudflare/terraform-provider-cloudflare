@@ -188,8 +188,8 @@ resource "cloudflare_page_rule" "foobar" {
 
 This setting allows you to redirect the target to a page that you specify
 
-* `url` - (Required) A URL that you would like to redirect to
-* `status_cdoe` - (Required) A HTTP status code that Cloudflare should respond as, as part of the redirect
+* `url` - (Required) The URL to which the page rule should forward.
+* `status_code` - (Required) The status code to use for the redirection.
   * `301` - Permanent redirect
   * `302` - Temporary redirect
   
