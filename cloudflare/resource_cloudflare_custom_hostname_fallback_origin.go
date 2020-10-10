@@ -89,10 +89,9 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		}
 
 		// Address an eventual consistency issue where deleting a fallback hostname
-		// and then adding it _may_ cause some issues. We don't expect "active" here
-		// as some resources (such as DNS records) will be created while the
-		// deployment is in progress.
-		if fallbackHostname.Status != "pending_deployment" {
+		// and then adding it _may_ cause some issues. It is possible that the status does
+		// move into the active state during the retry period.
+		if fallbackHostname.Status != "pending_deployment" && fallbackHostname.Status != "active" {
 			return resource.RetryableError(fmt.Errorf("expected custom hostname fallback to be created but was %s", fallbackHostname.Status))
 		}
 
