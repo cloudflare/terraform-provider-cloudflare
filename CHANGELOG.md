@@ -7,6 +7,10 @@
 * `resource/cloudflare_access_group`: Add support for `geo` conditionals ([#803](https://github.com/cloudflare/terraform-provider-cloudflare/issues/803)) 
 * `resource/cloudflare_access_application`: Add support for `enable_binding_cookie` ([#802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/802)) 
 
+**Fixes**
+
+* `resource/cloudflare_custom_hostname_fallback_origin`: Don't retry the "active" status of custom hostnames fallbacks ([#818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/818)) 
+
 ## 2.11.0 (September 11th, 2020)
 
 * **New Resource:** `cloudflare_certificate_pack` ([#778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/778))
