@@ -24,8 +24,8 @@ resource "cloudflare_access_service_token" "my_app" {
 
 The following arguments are supported:
 
-* `account_id` - (Required) The ID of the account where the Access
-Service is being created.
+* `account_id` - (Optional) The ID of the account where the Access Service is being created. Conflicts with `zone_id`.
+* `zone_id` - (Optional) The ID of the zone where the Access Service is being created. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the token's intent.
 
 ## Attributes Reference

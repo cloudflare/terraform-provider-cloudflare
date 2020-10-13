@@ -54,7 +54,8 @@ for full reference on what is available and how to configure your provider.
 
 The following arguments are supported:
 
-* `account` - (Required) The account ID the provider should be associated with.
+* `account_id` - (Optional) The account ID the provider should be associated with. Conflicts with `zone_id`.
+* `zone_id` - (Optional) The zone ID the provider should be associated with. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the Access Identity Provider configuration.
 * `type` - (Required) The provider type to use. Must be one of: `"centrify"`,
   `"facebook"`, `"google-apps"`, `"oidc"`, `"github"`, `"google"`, `"saml"`,

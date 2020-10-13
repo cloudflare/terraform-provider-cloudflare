@@ -45,8 +45,8 @@ resource "cloudflare_access_group" "test_group" {
 
 The following arguments are supported:
 
-* `account_id` - (Required) The ID of the account the group is
-  associated with.
+* `account_id` - (Optional) The ID of the account the group is associated with. Conflicts with `zone_id`.
+* `zone_id` - (Optional) The ID of the zone the group is associated with. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the Access Group.
 * `require` - (Optional) A series of access conditions, see below for
   full list.

@@ -42,7 +42,8 @@ resource "cloudflare_access_application" "staging_app" {
 
 The following arguments are supported:
 
-* `zone_id` - (Required) The DNS zone to which the access rule should be added.
+* `account_id` - (Optional) The account to which the access application should be added. Conflicts with `zone_id`.
+* `zone_id` - (Optional) The DNS zone to which the access application should be added. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the Access Application.
 * `domain` - (Required) The complete URL of the asset you wish to put
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
