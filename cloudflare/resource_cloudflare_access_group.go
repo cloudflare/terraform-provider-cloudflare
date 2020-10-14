@@ -375,12 +375,6 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					AuthMethod string `json:"auth_method"`
 				}{AuthMethod: values.(string)}})
 			}
-		} else if accessGroupType == "geo" {
-			if values != "" {
-				group = append(group, cloudflare.AccessGroupGeo{Geo: struct {
-					CountryCode string `json:"country_code"`
-				}{CountryCode: values.(string)}})
-			}
 		} else if accessGroupType == "gsuite" {
 			for _, v := range values.([]interface{}) {
 				gsuiteCfg := v.(map[string]interface{})
@@ -471,6 +465,10 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					group = append(group, cloudflare.AccessGroupAccessGroup{Group: struct {
 						ID string `json:"id"`
 					}{ID: value.(string)}})
+				case "geo":
+					group = append(group, cloudflare.AccessGroupGeo{Geo: struct {
+						CountryCode string `json:"country_code"`
+					}{CountryCode: value.(string)}})
 				}
 			}
 		}
