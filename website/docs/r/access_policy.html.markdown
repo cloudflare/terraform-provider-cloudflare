@@ -51,6 +51,8 @@ resource "cloudflare_access_policy" "test_policy" {
 
 The following arguments are supported:
 
+-> **Note:** It's required that an `account_id` or `zone_id` is provided and in most cases using either is fine. However, if you're using a scoped access token, you must provide the argument that matches the token's scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
+
 * `application_id` - (Required) The ID of the application the policy is associated with.
 * `account_id` - (Optional) The account to which the access rule should be added. Conflicts with `zone_id`.
 * `zone_id` - (Optional) The DNS zone to which the access rule should be added. Conflicts with `account_id`.

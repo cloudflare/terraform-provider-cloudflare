@@ -42,6 +42,8 @@ resource "cloudflare_access_application" "staging_app" {
 
 The following arguments are supported:
 
+-> **Note:** It's required that an `account_id` or `zone_id` is provided and in most cases using either is fine. However, if you're using a scoped access token, you must provide the argument that matches the token's scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
+
 * `account_id` - (Optional) The account to which the access application should be added. Conflicts with `zone_id`.
 * `zone_id` - (Optional) The DNS zone to which the access application should be added. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the Access Application.
