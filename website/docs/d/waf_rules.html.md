@@ -41,7 +41,7 @@ values must match in order to be included, see below for full list.
 **filter**
 
 - `description` - (Optional) A regular expression matching the description of the WAF Rules to lookup.
-- `mode` - (Optional) Mode of the WAF Rules to lookup. Valid values: `"on"` and `"off"`.
+- `mode` - (Optional) Mode of the WAF Rules to lookup. Valid values: one of ["block", "challenge", "default", "disable", "simulate"] or ["on", "off"] depending on the WAF Rule type.
 - `group_id` - (Optional) The ID of the WAF Rule Group in which the WAF Rules to lookup have to be.
 
 ## Attributes Reference
