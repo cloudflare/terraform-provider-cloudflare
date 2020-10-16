@@ -45,8 +45,10 @@ resource "cloudflare_access_group" "test_group" {
 
 The following arguments are supported:
 
-* `account_id` - (Required) The ID of the account the group is
-  associated with.
+-> **Note:** It's required that an `account_id` or `zone_id` is provided and in most cases using either is fine. However, if you're using a scoped access token, you must provide the argument that matches the token's scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
+
+* `account_id` - (Optional) The ID of the account the group is associated with. Conflicts with `zone_id`.
+* `zone_id` - (Optional) The ID of the zone the group is associated with. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the Access Group.
 * `require` - (Optional) A series of access conditions, see below for
   full list.

@@ -32,20 +32,24 @@ func TestProvider_impl(t *testing.T) {
 type preCheckFunc = func(*testing.T)
 
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("CLOUDFLARE_EMAIL"); v == "" {
-		t.Fatal("CLOUDFLARE_EMAIL must be set for acceptance tests")
-	}
-
-	if v := os.Getenv("CLOUDFLARE_API_KEY"); v == "" {
-		t.Fatal("CLOUDFLARE_API_KEY must be set for acceptance tests")
-	}
-
-	if v := os.Getenv("CLOUDFLARE_DOMAIN"); v == "" {
-		t.Fatal("CLOUDFLARE_DOMAIN must be set for acceptance tests. The domain is used to create and destroy record against.")
-	}
+	testAccPreCheckEmail(t)
+	testAccPreCheckApiKey(t)
+	testAccPreCheckDomain(t)
 
 	if v := os.Getenv("CLOUDFLARE_ZONE_ID"); v == "" {
 		t.Fatal("CLOUDFLARE_ZONE_ID must be set for this acceptance test")
+	}
+}
+
+func testAccessAccPreCheck(t *testing.T) {
+	testAccPreCheckEmail(t)
+	testAccPreCheckApiKey(t)
+	testAccPreCheckDomain(t)
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if zoneID == "" && accountID == "" {
+		t.Fatal("CLOUDFLARE_ZONE_ID or CLOUDFLARE_ACCOUNT_ID must be set for this acceptance test")
 	}
 }
 
@@ -64,6 +68,24 @@ func testAccPreCheckAltZoneID(t *testing.T) {
 func testAccPreCheckAccount(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ACCOUNT_ID"); v == "" {
 		t.Fatal("CLOUDFLARE_ACCOUNT_ID must be set for this acceptance test")
+	}
+}
+
+func testAccPreCheckEmail(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_EMAIL"); v == "" {
+		t.Fatal("CLOUDFLARE_EMAIL must be set for acceptance tests")
+	}
+}
+
+func testAccPreCheckApiKey(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_API_KEY"); v == "" {
+		t.Fatal("CLOUDFLARE_API_KEY must be set for acceptance tests")
+	}
+}
+
+func testAccPreCheckDomain(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_DOMAIN"); v == "" {
+		t.Fatal("CLOUDFLARE_DOMAIN must be set for acceptance tests. The domain is used to create and destroy record against.")
 	}
 }
 

@@ -22,17 +22,37 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &accessGroup),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+				),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, &accessGroup),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
 				),
@@ -47,7 +67,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
@@ -73,7 +93,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
@@ -99,7 +119,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
@@ -128,7 +148,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
@@ -156,20 +176,20 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &before),
 				),
 			},
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, "test-changed@example.com"),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, "test-changed@example.com", AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &after),
 					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
@@ -188,14 +208,14 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, accountID, email),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAccessGroupExists(name, &before),
 					testAccManuallyDeleteAccessGroup(name, &initialID),
@@ -216,16 +236,16 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func testAccCloudflareAccessGroupConfigBasic(resourceName, accountID, email string) string {
+func testAccCloudflareAccessGroupConfigBasic(resourceName string, email string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
-  account_id = "%[2]s"
-  name = "%[1]s"
+  %[3]s_id = "%[4]s"
+  name     = "%[1]s"
 
   include {
-    email = ["%[3]s"]
+    email = ["%[2]s"]
   }
-}`, resourceName, accountID, email)
+}`, resourceName, email, identifier.Type, identifier.Value)
 }
 
 func testAccCloudflareAccessGroupConfigBasicWithUpdate(resourceName, accountID, email string) string {
@@ -354,6 +374,11 @@ func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
 		}
 
 		_, err := client.AccessGroup(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("AccessGroup still exists")
+		}
+
+		_, err = client.AccessGroup(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
 		}

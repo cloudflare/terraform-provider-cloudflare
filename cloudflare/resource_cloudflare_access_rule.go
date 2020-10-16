@@ -114,7 +114,6 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 		if client.AccountID != "" {
 			accessRuleResponse, err = client.AccountAccessRule(client.AccountID, d.Id())
 		} else {
-
 			accessRuleResponse, err = client.UserAccessRule(d.Id())
 		}
 	} else {

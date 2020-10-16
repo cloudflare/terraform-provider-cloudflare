@@ -47,20 +47,36 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 
 func TestAccCloudflareAccessIdentityProviderOneTimePin(t *testing.T) {
 	t.Parallel()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(accountID, rnd),
+				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "type", "onetimepin"),
+				),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "onetimepin"),
 				),
@@ -76,7 +92,7 @@ func TestAccCloudflareAccessIdentityProviderOAuth(t *testing.T) {
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -102,7 +118,7 @@ func TestAccCloudflareAccessIdentityProviderOAuthWithUpdate(t *testing.T) {
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -138,7 +154,7 @@ func TestAccCloudflareAccessIdentityProviderSAML(t *testing.T) {
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		Providers: testAccProviders,
@@ -162,13 +178,13 @@ func TestAccCloudflareAccessIdentityProviderSAML(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessIdentityProviderOneTimePin(accountID, name string) string {
+func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-  type = "onetimepin"
-}`, accountID, name)
+resource "cloudflare_access_identity_provider" "%[1]s" {
+  %[2]s_id = "%[3]s"
+  name     = "%[1]s"
+  type     = "onetimepin"
+}`, name, identifier.Type, identifier.Value)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, name string) string {

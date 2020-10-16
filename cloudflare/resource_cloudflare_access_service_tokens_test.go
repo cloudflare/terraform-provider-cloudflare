@@ -22,19 +22,34 @@ func TestAccAccessServiceTokenCreate(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccessAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, accountID, resourceName),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+				),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccessAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
@@ -55,23 +70,44 @@ func TestAccAccessServiceTokenUpdate(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, accountID, resourceName),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 				),
 			},
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, accountID, resourceName+"-updated"),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", AccessIdentifier{Type: AccountType, Value: accountID}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
+				),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccessAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+				),
+			},
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", AccessIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
 				),
@@ -91,18 +127,20 @@ func TestAccAccessServiceTokenDelete(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, accountID, resourceName),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
@@ -112,14 +150,31 @@ func TestAccAccessServiceTokenDelete(t *testing.T) {
 			},
 		},
 	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccessAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+				),
+			},
+		},
+	})
 }
 
-func testCloudflareAccessServiceTokenBasicConfig(resourceName, accountID, tokenName string) string {
+func testCloudflareAccessServiceTokenBasicConfig(resourceName string, tokenName string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_service_token" "%[1]s" {
-  account_id = "%[2]s"
-  name = "%[3]s"
-}`, resourceName, accountID, tokenName)
+  %[3]s_id = "%[4]s"
+  name     = "%[2]s"
+}`, resourceName, tokenName, identifier.Type, identifier.Value)
 }
 
 func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
@@ -131,6 +186,11 @@ func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
 		}
 
 		_, err := client.DeleteAccessServiceToken(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		if err == nil {
+			return fmt.Errorf("access service token still exists")
+		}
+
+		_, err = client.DeleteZoneLevelAccessServiceToken(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("access service token still exists")
 		}

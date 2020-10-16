@@ -21,9 +21,16 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"zone_id"},
+			},
+			"zone_id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"account_id"},
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -219,9 +226,18 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 
 func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 
-	accessGroup, err := client.AccessGroup(accountID, d.Id())
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessGroup cloudflare.AccessGroup
+	if identifier.Type == AccountType {
+		accessGroup, err = client.AccessGroup(identifier.Value, d.Id())
+	} else {
+		accessGroup, err = client.ZoneLevelAccessGroup(identifier.Value, d.Id())
+	}
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Access Group %s no longer exists", d.Id())
@@ -241,7 +257,6 @@ func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{})
 
 func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 	newAccessGroup := cloudflare.AccessGroup{
 		Name: d.Get("name").(string),
 	}
@@ -250,7 +265,17 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 
 	log.Printf("[DEBUG] Creating Cloudflare Access Group from struct: %+v", newAccessGroup)
 
-	accessGroup, err := client.CreateAccessGroup(accountID, newAccessGroup)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessGroup cloudflare.AccessGroup
+	if identifier.Type == AccountType {
+		accessGroup, err = client.CreateAccessGroup(identifier.Value, newAccessGroup)
+	} else {
+		accessGroup, err = client.CreateZoneLevelAccessGroup(identifier.Value, newAccessGroup)
+	}
 	if err != nil {
 		return fmt.Errorf("error creating Access Group for ID %q: %s", accessGroup.ID, err)
 	}
@@ -263,7 +288,6 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 
 func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 	updatedAccessGroup := cloudflare.AccessGroup{
 		Name: d.Get("name").(string),
 		ID:   d.Id(),
@@ -273,7 +297,17 @@ func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{
 
 	log.Printf("[DEBUG] Updating Cloudflare Access Group from struct: %+v", updatedAccessGroup)
 
-	accessGroup, err := client.UpdateAccessGroup(accountID, updatedAccessGroup)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessGroup cloudflare.AccessGroup
+	if identifier.Type == AccountType {
+		accessGroup, err = client.UpdateAccessGroup(identifier.Value, updatedAccessGroup)
+	} else {
+		accessGroup, err = client.UpdateZoneLevelAccessGroup(identifier.Value, updatedAccessGroup)
+	}
 	if err != nil {
 		return fmt.Errorf("error updating Access Group for ID %q: %s", d.Id(), err)
 	}
@@ -287,11 +321,19 @@ func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{
 
 func resourceCloudflareAccessGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Group using ID: %s", d.Id())
 
-	err := client.DeleteAccessGroup(accountID, d.Id())
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	if identifier.Type == AccountType {
+		err = client.DeleteAccessGroup(identifier.Value, d.Id())
+	} else {
+		err = client.DeleteZoneLevelAccessGroup(identifier.Value, d.Id())
+	}
 	if err != nil {
 		return fmt.Errorf("error deleting Access Group for ID %q: %s", d.Id(), err)
 	}

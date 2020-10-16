@@ -24,9 +24,16 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"zone_id"},
+			},
+			"zone_id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"account_id"},
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -144,9 +151,18 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 
 func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 
-	accessIdentityProvider, err := client.AccessIdentityProviderDetails(accountID, d.Id())
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessIdentityProvider cloudflare.AccessIdentityProvider
+	if identifier.Type == AccountType {
+		accessIdentityProvider, err = client.AccessIdentityProviderDetails(identifier.Value, d.Id())
+	} else {
+		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(identifier.Value, d.Id())
+	}
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Access Identity Provider %s no longer exists", d.Id())
@@ -157,7 +173,6 @@ func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta i
 	}
 
 	d.SetId(accessIdentityProvider.ID)
-	d.Set("account_id", accountID)
 	d.Set("name", accessIdentityProvider.Name)
 	d.Set("type", accessIdentityProvider.Type)
 
@@ -171,7 +186,6 @@ func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta i
 
 func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 
 	IDPConfig, _ := convertSchemaToStruct(d)
 
@@ -183,19 +197,28 @@ func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta
 
 	log.Printf("[DEBUG] Creating Cloudflare Access Identity Provider from struct: %+v", identityProvider)
 
-	accessPolicy, err := client.CreateAccessIdentityProvider(accountID, identityProvider)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessIdentityProvider cloudflare.AccessIdentityProvider
+	if identifier.Type == AccountType {
+		accessIdentityProvider, err = client.CreateAccessIdentityProvider(identifier.Value, identityProvider)
+	} else {
+		accessIdentityProvider, err = client.CreateZoneLevelAccessIdentityProvider(identifier.Value, identityProvider)
+	}
 	if err != nil {
 		return fmt.Errorf("error creating Access Identity Provider for ID %q: %s", d.Id(), err)
 	}
 
-	d.SetId(accessPolicy.ID)
+	d.SetId(accessIdentityProvider.ID)
 
 	return resourceCloudflareAccessIdentityProviderRead(d, meta)
 }
 
 func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 
 	IDPConfig, conversionErr := convertSchemaToStruct(d)
 	if conversionErr != nil {
@@ -211,7 +234,17 @@ func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta
 
 	log.Printf("[DEBUG] Updating Cloudflare Access Identity Provider from struct: %+v", updatedAccessIdentityProvider)
 
-	accessIdentityProvider, err := client.UpdateAccessIdentityProvider(accountID, d.Id(), updatedAccessIdentityProvider)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return err
+	}
+
+	var accessIdentityProvider cloudflare.AccessIdentityProvider
+	if identifier.Type == AccountType {
+		accessIdentityProvider, err = client.UpdateAccessIdentityProvider(identifier.Value, d.Id(), updatedAccessIdentityProvider)
+	} else {
+		accessIdentityProvider, err = client.UpdateZoneLevelAccessIdentityProvider(identifier.Value, d.Id(), updatedAccessIdentityProvider)
+	}
 	if err != nil {
 		return fmt.Errorf("error updating Access Identity Provider for ID %q: %s", d.Id(), err)
 	}
@@ -225,13 +258,21 @@ func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta
 
 func resourceCloudflareAccessIdentityProviderDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Identity Provider using ID: %s", d.Id())
 
-	_, err := client.DeleteAccessIdentityProvider(accountID, d.Id())
+	identifier, err := initIdentifier(d)
 	if err != nil {
-		return fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err)
+		return err
+	}
+
+	if identifier.Type == AccountType {
+		_, err = client.DeleteAccessIdentityProvider(identifier.Value, d.Id())
+	} else {
+		_, err = client.DeleteZoneLevelAccessIdentityProvider(identifier.Value, d.Id())
+	}
+	if err != nil {
+		return fmt.Errorf("error deleting Access Identity Provider for ID %q: %s", d.Id(), err)
 	}
 
 	d.SetId("")

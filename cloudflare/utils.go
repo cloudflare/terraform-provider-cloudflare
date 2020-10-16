@@ -153,3 +153,42 @@ func getAccountIDFromZoneID(d *schema.ResourceData, client *cloudflare.API) (str
 	d.Set("account_id", accountID)
 	return accountID, nil
 }
+
+// AccessIdentifier represents the identifier provided in a resource
+type AccessIdentifier struct {
+	Type  AccessIdentifierType
+	Value string
+}
+
+// AccessIdentifierType represents the identifier type for access resources
+type AccessIdentifierType string
+
+const (
+	// AccountType is the access identifier type for an account
+	AccountType AccessIdentifierType = "account"
+
+	// ZoneType is the access identifier type for a zone
+	ZoneType AccessIdentifierType = "zone"
+)
+
+func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
+	accountID := d.Get("account_id").(string)
+	zoneID := d.Get("zone_id").(string)
+	if accountID == "" && zoneID == "" {
+		return nil, fmt.Errorf("error creating Access Application: zone_id or account_id required")
+	}
+
+	if accountID != "" {
+		d.Set("account_id", accountID)
+		return &AccessIdentifier{
+			Type:  AccountType,
+			Value: accountID,
+		}, nil
+	}
+
+	d.Set("zone_id", zoneID)
+	return &AccessIdentifier{
+		Type:  ZoneType,
+		Value: zoneID,
+	}, nil
+}

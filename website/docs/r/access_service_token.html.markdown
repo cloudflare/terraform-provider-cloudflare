@@ -24,8 +24,10 @@ resource "cloudflare_access_service_token" "my_app" {
 
 The following arguments are supported:
 
-* `account_id` - (Required) The ID of the account where the Access
-Service is being created.
+-> **Note:** It's required that an `account_id` or `zone_id` is provided and in most cases using either is fine. However, if you're using a scoped access token, you must provide the argument that matches the token's scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
+
+* `account_id` - (Optional) The ID of the account where the Access Service is being created. Conflicts with `zone_id`.
+* `zone_id` - (Optional) The ID of the zone where the Access Service is being created. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the token's intent.
 
 ## Attributes Reference
