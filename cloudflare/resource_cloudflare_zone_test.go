@@ -30,6 +30,29 @@ func TestAccCloudflareZoneBasic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareZoneBasicWithJumpStartEnabled(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testZoneConfig(rnd, "example.cfapi.net", "true", "true"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", "example.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "type", "full"),
+					resource.TestCheckResourceAttr(name, "jump_start", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareZoneWithPlan(t *testing.T) {
 	name := "cloudflare_zone.tf-acc-with-plan-zone"
 	resourceName := strings.Split(name, ".")[1]
