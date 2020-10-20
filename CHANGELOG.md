@@ -8,7 +8,10 @@
 * `resource/cloudflare_access_application`: Add support for `enable_binding_cookie` ([#802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/802)) 
 * `resource/cloudflare_waf_rule`: Improve documentation for `mode` ([#824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/824)) 
 * `datasource/cloudflare_waf_rule`: Improve documentation for `mode` ([#824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/824)) 
-
+* `resource/cloudflare_access_application`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819)) 
+* `resource/cloudflare_access_group`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819)) 
+* `resource/cloudflare_access_identity_provider`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819)) 
+* `resource/cloudflare_access_policy`: Add support for zone-level routes to Access resources ([#819](https://github.com/cloudflare/terraform-provider-cloudflare/issues/819)) 
 
 **Fixes**
 
