@@ -59,9 +59,6 @@ func resourceCloudflareZone() *schema.Resource {
 			"jump_start": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 			"paused": {
 				Type:     schema.TypeBool,
