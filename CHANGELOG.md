@@ -16,6 +16,7 @@
 **Fixes**
 
 * `resource/cloudflare_custom_hostname_fallback_origin`: Don't retry the "active" status of custom hostnames fallbacks ([#818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/818)) 
+* `resource/cloudflare_zone`: Remove `DiffSuppressFunc` causing `jump_start` issues ([#830](https://github.com/cloudflare/terraform-provider-cloudflare/issues/830)) 
 
 ## 2.11.0 (September 11th, 2020)
 
