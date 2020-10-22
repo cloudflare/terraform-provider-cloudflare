@@ -1,7 +1,7 @@
 ---
 name: "\U0001F41B Bug report"
 about: When something isn't working as expected or documented
-labels: bug
+labels: kind/bug, needs-triage
 ---
 
 <!--
