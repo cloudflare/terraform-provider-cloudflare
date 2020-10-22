@@ -1,5 +1,11 @@
 ## Unreleased
 
+**Fixes**
+
+* `resource/cloudflare_page_rule`: Set default for `cache_key_fields` to prevent panics ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/832))
+
+## 2.12.0 (October 22nd, 2020)
+
 **Improvements**
 
 * `resource/cloudflare_certificate_pack`: Swap internal representation of `hosts` to remove inconsistent ordering issues ([#800](https://github.com/cloudflare/terraform-provider-cloudflare/issues/800)) 
