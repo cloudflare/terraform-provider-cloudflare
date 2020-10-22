@@ -372,7 +372,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 												"resolved": {
 													Type:     schema.TypeBool,
 													Optional: true,
-													Computed: true,
+													Default:  false,
 												},
 											},
 										},
