@@ -20,7 +20,7 @@ resource "google_compute_firewall" "allow_cloudflare_ingress" {
   network = "default"
 
   source_ranges = data.cloudflare_ip_ranges.cloudflare.ipv4_cidr_blocks
-  
+
   allow {
     ports    = "443"
     protocol = "tcp"
@@ -30,10 +30,10 @@ resource "google_compute_firewall" "allow_cloudflare_ingress" {
 
 ## Attributes Reference
 
-- `cidr_blocks` - The lexically ordered list of all CIDR blocks.
-
+- `cidr_blocks` - The lexically ordered list of all non-China CIDR blocks.
 - `ipv4_cidr_blocks` - The lexically ordered list of only the IPv4 CIDR blocks.
-
 - `ipv6_cidr_blocks` - The lexically ordered list of only the IPv6 CIDR blocks.
+- `china_ipv4_cidr_blocks` - The lexically ordered list of only the IPv4 China CIDR blocks.
+- `china_ipv6_cidr_blocks` - The lexically ordered list of only the IPv6 China CIDR blocks.
 
 [1]: https://www.cloudflare.com/ips/
