@@ -2,7 +2,7 @@
 
 **Fixes**
 
-* `resource/cloudflare_page_rule`: Set default for `cache_key_fields` to prevent panics ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/832))
+* `resource/cloudflare_page_rule`: Set default for `cache_key_fields.host.resolved` to prevent panics ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/832))
 
 ## 2.12.0 (October 22nd, 2020)
 
