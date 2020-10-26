@@ -291,14 +291,14 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 				Config: testAccessApplicationWithZoneID(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 				),
 			},
 			{
 				Config: testAccessApplicationWithZoneIDUpdated(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", updatedName),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 				),
 			},
 		},
