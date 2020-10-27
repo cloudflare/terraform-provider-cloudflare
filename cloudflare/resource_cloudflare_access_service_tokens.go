@@ -140,7 +140,7 @@ func resourceCloudflareAccessServiceTokenDelete(d *schema.ResourceData, meta int
 	if identifier.Type == AccountType {
 		_, err = client.DeleteAccessServiceToken(identifier.Value, d.Id())
 	} else {
-		_, err = client.DeleteAccessServiceToken(identifier.Value, d.Id())
+		_, err = client.DeleteZoneLevelAccessServiceToken(identifier.Value, d.Id())
 	}
 	if err != nil {
 		return fmt.Errorf("error deleting access service token: %s", err)
