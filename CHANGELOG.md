@@ -3,6 +3,7 @@
 **Improvements**
 
 * `datasource/cloudflare_ip_ranges`: Add the ability to query `china_ipv4_cidr_blocks` and `china_ipv6_cidr_blocks` ([#833](https://github.com/cloudflare/terraform-provider-cloudflare/issues/833)) 
+* `resource/cloudflare_filter`: Improve validation of expressions using the schema ([#848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/848)) 
 
 **Fixes**
 
