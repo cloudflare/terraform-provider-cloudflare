@@ -22,7 +22,6 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	rnd := generateRandomResourceName()
@@ -56,7 +55,6 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	rnd := generateRandomResourceName()
@@ -106,7 +104,6 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	rnd := generateRandomResourceName()
@@ -132,7 +129,6 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 }
 
 func TestAccCloudflareHealthcheckMissingRequired(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	rnd := generateRandomResourceName()
