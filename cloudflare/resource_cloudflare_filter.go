@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"os"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -36,6 +37,22 @@ func resourceCloudflareFilter() *schema.Resource {
 				Required: true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return strings.TrimSpace(new) == old
+				},
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					// Validating the filter expression doesn't support API tokens (yet!)
+					// so use API key and email for now. Establishing a new client here
+					// isn't the best solution either however we don't have the `meta`
+					// interface available that holds the configured client.
+					api, err := cloudflare.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					expression := val.(string)
+					if err := api.ValidateFilterExpression(expression); err != nil {
+						errs = append(errs, fmt.Errorf("filter expression is invalid: %s", err))
+					}
+					return
 				},
 			},
 			"description": {
