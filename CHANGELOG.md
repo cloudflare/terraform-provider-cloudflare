@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.13.0 (November 5th, 2020)
+
 **Improvements**
 
 * `datasource/cloudflare_ip_ranges`: Add the ability to query `china_ipv4_cidr_blocks` and `china_ipv6_cidr_blocks` ([#833](https://github.com/cloudflare/terraform-provider-cloudflare/issues/833)) 
