@@ -202,7 +202,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateImport(d *schema.Resou
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 3)
 
-	if len(idAttr) != 2 {
+	if len(idAttr) != 3 {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/type/certID\"", d.Id())
 	}
 	zoneID, aopType, certID := idAttr[0], idAttr[1], idAttr[2]
