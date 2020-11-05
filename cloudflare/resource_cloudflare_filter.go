@@ -4,13 +4,11 @@ import (
 	"fmt"
 	"html"
 	"log"
-	"os"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/pkg/errors"
 )
 
 func resourceCloudflareFilter() *schema.Resource {
@@ -38,23 +36,6 @@ func resourceCloudflareFilter() *schema.Resource {
 				Required: true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return strings.TrimSpace(new) == old
-				},
-				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
-					// Validating the filter expression doesn't support API tokens (yet!)
-					// so use API key and email for now. Establishing a new client here
-					// isn't the best solution either however we don't have the `meta`
-					// interface available that holds the configured client.
-					api, err := cloudflare.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
-					if err != nil {
-						errs = append(errs, errors.New("cloudflare_api_key and cloudflare_email are required for validating filter expressions but they are missing"))
-						return
-					}
-
-					expression := val.(string)
-					if err := api.ValidateFilterExpression(expression); err != nil {
-						errs = append(errs, fmt.Errorf("filter expression is invalid: %s", err))
-					}
-					return
 				},
 			},
 			"description": {
