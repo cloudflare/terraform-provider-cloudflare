@@ -20,43 +20,33 @@ $ mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com
 $ git clone https://github.com/cloudflare/terraform-provider-cloudflare.git
 ```
 
-When it comes to building you have two options:
-
-#### `make build` and install it globally
-
-If you don't mind installing the development version of the provider
-globally, you can use `make build` in the provider directory which will
-build and link the binary into your `$GOPATH/bin` directory.
-
-```sh
-$ cd $GOPATH/src/github.com/cloudflare/terraform-provider-cloudflare
-$ make build
-```
-
-#### `go build` and install it local to your changes
-
-If you would rather install the provider locally and not impact the
-stable version you already have installed, you can use the
-`~/.terraformrc` file to tell Terraform where your provider is. You do
-this by building the provider using Go.
-
-```sh
-$ cd $GOPATH/src/github.com/cloudflare/terraform-provider-cloudflare
-$ go build -o terraform-provider-cloudflare
-```
-
-And then update your `~/.terraformrc` file to point at the location
-you've built it.
+Since Terraform 0.13, all providers (including local ones) require a version and
+need to meet stricter load conditions. To simplify this there is a `make` target
+available which will handle building and putting the executable in the correct
+place.
 
 ```
-providers {
-  cloudflare = "${GOPATH}/src/github.com/cloudflare/terraform-provider-cloudflare/terraform-provider-cloudflare"
+make build-and-install-dev-version
+```
+
+Once this completes, you will need to update your Terraform provider
+configuration to reference version 99.0.0 (the version of the development build)
+in order to use it. Example configuration:
+
+```hcl
+terraform {
+  required_version = ">= 0.13"
+  required_providers {
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+      version = "99.0.0"
+    }
+  }
 }
 ```
 
-A caveat with this approach is that you will need to run `terraform
-init` whenever the provider is rebuilt. You'll also need to remember to
-comment it/remove it when it's not in use to avoid tripping yourself up.
+Be sure to remove any additional configuration from your `~/.terraformrc` and
+`.terraform` directories to prevent load issues.
 
 ## Developing the Provider
 
