@@ -24,7 +24,7 @@ func TestAccCloudflareZoneDNSSEC(t *testing.T) {
 				Config: testAccCloudflareZoneDNSSECConfig(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
-					resource.TestCheckResourceAttrSet(name, "zoneid"),
+					resource.TestCheckResourceAttrSet(name, "zone_id"),
 					resource.TestMatchResourceAttr(name, "status", regexp.MustCompile("active|disabled|pending")),
 					resource.TestCheckResourceAttrSet(name, "flags"),
 					resource.TestCheckResourceAttrSet(name, "algorithm"),
@@ -35,7 +35,6 @@ func TestAccCloudflareZoneDNSSEC(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "ds"),
 					resource.TestCheckResourceAttrSet(name, "key_tag"),
 					resource.TestCheckResourceAttrSet(name, "public_key"),
-					resource.TestCheckResourceAttrSet(name, "modified_on"),
 				),
 			},
 		},
@@ -60,7 +59,7 @@ func testAccCheckCloudflareZoneDNSSECDataSourceID(n string) resource.TestCheckFu
 func testAccCloudflareZoneDNSSECConfig(zoneID string, name string) string {
 	return fmt.Sprintf(`
 data "cloudflare_zone_dnssec" "%s" {
-	zoneid = cloudflare_zone_dnssec.%s.zoneid
+	zone_id = cloudflare_zone_dnssec.%s.zone_id
 }
 
 %s
@@ -70,6 +69,6 @@ data "cloudflare_zone_dnssec" "%s" {
 func testAccCloudflareZoneDNSSECResourceConfig(zoneID string, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_zone_dnssec" "%s" {
-	zoneid = "%s"
+	zone_id = "%s"
 }`, name, zoneID)
 }

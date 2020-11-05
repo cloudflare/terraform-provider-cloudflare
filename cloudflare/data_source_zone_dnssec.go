@@ -14,10 +14,9 @@ func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
 		Read: dataSourceCloudflareZoneDNSSECRead,
 
 		Schema: map[string]*schema.Schema{
-			"zoneid": {
-				Type:             schema.TypeString,
-				Required:         true,
-				DiffSuppressFunc: zoneDiffFunc,
+			"zone_id": {
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -59,10 +58,6 @@ func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified_on": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 	}
 }
@@ -70,7 +65,7 @@ func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
 func dataSourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zoneid").(string)
+	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[DEBUG] Reading Zone DNSSEC %s", zoneID)
 
@@ -79,7 +74,7 @@ func dataSourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error finding Zone DNSSEC %q: %s", zoneID, err)
 	}
 
-	d.Set("zoneid", zoneID)
+	d.Set("zone_id", zoneID)
 	d.Set("status", dnssec.Status)
 	d.Set("flags", dnssec.Flags)
 	d.Set("algorithm", dnssec.Algorithm)
@@ -90,9 +85,8 @@ func dataSourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}
 	d.Set("ds", dnssec.DS)
 	d.Set("key_tag", dnssec.KeyTag)
 	d.Set("public_key", dnssec.PublicKey)
-	d.Set("modified_on", dnssec.ModifiedOn.Format(time.RFC1123Z))
 
-	d.SetId(time.Now().UTC().String())
+	d.SetId(dnssec.ModifiedOn.Format(time.RFC1123Z))
 
 	return nil
 }

@@ -23,7 +23,7 @@ func TestAccCloudflareZoneDNSSECFull(t *testing.T) {
 				Config: testAccCloudflareZoneDNSSECResourceConfig(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
-					resource.TestCheckResourceAttrSet(name, "zoneid"),
+					resource.TestCheckResourceAttrSet(name, "zone_id"),
 					resource.TestMatchResourceAttr(name, "status", regexp.MustCompile("active|pending")),
 					resource.TestCheckResourceAttrSet(name, "flags"),
 					resource.TestCheckResourceAttrSet(name, "algorithm"),

@@ -27,11 +27,10 @@ func resourceCloudflareZoneDNSSEC() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"zoneid": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: zoneDiffFunc,
+			"zone_id": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -85,7 +84,7 @@ func resourceCloudflareZoneDNSSEC() *schema.Resource {
 func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zoneid").(string)
+	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Creating Cloudflare Zone DNSSEC: name %s", zoneID)
 
@@ -113,7 +112,7 @@ func resourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) 
 	if dnssec.Status == DNSSECStatusDisabled {
 		return fmt.Errorf("Zone DNSSEC %q: already disabled", zoneID)
 	}
-	d.Set("zoneid", zoneID)
+	d.Set("zone_id", zoneID)
 	d.Set("status", dnssec.Status)
 	d.Set("flags", dnssec.Flags)
 	d.Set("algorithm", dnssec.Algorithm)
