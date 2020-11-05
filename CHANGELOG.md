@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 2.13.1 (November 5th, 2020)
+
+**Improvements**
+
+* `resource/cloudflare_filter`: Pass missing credential error through to end user ([#860](https://github.com/cloudflare/terraform-provider-cloudflare/issues/860)) 
+
 ## 2.13.0 (November 5th, 2020)
 
 **Improvements**
