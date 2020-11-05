@@ -82,6 +82,44 @@ func TestAccFilterInvalid(t *testing.T) {
 		},
 	})
 }
+
+func TestAccFilterMissingCredentials(t *testing.T) {
+	// Intentionally unset all credentials to trigger the lack of credentials
+	// check schema validation.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	if os.Getenv("CLOUDFLARE_API_KEY") != "" {
+		defer func(apiKey string) {
+			os.Setenv("CLOUDFLARE_API_KEY", apiKey)
+		}(os.Getenv("CLOUDFLARE_API_KEY"))
+		os.Setenv("CLOUDFLARE_API_KEY", "")
+	}
+
+	if os.Getenv("CLOUDFLARE_EMAIL") != "" {
+		defer func(email string) {
+			os.Setenv("CLOUDFLARE_EMAIL", email)
+		}(os.Getenv("CLOUDFLARE_EMAIL"))
+		os.Setenv("CLOUDFLARE_EMAIL", "")
+	}
+
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testFilterConfig(rnd, zoneID, "true", "this is notes", "invalid expression"),
+				ExpectError: regexp.MustCompile("cloudflare_api_key and cloudflare_email are required for validating filter expressions but they are missing"),
+			},
+		},
+	})
+}
 func TestAccFilterInvalidOver4kbString(t *testing.T) {
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
