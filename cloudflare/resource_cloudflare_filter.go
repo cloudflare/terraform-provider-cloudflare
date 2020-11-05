@@ -10,6 +10,7 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/pkg/errors"
 )
 
 func resourceCloudflareFilter() *schema.Resource {
@@ -45,7 +46,8 @@ func resourceCloudflareFilter() *schema.Resource {
 					// interface available that holds the configured client.
 					api, err := cloudflare.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
 					if err != nil {
-						log.Fatal(err)
+						errs = append(errs, errors.New("cloudflare_api_key and cloudflare_email are required for validating filter expressions but they are missing"))
+						return
 					}
 
 					expression := val.(string)
