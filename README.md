@@ -46,7 +46,14 @@ terraform {
 ```
 
 Be sure to remove any additional configuration from your `~/.terraformrc` and
-`.terraform` directories to prevent load issues.
+`.terraform` directories to prevent load issues. You will also need to update
+*all* `version` references to use 99.0.0 in order to fully initialise the 
+development provider. If you see other versions (like the example below) you
+need to track them down and remove them.
+
+```
+Finding cloudflare/cloudflare versions matching "99.0.0, ~> 2.*"...
+```
 
 ## Developing the Provider
 
