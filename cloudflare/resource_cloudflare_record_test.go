@@ -174,6 +174,30 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_CAA(t *testing.T) {
+	t.Parallel()
+	var record cloudflare.DNSRecord
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigCAA(zoneID, fmt.Sprintf("tf-acctest-caa.%s", domain)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(
+						resourceName, "data.%", "3"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRecord_Proxied(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord
@@ -546,6 +570,21 @@ resource "cloudflare_record" "foobar" {
   }
   type = "SRV"
   ttl = 3600
+}`, zoneID, name)
+}
+
+func testAccCheckCloudflareRecordConfigCAA(zoneID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "foobar" {
+  zone_id = "%[1]s"
+  name = "%[2]s"
+  data = {
+    flags = "0"
+    tag   = "issue"
+    value = "letsencrypt.org"
+  }
+  type = "CAA"
+  ttl = 600
 }`, zoneID, name)
 }
 
