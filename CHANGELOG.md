@@ -1,5 +1,9 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/cloudflare_record`: Add explicit fields for CAA records instead of relying on the map value ([#866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/866)) 
+
 ## 2.13.2 (November 6th, 2020)
 
 **Fixes**
