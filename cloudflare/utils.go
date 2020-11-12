@@ -196,8 +196,7 @@ func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 }
 
 func generateShaId(content string) string {
-	hasher := sha256.New()
-	hasher.Write([]byte(content))
-	id := hex.EncodeToString(hasher.Sum(nil))
+	sha := sha256.Sum256([]byte(content))
+	id := hex.EncodeToString(sha[:])
 	return id
 }
