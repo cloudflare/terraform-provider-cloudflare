@@ -179,7 +179,8 @@ func TestAccCloudflareRecord_CAA(t *testing.T) {
 	var record cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	resourceName := fmt.Sprintf("cloudflare_record.foobar")
+	rnd := generateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -187,7 +188,7 @@ func TestAccCloudflareRecord_CAA(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigCAA(zoneID, fmt.Sprintf("tf-acctest-caa.%s", domain)),
+				Config: testAccCheckCloudflareRecordConfigCAA(rnd, zoneID, fmt.Sprintf("tf-acctest-caa.%s", domain)),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(
@@ -573,11 +574,11 @@ resource "cloudflare_record" "foobar" {
 }`, zoneID, name)
 }
 
-func testAccCheckCloudflareRecordConfigCAA(zoneID, name string) string {
+func testAccCheckCloudflareRecordConfigCAA(resourceName, zoneID, name string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_record" "foobar" {
-  zone_id = "%[1]s"
-  name = "%[2]s"
+resource "cloudflare_record" "%[1]s" {
+  zone_id = "%[2]s"
+  name = "%[3]s"
   data = {
     flags = "0"
     tag   = "issue"
@@ -585,7 +586,7 @@ resource "cloudflare_record" "foobar" {
   }
   type = "CAA"
   ttl = 600
-}`, zoneID, name)
+}`, resourceName, zoneID, name)
 }
 
 func testAccCheckCloudflareRecordConfigProxied(zoneID, domain, name string) string {
