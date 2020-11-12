@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"sort"
-	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -172,9 +170,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error setting WAF rules: %s", err)
 	}
 
-	sort.Strings(ruleIds)
-	id := generateShaId(strings.Join(ruleIds, ""))
-	d.SetId(id)
+	d.SetId(genarteIdSha(ruleIds))
 	return nil
 }
 

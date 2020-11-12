@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"sort"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -195,8 +196,9 @@ func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 	}, nil
 }
 
-func generateShaId(content string) string {
-	sha := sha256.Sum256([]byte(content))
+func genarteIdSha(ids []string) string {
+	sort.Strings(ids)
+	sha := sha256.Sum256([]byte(strings.Join(ids, "")))
 	id := hex.EncodeToString(sha[:])
 	return id
 }

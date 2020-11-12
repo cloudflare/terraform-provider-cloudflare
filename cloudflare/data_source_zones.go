@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"sort"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -119,9 +117,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error setting zones: %s", err)
 	}
 
-	sort.Strings(zoneIds)
-	id := generateShaId(strings.Join(zoneIds, ""))
-	d.SetId(id)
+	d.SetId(genarteIdSha(zoneIds))
 	return nil
 }
 

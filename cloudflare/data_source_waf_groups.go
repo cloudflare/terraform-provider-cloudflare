@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"sort"
-	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -145,9 +143,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error setting WAF groups: %s", err)
 	}
 
-	sort.Strings(groupIds)
-	id := generateShaId(strings.Join(groupIds, ""))
-	d.SetId(id)
+	d.SetId(genarteIdSha(groupIds))
 	return nil
 }
 
