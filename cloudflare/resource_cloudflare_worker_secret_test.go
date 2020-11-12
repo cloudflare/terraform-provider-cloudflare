@@ -10,78 +10,101 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
+const scriptContentForSecret = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
+
+var workerSecretTestScriptName string
+
 func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 	t.Parallel()
-	var secret cloudflare.WorkersSecret
-	script_name := generateRandomResourceName()
-	key := generateRandomResourceName()
-	value := generateRandomResourceName()
-	resourceName := "cloudflare_workers_secret." + script_name
+
+	name := generateRandomResourceName()
+	secretText := generateRandomResourceName()
+	workerSecretTestScriptName = generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheckAccount(t) },
+		PreCheck:     func() { testPreCheckAccountCreateWorker(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCloudflareWorkerSecretDestroy,
+		CheckDestroy: testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerSecret(script_name, key, value),
+				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(script_name, key, secret),
-					resource.TestCheckResourceAttr(
-						resourceName, "value", value,
-					),
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, secretText),
 				),
 			},
 		},
 	})
 }
 
-func testAccCloudflareWorkerSecretDestroy(s *terraform.State) error {
-	 resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
-		secretResponse, err := client.ListWorkersSecrets(context.Background(), script_name)
-		if err != nil {
-			return err
-		}
+func testPreCheckAccountCreateWorker(t *testing.T) {
+	testAccPreCheckAccount(t)
 
-		for _, secret := range secretResponse.Result {
-			if secret.Name == script_name {
-				return nil
-			}
-		}
+	// Create the worker manually
+	client := testAccProvider.Meta().(*cloudflare.API)
 
-		return fmt.Errorf("worker secret key %s not found against worker script %s", key, script_name)
+	scriptRequestParams := cloudflare.WorkerRequestParams{
+		ScriptName: workerSecretTestScriptName,
 	}
+
+	client.UploadWorker(&scriptRequestParams, scriptContentForSecret)
+
 }
 
-func testAccCheckCloudflareWorkerSecret(script_name string, key string, value string) string {
+func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
+	client := testAccProvider.Meta().(*cloudflare.API)
+	var discoveredWorkerSecretName string
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_worker_secret`" {
+			continue
+		}
+
+		params := getRequestParamsFromResource(rs)
+		discoveredWorkerSecretName = params.ScriptName
+		secretResponse, err := client.ListWorkersSecrets(context.Background(), params.ScriptName)
+
+		// Cleanup the temporary non-terraform worker created in PreCheck step.
+		scriptRequestParams := cloudflare.WorkerRequestParams{
+			ScriptName: discoveredWorkerSecretName,
+		}
+
+		_, delErr := client.DeleteWorker(&scriptRequestParams)
+
+		if err != nil || delErr != nil {
+			return fmt.Errorf("Error deleting worker secret, and temp worker script %s %s", err, delErr)
+		}
+
+		if len(secretResponse.Result) > 0 {
+			return fmt.Errorf("Worker secret with name %s still exists against Work Script %s", secretResponse.Result[0].Name, params.ScriptName)
+		}
+	}
+
+	return nil
+}
+
+func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name string, secretText string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_worker_script" "cloudflare_worker_script.%[1]s" {
-		name 	= ""cloudflare_worker_script.%[1]s""
-	}
-
-	resource "cloudflare_worker_secret" "cloudflare_worker_secret.%[1]s" {
-		script_name = "cloudflare_worker_script.%[1]s"
-		key 		= "%[2]s"
-		value		= "%[3]s"
-	}`, script_name, key, value)
+	resource "cloudflare_worker_secret" "%[2]s" {
+		script_name = "%[1]s"
+		name 		= "%[2]s"
+		secret_text	= "%[3]s"
+	}`, scriptName, name, secretText)
 }
 
-func testAccCheckCloudflareWorkerSecretExists(script_name string, key string, secret cloudflare.WorkersSecret) resource.TestCheckFunc {
+func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, secretText string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
-		secretResponse, err := client.ListWorkersSecrets(context.Background(), script_name)
+		secretResponse, err := client.ListWorkersSecrets(context.Background(), scriptName)
 		if err != nil {
 			return err
 		}
 
 		for _, secret := range secretResponse.Result {
-			if secret.Name == script_name {
+			if secret.Name == name {
 				return nil
 			}
 		}
 
-		return fmt.Errorf("worker secret key %s not found against worker script %s", key, script_name)
+		return fmt.Errorf("Worker secret with name %s not found against Worker Script %s", name, scriptName)
 	}
 }

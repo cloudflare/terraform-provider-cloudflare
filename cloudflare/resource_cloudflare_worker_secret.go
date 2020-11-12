@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -12,9 +13,8 @@ import (
 
 func resourceCloudflareWorkerSecret() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareWorkerSecretUpdate,
+		Create: resourceCloudflareWorkerSecretCreate,
 		Read:   resourceCloudflareWorkerSecretRead,
-		Update: resourceCloudflareWorkerSecretUpdate,
 		Delete: resourceCloudflareWorkerSecretDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWorkersSecretImport,
@@ -22,88 +22,100 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"script_name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
+				Description: "The name of the Worker script to associate the secret with.",
 			},
-			"key": {
-				Type:     schema.TypeString,
-				Required: true,
+			"name": {
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
+				Description: "The name of the Worker secret.",
 			},
-			"value": {
-				Type:     schema.TypeString,
-				Required: true,
+			"secret_text": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Sensitive:   true,
+				Description: "The text of the Worker secret, this cannot be read back after creation and is stored encrypted .",
 			},
 		},
 	}
 }
 
-type ScriptData struct {
-	// The script id will be the `name` for named script
-	// or the `zone_name` for zone-scoped scripts
-	ID     string
-	Params cloudflare.WorkerRequestParams
-}
-
-func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, error) {
-	scriptName := d.Get("name").(string)
-
 func resourceCloudflareWorkerSecretRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	namespaceID, key := parseId(d.Id())
+	scriptName := d.Get("script_name").(string)
+	name := d.Get("name").(string)
 
-	value, err := client.ReadWorkersKV(context.Background(), namespaceID, key)
+	secrets, err := client.ListWorkersSecrets(context.Background(), scriptName)
 	if err != nil {
-		return errors.Wrap(err, "error reading workers kv")
+		return errors.Wrap(err, "error reading worker secrets")
 	}
 
-	if value == nil {
-		d.SetId("")
-		return nil
+	if len(secrets.Result) > 0 {
+		for _, secret := range secrets.Result {
+			if secret.Name == name {
+				return nil
+			}
+		}
 	}
 
-	d.Set("value", string(value))
+	d.SetId("")
 	return nil
 }
 
-func resourceCloudflareWorkerSecretUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerSecretCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	namespaceID := d.Get("namespace_id").(string)
-	key := d.Get("key").(string)
-	value := d.Get("value").(string)
+	scriptName := d.Get("script_name").(string)
+	name := d.Get("name").(string)
+	secretText := d.Get("secret_text").(string)
 
-	_, err := client.WriteWorkersKV(context.Background(), namespaceID, key, []byte(value))
-	if err != nil {
-		return errors.Wrap(err, "error creating workers kv")
+	request := cloudflare.WorkersPutSecretRequest{
+		Name: name,
+		Text: secretText,
+		Type: cloudflare.WorkerSecretTextBindingType,
 	}
 
-	d.SetId(fmt.Sprintf("%s/%s", namespaceID, key))
+	_, err := client.SetWorkersSecret(context.Background(), scriptName, &request)
+	if err != nil {
+		return errors.Wrap(err, "error creating worker secret")
+	}
 
-	log.Printf("[INFO] Cloudflare Workers KV Namespace ID: %s", d.Id())
+	d.SetId(fmt.Sprintf("%s/%s", scriptName, name))
 
-	return resourceCloudflareWorkersKVRead(d, meta)
+	log.Printf("[INFO] Cloudflare Workers Secret ID: %s", d.Id())
+
+	return nil
 }
 
 func resourceCloudflareWorkerSecretDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	namespaceID, key := parseId(d.Id())
+	scriptName, name := parseSecretId(d.Id())
 
-	log.Printf("[INFO] Deleting Cloudflare Workers KV with id: %+v", d.Id())
+	log.Printf("[INFO] Deleting Cloudflare Workers secret with id: %+v", d.Id())
 
-	_, err := client.DeleteWorkersKV(context.Background(), namespaceID, key)
+	_, err := client.DeleteWorkersSecret(context.Background(), scriptName, name)
 	if err != nil {
-		return errors.Wrap(err, "error deleting workers kv")
+		return errors.Wrap(err, "error deleting worker secret")
 	}
 
 	return nil
 }
 
 func resourceCloudflareWorkersSecretImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	namespaceID, key := parseId(d.Id())
+	scriptName, name := parseSecretId(d.Id())
 
-	d.Set("namespace_id", namespaceID)
-	d.Set("key", key)
+	d.Set("script_name", scriptName)
+	d.Set("name", name)
 
-	resourceCloudflareWorkersKVRead(d, meta)
+	resourceCloudflareWorkerSecretRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func parseSecretId(id string) (string, string) {
+	parts := strings.SplitN(id, "/", 2)
+	return parts[0], parts[1]
 }

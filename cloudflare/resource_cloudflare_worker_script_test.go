@@ -32,24 +32,11 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerScriptConfigNoScriptInitial(rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerExists(name),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-				),
-			},
-			{
-				Config: testAccCheckCloudflareWorkerScriptConfigNoScriptUpdateBindings(rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerExists(name),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-				),
-			},
-			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "content", scriptContent1),
 				),
 			},
 			{
@@ -70,13 +57,6 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccCheckCloudflareWorkerScriptConfigNoScriptInitial(rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[1]s" {
-  name = "%[1]s"
-}`, rnd)
 }
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd string) string {
@@ -133,27 +113,6 @@ func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.Worker
 	}
 
 	return params
-}
-
-func testAccCheckCloudflareWorkerExists(n string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("Not found: %s", n)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No Worker Script ID is set")
-		}
-
-		client := testAccProvider.Meta().(*cloudflare.API)
-		params := getRequestParamsFromResource(rs)
-		_, err := client.DownloadWorker(&params)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
 }
 
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
