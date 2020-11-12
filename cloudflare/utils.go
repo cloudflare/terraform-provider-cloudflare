@@ -2,6 +2,8 @@ package cloudflare
 
 import (
 	"crypto/md5"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -191,4 +193,11 @@ func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 		Type:  ZoneType,
 		Value: zoneID,
 	}, nil
+}
+
+func generateShaId(content string) string {
+	hasher := sha256.New()
+	hasher.Write([]byte(content))
+	id := hex.EncodeToString(hasher.Sum(nil))
+	return id
 }

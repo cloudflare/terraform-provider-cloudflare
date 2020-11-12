@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"time"
+	"sort"
+	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -119,6 +120,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[DEBUG] Reading WAF Rules")
+	ruleIds := make([]string, 0)
 	ruleDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {
 		ruleList, err := client.ListWAFRules(zoneID, pkg.ID)
@@ -170,7 +172,9 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error setting WAF rules: %s", err)
 	}
 
-	d.SetId(fmt.Sprintf("WAFRules_%s", time.Now().UTC().String()))
+	sort.Strings(ruleIds)
+	id := generateShaId(strings.Join(ruleIds, ""))
+	d.SetId(id)
 	return nil
 }
 
