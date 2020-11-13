@@ -3,10 +3,16 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
+	cleanhttp "github.com/hashicorp/go-cleanhttp"
+
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/version"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
@@ -22,7 +28,7 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 	workerSecretTestScriptName = generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testPreCheckAccountCreateWorker(t) },
+		PreCheck:     func() { testAccPreCheckAccount(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
@@ -34,41 +40,21 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 			},
 		},
 	})
-}
 
-func testPreCheckAccountCreateWorker(t *testing.T) {
-	testAccPreCheckAccount(t)
-
-	// Create the worker manually
-	client := testAccProvider.Meta().(*cloudflare.API)
-
-	scriptRequestParams := cloudflare.WorkerRequestParams{
-		ScriptName: workerSecretTestScriptName,
-	}
-
-	client.UploadWorker(&scriptRequestParams, scriptContentForSecret)
-
+	deleteWorker()
 }
 
 func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
-	var discoveredWorkerSecretName string
-
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_worker_secret`" {
 			continue
 		}
 
 		params := getRequestParamsFromResource(rs)
-		discoveredWorkerSecretName = params.ScriptName
 		secretResponse, err := client.ListWorkersSecrets(context.Background(), params.ScriptName)
 
-		// Cleanup the temporary non-terraform worker created in PreCheck step.
-		scriptRequestParams := cloudflare.WorkerRequestParams{
-			ScriptName: discoveredWorkerSecretName,
-		}
-
-		_, delErr := client.DeleteWorker(&scriptRequestParams)
+		delErr := deleteWorker()
 
 		if err != nil || delErr != nil {
 			return fmt.Errorf("Error deleting worker secret, and temp worker script %s %s", err, delErr)
@@ -83,6 +69,12 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name string, secretText string) string {
+	err := createWorker()
+
+	if err != nil {
+		panic(err)
+	}
+
 	return fmt.Sprintf(`
 	resource "cloudflare_worker_secret" "%[2]s" {
 		script_name = "%[1]s"
@@ -107,4 +99,69 @@ func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, se
 
 		return fmt.Errorf("Worker secret with name %s not found against Worker Script %s", name, scriptName)
 	}
+}
+
+func createWorker() error {
+	client, err := createCloudflareClient()
+
+	if err != nil {
+		panic(err)
+	}
+
+	scriptRequestParams := cloudflare.WorkerRequestParams{
+		ScriptName: workerSecretTestScriptName,
+	}
+
+	_, err = client.UploadWorker(&scriptRequestParams, scriptContentForSecret)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func deleteWorker() error {
+	client, err := createCloudflareClient()
+
+	if err != nil {
+		return err
+	}
+
+	scriptRequestParams := cloudflare.WorkerRequestParams{
+		ScriptName: workerSecretTestScriptName,
+	}
+
+	_, err = client.DeleteWorker(&scriptRequestParams)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createCloudflareClient() (*cloudflare.API, error) {
+	options := []cloudflare.Option{}
+
+	httpClient := cleanhttp.DefaultClient()
+	httpClient.Transport = logging.NewTransport("Cloudflare", httpClient.Transport)
+	options = append(options, cloudflare.HTTPClient(httpClient))
+
+	tfUserAgent := httpclient.TerraformUserAgent("0.11+compatible")
+	providerUserAgent := fmt.Sprintf("terraform-provider-cloudflare/%s", version.ProviderVersion)
+	ua := fmt.Sprintf("%s %s", tfUserAgent, providerUserAgent)
+
+	options = append(options, cloudflare.UserAgent(ua))
+	options = append(options, cloudflare.UsingAccount(os.Getenv("CLOUDFLARE_ACCOUNT_ID")))
+
+	apiToken := os.Getenv("CLOUDFLARE_TOKEN")
+
+	client, err := cloudflare.NewWithAPIToken(apiToken, options...)
+
+	if err != nil {
+		return nil, fmt.Errorf("Error creating Cloudflare client directly: %s ", err)
+	}
+
+	return client, nil
 }
