@@ -170,7 +170,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error setting WAF rules: %s", err)
 	}
 
-	d.SetId(genarteIdSha(ruleIds))
+	d.SetId(stringListChecksum(ruleIds))
 	return nil
 }
 

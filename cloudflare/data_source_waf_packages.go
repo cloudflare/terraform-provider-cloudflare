@@ -134,7 +134,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error setting WAF packages: %s", err)
 	}
 
-	d.SetId(genarteIdSha(packageIds))
+	d.SetId(stringListChecksum(packageIds))
 	return nil
 }
 

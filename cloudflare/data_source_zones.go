@@ -117,7 +117,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error setting zones: %s", err)
 	}
 
-	d.SetId(genarteIdSha(zoneIds))
+	d.SetId(stringListChecksum(zoneIds))
 	return nil
 }
 

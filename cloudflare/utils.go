@@ -2,8 +2,6 @@ package cloudflare
 
 import (
 	"crypto/md5"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -67,6 +65,11 @@ func stringChecksum(s string) string {
 	bs := h.Sum(nil)
 
 	return fmt.Sprintf("%x", bs)
+}
+
+func stringListChecksum(s []string) string {
+	sort.Strings(s)
+	return stringChecksum(strings.Join(s, ""))
 }
 
 // Returns true if string value exists in string slice
@@ -194,11 +197,4 @@ func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 		Type:  ZoneType,
 		Value: zoneID,
 	}, nil
-}
-
-func genarteIdSha(ids []string) string {
-	sort.Strings(ids)
-	sha := sha256.Sum256([]byte(strings.Join(ids, "")))
-	id := hex.EncodeToString(sha[:])
-	return id
 }
