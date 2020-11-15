@@ -69,14 +69,6 @@ func resourceCloudflareApiToken() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			//"not_before": {
-			//	Type:     schema.TypeString,
-			//	Computed: true,
-			//},
-			//"expires_on": {
-			//	Type:     schema.TypeString,
-			//	Computed: true,
-			//},
 		},
 	}
 }
@@ -84,7 +76,6 @@ func resourceCloudflareApiToken() *schema.Resource {
 func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	//accountID := client.AccountID
 	name := d.Get("name").(string)
 
 	log.Printf("[INFO] Creating Cloudflare ApiToken: name %s", name)
@@ -104,12 +95,6 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 	d.Set("status", t.Status)
 	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
-	//if t.NotBefore != nil {
-	//	d.Set("not_before", t.NotBefore.Format(time.RFC3339Nano))
-	//}
-	//if t.ExpiresOn != nil {
-	//	d.Set("expires_on", t.ExpiresOn.Format(time.RFC3339Nano))
-	//}
 	d.Set("value", t.Value)
 
 	return nil
@@ -124,10 +109,6 @@ func resourceDataToApiTokenCondition(d *schema.ResourceData) *cloudflare.APIToke
 	if ips, ok := d.GetOk("request_ip_not_in"); ok {
 		ipNotIn = expandInterfaceToStringList(ips)
 	}
-
-	//if len(ipIn) == 0 && len(ipNotIn) == 0 {
-	//	return nil
-	//}
 
 	return &cloudflare.APITokenCondition{
 		RequestIP: &cloudflare.APITokenRequestIPCondition{
@@ -211,13 +192,6 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("status", t.Status)
 	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
-	//if t.NotBefore != nil {
-	//	d.Set("not_before", t.NotBefore.Format(time.RFC3339Nano))
-	//}
-	//if t.ExpiresOn != nil {
-	//	d.Set("expires_on", t.ExpiresOn.Format(time.RFC3339Nano))
-	//}
-
 	d.Set("request_ip_in", t.Condition.RequestIP.In)
 	d.Set("request_ip_not_in", t.Condition.RequestIP.NotIn)
 
@@ -227,7 +201,6 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	//accountID := client.AccountID
 	name := d.Get("name").(string)
 	tokenID := d.Id()
 
