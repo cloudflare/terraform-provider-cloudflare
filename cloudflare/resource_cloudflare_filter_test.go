@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -62,42 +61,6 @@ func TestAccFilterSimple(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 				),
-			},
-		},
-	})
-}
-
-func TestAccFilterInvalid(t *testing.T) {
-	rnd := generateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config:      testFilterConfig(rnd, zoneID, "true", "this is notes", "invalid expression"),
-				ExpectError: regexp.MustCompile("config is invalid: filter expression is invalid"),
-			},
-		},
-	})
-}
-func TestAccFilterInvalidOver4kbString(t *testing.T) {
-	rnd := generateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	output := ""
-	for i := 1; i < 4100; i++ {
-		output += "x"
-	}
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config:      testFilterConfig(rnd, zoneID, "true", "this is notes", output),
-				ExpectError: regexp.MustCompile("config is invalid: filter expression is invalid"),
 			},
 		},
 	})

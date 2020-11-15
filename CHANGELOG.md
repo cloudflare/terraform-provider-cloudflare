@@ -2,12 +2,32 @@
 
 **Improvements**
 
+* `resource/cloudflare_record`: Add explicit fields for CAA records instead of relying on the map value ([#866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/866)) 
+
+## 2.13.2 (November 6th, 2020)
+
+**Fixes**
+
+* `resource/cloudflare_filter`: Remove schema based validation for filters ([#863](https://github.com/cloudflare/terraform-provider-cloudflare/issues/863))
+
+## 2.13.1 (November 5th, 2020)
+
+**Improvements**
+
+* `resource/cloudflare_filter`: Pass missing credential error through to end user ([#860](https://github.com/cloudflare/terraform-provider-cloudflare/issues/860)) 
+
+## 2.13.0 (November 5th, 2020)
+
+**Improvements**
+
 * `datasource/cloudflare_ip_ranges`: Add the ability to query `china_ipv4_cidr_blocks` and `china_ipv6_cidr_blocks` ([#833](https://github.com/cloudflare/terraform-provider-cloudflare/issues/833)) 
 * `resource/cloudflare_filter`: Improve validation of expressions using the schema ([#848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/848)) 
 
 **Fixes**
 
 * `resource/cloudflare_page_rule`: Set default for `cache_key_fields.host.resolved` to prevent panics ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/832))
+* `resource/cloudflare_authenticated_origin_pulls`: Fix off-by-one error check in `Import` ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/859))
+* `resource/cloudflare_authenticated_origin_pulls_certificate`: Fix off-by-one error check in `Import` ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/859))
 
 ## 2.12.0 (October 22nd, 2020)
 

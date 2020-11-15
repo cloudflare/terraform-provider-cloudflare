@@ -10,7 +10,7 @@ description: |-
 
 Provides a Cloudflare Origin CA certificate used to protect traffic to your origin without involving a third party Certificate Authority.
 
-**This resource requires you use your Origin CA Key as the [`api_user_service_key`](../index.html#api_user_service_key).**
+**This resource requires you use your Origin CA Key as the [`api_user_service_key`](../index.html#api_user_service_key), in conjunction with an `api_token` or `email` and `api_key`.**
 
 ## Example Usage
 

@@ -65,4 +65,20 @@ endif
 	ln -sf ../../../ext/providers/cloudflare/website/cloudflare.erb $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/layouts/cloudflare.erb
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test
+os = $(shell go env GOOS)
+arch = $(shell go env GOARCH)
+dev_version = 99.0.0
+provider_path = registry.terraform.io/cloudflare/cloudflare/$(dev_version)/$(os)_$(arch)/
+
+build-and-install-dev-version:
+	go build -o terraform-provider-cloudflare_$(dev_version)
+ifeq ($(os), darwin)
+	mkdir -p ~/Library/Application\ Support/io.terraform/plugins/$(provider_path)
+	cp terraform-provider-cloudflare_$(dev_version) ~/Library/Application\ Support/io.terraform/plugins/$(provider_path)
+endif
+ifeq ($(os), linux)
+	mkdir -p /usr/local/share/terraform/plugins/$(provider_path)
+	cp terraform-provider-cloudflare_$(dev_version) /usr/local/share/terraform/plugins/$(provider_path)
+endif
+
+.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-and-install-dev-version
