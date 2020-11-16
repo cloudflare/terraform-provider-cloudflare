@@ -3,24 +3,10 @@ package cloudflare
 import (
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccCloudflareWorkerSecret_Import(t *testing.T) {
-
-	client, err := createCloudflareClient()
-
-	if err != nil {
-		panic(err)
-	}
-
-	scriptRequestParams := cloudflare.WorkerRequestParams{
-		ScriptName: workerSecretTestScriptName,
-	}
-
-	client.UploadWorker(&scriptRequestParams, scriptContentForSecret)
-
 	name := generateRandomResourceName()
 	secretText := generateRandomResourceName()
 	workerSecretTestScriptName = generateRandomResourceName()
@@ -39,5 +25,5 @@ func TestAccCloudflareWorkerSecret_Import(t *testing.T) {
 		},
 	})
 
-	client.DeleteWorker(&scriptRequestParams)
+	deleteWorker()
 }

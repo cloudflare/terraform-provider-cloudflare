@@ -54,10 +54,8 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 		params := getRequestParamsFromResource(rs)
 		secretResponse, err := client.ListWorkersSecrets(context.Background(), params.ScriptName)
 
-		delErr := deleteWorker()
-
-		if err != nil || delErr != nil {
-			return fmt.Errorf("Error deleting worker secret, and temp worker script %s %s", err, delErr)
+		if err != nil {
+			return err
 		}
 
 		if len(secretResponse.Result) > 0 {
