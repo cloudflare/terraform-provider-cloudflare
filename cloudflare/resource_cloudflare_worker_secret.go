@@ -54,11 +54,9 @@ func resourceCloudflareWorkerSecretRead(d *schema.ResourceData, meta interface{}
 		return errors.Wrap(err, "error reading worker secrets")
 	}
 
-	if len(secrets.Result) > 0 {
-		for _, secret := range secrets.Result {
-			if secret.Name == name {
-				return nil
-			}
+	for _, secret := range secrets.Result {
+		if secret.Name == name {
+			return nil
 		}
 	}
 
