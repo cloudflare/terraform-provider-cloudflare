@@ -15,9 +15,9 @@ jobs:
       # https://help.github.com/en/actions/reference/workflow-commands-for-github-actions
       - name: Set Go variables for backwards compatibility
         run: |
-          echo "::set-env name=GOPATH::$GITHUB_WORKSPACE/go"
-          echo "::set-env name=GOBIN::$GITHUB_WORKSPACE/go/bin"
-          echo "::add-path::$GITHUB_WORKSPACE/go/bin"
+          echo "GOPATH=$GITHUB_WORKSPACE/go" >> $GITHUB_ENV
+          echo "GOBIN=$GITHUB_WORKSPACE/go/bin" >> $GITHUB_ENV
+          echo "$GITHUB_WORKSPACE/go/bin" >> $GITHUB_PATH
 
       - name: Check out code repository source code
         uses: actions/checkout@v2
