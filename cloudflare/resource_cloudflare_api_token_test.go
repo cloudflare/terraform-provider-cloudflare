@@ -38,6 +38,25 @@ func TestAccAPIToken(t *testing.T) {
 	})
 }
 
+func TestAccAPITokenAllowDeny(t *testing.T) {
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAPITokenConfigAllowDeny(rnd, rnd, permissionID, zoneID, false),
+			},
+			{
+				Config: testAPITokenConfigAllowDeny(rnd, rnd, permissionID, zoneID, true),
+			},
+		},
+	})
+}
+
 func testAPITokenConfig(resourceID, name, permissionID, zoneID string, ips bool) string {
 	var ipIn, ipNotIn string
 
@@ -54,13 +73,48 @@ func testAPITokenConfig(resourceID, name, permissionID, zoneID string, ips bool)
           %[6]s
 		
 		  policy {
+			effect = "deny"
 			permission_groups = [
-			  "%[3]s",
+			  "%[3]s", 
 			]
-			resources = [
-			  "com.cloudflare.api.account.zone.%[4]s",
-			]
+			resources = {
+			  "com.cloudflare.api.account.zone.%[4]s" = "*"
+			}
 		  }
 		}
 		`, resourceID, name, permissionID, zoneID, ipIn, ipNotIn)
+}
+
+func testAPITokenConfigAllowDeny(resourceID, name, permissionID, zoneID string, allowAllZonesExceptOne bool) string {
+	var add string
+	if allowAllZonesExceptOne {
+		add = fmt.Sprintf(`
+    		policy {
+			  effect = "deny"
+			  permission_groups = [
+			    "%[1]s", 
+			  ]
+			  resources = {
+			    "com.cloudflare.api.account.zone.*" = "*"
+			  }
+	    	}
+	  `, permissionID)
+	}
+
+	return fmt.Sprintf(`
+		resource "cloudflare_api_token" "%[1]s" {
+		  name = "%[2]s"
+		
+		  policy {
+			effect = "allow"
+			permission_groups = [
+			  "%[3]s", 
+			]
+			resources = {
+			  "com.cloudflare.api.account.zone.%[4]s" = "*"
+			}
+		  }
+		  %[5]s
+		}
+		`, resourceID, name, permissionID, zoneID, add)
 }

@@ -1,7 +1,9 @@
 package cloudflare
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"log"
 	"strings"
 	"time"
@@ -14,7 +16,7 @@ func resourceCloudflareApiToken() *schema.Resource {
 	p := schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"resources": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeMap,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
@@ -22,6 +24,12 @@ func resourceCloudflareApiToken() *schema.Resource {
 				Type:     schema.TypeList,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"effect": {
+				Type:         schema.TypeString,
+				Optional:  true,
+				Default:      "allow",
+				ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, false),
 			},
 		},
 	}
@@ -31,15 +39,17 @@ func resourceCloudflareApiToken() *schema.Resource {
 		Read:   resourceCloudflareApiTokenRead,
 		Update: resourceCloudflareApiTokenUpdate,
 		Delete: resourceCloudflareApiTokenDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"policy": {
-				Type:     schema.TypeSet,
-				Required: true,
-				Set:      schema.HashResource(&p),
+				Type:     schema.TypeList,
+				Optional: true,
 				Elem:     &p,
 			},
 			"request_ip_in": {
@@ -119,17 +129,11 @@ func resourceDataToApiTokenCondition(d *schema.ResourceData) *cloudflare.APIToke
 }
 
 func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APITokenPolicies {
-	policies := d.Get("policy").(*schema.Set).List()
+	policies := d.Get("policy").([]interface{})
 	var cfPolicies []cloudflare.APITokenPolicies
 
 	for _, p := range policies {
 		policy := p.(map[string]interface{})
-
-		resources := expandInterfaceToStringList(policy["resources"])
-		cfResources := map[string]interface{}{}
-		for _, r := range resources {
-			cfResources[r] = "*"
-		}
 
 		permissionGroups := expandInterfaceToStringList(policy["permission_groups"])
 		var cfPermissionGroups []cloudflare.APITokenPermissionGroups
@@ -139,8 +143,19 @@ func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APIToken
 			})
 		}
 
+		cfResources := map[string]interface{}{}
+		for k, v := range policy["resources"].(map[string]interface{}) {
+			// value can be object or just a string ("*"), try to convert it to map
+			obj := map[string]string{}
+			if err := json.Unmarshal([]byte(v.(string)), &obj); err == nil {
+				cfResources[k] = obj
+			} else {
+				cfResources[k] = v
+			}
+		}
+
 		cfPolicies = append(cfPolicies, cloudflare.APITokenPolicies{
-			Effect:           "allow",
+			Effect:           policy["effect"].(string),
 			Resources:        cfResources,
 			PermissionGroups: cfPermissionGroups,
 		})
@@ -171,19 +186,15 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	policies := []map[string]interface{}{}
 
 	for _, p := range t.Policies {
-		resources := []string{}
-		for k, _ := range p.Resources {
-			resources = append(resources, k)
-		}
-
 		permissionGroups := []string{}
 		for _, v := range p.PermissionGroups {
 			permissionGroups = append(permissionGroups, v.ID)
 		}
 
 		policies = append(policies, map[string]interface{}{
-			"resources":         resources,
+			"resources":         p.Resources,
 			"permission_groups": permissionGroups,
+			"effect":            p.Effect,
 		})
 	}
 
