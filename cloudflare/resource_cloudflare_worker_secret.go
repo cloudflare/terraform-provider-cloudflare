@@ -81,7 +81,7 @@ func resourceCloudflareWorkerSecretCreate(d *schema.ResourceData, meta interface
 		return errors.Wrap(err, "error creating worker secret")
 	}
 
-   d.SetId(stringChecksum(fmt.Sprintf("%s/%s", scriptName, name)))
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", scriptName, name)))
 
 	log.Printf("[INFO] Cloudflare Workers Secret ID: %s", d.Id())
 
