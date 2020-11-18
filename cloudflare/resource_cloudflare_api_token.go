@@ -27,7 +27,7 @@ func resourceCloudflareApiToken() *schema.Resource {
 			},
 			"effect": {
 				Type:         schema.TypeString,
-				Optional:  true,
+				Optional:     true,
 				Default:      "allow",
 				ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, false),
 			},
