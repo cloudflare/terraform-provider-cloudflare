@@ -127,6 +127,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 			"sensitivity":    pkg.Sensitivity,
 			"action_mode":    pkg.ActionMode,
 		})
+		packageIds = append(packageIds, pkg.ID)
 	}
 
 	err = d.Set("packages", packageDetails)

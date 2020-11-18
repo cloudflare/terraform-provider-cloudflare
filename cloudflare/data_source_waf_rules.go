@@ -155,6 +155,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 				"package_id":    pkg.ID,
 				"allowed_modes": rule.AllowedModes,
 			})
+			ruleIds = append(ruleIds, rule.ID)
 		}
 
 		if foundGroup {

@@ -135,6 +135,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 				"modified_rules_count": group.ModifiedRulesCount,
 				"package_id":           pkg.ID,
 			})
+			groupIds = append(groupIds, group.ID)
 		}
 	}
 
