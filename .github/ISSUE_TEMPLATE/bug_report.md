@@ -46,7 +46,9 @@ Terraform's core, so please mention this.
 <!--
 Please provider a link to a GitHub Gist containing the complete debug output:
 https://www.terraform.io/docs/internals/debugging.html. Please do NOT paste the
-debug output in the issue; just paste a link to the Gist.
+debug output in the issue; just paste a link to the Gist. To speed up the process
+please provide the *entire* debug log instead of a snippet. You should redact any 
+sensitive details before posting it.
 -->
 
 ### Panic output

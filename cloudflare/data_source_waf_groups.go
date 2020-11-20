@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -110,6 +109,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 	}
 
 	log.Printf("[DEBUG] Reading WAF Groups")
+	groupIds := make([]string, 0)
 	groupDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {
 		groupList, err := client.ListWAFGroups(zoneID, pkg.ID)
@@ -135,6 +135,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 				"modified_rules_count": group.ModifiedRulesCount,
 				"package_id":           pkg.ID,
 			})
+			groupIds = append(groupIds, group.ID)
 		}
 	}
 
@@ -143,7 +144,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error setting WAF groups: %s", err)
 	}
 
-	d.SetId("WAFGroups " + time.Now().UTC().String())
+	d.SetId(stringListChecksum(groupIds))
 	return nil
 }
 
