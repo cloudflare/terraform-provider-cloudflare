@@ -8,7 +8,7 @@ description: |-
 
 # cloudflare_api_token
 
-Provides a resource which manages Cloudflare custom error pages.
+Provides a resource which manages Cloudflare API tokens.
 
 Read more about permission groups and their applicable scopes in
 [the official documentation][1].
@@ -126,8 +126,8 @@ resource "cloudflare_api_token" "dns_tls_edit_all_except_one" {
 
 
 // Token allowed to edit DNS entries for all zones from specific account.
-resource "cloudflare_api_token" "dns_tls_edit_all_account" {
-  name = "dns_tls_edit_all_account"
+resource "cloudflare_api_token" "dns_edit_all_account" {
+  name = "dns_edit_all_account"
 
   // include all zones from specific account
   policy {
@@ -161,7 +161,7 @@ The **policy** block supports:
 ids ([see official docs][1]).
 * `resources` - (Required) Map describes what operations against which resources
 are allowed or denied.
-* `effect` - (Optional) Policy effect. Only `allow` or `deny` can be used.
-`allow` is set as default.
+* `effect` - (Optional) Policy effect. Valid values are `allow` or `deny`. `allow` 
+   is set as default.
 
 [1]: https://developers.cloudflare.com/api/tokens/create/permissions
