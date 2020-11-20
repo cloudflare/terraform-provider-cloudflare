@@ -225,9 +225,7 @@ func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("error updating Cloudflare API Token %q: %s", name, err)
 	}
 
-	d.Set("modified_on", t.ModifiedOn)
-
-	return nil
+	return resourceCloudflareApiTokenRead(d, meta)
 }
 
 func resourceCloudflareApiTokenDelete(d *schema.ResourceData, meta interface{}) error {
