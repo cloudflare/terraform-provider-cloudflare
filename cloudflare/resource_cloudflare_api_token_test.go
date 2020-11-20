@@ -22,16 +22,16 @@ func TestAccAPIToken(t *testing.T) {
 				Config: testAPITokenConfig(rnd, rnd, permissionID, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd),
-					resource.TestCheckResourceAttr(resourceID, "request_ip_in.0", "10.0.0.0/8"),
-					resource.TestCheckResourceAttr(resourceID, "request_ip_not_in.0", "10.0.255.0/24"),
+					resource.TestCheckResourceAttr(resourceID, "condition.0.request_ip.0.in.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(resourceID, "condition.0.request_ip.0.not_in.0", "198.51.100.1/32"),
 				),
 			},
 			{
 				Config: testAPITokenConfig(rnd, rnd, permissionID, zoneID, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "name", rnd),
-					resource.TestCheckNoResourceAttr(resourceID, "request_ip_in.0"),
-					resource.TestCheckNoResourceAttr(resourceID, "request_ip_not_in.0"),
+					resource.TestCheckNoResourceAttr(resourceID, "condition.0.request_ip.0.in.0"),
+					resource.TestCheckNoResourceAttr(resourceID, "condition.0.request_ip.0.not_in.0"),
 				),
 			},
 		},
@@ -58,19 +58,24 @@ func TestAccAPITokenAllowDeny(t *testing.T) {
 }
 
 func testAPITokenConfig(resourceID, name, permissionID, zoneID string, ips bool) string {
-	var ipIn, ipNotIn string
+	var condition string
 
 	if ips {
-		ipIn = `request_ip_in = ["10.0.0.0/8"]`
-		ipNotIn = `request_ip_not_in = ["10.0.255.0/24"]`
+		condition = `
+			condition {
+			  request_ip {
+				in     = ["192.0.2.1/32"]
+				not_in = ["198.51.100.1/32"]
+			  }
+			}`
 	}
+
 
 	return fmt.Sprintf(`
 		resource "cloudflare_api_token" "%[1]s" {
 		  name = "%[2]s"
 
           %[5]s
-          %[6]s
 		
 		  policy {
 			effect = "deny"
@@ -82,7 +87,7 @@ func testAPITokenConfig(resourceID, name, permissionID, zoneID string, ips bool)
 			}
 		  }
 		}
-		`, resourceID, name, permissionID, zoneID, ipIn, ipNotIn)
+		`, resourceID, name, permissionID, zoneID, condition)
 }
 
 func testAPITokenConfigAllowDeny(resourceID, name, permissionID, zoneID string, allowAllZonesExceptOne bool) string {

@@ -8,30 +8,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"log"
 	"strings"
+	"time"
 )
 
 func resourceCloudflareApiToken() *schema.Resource {
-	p := schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"resources": {
-				Type:     schema.TypeMap,
-				Required: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-			"permission_groups": {
-				Type:     schema.TypeList,
-				Required: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-			"effect": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "allow",
-				ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, false),
-			},
-		},
-	}
-
 	return &schema.Resource{
 		Create: resourceCloudflareApiTokenCreate,
 		Read:   resourceCloudflareApiTokenRead,
@@ -48,17 +28,55 @@ func resourceCloudflareApiToken() *schema.Resource {
 			"policy": {
 				Type:     schema.TypeList,
 				Required: true,
-				Elem:     &p,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"resources": {
+							Type:     schema.TypeMap,
+							Required: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+						"permission_groups": {
+							Type:     schema.TypeList,
+							Required: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+						"effect": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "allow",
+							ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, false),
+						},
+					},
+				},
+
 			},
-			"request_ip_in": {
+			"condition": {
 				Type:     schema.TypeList,
-				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
-			},
-			"request_ip_not_in": {
-				Type:     schema.TypeList,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"request_ip": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"in": {
+										Type:     schema.TypeList,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Optional: true,
+									},
+									"not_in": {
+										Type:     schema.TypeList,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 			"value": {
 				Type:      schema.TypeString,
@@ -111,10 +129,10 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 func resourceDataToApiTokenCondition(d *schema.ResourceData) *cloudflare.APITokenCondition {
 	ipIn := []string{}
 	ipNotIn := []string{}
-	if ips, ok := d.GetOk("request_ip_in"); ok {
+	if ips, ok := d.GetOk("condition.0.request_ip.0.in"); ok {
 		ipIn = expandInterfaceToStringList(ips)
 	}
-	if ips, ok := d.GetOk("request_ip_not_in"); ok {
+	if ips, ok := d.GetOk("condition.0.request_ip.0.not_in"); ok {
 		ipNotIn = expandInterfaceToStringList(ips)
 	}
 
@@ -196,12 +214,23 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	}
 
 	d.Set("name", t.Name)
-	d.Set("policies", policies)
+	d.Set("policy", policies)
 	d.Set("status", t.Status)
 	d.Set("issued_on", t.IssuedOn)
-	d.Set("modified_on", t.ModifiedOn)
-	d.Set("request_ip_in", t.Condition.RequestIP.In)
-	d.Set("request_ip_not_in", t.Condition.RequestIP.NotIn)
+	d.Set("modified_on", time.Now())
+
+	var ipIn []string
+	var ipNotIn []string
+	if t.Condition != nil && t.Condition.RequestIP != nil {
+		ipIn = t.Condition.RequestIP.In
+		ipNotIn = t.Condition.RequestIP.NotIn
+	}
+	d.Set("condition", []map[string]interface{}{{
+		"request_ip": []map[string]interface{}{{
+			"in":     ipIn,
+			"not_in": ipNotIn,
+		}},
+	}})
 
 	return nil
 }

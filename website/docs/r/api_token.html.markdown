@@ -34,14 +34,12 @@ resource "cloudflare_api_token" "api_token_create" {
     }
   }
 
-  request_ip_in = [
-    "10.0.0.0/8",
-    "2400:cb00::/32",
-  ]
-  request_ip_not_in = [
-    "10.0.0.10/16",
-    "2400:cb00::/64",
-  ]
+  condition {
+    request_ip {
+      in     = ["192.0.2.1/32"]
+      not_in = ["198.51.100.1/32"]
+    }
+  }
 }
 ```
 
@@ -150,10 +148,7 @@ The following arguments are supported:
 * `name` - (Required) Name of the APIToken.
 * `policy` - (Required) Permissions policy. Multiple policy blocks can be defined.
 See the definition below.
-* `request_ip_in` - (Optional) List of IPv4/IPv6 CIDR addresses where
-the Token can be used from.
-* `request_ip_not_in` - (Optional) List of IPv4/IPv6 CIDR addresses where
-the Token cannot be used from.
+* `condition` - (Optional) Condition block. See the definition below.
 
 The **policy** block supports:
 
@@ -163,5 +158,25 @@ ids ([see official docs][1]).
 are allowed or denied.
 * `effect` - (Optional) Policy effect. Valid values are `allow` or `deny`. `allow` 
    is set as default.
+
+The **condition** block supports:
+
+* `request_ip` - (Optional) Request IP related conditions. See the definition below.
+
+The **request_ip** block supports:
+
+* `ip_in` - (Optional) List of IPv4/IPv6 CIDR addresses where
+the Token can be used from.
+* `not_in` - (Optional) List of IPv4/IPv6 CIDR addresses where
+the Token cannot be used from.
+
+## Attributes Reference
+
+The following attributes are exported:
+
+* `id` - Unique identifier in the API for the API Token.
+* `value` - The value of the API Token. 
+* `issued_on` - The RFC3339 timestamp of when the API Token was issued.
+* `modified_on` - The RFC3339 timestamp of when the API Token was last modified.
 
 [1]: https://developers.cloudflare.com/api/tokens/create/permissions
