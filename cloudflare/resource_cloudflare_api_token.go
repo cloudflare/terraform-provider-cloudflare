@@ -48,7 +48,6 @@ func resourceCloudflareApiToken() *schema.Resource {
 						},
 					},
 				},
-
 			},
 			"condition": {
 				Type:     schema.TypeList,

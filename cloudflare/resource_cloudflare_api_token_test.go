@@ -70,7 +70,6 @@ func testAPITokenConfig(resourceID, name, permissionID, zoneID string, ips bool)
 			}`
 	}
 
-
 	return fmt.Sprintf(`
 		resource "cloudflare_api_token" "%[1]s" {
 		  name = "%[2]s"
