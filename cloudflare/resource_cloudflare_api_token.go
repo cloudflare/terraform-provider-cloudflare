@@ -170,7 +170,6 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	t, err := client.GetAPIToken(tokenID)
 
 	log.Printf("[DEBUG] Cloudflare API Token: %+v", t)
-	log.Printf("[DEBUG] Cloudflare API Token error: %#v", err)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
