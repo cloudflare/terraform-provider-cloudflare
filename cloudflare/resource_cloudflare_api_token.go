@@ -3,13 +3,11 @@ package cloudflare
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"log"
 	"strings"
-	"time"
-
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceCloudflareApiToken() *schema.Resource {
@@ -49,7 +47,7 @@ func resourceCloudflareApiToken() *schema.Resource {
 			},
 			"policy": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Required: true,
 				Elem:     &p,
 			},
 			"request_ip_in": {
@@ -88,7 +86,7 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 
 	name := d.Get("name").(string)
 
-	log.Printf("[INFO] Creating Cloudflare ApiToken: name %s", name)
+	log.Printf("[INFO] Creating Cloudflare API Token: name %s", name)
 
 	t := cloudflare.APIToken{
 		Name:      name,
@@ -98,13 +96,13 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 
 	t, err := client.CreateAPIToken(t)
 	if err != nil {
-		return fmt.Errorf("Error creating Cloudflare ApiToken %q: %s", name, err)
+		return fmt.Errorf("error creating Cloudflare API Token %q: %s", name, err)
 	}
 
 	d.SetId(t.ID)
 	d.Set("status", t.Status)
-	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
-	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
+	d.Set("issued_on", t.IssuedOn)
+	d.Set("modified_on", t.ModifiedOn)
 	d.Set("value", t.Value)
 
 	return nil
@@ -171,16 +169,16 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 
 	t, err := client.GetAPIToken(tokenID)
 
-	log.Printf("[DEBUG] Cloudflare APIToken: %+v", t)
-	log.Printf("[DEBUG] Cloudflare APIToken error: %#v", err)
+	log.Printf("[DEBUG] Cloudflare API Token: %+v", t)
+	log.Printf("[DEBUG] Cloudflare API Token error: %#v", err)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Cloudflare ApiToken %s no longer exists", d.Id())
+			log.Printf("[INFO] Cloudflare API Token %s no longer exists", d.Id())
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Cloudflare ApiToken %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Cloudflare API Token %q: %s", d.Id(), err)
 	}
 
 	policies := []map[string]interface{}{}
@@ -201,8 +199,8 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("name", t.Name)
 	d.Set("policies", policies)
 	d.Set("status", t.Status)
-	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
-	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
+	d.Set("issued_on", t.IssuedOn)
+	d.Set("modified_on", t.ModifiedOn)
 	d.Set("request_ip_in", t.Condition.RequestIP.In)
 	d.Set("request_ip_not_in", t.Condition.RequestIP.NotIn)
 
@@ -221,14 +219,14 @@ func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) 
 		Condition: resourceDataToApiTokenCondition(d),
 	}
 
-	log.Printf("[INFO] Updating Cloudflare ApiToken: name %s", name)
+	log.Printf("[INFO] Updating Cloudflare API Token: name %s", name)
 
 	t, err := client.UpdateAPIToken(tokenID, t)
 	if err != nil {
-		return fmt.Errorf("Error updating Cloudflare ApiToken %q: %s", name, err)
+		return fmt.Errorf("error updating Cloudflare API Token %q: %s", name, err)
 	}
 
-	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
+	d.Set("modified_on", t.ModifiedOn)
 
 	return nil
 }
@@ -237,11 +235,11 @@ func resourceCloudflareApiTokenDelete(d *schema.ResourceData, meta interface{}) 
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 
-	log.Printf("[INFO] Deleting Cloudflare APIToken: id %s", tokenID)
+	log.Printf("[INFO] Deleting Cloudflare API Token: id %s", tokenID)
 
 	err := client.DeleteAPIToken(tokenID)
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare ApiToken: %s", err)
+		return fmt.Errorf("error deleting Cloudflare API Token: %s", err)
 	}
 
 	return nil

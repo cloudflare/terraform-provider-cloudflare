@@ -2,11 +2,9 @@ package cloudflare
 
 import (
 	"fmt"
-	"log"
-	"time"
-
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func dataSourceCloudflareApiTokenPermissionGroups() *schema.Resource {
@@ -23,24 +21,27 @@ func dataSourceCloudflareApiTokenPermissionGroups() *schema.Resource {
 }
 
 func dataSourceCloudflareApiTokenPermissionGroupsRead(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] Reading User Token Permission Groups")
+	log.Printf("[DEBUG] Reading API Token Permission Groups")
 	client := meta.(*cloudflare.API)
 
 	permissions, err := client.ListAPITokensPermissionGroups()
 	if err != nil {
-		return fmt.Errorf("error listing User Token Permission Groups: %s", err)
+		return fmt.Errorf("error listing API Token Permission Groups: %s", err)
 	}
 
 	permissionDetails := make(map[string]interface{}, 0)
+	ids := []string{}
 	for _, v := range permissions {
 		permissionDetails[v.Name] = v.ID
+		ids = append(ids, v.ID)
 	}
 
 	err = d.Set("permissions", permissionDetails)
 	if err != nil {
-		return fmt.Errorf("Error setting User Token Permission Groups: %s", err)
+		return fmt.Errorf("error setting API Token Permission Groups: %s", err)
 	}
 
-	d.SetId(time.Now().UTC().String())
+	d.SetId(stringListChecksum(ids))
+
 	return nil
 }
