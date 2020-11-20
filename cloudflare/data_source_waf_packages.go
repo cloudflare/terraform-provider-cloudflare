@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -96,6 +95,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 	}
 
 	log.Printf("[DEBUG] Reading WAF Packages")
+	packageIds := make([]string, 0)
 	packageDetails := make([]interface{}, 0)
 	pkgList, err := client.ListWAFPackages(zoneID)
 	if err != nil {
@@ -127,6 +127,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 			"sensitivity":    pkg.Sensitivity,
 			"action_mode":    pkg.ActionMode,
 		})
+		packageIds = append(packageIds, pkg.ID)
 	}
 
 	err = d.Set("packages", packageDetails)
@@ -134,7 +135,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error setting WAF packages: %s", err)
 	}
 
-	d.SetId("WAFPackages " + time.Now().UTC().String())
+	d.SetId(stringListChecksum(packageIds))
 	return nil
 }
 

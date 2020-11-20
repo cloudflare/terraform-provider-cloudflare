@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"sort"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -64,6 +65,11 @@ func stringChecksum(s string) string {
 	bs := h.Sum(nil)
 
 	return fmt.Sprintf("%x", bs)
+}
+
+func stringListChecksum(s []string) string {
+	sort.Strings(s)
+	return stringChecksum(strings.Join(s, ""))
 }
 
 // Returns true if string value exists in string slice
