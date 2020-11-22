@@ -1,7 +1,7 @@
 ---
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_api_token_permission_groups"
-sidebar_current: "docs-cloudflare-api-token-permissions-groups"
+sidebar_current: "docs-cloudflare-api-token-permission-groups"
 description: |-
   List available API Token Permission Group IDs.
 ---
