@@ -91,7 +91,7 @@ func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}
 	_, err := client.UpdateZoneDNSSEC(zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusActive})
 
 	if err != nil {
-		return fmt.Errorf("Error creating zone DNSSEC %q: %s", zoneID, err)
+		return fmt.Errorf("error creating zone DNSSEC %q: %s", zoneID, err)
 	}
 
 	d.SetId(zoneID)
@@ -102,15 +102,15 @@ func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}
 func resourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Id()
+	zoneID := d.Get("zone_id").(string)
 
 	dnssec, err := client.ZoneDNSSECSetting(zoneID)
 	if err != nil {
-		return fmt.Errorf("Error finding Zone DNSSEC %q: %s", zoneID, err)
+		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
 	}
 
 	if dnssec.Status == DNSSECStatusDisabled {
-		return fmt.Errorf("Zone DNSSEC %q: already disabled", zoneID)
+		return fmt.Errorf("zone DNSSEC %q: already disabled", zoneID)
 	}
 	d.Set("zone_id", zoneID)
 	d.Set("status", dnssec.Status)
@@ -136,7 +136,7 @@ func resourceCloudflareZoneDNSSECUpdate(d *schema.ResourceData, meta interface{}
 func resourceCloudflareZoneDNSSECDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Id()
+	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Zone DNSSEC: id %s", zoneID)
 
@@ -148,7 +148,7 @@ func resourceCloudflareZoneDNSSECDelete(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error deleting Cloudflare Zone DNSSEC: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Zone DNSSEC: %s", err)
 	}
 
 	return nil

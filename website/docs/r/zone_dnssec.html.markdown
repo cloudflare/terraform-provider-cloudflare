@@ -3,7 +3,7 @@ layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_zone_dnssec"
 sidebar_current: "docs-cloudflare-resource-zone-dnssec"
 description: |-
-  Provides a Cloudflare resource to create and modify a zone DNSSEC.
+  Provides a Cloudflare resource to create and modify zone DNSSEC settings.
 ---
 
 # cloudflare_zone
