@@ -53,6 +53,9 @@ func TestAccAPITokenAllowDeny(t *testing.T) {
 			{
 				Config: testAPITokenConfigAllowDeny(rnd, rnd, permissionID, zoneID, true),
 			},
+			{
+				Config: testAPITokenConfigAllowDeny(rnd, rnd, permissionID, zoneID, false),
+			},
 		},
 	})
 }
@@ -77,7 +80,7 @@ func testAPITokenConfig(resourceID, name, permissionID, zoneID string, ips bool)
           %[5]s
 		
 		  policy {
-			effect = "deny"
+			effect = "allow"
 			permission_groups = [
 			  "%[3]s", 
 			]
@@ -99,10 +102,10 @@ func testAPITokenConfigAllowDeny(resourceID, name, permissionID, zoneID string, 
 			    "%[1]s", 
 			  ]
 			  resources = {
-			    "com.cloudflare.api.account.zone.*" = "*"
+			    "com.cloudflare.api.account.zone.%[2]s" = "*"
 			  }
 	    	}
-	  `, permissionID)
+	  `, permissionID, zoneID)
 	}
 
 	return fmt.Sprintf(`
@@ -115,10 +118,10 @@ func testAPITokenConfigAllowDeny(resourceID, name, permissionID, zoneID string, 
 			  "%[3]s", 
 			]
 			resources = {
-			  "com.cloudflare.api.account.zone.%[4]s" = "*"
+			  "com.cloudflare.api.account.zone.*" = "*"
 			}
 		  }
-		  %[5]s
+		  %[4]s
 		}
-		`, resourceID, name, permissionID, zoneID, add)
+		`, resourceID, name, permissionID, add)
 }

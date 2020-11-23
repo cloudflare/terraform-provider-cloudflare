@@ -12,6 +12,27 @@ import (
 )
 
 func resourceCloudflareApiToken() *schema.Resource {
+	p := schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"resources": {
+				Type:     schema.TypeMap,
+				Required: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"permission_groups": {
+				Type:     schema.TypeList,
+				Required: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"effect": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "allow",
+				ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, false),
+			},
+		},
+	}
+
 	return &schema.Resource{
 		Create: resourceCloudflareApiTokenCreate,
 		Read:   resourceCloudflareApiTokenRead,
@@ -26,28 +47,10 @@ func resourceCloudflareApiToken() *schema.Resource {
 				Required: true,
 			},
 			"policy": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
+				Set:      schema.HashResource(&p),
 				Required: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"resources": {
-							Type:     schema.TypeMap,
-							Required: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-						},
-						"permission_groups": {
-							Type:     schema.TypeList,
-							Required: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-						},
-						"effect": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      "allow",
-							ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, false),
-						},
-					},
-				},
+				Elem:     &p,
 			},
 			"condition": {
 				Type:     schema.TypeList,
@@ -144,13 +147,16 @@ func resourceDataToApiTokenCondition(d *schema.ResourceData) *cloudflare.APIToke
 }
 
 func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APITokenPolicies {
-	policies := d.Get("policy").([]interface{})
+	policies := d.Get("policy").(*schema.Set).List()
 	var cfPolicies []cloudflare.APITokenPolicies
 
 	for _, p := range policies {
 		policy := p.(map[string]interface{})
 
 		permissionGroups := expandInterfaceToStringList(policy["permission_groups"])
+		if len(permissionGroups) == 0 {
+			continue
+		}
 		var cfPermissionGroups []cloudflare.APITokenPermissionGroups
 		for _, pg := range permissionGroups {
 			cfPermissionGroups = append(cfPermissionGroups, cloudflare.APITokenPermissionGroups{
@@ -224,12 +230,15 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 		ipIn = t.Condition.RequestIP.In
 		ipNotIn = t.Condition.RequestIP.NotIn
 	}
-	d.Set("condition", []map[string]interface{}{{
-		"request_ip": []map[string]interface{}{{
-			"in":     ipIn,
-			"not_in": ipNotIn,
-		}},
-	}})
+
+	if len(ipIn) > 0 || len(ipNotIn) > 0 {
+		d.Set("condition", []map[string]interface{}{{
+			"request_ip": []map[string]interface{}{{
+				"in":     ipIn,
+				"not_in": ipNotIn,
+			}},
+		}})
+	}
 
 	return nil
 }
