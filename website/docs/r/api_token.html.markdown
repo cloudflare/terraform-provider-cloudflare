@@ -165,7 +165,7 @@ The **condition** block supports:
 
 The **request_ip** block supports:
 
-* `ip_in` - (Optional) List of IPv4/IPv6 CIDR addresses where
+* `in` - (Optional) List of IPv4/IPv6 CIDR addresses where
 the Token can be used from.
 * `not_in` - (Optional) List of IPv4/IPv6 CIDR addresses where
 the Token cannot be used from.
