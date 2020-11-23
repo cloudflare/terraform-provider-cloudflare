@@ -36,7 +36,7 @@ func testAccCloudflareApiTokenPermissionGroups(n string) resource.TestCheckFunc 
 
 		// PermissionGroupsIDs can be found at
 		// https://developers.cloudflare.com/api/tokens/create/permissions
-		apiTokenReadIdShouldBe := "0cc3a61731504c89b99ec1be78b77aa"
+		apiTokenReadIdShouldBe := "0cc3a61731504c89b99ec1be78b77aa0"
 
 		if apiTokenReadId != apiTokenReadIdShouldBe {
 			return fmt.Errorf("ApiTokenPermissionGroups 'API Tokens Read' is '%s', but should be '%s'",
