@@ -94,12 +94,13 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"cloudflare_ip_ranges":    dataSourceCloudflareIPRanges(),
-			"cloudflare_waf_groups":   dataSourceCloudflareWAFGroups(),
-			"cloudflare_waf_packages": dataSourceCloudflareWAFPackages(),
-			"cloudflare_waf_rules":    dataSourceCloudflareWAFRules(),
-			"cloudflare_zones":        dataSourceCloudflareZones(),
-			"cloudflare_zone_dnssec":  dataSourceCloudflareZoneDNSSEC(),
+			"cloudflare_api_token_permission_groups": dataSourceCloudflareApiTokenPermissionGroups(),
+			"cloudflare_ip_ranges":                   dataSourceCloudflareIPRanges(),
+			"cloudflare_waf_groups":                  dataSourceCloudflareWAFGroups(),
+			"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
+			"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
+			"cloudflare_zones":                       dataSourceCloudflareZones(),
+      "cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -110,6 +111,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
 			"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
 			"cloudflare_account_member":                         resourceCloudflareAccountMember(),
+			"cloudflare_api_token":                              resourceCloudflareApiToken(),
 			"cloudflare_argo":                                   resourceCloudflareArgo(),
 			"cloudflare_authenticated_origin_pulls":             resourceCloudflareAuthenticatedOriginPulls(),
 			"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),

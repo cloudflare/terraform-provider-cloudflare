@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -93,6 +92,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("error listing Zone: %s", err)
 	}
 
+	zoneIds := make([]string, 0)
 	zoneDetails := make([]interface{}, 0)
 	for _, v := range zones.Result {
 		if filter.regexValue != nil {
@@ -109,6 +109,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 			"id":   v.ID,
 			"name": v.Name,
 		})
+		zoneIds = append(zoneIds, v.ID)
 	}
 
 	err = d.Set("zones", zoneDetails)
@@ -116,8 +117,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error setting zones: %s", err)
 	}
 
-	d.SetId(time.Now().UTC().String())
-
+	d.SetId(stringListChecksum(zoneIds))
 	return nil
 }
 

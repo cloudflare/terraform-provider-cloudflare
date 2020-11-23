@@ -1,8 +1,18 @@
 ## Unreleased
 
+* **New Resource:** `cloudflare_api_token` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
+* **New Datasource:** `cloudflare_api_token_permission_groups` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
+
 **Improvements**
 
 * `resource/cloudflare_record`: Add explicit fields for CAA records instead of relying on the map value ([#866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/866)) 
+
+**Fixes** 
+
+* `datasource/cloudflare_waf_groups`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
+* `datasource/cloudflare_waf_packages`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
+* `datasource/cloudflare_waf_rules`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
+* `datasource/cloudflare_zones`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
 
 ## 2.13.2 (November 6th, 2020)
 
