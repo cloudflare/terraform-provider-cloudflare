@@ -20,8 +20,8 @@ Read more about permission groups and their applicable scopes in
 ```hcl
 data "cloudflare_api_token_permission_groups" "all" {}
 
-// Token allowed to create new tokens.
-// Can only be used from specific ip range.
+# Token allowed to create new tokens.
+# Can only be used from specific ip range.
 resource "cloudflare_api_token" "api_token_create" {
   name = "api_token_create"
 
@@ -48,7 +48,7 @@ resource "cloudflare_api_token" "api_token_create" {
 ```hcl
 data "cloudflare_api_token_permission_groups" "all" {}
 
-// Token allowed to read audit logs from all accounts.
+# Token allowed to read audit logs from all accounts.
 resource "cloudflare_api_token" "logs_account_all" {
   name = "logs_account_all"
 
@@ -62,7 +62,7 @@ resource "cloudflare_api_token" "logs_account_all" {
   }
 }
 
-// Token allowed to read audit logs from specific account.
+# Token allowed to read audit logs from specific account.
 resource "cloudflare_api_token" "logs_account" {
   name = "logs_account"
 
@@ -81,7 +81,7 @@ resource "cloudflare_api_token" "logs_account" {
 ```hcl
 data "cloudflare_api_token_permission_groups" "all" {}
 
-// Token allowed to edit DNS entries and TLS certs for specific zone.
+# Token allowed to edit DNS entries and TLS certs for specific zone.
 resource "cloudflare_api_token" "dns_tls_edit" {
   name = "dns_tls_edit"
 
@@ -96,11 +96,11 @@ resource "cloudflare_api_token" "dns_tls_edit" {
   }
 }
 
-// Token allowed to edit DNS entries for all zones except one.
+# Token allowed to edit DNS entries for all zones except one.
 resource "cloudflare_api_token" "dns_tls_edit_all_except_one" {
   name = "dns_tls_edit_all_except_one"
 
-  // include all zones
+  # include all zones
   policy {
     permission_groups = [
       data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
@@ -110,7 +110,7 @@ resource "cloudflare_api_token" "dns_tls_edit_all_except_one" {
     }
   }
 
-  // exclude (deny) specific zone
+  # exclude (deny) specific zone
   policy {
     permission_groups = [
       data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
@@ -123,11 +123,11 @@ resource "cloudflare_api_token" "dns_tls_edit_all_except_one" {
 }
 
 
-// Token allowed to edit DNS entries for all zones from specific account.
+# Token allowed to edit DNS entries for all zones from specific account.
 resource "cloudflare_api_token" "dns_edit_all_account" {
   name = "dns_edit_all_account"
 
-  // include all zones from specific account
+  # include all zones from specific account
   policy {
     permission_groups = [
       data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
@@ -156,7 +156,7 @@ The **policy** block supports:
 ids ([see official docs][1]).
 * `resources` - (Required) Map describes what operations against which resources
 are allowed or denied.
-* `effect` - (Optional) Policy effect. Valid values are `allow` or `deny`. `allow` 
+* `effect` - (Optional) Policy effect. Valid values are `allow` or `deny`. `allow`
    is set as default.
 
 The **condition** block supports:
@@ -175,7 +175,7 @@ the Token cannot be used from.
 The following attributes are exported:
 
 * `id` - Unique identifier in the API for the API Token.
-* `value` - The value of the API Token. 
+* `value` - The value of the API Token.
 * `issued_on` - The RFC3339 timestamp of when the API Token was issued.
 * `modified_on` - The RFC3339 timestamp of when the API Token was last modified.
 
