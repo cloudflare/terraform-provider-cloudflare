@@ -100,7 +100,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
 			"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
 			"cloudflare_zones":                       dataSourceCloudflareZones(),
-      "cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
+			"cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
