@@ -88,10 +88,17 @@ func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[INFO] Creating Cloudflare Zone DNSSEC: name %s", zoneID)
 
-	_, err := client.UpdateZoneDNSSEC(zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusActive})
-
+	currentDNSSEC, err := client.ZoneDNSSECSetting(zoneID)
 	if err != nil {
-		return fmt.Errorf("error creating zone DNSSEC %q: %s", zoneID, err)
+		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
+	}
+	if currentDNSSEC.Status != DNSSECStatusActive {
+		_, err := client.UpdateZoneDNSSEC(zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusActive})
+
+		if err != nil {
+			return fmt.Errorf("error creating zone DNSSEC %q: %s", zoneID, err)
+		}
+
 	}
 
 	d.SetId(zoneID)
@@ -104,6 +111,12 @@ func resourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) 
 
 	zoneID := d.Get("zone_id").(string)
 
+	// In the event zoneID isn't populated at this point, we're likely to be
+	// performing an import so set the zoneID to the d.Id() from the passthrough.
+	if zoneID == "" {
+		zoneID = d.Id()
+	}
+
 	dnssec, err := client.ZoneDNSSECSetting(zoneID)
 	if err != nil {
 		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
@@ -112,6 +125,7 @@ func resourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) 
 	if dnssec.Status == DNSSECStatusDisabled {
 		return fmt.Errorf("zone DNSSEC %q: already disabled", zoneID)
 	}
+
 	d.Set("zone_id", zoneID)
 	d.Set("status", dnssec.Status)
 	d.Set("flags", dnssec.Flags)
