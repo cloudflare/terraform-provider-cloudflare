@@ -100,6 +100,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
 			"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
 			"cloudflare_zones":                       dataSourceCloudflareZones(),
+			"cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -146,6 +147,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_zone_lockdown":                          resourceCloudflareZoneLockdown(),
 			"cloudflare_zone_settings_override":                 resourceCloudflareZoneSettingsOverride(),
 			"cloudflare_zone":                                   resourceCloudflareZone(),
+			"cloudflare_zone_dnssec":                            resourceCloudflareZoneDNSSEC(),
 		},
 	}
 
