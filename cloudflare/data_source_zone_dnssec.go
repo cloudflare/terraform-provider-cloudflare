@@ -3,7 +3,6 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -86,7 +85,7 @@ func dataSourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}
 	d.Set("key_tag", dnssec.KeyTag)
 	d.Set("public_key", dnssec.PublicKey)
 
-	d.SetId(dnssec.ModifiedOn.Format(time.RFC1123Z))
+	d.SetId(stringChecksum(dnssec.ModifiedOn.String()))
 
 	return nil
 }
