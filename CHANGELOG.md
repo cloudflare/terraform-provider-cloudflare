@@ -2,6 +2,8 @@
 
 * **New Resource:** `cloudflare_api_token` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
 * **New Datasource:** `cloudflare_api_token_permission_groups` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
+* **New Resource:** `cloudflare_zone_dnssec` ([#852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/852))
+* **New Datasource:** `cloudflare_zone_dnssec` ([#852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/852))
 
 **Improvements**
 
