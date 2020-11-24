@@ -11,7 +11,6 @@ import (
 )
 
 func TestAccCloudflareZoneDNSSEC(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zone_dnssec.%s", rnd)
