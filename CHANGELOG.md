@@ -8,6 +8,7 @@
 **Improvements**
 
 * `resource/cloudflare_record`: Add explicit fields for CAA records instead of relying on the map value ([#866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/866)) 
+* `resource/cloudflare_account_member`: Swap schema `role_ids` to `TypeSet` to better handle internal ordering changes ([#876](https://github.com/cloudflare/terraform-provider-cloudflare/issues/876)) 
 
 **Fixes** 
 
