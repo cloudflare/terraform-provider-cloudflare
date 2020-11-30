@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -13,11 +12,11 @@ import (
 
 func resourceCloudflareWorkerSecret() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareWorkerSecretCreate,
+		Create: resourceCloudflareWorkerSecretWrite,
 		Read:   resourceCloudflareWorkerSecretRead,
 		Delete: resourceCloudflareWorkerSecretDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWorkersSecretImport,
+			State: schema.ImportStatePassthrough,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -45,26 +44,11 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 }
 
 func resourceCloudflareWorkerSecretRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cloudflare.API)
-	scriptName := d.Get("script_name").(string)
-	name := d.Get("name").(string)
-
-	secrets, err := client.ListWorkersSecrets(context.Background(), scriptName)
-	if err != nil {
-		return errors.Wrap(err, "error reading worker secrets")
-	}
-
-	for _, secret := range secrets.Result {
-		if secret.Name == name {
-			return nil
-		}
-	}
-
-	d.SetId("")
+	// Always return nil, as secrets cannot be read back from the Cloudflare Worker API as it currently stands.
 	return nil
 }
 
-func resourceCloudflareWorkerSecretCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerSecretWrite(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	scriptName := d.Get("script_name").(string)
 	name := d.Get("name").(string)
@@ -85,12 +69,13 @@ func resourceCloudflareWorkerSecretCreate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Cloudflare Workers Secret ID: %s", d.Id())
 
-	return nil
+	return resourceCloudflareWorkerSecretRead(d, meta)
 }
 
 func resourceCloudflareWorkerSecretDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	scriptName, name := parseSecretId(d.Id())
+	scriptName := d.Get("script_name").(string)
+	name := d.Get("name").(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Workers secret with id: %+v", d.Id())
 
@@ -100,20 +85,4 @@ func resourceCloudflareWorkerSecretDelete(d *schema.ResourceData, meta interface
 	}
 
 	return nil
-}
-
-func resourceCloudflareWorkersSecretImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	scriptName, name := parseSecretId(d.Id())
-
-	d.Set("script_name", scriptName)
-	d.Set("name", name)
-
-	resourceCloudflareWorkerSecretRead(d, meta)
-
-	return []*schema.ResourceData{d}, nil
-}
-
-func parseSecretId(id string) (string, string) {
-	parts := strings.SplitN(id, "/", 2)
-	return parts[0], parts[1]
 }
