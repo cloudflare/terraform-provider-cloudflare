@@ -10,6 +10,9 @@ description: |-
 
 If you're using Cloudflare's Load Balancing to load-balance across multiple origin servers or data centers, you configure one of these Monitors to actively check the availability of those servers over HTTP(S) or TCP.
 
+*Note*
+When creating a monitor, you have to pass `account_id` to the provider configuration.
+
 ## Example Usage
 
 ### HTTP Monitor
@@ -39,6 +42,7 @@ resource "cloudflare_load_balancer_monitor" "tcp_monitor" {
   type = "tcp"
   method = "connection_established"
   timeout = 7
+  port = 8080
   interval = 60
   retries = 5
   description = "example tcp load balancer"
@@ -58,6 +62,7 @@ The following arguments are supported:
 * `retries` - (Optional) The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately. Default: 2.
 * `header` - (Optional) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. Fields documented below. Only valid if `type` is "http" or "https".
 * `type` - (Optional) The protocol to use for the healthcheck. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'. Default: "http".
+* `port` - The port to use for the healthcheck, required when creating a TCP monitor.
 * `description` - (Optional) Free text description.
 * `allow_insecure` - (Optional) Do not validate the certificate when monitor use HTTPS. Only valid if `type` is "http" or "https".
 * `follow_redirects` - (Optional) Follow redirects if returned by the origin. Only valid if `type` is "http" or "https".
