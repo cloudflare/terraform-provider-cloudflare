@@ -10,7 +10,7 @@ description: |-
 
 If you're using Cloudflare's Load Balancing to load-balance across multiple origin servers or data centers, you configure one of these Monitors to actively check the availability of those servers over HTTP(S) or TCP.
 
--> **Note:** When creating a monitor, you have to pass `account_id` to the provider configuration.
+-> **Note:** When creating a monitor, you have to pass `account_id` to the provider configuration in order to create account level resources. Otherwise, by default, it will be a user level resource.
 
 ## Example Usage
 
