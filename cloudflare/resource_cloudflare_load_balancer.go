@@ -92,6 +92,12 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Computed:     true,
 			},
 
+			"session_affinity_ttl": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ValidateFunc: validation.IntBetween(1800, 604800),
+			},
+
 			// nb enterprise only
 			"pop_pools": {
 				Type:     schema.TypeSet,
@@ -204,6 +210,10 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		newLoadBalancer.PopPools = expandedPopPools
 	}
 
+	if sessionAffinityTTL, ok := d.GetOk("session_affinity_ttl"); ok {
+		newLoadBalancer.PersistenceTTL = sessionAffinityTTL.(int)
+	}
+
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
 	r, err := client.CreateLoadBalancer(zoneID, newLoadBalancer)
@@ -258,6 +268,10 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 			return err
 		}
 		loadBalancer.PopPools = expandedPopPools
+	}
+
+	if sessionAffinityTTL, ok := d.GetOk("session_affinity_ttl"); ok {
+		loadBalancer.PersistenceTTL = sessionAffinityTTL.(int)
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
@@ -323,6 +337,10 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 
 	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region")); err != nil {
 		log.Printf("[WARN] Error setting region_pools on load balancer %q: %s", d.Id(), err)
+	}
+
+	if loadBalancer.PersistenceTTL != 0 {
+		d.Set("session_affinity_ttl", loadBalancer.PersistenceTTL)
 	}
 
 	return nil
