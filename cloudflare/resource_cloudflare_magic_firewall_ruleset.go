@@ -52,6 +52,7 @@ var ruleElem = &schema.Schema{
 		Type: schema.TypeString,
 	},
 	ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+		ruleElemValidators := ruleElemValidators()
 		ruleFields, ok := val.(map[string]interface{})
 
 		if !ok {
@@ -60,11 +61,12 @@ var ruleElem = &schema.Schema{
 		}
 
 		for k, v := range ruleFields {
-			if _, ok := ruleElemValidators()[k]; !ok {
+			if _, ok := ruleElemValidators[k]; !ok {
 				errs = append(errs, fmt.Errorf("%s is not supported in a rule", k))
 			}
 
-			validationFunc := ruleElemValidators()[k]
+			validationFunc := ruleElemValidators[k]
+			delete(ruleElemValidators, k)
 			if validationFunc == nil {
 				continue
 			}
@@ -72,6 +74,14 @@ var ruleElem = &schema.Schema{
 			w, e := validationFunc(v, k)
 			warns = append(warns, w...)
 			errs = append(errs, e...)
+		}
+
+		// attributes with non-nil validators must be set
+		for k, v := range ruleElemValidators {
+			if v == nil {
+				continue
+			}
+			errs = append(errs, fmt.Errorf("%s must be set in a rule", k))
 		}
 
 		return
@@ -189,7 +199,10 @@ func buildStateFromMagicFirewallRulesetRules(r []cloudflare.MagicFirewallRuleset
 		rulesetRule = make(map[string]interface{})
 
 		rulesetRule["expression"] = rule.Expression
-		rulesetRule["description"] = rule.Description
+
+		if rule.Description != "" {
+			rulesetRule["description"] = rule.Description
+		}
 
 		if rule.Enabled == true {
 			rulesetRule["enabled"] = "true"
@@ -227,7 +240,10 @@ func buildMagicFirewallRulesetRulesFromResource(r interface{}) ([]cloudflare.Mag
 		}
 
 		rule.Expression = resourceRule["expression"].(string)
-		rule.Description = resourceRule["description"].(string)
+
+		if resourceRule["description"] != nil {
+			rule.Description = resourceRule["description"].(string)
+		}
 
 		if resourceRule["enabled"].(string) == "true" {
 			rule.Enabled = true
