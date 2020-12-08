@@ -18,7 +18,7 @@ Provides a Cloudflare Load Balancer resource. This sits in front of a number of 
 # Within each pop or region we can define multiple pools in failover order
 resource "cloudflare_load_balancer" "bar" {
   zone_id = "d41d8cd98f00b204e9800998ecf8427e"
-  name = "example-load-balancer"
+  name = "example-load-balancer.mysite.com"
   fallback_pool_id = cloudflare_load_balancer_pool.foo.id
   default_pool_ids = [cloudflare_load_balancer_pool.foo.id]
   description = "example load balancer using geo-balancing"
