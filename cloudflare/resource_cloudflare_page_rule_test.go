@@ -279,6 +279,24 @@ func TestTranformForwardingURL(t *testing.T) {
 	}
 }
 
+// This test ensures there is no crash while encountering a nil query_string section, which may happen when updating
+// existing Page Rule that didn't have this value set previously
+func TestCacheKeyFieldsNilValue(t *testing.T) {
+	pageRuleAction, err := transformToCloudflarePageRuleAction(
+		"cache_key_fields",
+		[]interface{}{map[string]interface{}{"cookie": []interface{}{map[string]interface{}{"check_presence": []interface{}{}, "include": []interface{}{"next-i18next"}}}, "header": []interface{}{map[string]interface{}{"check_presence": []interface{}{}, "exclude": []interface{}{}, "include": []interface{}{"x-forwarded-host"}}}, "host": []interface{}{map[string]interface{}{"resolved": false}}, "query_string": []interface{}{interface{}(nil)}, "user": []interface{}{map[string]interface{}{"device_type": true, "geo": true, "lang": true}}}},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatalf("Unexpected error transforming page rule action: %s", err)
+	}
+
+	if !reflect.DeepEqual(pageRuleAction.Value.(map[string]interface{})["query_string"], map[string]interface{}{"include": "*"}) {
+		t.Fatalf("Unexpected transformToCloudflarePageRuleAction result, expected %#v, got %#v", map[string]interface{}{"include": "*"}, pageRuleAction.Value.(map[string]interface{})["query_string"])
+	}
+}
+
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	testAccRunResourceTestSteps(t, []resource.TestStep{
