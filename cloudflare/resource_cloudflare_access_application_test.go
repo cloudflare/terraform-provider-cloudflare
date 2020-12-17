@@ -143,6 +143,32 @@ func TestAccCloudflareAccessApplicationWithEnableBindingCookie(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithCustomDenyFields(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "custom_deny_message", "denied!"),
+					resource.TestCheckResourceAttr(name, "custom_deny_url", "https://www.cloudflare.com"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
@@ -219,6 +245,19 @@ resource "cloudflare_access_application" "%[1]s" {
   domain                    = "%[1]s.%[3]s"
   session_duration          = "24h"
   enable_binding_cookie     = true
+}
+`, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  session_duration          = "24h"
+  custom_deny_message       = "denied!"
+	custom_deny_url           = "https://www.cloudflare.com"
 }
 `, rnd, zoneID, domain)
 }
