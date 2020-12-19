@@ -3,6 +3,7 @@
 **Improvements**
 
 * `resource/cloudflare_load_balancer`: Add support for `session_affinity_ttl` ([#882](https://github.com/cloudflare/terraform-provider-cloudflare/issues/882)) 
+* `resource/cloudflare_load_balancer`: Add support for `session_affinity_attributes` ([#883](https://github.com/cloudflare/terraform-provider-cloudflare/issues/883)) 
 
 ## 2.14.0 (November 26th, 2020)
 
