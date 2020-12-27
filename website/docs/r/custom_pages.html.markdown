@@ -36,7 +36,7 @@ The following arguments are supported:
   `500_errors`, `1000_errors`, `always_online`.
 * `url` - (Required) URL of where the custom page source is located.
 * `state` - (Required) Managed state of the custom page. Must be one of
-  `default`, `customised`. If the value is `default` it will be removed
+  `default`, `customized`. If the value is `default` it will be removed
   from the Terraform state management.
 
 ## Import

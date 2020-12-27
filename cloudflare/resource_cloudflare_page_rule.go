@@ -866,18 +866,23 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 			for sectionID, sectionValue := range cacheKeyActionSchema[0].(map[string]interface{}) {
 				sectionOutput := map[string]interface{}{}
 
-				for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
-					sectionOutput[fieldID] = fieldValue
+				if sectionValue.([]interface{})[0] != nil {
+					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+						sectionOutput[fieldID] = fieldValue
+					}
 				}
 
 				if sectionID == "query_string" {
 					queryKey := "include"
-					if sectionOutput["ignore"].(bool) {
+					if ignore, ok := sectionOutput["ignore"]; ok && ignore.(bool) {
 						queryKey = "exclude"
 					}
 					delete(sectionOutput, "ignore")
 
-					if len(sectionOutput["exclude"].([]interface{})) == 0 && len(sectionOutput["include"].([]interface{})) == 0 {
+					exclude, ok1 := sectionOutput["exclude"]
+					include, ok2 := sectionOutput["include"]
+
+					if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
 						sectionOutput[queryKey] = "*"
 					}
 				}
