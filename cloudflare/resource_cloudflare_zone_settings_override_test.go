@@ -62,6 +62,8 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 						name, "settings.0.zero_rtt", "off"),
 					resource.TestCheckResourceAttr(
 						name, "settings.0.universal_ssl", "off"),
+					resource.TestCheckResourceAttr(
+						name, "settings.0.ciphers", "[\"ECDHE-RSA-AES128-GCM-SHA256\", \"AES128-SHA\"]"),
 				),
 			},
 		},
@@ -245,6 +247,7 @@ resource "cloudflare_zone_settings_override" "test" {
 	zone_id = "%s"
 	settings {
 		brotli = "on"
+		ciphers = ["ECDHE-RSA-AES128-GCM-SHA256", "AES128-SHA"]
 		challenge_ttl = 2700
 		security_level = "high"
 		opportunistic_encryption = "on"

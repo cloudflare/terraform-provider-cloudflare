@@ -91,6 +91,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 
 ### String Values
 
+* `ciphers`. An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format. Default: `[]`
 * `cache_level`. Allowed values: "aggressive" (default) - delivers a different resource each time the query string changes, "basic" - delivers resources from cache when there is no query string, "simplified" - delivers the same resource to everyone independent of the query string.
 * `cname_flattening`. Allowed values: "flatten_at_root" (default), "flatten_all", "flatten_none".
 * `h2_prioritization`. Allowed values: "on", "off" (default), "custom".

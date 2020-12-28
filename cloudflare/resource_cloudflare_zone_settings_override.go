@@ -126,6 +126,15 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 			86400, 604800, 2592000, 31536000}),
 	},
 
+	"ciphers": {
+		Type:     schema.TypeList,
+		Optional: true,
+		Computed: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+
 	"development_mode": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
