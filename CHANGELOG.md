@@ -1,9 +1,15 @@
 ## Unreleased
 
+## 2.15.0 (December 29th, 2020)
+
 **Improvements**
 
 * `resource/cloudflare_load_balancer`: Add support for `session_affinity_ttl` ([#882](https://github.com/cloudflare/terraform-provider-cloudflare/issues/882)) 
 * `resource/cloudflare_load_balancer`: Add support for `session_affinity_attributes` ([#883](https://github.com/cloudflare/terraform-provider-cloudflare/issues/883)) 
+
+**Fixes** 
+
+* `resource/cloudflare_page_rule`: Fixed crash during update when using custom cache key ([#894](https://github.com/cloudflare/terraform-provider-cloudflare/pull/894))
 
 ## 2.14.0 (November 26th, 2020)
 
