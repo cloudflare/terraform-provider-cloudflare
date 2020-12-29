@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"time"
@@ -223,7 +224,11 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	}
 
 	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
-		newLoadBalancer.SessionAffinityAttributes = expandSessionAffinityAttrs(sessionAffinityAttrs)
+		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
+		if err != nil {
+			return err
+		}
+		newLoadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
 
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
@@ -287,7 +292,11 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	}
 
 	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
-		loadBalancer.SessionAffinityAttributes = expandSessionAffinityAttrs(sessionAffinityAttrs)
+		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
+		if err != nil {
+			return err
+		}
+		loadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
@@ -410,7 +419,7 @@ func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface
 	return []*schema.ResourceData{d}, nil
 }
 
-func expandSessionAffinityAttrs(attrs interface{}) *cloudflare.SessionAffinityAttributes {
+func expandSessionAffinityAttrs(attrs interface{}) (*cloudflare.SessionAffinityAttributes, error) {
 	var cfSessionAffinityAttrs cloudflare.SessionAffinityAttributes
 
 	for k, v := range attrs.(map[string]interface{}) {
@@ -420,9 +429,12 @@ func expandSessionAffinityAttrs(attrs interface{}) *cloudflare.SessionAffinityAt
 		case "samesite":
 			cfSessionAffinityAttrs.SameSite = v.(string)
 		case "drain_duration":
-			cfSessionAffinityAttrs.DrainDuration = v.(int)
+			var err error
+			if cfSessionAffinityAttrs.DrainDuration, err = strconv.Atoi(v.(string)); err != nil {
+				return nil, err
+			}
 		}
 	}
 
-	return &cfSessionAffinityAttrs
+	return &cfSessionAffinityAttrs, nil
 }
