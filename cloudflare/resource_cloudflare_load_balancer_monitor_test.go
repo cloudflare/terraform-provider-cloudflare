@@ -60,6 +60,7 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "retries", "5"),
 					resource.TestCheckResourceAttr(name, "port", "8080"),
 					resource.TestCheckResourceAttr(name, "expected_body", "dead"),
+					resource.TestCheckResourceAttr(name, "probe_zone", "example.com"),
 				),
 			},
 		},
@@ -301,6 +302,7 @@ resource "cloudflare_load_balancer_monitor" "test" {
   retries = 5
   port = 8080
   description = "this is a very weird load balancer"
+  probe_zone = "example.com"
   header {
     header = "Host"
     values = ["example.com"]
