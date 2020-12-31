@@ -13,7 +13,7 @@ Provides a Cloudflare WAF rule resource for a particular zone. This can be used 
 ## Example Usage
 
 ```hcl
-resource "cloudflare_waf_rule" "100000" {
+resource "cloudflare_waf_rule" "rule_100000" {
   rule_id = "100000"
   zone_id = "ae36f999674d196762efcc5abb06b345"
   mode = "simulate"
