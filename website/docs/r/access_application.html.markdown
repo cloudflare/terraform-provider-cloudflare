@@ -76,8 +76,9 @@ The following arguments are supported:
   selection if only one is configured in allowed_idps. Defaults to `false`
   (disabled).
 * `enable_binding_cookie` - (Optional) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
+* `custom_deny_message` - (Optional) Option that returns a custom error message when a user is denied access to the application.
+* `custom_deny_url` - (Optional) Option that redirects to a custom URL when a user is denied access to the application.
 
-  
 ## Attributes Reference
 
 The following additional attributes are exported:

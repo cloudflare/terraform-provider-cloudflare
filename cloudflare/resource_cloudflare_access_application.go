@@ -119,6 +119,14 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"custom_deny_message": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"custom_deny_url": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -134,6 +142,8 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
+		CustomDenyMessage:      d.Get("custom_deny_message").(string),
+		CustomDenyURL:          d.Get("custom_deny_url").(string),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -199,6 +209,8 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("domain", accessApplication.Domain)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
+	d.Set("custom_deny_message", accessApplication.CustomDenyMessage)
+	d.Set("custom_deny_url", accessApplication.CustomDenyURL)
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
@@ -221,6 +233,8 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
+		CustomDenyMessage:      d.Get("custom_deny_message").(string),
+		CustomDenyURL:          d.Get("custom_deny_url").(string),
 	}
 
 	if len(allowedIDPList) > 0 {
