@@ -32,6 +32,7 @@ resource "cloudflare_load_balancer_monitor" "http_monitor" {
   }
   allow_insecure = false
   follow_redirects = true
+  probe_zone = "example.com"
 }
 ```
 
@@ -65,6 +66,7 @@ The following arguments are supported:
 * `description` - (Optional) Free text description.
 * `allow_insecure` - (Optional) Do not validate the certificate when monitor use HTTPS. Only valid if `type` is "http" or "https".
 * `follow_redirects` - (Optional) Follow redirects if returned by the origin. Only valid if `type` is "http" or "https".
+* `probe_zone` - (Optional) Assign this monitor to emulate the specified zone while probing. Only valid if `type` is "http" or "https".
 
 **header** requires the following:
 
