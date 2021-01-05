@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **New Resource:** `cloudflare_magic_firewall_ruleset` ([#884](https://github.com/cloudflare/terraform-provider-cloudflare/issues/884))
+
+**Fixes** 
+
+* `resource/cloudfare_api_token`: Omitting `conditions` will no longer send empty arrays causing IP restriction issues and unable tokens ([#902](https://github.com/cloudflare/terraform-provider-cloudflare/pull/902))
+
 ## 2.16.0 (January 5th, 2021)
 
 **Improvements**
