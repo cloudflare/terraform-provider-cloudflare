@@ -3,12 +3,13 @@ package cloudflare
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceCloudflareApiToken() *schema.Resource {
@@ -101,6 +102,39 @@ func resourceCloudflareApiToken() *schema.Resource {
 	}
 }
 
+func buildAPIToken(d *schema.ResourceData) cloudflare.APIToken {
+	token := cloudflare.APIToken{}
+
+	token.Name = d.Get("name").(string)
+	token.Policies = resourceDataToApiTokenPolices(d)
+
+	ipsIn := []string{}
+	ipsNotIn := []string{}
+	if ips, ok := d.GetOk("condition.0.request_ip.0.in"); ok {
+		ipsIn = expandInterfaceToStringList(ips)
+	}
+
+	if ips, ok := d.GetOk("condition.0.request_ip.0.not_in"); ok {
+		ipsNotIn = expandInterfaceToStringList(ips)
+	}
+
+	if len(ipsIn) > 0 || len(ipsNotIn) > 0 {
+		token.Condition = &cloudflare.APITokenCondition{
+			RequestIP: &cloudflare.APITokenRequestIPCondition{},
+		}
+
+		if len(ipsIn) > 0 {
+			token.Condition.RequestIP.In = ipsIn
+		}
+
+		if len(ipsNotIn) > 0 {
+			token.Condition.RequestIP.NotIn = ipsNotIn
+		}
+	}
+
+	return token
+}
+
 func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -108,12 +142,7 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[INFO] Creating Cloudflare API Token: name %s", name)
 
-	t := cloudflare.APIToken{
-		Name:      name,
-		Policies:  resourceDataToApiTokenPolices(d),
-		Condition: resourceDataToApiTokenCondition(d),
-	}
-
+	t := buildAPIToken(d)
 	t, err := client.CreateAPIToken(t)
 	if err != nil {
 		return fmt.Errorf("error creating Cloudflare API Token %q: %s", name, err)
@@ -125,25 +154,7 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 	d.Set("modified_on", t.ModifiedOn)
 	d.Set("value", t.Value)
 
-	return nil
-}
-
-func resourceDataToApiTokenCondition(d *schema.ResourceData) *cloudflare.APITokenCondition {
-	ipIn := []string{}
-	ipNotIn := []string{}
-	if ips, ok := d.GetOk("condition.0.request_ip.0.in"); ok {
-		ipIn = expandInterfaceToStringList(ips)
-	}
-	if ips, ok := d.GetOk("condition.0.request_ip.0.not_in"); ok {
-		ipNotIn = expandInterfaceToStringList(ips)
-	}
-
-	return &cloudflare.APITokenCondition{
-		RequestIP: &cloudflare.APITokenRequestIPCondition{
-			In:    ipIn,
-			NotIn: ipNotIn,
-		},
-	}
+	return resourceCloudflareApiTokenRead(d, meta)
 }
 
 func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APITokenPolicies {
@@ -226,16 +237,19 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 
 	var ipIn []string
 	var ipNotIn []string
-	if t.Condition != nil && t.Condition.RequestIP != nil {
+	if t.Condition != nil && t.Condition.RequestIP != nil && t.Condition.RequestIP.In != nil {
 		ipIn = t.Condition.RequestIP.In
+	}
+
+	if t.Condition != nil && t.Condition.RequestIP != nil && t.Condition.RequestIP.NotIn != nil {
 		ipNotIn = t.Condition.RequestIP.NotIn
 	}
 
 	if len(ipIn) > 0 || len(ipNotIn) > 0 {
 		d.Set("condition", []map[string]interface{}{{
 			"request_ip": []map[string]interface{}{{
-				"in":     ipIn,
 				"not_in": ipNotIn,
+				"in":     ipIn,
 			}},
 		}})
 	}
@@ -249,11 +263,7 @@ func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) 
 	name := d.Get("name").(string)
 	tokenID := d.Id()
 
-	t := cloudflare.APIToken{
-		Name:      d.Get("name").(string),
-		Policies:  resourceDataToApiTokenPolices(d),
-		Condition: resourceDataToApiTokenCondition(d),
-	}
+	t := buildAPIToken(d)
 
 	log.Printf("[INFO] Updating Cloudflare API Token: name %s", name)
 
