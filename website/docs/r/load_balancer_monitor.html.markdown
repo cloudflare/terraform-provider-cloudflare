@@ -78,3 +78,15 @@ The following attributes are exported:
 * `id` - Load balancer monitor ID.
 * `created_on` - The RFC3339 timestamp of when the load balancer monitor was created.
 * `modified_on` - The RFC3339 timestamp of when the load balancer monitor was last modified.
+
+## Import
+
+Load balancer monitor can be imported using a monitor ID
+
+```
+$ terraform import cloudflare_load_balancer_monitor.test 0506e75297d0b0597d04a1e946872971
+```
+
+where:
+
+* `0506e75297d0b0597d04a1e946872971` - Load balancer monitor ID

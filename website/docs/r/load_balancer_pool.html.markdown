@@ -59,3 +59,15 @@ The following attributes are exported:
 * `id` - ID for this load balancer pool.
 * `created_on` - The RFC3339 timestamp of when the load balancer was created.
 * `modified_on` - The RFC3339 timestamp of when the load balancer was last modified.
+
+## Import
+
+Load balancer pool can be imported using a monitor ID
+
+```
+$ terraform import cloudflare_load_balancer_pool.test a8e3887e6afce5400ffef4579b78ed92
+```
+
+where:
+
+* `a8e3887e6afce5400ffef4579b78ed92` - Load balancer pool ID
