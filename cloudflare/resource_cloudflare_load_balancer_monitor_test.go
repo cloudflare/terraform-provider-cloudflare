@@ -2,9 +2,9 @@ package cloudflare
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"testing"
-
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -44,6 +44,7 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
 	name := "cloudflare_load_balancer_monitor.test"
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -51,7 +52,7 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					// checking our overrides of default values worked
@@ -60,7 +61,7 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "retries", "5"),
 					resource.TestCheckResourceAttr(name, "port", "8080"),
 					resource.TestCheckResourceAttr(name, "expected_body", "dead"),
-					resource.TestCheckResourceAttr(name, "probe_zone", "example.com"),
+					resource.TestCheckResourceAttr(name, "probe_zone", zoneName),
 				),
 			},
 		},
@@ -133,6 +134,7 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
 	var initialId string
 	name := "cloudflare_load_balancer_monitor.test"
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -149,7 +151,7 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 				PreConfig: func() {
 					initialId = loadBalancerMonitor.ID
 				},
-				Config: testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					func(state *terraform.State) error {
@@ -290,8 +292,8 @@ resource "cloudflare_load_balancer_monitor" "test" {
 }`
 }
 
-func testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified() string {
-	return `
+func testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(zoneName string) string {
+	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_monitor" "test" {
   expected_body = "dead"
   expected_codes = "5xx"
@@ -302,12 +304,12 @@ resource "cloudflare_load_balancer_monitor" "test" {
   retries = 5
   port = 8080
   description = "this is a very weird load balancer"
-  probe_zone = "example.com"
+  probe_zone = "%[1]s"
   header {
     header = "Host"
-    values = ["example.com"]
+    values = ["%[1]s"]
   }
-}`
+}`, zoneName)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(resourceName string) string {
