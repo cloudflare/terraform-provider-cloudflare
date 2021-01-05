@@ -3,6 +3,7 @@
 **Improvements**
 
 * `resource/cloudflare_access_application`: Add support for `custom_deny_message` and `custom_deny_url` values ([#895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/895)) 
+* `resource/cloudflare_load_balancer_monitor`: Add support for `probe_zone` for monitors ([#903](https://github.com/cloudflare/terraform-provider-cloudflare/issues/903)) 
 
 ## 2.15.0 (December 29th, 2020)
 
