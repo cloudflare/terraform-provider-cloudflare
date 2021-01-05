@@ -1,5 +1,9 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/cloudflare_access_application`: Add support for `custom_deny_message` and `custom_deny_url` values ([#895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/895)) 
+
 ## 2.15.0 (December 29th, 2020)
 
 **Improvements**
