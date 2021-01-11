@@ -117,6 +117,34 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_www(t *testing.T) {
+	t.Parallel()
+	var record cloudflare.DNSRecord
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := fmt.Sprintf("cloudflare_record.foobar")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigWWW(zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					testAccCheckCloudflareRecordAttributes(&record),
+					resource.TestCheckResourceAttr(
+						resourceName, "name", "www"),
+					resource.TestCheckResourceAttr(
+						resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(
+						resourceName, "value", "@"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRecord_LOC(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord
@@ -528,6 +556,17 @@ resource "cloudflare_record" "foobar" {
 	value = "192.168.0.10"
 	type = "A"
 	ttl = 3600
+}`, zoneID)
+}
+
+func testAccCheckCloudflareRecordConfigWWW(zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "foobar" {
+	zone_id = "%s"
+	name = "www"
+	value = "@"
+	type = "CNAME"
+	ttl = -1
 }`, zoneID)
 }
 
