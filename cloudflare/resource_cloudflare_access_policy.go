@@ -96,9 +96,18 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 	d.Set("name", accessPolicy.Name)
 	d.Set("decision", accessPolicy.Decision)
 	d.Set("precedence", accessPolicy.Precedence)
-	d.Set("require", accessPolicy.Require)
-	d.Set("exclude", accessPolicy.Exclude)
-	d.Set("include", accessPolicy.Include)
+
+	if err := d.Set("require", accessPolicy.Require); err != nil {
+		return fmt.Errorf("failed to set require attribute: %s", err)
+	}
+
+	if err := d.Set("exclude", accessPolicy.Exclude); err != nil {
+		return fmt.Errorf("failed to set exclude attribute: %s", err)
+	}
+
+	if err := d.Set("include", accessPolicy.Include); err != nil {
+		return fmt.Errorf("failed to set include attribute: %s", err)
+	}
 
 	return nil
 }
