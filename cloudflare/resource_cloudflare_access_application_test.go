@@ -404,6 +404,36 @@ func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidSessionDuration(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(`session_duration only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`),
+			},
+		},
+	})
+}
+
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
     resource "cloudflare_access_application" "%[1]s" {
@@ -448,6 +478,17 @@ func testAccessApplicationWithMissingCORSOrigins(resourceID, zone, zoneID string
     cors_headers {
       allow_all_methods = true
     }
+  }
+  `, resourceID, zone, zoneID)
+}
+
+func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name             = "%[1]s-updated"
+      zone_id          = "%[3]s"
+      domain           = "%[1]s.%[2]s"
+      session_duration = "24z"
   }
   `, resourceID, zone, zoneID)
 }
