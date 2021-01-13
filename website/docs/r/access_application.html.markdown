@@ -50,7 +50,7 @@ The following arguments are supported:
 * `domain` - (Required) The complete URL of the asset you wish to put
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
 * `session_duration` - (Optional) How often a user will be forced to
-  re-authorise. Must be in the format `"300ms"`, `"-1.5h"`, or `"2h45m"`. 
+  re-authorise. Must be in the format `"48h"` or `"2h45m"`.
   Valid time units are `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`. Defaults to `24h`.
 * `cors_headers` - (Optional) CORS configuration for the Access Application. See
   below for reference structure.
