@@ -1,5 +1,9 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/cloudflare_access_application`: Allow any `session_duration` that is `time.ParseDuration` compatible ([#910](https://github.com/cloudflare/terraform-provider-cloudflare/issues/910)) 
+
 ## 2.17.0 (January 5th, 2021)
 
 * **New Resource:** `cloudflare_magic_firewall_ruleset` ([#884](https://github.com/cloudflare/terraform-provider-cloudflare/issues/884))
