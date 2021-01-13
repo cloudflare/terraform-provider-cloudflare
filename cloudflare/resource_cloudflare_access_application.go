@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -47,10 +48,17 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Required: true,
 			},
 			"session_duration": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "24h",
-				ValidateFunc: validation.StringInSlice([]string{"0s", "15m", "30m", "6h", "12h", "24h", "168h", "730h"}, false),
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "24h",
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					v := val.(string)
+					_, err := time.ParseDuration(v)
+					if err != nil {
+						errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`, key))
+					}
+					return
+				},
 			},
 			"cors_headers": {
 				Type:     schema.TypeList,
