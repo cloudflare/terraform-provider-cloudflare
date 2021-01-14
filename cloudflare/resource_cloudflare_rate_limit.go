@@ -147,6 +147,30 @@ func resourceCloudflareRateLimit() *schema.Resource {
 										Optional: true,
 										Computed: true,
 									},
+
+									"header": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"name": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+
+												"op": {
+													Type:         schema.TypeString,
+													Required:     true,
+													ValidateFunc: validation.StringInSlice([]string{"eq", "ne"}, false),
+												},
+
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -347,6 +371,20 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 			originTraffic := originIface.(bool)
 			responseMatcher.OriginTraffic = &originTraffic
 		}
+
+		if headersSet, ok := matchResp["header"]; ok {
+			headersArray := make([]cloudflare.RateLimitResponseMatcherHeader, headersSet.(*schema.Set).Len())
+			for i, entry := range headersSet.(*schema.Set).List() {
+				e := entry.(map[string]interface{})
+				headersArray[i] = cloudflare.RateLimitResponseMatcherHeader{
+					Name:  e["name"].(string),
+					Op:    e["op"].(string),
+					Value: e["value"].(string),
+				}
+			}
+			responseMatcher.Headers = headersArray
+		}
+
 		matcher.Response = responseMatcher
 	}
 	return
@@ -485,6 +523,10 @@ func flattenRateLimitResponseMatcher(cfg cloudflare.RateLimitResponseMatcher) []
 
 	if len(cfg.Statuses) > 0 {
 		data["statuses"] = schema.NewSet(IntIdentity, flattenIntList(cfg.Statuses))
+	}
+
+	if len(cfg.Headers) > 0 {
+		data["headers"] = cfg.Headers
 	}
 
 	if len(data) > 0 {
