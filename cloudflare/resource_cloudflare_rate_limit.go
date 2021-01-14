@@ -526,7 +526,15 @@ func flattenRateLimitResponseMatcher(cfg cloudflare.RateLimitResponseMatcher) []
 	}
 
 	if len(cfg.Headers) > 0 {
-		data["headers"] = cfg.Headers
+		headers := make([]map[string]interface{}, len(cfg.Headers))
+		for i, header := range cfg.Headers {
+			headers[i] = map[string]interface{}{
+				"name":  header.Name,
+				"op":    header.Op,
+				"value": header.Value,
+			}
+		}
+		data["header"] = headers
 	}
 
 	if len(data) > 0 {
