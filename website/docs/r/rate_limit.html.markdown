@@ -26,16 +26,18 @@ resource "cloudflare_rate_limit" "example" {
     response {
       statuses = [200, 201, 202, 301, 429]
       origin_traffic = false
-      header {
-        name  = "Host"
-        op    = "eq"
-        value = "localhost"
-      }
-      header {
-        name  = "X-Example"
-        op    = "ne"
-        value = "my-example"
-      }
+      headers = [ 
+        {
+          name  = "Host"
+          op    = "eq"
+          value = "localhost"
+        },
+        {
+          name  = "X-Example"
+          op    = "ne"
+          value = "my-example"
+        }
+      ]
     }
   }
   action {
@@ -84,13 +86,10 @@ The **match.response** block supports:
 
 * `statuses` - (Optional) HTTP Status codes, can be one [403], many [401,403] or indicate all by not providing this value.
 * `origin_traffic` - (Optional) Only count traffic that has come from your origin servers. If true, cached items that Cloudflare serve will not count towards rate limiting. Default: `true`.
-* `header` - (Optional) Origin Response Headers to match against based on an “AND” basis, so it must match all Headers to trigger. To exclude a Header from being matched, “not equals” is available. Each Header must be an exact match, but is not case sensitive.
-
-The **match.response.header** block supports:
-
-* `name` - (Required) The name of the response header to match.
-* `op` - (Required) The operator when matching. Allowable values are 'eq', 'ne' where `eq` means equals, `ne` means not equals.
-* `value` - (Required) The value of the header, which will be exactly matched.
+* `headers` - (Optional) block is a list of maps with the following attributes:
+    * `name` - (Required) The name of the response header to match.
+    * `op` - (Required) The operator when matching. Allowable values are 'eq', 'ne' where `eq` means equals, `ne` means not equals.
+    * `value` - (Required) The value of the header, which will be exactly matched.
 
 The **action** block supports:
 
