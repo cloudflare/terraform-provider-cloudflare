@@ -308,7 +308,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"check_presence": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -316,7 +316,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"include": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -335,7 +335,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"check_presence": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -343,7 +343,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"exclude": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -351,7 +351,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"include": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -386,7 +386,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"exclude": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -394,7 +394,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"include": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
