@@ -872,26 +872,31 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 						sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
 					}
 				case "query_string":
-					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
-						switch fieldID {
-						case "exclude", "include":
-							if fieldValue.(*schema.Set).Len() > 0 {
+					if sectionValue.([]interface{})[0] != nil {
+						for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+							switch fieldID {
+							case "exclude", "include":
+								if fieldValue.(*schema.Set).Len() > 0 {
+									sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+								}
+							case "ignore":
+								sectionOutput[fieldID] = fieldValue
+							default:
 								sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
 							}
-						default:
-							sectionOutput[fieldID] = fieldValue
 						}
-					}
 
-					if sectionOutput["ignore"].(bool) {
-						sectionOutput["exclude"] = []interface{}{"*"}
+						if sectionOutput["ignore"].(bool) {
+							sectionOutput["exclude"] = []interface{}{"*"}
+						}
+
+						delete(sectionOutput, "ignore")
 					}
-					delete(sectionOutput, "ignore")
 
 					exclude, ok1 := sectionOutput["exclude"]
 					include, ok2 := sectionOutput["include"]
 
-					// Ensure that if no `include`, `exlude` or `ignore` attributes are
+					// Ensure that if no `include`, `exclude` or `ignore` attributes are
 					// set, we default to including all query string parameters in the
 					// cache key.
 					if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
