@@ -745,12 +745,12 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 					fieldOutput[fieldID] = fieldValue
 				}
 
-				if fieldOutput["exclude"] == "*" {
-					fieldOutput["exclude"] = []interface{}{}
+				if itemExistsInSlice(fieldOutput["exclude"], "*") {
+					fieldOutput["exclude"] = []interface{}{"*"}
 					fieldOutput["ignore"] = true
 				}
 
-				if fieldOutput["include"] == "*" {
+				if itemExistsInSlice(fieldOutput["include"], "*") {
 					fieldOutput["include"] = []interface{}{}
 					fieldOutput["ignore"] = false
 				}
@@ -866,16 +866,25 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 			for sectionID, sectionValue := range cacheKeyActionSchema[0].(map[string]interface{}) {
 				sectionOutput := map[string]interface{}{}
 
-				if sectionValue.([]interface{})[0] != nil {
+				switch sectionID {
+				case "cookie", "header":
 					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
-						sectionOutput[fieldID] = fieldValue
+						sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
 					}
-				}
+				case "query_string":
+					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+						switch fieldID {
+						case "exclude", "include":
+							if fieldValue.(*schema.Set).Len() > 0 {
+								sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+							}
+						default:
+							sectionOutput[fieldID] = fieldValue
+						}
+					}
 
-				if sectionID == "query_string" {
-					queryKey := "include"
-					if ignore, ok := sectionOutput["ignore"]; ok && ignore.(bool) {
-						queryKey = "exclude"
+					if sectionOutput["ignore"].(bool) {
+						sectionOutput["exclude"] = []interface{}{"*"}
 					}
 					delete(sectionOutput, "ignore")
 
@@ -883,7 +892,13 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 					include, ok2 := sectionOutput["include"]
 
 					if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
-						sectionOutput[queryKey] = "*"
+						sectionOutput["exclude"] = []interface{}{"*"}
+					}
+
+					output[sectionID] = sectionOutput
+				default:
+					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+						sectionOutput[fieldID] = fieldValue
 					}
 				}
 

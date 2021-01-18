@@ -420,12 +420,70 @@ func TestAccCloudflarePageRuleCacheKeyFieldsBasic(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.cookie.0.check_presence.0", "cookie_presence"),
-					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.cookie.0.include.0", "cookie_include"),
-					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.check_presence.0", "header_presence"),
-					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.include.0", "header_include"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.cookie.0.check_presence.#", "1"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.cookie.0.include.#", "1"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.check_presence.#", "1"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.include.#", "1"),
 					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.host.0.resolved", "true"),
-					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.query_string.0.exclude.0", "qs_exclude"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.query_string.0.exclude.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRuleCacheKeyFieldsIgnoreQueryStringOrdering(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
+	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsWithUnorderedEntries(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.cookie.0.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.cookie.0.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.header.0.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.header.0.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.query_string.0.include.#", "7"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflarePageRuleCacheKeyFieldsExcludeAllQueryString(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
+	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIgnoreAllQueryString(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.cookie.0.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.cookie.0.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.header.0.check_presence.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.header.0.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.query_string.0.exclude.#", "1"),
 				),
 			},
 		},
@@ -447,7 +505,7 @@ func TestAccCloudflarePageRuleCacheKeyFields2(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields2(zoneID, target),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
-					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.exclude.0", "origin"),
+					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.header.0.exclude.#", "1"),
 					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.host.0.resolved", "false"),
 					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.user.0.device_type", "true"),
 					resource.TestCheckResourceAttr("cloudflare_page_rule.test", "actions.0.cache_key_fields.0.user.0.geo", "true"),
@@ -786,6 +844,68 @@ resource "cloudflare_page_rule" "test" {
 		}
 	}
 }`, zoneID, target)
+}
+
+func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsWithUnorderedEntries(zoneID, rnd, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "%[3]s" {
+	zone_id = "%[1]s"
+	target = "%[3]s"
+	actions {
+		cache_key_fields {
+			cookie {
+				check_presence = ["cookie_presence"]
+				include = ["cookie_include"]
+			}
+			header {
+				check_presence = ["header_presence"]
+				include = ["header_include"]
+			}
+			host {
+				resolved = true
+			}
+			query_string {
+				include = [
+          "test.anothertest",
+          "test.regiontest",
+          "test.devicetest",
+          "test.testthis",
+          "test.hello",
+          "test.segmenttest",
+          "test.usertype"
+				]
+			}
+			user {}
+		}
+	}
+}`, zoneID, target, rnd)
+}
+
+func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIgnoreAllQueryString(zoneID, rnd, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "%[3]s" {
+	zone_id = "%[1]s"
+	target = "%[3]s"
+	actions {
+		cache_key_fields {
+			cookie {
+				check_presence = ["cookie_presence"]
+				include = ["cookie_include"]
+			}
+			header {
+				check_presence = ["header_presence"]
+				include = ["header_include"]
+			}
+			host {
+				resolved = true
+			}
+			query_string {
+				ignore = true
+			}
+			user {}
+		}
+	}
+}`, zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFields2(zoneID, target string) string {
