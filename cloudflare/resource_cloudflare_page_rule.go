@@ -891,8 +891,11 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 					exclude, ok1 := sectionOutput["exclude"]
 					include, ok2 := sectionOutput["include"]
 
+					// Ensure that if no `include`, `exlude` or `ignore` attributes are
+					// set, we default to including all query string parameters in the
+					// cache key.
 					if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
-						sectionOutput["exclude"] = []interface{}{"*"}
+						sectionOutput["include"] = []interface{}{"*"}
 					}
 
 					output[sectionID] = sectionOutput
