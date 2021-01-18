@@ -9,6 +9,7 @@ import (
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
@@ -284,7 +285,38 @@ func TestTranformForwardingURL(t *testing.T) {
 func TestCacheKeyFieldsNilValue(t *testing.T) {
 	pageRuleAction, err := transformToCloudflarePageRuleAction(
 		"cache_key_fields",
-		[]interface{}{map[string]interface{}{"cookie": []interface{}{map[string]interface{}{"check_presence": []interface{}{}, "include": []interface{}{"next-i18next"}}}, "header": []interface{}{map[string]interface{}{"check_presence": []interface{}{}, "exclude": []interface{}{}, "include": []interface{}{"x-forwarded-host"}}}, "host": []interface{}{map[string]interface{}{"resolved": false}}, "query_string": []interface{}{interface{}(nil)}, "user": []interface{}{map[string]interface{}{"device_type": true, "geo": true, "lang": true}}}},
+		[]interface{}{
+			map[string]interface{}{
+				"cookie": []interface{}{
+					map[string]interface{}{
+						"include":        schema.NewSet(schema.HashString, []interface{}{}),
+						"check_presence": schema.NewSet(schema.HashString, []interface{}{"next-i18next"}),
+					},
+				},
+				"header": []interface{}{
+					map[string]interface{}{
+						"check_presence": schema.NewSet(schema.HashString, []interface{}{}),
+						"exclude":        schema.NewSet(schema.HashString, []interface{}{}),
+						"include":        schema.NewSet(schema.HashString, []interface{}{"x-forwarded-host"}),
+					},
+				},
+				"host": []interface{}{
+					map[string]interface{}{
+						"resolved": false,
+					},
+				},
+				"query_string": []interface{}{
+					interface{}(nil),
+				},
+				"user": []interface{}{
+					map[string]interface{}{
+						"device_type": true,
+						"geo":         true,
+						"lang":        true,
+					},
+				},
+			},
+		},
 		nil,
 	)
 
@@ -292,8 +324,8 @@ func TestCacheKeyFieldsNilValue(t *testing.T) {
 		t.Fatalf("Unexpected error transforming page rule action: %s", err)
 	}
 
-	if !reflect.DeepEqual(pageRuleAction.Value.(map[string]interface{})["query_string"], map[string]interface{}{"include": "*"}) {
-		t.Fatalf("Unexpected transformToCloudflarePageRuleAction result, expected %#v, got %#v", map[string]interface{}{"include": "*"}, pageRuleAction.Value.(map[string]interface{})["query_string"])
+	if !reflect.DeepEqual(pageRuleAction.Value.(map[string]interface{})["query_string"], map[string]interface{}{"include": []interface{}{"*"}}) {
+		t.Fatalf("Unexpected transformToCloudflarePageRuleAction result, expected %#v, got %#v", map[string]interface{}{"include": []interface{}{"*"}}, pageRuleAction.Value.(map[string]interface{})["query_string"])
 	}
 }
 
