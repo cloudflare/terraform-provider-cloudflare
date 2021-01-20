@@ -111,6 +111,13 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "match.0.request.0.schemes.#", "2"),
 					resource.TestMatchResourceAttr(name, "match.0.request.0.url_pattern", regexp.MustCompile("tfacc-full")),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.statuses.#", "5"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.#", "2"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.name", "Test"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.op", "ne"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.value", "test"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.1.name", "Host"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.1.op", "eq"),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.1.value", "localhost"),
 					resource.TestCheckResourceAttr(name, "correlate.0.by", "nat"),
 					resource.TestCheckResourceAttr(name, "disabled", "true"),
 					resource.TestCheckResourceAttr(name, "description", "my fully specified rate limit for a zone"),
@@ -369,6 +376,18 @@ resource "cloudflare_rate_limit" "%[1]s" {
     response {
       statuses = [200, 201, 202, 301, 429]
       origin_traffic = false
+      headers = [
+        {
+          name  = "Test"
+          op    = "ne"
+          value = "test"
+	    },
+        {
+          name  = "Host"
+          op    = "eq"
+          value = "localhost"
+	    }
+      ]
     }
   }
   action {
