@@ -3,6 +3,7 @@
 **Improvements**
 
 * `resource/cloudflare_access_application`: Allow any `session_duration` that is `time.ParseDuration` compatible ([#910](https://github.com/cloudflare/terraform-provider-cloudflare/issues/910)) 
+* `resource/cloudflare_rate_limit`: Add the ability to configure `match.response.headers` in rate limits ([#911](https://github.com/cloudflare/terraform-provider-cloudflare/issues/911)) 
 
 ## 2.17.0 (January 5th, 2021)
 
