@@ -518,3 +518,42 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 
 	return group
 }
+
+func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interface{} {
+	data := []map[string]interface{}{}
+	emails := []string{}
+	emailDomains := []string{}
+
+	for _, group := range accessGroup {
+		for groupKey, groupValue := range group.(map[string]interface{}) {
+			switch groupKey {
+			case "everyone":
+				data = append(data, map[string]interface{}{
+					groupKey: true,
+				})
+			case "email":
+				for _, email := range groupValue.(map[string]interface{}) {
+					emails = append(emails, email.(string))
+				}
+			case "email_domain":
+				for _, domain := range groupValue.(map[string]interface{}) {
+					emailDomains = append(emailDomains, domain.(string))
+				}
+			}
+		}
+	}
+
+	if len(emails) > 0 {
+		data = append(data, map[string]interface{}{
+			"email": emails,
+		})
+	}
+
+	if len(emailDomains) > 0 {
+		data = append(data, map[string]interface{}{
+			"email_domain": emailDomains,
+		})
+	}
+
+	return data
+}

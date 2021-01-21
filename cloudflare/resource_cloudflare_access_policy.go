@@ -105,7 +105,7 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("failed to set exclude attribute: %s", err)
 	}
 
-	if err := d.Set("include", accessPolicy.Include); err != nil {
+	if err := d.Set("include", FlattenAccessGroupForSchema(accessPolicy.Include)); err != nil {
 		return fmt.Errorf("failed to set include attribute: %s", err)
 	}
 
