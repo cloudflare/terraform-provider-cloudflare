@@ -523,6 +523,10 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	data := []map[string]interface{}{}
 	emails := []string{}
 	emailDomains := []string{}
+	ips := []string{}
+	serviceTokens := []string{}
+	commonName := ""
+	geos := []string{}
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -539,6 +543,19 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				for _, domain := range groupValue.(map[string]interface{}) {
 					emailDomains = append(emailDomains, domain.(string))
 				}
+			case "ip":
+				for _, ip := range groupValue.(map[string]interface{}) {
+					ips = append(ips, ip.(string))
+				}
+			case "service_token":
+				for _, serviceToken := range groupValue.(map[string]interface{}) {
+					serviceTokens = append(serviceTokens, serviceToken.(string))
+				}
+
+			case "geo":
+				for _, geo := range groupValue.(map[string]interface{}) {
+					geos = append(geos, geo.(string))
+				}
 			}
 		}
 	}
@@ -552,6 +569,30 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	if len(emailDomains) > 0 {
 		data = append(data, map[string]interface{}{
 			"email_domain": emailDomains,
+		})
+	}
+
+	if len(ips) > 0 {
+		data = append(data, map[string]interface{}{
+			"ip": ips,
+		})
+	}
+
+	if len(serviceTokens) > 0 {
+		data = append(data, map[string]interface{}{
+			"service_token": serviceTokens,
+		})
+	}
+
+	if commonName != "" {
+		data = append(data, map[string]interface{}{
+			"common_name": commonName,
+		})
+	}
+
+	if len(geos) > 0 {
+		data = append(data, map[string]interface{}{
+			"geo": geos,
 		})
 	}
 
