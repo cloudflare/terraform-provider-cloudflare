@@ -531,7 +531,7 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
 			switch groupKey {
-			case "everyone":
+			case "everyone", "any_valid_service_token", "certificate":
 				data = append(data, map[string]interface{}{
 					groupKey: true,
 				})
