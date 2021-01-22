@@ -598,6 +598,8 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				samlID = samlCfg["identity_provider_id"].(string)
 				samlAttrName = samlCfg["attribute_name"].(string)
 				samlAttrValue = samlCfg["attribute_value"].(string)
+			default:
+				log.Printf("[DEBUG] Access Group key %q not transformed", groupKey)
 			}
 		}
 	}
