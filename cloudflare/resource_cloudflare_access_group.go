@@ -564,7 +564,10 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				for _, serviceToken := range groupValue.(map[string]interface{}) {
 					serviceTokens = append(serviceTokens, serviceToken.(string))
 				}
-
+			case "common_name":
+				for _, name := range groupValue.(map[string]interface{}) {
+					commonName = name.(string)
+				}
 			case "auth_method":
 				for _, method := range groupValue.(map[string]interface{}) {
 					authMethod = method.(string)
