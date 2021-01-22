@@ -526,6 +526,7 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	ips := []string{}
 	serviceTokens := []string{}
 	commonName := ""
+	authMethod := ""
 	geos := []string{}
 
 	for _, group := range accessGroup {
@@ -552,6 +553,10 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 					serviceTokens = append(serviceTokens, serviceToken.(string))
 				}
 
+			case "auth_method":
+				for _, method := range groupValue.(map[string]interface{}) {
+					authMethod = method.(string)
+				}
 			case "geo":
 				for _, geo := range groupValue.(map[string]interface{}) {
 					geos = append(geos, geo.(string))
@@ -587,6 +592,12 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	if commonName != "" {
 		data = append(data, map[string]interface{}{
 			"common_name": commonName,
+		})
+	}
+
+	if authMethod != "" {
+		data = append(data, map[string]interface{}{
+			"auth_method": authMethod,
 		})
 	}
 

@@ -564,9 +564,7 @@ func TestAccessPolicyAuthMethod(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "include.0.auth_method.#", "1"),
-					resource.TestCheckResourceAttr(name, "include.0.auth_method.0", "10.0.0.1/32"),
-					resource.TestCheckResourceAttr(name, "include.0.ip.1", "10.0.0.2/32"),
+					resource.TestCheckResourceAttr(name, "include.0.auth_method", "hwk"),
 				),
 			},
 		},
@@ -589,7 +587,7 @@ func testAccessPolicyAuthMethodConfig(resourceID, zone, accountID string) string
 			precedence     = "1"
 
 			include {
-				ip = ["10.0.0.1/32", "10.0.0.2/32"]
+				auth_method = "hwk"
 			}
 		}
 
