@@ -238,6 +238,7 @@ func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{})
 	} else {
 		accessGroup, err = client.ZoneLevelAccessGroup(identifier.Value, d.Id())
 	}
+
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Access Group %s no longer exists", d.Id())
@@ -248,9 +249,18 @@ func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{})
 	}
 
 	d.Set("name", accessGroup.Name)
-	d.Set("require", accessGroup.Require)
-	d.Set("exclude", accessGroup.Exclude)
-	d.Set("include", accessGroup.Include)
+
+	if err := d.Set("require", TransformAccessGroupForSchema(accessGroup.Require)); err != nil {
+		return fmt.Errorf("failed to set require attribute: %s", err)
+	}
+
+	if err := d.Set("exclude", TransformAccessGroupForSchema(accessGroup.Exclude)); err != nil {
+		return fmt.Errorf("failed to set exclude attribute: %s", err)
+	}
+
+	if err := d.Set("include", TransformAccessGroupForSchema(accessGroup.Include)); err != nil {
+		return fmt.Errorf("failed to set include attribute: %s", err)
+	}
 
 	return nil
 }
