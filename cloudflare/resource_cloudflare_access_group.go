@@ -535,6 +535,8 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	githubName := ""
 	githubTeams := []string{}
 	githubID := ""
+	azureID := ""
+	azureIDs := []string{}
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -581,6 +583,10 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				githubID = githubCfg["identity_provider_id"].(string)
 				githubName = githubCfg["name"].(string)
 				githubTeams = append(githubTeams, githubCfg["team"].(string))
+			case "azure":
+				azureCfg := groupValue.(map[string]interface{})
+				azureID = azureCfg["identity_provider_id"].(string)
+				azureIDs = append(azureIDs, azureCfg["id"].(string))
 			}
 		}
 	}
@@ -654,6 +660,16 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 					"name":                 githubName,
 					"team":                 githubTeams,
 					"identity_provider_id": githubID,
+				}},
+		})
+	}
+
+	if len(azureIDs) > 0 && azureID != "" {
+		data = append(data, map[string]interface{}{
+			"azure": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": azureID,
+					"id":                   azureIDs,
 				}},
 		})
 	}
