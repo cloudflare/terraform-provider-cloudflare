@@ -527,6 +527,7 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 	emailDomains := []string{}
 	ips := []string{}
 	serviceTokens := []string{}
+	groups := []string{}
 	commonName := ""
 	authMethod := ""
 	geos := []string{}
@@ -600,6 +601,10 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 				samlID = samlCfg["identity_provider_id"].(string)
 				samlAttrName = samlCfg["attribute_name"].(string)
 				samlAttrValue = samlCfg["attribute_value"].(string)
+			case "group":
+				for _, group := range groupValue.(map[string]interface{}) {
+					groups = append(groups, group.(string))
+				}
 			default:
 				log.Printf("[DEBUG] Access Group key %q not transformed", groupKey)
 			}
@@ -697,6 +702,12 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 					"attribute_name":       samlAttrName,
 					"attribute_value":      samlAttrValue,
 				}},
+		})
+	}
+
+	if len(groups) > 0 {
+		data = append(data, map[string]interface{}{
+			"group": groups,
 		})
 	}
 
