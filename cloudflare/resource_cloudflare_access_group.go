@@ -530,6 +530,8 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	geos := []string{}
 	oktaID := ""
 	oktaGroups := []string{}
+	gsuiteID := ""
+	gsuiteEmails := []string{}
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -567,6 +569,10 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				oktaCfg := groupValue.(map[string]interface{})
 				oktaID = oktaCfg["identity_provider_id"].(string)
 				oktaGroups = append(oktaGroups, oktaCfg["name"].(string))
+			case "gsuite":
+				gsuiteCfg := groupValue.(map[string]interface{})
+				gsuiteID = gsuiteCfg["identity_provider_id"].(string)
+				gsuiteEmails = append(gsuiteEmails, gsuiteCfg["name"].(string))
 			}
 		}
 	}
@@ -619,6 +625,16 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				map[string]interface{}{
 					"identity_provider_id": oktaID,
 					"name":                 oktaGroups,
+				}},
+		})
+	}
+
+	if len(gsuiteEmails) > 0 && gsuiteID != "" {
+		data = append(data, map[string]interface{}{
+			"gsuite": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": gsuiteID,
+					"email":                gsuiteEmails,
 				}},
 		})
 	}
