@@ -70,7 +70,16 @@ arch = $(shell go env GOARCH)
 dev_version = 99.0.0
 provider_path = registry.terraform.io/cloudflare/cloudflare/$(dev_version)/$(os)_$(arch)/
 
-build-and-install-dev-version:
+clean-dev-version:
+	@echo "cleaning out dev version ($(dev_version))"
+ifeq ($(os), darwin)
+	rm -f ~/Library/Application\ Support/io.terraform/plugins/$(provider_path)terraform-provider-cloudflare_$(dev_version)
+endif
+ifeq ($(os), linux)
+	rm -f /usr/local/share/terraform/plugins/$(provider_path)terraform-provider-cloudflare_$(dev_version)
+endif
+
+build-and-install-dev-version: clean-dev-version
 	go build -o terraform-provider-cloudflare_$(dev_version)
 ifeq ($(os), darwin)
 	mkdir -p ~/Library/Application\ Support/io.terraform/plugins/$(provider_path)
@@ -81,4 +90,4 @@ ifeq ($(os), linux)
 	cp terraform-provider-cloudflare_$(dev_version) /usr/local/share/terraform/plugins/$(provider_path)
 endif
 
-.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-and-install-dev-version
+.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-and-install-dev-version clean-dev-version
