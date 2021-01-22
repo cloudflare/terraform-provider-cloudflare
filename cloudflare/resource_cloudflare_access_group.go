@@ -528,6 +528,8 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	commonName := ""
 	authMethod := ""
 	geos := []string{}
+	oktaID := ""
+	oktaGroups := []string{}
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -561,6 +563,10 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				for _, geo := range groupValue.(map[string]interface{}) {
 					geos = append(geos, geo.(string))
 				}
+			case "okta":
+				oktaCfg := groupValue.(map[string]interface{})
+				oktaID = oktaCfg["identity_provider_id"].(string)
+				oktaGroups = append(oktaGroups, oktaCfg["name"].(string))
 			}
 		}
 	}
@@ -604,6 +610,16 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	if len(geos) > 0 {
 		data = append(data, map[string]interface{}{
 			"geo": geos,
+		})
+	}
+
+	if len(oktaGroups) > 0 && oktaID != "" {
+		data = append(data, map[string]interface{}{
+			"okta": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": oktaID,
+					"name":                 oktaGroups,
+				}},
 		})
 	}
 
