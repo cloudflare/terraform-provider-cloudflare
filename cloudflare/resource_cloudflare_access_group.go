@@ -537,6 +537,9 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 	githubID := ""
 	azureID := ""
 	azureIDs := []string{}
+	samlAttrName := ""
+	samlAttrValue := ""
+	samlID := ""
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -587,6 +590,11 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				azureCfg := groupValue.(map[string]interface{})
 				azureID = azureCfg["identity_provider_id"].(string)
 				azureIDs = append(azureIDs, azureCfg["id"].(string))
+			case "saml":
+				samlCfg := groupValue.(map[string]interface{})
+				samlID = samlCfg["identity_provider_id"].(string)
+				samlAttrName = samlCfg["attribute_name"].(string)
+				samlAttrValue = samlCfg["attribute_value"].(string)
 			}
 		}
 	}
@@ -670,6 +678,17 @@ func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interfa
 				map[string]interface{}{
 					"identity_provider_id": azureID,
 					"id":                   azureIDs,
+				}},
+		})
+	}
+
+	if samlID != "" && samlAttrName != "" && samlAttrValue != "" {
+		data = append(data, map[string]interface{}{
+			"saml": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": samlID,
+					"attribute_name":       samlAttrName,
+					"attribute_value":      samlAttrValue,
 				}},
 		})
 	}
