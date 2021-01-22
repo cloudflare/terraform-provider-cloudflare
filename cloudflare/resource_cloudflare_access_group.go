@@ -519,7 +519,9 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 	return group
 }
 
-func FlattenAccessGroupForSchema(accessGroup []interface{}) []map[string]interface{} {
+// TransformAccessGroupForSchema takes the incoming `accessGroup` from the API
+// response and converts it to a usable schema for the conditions.
+func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]interface{} {
 	data := []map[string]interface{}{}
 	emails := []string{}
 	emailDomains := []string{}

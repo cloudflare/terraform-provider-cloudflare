@@ -97,15 +97,15 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 	d.Set("decision", accessPolicy.Decision)
 	d.Set("precedence", accessPolicy.Precedence)
 
-	if err := d.Set("require", accessPolicy.Require); err != nil {
+	if err := d.Set("require", TransformAccessGroupForSchema(accessPolicy.Require)); err != nil {
 		return fmt.Errorf("failed to set require attribute: %s", err)
 	}
 
-	if err := d.Set("exclude", accessPolicy.Exclude); err != nil {
+	if err := d.Set("exclude", TransformAccessGroupForSchema(accessPolicy.Exclude)); err != nil {
 		return fmt.Errorf("failed to set exclude attribute: %s", err)
 	}
 
-	if err := d.Set("include", FlattenAccessGroupForSchema(accessPolicy.Include)); err != nil {
+	if err := d.Set("include", TransformAccessGroupForSchema(accessPolicy.Include)); err != nil {
 		return fmt.Errorf("failed to set include attribute: %s", err)
 	}
 
