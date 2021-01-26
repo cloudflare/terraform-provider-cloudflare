@@ -38,3 +38,29 @@ resource "cloudflare_access_rule" "test" {
   }
 }`, mode, notes, target, value)
 }
+
+func TestValidateAccessRuleConfigurationIPRange(t *testing.T) {
+	ipRangeValid := map[string]bool{
+		"192.168.0.1/32":           true,
+		"192.168.0.1/24":           true,
+		"192.168.0.1/64":           false,
+		"192.168.0.1/31":           false,
+		"192.168.0.1/16":           false,
+		"fd82:0f75:cf0d:d7b3::/64": true,
+		"fd82:0f75:cf0d:d7b3::/48": true,
+		"fd82:0f75:cf0d:d7b3::/32": true,
+		"fd82:0f75:cf0d:d7b3::/63": false,
+		"fd82:0f75:cf0d:d7b3::/16": false,
+	}
+
+	for ipRange, valid := range ipRangeValid {
+		warnings, errors := validateAccessRuleConfigurationIPRange(ipRange)
+		isValid := len(errors) == 0
+		if len(warnings) != 0 {
+			t.Fatalf("ipRange is either invalid or valid, no room for warnings")
+		}
+		if isValid != valid {
+			t.Fatalf("%s resulted in %v, expected %v", ipRange, isValid, valid)
+		}
+	}
+}

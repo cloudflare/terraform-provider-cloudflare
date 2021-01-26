@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"net"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -257,4 +258,48 @@ func configurationDiffSuppress(k, old, new string, d *schema.ResourceData) bool 
 	}
 
 	return false
+}
+
+func validateAccessRuleConfiguration(v interface{}, k string) (warnings []string, errors []error) {
+	config := v.(map[string]interface{})
+
+	target := config["target"].(string)
+	value := config["value"].(string)
+
+	switch target {
+	case "ip_range":
+		return validateAccessRuleConfigurationIPRange(value)
+	default:
+	}
+
+	return warnings, errors
+}
+
+func validateAccessRuleConfigurationIPRange(v string) (warnings []string, errors []error) {
+	ip, ipNet, err := net.ParseCIDR(v)
+	if err != nil {
+		errors = append(errors, fmt.Errorf("failed to parse value as CIDR: %v", err))
+		return warnings, errors
+	}
+
+	if ipNet == nil {
+		errors = append(errors, fmt.Errorf("ip_range must hold a range"))
+		return warnings, errors
+	}
+
+	if ip.To4() != nil {
+		ones, _ := ipNet.Mask.Size()
+		if ones != 24 && ones != 32 {
+			errors = append(errors, fmt.Errorf("ip_range with ipv4 address must be a /24 or /32, got a /%d", ones))
+			return warnings, errors
+		}
+	} else {
+		ones, _ := ipNet.Mask.Size()
+		if ones != 32 && ones != 48 && ones != 64 {
+			errors = append(errors, fmt.Errorf("ip_range with ipv4 address must be in (/32, /48, /64), instead got a /%d", ones))
+			return warnings, errors
+		}
+	}
+
+	return warnings, errors
 }
