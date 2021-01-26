@@ -42,6 +42,7 @@ func resourceCloudflareAccessRule() *schema.Resource {
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: configurationDiffSuppress,
+				ValidateFunc:     validateAccessRuleConfiguration,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"target": {
