@@ -1,5 +1,9 @@
 ## Unreleased
 
+**Fixes**
+
+* `datasource/cloudflare_zones`: Pagination is now correctly handled internally and will return more than the single page of results ([cloudflare/cloudflare-go#534](https://github.com/cloudflare/cloudflare-go/pull/534)). 
+
 **Improvements**
 
 * `resource/cloudflare_access_application`: Allow any `session_duration` that is `time.ParseDuration` compatible ([#910](https://github.com/cloudflare/terraform-provider-cloudflare/issues/910)) 
