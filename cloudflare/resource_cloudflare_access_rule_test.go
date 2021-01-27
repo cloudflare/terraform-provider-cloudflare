@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -21,6 +22,29 @@ func TestAccAccessRuleASN(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
 					resource.TestCheckResourceAttr(name, "configuration.target", "asn"),
 					resource.TestCheckResourceAttr(name, "configuration.value", "AS112"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccAccessRuleIPRange(t *testing.T) {
+	name := "cloudflare_access_rule.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessRuleAccountConfig("challenge", "this is notes", "ip_range", "104.16.0.0/20"),
+				ExpectError: regexp.MustCompile("ip_range with ipv4 address must be a /16 or /24, got a /20"),
+			}, {
+				Config: testAccessRuleAccountConfig("challenge", "this is notes", "ip_range", "104.16.0.0/24"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
+					resource.TestCheckResourceAttr(name, "mode", "challenge"),
+					resource.TestCheckResourceAttr(name, "configuration.target", "ip_range"),
+					resource.TestCheckResourceAttr(name, "configuration.value", "104.16.0.0/24"),
 				),
 			},
 		},

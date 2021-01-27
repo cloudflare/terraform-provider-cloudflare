@@ -291,13 +291,13 @@ func validateAccessRuleConfigurationIPRange(v string) (warnings []string, errors
 	if ip.To4() != nil {
 		ones, _ := ipNet.Mask.Size()
 		if ones != 16 && ones != 24 {
-			errors = append(errors, fmt.Errorf("ip_range with ipv4 address must be a /24 or /32, got a /%d", ones))
+			errors = append(errors, fmt.Errorf("ip_range with ipv4 address must be a /16 or /24, got a /%d", ones))
 			return warnings, errors
 		}
 	} else {
 		ones, _ := ipNet.Mask.Size()
 		if ones != 32 && ones != 48 && ones != 64 {
-			errors = append(errors, fmt.Errorf("ip_range with ipv4 address must be in (/32, /48, /64), instead got a /%d", ones))
+			errors = append(errors, fmt.Errorf("ip_range with ipv6 address must be in (/32, /48, /64), instead got a /%d", ones))
 			return warnings, errors
 		}
 	}
