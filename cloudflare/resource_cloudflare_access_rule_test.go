@@ -41,11 +41,11 @@ resource "cloudflare_access_rule" "test" {
 
 func TestValidateAccessRuleConfigurationIPRange(t *testing.T) {
 	ipRangeValid := map[string]bool{
-		"192.168.0.1/32":           true,
+		"192.168.0.1/32":           false,
 		"192.168.0.1/24":           true,
 		"192.168.0.1/64":           false,
 		"192.168.0.1/31":           false,
-		"192.168.0.1/16":           false,
+		"192.168.0.1/16":           true,
 		"fd82:0f75:cf0d:d7b3::/64": true,
 		"fd82:0f75:cf0d:d7b3::/48": true,
 		"fd82:0f75:cf0d:d7b3::/32": true,

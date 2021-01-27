@@ -290,7 +290,7 @@ func validateAccessRuleConfigurationIPRange(v string) (warnings []string, errors
 
 	if ip.To4() != nil {
 		ones, _ := ipNet.Mask.Size()
-		if ones != 24 && ones != 32 {
+		if ones != 16 && ones != 24 {
 			errors = append(errors, fmt.Errorf("ip_range with ipv4 address must be a /24 or /32, got a /%d", ones))
 			return warnings, errors
 		}
