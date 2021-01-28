@@ -113,6 +113,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_account_member":                         resourceCloudflareAccountMember(),
 			"cloudflare_api_token":                              resourceCloudflareApiToken(),
 			"cloudflare_argo":                                   resourceCloudflareArgo(),
+			"cloudflare_argo_tunnel":                            resourceCloudflareArgoTunnel(),
 			"cloudflare_authenticated_origin_pulls":             resourceCloudflareAuthenticatedOriginPulls(),
 			"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),
 			"cloudflare_byo_ip_prefix":                          resourceCloudflareBYOIPPrefix(),
