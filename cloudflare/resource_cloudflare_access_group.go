@@ -518,3 +518,198 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 
 	return group
 }
+
+// TransformAccessGroupForSchema takes the incoming `accessGroup` from the API
+// response and converts it to a usable schema for the conditions.
+func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]interface{} {
+	data := []map[string]interface{}{}
+	emails := []string{}
+	emailDomains := []string{}
+	ips := []string{}
+	serviceTokens := []string{}
+	groups := []string{}
+	commonName := ""
+	authMethod := ""
+	geos := []string{}
+	oktaID := ""
+	oktaGroups := []string{}
+	gsuiteID := ""
+	gsuiteEmails := []string{}
+	githubName := ""
+	githubTeams := []string{}
+	githubID := ""
+	azureID := ""
+	azureIDs := []string{}
+	samlAttrName := ""
+	samlAttrValue := ""
+	samlID := ""
+
+	for _, group := range accessGroup {
+		for groupKey, groupValue := range group.(map[string]interface{}) {
+			switch groupKey {
+			case "everyone", "any_valid_service_token", "certificate":
+				data = append(data, map[string]interface{}{
+					groupKey: true,
+				})
+			case "email":
+				for _, email := range groupValue.(map[string]interface{}) {
+					emails = append(emails, email.(string))
+				}
+			case "email_domain":
+				for _, domain := range groupValue.(map[string]interface{}) {
+					emailDomains = append(emailDomains, domain.(string))
+				}
+			case "ip":
+				for _, ip := range groupValue.(map[string]interface{}) {
+					ips = append(ips, ip.(string))
+				}
+			case "service_token":
+				for _, serviceToken := range groupValue.(map[string]interface{}) {
+					serviceTokens = append(serviceTokens, serviceToken.(string))
+				}
+			case "common_name":
+				for _, name := range groupValue.(map[string]interface{}) {
+					commonName = name.(string)
+				}
+			case "auth_method":
+				for _, method := range groupValue.(map[string]interface{}) {
+					authMethod = method.(string)
+				}
+			case "geo":
+				for _, geo := range groupValue.(map[string]interface{}) {
+					geos = append(geos, geo.(string))
+				}
+			case "okta":
+				oktaCfg := groupValue.(map[string]interface{})
+				oktaID = oktaCfg["identity_provider_id"].(string)
+				oktaGroups = append(oktaGroups, oktaCfg["name"].(string))
+			case "gsuite":
+				gsuiteCfg := groupValue.(map[string]interface{})
+				gsuiteID = gsuiteCfg["identity_provider_id"].(string)
+				gsuiteEmails = append(gsuiteEmails, gsuiteCfg["name"].(string))
+			case "github":
+				githubCfg := groupValue.(map[string]interface{})
+				githubID = githubCfg["identity_provider_id"].(string)
+				githubName = githubCfg["name"].(string)
+				githubTeams = append(githubTeams, githubCfg["team"].(string))
+			case "azure":
+				azureCfg := groupValue.(map[string]interface{})
+				azureID = azureCfg["identity_provider_id"].(string)
+				azureIDs = append(azureIDs, azureCfg["id"].(string))
+			case "saml":
+				samlCfg := groupValue.(map[string]interface{})
+				samlID = samlCfg["identity_provider_id"].(string)
+				samlAttrName = samlCfg["attribute_name"].(string)
+				samlAttrValue = samlCfg["attribute_value"].(string)
+			case "group":
+				for _, group := range groupValue.(map[string]interface{}) {
+					groups = append(groups, group.(string))
+				}
+			default:
+				log.Printf("[DEBUG] Access Group key %q not transformed", groupKey)
+			}
+		}
+	}
+
+	if len(emails) > 0 {
+		data = append(data, map[string]interface{}{
+			"email": emails,
+		})
+	}
+
+	if len(emailDomains) > 0 {
+		data = append(data, map[string]interface{}{
+			"email_domain": emailDomains,
+		})
+	}
+
+	if len(ips) > 0 {
+		data = append(data, map[string]interface{}{
+			"ip": ips,
+		})
+	}
+
+	if len(serviceTokens) > 0 {
+		data = append(data, map[string]interface{}{
+			"service_token": serviceTokens,
+		})
+	}
+
+	if commonName != "" {
+		data = append(data, map[string]interface{}{
+			"common_name": commonName,
+		})
+	}
+
+	if authMethod != "" {
+		data = append(data, map[string]interface{}{
+			"auth_method": authMethod,
+		})
+	}
+
+	if len(geos) > 0 {
+		data = append(data, map[string]interface{}{
+			"geo": geos,
+		})
+	}
+
+	if len(oktaGroups) > 0 && oktaID != "" {
+		data = append(data, map[string]interface{}{
+			"okta": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": oktaID,
+					"name":                 oktaGroups,
+				}},
+		})
+	}
+
+	if len(gsuiteEmails) > 0 && gsuiteID != "" {
+		data = append(data, map[string]interface{}{
+			"gsuite": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": gsuiteID,
+					"email":                gsuiteEmails,
+				}},
+		})
+	}
+
+	if len(githubTeams) > 0 && githubID != "" && githubName != "" {
+		data = append(data, map[string]interface{}{
+			"github": []interface{}{
+				map[string]interface{}{
+					"name":                 githubName,
+					"team":                 githubTeams,
+					"identity_provider_id": githubID,
+				}},
+		})
+	}
+
+	if len(azureIDs) > 0 && azureID != "" {
+		data = append(data, map[string]interface{}{
+			"azure": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": azureID,
+					"id":                   azureIDs,
+				}},
+		})
+	}
+
+	if samlID != "" && samlAttrName != "" && samlAttrValue != "" {
+		data = append(data, map[string]interface{}{
+			"saml": []interface{}{
+				map[string]interface{}{
+					"identity_provider_id": samlID,
+					"attribute_name":       samlAttrName,
+					"attribute_value":      samlAttrValue,
+				}},
+		})
+	}
+
+	if len(groups) > 0 {
+		data = append(data, map[string]interface{}{
+			"group": groups,
+		})
+	}
+
+	return data
+}

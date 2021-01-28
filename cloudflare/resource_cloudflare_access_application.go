@@ -212,6 +212,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error finding Access Application %q: %s", d.Id(), err)
 	}
 
+	d.Set("name", accessApplication.Name)
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
