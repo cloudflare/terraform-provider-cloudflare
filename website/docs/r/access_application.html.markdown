@@ -50,7 +50,8 @@ The following arguments are supported:
 * `domain` - (Required) The complete URL of the asset you wish to put
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
 * `session_duration` - (Optional) How often a user will be forced to
-  re-authorise. Must be one of `0s`, `15m`, `30m`, `6h`, `12h`, `24h`, `168h`, `730h`.
+  re-authorise. Must be in the format `"48h"` or `"2h45m"`.
+  Valid time units are `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`. Defaults to `24h`.
 * `cors_headers` - (Optional) CORS configuration for the Access Application. See
   below for reference structure.
 * `allowed_idps` - (Optional) The identity providers selected for the application.
@@ -76,8 +77,9 @@ The following arguments are supported:
   selection if only one is configured in allowed_idps. Defaults to `false`
   (disabled).
 * `enable_binding_cookie` - (Optional) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
+* `custom_deny_message` - (Optional) Option that returns a custom error message when a user is denied access to the application.
+* `custom_deny_url` - (Optional) Option that redirects to a custom URL when a user is denied access to the application.
 
-  
 ## Attributes Reference
 
 The following additional attributes are exported:

@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"time"
@@ -90,6 +91,20 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", ""}, false),
 				Computed:     true,
+			},
+
+			"session_affinity_ttl": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ValidateFunc: validation.IntBetween(1800, 604800),
+			},
+
+			"session_affinity_attributes": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 
 			// nb enterprise only
@@ -204,6 +219,18 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		newLoadBalancer.PopPools = expandedPopPools
 	}
 
+	if sessionAffinityTTL, ok := d.GetOk("session_affinity_ttl"); ok {
+		newLoadBalancer.PersistenceTTL = sessionAffinityTTL.(int)
+	}
+
+	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
+		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
+		if err != nil {
+			return err
+		}
+		newLoadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
+	}
+
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
 	r, err := client.CreateLoadBalancer(zoneID, newLoadBalancer)
@@ -260,6 +287,18 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 		loadBalancer.PopPools = expandedPopPools
 	}
 
+	if sessionAffinityTTL, ok := d.GetOk("session_affinity_ttl"); ok {
+		loadBalancer.PersistenceTTL = sessionAffinityTTL.(int)
+	}
+
+	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
+		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
+		if err != nil {
+			return err
+		}
+		loadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
+	}
+
 	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
 
 	_, err := client.ModifyLoadBalancer(zoneID, loadBalancer)
@@ -310,6 +349,7 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	d.Set("ttl", loadBalancer.TTL)
 	d.Set("steering_policy", loadBalancer.SteeringPolicy)
 	d.Set("session_affinity", loadBalancer.Persistence)
+	d.Set("session_affinity_attributes", loadBalancer.SessionAffinityAttributes)
 	d.Set("created_on", loadBalancer.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancer.ModifiedOn.Format(time.RFC3339Nano))
 
@@ -323,6 +363,10 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 
 	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region")); err != nil {
 		log.Printf("[WARN] Error setting region_pools on load balancer %q: %s", d.Id(), err)
+	}
+
+	if loadBalancer.PersistenceTTL != 0 {
+		d.Set("session_affinity_ttl", loadBalancer.PersistenceTTL)
 	}
 
 	return nil
@@ -373,4 +417,24 @@ func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface
 	resourceCloudflareLoadBalancerRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func expandSessionAffinityAttrs(attrs interface{}) (*cloudflare.SessionAffinityAttributes, error) {
+	var cfSessionAffinityAttrs cloudflare.SessionAffinityAttributes
+
+	for k, v := range attrs.(map[string]interface{}) {
+		switch k {
+		case "secure":
+			cfSessionAffinityAttrs.Secure = v.(string)
+		case "samesite":
+			cfSessionAffinityAttrs.SameSite = v.(string)
+		case "drain_duration":
+			var err error
+			if cfSessionAffinityAttrs.DrainDuration, err = strconv.Atoi(v.(string)); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return &cfSessionAffinityAttrs, nil
 }

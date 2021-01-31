@@ -94,11 +94,13 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"cloudflare_ip_ranges":    dataSourceCloudflareIPRanges(),
-			"cloudflare_waf_groups":   dataSourceCloudflareWAFGroups(),
-			"cloudflare_waf_packages": dataSourceCloudflareWAFPackages(),
-			"cloudflare_waf_rules":    dataSourceCloudflareWAFRules(),
-			"cloudflare_zones":        dataSourceCloudflareZones(),
+			"cloudflare_api_token_permission_groups": dataSourceCloudflareApiTokenPermissionGroups(),
+			"cloudflare_ip_ranges":                   dataSourceCloudflareIPRanges(),
+			"cloudflare_waf_groups":                  dataSourceCloudflareWAFGroups(),
+			"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
+			"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
+			"cloudflare_zones":                       dataSourceCloudflareZones(),
+			"cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -109,7 +111,9 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
 			"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
 			"cloudflare_account_member":                         resourceCloudflareAccountMember(),
+			"cloudflare_api_token":                              resourceCloudflareApiToken(),
 			"cloudflare_argo":                                   resourceCloudflareArgo(),
+			"cloudflare_argo_tunnel":                            resourceCloudflareArgoTunnel(),
 			"cloudflare_authenticated_origin_pulls":             resourceCloudflareAuthenticatedOriginPulls(),
 			"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),
 			"cloudflare_byo_ip_prefix":                          resourceCloudflareBYOIPPrefix(),
@@ -128,6 +132,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_logpush_ownership_challenge":            resourceCloudflareLogpushOwnershipChallenge(),
 			"cloudflare_logpush_job":                            resourceCloudflareLogpushJob(),
 			"cloudflare_logpull_retention":                      resourceCloudflareLogpullRetention(),
+			"cloudflare_magic_firewall_ruleset":                 resourceCloudflareMagicFirewallRuleset(),
 			"cloudflare_origin_ca_certificate":                  resourceCloudflareOriginCACertificate(),
 			"cloudflare_page_rule":                              resourceCloudflarePageRule(),
 			"cloudflare_rate_limit":                             resourceCloudflareRateLimit(),
@@ -144,6 +149,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_zone_lockdown":                          resourceCloudflareZoneLockdown(),
 			"cloudflare_zone_settings_override":                 resourceCloudflareZoneSettingsOverride(),
 			"cloudflare_zone":                                   resourceCloudflareZone(),
+			"cloudflare_zone_dnssec":                            resourceCloudflareZoneDNSSEC(),
 		},
 	}
 

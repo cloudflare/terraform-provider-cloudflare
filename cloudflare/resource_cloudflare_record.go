@@ -229,6 +229,17 @@ func resourceCloudflareRecord() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+
+						// CAA record properties
+						"tag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"value": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},

@@ -147,6 +147,12 @@ func resourceCloudflareRateLimit() *schema.Resource {
 										Optional: true,
 										Computed: true,
 									},
+
+									"headers": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem:     headersElem,
+									},
 								},
 							},
 						},
@@ -188,6 +194,57 @@ func resourceCloudflareRateLimit() *schema.Resource {
 			},
 		},
 	}
+}
+
+var headersElem = &schema.Schema{
+	Type: schema.TypeMap,
+	Elem: &schema.Schema{
+		Type: schema.TypeString,
+	},
+	ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+		headerElemValidators := headersElemValidators()
+		headerFields, ok := val.(map[string]interface{})
+
+		if !ok {
+			errs = append(errs, fmt.Errorf("got invalid map for rule element"))
+			return
+		}
+
+		for k, v := range headerFields {
+			if _, ok := headerElemValidators[k]; !ok {
+				errs = append(errs, fmt.Errorf("%s is not supported in a response header", k))
+			}
+
+			validationFunc := headerElemValidators[k]
+			delete(headerElemValidators, k)
+			if validationFunc == nil {
+				continue
+			}
+
+			w, e := validationFunc(v, k)
+			warns = append(warns, w...)
+			errs = append(errs, e...)
+		}
+
+		// attributes with non-nil validators must be set
+		for k, v := range headerElemValidators {
+			if v == nil {
+				continue
+			}
+			errs = append(errs, fmt.Errorf("%s must be set in a response header", k))
+		}
+
+		return
+	},
+}
+
+func headersElemValidators() map[string]schema.SchemaValidateFunc {
+	v := make(map[string]schema.SchemaValidateFunc)
+
+	v["name"] = validation.StringIsNotEmpty
+	v["op"] = validation.StringInSlice([]string{"eq", "ne"}, false)
+	v["value"] = validation.StringIsNotEmpty
+	return v
 }
 
 func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{}) error {
@@ -347,6 +404,20 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 			originTraffic := originIface.(bool)
 			responseMatcher.OriginTraffic = &originTraffic
 		}
+
+		if headers, ok := matchResp["headers"]; ok {
+			headersArray := make([]cloudflare.RateLimitResponseMatcherHeader, len(headers.([]interface{})))
+			for i, entry := range headers.([]interface{}) {
+				e := entry.(map[string]interface{})
+				headersArray[i] = cloudflare.RateLimitResponseMatcherHeader{
+					Name:  e["name"].(string),
+					Op:    e["op"].(string),
+					Value: e["value"].(string),
+				}
+			}
+			responseMatcher.Headers = headersArray
+		}
+
 		matcher.Response = responseMatcher
 	}
 	return
@@ -485,6 +556,18 @@ func flattenRateLimitResponseMatcher(cfg cloudflare.RateLimitResponseMatcher) []
 
 	if len(cfg.Statuses) > 0 {
 		data["statuses"] = schema.NewSet(IntIdentity, flattenIntList(cfg.Statuses))
+	}
+
+	if len(cfg.Headers) > 0 {
+		headers := make([]map[string]interface{}, len(cfg.Headers))
+		for i, header := range cfg.Headers {
+			headers[i] = map[string]interface{}{
+				"name":  header.Name,
+				"op":    header.Op,
+				"value": header.Value,
+			}
+		}
+		data["headers"] = headers
 	}
 
 	if len(data) > 0 {

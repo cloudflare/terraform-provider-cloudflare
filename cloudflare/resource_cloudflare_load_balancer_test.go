@@ -70,6 +70,10 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
 					// explicitly verify that our session_affinity has been set
 					resource.TestCheckResourceAttr(name, "session_affinity", "cookie"),
+					resource.TestCheckResourceAttr(name, "session_affinity_ttl", "1800"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.samesite", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.secure", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.drain_duration", "60"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
@@ -91,6 +95,9 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
 					// explicitly verify that our session_affinity has been set
 					resource.TestCheckResourceAttr(name, "session_affinity", "ip_cookie"),
+					// session_affinity_ttl should not be present as it isn't set
+					resource.TestCheckNoResourceAttr(name, "session_affinity_ttl"),
+					resource.TestCheckNoResourceAttr(name, "session_affinity_attributes"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
@@ -362,6 +369,12 @@ resource "cloudflare_load_balancer" "%[3]s" {
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
 	session_affinity = "cookie"
+	session_affinity_ttl = 1800
+	session_affinity_attributes = {
+    samesite = "Auto"
+    secure = "Auto"
+    drain_duration = 60
+	}
 }`, zoneID, zone, id)
 }
 

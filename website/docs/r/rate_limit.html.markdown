@@ -26,6 +26,18 @@ resource "cloudflare_rate_limit" "example" {
     response {
       statuses = [200, 201, 202, 301, 429]
       origin_traffic = false
+      headers = [ 
+        {
+          name  = "Host"
+          op    = "eq"
+          value = "localhost"
+        },
+        {
+          name  = "X-Example"
+          op    = "ne"
+          value = "my-example"
+        }
+      ]
     }
   }
   action {
@@ -74,6 +86,10 @@ The **match.response** block supports:
 
 * `statuses` - (Optional) HTTP Status codes, can be one [403], many [401,403] or indicate all by not providing this value.
 * `origin_traffic` - (Optional) Only count traffic that has come from your origin servers. If true, cached items that Cloudflare serve will not count towards rate limiting. Default: `true`.
+* `headers` - (Optional) block is a list of maps with the following attributes:
+    * `name` - (Required) The name of the response header to match.
+    * `op` - (Required) The operator when matching. Allowable values are 'eq', 'ne' where `eq` means equals, `ne` means not equals.
+    * `value` - (Required) The value of the header, which will be exactly matched.
 
 The **action** block supports:
 

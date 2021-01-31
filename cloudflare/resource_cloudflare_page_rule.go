@@ -308,7 +308,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"check_presence": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -316,7 +316,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"include": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -335,7 +335,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"check_presence": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -343,7 +343,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"exclude": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -351,7 +351,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"include": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -386,7 +386,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"exclude": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -394,7 +394,7 @@ func resourceCloudflarePageRule() *schema.Resource {
 													},
 												},
 												"include": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Schema{
@@ -745,12 +745,12 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 					fieldOutput[fieldID] = fieldValue
 				}
 
-				if fieldOutput["exclude"] == "*" {
-					fieldOutput["exclude"] = []interface{}{}
+				if itemExistsInSlice(fieldOutput["exclude"], "*") {
+					fieldOutput["exclude"] = []interface{}{"*"}
 					fieldOutput["ignore"] = true
 				}
 
-				if fieldOutput["include"] == "*" {
+				if itemExistsInSlice(fieldOutput["include"], "*") {
 					fieldOutput["include"] = []interface{}{}
 					fieldOutput["ignore"] = false
 				}
@@ -866,19 +866,47 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 			for sectionID, sectionValue := range cacheKeyActionSchema[0].(map[string]interface{}) {
 				sectionOutput := map[string]interface{}{}
 
-				for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
-					sectionOutput[fieldID] = fieldValue
-				}
-
-				if sectionID == "query_string" {
-					queryKey := "include"
-					if sectionOutput["ignore"].(bool) {
-						queryKey = "exclude"
+				switch sectionID {
+				case "cookie", "header":
+					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+						sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
 					}
-					delete(sectionOutput, "ignore")
+				case "query_string":
+					if sectionValue.([]interface{})[0] != nil {
+						for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+							switch fieldID {
+							case "exclude", "include":
+								if fieldValue.(*schema.Set).Len() > 0 {
+									sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+								}
+							case "ignore":
+								sectionOutput[fieldID] = fieldValue
+							default:
+								sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+							}
+						}
 
-					if len(sectionOutput["exclude"].([]interface{})) == 0 && len(sectionOutput["include"].([]interface{})) == 0 {
-						sectionOutput[queryKey] = "*"
+						if sectionOutput["ignore"].(bool) {
+							sectionOutput["exclude"] = []interface{}{"*"}
+						}
+
+						delete(sectionOutput, "ignore")
+					}
+
+					exclude, ok1 := sectionOutput["exclude"]
+					include, ok2 := sectionOutput["include"]
+
+					// Ensure that if no `include`, `exclude` or `ignore` attributes are
+					// set, we default to including all query string parameters in the
+					// cache key.
+					if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
+						sectionOutput["include"] = []interface{}{"*"}
+					}
+
+					output[sectionID] = sectionOutput
+				default:
+					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+						sectionOutput[fieldID] = fieldValue
 					}
 				}
 

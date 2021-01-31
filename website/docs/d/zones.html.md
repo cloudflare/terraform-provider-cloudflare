@@ -72,7 +72,7 @@ data "cloudflare_zones" "test" {
 }
 
 resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
-  zone        = "${lookup(data.cloudflare_zones.test.zones[0], "name")}"
+  zone        = lookup(data.cloudflare_zones.test.zones[0], "name")
   paused      = "false"
   description = "Restrict access to these endpoints to requests from a known IP address"
   urls = [
@@ -82,6 +82,14 @@ resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
     target = "ip"
     value = "198.51.100.4"
   }
+}
+
+resource "cloudflare_zone" "example" {
+  zone_id     = lookup(data.cloudflare_zones.test.zones[0], "id")
+  name        = "www"
+  value       = "203.0.113.1"
+  type        = "A"
+  proxied     = false
 }
 ```
 

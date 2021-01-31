@@ -1,12 +1,88 @@
 ## Unreleased
 
+* **New Resource:** `cloudflare_argo_tunnel` ([#905](https://github.com/cloudflare/terraform-provider-cloudflare/issues/905))
+
+**Fixes**
+
+* `datasource/cloudflare_zones`: Pagination is now correctly handled internally and will return more than the single page of results ([cloudflare/cloudflare-go#534](https://github.com/cloudflare/cloudflare-go/pull/534)). 
+* `resource/cloudflare_access_policy`: Correctly handle transforming API responses to schema ([#917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/917)) 
+* `resource/cloudflare_access_group`: Correctly handle transforming API responses to schema ([#918](https://github.com/cloudflare/terraform-provider-cloudflare/issues/918)) 
+
+**Improvements**
+
+* `resource/cloudflare_access_application`: Allow any `session_duration` that is `time.ParseDuration` compatible ([#910](https://github.com/cloudflare/terraform-provider-cloudflare/issues/910)) 
+* `resource/cloudflare_rate_limit`: Add the ability to configure `match.response.headers` in rate limits ([#911](https://github.com/cloudflare/terraform-provider-cloudflare/issues/911)) 
+* `resource/cloudflare_access_rule`: Validate IP masks within schema ([#921](https://github.com/cloudflare/terraform-provider-cloudflare/issues/921)) 
+
+## 2.17.0 (January 5th, 2021)
+
+* **New Resource:** `cloudflare_magic_firewall_ruleset` ([#884](https://github.com/cloudflare/terraform-provider-cloudflare/issues/884))
+
+**Fixes** 
+
+* `resource/cloudfare_api_token`: Omitting `conditions` will no longer send empty arrays causing IP restriction issues and unusable tokens ([#902](https://github.com/cloudflare/terraform-provider-cloudflare/pull/902))
+
+## 2.16.0 (January 5th, 2021)
+
+**Improvements**
+
+* `resource/cloudflare_access_application`: Add support for `custom_deny_message` and `custom_deny_url` values ([#895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/895)) 
+* `resource/cloudflare_load_balancer_monitor`: Add support for `probe_zone` for monitors ([#903](https://github.com/cloudflare/terraform-provider-cloudflare/issues/903)) 
+
+## 2.15.0 (December 29th, 2020)
+
+**Improvements**
+
+* `resource/cloudflare_load_balancer`: Add support for `session_affinity_ttl` ([#882](https://github.com/cloudflare/terraform-provider-cloudflare/issues/882)) 
+* `resource/cloudflare_load_balancer`: Add support for `session_affinity_attributes` ([#883](https://github.com/cloudflare/terraform-provider-cloudflare/issues/883)) 
+
+**Fixes** 
+
+* `resource/cloudflare_page_rule`: Fixed crash during update when using custom cache key ([#894](https://github.com/cloudflare/terraform-provider-cloudflare/pull/894))
+
+## 2.14.0 (November 26th, 2020)
+
+* **New Resource:** `cloudflare_api_token` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
+* **New Datasource:** `cloudflare_api_token_permission_groups` ([#862](https://github.com/cloudflare/terraform-provider-cloudflare/issues/862))
+* **New Resource:** `cloudflare_zone_dnssec` ([#852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/852))
+* **New Datasource:** `cloudflare_zone_dnssec` ([#852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/852))
+
+**Improvements**
+
+* `resource/cloudflare_record`: Add explicit fields for CAA records instead of relying on the map value ([#866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/866)) 
+* `resource/cloudflare_account_member`: Swap schema `role_ids` to `TypeSet` to better handle internal ordering changes ([#876](https://github.com/cloudflare/terraform-provider-cloudflare/issues/876)) 
+
+**Fixes** 
+
+* `datasource/cloudflare_waf_groups`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
+* `datasource/cloudflare_waf_packages`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
+* `datasource/cloudflare_waf_rules`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
+* `datasource/cloudflare_zones`: Make `d.Id()` a consistent string value to prevent Terraform thinking it requires an update ([#869](https://github.com/cloudflare/terraform-provider-cloudflare/issues/869)) 
+
+## 2.13.2 (November 6th, 2020)
+
+**Fixes**
+
+* `resource/cloudflare_filter`: Remove schema based validation for filters ([#863](https://github.com/cloudflare/terraform-provider-cloudflare/issues/863))
+
+## 2.13.1 (November 5th, 2020)
+
+**Improvements**
+
+* `resource/cloudflare_filter`: Pass missing credential error through to end user ([#860](https://github.com/cloudflare/terraform-provider-cloudflare/issues/860)) 
+
+## 2.13.0 (November 5th, 2020)
+
 **Improvements**
 
 * `datasource/cloudflare_ip_ranges`: Add the ability to query `china_ipv4_cidr_blocks` and `china_ipv6_cidr_blocks` ([#833](https://github.com/cloudflare/terraform-provider-cloudflare/issues/833)) 
+* `resource/cloudflare_filter`: Improve validation of expressions using the schema ([#848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/848)) 
 
 **Fixes**
 
 * `resource/cloudflare_page_rule`: Set default for `cache_key_fields.host.resolved` to prevent panics ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/832))
+* `resource/cloudflare_authenticated_origin_pulls`: Fix off-by-one error check in `Import` ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/859))
+* `resource/cloudflare_authenticated_origin_pulls_certificate`: Fix off-by-one error check in `Import` ([#832](https://github.com/cloudflare/terraform-provider-cloudflare/issues/859))
 
 ## 2.12.0 (October 22nd, 2020)
 

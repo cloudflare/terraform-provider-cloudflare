@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"reflect"
 	"regexp"
+	"sort"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -66,6 +68,11 @@ func stringChecksum(s string) string {
 	return fmt.Sprintf("%x", bs)
 }
 
+func stringListChecksum(s []string) string {
+	sort.Strings(s)
+	return stringChecksum(strings.Join(s, ""))
+}
+
 // Returns true if string value exists in string slice
 func contains(slice []string, item string) bool {
 	set := make(map[string]struct{}, len(slice))
@@ -75,6 +82,22 @@ func contains(slice []string, item string) bool {
 
 	_, ok := set[item]
 	return ok
+}
+
+func itemExistsInSlice(slice interface{}, item interface{}) bool {
+	s := reflect.ValueOf(slice)
+
+	if s.Kind() != reflect.Slice {
+		panic("Invalid data-type")
+	}
+
+	for i := 0; i < s.Len(); i++ {
+		if s.Index(i).Interface() == item {
+			return true
+		}
+	}
+
+	return false
 }
 
 // findIndex returns the smallest index i at which x == a[i],

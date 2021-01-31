@@ -133,6 +133,11 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+
+			"probe_zone": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -194,6 +199,12 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 			loadBalancerMonitor.Path = path.(string)
 		} else {
 			loadBalancerMonitor.Path = "/"
+		}
+
+		if probeZone, ok := d.GetOk("probe_zone"); ok {
+			loadBalancerMonitor.ProbeZone = probeZone.(string)
+		} else {
+			loadBalancerMonitor.ProbeZone = ""
 		}
 	}
 
@@ -277,6 +288,12 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 		} else {
 			loadBalancerMonitor.Path = "/"
 		}
+
+		if probeZone, ok := d.GetOk("probe_zone"); ok {
+			loadBalancerMonitor.ProbeZone = probeZone.(string)
+		} else {
+			loadBalancerMonitor.ProbeZone = ""
+		}
 	}
 
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
@@ -323,6 +340,7 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 		d.Set("expected_codes", loadBalancerMonitor.ExpectedCodes)
 		d.Set("follow_redirects", loadBalancerMonitor.FollowRedirects)
 		d.Set("path", loadBalancerMonitor.Path)
+		d.Set("probe_zone", loadBalancerMonitor.ProbeZone)
 
 		if err := d.Set("header", flattenLoadBalancerMonitorHeader(loadBalancerMonitor.Header)); err != nil {
 			log.Printf("[WARN] Error setting header for load balancer monitor %q: %s", d.Id(), err)

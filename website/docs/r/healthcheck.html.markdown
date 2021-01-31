@@ -95,7 +95,7 @@ The following arguments are supported:
 * `notification_suspended` - (Optional) Whether the notifications are suspended or not. Useful for maintenance periods. Valid values: `true` or `false` (Default: `false`).
 * `notification_email_addresses` - (Optional) A list of email addresses we want to send the notifications to.
 * `type` - (Required) The protocol to use for the health check. Valid values: `HTTP`, `HTTPS`, `TCP`.
-* `port` - (Optional) Port number to connect to for the health check.  Valid values are in the rage `0-65535` (Default: `80`).
+* `port` - (Optional) Port number to connect to for the health check.  Valid values are in the range `0-65535` (Default: `80`).
 * `timeout` - (Optional) The timeout (in seconds) before marking the health check as failed. (Default: `5`)
 * `retries` - (Optional) The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately. (Default: `2`)
 * `interval` - (Optional) The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations. (Default: `60`)

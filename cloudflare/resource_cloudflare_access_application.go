@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -47,10 +48,17 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Required: true,
 			},
 			"session_duration": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "24h",
-				ValidateFunc: validation.StringInSlice([]string{"0s", "15m", "30m", "6h", "12h", "24h", "168h", "730h"}, false),
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "24h",
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					v := val.(string)
+					_, err := time.ParseDuration(v)
+					if err != nil {
+						errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`, key))
+					}
+					return
+				},
 			},
 			"cors_headers": {
 				Type:     schema.TypeList,
@@ -119,6 +127,14 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"custom_deny_message": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"custom_deny_url": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -134,6 +150,8 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
+		CustomDenyMessage:      d.Get("custom_deny_message").(string),
+		CustomDenyURL:          d.Get("custom_deny_url").(string),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -194,11 +212,14 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error finding Access Application %q: %s", d.Id(), err)
 	}
 
+	d.Set("name", accessApplication.Name)
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
+	d.Set("custom_deny_message", accessApplication.CustomDenyMessage)
+	d.Set("custom_deny_url", accessApplication.CustomDenyURL)
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
@@ -221,6 +242,8 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
+		CustomDenyMessage:      d.Get("custom_deny_message").(string),
+		CustomDenyURL:          d.Get("custom_deny_url").(string),
 	}
 
 	if len(allowedIDPList) > 0 {

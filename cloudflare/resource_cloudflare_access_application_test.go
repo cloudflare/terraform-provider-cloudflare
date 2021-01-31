@@ -143,6 +143,32 @@ func TestAccCloudflareAccessApplicationWithEnableBindingCookie(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithCustomDenyFields(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "custom_deny_message", "denied!"),
+					resource.TestCheckResourceAttr(name, "custom_deny_url", "https://www.cloudflare.com"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
@@ -219,6 +245,19 @@ resource "cloudflare_access_application" "%[1]s" {
   domain                    = "%[1]s.%[3]s"
   session_duration          = "24h"
   enable_binding_cookie     = true
+}
+`, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  session_duration          = "24h"
+  custom_deny_message       = "denied!"
+	custom_deny_url           = "https://www.cloudflare.com"
 }
 `, rnd, zoneID, domain)
 }
@@ -365,6 +404,36 @@ func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationWithInvalidSessionDuration(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`)),
+			},
+		},
+	})
+}
+
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
     resource "cloudflare_access_application" "%[1]s" {
@@ -409,6 +478,17 @@ func testAccessApplicationWithMissingCORSOrigins(resourceID, zone, zoneID string
     cors_headers {
       allow_all_methods = true
     }
+  }
+  `, resourceID, zone, zoneID)
+}
+
+func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name             = "%[1]s-updated"
+      zone_id          = "%[3]s"
+      domain           = "%[1]s.%[2]s"
+      session_duration = "24z"
   }
   `, resourceID, zone, zoneID)
 }

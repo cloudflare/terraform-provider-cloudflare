@@ -27,17 +27,9 @@ func resourceCloudflareAccountMember() *schema.Resource {
 			},
 
 			"role_ids": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					roleIDs := d.Get("role_ids").([]interface{})
-					if arrayContains(old, roleIDs) && arrayContains(new, roleIDs) {
-						return true
-					}
-
-					return false
-				},
 			},
 		},
 	}
@@ -77,7 +69,7 @@ func resourceCloudflareAccountMemberDelete(d *schema.ResourceData, meta interfac
 
 func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interface{}) error {
 	memberEmailAddress := d.Get("email_address").(string)
-	requestedMemberRoles := d.Get("role_ids").([]interface{})
+	requestedMemberRoles := d.Get("role_ids").(*schema.Set).List()
 
 	client := meta.(*cloudflare.API)
 
@@ -104,7 +96,7 @@ func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interfac
 func resourceCloudflareAccountMemberUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountRoles := []cloudflare.AccountRole{}
-	memberRoles := d.Get("role_ids").([]interface{})
+	memberRoles := d.Get("role_ids").(*schema.Set).List()
 
 	for _, r := range memberRoles {
 		accountRole, _ := client.AccountRole(client.AccountID, r.(string))
@@ -151,13 +143,4 @@ func resourceCloudflareAccountMemberImport(d *schema.ResourceData, meta interfac
 	d.SetId(accountMemberID)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func arrayContains(a string, list []interface{}) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
 }
