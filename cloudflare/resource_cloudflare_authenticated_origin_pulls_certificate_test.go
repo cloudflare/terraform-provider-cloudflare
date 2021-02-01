@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -9,6 +10,42 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_authenticated_origin_pulls_certificate", &resource.Sweeper{
+		Name: "cloudflare_authenticated_origin_pulls_certificate",
+		F:    testSweepCloudflareAuthenticatdOriginPullsCertificates,
+	})
+}
+
+func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	perZoneCertificates, certsErr := client.ListPerZoneAuthenticatedOriginPullsCertificates(zoneID)
+
+	if certsErr != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare authenticated origin pull certificates: %s", certsErr)
+	}
+
+	if len(perZoneCertificates) == 0 {
+		log.Print("[DEBUG] No Cloudflare authenticated origin pull certificates to sweep")
+		return nil
+	}
+
+	for _, certificate := range perZoneCertificates {
+		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(zoneID, certificate.ID)
+
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete Cloudflare authenticated origin pull certificate (%s) in zone ID: %s", certificate.ID, zoneID)
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 	var perZoneAOP cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails
