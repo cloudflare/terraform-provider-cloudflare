@@ -88,7 +88,6 @@ func resourceCloudflareIPListCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceCloudflareIPListImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -97,7 +96,7 @@ func resourceCloudflareIPListImport(d *schema.ResourceData, meta interface{}) ([
 
 	accountID, listID := attributes[0], attributes[1]
 	d.SetId(listID)
-	client.AccountID = accountID
+	d.Set("account_id", accountID)
 
 	resourceCloudflareIPListRead(d, meta)
 
