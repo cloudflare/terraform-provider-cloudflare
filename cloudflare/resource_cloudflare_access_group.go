@@ -688,7 +688,7 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 			"github": []interface{}{
 				map[string]interface{}{
 					"name":                 githubName,
-					"team":                 githubTeams,
+					"teams":                githubTeams,
 					"identity_provider_id": githubID,
 				}},
 		})
