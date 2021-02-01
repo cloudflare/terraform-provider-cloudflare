@@ -142,6 +142,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
 			"cloudflare_waf_rule":                               resourceCloudflareWAFRule(),
 			"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
+			"cloudflare_worker_cron_trigger":                    resourceCloudflareWorkerCronTrigger(),
 			"cloudflare_worker_route":                           resourceCloudflareWorkerRoute(),
 			"cloudflare_worker_script":                          resourceCloudflareWorkerScript(),
 			"cloudflare_workers_kv":                             resourceCloudflareWorkerKV(),
