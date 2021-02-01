@@ -2,11 +2,45 @@ package cloudflare
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_certificate_pack", &resource.Sweeper{
+		Name: "cloudflare_certificate_pack",
+		F:    testSweepCloudflareCertificatePack,
+	})
+}
+
+func testSweepCloudflareCertificatePack(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	certificates, certErr := client.ListCertificatePacks(zoneID)
+	if certErr != nil {
+		log.Printf("[ERROR] Failed to fetch certificate packs: %s", clientErr)
+	}
+
+	if len(certificates) == 0 {
+		log.Print("[DEBUG] No Cloudflare certificate packs to sweep")
+		return nil
+	}
+
+	for _, certificate := range certificates {
+		if err := client.DeleteCertificatePack(zoneID, certificate.ID); err != nil {
+			log.Printf("[ERROR] Failed to delete certificate pack %s", certificate.ID)
+		}
+	}
+
+	return nil
+}
 
 func TestAccCertificatePackAdvancedDigicert(t *testing.T) {
 	rnd := generateRandomResourceName()
