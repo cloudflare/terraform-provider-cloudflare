@@ -235,7 +235,7 @@ func testAccessPolicyGroupConfig(resourceID, zone, accountID string) string {
   			name           = "%[1]s"
 
   			include {
-				ip = ["127.0.0.1"]
+				  ip = ["127.0.0.1/32"]
   			}
 		}
 
