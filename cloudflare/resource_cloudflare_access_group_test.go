@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -9,6 +10,58 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_access_group", &resource.Sweeper{
+		Name: "cloudflare_access_group",
+		F:    testSweepCloudflareAccessGroups,
+	})
+}
+
+func testSweepCloudflareAccessGroups(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	// Zone level Access Groups
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneAccessGroups, _, err := client.ZoneLevelAccessGroups(zoneID, cloudflare.PaginationOptions{})
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch zone level Access Groups: %s", err)
+	}
+
+	if len(zoneAccessGroups) == 0 {
+		log.Print("[DEBUG] No Cloudflare zone level Access Groups to sweep")
+		return nil
+	}
+
+	for _, accessGroup := range zoneAccessGroups {
+		if err := client.DeleteZoneLevelAccessGroup(zoneID, accessGroup.ID); err != nil {
+			log.Printf("[ERROR] Failed to delete zone level Access Group %s", accessGroup.ID)
+		}
+	}
+
+	// Account level Access Groups
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountAccessGroups, _, err := client.AccessGroups(accountID, cloudflare.PaginationOptions{})
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch account level Access Groups: %s", err)
+	}
+
+	if len(accountAccessGroups) == 0 {
+		log.Print("[DEBUG] No Cloudflare account level Access Groups to sweep")
+		return nil
+	}
+
+	for _, accessGroup := range accountAccessGroups {
+		if err := client.DeleteAccessGroup(accountID, accessGroup.ID); err != nil {
+			log.Printf("[ERROR] Failed to delete account level Access Group %s", accessGroup.ID)
+		}
+	}
+
+	return nil
+}
 
 var (
 	accountID   = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
