@@ -7,6 +7,7 @@
 * `datasource/cloudflare_zones`: Pagination is now correctly handled internally and will return more than the single page of results ([cloudflare/cloudflare-go#534](https://github.com/cloudflare/cloudflare-go/pull/534)). 
 * `resource/cloudflare_access_policy`: Correctly handle transforming API responses to schema ([#917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/917)) 
 * `resource/cloudflare_access_group`: Correctly handle transforming API responses to schema ([#918](https://github.com/cloudflare/terraform-provider-cloudflare/issues/918)) 
+* `resource/cloudflare_ip_list`: Ensure account ID is persisted during `Import` ([#916](https://github.com/cloudflare/terraform-provider-cloudflare/issues/916)) 
 
 **Improvements**
 
