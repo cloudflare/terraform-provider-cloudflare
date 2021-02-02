@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -9,6 +10,15 @@ import (
 )
 
 func TestAccCloudflareApiTokenPermissionGroups(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// permission groups endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
