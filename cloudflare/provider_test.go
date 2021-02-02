@@ -122,3 +122,13 @@ func testAccPreCheckBYOIPPrefix(t *testing.T) {
 func generateRandomResourceName() string {
 	return acctest.RandStringFromCharSet(10, acctest.CharSetAlpha)
 }
+
+// skipMagicTransitTestForNonConfiguredDefaultZone will force an acceptance test
+// to skip instead of running and failing due to not having setup Magic Transit.
+// This will allow those who intentionally want to run the test to do so while
+// keeping CI sane.
+func skipMagicTransitTestForNonConfiguredDefaultZone(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
+		t.Skipf("Skipping acceptance test as %s is not configured for Magic Transit", testAccCloudflareZoneID)
+	}
+}
