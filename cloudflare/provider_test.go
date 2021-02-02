@@ -9,8 +9,23 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-var testAccProviders map[string]terraform.ResourceProvider
-var testAccProvider *schema.Provider
+var (
+	testAccProviders map[string]terraform.ResourceProvider
+	testAccProvider  *schema.Provider
+
+	// Integration test account ID
+	testAccCloudflareAccountID string = "f037e56e89293a057740de681ac9abbe"
+
+	// Integration test account zone ID
+	testAccCloudflareZoneID string = "0da42c8d2132a9ddaf714f9e7c920711"
+	// Integration test account zone name
+	testAccCloudflareZoneName string = "terraform.cfapi.net"
+
+	// Integration test account alternate zone ID
+	testAccCloudflareAltZoneID string = "b72110c08e3382597095c29ba7e661ea"
+	// Integration test account alternate zone name
+	testAccCloudflareAltZoneName string = "terraform2.cfapi.net"
+)
 
 func init() {
 	testAccProvider = Provider().(*schema.Provider)
