@@ -12,6 +12,8 @@ import (
 )
 
 func TestAccCloudflareMagicFirewallRulesetExists(t *testing.T) {
+	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_firewall_ruleset.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -35,6 +37,8 @@ func TestAccCloudflareMagicFirewallRulesetExists(t *testing.T) {
 }
 
 func TestAccCloudflareMagicFirewallRulesetUpdateName(t *testing.T) {
+	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_firewall_ruleset.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -77,6 +81,8 @@ func TestAccCloudflareMagicFirewallRulesetUpdateName(t *testing.T) {
 }
 
 func TestAccCloudflareMagicFirewallRulesetUpdateDescription(t *testing.T) {
+	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_firewall_ruleset.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -119,6 +125,8 @@ func TestAccCloudflareMagicFirewallRulesetUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareMagicFirewallRulesetSingleRule(t *testing.T) {
+	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_firewall_ruleset.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -147,6 +155,8 @@ func TestAccCloudflareMagicFirewallRulesetSingleRule(t *testing.T) {
 }
 
 func TestAccCloudflareMagicFirewallRulesetUpdateWithHigherPriority(t *testing.T) {
+	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_magic_firewall_ruleset.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
