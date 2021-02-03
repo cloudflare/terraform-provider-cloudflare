@@ -9,6 +9,15 @@ import (
 )
 
 func TestAccAPIToken(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// endpoint does not yet support the API tokens without an explicit scope.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_api_token." + rnd
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
@@ -34,6 +43,15 @@ func TestAccAPIToken(t *testing.T) {
 }
 
 func TestAccAPITokenAllowDeny(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// endpoint does not yet support the API tokens without an explicit scope.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
@@ -56,6 +74,15 @@ func TestAccAPITokenAllowDeny(t *testing.T) {
 }
 
 func TestAccAPITokenDoesNotSetConditions(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// endpoint does not yet support the API tokens without an explicit scope.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := "cloudflare_api_token." + rnd
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
@@ -91,6 +118,15 @@ func testAccCloudflareAPITokenWithoutCondition(resourceName, rnd, permissionID s
 }
 
 func TestAccAPITokenSetIndividualCondition(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// endpoint does not yet support the API tokens without an explicit scope.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := "cloudflare_api_token." + rnd
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
@@ -132,6 +168,15 @@ func testAccCloudflareAPITokenWithIndividualCondition(rnd string, permissionID s
 }
 
 func TestAccAPITokenSetAllCondition(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// endpoint does not yet support the API tokens without an explicit scope.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := "cloudflare_api_token." + rnd
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
