@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.17.0 (February 3rd, 2021)
+
 * **New Resource:** `cloudflare_argo_tunnel` ([#905](https://github.com/cloudflare/terraform-provider-cloudflare/issues/905))
 * **New Resource:** `cloudflare_worker_cron_trigger` ([#926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/926))
 
