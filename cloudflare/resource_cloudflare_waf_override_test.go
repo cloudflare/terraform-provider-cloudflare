@@ -21,7 +21,6 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 

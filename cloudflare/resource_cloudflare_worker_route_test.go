@@ -15,8 +15,6 @@ const (
 )
 
 func TestAccCloudflareWorkerRoute_MultiScriptEnt(t *testing.T) {
-	t.Parallel()
-
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -97,8 +95,6 @@ resource "cloudflare_worker_script" "%[3]s" {
 }
 
 func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
-	t.Parallel()
-
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.

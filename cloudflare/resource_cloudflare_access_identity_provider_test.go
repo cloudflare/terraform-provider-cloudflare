@@ -56,7 +56,6 @@ func TestAccCloudflareAccessIdentityProviderOneTimePin(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	t.Parallel()
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
