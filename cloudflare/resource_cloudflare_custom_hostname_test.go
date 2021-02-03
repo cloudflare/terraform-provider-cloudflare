@@ -260,6 +260,7 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 		PreCheck: func() {
 			testAccPreCheck(t)
 			testAccPreCheckAltZoneID(t)
+			testAccPreCheckAltDomain(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -272,8 +273,7 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 				),
 			},
 			{
-				ExpectNonEmptyPlan: true,
-				Config:             testAccCheckCloudflareCustomHostnameBasic(altZoneID, rnd, altDomain),
+				Config: testAccCheckCloudflareCustomHostnameBasic(altZoneID, rnd, altDomain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareCustomHostnameExists(resourceName, &after),
 					testAccCheckCloudflareCustomHostnameRecreated(&before, &after),
