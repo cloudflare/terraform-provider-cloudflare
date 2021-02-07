@@ -43,7 +43,7 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 			},
 			"precedence": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Required: true,
 			},
 			"decision": {
 				Type:         schema.TypeString,
