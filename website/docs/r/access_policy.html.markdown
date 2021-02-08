@@ -59,7 +59,7 @@ The following arguments are supported:
 * `decision` - (Required) Defines the action Access will take if the policy matches the user.
   Allowed values: `allow`, `deny`, `non_identity`, `bypass`
 * `name` - (Required) Friendly name of the Access Application.
-* `precedence` - (Optional) The unique precedence for policies on a single application. Integer.
+* `precedence` - (Required) The unique precedence for policies on a single application. Integer.
 * `require` - (Optional) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
 * `exclude` - (Optional) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
 * `include` - (Required) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
