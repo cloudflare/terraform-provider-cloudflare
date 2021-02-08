@@ -1,0 +1,32 @@
+name: tfproviderlint
+on: [push, pull_request]
+
+jobs:
+  tfproviderlint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+        id: go
+
+      - name: Check out code repository source code
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Run tfproviderlint
+        run: |
+          go get github.com/bflad/tfproviderlint/cmd/tfproviderlint
+          tfproviderlint -R003=false -R011=false -R012=false -S001=false -S002=false -S003=false -S004=false -S005=false -S006=false -S007=false -S008=false -S009=false -S010=false -S011=false -S012=false -S013=false -S014=false -S015=false -S016=false -S017=false -S018=false -S019=false -S020=false -S021=false -S022=false -S023=false -S024=false -S025=false -S026=false -S027=false -S028=false -S029=false -S030=false -S031=false -S032=false -S033=false -S034=false -S035=false -S036=false -S037=false -AT001=false -AT002=false -AT005=false -AT003=false -AT006=false -R002=false  -R004=false  -R007=false  -R008=false  -R009=false  -R013=false  -R017=false  -R018=false  ./cloudflare/
