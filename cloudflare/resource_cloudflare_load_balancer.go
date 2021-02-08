@@ -344,7 +344,7 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	d.Set("name", loadBalancer.Name)
 	d.Set("fallback_pool_id", loadBalancer.FallbackPool)
 	d.Set("proxied", loadBalancer.Proxied)
-	d.Set("enabled", *loadBalancer.Enabled)
+	d.Set("enabled", loadBalancer.Enabled)
 	d.Set("description", loadBalancer.Description)
 	d.Set("ttl", loadBalancer.TTL)
 	d.Set("steering_policy", loadBalancer.SteeringPolicy)
