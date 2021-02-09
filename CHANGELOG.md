@@ -1,5 +1,11 @@
 ## Unreleased
 
+**Fixes**
+
+* `resource/cloudflare_access_group`: Fix crash when constructing a GSuite group ([#940](https://github.com/cloudflare/terraform-provider-cloudflare/issues/940)) 
+* `resource/cloudflare_access_policy`: Make `precedence` required ([#941](https://github.com/cloudflare/terraform-provider-cloudflare/issues/941)) 
+
+
 ## 2.17.0 (February 3rd, 2021)
 
 * **New Resource:** `cloudflare_argo_tunnel` ([#905](https://github.com/cloudflare/terraform-provider-cloudflare/issues/905))
