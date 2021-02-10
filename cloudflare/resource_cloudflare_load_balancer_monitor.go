@@ -350,7 +350,7 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 	d.Set("description", loadBalancerMonitor.Description)
 	d.Set("interval", loadBalancerMonitor.Interval)
 	d.Set("method", loadBalancerMonitor.Method)
-	d.Set("port", loadBalancerMonitor.Port)
+	d.Set("port", int(loadBalancerMonitor.Port))
 	d.Set("retries", loadBalancerMonitor.Retries)
 	d.Set("timeout", loadBalancerMonitor.Timeout)
 	d.Set("type", loadBalancerMonitor.Type)

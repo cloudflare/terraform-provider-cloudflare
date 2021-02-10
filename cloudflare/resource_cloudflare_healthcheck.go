@@ -187,10 +187,10 @@ func resourceCloudflareHealthcheckRead(d *schema.ResourceData, meta interface{})
 	switch healthcheck.Type {
 	case "TCP":
 		d.Set("method", healthcheck.TCPConfig.Method)
-		d.Set("port", healthcheck.TCPConfig.Port)
+		d.Set("port", int(healthcheck.TCPConfig.Port))
 	case "HTTP", "HTTPS":
 		d.Set("method", healthcheck.HTTPConfig.Method)
-		d.Set("port", healthcheck.HTTPConfig.Port)
+		d.Set("port", int(healthcheck.HTTPConfig.Port))
 		d.Set("path", healthcheck.HTTPConfig.Path)
 		d.Set("expected_codes", healthcheck.HTTPConfig.ExpectedCodes)
 		d.Set("expected_body", healthcheck.HTTPConfig.ExpectedBody)

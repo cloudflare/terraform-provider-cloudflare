@@ -232,7 +232,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 
 	if application.OriginPort != nil {
 		if application.OriginPort.Port > 0 {
-			d.Set("origin_port", application.OriginPort.Port)
+			d.Set("origin_port", int(application.OriginPort.Port))
 		} else {
 			if err := d.Set("origin_port_range", flattenOriginPortRange(application.OriginPort)); err != nil {
 				log.Printf("[WARN] Error setting origin port range on spectrum application %q: %s", d.Id(), err)
