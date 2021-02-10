@@ -3,7 +3,6 @@ package cloudflare
 import (
 	"fmt"
 	"log"
-	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -43,7 +42,7 @@ func resourceCloudflareLogpullRetentionSet(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("error setting Logpull Retention for zone ID %q: %s", zoneID, err)
 	}
 
-	d.SetId(stringChecksum(time.Now().String()))
+	d.SetId(stringChecksum("logpull-retention/" + zoneID))
 
 	return resourceCloudflareLogpullRetentionRead(d, meta)
 }
@@ -82,7 +81,7 @@ func resourceCloudflareLogpullRetentionImport(d *schema.ResourceData, meta inter
 	log.Printf("[DEBUG] Importing Cloudflare Logpull Retention option for zone ID: %s", zoneID)
 
 	d.Set("zone_id", zoneID)
-	d.SetId(stringChecksum(time.Now().String()))
+	d.SetId(stringChecksum("logpull-retention/" + zoneID))
 
 	resourceCloudflareLogpullRetentionRead(d, meta)
 
