@@ -188,7 +188,7 @@ func resourceCloudflareWAFGroupImport(d *schema.ResourceData, meta interface{}) 
 
 	pkgList, err := client.ListWAFPackages(zoneID)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("error listing WAF packages: %s", err)
 	}
 
 	for _, pkg := range pkgList {

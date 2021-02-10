@@ -88,7 +88,8 @@ func itemExistsInSlice(slice interface{}, item interface{}) bool {
 	s := reflect.ValueOf(slice)
 
 	if s.Kind() != reflect.Slice {
-		panic("Invalid data-type")
+		log.Print("[DEBUG] invalid data type detected")
+		return false
 	}
 
 	for i := 0; i < s.Len(); i++ {
