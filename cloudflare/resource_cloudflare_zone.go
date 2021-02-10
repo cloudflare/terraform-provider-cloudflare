@@ -5,11 +5,11 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"time"
 
 	"golang.org/x/net/idna"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
@@ -147,7 +147,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
-		if err := setRatePlan(client, zone.ID, plan.(string), true); err != nil {
+		if err := setRatePlan(client, zone.ID, plan.(string), true, d); err != nil {
 			return err
 		}
 	}
@@ -228,7 +228,7 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		wasFreePlan := existingPlan.(string) == "free"
 		planID := newPlan.(string)
 
-		if err := setRatePlan(client, zoneID, planID, wasFreePlan); err != nil {
+		if err := setRatePlan(client, zoneID, planID, wasFreePlan, d); err != nil {
 			return err
 		}
 	}
@@ -264,7 +264,7 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 
 // setRatePlan handles the internals of creating or updating a zone
 // subscription rate plan.
-func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool) error {
+func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool, d *schema.ResourceData) error {
 	if isNewPlan {
 		if err := client.ZoneSetPlan(zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
 			return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
@@ -275,24 +275,15 @@ func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool) 
 		}
 	}
 
-	// Due to the async delivery of the subscription service, there is
-	// potential that the update is made and we query the zone endpoint
-	// before it's propagated. To handle this, a poor mans retry and
-	// backoff mechanism will try to compare the current zone state and
-	// what we intend for it to be and if they don't match, try again
-	// after a brief pause.
-	backoffTimes := []int{1, 3, 5}
-	for _, i := range backoffTimes {
+	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 		zone, _ := client.ZoneDetails(zoneID)
 
-		if zone.PlanPending.LegacyID == planID {
-			break
+		if zone.PlanPending.LegacyID != planID {
+			return resource.RetryableError(fmt.Errorf("plan ID change has not yet propagated"))
 		}
 
-		time.Sleep(time.Duration(i) * time.Second)
-	}
-
-	return nil
+		return nil
+	})
 }
 
 func planIDForName(name string) string {
