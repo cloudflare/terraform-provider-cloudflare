@@ -552,7 +552,6 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 	azureIDs := []string{}
 	samlAttrName := ""
 	samlAttrValue := ""
-	samlID := ""
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -608,7 +607,6 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 				azureIDs = append(azureIDs, azureCfg["id"].(string))
 			case "saml":
 				samlCfg := groupValue.(map[string]interface{})
-				samlID = samlCfg["identity_provider_id"].(string)
 				samlAttrName = samlCfg["attribute_name"].(string)
 				samlAttrValue = samlCfg["attribute_value"].(string)
 			case "group":
@@ -704,13 +702,12 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 		})
 	}
 
-	if samlID != "" && samlAttrName != "" && samlAttrValue != "" {
+	if samlAttrName != "" && samlAttrValue != "" {
 		data = append(data, map[string]interface{}{
 			"saml": []interface{}{
 				map[string]interface{}{
-					"identity_provider_id": samlID,
-					"attribute_name":       samlAttrName,
-					"attribute_value":      samlAttrValue,
+					"attribute_name":  samlAttrName,
+					"attribute_value": samlAttrValue,
 				}},
 		})
 	}
