@@ -41,9 +41,8 @@ The following additional attributes are exported:
 
 ## Import
 
-Access Mutual TLS Certificate can be imported using a composite ID formed of the account
-ID and the mutual TLS certificate ID.
+Access Mutual TLS Certificate can be imported using a composite ID composed of the account or zone and the mutual TLS certificate ID in the form of: `account/ACCOUNT_ID/MUTUAL_TLS_CERTIFICATE_ID` or `zone/ZONE_ID/MUTUAL_TLS_CERTIFICATE_ID`.
 
 ```
-$ terraform import cloudflare_access_mutual_tls_certificate.staging cb029e245cfdd66dc8d2e570d5dd3322/d41d8cd98f00b204e9800998ecf8427e
+$ terraform import cloudflare_access_mutual_tls_certificate.staging account/cb029e245cfdd66dc8d2e570d5dd3322/d41d8cd98f00b204e9800998ecf8427e
 ```
