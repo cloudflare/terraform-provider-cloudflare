@@ -13,7 +13,7 @@ import (
 func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
-	cert := os.Getenv("CLOUDFLARE_CERTIFICATE")
+	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
@@ -59,7 +59,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
-	cert := os.Getenv("CLOUDFLARE_CERTIFICATE")
+	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{

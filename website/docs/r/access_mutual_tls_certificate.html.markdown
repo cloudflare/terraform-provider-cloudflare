@@ -41,7 +41,7 @@ The following additional attributes are exported:
 
 ## Import
 
-Access Mutual TLS Certificate can be imported using a composite ID formed of the zone
+Access Mutual TLS Certificate can be imported using a composite ID formed of the account
 ID and the mutual TLS certificate ID.
 
 ```
