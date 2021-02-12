@@ -171,17 +171,21 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(d *schema.ResourceData, 
 }
 
 func resourceCloudflareAccessMutualTLSCertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 2)
+	attributes := strings.SplitN(d.Id(), "/", 3)
 
-	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/accessMutualTLSCertificateID\"", d.Id())
+	if len(attributes) != 3 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessMutualTLSCertificateID\" or \"zone/zoneID/accessMutualTLSCertificateID\"", d.Id())
 	}
 
-	accountID, accessMutualTLSCertificateID := attributes[0], attributes[1]
+	identifierType, identifierID, accessMutualTLSCertificateID := attributes[0], attributes[1], attributes[2]
+
+	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessMutualTLSCertificateID\" or \"zone/zoneID/accessMutualTLSCertificateID\"", d.Id())
+	}
 
 	log.Printf("[DEBUG] Importing Cloudflare Access Mutual TLS Certificate: id %s for account %s", accessMutualTLSCertificateID, accountID)
 
-	d.Set("account_id", accountID)
+	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessMutualTLSCertificateID)
 
 	resourceCloudflareAccessMutualTLSCertificateRead(d, meta)
