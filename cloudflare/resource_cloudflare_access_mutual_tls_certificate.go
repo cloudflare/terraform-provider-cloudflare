@@ -183,7 +183,7 @@ func resourceCloudflareAccessMutualTLSCertificateImport(d *schema.ResourceData, 
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessMutualTLSCertificateID\" or \"zone/zoneID/accessMutualTLSCertificateID\"", d.Id())
 	}
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Mutual TLS Certificate: id %s for account %s", accessMutualTLSCertificateID, accountID)
+	log.Printf("[DEBUG] Importing Cloudflare Access Mutual TLS Certificate: id %s for %s %s", accessMutualTLSCertificateID, identifierType, identifierID)
 
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessMutualTLSCertificateID)
