@@ -85,7 +85,7 @@ func testFirewallRuleConfig(resourceID, zoneID, paused, description, expression,
 		`, resourceID, zoneID, paused, description, expression, action, priority)
 }
 
-func TestFirewallRuleBypass(t *testing.T) {
+func TestAccFirewallRuleBypass(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_firewall_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

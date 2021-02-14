@@ -193,7 +193,7 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 
 	packs, err := client.ListWAFPackages(zoneID)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("error listing WAF packages: %s", err)
 	}
 
 	for _, p := range packs {

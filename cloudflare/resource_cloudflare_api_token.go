@@ -150,8 +150,8 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 
 	d.SetId(t.ID)
 	d.Set("status", t.Status)
-	d.Set("issued_on", t.IssuedOn)
-	d.Set("modified_on", t.ModifiedOn)
+	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
+	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
 	d.Set("value", t.Value)
 
 	return resourceCloudflareApiTokenRead(d, meta)
@@ -197,7 +197,6 @@ func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APIToken
 }
 
 func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) error {
-
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 
@@ -232,8 +231,8 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("name", t.Name)
 	d.Set("policy", policies)
 	d.Set("status", t.Status)
-	d.Set("issued_on", t.IssuedOn)
-	d.Set("modified_on", time.Now())
+	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
+	d.Set("modified_on", time.Now().Format(time.RFC3339Nano))
 
 	var ipIn []string
 	var ipNotIn []string

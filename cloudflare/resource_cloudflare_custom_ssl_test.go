@@ -12,7 +12,6 @@ import (
 )
 
 func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
-	t.Parallel()
 	var customSSL cloudflare.ZoneCustomSSL
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -103,7 +102,6 @@ func testAccCheckCloudflareCustomSSLExists(n string, customSSL *cloudflare.ZoneC
 }
 
 func TestAccCloudflareCustomSSLWithEmptyGeoRestrictions(t *testing.T) {
-	t.Parallel()
 	var customSSL cloudflare.ZoneCustomSSL
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()

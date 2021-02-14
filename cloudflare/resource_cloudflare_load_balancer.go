@@ -344,14 +344,20 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	d.Set("name", loadBalancer.Name)
 	d.Set("fallback_pool_id", loadBalancer.FallbackPool)
 	d.Set("proxied", loadBalancer.Proxied)
-	d.Set("enabled", *loadBalancer.Enabled)
+	d.Set("enabled", loadBalancer.Enabled)
 	d.Set("description", loadBalancer.Description)
 	d.Set("ttl", loadBalancer.TTL)
 	d.Set("steering_policy", loadBalancer.SteeringPolicy)
 	d.Set("session_affinity", loadBalancer.Persistence)
-	d.Set("session_affinity_attributes", loadBalancer.SessionAffinityAttributes)
+
 	d.Set("created_on", loadBalancer.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancer.ModifiedOn.Format(time.RFC3339Nano))
+
+	if _, sessionAffinityAttrsOk := d.GetOk("session_affinity_attributes"); sessionAffinityAttrsOk {
+		if err := d.Set("session_affinity_attributes", flattenSessionAffinityAttrs(loadBalancer.SessionAffinityAttributes)); err != nil {
+			return fmt.Errorf("failed to set session_affinity_attributes: %s", err)
+		}
+	}
 
 	if err := d.Set("default_pool_ids", loadBalancer.DefaultPools); err != nil {
 		log.Printf("[WARN] Error setting default_pool_ids on load balancer %q: %s", d.Id(), err)
@@ -382,6 +388,14 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 		flattened = append(flattened, geoConf)
 	}
 	return schema.NewSet(schema.HashResource(localPoolElems[geoType]), flattened)
+}
+
+func flattenSessionAffinityAttrs(attrs *cloudflare.SessionAffinityAttributes) map[string]interface{} {
+	return map[string]interface{}{
+		"drain_duration": strconv.Itoa(attrs.DrainDuration),
+		"samesite":       attrs.SameSite,
+		"secure":         attrs.Secure,
+	}
 }
 
 func resourceCloudflareLoadBalancerDelete(d *schema.ResourceData, meta interface{}) error {

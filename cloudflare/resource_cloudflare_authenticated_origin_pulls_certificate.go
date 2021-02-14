@@ -157,7 +157,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 		d.Set("signature", record.Signature)
 		d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
 		d.Set("status", record.Status)
-		d.Set("uploaded_on", record.UploadedOn)
+		d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
 	case aopType == "per-hostname":
 		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, certID)
 		if err != nil {
@@ -173,7 +173,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 		d.Set("serial_number", record.SerialNumber)
 		d.Set("expires_on", record.ExpiresOn.Format(time.RFC3339Nano))
 		d.Set("status", record.Status)
-		d.Set("uploaded_on", record.UploadedOn)
+		d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
 	}
 	return nil
 }

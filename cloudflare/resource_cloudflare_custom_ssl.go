@@ -152,9 +152,6 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	var reprioritizeErr = false
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
-	// Enable partial state mode for atomic subsequent updates
-	d.Partial(true)
-
 	if d.HasChange("custom_ssl_options") {
 		zcso, err := expandToZoneCustomSSLOptions(d)
 		if err != nil {
@@ -166,7 +163,6 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 			log.Printf("[DEBUG] Failed to update custom ssl cert: %s", uErr)
 			updateErr = true
 		} else {
-			d.SetPartial("custom_ssl_options")
 			log.Printf("[DEBUG] Custom SSL set to: %s", res.ID)
 		}
 
@@ -183,7 +179,6 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 			log.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
 			reprioritizeErr = true
 		} else {
-			d.SetPartial("custom_ssl_priority")
 			log.Printf("[DEBUG] Custom SSL reprioritized to: %#v", resList)
 		}
 	}
@@ -191,8 +186,6 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	if updateErr && reprioritizeErr {
 		return fmt.Errorf("Failed to update and reprioritize custom ssl cert: %s, %s", uErr, reErr)
 	}
-	// We succeeded so disable partial mode
-	d.Partial(false)
 
 	return resourceCloudflareCustomSslRead(d, meta)
 }
