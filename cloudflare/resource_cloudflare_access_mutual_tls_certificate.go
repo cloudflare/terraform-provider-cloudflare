@@ -185,6 +185,7 @@ func resourceCloudflareAccessMutualTLSCertificateImport(d *schema.ResourceData, 
 
 	log.Printf("[DEBUG] Importing Cloudflare Access Mutual TLS Certificate: id %s for %s %s", accessMutualTLSCertificateID, identifierType, identifierID)
 
+	//lintignore:R001
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessMutualTLSCertificateID)
 
