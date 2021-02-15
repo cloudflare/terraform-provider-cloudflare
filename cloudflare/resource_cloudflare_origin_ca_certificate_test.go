@@ -31,7 +31,10 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckApiUserServiceKey(t)
+		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareOriginCACertificateDestroy,
 		Steps: []resource.TestStep{
@@ -44,6 +47,10 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "csr", csr),
 					resource.TestCheckResourceAttr(name, "request_type", "origin-rsa"),
 				),
+			},
+			{
+				ResourceName: name,
+				ImportState:  true,
 			},
 		},
 	})

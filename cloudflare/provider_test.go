@@ -98,6 +98,12 @@ func testAccPreCheckApiKey(t *testing.T) {
 	}
 }
 
+func testAccPreCheckApiUserServiceKey(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_API_USER_SERVICE_KEY"); v == "" {
+		t.Fatal("CLOUDFLARE_API_USER_SERVICE_KEY must be set for acceptance tests")
+	}
+}
+
 func testAccPreCheckDomain(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_DOMAIN"); v == "" {
 		t.Fatal("CLOUDFLARE_DOMAIN must be set for acceptance tests. The domain is used to create and destroy record against.")

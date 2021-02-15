@@ -16,6 +16,7 @@ import (
 func resourceCloudflareOriginCACertificate() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareOriginCACertificateCreate,
+		Update: resourceCloudflareOriginCACertificateCreate,
 		Read:   resourceCloudflareOriginCACertificateRead,
 		Delete: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
@@ -29,8 +30,7 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 			},
 			"csr": {
 				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
+				Optional:     true,
 				ValidateFunc: validateCSR,
 			},
 			"expires_on": {
@@ -71,9 +71,12 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 	}
 
 	certInput := cloudflare.OriginCACertificate{
-		CSR:         d.Get("csr").(string),
 		Hostnames:   hostnames,
 		RequestType: d.Get("request_type").(string),
+	}
+
+	if csr, ok := d.GetOk("csr"); ok {
+		certInput.CSR = csr.(string)
 	}
 
 	requestValidity, ok := d.GetOk("requested_validity")
@@ -89,9 +92,8 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 	}
 
 	d.SetId(cert.ID)
-	d.Set("certificate", cert.Certificate)
-	d.Set("expires_on", cert.ExpiresOn.Format(time.RFC3339))
-	return nil
+
+	return resourceCloudflareOriginCACertificateRead(d, meta)
 }
 
 func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta interface{}) error {
