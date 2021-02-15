@@ -46,6 +46,7 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 					resource.TestMatchResourceAttr(name, "id", regexp.MustCompile("^[0-9]+$")),
 					resource.TestCheckResourceAttr(name, "csr", csr),
 					resource.TestCheckResourceAttr(name, "request_type", "origin-rsa"),
+					resource.TestCheckResourceAttr(name, "requested_validity", "7"),
 				),
 			},
 			{
