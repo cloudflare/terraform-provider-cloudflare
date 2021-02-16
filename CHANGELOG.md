@@ -6,6 +6,9 @@
 * `resource/cloudflare_access_policy`: Make `precedence` required ([#941](https://github.com/cloudflare/terraform-provider-cloudflare/issues/941)) 
 * `resource/cloudflare_access_group`: Fix crash when constructing a SAML group ([#948](https://github.com/cloudflare/terraform-provider-cloudflare/issues/948)) 
 
+**Improvements**
+
+* `resource/cloudflare_access_policy`: Enable zone and account level resources to be imported ([#956](https://github.com/cloudflare/terraform-provider-cloudflare/issues/956)) 
 
 ## 2.17.0 (February 3rd, 2021)
 
