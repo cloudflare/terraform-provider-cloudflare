@@ -67,15 +67,14 @@ The following arguments are supported:
 
 ## Import
 
-Access Policies can be imported using a composite ID formed of zone
-ID, application ID and policy ID.
+Access Policies can be imported using a composite ID formed of identifier type
+(`zone` or `account`), identifier ID (`zone_id` or `account_id`), application ID
+and policy ID.
 
 ```
-$ terraform import cloudflare_access_policy.staging cb029e245cfdd66dc8d2e570d5dd3322/d41d8cd98f00b204e9800998ecf8427e/67ea780ce4982c1cfbe6b7293afc765d
+# import a zone level Access policy
+$ terraform import cloudflare_access_policy.staging zone/cb029e245cfdd66dc8d2e570d5dd3322/d41d8cd98f00b204e9800998ecf8427e/67ea780ce4982c1cfbe6b7293afc765d
+
+# import an account level Access policy
+$ terraform import cloudflare_access_policy.production account/0d599f0ec05c3bda8c3b8a68c32a1b47/d41d8cd98f00b204e9800998ecf8427e/67ea780ce4982c1cfbe6b7293afc765d
 ```
-
-where
-
-* `cb029e245cfdd66dc8d2e570d5dd3322` - Zone ID
-* `d41d8cd98f00b204e9800998ecf8427e` - Access Application ID
-* `67ea780ce4982c1cfbe6b7293afc765d` - Access Policy ID
