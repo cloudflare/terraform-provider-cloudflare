@@ -222,6 +222,7 @@ func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Importing Cloudflare Access Policy: %s %q, appID %q, accessPolicyID %q", identifierType, identifierID, accessAppID, accessPolicyID)
 
+	//lintignore:R001
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.Set("application_id", accessAppID)
 	d.SetId(accessPolicyID)
