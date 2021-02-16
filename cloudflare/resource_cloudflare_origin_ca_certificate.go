@@ -55,7 +55,6 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 			"requested_validity": {
 				Type:         schema.TypeInt,
 				Optional:     true,
-				ForceNew:     true,
 				ValidateFunc: validation.IntInSlice([]int{7, 30, 90, 365, 730, 1095, 5475}),
 			},
 		},
