@@ -207,17 +207,22 @@ func resourceCloudflareAccessPolicyDelete(d *schema.ResourceData, meta interface
 }
 
 func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 3)
+	attributes := strings.SplitN(d.Id(), "/", 4)
 
-	if len(attributes) != 3 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/accessApplicationID/accessPolicyID\"", d.Id())
+	if len(attributes) != 4 {
+		return nil, fmt.Errorf(
+			"invalid id (%q) specified, should be in format %q or %q",
+			d.Id(),
+			"account/accountID/accessApplicationID/accessPolicyID",
+			"zone/zoneID/accessApplicationID/accessPolicyID",
+		)
 	}
 
-	accountID, accessAppID, accessPolicyID := attributes[0], attributes[1], attributes[2]
+	identifierType, identifierID, accessAppID, accessPolicyID := attributes[0], attributes[1], attributes[2], attributes[3]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Policy: accountID %q, appID %q, accessPolicyID %q", accountID, accessAppID, accessPolicyID)
+	log.Printf("[DEBUG] Importing Cloudflare Access Policy: %s %q, appID %q, accessPolicyID %q", identifierType, identifierID, accessAppID, accessPolicyID)
 
-	d.Set("account_id", accountID)
+	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.Set("application_id", accessAppID)
 	d.SetId(accessPolicyID)
 
