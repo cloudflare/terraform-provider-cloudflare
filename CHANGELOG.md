@@ -9,6 +9,7 @@
 **Improvements**
 
 * `resource/cloudflare_access_policy`: Enable zone and account level resources to be imported ([#956](https://github.com/cloudflare/terraform-provider-cloudflare/issues/956)) 
+* `resource/cloudflare_origin_ca_certificate`: Smoother import process with less recreation ([#955](https://github.com/cloudflare/terraform-provider-cloudflare/issues/955)) 
 
 ## 2.17.0 (February 3rd, 2021)
 
