@@ -40,10 +40,10 @@ resource "cloudflare_origin_ca_certificate" "example" {
 
 ## Argument Reference
 
-* `csr`  - (Required) The Certificate Signing Request. Must be newline-encoded.
+* `csr`  - (Optional) The Certificate Signing Request. Must be newline-encoded.
 * `hostnames` - (Required) An array of hostnames or wildcard names bound to the certificate.
 * `request_type` - (Required) The signature type desired on the certificate.
-* `requested_validity` - (Required) The number of days for which the certificate should be valid.
+* `requested_validity` - (Optional) The number of days for which the certificate should be valid.
 
 ## Attributes Reference
 

@@ -5,6 +5,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 func resourceCloudflareOriginCACertificate() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareOriginCACertificateCreate,
+		Update: resourceCloudflareOriginCACertificateCreate,
 		Read:   resourceCloudflareOriginCACertificateRead,
 		Delete: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
@@ -29,8 +31,7 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 			},
 			"csr": {
 				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
+				Optional:     true,
 				ValidateFunc: validateCSR,
 			},
 			"expires_on": {
@@ -54,7 +55,6 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 			"requested_validity": {
 				Type:         schema.TypeInt,
 				Optional:     true,
-				ForceNew:     true,
 				ValidateFunc: validation.IntInSlice([]int{7, 30, 90, 365, 730, 1095, 5475}),
 			},
 		},
@@ -71,9 +71,12 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 	}
 
 	certInput := cloudflare.OriginCACertificate{
-		CSR:         d.Get("csr").(string),
 		Hostnames:   hostnames,
 		RequestType: d.Get("request_type").(string),
+	}
+
+	if csr, ok := d.GetOk("csr"); ok {
+		certInput.CSR = csr.(string)
 	}
 
 	requestValidity, ok := d.GetOk("requested_validity")
@@ -89,9 +92,8 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 	}
 
 	d.SetId(cert.ID)
-	d.Set("certificate", cert.Certificate)
-	d.Set("expires_on", cert.ExpiresOn.Format(time.RFC3339))
-	return nil
+
+	return resourceCloudflareOriginCACertificateRead(d, meta)
 }
 
 func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta interface{}) error {
@@ -125,6 +127,19 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 	d.Set("expires_on", cert.ExpiresOn.Format(time.RFC3339))
 	d.Set("hostnames", hostnames)
 	d.Set("request_type", cert.RequestType)
+
+	// lazy approach to extracting the date from a known timestamp in order to
+	// `time.Parse` it correctly. Here we are getting the certificate expiry and
+	// calculating the validity as the API doesn't return it yet it is present in
+	// the schema.
+	date := strings.Split(cert.ExpiresOn.Format(time.RFC3339), "T")
+	certDate, _ := time.Parse("2006-01-02", date[0])
+	now := time.Now()
+	duration := certDate.Sub(now)
+	var validityDays int
+	validityDays = int(math.Ceil(duration.Hours() / 24))
+
+	d.Set("requested_validity", validityDays)
 
 	return nil
 }
