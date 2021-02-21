@@ -47,6 +47,7 @@ resource "cloudflare_page_rule" "www" {
 ```
 
 ### Terraform < 0.13
+
 ```hcl
 # Configure the Cloudflare provider.
 # You may optionally use version directive to prevent breaking changes occurring unannounced.
