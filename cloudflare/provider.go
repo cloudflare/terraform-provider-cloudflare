@@ -40,7 +40,7 @@ func Provider() terraform.ResourceProvider {
 				Optional:     true,
 				DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
 				Description:  "The API Token for operations.",
-				ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must only contain characters a-z, A-Z, 0-9, hyphens, and underscores"),
+				ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
 			},
 
 			"api_user_service_key": {
