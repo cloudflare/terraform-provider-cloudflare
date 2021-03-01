@@ -84,7 +84,7 @@ resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
   }
 }
 
-resource "cloudflare_zone" "example" {
+resource "cloudflare_record" "example" {
   zone_id     = lookup(data.cloudflare_zones.test.zones[0], "id")
   name        = "www"
   value       = "203.0.113.1"
