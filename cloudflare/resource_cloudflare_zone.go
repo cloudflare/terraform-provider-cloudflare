@@ -278,7 +278,7 @@ func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool, 
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 		zone, _ := client.ZoneDetails(zoneID)
 
-		if zone.PlanPending.LegacyID != planID {
+		if zone.Plan.LegacyID != planID {
 			return resource.RetryableError(fmt.Errorf("plan ID change has not yet propagated"))
 		}
 
