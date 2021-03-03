@@ -6,6 +6,7 @@
 * `resource/cloudflare_access_policy`: Make `precedence` required ([#941](https://github.com/cloudflare/terraform-provider-cloudflare/issues/941)) 
 * `resource/cloudflare_access_group`: Fix crash when constructing a SAML group ([#948](https://github.com/cloudflare/terraform-provider-cloudflare/issues/948)) 
 * `resource/cloudflare_zone`: Update `Retry` logic to look at an available field for passing conditions ([#973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/973))
+* `resource/cloudflare_page_rule`: Allow ignoring/including all query string parameters for `cache_key_fields` ([#975](https://github.com/cloudflare/terraform-provider-cloudflare/issues/975))
 
 **Improvements**
 
