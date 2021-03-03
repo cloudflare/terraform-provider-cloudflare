@@ -899,7 +899,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 					// Ensure that if no `include`, `exclude` or `ignore` attributes are
 					// set, we default to including all query string parameters in the
 					// cache key.
-					if !ignore.(bool) {
+					if ignore == nil || !ignore.(bool) {
 						if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
 							sectionOutput["include"] = "*"
 						}

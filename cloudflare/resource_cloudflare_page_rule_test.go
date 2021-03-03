@@ -324,8 +324,8 @@ func TestCacheKeyFieldsNilValue(t *testing.T) {
 		t.Fatalf("Unexpected error transforming page rule action: %s", err)
 	}
 
-	if !reflect.DeepEqual(pageRuleAction.Value.(map[string]interface{})["query_string"], map[string]interface{}{"include": []interface{}{"*"}}) {
-		t.Fatalf("Unexpected transformToCloudflarePageRuleAction result, expected %#v, got %#v", map[string]interface{}{"include": []interface{}{"*"}}, pageRuleAction.Value.(map[string]interface{})["query_string"])
+	if !reflect.DeepEqual(pageRuleAction.Value.(map[string]interface{})["query_string"], map[string]interface{}{"include": "*"}) {
+		t.Fatalf("Unexpected transformToCloudflarePageRuleAction result, expected %#v, got %#v", map[string]interface{}{"include": "*"}, pageRuleAction.Value.(map[string]interface{})["query_string"])
 	}
 }
 
