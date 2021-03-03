@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -90,7 +91,7 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		rule, err := client.WAFRule(rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["package_id"], rs.Primary.ID)
+		rule, err := client.WAFRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["package_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -88,12 +89,12 @@ func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[INFO] Creating Cloudflare Zone DNSSEC: name %s", zoneID)
 
-	currentDNSSEC, err := client.ZoneDNSSECSetting(zoneID)
+	currentDNSSEC, err := client.ZoneDNSSECSetting(context.Background(), zoneID)
 	if err != nil {
 		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
 	}
 	if currentDNSSEC.Status != DNSSECStatusActive {
-		_, err := client.UpdateZoneDNSSEC(zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusActive})
+		_, err := client.UpdateZoneDNSSEC(context.Background(), zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusActive})
 
 		if err != nil {
 			return fmt.Errorf("error creating zone DNSSEC %q: %s", zoneID, err)
@@ -117,7 +118,7 @@ func resourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) 
 		zoneID = d.Id()
 	}
 
-	dnssec, err := client.ZoneDNSSECSetting(zoneID)
+	dnssec, err := client.ZoneDNSSECSetting(context.Background(), zoneID)
 	if err != nil {
 		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
 	}
@@ -154,7 +155,7 @@ func resourceCloudflareZoneDNSSECDelete(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[INFO] Deleting Cloudflare Zone DNSSEC: id %s", zoneID)
 
-	_, err := client.UpdateZoneDNSSEC(zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusDisabled})
+	_, err := client.UpdateZoneDNSSEC(context.Background(), zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusDisabled})
 
 	if err != nil {
 		if strings.Contains(err.Error(), "DNSSEC is already disabled") {

@@ -50,7 +50,7 @@ func testSweepCloudflareZones(r string) error {
 		}
 
 		log.Printf("[INFO] Deleting Cloudflare Zone ID: %s", zone.ID)
-		_, err := client.DeleteZone(zone.ID)
+		_, err := client.DeleteZone(context.Background(), zone.ID)
 
 		if err != nil {
 			log.Printf("[ERROR] Failed to delete Cloudflare Zone (%s): %s", zone.Name, err)

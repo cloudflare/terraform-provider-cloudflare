@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -90,7 +91,7 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 			CertificateAuthority: ca,
 			CloudflareBranding:   cloudflareBranding,
 		}
-		certPackResponse, err := client.CreateAdvancedCertificatePack(zoneID, cert)
+		certPackResponse, err := client.CreateAdvancedCertificatePack(context.Background(), zoneID, cert)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err))
 		}
@@ -100,7 +101,7 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 			Type:  certificatePackType,
 			Hosts: expandInterfaceToStringList(certificateHostSet.List()),
 		}
-		certPackResponse, err := client.CreateCertificatePack(zoneID, cert)
+		certPackResponse, err := client.CreateCertificatePack(context.Background(), zoneID, cert)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err))
 		}
@@ -116,7 +117,7 @@ func resourceCloudflareCertificatePackRead(d *schema.ResourceData, meta interfac
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	certificatePack, err := client.CertificatePack(zoneID, d.Id())
+	certificatePack, err := client.CertificatePack(context.Background(), zoneID, d.Id())
 	if err != nil {
 		return errors.Wrap(err, "failed to fetch certificate pack")
 	}
@@ -131,7 +132,7 @@ func resourceCloudflareCertificatePackDelete(d *schema.ResourceData, meta interf
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteCertificatePack(zoneID, d.Id())
+	err := client.DeleteCertificatePack(context.Background(), zoneID, d.Id())
 	if err != nil {
 		return errors.Wrap(err, "failed to delete certificate pack")
 	}

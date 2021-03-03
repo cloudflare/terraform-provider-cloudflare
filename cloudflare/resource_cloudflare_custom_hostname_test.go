@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -332,7 +333,7 @@ func testAccCheckCloudflareCustomHostnameExists(n string, customHostname *cloudf
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundCustomHostname, err := client.CustomHostname(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundCustomHostname, err := client.CustomHostname(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

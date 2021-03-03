@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -126,7 +127,7 @@ func resourceCloudflareCustomSslCreate(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Failed to create custom ssl cert: %s", err)
 	}
 
-	res, err := client.CreateSSL(zoneID, zcso)
+	res, err := client.CreateSSL(context.Background(), zoneID, zcso)
 	if err != nil {
 		return fmt.Errorf("Failed to create custom ssl cert: %s", err)
 	}
@@ -158,7 +159,7 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 			return fmt.Errorf("Failed to update custom ssl cert: %s", err)
 		}
 
-		res, uErr := client.UpdateSSL(zoneID, certID, zcso)
+		res, uErr := client.UpdateSSL(context.Background(), zoneID, certID, zcso)
 		if uErr != nil {
 			log.Printf("[DEBUG] Failed to update custom ssl cert: %s", uErr)
 			updateErr = true
@@ -174,7 +175,7 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 			log.Printf("Failed to update custom ssl cert: %s", err)
 		}
 
-		resList, reErr := client.ReprioritizeSSL(zoneID, zcsp)
+		resList, reErr := client.ReprioritizeSSL(context.Background(), zoneID, zcsp)
 		if err != nil {
 			log.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
 			reprioritizeErr = true
@@ -196,7 +197,7 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	certID := d.Id()
 
 	// update all possible schema attributes with fields from api response
-	record, err := client.SSLDetails(zoneID, certID)
+	record, err := client.SSLDetails(context.Background(), zoneID, certID)
 	if err != nil {
 		log.Printf("[WARN] Removing record from state because it's not found in API")
 		d.SetId("")
@@ -250,7 +251,7 @@ func resourceCloudflareCustomSslDelete(d *schema.ResourceData, meta interface{})
 
 	log.Printf("[DEBUG] Deleting SSL cert %s for zone %s", certID, zoneID)
 
-	err := client.DeleteSSL(zoneID, certID)
+	err := client.DeleteSSL(context.Background(), zoneID, certID)
 	if err != nil {
 		errors.Wrap(err, "failed to delete custom ssl cert setting")
 	}

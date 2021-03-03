@@ -24,7 +24,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-				Description: "A registered Cloudflare email address.",
+				Description: "A registered Cloudflare email address",
 			},
 
 			"api_key": {
@@ -47,7 +47,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_USER_SERVICE_KEY", nil),
-				Description: "A special Cloudflare API key good for a restricted set of endpoints.",
+				Description: "A special Cloudflare API key good for a restricted set of endpoints",
 			},
 
 			"rps": {
@@ -89,7 +89,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
-				Description: "Configure API client to always use that account.",
+				Description: "Configure API client to always use that account",
 			},
 		},
 

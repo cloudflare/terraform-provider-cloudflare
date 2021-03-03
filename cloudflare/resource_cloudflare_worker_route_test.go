@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -150,7 +151,7 @@ func getRouteFromApi(zoneID, routeId string) (cloudflare.WorkerRoute, error) {
 	}
 
 	client := testAccProvider.Meta().(*cloudflare.API)
-	resp, err := client.ListWorkerRoutes(zoneID)
+	resp, err := client.ListWorkerRoutes(context.Background(), zoneID)
 	if err != nil {
 		return cloudflare.WorkerRoute{}, err
 	}

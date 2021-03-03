@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -412,7 +413,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.DNSRecord(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.DNSRecord(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Record still exists")
 		}
@@ -424,7 +425,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
-		err := client.DeleteDNSRecord(record.ZoneID, record.ID)
+		err := client.DeleteDNSRecord(context.Background(), record.ZoneID, record.ID)
 		if err != nil {
 			return err
 		}
@@ -494,7 +495,7 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundRecord, err := client.DNSRecord(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundRecord, err := client.DNSRecord(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

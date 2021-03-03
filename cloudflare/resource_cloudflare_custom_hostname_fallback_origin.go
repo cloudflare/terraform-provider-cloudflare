@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -44,7 +45,7 @@ func resourceCloudflareCustomHostnameFallbackOriginRead(d *schema.ResourceData, 
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(zoneID)
+	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error reading custom hostname fallback origin %q", zoneID))
 	}
@@ -59,7 +60,7 @@ func resourceCloudflareCustomHostnameFallbackOriginDelete(d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteCustomHostnameFallbackOrigin(zoneID)
+	err := client.DeleteCustomHostnameFallbackOrigin(context.Background(), zoneID)
 	if err != nil {
 		return errors.Wrap(err, "failed to delete custom hostname fallback origin")
 	}
@@ -76,13 +77,13 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		Origin: origin,
 	}
 
-	_, err := client.UpdateCustomHostnameFallbackOrigin(zoneID, fallbackOrigin)
+	_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
 	if err != nil {
 		return errors.Wrap(err, "failed to create custom hostname fallback origin")
 	}
 
 	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
-		fallbackHostname, err := client.CustomHostnameFallbackOrigin(zoneID)
+		fallbackHostname, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %s", err))
@@ -112,7 +113,7 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 		Origin: origin,
 	}
 
-	_, err := client.UpdateCustomHostnameFallbackOrigin(zoneID, fallbackOrigin)
+	_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
 	if err != nil {
 		return errors.Wrap(err, "failed to update custom hostname fallback origin")
 	}

@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
@@ -85,7 +86,7 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 	}
 
 	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: hostnames %v", hostnames)
-	cert, err := client.CreateOriginCertificate(certInput)
+	cert, err := client.CreateOriginCertificate(context.Background(), certInput)
 
 	if err != nil {
 		return fmt.Errorf("Error creating origin certificate: %s", err)
@@ -99,7 +100,7 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
-	cert, err := client.OriginCertificate(certID)
+	cert, err := client.OriginCertificate(context.Background(), certID)
 
 	log.Printf("[DEBUG] OriginCACertificate: %#v", cert)
 
@@ -150,7 +151,7 @@ func resourceCloudflareOriginCACertificateDelete(d *schema.ResourceData, meta in
 
 	log.Printf("[INFO] Revoking Cloudflare OriginCACertificate: id %s", certID)
 
-	_, err := client.RevokeOriginCertificate(certID)
+	_, err := client.RevokeOriginCertificate(context.Background(), certID)
 
 	if err != nil {
 		return fmt.Errorf("Error revoking Cloudflare OriginCACertificate: %s", err)

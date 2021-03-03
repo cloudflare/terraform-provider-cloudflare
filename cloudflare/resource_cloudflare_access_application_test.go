@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -288,12 +289,12 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.AccessApplication(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.AccessApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessApplication still exists")
 		}
 
-		_, err = client.AccessApplication(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err = client.AccessApplication(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessApplication still exists")
 		}

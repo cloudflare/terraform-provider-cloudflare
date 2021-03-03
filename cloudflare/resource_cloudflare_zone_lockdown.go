@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -102,7 +103,7 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 
 	var r *cloudflare.ZoneLockdownResponse
 
-	r, err = client.CreateZoneLockdown(zoneID, newZoneLockdown)
+	r, err = client.CreateZoneLockdown(context.Background(), zoneID, newZoneLockdown)
 
 	if err != nil {
 		return fmt.Errorf("error creating zone lockdown for zone ID %q: %s", zoneID, err)
@@ -123,7 +124,7 @@ func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	zoneLockdownResponse, err := client.ZoneLockdown(zoneID, d.Id())
+	zoneLockdownResponse, err := client.ZoneLockdown(context.Background(), zoneID, d.Id())
 
 	log.Printf("[DEBUG] zoneLockdownResponse: %#v", zoneLockdownResponse)
 	log.Printf("[DEBUG] zoneLockdownResponse error: %#v", err)
@@ -190,7 +191,7 @@ func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Updating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown)
 
-	r, err := client.UpdateZoneLockdown(zoneID, d.Id(), newZoneLockdown)
+	r, err := client.UpdateZoneLockdown(context.Background(), zoneID, d.Id(), newZoneLockdown)
 
 	if err != nil {
 		return fmt.Errorf("error updating zone lockdown for zone %q: %s", d.Get("zone").(string), err)
@@ -213,7 +214,7 @@ func resourceCloudflareZoneLockdownDelete(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Deleting Cloudflare Zone Lockdown: id %s for zone %s", d.Id(), zoneID)
 
-	_, err := client.DeleteZoneLockdown(zoneID, d.Id())
+	_, err := client.DeleteZoneLockdown(context.Background(), zoneID, d.Id())
 
 	if err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Zone Lockdown: %s", err)

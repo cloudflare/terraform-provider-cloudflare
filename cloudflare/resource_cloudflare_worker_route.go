@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -56,7 +57,7 @@ func resourceCloudflareWorkerRouteCreate(d *schema.ResourceData, meta interface{
 
 	log.Printf("[INFO] Creating Cloudflare Worker Route from struct: %+v", route)
 
-	r, err := client.CreateWorkerRoute(zoneID, route)
+	r, err := client.CreateWorkerRoute(context.Background(), zoneID, route)
 	if err != nil {
 		return errors.Wrap(err, "error creating worker route")
 	}
@@ -79,7 +80,7 @@ func resourceCloudflareWorkerRouteRead(d *schema.ResourceData, meta interface{})
 
 	// There isn't a dedicated endpoint for retrieving a specific route, so we
 	// list all routes and find the target route by comparing IDs
-	resp, err := client.ListWorkerRoutes(zoneID)
+	resp, err := client.ListWorkerRoutes(context.Background(), zoneID)
 
 	if err != nil {
 		return errors.Wrap(err, "error reading worker routes")
@@ -113,7 +114,7 @@ func resourceCloudflareWorkerRouteUpdate(d *schema.ResourceData, meta interface{
 
 	log.Printf("[INFO] Updating Cloudflare Worker Route from struct: %+v", route)
 
-	_, err := client.UpdateWorkerRoute(zoneID, route.ID, route)
+	_, err := client.UpdateWorkerRoute(context.Background(), zoneID, route.ID, route)
 	if err != nil {
 		return errors.Wrap(err, "error updating worker route")
 	}
@@ -128,7 +129,7 @@ func resourceCloudflareWorkerRouteDelete(d *schema.ResourceData, meta interface{
 
 	log.Printf("[INFO] Deleting Cloudflare Worker Route from zone %+v with id: %+v", zoneID, route.ID)
 
-	_, err := client.DeleteWorkerRoute(zoneID, route.ID)
+	_, err := client.DeleteWorkerRoute(context.Background(), zoneID, route.ID)
 	if err != nil {
 		return errors.Wrap(err, "error deleting worker route")
 	}

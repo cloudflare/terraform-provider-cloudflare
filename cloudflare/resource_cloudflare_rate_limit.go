@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -291,7 +292,7 @@ func resourceCloudflareRateLimitCreate(d *schema.ResourceData, meta interface{})
 
 	log.Printf("[DEBUG] Creating Cloudflare Rate Limit from struct: %+v", newRateLimit)
 
-	r, err := client.CreateRateLimit(zoneID, newRateLimit)
+	r, err := client.CreateRateLimit(context.Background(), zoneID, newRateLimit)
 	if err != nil {
 		return errors.Wrap(err, "error creating rate limit for zone")
 	}
@@ -350,7 +351,7 @@ func resourceCloudflareRateLimitUpdate(d *schema.ResourceData, meta interface{})
 
 	updatedRateLimit.Correlate, _ = expandRateLimitCorrelate(d)
 
-	_, err = client.UpdateRateLimit(zoneID, rateLimitId, updatedRateLimit)
+	_, err = client.UpdateRateLimit(context.Background(), zoneID, rateLimitId, updatedRateLimit)
 	if err != nil {
 		return errors.Wrap(err, "error creating rate limit for zone")
 	}
@@ -484,7 +485,7 @@ func resourceCloudflareRateLimitRead(d *schema.ResourceData, meta interface{}) e
 	zoneID := d.Get("zone_id").(string)
 	rateLimitId := d.Id()
 
-	rateLimit, err := client.RateLimit(zoneID, rateLimitId)
+	rateLimit, err := client.RateLimit(context.Background(), zoneID, rateLimitId)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Resource %s in zone %s no longer exists", rateLimitId, zoneID)
@@ -608,7 +609,7 @@ func resourceCloudflareRateLimitDelete(d *schema.ResourceData, meta interface{})
 
 	log.Printf("[INFO] Deleting Cloudflare Rate Limit: %s for zone: %s", rateLimitId, zoneID)
 
-	err := client.DeleteRateLimit(zoneID, rateLimitId)
+	err := client.DeleteRateLimit(context.Background(), zoneID, rateLimitId)
 	if err != nil {
 		return fmt.Errorf("error deleting Cloudflare Rate Limit for zone: %s", err)
 	}

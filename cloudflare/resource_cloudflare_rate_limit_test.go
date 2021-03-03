@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -255,7 +256,7 @@ func testAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.RateLimit(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.RateLimit(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Rate limit still exists")
 		}
@@ -276,7 +277,7 @@ func testAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateL
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundRateLimit, err := client.RateLimit(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundRateLimit, err := client.RateLimit(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -322,7 +323,7 @@ func testAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialRateLimitId = rateLimit.ID
-		err := client.DeleteRateLimit(s.RootModule().Resources[name].Primary.Attributes["zone_id"], rateLimit.ID)
+		err := client.DeleteRateLimit(context.Background(), s.RootModule().Resources[name].Primary.Attributes["zone_id"], rateLimit.ID)
 		if err != nil {
 			return err
 		}

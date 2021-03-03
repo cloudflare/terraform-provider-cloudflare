@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"html"
 	"log"
@@ -106,7 +107,7 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 
 	var r []cloudflare.FirewallRule
 
-	r, err = client.CreateFirewallRules(zoneID, []cloudflare.FirewallRule{newFirewallRule})
+	r, err = client.CreateFirewallRules(context.Background(), zoneID, []cloudflare.FirewallRule{newFirewallRule})
 
 	if err != nil {
 		return fmt.Errorf("error creating Firewall Rule for zone %q: %s", zoneID, err)
@@ -127,7 +128,7 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	firewallRule, err := client.FirewallRule(zoneID, d.Id())
+	firewallRule, err := client.FirewallRule(context.Background(), zoneID, d.Id())
 
 	log.Printf("[DEBUG] firewallRule: %#v", firewallRule)
 	log.Printf("[DEBUG] firewallRule error: %#v", err)
@@ -189,7 +190,7 @@ func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Updating Cloudflare Firewall Rule from struct: %+v", newFirewallRule)
 
-	r, err := client.UpdateFirewallRule(zoneID, newFirewallRule)
+	r, err := client.UpdateFirewallRule(context.Background(), zoneID, newFirewallRule)
 
 	if err != nil {
 		return fmt.Errorf("error updating Firewall Rule for zone %q: %s", zoneID, err)
@@ -208,7 +209,7 @@ func resourceCloudflareFirewallRuleDelete(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Deleting Cloudflare Firewall Rule: id %s for zone %s", d.Id(), zoneID)
 
-	err := client.DeleteFirewallRule(zoneID, d.Id())
+	err := client.DeleteFirewallRule(context.Background(), zoneID, d.Id())
 
 	if err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Firewall Rule: %s", err)

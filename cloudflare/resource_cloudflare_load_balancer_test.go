@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -254,7 +255,7 @@ func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.LoadBalancerDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.LoadBalancerDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("load balancer still exists: %s", rs.Primary.ID)
 		}
@@ -275,7 +276,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancer, err := client.LoadBalancerDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundLoadBalancer, err := client.LoadBalancerDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -342,7 +343,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancer.ID
-		err := client.DeleteLoadBalancer(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeleteLoadBalancer(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

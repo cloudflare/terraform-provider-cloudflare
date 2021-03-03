@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -65,7 +66,7 @@ func testAccCheckCloudflareOriginCACertificateDestroy(s *terraform.State) error 
 			continue
 		}
 
-		cert, err := client.OriginCertificate(rs.Primary.ID)
+		cert, err := client.OriginCertificate(context.Background(), rs.Primary.ID)
 		if err == nil && cert.RevokedAt == (time.Time{}) {
 			return fmt.Errorf("Origin CA Certificate still exists: %s", rs.Primary.ID)
 		}
@@ -86,7 +87,7 @@ func testAccCheckCloudflareOriginCACertificateExists(name string, cert *cloudfla
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundOriginCACertificate, err := client.OriginCertificate(rs.Primary.ID)
+		foundOriginCACertificate, err := client.OriginCertificate(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err
 		}

@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -25,7 +26,7 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	perZoneCertificates, certsErr := client.ListPerZoneAuthenticatedOriginPullsCertificates(zoneID)
+	perZoneCertificates, certsErr := client.ListPerZoneAuthenticatedOriginPullsCertificates(context.Background(), zoneID)
 
 	if certsErr != nil {
 		log.Printf("[ERROR] Failed to fetch Cloudflare authenticated origin pull certificates: %s", certsErr)
@@ -37,7 +38,7 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 	}
 
 	for _, certificate := range perZoneCertificates {
-		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(zoneID, certificate.ID)
+		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certificate.ID)
 
 		if err != nil {
 			log.Printf("[ERROR] Failed to delete Cloudflare authenticated origin pull certificate (%s) in zone ID: %s", certificate.ID, zoneID)
@@ -109,7 +110,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n st
 			return fmt.Errorf("No cert ID is set")
 		}
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -131,7 +132,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(
 			return fmt.Errorf("No cert ID is set")
 		}
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -157,12 +158,12 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terrafo
 	client := testAccProvider.Meta().(*cloudflare.API)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Primary.Attributes["type"] == "per-zone" {
-			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 			}
 		} else if rs.Primary.Attributes["type"] == "per-hostname" {
-			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 			}

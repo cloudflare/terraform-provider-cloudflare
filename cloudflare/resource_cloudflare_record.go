@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -354,7 +355,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
 
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		r, err := client.CreateDNSRecord(newRecord.ZoneID, newRecord)
+		r, err := client.CreateDNSRecord(context.Background(), newRecord.ZoneID, newRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
@@ -381,7 +382,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	record, err := client.DNSRecord(zoneID, d.Id())
+	record, err := client.DNSRecord(context.Background(), zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -480,7 +481,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] Cloudflare Record update configuration: %#v", updateRecord)
 
 	return resource.Retry(d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
-		err := client.UpdateDNSRecord(zoneID, d.Id(), updateRecord)
+		err := client.UpdateDNSRecord(context.Background(), zoneID, d.Id(), updateRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
@@ -499,7 +500,7 @@ func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[INFO] Deleting Cloudflare Record: %s, %s", zoneID, d.Id())
 
-	err := client.DeleteDNSRecord(zoneID, d.Id())
+	err := client.DeleteDNSRecord(context.Background(), zoneID, d.Id())
 	if err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Record: %s", err)
 	}
@@ -535,7 +536,7 @@ func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([
 		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneID/recordID\" for import", d.Id())
 	}
 
-	record, err := client.DNSRecord(zoneID, recordID)
+	record, err := client.DNSRecord(context.Background(), zoneID, recordID)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to find record with ID %q: %q", d.Id(), err)
 	}

@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"regexp"
@@ -100,7 +101,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 	if packageID == "" {
 		var err error
 		log.Printf("[DEBUG] Reading WAF Packages")
-		pkgList, err = client.ListWAFPackages(zoneID)
+		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
 		if err != nil {
 			return err
 		}
@@ -112,7 +113,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 	groupIds := make([]string, 0)
 	groupDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {
-		groupList, err := client.ListWAFGroups(zoneID, pkg.ID)
+		groupList, err := client.ListWAFGroups(context.Background(), zoneID, pkg.ID)
 		if err != nil {
 			return err
 		}

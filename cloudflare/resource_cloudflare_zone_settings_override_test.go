@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -144,7 +145,7 @@ func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundZone, err := client.ZoneSettings(rs.Primary.ID)
+		foundZone, err := client.ZoneSettings(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -175,7 +176,7 @@ func testAccGetInitialZoneSettings(t *testing.T, zoneID string, settings map[str
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 
-		foundZone, err := client.ZoneSettings(zoneID)
+		foundZone, err := client.ZoneSettings(context.Background(), zoneID)
 		if err != nil {
 			t.Fatalf(err.Error())
 		}
@@ -203,7 +204,7 @@ func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]i
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 
-		foundZone, err := client.ZoneSettings(zoneID)
+		foundZone, err := client.ZoneSettings(context.Background(), zoneID)
 		if err != nil {
 			return err
 		}

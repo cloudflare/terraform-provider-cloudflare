@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -65,7 +66,7 @@ func testAccCheckCloudflareCustomSSLDestroy(s *terraform.State) error {
 			continue
 		}
 
-		err := client.DeleteSSL(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeleteSSL(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("cert still exists")
 		}
@@ -86,7 +87,7 @@ func testAccCheckCloudflareCustomSSLExists(n string, customSSL *cloudflare.ZoneC
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundCustomSSL, err := client.SSLDetails(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundCustomSSL, err := client.SSLDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
