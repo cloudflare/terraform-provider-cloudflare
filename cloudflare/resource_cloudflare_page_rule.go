@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -745,14 +746,14 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 					fieldOutput[fieldID] = fieldValue
 				}
 
-				if itemExistsInSlice(fieldOutput["exclude"], "*") {
-					fieldOutput["exclude"] = []interface{}{"*"}
+				if reflect.TypeOf(fieldOutput["exclude"]).Kind() == reflect.String && fieldOutput["exclude"] == "*" {
 					fieldOutput["ignore"] = true
+					fieldOutput["exclude"] = []interface{}{}
 				}
 
-				if itemExistsInSlice(fieldOutput["include"], "*") {
-					fieldOutput["include"] = []interface{}{}
+				if reflect.TypeOf(fieldOutput["include"]).Kind() == reflect.String && fieldOutput["include"] == "*" {
 					fieldOutput["ignore"] = false
+					fieldOutput["include"] = []interface{}{}
 				}
 
 				output[sectionID] = []interface{}{fieldOutput}
@@ -887,21 +888,26 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 						}
 
 						if sectionOutput["ignore"].(bool) {
-							sectionOutput["exclude"] = []interface{}{"*"}
+							sectionOutput["exclude"] = "*"
 						}
-
-						delete(sectionOutput, "ignore")
 					}
 
 					exclude, ok1 := sectionOutput["exclude"]
 					include, ok2 := sectionOutput["include"]
+					ignore := sectionOutput["ignore"]
 
 					// Ensure that if no `include`, `exclude` or `ignore` attributes are
 					// set, we default to including all query string parameters in the
 					// cache key.
-					if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
-						sectionOutput["include"] = []interface{}{"*"}
+					if ignore == nil || !ignore.(bool) {
+						if (!ok1 || len(exclude.([]interface{})) == 0) && (!ok2 || len(include.([]interface{})) == 0) {
+							sectionOutput["include"] = "*"
+						}
 					}
+
+					// Clean up the payload and ensure we don't send `ignore` property
+					// despite using it in the schema.
+					delete(sectionOutput, "ignore")
 
 					output[sectionID] = sectionOutput
 				default:
