@@ -370,6 +370,43 @@ func TestAccCloudflareRecord_TtlValidation(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_ExplicitProxiedFalse(t *testing.T) {
+	t.Parallel()
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_record." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, rnd, zoneName, "false", "300"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "proxied", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "300"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, rnd, zoneName, "true", "1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "proxied", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "1"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, rnd, zoneName, "false", "300"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "proxied", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "300"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 	t.Parallel()
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -644,4 +681,16 @@ resource "cloudflare_record" "foobar" {
 	proxied = true
 	ttl = 3600
 }`, zoneID, name, zoneName)
+}
+
+func testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, name, zoneName, proxied, ttl string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[2]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	value = "%[3]s"
+	type = "CNAME"
+	proxied = %[4]s
+	ttl = %[5]s
+}`, zoneID, name, zoneName, proxied, ttl)
 }

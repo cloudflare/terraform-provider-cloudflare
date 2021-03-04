@@ -18,7 +18,7 @@ func validateRecordType(t string, proxied bool) error {
 	case "A", "AAAA", "CNAME":
 		return nil
 	case "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR":
-		if !proxied {
+		if ![]bool{proxied}[0] {
 			return nil
 		}
 	default:

@@ -258,7 +258,6 @@ func resourceCloudflareRecord() *schema.Resource {
 			},
 
 			"proxied": {
-				Default:  false,
 				Optional: true,
 				Type:     schema.TypeBool,
 			},
@@ -294,10 +293,14 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	client := meta.(*cloudflare.API)
 
 	newRecord := cloudflare.DNSRecord{
-		Type:    d.Get("type").(string),
-		Name:    d.Get("name").(string),
-		Proxied: d.Get("proxied").(bool),
-		ZoneID:  d.Get("zone_id").(string),
+		Type:   d.Get("type").(string),
+		Name:   d.Get("name").(string),
+		ZoneID: d.Get("zone_id").(string),
+	}
+
+	proxied, proxiedOk := d.GetOkExists("proxied")
+	if proxiedOk {
+		newRecord.Proxied = &[]bool{proxied.(bool)}[0]
 	}
 
 	value, valueOk := d.GetOk("value")
@@ -335,7 +338,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if ttl, ok := d.GetOk("ttl"); ok {
-		if ttl.(int) != 1 && newRecord.Proxied {
+		if ttl.(int) != 1 && proxiedOk && *newRecord.Proxied {
 			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", newRecord.Name)
 		}
 
@@ -347,8 +350,15 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error validating record name %q: %s", newRecord.Name, err)
 	}
 
+	var proxiedVal *bool
+	if proxiedOk {
+		proxiedVal = newRecord.Proxied
+	} else {
+		proxiedVal = &[]bool{false}[0]
+	}
+
 	// Validate type
-	if err := validateRecordType(newRecord.Type, newRecord.Proxied); err != nil {
+	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
 		return fmt.Errorf("Error validating record type %q: %s", newRecord.Type, err)
 	}
 
@@ -440,7 +450,6 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		Name:    d.Get("name").(string),
 		Content: d.Get("value").(string),
 		ZoneID:  zoneID,
-		Proxied: false,
 	}
 
 	data, dataOk := d.GetOk("data")
@@ -466,12 +475,13 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		updateRecord.Priority = priority.(int)
 	}
 
-	if proxied, ok := d.GetOk("proxied"); ok {
-		updateRecord.Proxied = proxied.(bool)
+	proxied, proxiedOk := d.GetOkExists("proxied")
+	if proxiedOk {
+		updateRecord.Proxied = &[]bool{proxied.(bool)}[0]
 	}
 
 	if ttl, ok := d.GetOk("ttl"); ok {
-		if ttl.(int) != 1 && updateRecord.Proxied {
+		if ttl.(int) != 1 && proxiedOk && *updateRecord.Proxied {
 			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", updateRecord.Name)
 		}
 

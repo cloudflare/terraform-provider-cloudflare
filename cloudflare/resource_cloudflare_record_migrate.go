@@ -71,7 +71,7 @@ func migrateCloudflareRecordStateV0toV1(is *terraform.InstanceState, meta interf
 				return is, fmt.Errorf("Error converting proxied to bool in Cloudflare Record Migration")
 			}
 
-			if b != r.Proxied {
+			if b != *r.Proxied {
 				continue
 			}
 		}
