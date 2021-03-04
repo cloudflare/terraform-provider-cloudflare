@@ -334,7 +334,8 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
-		newRecord.Priority = priority.(int)
+		p := uint16(priority.(int))
+		newRecord.Priority = &p
 	}
 
 	if ttl, ok := d.GetOk("ttl"); ok {
@@ -472,7 +473,8 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
-		updateRecord.Priority = priority.(int)
+		p := uint16(priority.(int))
+		updateRecord.Priority = &p
 	}
 
 	proxied, proxiedOk := d.GetOkExists("proxied")
