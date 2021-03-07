@@ -82,7 +82,8 @@ func migrateCloudflareRecordStateV0toV1(is *terraform.InstanceState, meta interf
 				return is, fmt.Errorf("Error converting priority to int in Cloudflare Record Migration")
 			}
 
-			if v != r.Priority {
+			p := uint16(v)
+			if &p != r.Priority {
 				continue
 			}
 		}
