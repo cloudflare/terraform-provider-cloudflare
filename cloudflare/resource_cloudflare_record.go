@@ -428,7 +428,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("type", record.Type)
 	d.Set("value", record.Content)
 	d.Set("ttl", record.TTL)
-	d.Set("priority", record.Priority)
+	d.Set("priority", fmt.Sprintf("%d", record.Priority))
 	d.Set("proxied", record.Proxied)
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("data", expandStringMap(record.Data))
