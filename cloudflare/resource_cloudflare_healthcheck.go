@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -174,7 +175,7 @@ func resourceCloudflareHealthcheckRead(d *schema.ResourceData, meta interface{})
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	healthcheck, err := client.Healthcheck(zoneID, d.Id())
+	healthcheck, err := client.Healthcheck(context.Background(), zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "object does not exist") {
 			log.Printf("[INFO] Healthcheck %s no longer exists", d.Id())
@@ -231,7 +232,7 @@ func resourceCloudflareHealthcheckCreate(d *schema.ResourceData, meta interface{
 	}
 
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		hc, err := client.CreateHealthcheck(zoneID, healthcheck)
+		hc, err := client.CreateHealthcheck(context.Background(), zoneID, healthcheck)
 		if err != nil {
 			if strings.Contains(err.Error(), "no such host") {
 				return resource.RetryableError(fmt.Errorf("hostname resolution failed"))
@@ -255,7 +256,7 @@ func resourceCloudflareHealthcheckUpdate(d *schema.ResourceData, meta interface{
 		return errors.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
 	}
 
-	_, err = client.UpdateHealthcheck(zoneID, d.Id(), healthcheck)
+	_, err = client.UpdateHealthcheck(context.Background(), zoneID, d.Id(), healthcheck)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error creating healthcheck"))
 	}
@@ -267,7 +268,7 @@ func resourceCloudflareHealthcheckDelete(d *schema.ResourceData, meta interface{
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteHealthcheck(zoneID, d.Id())
+	err := client.DeleteHealthcheck(context.Background(), zoneID, d.Id())
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error deleting standalone healthcheck"))
 	}

@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -24,14 +25,14 @@ func testSweepCloudflareFilterSweeper(r string) error {
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	filters, filtersErr := client.Filters(zoneID, cloudflare.PaginationOptions{})
+	filters, filtersErr := client.Filters(context.Background(), zoneID, cloudflare.PaginationOptions{})
 
 	if filtersErr != nil {
 		log.Printf("[ERROR] Failed to fetch Cloudflare filters: %s", filtersErr)
 	}
 
 	for _, filter := range filters {
-		err := client.DeleteFilter(zoneID, filter.ID)
+		err := client.DeleteFilter(context.Background(), zoneID, filter.ID)
 
 		if err != nil {
 			log.Printf("[ERROR] Failed to delete Cloudflare filter (%s) in zone ID: %s", filter.ID, zoneID)

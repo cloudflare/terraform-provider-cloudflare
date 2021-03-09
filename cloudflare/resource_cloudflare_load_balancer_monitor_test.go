@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -211,7 +212,7 @@ func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error 
 			continue
 		}
 
-		_, err := client.LoadBalancerMonitorDetails(rs.Primary.ID)
+		_, err := client.LoadBalancerMonitorDetails(context.Background(), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Load balancer monitor still exists")
 		}
@@ -232,7 +233,7 @@ func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancerMonitor, err := client.LoadBalancerMonitorDetails(rs.Primary.ID)
+		foundLoadBalancerMonitor, err := client.LoadBalancerMonitorDetails(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -275,7 +276,7 @@ func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerMonitor.ID
-		err := client.DeleteLoadBalancerMonitor(loadBalancerMonitor.ID)
+		err := client.DeleteLoadBalancerMonitor(context.Background(), loadBalancerMonitor.ID)
 		if err != nil {
 			return err
 		}

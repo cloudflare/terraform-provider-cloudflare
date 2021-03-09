@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -157,7 +158,7 @@ func testAccCheckCloudflareHealthcheckExists(n string, zoneID string, load *clou
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundHealthcheck, err := client.Healthcheck(zoneID, rs.Primary.ID)
+		foundHealthcheck, err := client.Healthcheck(context.Background(), zoneID, rs.Primary.ID)
 		if err != nil {
 			return err
 		}

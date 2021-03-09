@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -105,7 +106,7 @@ func testAccCheckCloudflareWAFOverrideDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.WAFOverride(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.WAFOverride(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("WAFOverride still exists")
 		}

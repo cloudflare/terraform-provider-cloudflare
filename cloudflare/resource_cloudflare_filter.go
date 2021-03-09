@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"html"
 	"log"
@@ -84,7 +85,7 @@ func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Creating Cloudflare Filter from struct: %+v", newFilter)
 
-	r, err := client.CreateFilters(zoneID, []cloudflare.Filter{newFilter})
+	r, err := client.CreateFilters(context.Background(), zoneID, []cloudflare.Filter{newFilter})
 
 	if err != nil {
 		return fmt.Errorf("error creating Filter for zone %q: %s", zoneID, err)
@@ -106,7 +107,7 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[DEBUG] Getting a Filter record for zone %q, id %s", zoneID, d.Id())
-	filter, err := client.Filter(zoneID, d.Id())
+	filter, err := client.Filter(context.Background(), zoneID, d.Id())
 
 	log.Printf("[DEBUG] filter: %#v", filter)
 	log.Printf("[DEBUG] filter error: %#v", err)
@@ -155,7 +156,7 @@ func resourceCloudflareFilterUpdate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Updating Cloudflare Filter from struct: %+v", newFilter)
 
-	r, err := client.UpdateFilter(zoneID, newFilter)
+	r, err := client.UpdateFilter(context.Background(), zoneID, newFilter)
 
 	if err != nil {
 		return fmt.Errorf("error updating Filter for zone %q: %s", zoneID, err)
@@ -174,7 +175,7 @@ func resourceCloudflareFilterDelete(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[INFO] Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID)
 
-	err := client.DeleteFilter(zoneID, d.Id())
+	err := client.DeleteFilter(context.Background(), zoneID, d.Id())
 
 	if err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Filter: %s", err)

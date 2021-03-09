@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"regexp"
@@ -109,7 +110,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 	if packageID == "" {
 		var err error
 		log.Printf("[DEBUG] Reading WAF Packages")
-		pkgList, err = client.ListWAFPackages(zoneID)
+		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
 		if err != nil {
 			return err
 		}
@@ -121,7 +122,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 	ruleIds := make([]string, 0)
 	ruleDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {
-		ruleList, err := client.ListWAFRules(zoneID, pkg.ID)
+		ruleList, err := client.ListWAFRules(context.Background(), zoneID, pkg.ID)
 		if err != nil {
 			return err
 		}

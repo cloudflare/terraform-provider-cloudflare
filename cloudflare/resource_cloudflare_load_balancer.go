@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -233,7 +234,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
-	r, err := client.CreateLoadBalancer(zoneID, newLoadBalancer)
+	r, err := client.CreateLoadBalancer(context.Background(), zoneID, newLoadBalancer)
 	if err != nil {
 		return errors.Wrap(err, "error creating load balancer for zone")
 	}
@@ -301,7 +302,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
 
-	_, err := client.ModifyLoadBalancer(zoneID, loadBalancer)
+	_, err := client.ModifyLoadBalancer(context.Background(), zoneID, loadBalancer)
 	if err != nil {
 		return errors.Wrap(err, "error creating load balancer for zone")
 	}
@@ -330,7 +331,7 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	zoneID := d.Get("zone_id").(string)
 	loadBalancerID := d.Id()
 
-	loadBalancer, err := client.LoadBalancerDetails(zoneID, loadBalancerID)
+	loadBalancer, err := client.LoadBalancerDetails(context.Background(), zoneID, loadBalancerID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer %s in zone %s not found", loadBalancerID, zoneID)
@@ -405,7 +406,7 @@ func resourceCloudflareLoadBalancerDelete(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID)
 
-	err := client.DeleteLoadBalancer(zoneID, loadBalancerID)
+	err := client.DeleteLoadBalancer(context.Background(), zoneID, loadBalancerID)
 	if err != nil {
 		return fmt.Errorf("error deleting Cloudflare Load Balancer: %s", err)
 	}

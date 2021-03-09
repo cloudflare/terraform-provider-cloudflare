@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -159,9 +160,9 @@ func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta i
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.AccessIdentityProviderDetails(identifier.Value, d.Id())
+		accessIdentityProvider, err = client.AccessIdentityProviderDetails(context.Background(), identifier.Value, d.Id())
 	} else {
-		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(identifier.Value, d.Id())
+		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(context.Background(), identifier.Value, d.Id())
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
@@ -204,9 +205,9 @@ func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.CreateAccessIdentityProvider(identifier.Value, identityProvider)
+		accessIdentityProvider, err = client.CreateAccessIdentityProvider(context.Background(), identifier.Value, identityProvider)
 	} else {
-		accessIdentityProvider, err = client.CreateZoneLevelAccessIdentityProvider(identifier.Value, identityProvider)
+		accessIdentityProvider, err = client.CreateZoneLevelAccessIdentityProvider(context.Background(), identifier.Value, identityProvider)
 	}
 	if err != nil {
 		return fmt.Errorf("error creating Access Identity Provider for ID %q: %s", d.Id(), err)
@@ -241,9 +242,9 @@ func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.UpdateAccessIdentityProvider(identifier.Value, d.Id(), updatedAccessIdentityProvider)
+		accessIdentityProvider, err = client.UpdateAccessIdentityProvider(context.Background(), identifier.Value, d.Id(), updatedAccessIdentityProvider)
 	} else {
-		accessIdentityProvider, err = client.UpdateZoneLevelAccessIdentityProvider(identifier.Value, d.Id(), updatedAccessIdentityProvider)
+		accessIdentityProvider, err = client.UpdateZoneLevelAccessIdentityProvider(context.Background(), identifier.Value, d.Id(), updatedAccessIdentityProvider)
 	}
 	if err != nil {
 		return fmt.Errorf("error updating Access Identity Provider for ID %q: %s", d.Id(), err)
@@ -267,9 +268,9 @@ func resourceCloudflareAccessIdentityProviderDelete(d *schema.ResourceData, meta
 	}
 
 	if identifier.Type == AccountType {
-		_, err = client.DeleteAccessIdentityProvider(identifier.Value, d.Id())
+		_, err = client.DeleteAccessIdentityProvider(context.Background(), identifier.Value, d.Id())
 	} else {
-		_, err = client.DeleteZoneLevelAccessIdentityProvider(identifier.Value, d.Id())
+		_, err = client.DeleteZoneLevelAccessIdentityProvider(context.Background(), identifier.Value, d.Id())
 	}
 	if err != nil {
 		return fmt.Errorf("error deleting Access Identity Provider for ID %q: %s", d.Id(), err)

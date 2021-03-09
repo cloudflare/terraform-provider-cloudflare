@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -109,12 +110,12 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 			continue
 		}
 
-		_, err := client.AccessMutualTLSCertificate(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessMutualTLSCertificate still exists")
 		}
 
-		_, err = client.AccessMutualTLSCertificate(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err = client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessMutualTLSCertificate still exists")
 		}

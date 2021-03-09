@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -128,7 +129,7 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 
 		client := testAccProvider.Meta().(*cloudflare.API)
 		params := getRequestParamsFromResource(rs)
-		r, err := client.DownloadWorker(&params)
+		r, err := client.DownloadWorker(context.Background(), &params)
 		if err != nil {
 			return err
 		}
@@ -162,7 +163,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 
 		client := testAccProvider.Meta().(*cloudflare.API)
 		params := getRequestParamsFromResource(rs)
-		r, _ := client.DownloadWorker(&params)
+		r, _ := client.DownloadWorker(context.Background(), &params)
 
 		if r.Script != "" {
 			return fmt.Errorf("Worker script with id %s still exists", rs.Primary.ID)

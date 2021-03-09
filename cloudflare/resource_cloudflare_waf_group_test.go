@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -60,13 +61,13 @@ func testAccGetWAFGroup(zoneID string) (string, error) {
 		return "", err
 	}
 
-	pkgList, err := client.ListWAFPackages(zoneID)
+	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
 	if err != nil {
 		return "", fmt.Errorf("Error while listing WAF packages: %s", err)
 	}
 
 	for _, pkg := range pkgList {
-		groupList, err := client.ListWAFGroups(zoneID, pkg.ID)
+		groupList, err := client.ListWAFGroups(context.Background(), zoneID, pkg.ID)
 		if err != nil {
 			return "", fmt.Errorf("Error while listing WAF groups for WAF package %s: %s", pkg.ID, err)
 		}
@@ -87,7 +88,7 @@ func testAccCheckCloudflareWAFGroupDestroy(s *terraform.State) error {
 			continue
 		}
 
-		group, err := client.WAFGroup(rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["package_id"], rs.Primary.ID)
+		group, err := client.WAFGroup(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["package_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

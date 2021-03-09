@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -149,7 +150,7 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool)
 
-	r, err := client.CreateLoadBalancerPool(loadBalancerPool)
+	r, err := client.CreateLoadBalancerPool(context.Background(), loadBalancerPool)
 	if err != nil {
 		return errors.Wrap(err, "error creating load balancer pool")
 	}
@@ -194,7 +195,7 @@ func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta inter
 
 	log.Printf("[DEBUG] Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool)
 
-	_, err := client.ModifyLoadBalancerPool(loadBalancerPool)
+	_, err := client.ModifyLoadBalancerPool(context.Background(), loadBalancerPool)
 	if err != nil {
 		return errors.Wrap(err, "error updating load balancer pool")
 	}
@@ -219,7 +220,7 @@ func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.Load
 func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	loadBalancerPool, err := client.LoadBalancerPoolDetails(d.Id())
+	loadBalancerPool, err := client.LoadBalancerPoolDetails(context.Background(), d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer pool %s no longer exists", d.Id())
@@ -271,7 +272,7 @@ func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta inter
 
 	log.Printf("[INFO] Deleting Cloudflare Load Balancer Pool: %s ", d.Id())
 
-	err := client.DeleteLoadBalancerPool(d.Id())
+	err := client.DeleteLoadBalancerPool(context.Background(), d.Id())
 	if err != nil {
 		return errors.Wrap(err, "error deleting Cloudflare Load Balancer Pool")
 	}

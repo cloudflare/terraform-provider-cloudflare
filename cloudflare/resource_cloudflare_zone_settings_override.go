@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -500,7 +501,7 @@ func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 	log.Printf("[INFO] Creating zone settings resource for zone ID: %s", d.Id())
 
 	// do extra initial read to get initial_settings before updating
-	zoneSettings, err := client.ZoneSettings(d.Id())
+	zoneSettings, err := client.ZoneSettings(context.Background(), d.Id())
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error reading initial settings for zone %q", d.Id()))
 	}
@@ -536,7 +537,7 @@ func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta i
 
 func updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
 	for _, settingName := range fetchAsSingleSetting {
-		singleSetting, err := client.ZoneSingleSetting(zoneId, settingName)
+		singleSetting, err := client.ZoneSingleSetting(context.Background(), zoneId, settingName)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Error reading setting '%q' for zone %q", settingName, zoneId))
 		}
@@ -546,7 +547,7 @@ func updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings *cloudflare.Z
 }
 
 func updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
-	ussl, err := client.UniversalSSLSettingDetails(zoneId)
+	ussl, err := client.UniversalSSLSettingDetails(context.Background(), zoneId)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error reading initial Universal SSL settings for zone %q", zoneId))
 	}
@@ -565,7 +566,7 @@ func updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings *cloudflare
 func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	zone, err := client.ZoneDetails(d.Id())
+	zone, err := client.ZoneDetails(context.Background(), d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Zone %q not found", d.Id())
@@ -580,7 +581,7 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 
 	// not all settings are visible to all users, so this might be a subset
 	// assume (for now) that user can see/do everything
-	zoneSettings, err := client.ZoneSettings(d.Id())
+	zoneSettings, err := client.ZoneSettings(context.Background(), d.Id())
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error reading settings for zone %q", d.Id()))
 	}
@@ -676,7 +677,7 @@ func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *clo
 	var indexesToCut []int
 	for i, setting := range zoneSettings {
 		if contains(fetchAsSingleSetting, setting.ID) {
-			_, err := client.UpdateZoneSingleSetting(zoneID, setting.ID, setting)
+			_, err := client.UpdateZoneSingleSetting(context.Background(), zoneID, setting.ID, setting)
 			if err != nil {
 				return zoneSettings, err
 			}
@@ -696,7 +697,7 @@ func updateUniversalSSLSetting(zoneSettings []cloudflare.ZoneSetting, client *cl
 		// Skipping USSL Update if value is empty, especially when we are reverting to the initial state and we did not had the information
 		if setting.ID == "universal_ssl" {
 			if setting.Value.(string) != "" {
-				_, err := client.EditUniversalSSLSetting(zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
+				_, err := client.EditUniversalSSLSetting(context.Background(), zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
 				if err != nil {
 					return zoneSettings, err
 				}
@@ -734,7 +735,7 @@ func resourceCloudflareZoneSettingsOverrideUpdate(d *schema.ResourceData, meta i
 		}
 
 		if len(zoneSettings) > 0 {
-			_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
+			_, err = client.UpdateZoneSettings(context.Background(), d.Id(), zoneSettings)
 			if err != nil {
 				return err
 			}
@@ -847,7 +848,7 @@ func resourceCloudflareZoneSettingsOverrideDelete(d *schema.ResourceData, meta i
 		}
 
 		if len(zoneSettings) > 0 {
-			_, err = client.UpdateZoneSettings(d.Id(), zoneSettings)
+			_, err = client.UpdateZoneSettings(context.Background(), d.Id(), zoneSettings)
 			if err != nil {
 				return err
 			}

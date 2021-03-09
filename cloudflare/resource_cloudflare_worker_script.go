@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
@@ -132,7 +133,7 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 type ScriptBindings map[string]cloudflare.WorkerBinding
 
 func getWorkerScriptBindings(scriptName string, client *cloudflare.API) (ScriptBindings, error) {
-	resp, err := client.ListWorkerBindings(&cloudflare.WorkerRequestParams{ScriptName: scriptName})
+	resp, err := client.ListWorkerBindings(context.Background(), &cloudflare.WorkerRequestParams{ScriptName: scriptName})
 	if err != nil {
 		return nil, fmt.Errorf("cannot list script bindings: %v", err)
 	}
@@ -186,7 +187,7 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 	}
 
 	// make sure that the worker does not already exist
-	r, _ := client.DownloadWorker(&scriptData.Params)
+	r, _ := client.DownloadWorker(context.Background(), &scriptData.Params)
 	if r.WorkerScript.Script != "" {
 		return fmt.Errorf("script already exists")
 	}
@@ -207,7 +208,7 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 		Bindings: bindings,
 	}
 
-	_, err = client.UploadWorkerWithBindings(&scriptData.Params, &scriptParams)
+	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
 	if err != nil {
 		return errors.Wrap(err, "error creating worker script")
 	}
@@ -225,7 +226,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	r, err := client.DownloadWorker(&scriptData.Params)
+	r, err := client.DownloadWorker(context.Background(), &scriptData.Params)
 	if err != nil {
 		// If the resource is deleted, we should set the ID to "" and not
 		// return an error according to the terraform spec
@@ -333,7 +334,7 @@ func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface
 		Bindings: bindings,
 	}
 
-	_, err = client.UploadWorkerWithBindings(&scriptData.Params, &scriptParams)
+	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
 	if err != nil {
 		return errors.Wrap(err, "error updating worker script")
 	}
@@ -351,7 +352,7 @@ func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params)
 
-	_, err = client.DeleteWorker(&scriptData.Params)
+	_, err = client.DeleteWorker(context.Background(), &scriptData.Params)
 	if err != nil {
 		// If the resource is already deleted, we should return without an error
 		// according to the terraform spec

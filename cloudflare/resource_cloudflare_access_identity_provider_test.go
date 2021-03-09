@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -23,7 +24,7 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
 	}
 
-	accessIDPs, accessIDPsErr := client.AccessIdentityProviders(accountID)
+	accessIDPs, accessIDPsErr := client.AccessIdentityProviders(context.Background(), accountID)
 	if accessIDPsErr != nil {
 		log.Printf("[ERROR] Failed to fetch Access Identity Providers: %s", accessIDPsErr)
 	}
@@ -35,7 +36,7 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 
 	for _, idp := range accessIDPs {
 		log.Printf("[INFO] Deleting Access Identity Provider ID: %s", idp.ID)
-		_, err := client.DeleteAccessIdentityProvider(accountID, idp.ID)
+		_, err := client.DeleteAccessIdentityProvider(context.Background(), accountID, idp.ID)
 
 		if err != nil {
 			log.Printf("[ERROR] Failed to delete Access Identity Provider (%s): %s", idp.ID, err)

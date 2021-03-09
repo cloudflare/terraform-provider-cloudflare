@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -257,7 +258,6 @@ func resourceCloudflareRecord() *schema.Resource {
 			},
 
 			"proxied": {
-				Default:  false,
 				Optional: true,
 				Type:     schema.TypeBool,
 			},
@@ -293,10 +293,14 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	client := meta.(*cloudflare.API)
 
 	newRecord := cloudflare.DNSRecord{
-		Type:    d.Get("type").(string),
-		Name:    d.Get("name").(string),
-		Proxied: d.Get("proxied").(bool),
-		ZoneID:  d.Get("zone_id").(string),
+		Type:   d.Get("type").(string),
+		Name:   d.Get("name").(string),
+		ZoneID: d.Get("zone_id").(string),
+	}
+
+	proxied, proxiedOk := d.GetOkExists("proxied")
+	if proxiedOk {
+		newRecord.Proxied = &[]bool{proxied.(bool)}[0]
 	}
 
 	value, valueOk := d.GetOk("value")
@@ -330,11 +334,12 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
-		newRecord.Priority = priority.(int)
+		p := uint16(priority.(int))
+		newRecord.Priority = &p
 	}
 
 	if ttl, ok := d.GetOk("ttl"); ok {
-		if ttl.(int) != 1 && newRecord.Proxied {
+		if ttl.(int) != 1 && proxiedOk && *newRecord.Proxied {
 			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", newRecord.Name)
 		}
 
@@ -346,15 +351,22 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error validating record name %q: %s", newRecord.Name, err)
 	}
 
+	var proxiedVal *bool
+	if proxiedOk {
+		proxiedVal = newRecord.Proxied
+	} else {
+		proxiedVal = &[]bool{false}[0]
+	}
+
 	// Validate type
-	if err := validateRecordType(newRecord.Type, newRecord.Proxied); err != nil {
+	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
 		return fmt.Errorf("Error validating record type %q: %s", newRecord.Type, err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
 
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		r, err := client.CreateDNSRecord(newRecord.ZoneID, newRecord)
+		r, err := client.CreateDNSRecord(context.Background(), newRecord.ZoneID, newRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
@@ -381,7 +393,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	record, err := client.DNSRecord(zoneID, d.Id())
+	record, err := client.DNSRecord(context.Background(), zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -416,7 +428,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("type", record.Type)
 	d.Set("value", record.Content)
 	d.Set("ttl", record.TTL)
-	d.Set("priority", record.Priority)
+	d.Set("priority", fmt.Sprintf("%d", record.Priority))
 	d.Set("proxied", record.Proxied)
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("data", expandStringMap(record.Data))
@@ -439,7 +451,6 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		Name:    d.Get("name").(string),
 		Content: d.Get("value").(string),
 		ZoneID:  zoneID,
-		Proxied: false,
 	}
 
 	data, dataOk := d.GetOk("data")
@@ -462,15 +473,17 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if priority, ok := d.GetOk("priority"); ok {
-		updateRecord.Priority = priority.(int)
+		p := uint16(priority.(int))
+		updateRecord.Priority = &p
 	}
 
-	if proxied, ok := d.GetOk("proxied"); ok {
-		updateRecord.Proxied = proxied.(bool)
+	proxied, proxiedOk := d.GetOkExists("proxied")
+	if proxiedOk {
+		updateRecord.Proxied = &[]bool{proxied.(bool)}[0]
 	}
 
 	if ttl, ok := d.GetOk("ttl"); ok {
-		if ttl.(int) != 1 && updateRecord.Proxied {
+		if ttl.(int) != 1 && proxiedOk && *updateRecord.Proxied {
 			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", updateRecord.Name)
 		}
 
@@ -480,7 +493,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	log.Printf("[DEBUG] Cloudflare Record update configuration: %#v", updateRecord)
 
 	return resource.Retry(d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
-		err := client.UpdateDNSRecord(zoneID, d.Id(), updateRecord)
+		err := client.UpdateDNSRecord(context.Background(), zoneID, d.Id(), updateRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
@@ -499,7 +512,7 @@ func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[INFO] Deleting Cloudflare Record: %s, %s", zoneID, d.Id())
 
-	err := client.DeleteDNSRecord(zoneID, d.Id())
+	err := client.DeleteDNSRecord(context.Background(), zoneID, d.Id())
 	if err != nil {
 		return fmt.Errorf("Error deleting Cloudflare Record: %s", err)
 	}
@@ -535,7 +548,7 @@ func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([
 		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneID/recordID\" for import", d.Id())
 	}
 
-	record, err := client.DNSRecord(zoneID, recordID)
+	record, err := client.DNSRecord(context.Background(), zoneID, recordID)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to find record with ID %q: %q", d.Id(), err)
 	}

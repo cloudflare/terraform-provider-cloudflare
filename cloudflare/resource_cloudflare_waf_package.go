@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -65,7 +66,7 @@ func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) 
 	packageID := d.Get("package_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	pkg, err := client.WAFPackage(zoneID, packageID)
+	pkg, err := client.WAFPackage(context.Background(), zoneID, packageID)
 	if err != nil {
 		if errorIsWAFPackageNotFound(err) {
 			d.SetId("")
@@ -90,7 +91,7 @@ func resourceCloudflareWAFPackageCreate(d *schema.ResourceData, meta interface{}
 	sensitivity := d.Get("sensitivity").(string)
 	actionMode := d.Get("action_mode").(string)
 
-	pkg, err := client.WAFPackage(zoneID, packageID)
+	pkg, err := client.WAFPackage(context.Background(), zoneID, packageID)
 	if err != nil {
 		return fmt.Errorf("Unable to find WAF Package %s", packageID)
 	}
@@ -124,7 +125,7 @@ func resourceCloudflareWAFPackageDelete(d *schema.ResourceData, meta interface{}
 	packageID := d.Get("package_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	pkg, err := client.WAFPackage(zoneID, packageID)
+	pkg, err := client.WAFPackage(context.Background(), zoneID, packageID)
 	if err != nil {
 		return err
 	}
@@ -140,7 +141,7 @@ func resourceCloudflareWAFPackageDelete(d *schema.ResourceData, meta interface{}
 			ActionMode:  defaultActionMode,
 		}
 
-		_, err = client.UpdateWAFPackage(zoneID, packageID, options)
+		_, err = client.UpdateWAFPackage(context.Background(), zoneID, packageID, options)
 		if err != nil {
 			return err
 		}
@@ -162,7 +163,7 @@ func resourceCloudflareWAFPackageUpdate(d *schema.ResourceData, meta interface{}
 		ActionMode:  actionMode,
 	}
 
-	_, err := client.UpdateWAFPackage(zoneID, packageID, options)
+	_, err := client.UpdateWAFPackage(context.Background(), zoneID, packageID, options)
 	if err != nil {
 		return err
 	}
@@ -184,7 +185,7 @@ func resourceCloudflareWAFPackageImport(d *schema.ResourceData, meta interface{}
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/PackageID\" for import", d.Id())
 	}
 
-	pkg, err := client.WAFPackage(zoneID, packageID)
+	pkg, err := client.WAFPackage(context.Background(), zoneID, packageID)
 	if err != nil {
 		return nil, err
 	}

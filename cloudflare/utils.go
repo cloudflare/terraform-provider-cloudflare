@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -167,7 +168,7 @@ func getAccountIDFromZoneID(d *schema.ResourceData, client *cloudflare.API) (str
 	accountID := d.Get("account_id").(string)
 	if accountID == "" {
 		zoneID := d.Get("zone_id").(string)
-		zone, err := client.ZoneDetails(zoneID)
+		zone, err := client.ZoneDetails(context.Background(), zoneID)
 		if err != nil {
 			return "", fmt.Errorf("error retrieving zone for zone_id %q: %s", zoneID, err)
 		}

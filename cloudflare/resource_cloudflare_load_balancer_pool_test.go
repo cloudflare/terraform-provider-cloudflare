@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -110,7 +111,7 @@ func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.LoadBalancerPoolDetails(rs.Primary.ID)
+		_, err := client.LoadBalancerPoolDetails(context.Background(), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Load balancer pool still exists")
 		}
@@ -131,7 +132,7 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancerPool, err := client.LoadBalancerPoolDetails(rs.Primary.ID)
+		foundLoadBalancerPool, err := client.LoadBalancerPoolDetails(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -174,7 +175,7 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerPool.ID
-		err := client.DeleteLoadBalancerPool(loadBalancerPool.ID)
+		err := client.DeleteLoadBalancerPool(context.Background(), loadBalancerPool.ID)
 		if err != nil {
 			return err
 		}

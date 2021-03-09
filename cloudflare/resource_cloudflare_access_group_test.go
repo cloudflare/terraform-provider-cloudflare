@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -26,7 +27,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 
 	// Zone level Access Groups
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneAccessGroups, _, err := client.ZoneLevelAccessGroups(zoneID, cloudflare.PaginationOptions{})
+	zoneAccessGroups, _, err := client.ZoneLevelAccessGroups(context.Background(), zoneID, cloudflare.PaginationOptions{})
 	if err != nil {
 		log.Printf("[ERROR] Failed to fetch zone level Access Groups: %s", err)
 	}
@@ -37,14 +38,14 @@ func testSweepCloudflareAccessGroups(r string) error {
 	}
 
 	for _, accessGroup := range zoneAccessGroups {
-		if err := client.DeleteZoneLevelAccessGroup(zoneID, accessGroup.ID); err != nil {
+		if err := client.DeleteZoneLevelAccessGroup(context.Background(), zoneID, accessGroup.ID); err != nil {
 			log.Printf("[ERROR] Failed to delete zone level Access Group %s", accessGroup.ID)
 		}
 	}
 
 	// Account level Access Groups
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	accountAccessGroups, _, err := client.AccessGroups(accountID, cloudflare.PaginationOptions{})
+	accountAccessGroups, _, err := client.AccessGroups(context.Background(), accountID, cloudflare.PaginationOptions{})
 	if err != nil {
 		log.Printf("[ERROR] Failed to fetch account level Access Groups: %s", err)
 	}
@@ -55,7 +56,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 	}
 
 	for _, accessGroup := range accountAccessGroups {
-		if err := client.DeleteAccessGroup(accountID, accessGroup.ID); err != nil {
+		if err := client.DeleteAccessGroup(context.Background(), accountID, accessGroup.ID); err != nil {
 			log.Printf("[ERROR] Failed to delete account level Access Group %s", accessGroup.ID)
 		}
 	}
@@ -406,12 +407,12 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessId
 		var err error
 
 		if accessIdentifier.Type == AccountType {
-			foundAccessGroup, err = client.AccessGroup(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+			foundAccessGroup, err = client.AccessGroup(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 		} else {
-			foundAccessGroups, _, err := client.ZoneLevelAccessGroups(rs.Primary.Attributes["zone_id"], cloudflare.PaginationOptions{})
+			foundAccessGroups, _, err := client.ZoneLevelAccessGroups(context.Background(), rs.Primary.Attributes["zone_id"], cloudflare.PaginationOptions{})
 			if err != nil {
 				return err
 			}
@@ -436,12 +437,12 @@ func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.AccessGroup(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.AccessGroup(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
 		}
 
-		_, err = client.AccessGroup(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err = client.AccessGroup(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
 		}
@@ -468,7 +469,7 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
-		err := client.DeleteAccessGroup(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		err := client.DeleteAccessGroup(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

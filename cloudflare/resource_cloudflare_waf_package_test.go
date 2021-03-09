@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -60,7 +61,7 @@ func testAccGetWAFPackage(zoneID string) (string, error) {
 		return "", err
 	}
 
-	pkgList, err := client.ListWAFPackages(zoneID)
+	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
 	if err != nil {
 		return "", fmt.Errorf("Error while listing WAF packages: %s", err)
 	}
@@ -82,7 +83,7 @@ func testAccCheckCloudflareWAFPackageDestroy(s *terraform.State) error {
 			continue
 		}
 
-		pkg, err := client.WAFPackage(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		pkg, err := client.WAFPackage(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -92,14 +93,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 			Certificate: d.Get("certificate").(string),
 			PrivateKey:  d.Get("private_key").(string),
 		}
-		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(zoneID, perZoneAOPCert)
+		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perZoneAOPCert)
 		if err != nil {
 			return fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
 
 		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(zoneID, record.ID)
+			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), zoneID, record.ID)
 			if err != nil {
 				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %s", err))
 			}
@@ -115,14 +116,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 			Certificate: d.Get("certificate").(string),
 			PrivateKey:  d.Get("private_key").(string),
 		}
-		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(zoneID, perHostnameAOPCert)
+		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perHostnameAOPCert)
 		if err != nil {
 			return fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}
 		d.SetId(record.ID)
 
 		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, record.ID)
+			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, record.ID)
 			if err != nil {
 				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %s", err))
 			}
@@ -144,7 +145,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
-		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(zoneID, certID)
+		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
 				log.Printf("[INFO] Per-Zone Authenticated Origin Pull certificate %s no longer exists", d.Id())
@@ -159,7 +160,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 		d.Set("status", record.Status)
 		d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
 	case aopType == "per-hostname":
-		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(zoneID, certID)
+		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
 				log.Printf("[INFO] Per-Hostname Authenticated Origin Pull certificate %s no longer exists", d.Id())
@@ -185,12 +186,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.Resou
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
-		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(zoneID, certID)
+		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
 			return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
 	case aopType == "per-hostname":
-		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(zoneID, certID)
+		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
 			return fmt.Errorf("Error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}

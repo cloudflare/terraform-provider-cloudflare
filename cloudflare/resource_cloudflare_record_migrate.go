@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -47,7 +48,7 @@ func migrateCloudflareRecordStateV0toV1(is *terraform.InstanceState, meta interf
 		Content: is.Attributes["value"],
 	}
 
-	records, err := client.DNSRecords(zoneId, searchRecord)
+	records, err := client.DNSRecords(context.Background(), zoneId, searchRecord)
 	if err != nil {
 		return is, err
 	}
@@ -70,7 +71,7 @@ func migrateCloudflareRecordStateV0toV1(is *terraform.InstanceState, meta interf
 				return is, fmt.Errorf("Error converting proxied to bool in Cloudflare Record Migration")
 			}
 
-			if b != r.Proxied {
+			if b != *r.Proxied {
 				continue
 			}
 		}
@@ -81,7 +82,8 @@ func migrateCloudflareRecordStateV0toV1(is *terraform.InstanceState, meta interf
 				return is, fmt.Errorf("Error converting priority to int in Cloudflare Record Migration")
 			}
 
-			if v != r.Priority {
+			p := uint16(v)
+			if &p != r.Priority {
 				continue
 			}
 		}

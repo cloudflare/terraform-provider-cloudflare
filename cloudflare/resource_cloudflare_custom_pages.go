@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -88,7 +89,7 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 		identifier = zoneID
 	}
 
-	page, err := client.CustomPage(&pageOptions, pageType)
+	page, err := client.CustomPage(context.Background(), &pageOptions, pageType)
 	if err != nil {
 		return errors.New(err.Error())
 	}
@@ -129,7 +130,7 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 		URL:   d.Get("url").(string),
 		State: "customized",
 	}
-	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}
@@ -154,7 +155,7 @@ func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{
 		URL:   nil,
 		State: "default",
 	}
-	_, err := client.UpdateCustomPage(&pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}

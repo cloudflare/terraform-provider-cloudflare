@@ -3,37 +3,37 @@ package cloudflare
 import "testing"
 
 func TestValidateRecordType(t *testing.T) {
-	validTypes := map[string]bool{
-		"A":     true,
-		"AAAA":  true,
-		"CNAME": true,
-		"TXT":   false,
-		"SRV":   false,
-		"LOC":   false,
-		"MX":    false,
-		"NS":    false,
-		"SPF":   false,
+	validTypes := map[string]*bool{
+		"A":     &[]bool{true}[0],
+		"AAAA":  &[]bool{true}[0],
+		"CNAME": &[]bool{true}[0],
+		"TXT":   &[]bool{false}[0],
+		"SRV":   &[]bool{false}[0],
+		"LOC":   &[]bool{false}[0],
+		"MX":    &[]bool{false}[0],
+		"NS":    &[]bool{false}[0],
+		"SPF":   &[]bool{false}[0],
 	}
 	for k, v := range validTypes {
-		err := validateRecordType(k, v)
+		err := validateRecordType(k, *v)
 		if err != nil {
 			t.Fatalf("%s should be a valid record type: %s", k, err)
 		}
 	}
 
-	invalidTypes := map[string]bool{
-		"a":     false,
-		"cName": false,
-		"txt":   false,
-		"SRv":   false,
-		"foo":   false,
-		"bar":   false,
-		"TXT":   true,
-		"SRV":   true,
-		"SPF":   true,
+	invalidTypes := map[string]*bool{
+		"a":     &[]bool{false}[0],
+		"cName": &[]bool{false}[0],
+		"txt":   &[]bool{false}[0],
+		"SRv":   &[]bool{false}[0],
+		"foo":   &[]bool{false}[0],
+		"bar":   &[]bool{false}[0],
+		"TXT":   &[]bool{true}[0],
+		"SRV":   &[]bool{true}[0],
+		"SPF":   &[]bool{true}[0],
 	}
 	for k, v := range invalidTypes {
-		if err := validateRecordType(k, v); err == nil {
+		if err := validateRecordType(k, *v); err == nil {
 			t.Fatalf("%s should be an invalid record type", k)
 		}
 	}

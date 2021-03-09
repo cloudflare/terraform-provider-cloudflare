@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -43,7 +44,7 @@ func resourceCloudflareLogpushOwnershipChallengeCreate(d *schema.ResourceData, m
 	zoneID := d.Get("zone_id").(string)
 	destinationConf := d.Get("destination_conf").(string)
 
-	challenge, err := client.GetLogpushOwnershipChallenge(zoneID, destinationConf)
+	challenge, err := client.GetLogpushOwnershipChallenge(context.Background(), zoneID, destinationConf)
 	if err != nil {
 		return fmt.Errorf("error requesting ownership challenge: %v", err)
 	}

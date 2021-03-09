@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -38,7 +39,7 @@ func resourceCloudflareAccountMember() *schema.Resource {
 func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	_, err := client.AccountMember(client.AccountID, d.Id())
+	_, err := client.AccountMember(context.Background(), client.AccountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Member not found") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -59,7 +60,7 @@ func resourceCloudflareAccountMemberDelete(d *schema.ResourceData, meta interfac
 
 	log.Printf("[INFO] Deleting Cloudflare account member ID: %s", d.Id())
 
-	err := client.DeleteAccountMember(client.AccountID, d.Id())
+	err := client.DeleteAccountMember(context.Background(), client.AccountID, d.Id())
 	if err != nil {
 		return fmt.Errorf("error deleting Cloudflare account member: %s", err)
 	}
@@ -78,7 +79,7 @@ func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interfac
 		accountMemberRoleIDs = append(accountMemberRoleIDs, roleID.(string))
 	}
 
-	r, err := client.CreateAccountMember(client.AccountID, memberEmailAddress, accountMemberRoleIDs)
+	r, err := client.CreateAccountMember(context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs)
 
 	if err != nil {
 		return fmt.Errorf("error creating Cloudflare account member: %s", err)
@@ -99,12 +100,12 @@ func resourceCloudflareAccountMemberUpdate(d *schema.ResourceData, meta interfac
 	memberRoles := d.Get("role_ids").(*schema.Set).List()
 
 	for _, r := range memberRoles {
-		accountRole, _ := client.AccountRole(client.AccountID, r.(string))
+		accountRole, _ := client.AccountRole(context.Background(), client.AccountID, r.(string))
 		accountRoles = append(accountRoles, accountRole)
 	}
 
 	updatedAccountMember := cloudflare.AccountMember{Roles: accountRoles}
-	_, err := client.UpdateAccountMember(client.AccountID, d.Id(), updatedAccountMember)
+	_, err := client.UpdateAccountMember(context.Background(), client.AccountID, d.Id(), updatedAccountMember)
 	if err != nil {
 		return fmt.Errorf("failed to update Cloudflare account member: %s", err)
 	}
@@ -126,7 +127,7 @@ func resourceCloudflareAccountMemberImport(d *schema.ResourceData, meta interfac
 		return nil, fmt.Errorf("invalid id %q specified, should be in format \"accountID/accountMemberID\" for import", d.Id())
 	}
 
-	member, err := client.AccountMember(accountID, accountMemberID)
+	member, err := client.AccountMember(context.Background(), accountID, accountMemberID)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find account member with ID %q: %q", accountMemberID, err)
 	}

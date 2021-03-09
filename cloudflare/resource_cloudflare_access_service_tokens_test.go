@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -185,12 +186,12 @@ func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.DeleteAccessServiceToken(rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.DeleteAccessServiceToken(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("access service token still exists")
 		}
 
-		_, err = client.DeleteZoneLevelAccessServiceToken(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err = client.DeleteZoneLevelAccessServiceToken(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("access service token still exists")
 		}

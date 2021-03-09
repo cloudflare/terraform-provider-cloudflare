@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -234,9 +235,9 @@ func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{})
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.AccessGroup(identifier.Value, d.Id())
+		accessGroup, err = client.AccessGroup(context.Background(), identifier.Value, d.Id())
 	} else {
-		accessGroup, err = client.ZoneLevelAccessGroup(identifier.Value, d.Id())
+		accessGroup, err = client.ZoneLevelAccessGroup(context.Background(), identifier.Value, d.Id())
 	}
 
 	if err != nil {
@@ -282,9 +283,9 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.CreateAccessGroup(identifier.Value, newAccessGroup)
+		accessGroup, err = client.CreateAccessGroup(context.Background(), identifier.Value, newAccessGroup)
 	} else {
-		accessGroup, err = client.CreateZoneLevelAccessGroup(identifier.Value, newAccessGroup)
+		accessGroup, err = client.CreateZoneLevelAccessGroup(context.Background(), identifier.Value, newAccessGroup)
 	}
 	if err != nil {
 		return fmt.Errorf("error creating Access Group for ID %q: %s", accessGroup.ID, err)
@@ -314,9 +315,9 @@ func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.UpdateAccessGroup(identifier.Value, updatedAccessGroup)
+		accessGroup, err = client.UpdateAccessGroup(context.Background(), identifier.Value, updatedAccessGroup)
 	} else {
-		accessGroup, err = client.UpdateZoneLevelAccessGroup(identifier.Value, updatedAccessGroup)
+		accessGroup, err = client.UpdateZoneLevelAccessGroup(context.Background(), identifier.Value, updatedAccessGroup)
 	}
 	if err != nil {
 		return fmt.Errorf("error updating Access Group for ID %q: %s", d.Id(), err)
@@ -340,9 +341,9 @@ func resourceCloudflareAccessGroupDelete(d *schema.ResourceData, meta interface{
 	}
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessGroup(identifier.Value, d.Id())
+		err = client.DeleteAccessGroup(context.Background(), identifier.Value, d.Id())
 	} else {
-		err = client.DeleteZoneLevelAccessGroup(identifier.Value, d.Id())
+		err = client.DeleteZoneLevelAccessGroup(context.Background(), identifier.Value, d.Id())
 	}
 	if err != nil {
 		return fmt.Errorf("error deleting Access Group for ID %q: %s", d.Id(), err)

@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"regexp"
@@ -97,7 +98,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Reading WAF Packages")
 	packageIds := make([]string, 0)
 	packageDetails := make([]interface{}, 0)
-	pkgList, err := client.ListWAFPackages(zoneID)
+	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
 	if err != nil {
 		return err
 	}

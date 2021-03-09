@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -27,14 +28,14 @@ func testSweepCloudflareSpectrumApplications(r string) error {
 	}
 
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	zones, zoneErr := client.ListZones(zone)
+	zones, zoneErr := client.ListZones(context.Background(), zone)
 
 	if zoneErr != nil {
 		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
 	}
 
 	for _, zone := range zones {
-		spectrumApps, spectrumErr := client.SpectrumApplications(zone.ID)
+		spectrumApps, spectrumErr := client.SpectrumApplications(context.Background(), zone.ID)
 		if spectrumErr != nil {
 			log.Printf("[ERROR] Failed to fetch Cloudflare spectrum applications: %s", zoneErr)
 		}
@@ -46,7 +47,7 @@ func testSweepCloudflareSpectrumApplications(r string) error {
 
 		for _, application := range spectrumApps {
 			log.Printf("[INFO] Deleting Cloudflare spectrum application ID: %s", application.ID)
-			err := client.DeleteSpectrumApplication(zone.ID, application.ID)
+			err := client.DeleteSpectrumApplication(context.Background(), zone.ID, application.ID)
 
 			if err != nil {
 				log.Printf("[ERROR] Failed to delete Cloudflare spectrum application (%s) in zone ID: %s", application.ID, zone.ID)
@@ -232,7 +233,7 @@ func testAccCheckCloudflareSpectrumApplicationDestroy(s *terraform.State) error 
 			continue
 		}
 
-		_, err := client.SpectrumApplication(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.SpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("spectrum application still exists: %s", rs.Primary.ID)
 		}
@@ -253,7 +254,7 @@ func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *clou
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundSpectrumApplication, err := client.SpectrumApplication(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundSpectrumApplication, err := client.SpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -291,7 +292,7 @@ func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudfla
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = spectrumApp.ID
-		err := client.DeleteSpectrumApplication(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeleteSpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

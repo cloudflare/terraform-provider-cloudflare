@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -23,7 +24,7 @@ func testSweepCloudflareCertificatePack(r string) error {
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	certificates, certErr := client.ListCertificatePacks(zoneID)
+	certificates, certErr := client.ListCertificatePacks(context.Background(), zoneID)
 	if certErr != nil {
 		log.Printf("[ERROR] Failed to fetch certificate packs: %s", clientErr)
 	}
@@ -34,7 +35,7 @@ func testSweepCloudflareCertificatePack(r string) error {
 	}
 
 	for _, certificate := range certificates {
-		if err := client.DeleteCertificatePack(zoneID, certificate.ID); err != nil {
+		if err := client.DeleteCertificatePack(context.Background(), zoneID, certificate.ID); err != nil {
 			log.Printf("[ERROR] Failed to delete certificate pack %s", certificate.ID)
 		}
 	}
