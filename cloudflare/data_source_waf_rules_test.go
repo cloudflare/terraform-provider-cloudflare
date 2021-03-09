@@ -66,7 +66,7 @@ func TestAccCloudflareWAFRules_DefaultMode(t *testing.T) {
 				Config: testAccCloudflareWAFRulesConfig(zoneID, map[string]string{}, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWAFRulesDataSourceID(name),
-					resource.TestCheckResourceAttrSet(name, "default_mode"),
+					resource.TestCheckResourceAttrSet(name, "rules.#"),
 				),
 			},
 		},
