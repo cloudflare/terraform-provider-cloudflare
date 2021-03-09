@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.19.0 (March 10th, 2021)
+
 **Fixes**
 
 * `resource/cloudflare_access_group`: Fix crash when constructing a GSuite group ([#940](https://github.com/cloudflare/terraform-provider-cloudflare/issues/940)) 
