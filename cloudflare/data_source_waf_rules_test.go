@@ -52,6 +52,27 @@ func TestAccCloudflareWAFRules_MatchDescription(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWAFRules_DefaultMode(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("data.cloudflare_waf_rules.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareWAFRulesConfig(zoneID, map[string]string{}, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWAFRulesDataSourceID(name),
+					resource.TestCheckResourceAttrSet(name, "default_mode"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareWAFRules_MatchMode(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
