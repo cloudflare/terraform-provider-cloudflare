@@ -1,3 +1,4 @@
+---
 name: "\U0001F41B Bug report"
 description: "When something isn't working as expected or documented"
 title: ""
