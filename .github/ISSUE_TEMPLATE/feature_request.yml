@@ -44,7 +44,7 @@ body:
   attributes:
     label: Potential Terraform configuration
     description: Show how you think this should work and interact.
-    placeholder: |
+    value: |
       ```hcl
       ...
       ```
