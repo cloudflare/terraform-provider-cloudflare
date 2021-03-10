@@ -10,7 +10,7 @@ body:
 - type: textarea
   attributes:
     label: Terraform version
-    placeholder: |
+    description: |
       Run `terraform -v` to show the version of Terraform and providers you are 
       using. If you are not running the latest version of Terraform or the 
       providers, please upgrade because your issue may have already been fixed.
@@ -19,7 +19,7 @@ body:
 - type: textarea
   attributes:
     label: Affected resource(s)
-    placeholder: |
+    description: |
       Please list the resources as a list, for example:
       - opc_instance
       - opc_storage_volume
@@ -40,7 +40,7 @@ body:
 - type: textarea
   attributes:
     label: Debug output
-    description: The output provided from prepending TF_LOG=DEBUG to your Terraform apply or plan.
+    description: The output provided from prepending `TF_LOG=DEBUG` to your Terraform apply or plan.
   validations:
     required: false
 - type: textarea
