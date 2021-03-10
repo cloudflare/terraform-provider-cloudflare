@@ -1,5 +1,9 @@
 ## Unreleased
 
+**Fixes**
+
+* `resource/cloudflare_record`: Update `Priority` handling for MX parked records ([#986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/986))
+ 
 ## 2.19.0 (March 10th, 2021)
 
 **Fixes**
