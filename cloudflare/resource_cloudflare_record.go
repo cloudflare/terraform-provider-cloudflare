@@ -333,7 +333,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 			valueOk, dataOk)
 	}
 
-	if priority, ok := d.GetOk("priority"); ok {
+	if priority, ok := d.GetOkExists("priority"); ok {
 		p := uint16(priority.(int))
 		newRecord.Priority = &p
 	}
@@ -428,7 +428,6 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("type", record.Type)
 	d.Set("value", record.Content)
 	d.Set("ttl", record.TTL)
-	d.Set("priority", fmt.Sprintf("%d", record.Priority))
 	d.Set("proxied", record.Proxied)
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("data", expandStringMap(record.Data))
@@ -437,6 +436,12 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 		log.Printf("[WARN] Error setting metadata: %s", err)
 	}
 	d.Set("proxiable", record.Proxiable)
+
+	if _, ok := d.GetOkExists("priority"); ok {
+		priority := record.Priority
+		p := *priority
+		d.Set("priority", fmt.Sprintf("%d", int(p)))
+	}
 
 	return nil
 }
@@ -472,7 +477,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		updateRecord.Data = newDataMap
 	}
 
-	if priority, ok := d.GetOk("priority"); ok {
+	if priority, ok := d.GetOkExists("priority"); ok {
 		p := uint16(priority.(int))
 		updateRecord.Priority = &p
 	}
