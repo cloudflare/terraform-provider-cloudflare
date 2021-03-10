@@ -13,7 +13,7 @@ body:
 - type: textarea
   attributes:
     label: Current Terraform version
-    placeholder: |
+    description: |
       Run `terraform version` to show the version, and include the output below.
       This will record which version was current at the time of your feature request,
       to help manage the request backlog.
@@ -56,6 +56,6 @@ body:
     description: |
       Are there any other GitHub issues, whether open or closed, that are related to
       the problem you've described above or to the suggested solution? If so, please
-      create a list below that mentions each of them. For example:
+      create a list below that mentions each of them. 
   validations:
     required: true
