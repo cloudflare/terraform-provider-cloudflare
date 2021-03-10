@@ -58,4 +58,4 @@ body:
       the problem you've described above or to the suggested solution? If so, please
       create a list below that mentions each of them. 
   validations:
-    required: true
+    required: false
