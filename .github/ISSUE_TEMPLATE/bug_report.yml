@@ -1,17 +1,12 @@
----
 name: "\U0001F41B Bug report"
 description: "When something isn't working as expected or documented"
 title: ""
 labels: ["kind/bug", "needs-triage"]
-
 issue_body: true
 body:
 - type: markdown
   attributes:
-    value: |
-    Thank you for opening an issue. Please note that we try to keep the Terraform
-    issue tracker reserved for bug reports and feature requests. For general usage
-    questions, please see: https://www.terraform.io/community.html.
+    value: "Thank you for opening an issue. Please note that we try to keep the Terraform issue tracker reserved for bug reports and feature requests. For general usage questions, please see: https://www.terraform.io/community.html."
 - type: textarea
   attributes:
     label: Terraform version
@@ -24,7 +19,7 @@ body:
 - type: textarea
   attributes:
     label: Affected resource(s)
-    value: |
+    placeholder: |
       Please list the resources as a list, for example:
       - opc_instance
       - opc_storage_volume
@@ -70,7 +65,7 @@ body:
   attributes:
     label: Steps to reproduce
     description: What actually happened?
-    value: |
+    placeholder: |
       1. ...
       2. ...
       3. ...
