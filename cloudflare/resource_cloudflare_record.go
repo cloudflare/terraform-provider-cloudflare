@@ -437,7 +437,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	}
 	d.Set("proxiable", record.Proxiable)
 
-	if _, ok := d.GetOkExists("priority"); ok {
+	if record.Priority != nil {
 		priority := record.Priority
 		p := *priority
 		d.Set("priority", fmt.Sprintf("%d", int(p)))
