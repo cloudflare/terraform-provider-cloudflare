@@ -40,7 +40,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "certificate", cert),
+					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.0", domain),
 				),
 			},
@@ -49,8 +49,8 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "certificate", cert),
-					resource.TestCheckResourceAttr(name, "associated_hostnames.0", ""),
+					resource.TestCheckResourceAttrSet(name, "certificate"),
+					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "0"),
 				),
 			},
 		},
@@ -85,7 +85,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "certificate", cert),
+					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.0", domain),
 				),
 			},
@@ -94,8 +94,8 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "certificate", cert),
-					resource.TestCheckResourceAttr(name, "associated_hostnames.0", ""),
+					resource.TestCheckResourceAttrSet(name, "certificate"),
+					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "0"),
 				),
 			},
 		},
@@ -110,14 +110,18 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 			continue
 		}
 
-		_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
-		if err == nil {
-			return fmt.Errorf("AccessMutualTLSCertificate still exists")
+		if rs.Primary.Attributes["zone_id"] != "" {
+			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			if err == nil {
+				return fmt.Errorf("AccessMutualTLSCertificate still exists")
+			}
 		}
 
-		_, err = client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
-		if err == nil {
-			return fmt.Errorf("AccessMutualTLSCertificate still exists")
+		if rs.Primary.Attributes["account_id"] != "" {
+			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+			if err == nil {
+				return fmt.Errorf("AccessMutualTLSCertificate still exists")
+			}
 		}
 	}
 
@@ -130,9 +134,7 @@ resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	name                 = "%[1]s"
 	%[2]s_id             = "%[3]s"
 	associated_hostnames = ["%[5]s"]
-	certificate          = <<-EOF
-	%[4]s
-	EOF
+	certificate          = "%[4]s"
 }
 `, rnd, identifier.Type, identifier.Value, cert, domain)
 }
@@ -143,9 +145,7 @@ resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	name                 = "%[1]s"
 	%[2]s_id             = "%[3]s"
 	associated_hostnames = []
-	certificate          = <<-EOF
-	%[4]s
-	EOF
+	certificate          = "%[4]s"
 }
 `, rnd, identifier.Type, identifier.Value, cert)
 }

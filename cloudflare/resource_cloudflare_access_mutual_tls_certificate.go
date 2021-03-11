@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -147,6 +148,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(d *schema.ResourceData, 
 }
 
 func resourceCloudflareAccessMutualTLSCertificateDelete(d *schema.ResourceData, meta interface{}) error {
+
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
 
@@ -157,18 +159,45 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(d *schema.ResourceData, 
 		return err
 	}
 
+	// To actually delete the certificate, it cannot have any hostnames associated
+	// with it so here we perform an update (to remove them) before we continue on
+	// with wiping the certificate itself.
+	deletedCertificate := cloudflare.AccessMutualTLSCertificate{
+		ID:                  d.Id(),
+		Name:                d.Get("name").(string),
+		AssociatedHostnames: []string{},
+	}
+
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessMutualTLSCertificate(context.Background(), identifier.Value, certID)
+		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id(), deletedCertificate)
 	} else {
-		err = client.DeleteZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, certID)
+		_, err = client.UpdateZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id(), deletedCertificate)
 	}
+
 	if err != nil {
-		return fmt.Errorf("error deleting Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err)
+		return fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err)
 	}
 
-	d.SetId("")
+	return resource.Retry(d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+		if identifier.Type == AccountType {
+			err = client.DeleteAccessMutualTLSCertificate(context.Background(), identifier.Value, certID)
+		} else {
+			err = client.DeleteZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, certID)
+		}
 
-	return nil
+		if err != nil {
+			if strings.Contains(err.Error(), "access.api.error.certificate_has_active_associations") {
+				return resource.RetryableError(fmt.Errorf("certificate associations are not yet removed"))
+			} else {
+				return resource.NonRetryableError(fmt.Errorf("error deleting Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
+			}
+		}
+
+		d.SetId("")
+
+		return nil
+	})
+
 }
 
 func resourceCloudflareAccessMutualTLSCertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
