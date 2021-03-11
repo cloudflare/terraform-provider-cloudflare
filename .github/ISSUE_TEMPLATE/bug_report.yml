@@ -10,6 +10,15 @@ body:
       Thank you for opening an issue. Please note that we try to keep the 
       Terraform issue tracker reserved for bug reports and feature requests. 
       For general usage questions, please see: https://www.terraform.io/community.html.
+- type: checkboxes
+  attributes:
+    label: Confirmation
+    description: Please make sure to have followed the following checks.
+    options:
+      - label: My issue isn't already found on the issue tracker.
+        required: true
+      - label: I have replicated my issue using the latest version of the provider and it is still present.
+        required: true
 - type: textarea
   attributes:
     label: Terraform version
@@ -34,7 +43,9 @@ body:
 - type: textarea
   attributes:
     label: Terraform configuration files
-    value: |
+    description: |
+      Please wrap your configuration files in the appropriate backtick code fences.
+    placeholder: |
       ```hcl
       ...
       ```
@@ -43,7 +54,11 @@ body:
 - type: textarea
   attributes:
     label: Debug output
-    description: The output provided from prepending `TF_LOG=DEBUG` to your Terraform apply or plan.
+    description: |
+      The output provided from prepending `TF_LOG=DEBUG` to your Terraform apply or plan. 
+      **Do not truncate or trim the output as the surrounding context is useful for debugging**. 
+      Be sure to redact or sanitise any sensitive information (such as API keys or tokens) in 
+      your logs.
   validations:
     required: false
 - type: textarea
