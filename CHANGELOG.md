@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 2.19.2 (March 11th, 2021)
+
+**Fixes**
+
+* `resource/cloudflare_record`: Address regression from 2.19.1 by checking the API response instead of the schema output for `Priority` ([#992](https://github.com/cloudflare/terraform-provider-cloudflare/issues/992))
+ 
+## 2.19.1 (March 11th, 2021)
+
 **Fixes**
 
 * `resource/cloudflare_record`: Update `Priority` handling for MX parked records ([#986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/986))
