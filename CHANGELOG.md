@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 2.19.2 (March 11th, 2021)
+## 2.19.2 (March 15th, 2021)
 
 **Fixes**
 
