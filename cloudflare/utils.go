@@ -200,7 +200,7 @@ func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	if accountID == "" && zoneID == "" {
-		return nil, fmt.Errorf("error creating Access Application: zone_id or account_id required")
+		return nil, fmt.Errorf("error creating Access resource: zone_id or account_id required")
 	}
 
 	if accountID != "" {
