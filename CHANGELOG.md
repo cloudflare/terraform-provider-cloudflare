@@ -1,5 +1,7 @@
 ## Unreleased
 
+**New resource**: `cloudflare_access_ca_certificate` ([#995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/995))
+
 ## 2.19.2 (March 15th, 2021)
 
 **Fixes**
