@@ -8,13 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-func init() {
-	resource.AddTestSweepers("cloudflare_firewall_rule", &resource.Sweeper{
-		Name: "cloudflare_firewall_rule",
-		F:    testSweepCloudflareFirewallRuleSweeper,
-	})
-}
-
 func TestAccCloudflareFirewallRulesMatchPaused(t *testing.T) {
 	t.Parallel()
 	rnd := generateRandomResourceName()
