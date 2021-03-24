@@ -93,7 +93,7 @@ The following additional attributes are exported:
 
 ## Import
 
-Access Applications can be imported using a composite ID formed of zone
+Access Applications can be imported using a composite ID formed of account
 ID and application ID.
 
 ```
