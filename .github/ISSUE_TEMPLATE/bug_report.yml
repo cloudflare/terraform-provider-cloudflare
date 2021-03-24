@@ -44,11 +44,11 @@ body:
   attributes:
     label: Terraform configuration files
     description: |
-      Please wrap your configuration files in the appropriate backtick code fences.
+      No need for code block backticks, this will be rendered as HCL automatically.
     placeholder: |
-      ```hcl
-      ...
-      ```
+      resource "example_resource" "my_resource" {
+        # ..
+      }
   validations:
     required: true
 - type: textarea
