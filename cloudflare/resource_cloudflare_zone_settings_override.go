@@ -96,7 +96,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Type:     schema.TypeInt,
 		Optional: true,
 		Computed: true,
-		ValidateFunc: validateIntInSlice([]int{0, 30, 60, 300, 1200, 1800, 3600, 7200, 10800, 14400, 18000, 28800,
+		ValidateFunc: validation.IntInSlice([]int{0, 30, 60, 300, 1200, 1800, 3600, 7200, 10800, 14400, 18000, 28800,
 			43200, 57600, 72000, 86400, 172800, 259200, 345600, 432000, 691200, 1382400, 2073600, 2678400, 5356800,
 			16070400, 31536000}),
 		// minimum TTL available depends on the plan level of the zone.
@@ -123,7 +123,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Type:     schema.TypeInt,
 		Optional: true,
 		Computed: true,
-		ValidateFunc: validateIntInSlice([]int{300, 900, 1800, 2700, 3600, 7200, 10800, 14400, 28800, 57600,
+		ValidateFunc: validation.IntInSlice([]int{300, 900, 1800, 2700, 3600, 7200, 10800, 14400, 28800, 57600,
 			86400, 604800, 2592000, 31536000}),
 	},
 
