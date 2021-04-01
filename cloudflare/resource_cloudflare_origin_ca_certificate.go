@@ -11,6 +11,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
@@ -24,6 +25,13 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
+
+		CustomizeDiff: customdiff.All(
+			customdiff.ComputedIf("certificate", func (d *schema.ResourceDiff, meta interface{}) bool {
+				// Any change to this resource causes a new "certificate" to be created.
+				return len(d.UpdatedKeys()) > 0
+			}),
+		),
 
 		Schema: map[string]*schema.Schema{
 			"certificate": {
