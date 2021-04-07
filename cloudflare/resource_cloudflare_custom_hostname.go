@@ -275,7 +275,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 		SSL: cloudflare.CustomHostnameSSL{
 			Method:            d.Get("ssl.0.method").(string),
 			Type:              d.Get("ssl.0.type").(string),
-			Wildcard:          d.Get("ssl.0.wildcard").(bool),
+			Wildcard:          &[]bool{d.Get("ssl.0.wildcard").(bool)}[0],
 			CnameTarget:       d.Get("ssl.0.cname_target").(string),
 			CnameName:         d.Get("ssl.0.cname_name").(string),
 			CustomCertificate: d.Get("ssl.0.custom_certificate").(string),
