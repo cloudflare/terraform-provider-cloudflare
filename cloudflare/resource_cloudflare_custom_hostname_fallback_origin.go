@@ -77,12 +77,15 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		Origin: origin,
 	}
 
-	_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
-	if err != nil {
-		return errors.Wrap(err, "failed to create custom hostname fallback origin")
-	}
-
 	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
+		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
+		if err != nil {
+			if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
+				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
+			}
+			return resource.NonRetryableError(errors.Wrap(err, "failed to create custom hostname fallback origin"))
+		}
+
 		fallbackHostname, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
 
 		if err != nil {
@@ -113,12 +116,17 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 		Origin: origin,
 	}
 
-	_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
-	if err != nil {
-		return errors.Wrap(err, "failed to update custom hostname fallback origin")
-	}
+	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
+		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
+		if err != nil {
+			if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
+				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
+			}
+			return resource.NonRetryableError(errors.Wrap(err, "failed to update custom hostname fallback origin"))
+		}
 
-	return resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
+		return resource.NonRetryableError(resourceCloudflareCustomHostnameFallbackOriginRead(d, meta))
+	})
 }
 
 func resourceCloudflareCustomHostnameFallbackOriginImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
