@@ -10,8 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
-const CLOUDFLARE_INVALID_OR_REMOVED_WAF_PACKAGE_ID_ERROR = 1002
-
 func resourceCloudflareWAFPackage() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareWAFPackageCreate,
@@ -54,12 +52,6 @@ func resourceCloudflareWAFPackage() *schema.Resource {
 	}
 }
 
-func errorIsWAFPackageNotFound(err error) bool {
-	return cloudflareErrorIsOneOfCodes(err, []int{
-		CLOUDFLARE_INVALID_OR_REMOVED_WAF_PACKAGE_ID_ERROR,
-	})
-}
-
 func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -68,7 +60,7 @@ func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) 
 
 	pkg, err := client.WAFPackage(context.Background(), zoneID, packageID)
 	if err != nil {
-		if errorIsWAFPackageNotFound(err) {
+		if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1002) {
 			d.SetId("")
 			return nil
 		}
