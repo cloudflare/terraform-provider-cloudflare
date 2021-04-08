@@ -97,6 +97,7 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 			"session_affinity_ttl": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				Default:      nil,
 				ValidateFunc: validation.IntBetween(1800, 604800),
 			},
 
@@ -106,6 +107,12 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+
+			"rules": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     rulesElem,
 			},
 
 			// nb enterprise only
@@ -134,6 +141,134 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 			},
 		},
 	}
+}
+
+var rulesElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:         schema.TypeString,
+			Required:     true,
+			ValidateFunc: validation.StringLenBetween(1, 200),
+		},
+
+		"priority": {
+			Type:     schema.TypeInt,
+			Optional: true,
+			Computed: true,
+		},
+
+		"disabled": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+
+		"condition": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+
+		"terminates": {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Computed: true,
+		},
+
+		"overrides": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					"session_affinity": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"", "none", "cookie", "ip_cookie"}, false),
+					},
+
+					"session_affinity_ttl": {
+						Type:         schema.TypeInt,
+						Optional:     true,
+						ValidateFunc: validation.IntBetween(1800, 604800),
+					},
+
+					"session_affinity_attributes": {
+						Type:     schema.TypeMap,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+
+					"ttl": {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
+					"steering_policy": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", ""}, false),
+					},
+
+					"fallback_pool": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					"default_pools": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+
+					"pop_pools": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     popPoolElem,
+					},
+
+					"region_pools": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     regionPoolElem,
+					},
+				},
+			},
+		},
+
+		"fixed_response": {
+			Type:     schema.TypeMap,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"message_body": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringLenBetween(0, 1024),
+					},
+
+					"status_code": {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
+					"content_type": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringLenBetween(0, 32),
+					},
+
+					"location": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringLenBetween(0, 2048),
+					},
+				},
+			},
+		},
+	},
 }
 
 var popPoolElem = &schema.Resource{
@@ -232,6 +367,14 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 		newLoadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
 
+	if rules, ok := d.GetOk("rules"); ok {
+		v, err := expandRules(rules)
+		if err != nil {
+			return err
+		}
+		newLoadBalancer.Rules = v
+	}
+
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
 	r, err := client.CreateLoadBalancer(context.Background(), zoneID, newLoadBalancer)
@@ -300,6 +443,14 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 		loadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
 
+	if rules, ok := d.GetOk("rules"); ok {
+		v, err := expandRules(rules)
+		if err != nil {
+			return err
+		}
+		loadBalancer.Rules = v
+	}
+
 	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
 
 	_, err := client.ModifyLoadBalancer(context.Background(), zoneID, loadBalancer)
@@ -357,6 +508,16 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 	if _, sessionAffinityAttrsOk := d.GetOk("session_affinity_attributes"); sessionAffinityAttrsOk {
 		if err := d.Set("session_affinity_attributes", flattenSessionAffinityAttrs(loadBalancer.SessionAffinityAttributes)); err != nil {
 			return fmt.Errorf("failed to set session_affinity_attributes: %s", err)
+		}
+	}
+
+	if len(loadBalancer.Rules) > 0 {
+		fr, err := flattenRules(d, loadBalancer.Rules)
+		if err != nil {
+			return fmt.Errorf("failed to flatten rules: %s", err)
+		}
+		if err := d.Set("rules", fr); err != nil {
+			return fmt.Errorf("failed to set rules: %s\n %v", err, fr)
 		}
 	}
 
@@ -432,6 +593,213 @@ func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface
 	resourceCloudflareLoadBalancerRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) (interface{}, error) {
+	if len(rules) == 0 {
+		return nil, nil
+	}
+
+	cfResources := []map[string]interface{}{}
+	for idx, r := range rules {
+		m := map[string]interface{}{
+			"name":      r.Name,
+			"condition": r.Condition,
+			"disabled":  r.Disabled,
+		}
+
+		if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.priority", idx)); ok {
+			m["priority"] = r.Priority
+		}
+		if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.terminates", idx)); ok {
+			m["terminates"] = r.Terminates
+		}
+
+		if fr := r.FixedResponse; fr != nil {
+			frm := map[string]interface{}{}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.message_body", idx)); ok {
+				frm["message_body"] = fr.MessageBody
+				m["fixed_response"] = frm // only set if one of these has is true
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.status_code", idx)); ok {
+				frm["status_code"] = strconv.FormatInt(int64(fr.StatusCode), 10)
+				m["fixed_response"] = frm // only set if one of these has is true
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.content_type", idx)); ok {
+				frm["content_type"] = fr.ContentType
+				m["fixed_response"] = frm // only set if one of these has is true
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.location", idx)); ok {
+				frm["location"] = fr.Location
+				m["fixed_response"] = frm // only set if one of these has is true
+			}
+		}
+		if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides", idx)); ok {
+			o := r.Overrides
+			om := map[string]interface{}{}
+
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity", idx)); ok {
+				om["session_affinity"] = o.Persistence
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_ttl", idx)); ok {
+				om["session_affinity"] = o.PersistenceTTL
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.ttl", idx)); ok {
+				om["ttl"] = o.TTL
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.steering_policy", idx)); ok {
+				om["steering_policy"] = o.SteeringPolicy
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.fallback_pool", idx)); ok {
+				om["fallback_pool"] = o.FallbackPool
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.default_pools", idx)); ok {
+				om["default_pools"] = o.DefaultPools
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.pop_pools", idx)); ok {
+				om["pop_pools"] = flattenGeoPools(o.PoPPools, "rules_pop")
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.region_pools", idx)); ok {
+				om["region_pools"] = flattenGeoPools(o.RegionPools, "rules_region")
+				m["overrides"] = []interface{}{om}
+			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes", idx)); o.SessionAffinityAttrs != nil && ok {
+				saa := map[string]interface{}{}
+				om["session_affinity_attributes"] = saa
+				m["overrides"] = []interface{}{om}
+				if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes.samesite", idx)); ok {
+					saa["samesite"] = o.SessionAffinityAttrs.SameSite
+				}
+				if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes.secure", idx)); ok {
+					saa["secure"] = o.SessionAffinityAttrs.Secure
+				}
+			}
+		}
+
+		cfResources = append(cfResources, m)
+	}
+	return cfResources, nil
+}
+
+func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
+	var rules []*cloudflare.LoadBalancerRule
+	for _, ele := range rdata.([]interface{}) {
+		r := ele.(map[string]interface{})
+		lbr := &cloudflare.LoadBalancerRule{
+			Name: r["name"].(string),
+		}
+		if v, ok := r["priority"]; ok {
+			lbr.Priority = v.(int)
+		}
+		if d, ok := r["disabled"]; ok {
+			lbr.Disabled = d.(bool)
+		}
+		if c, ok := r["condition"]; ok {
+			lbr.Condition = c.(string)
+		}
+		if t, ok := r["terminates"]; ok {
+			lbr.Terminates = t.(bool)
+		}
+
+		if overridesData, ok := r["overrides"]; ok && len(overridesData.([]interface{})) > 0 {
+			ov := overridesData.([]interface{})[0].(map[string]interface{})
+
+			if sa, ok := ov["session_affinity"]; ok {
+				lbr.Overrides.Persistence = sa.(string)
+			}
+
+			if sattl, ok := ov["session_affinity_ttl"]; ok {
+				v := uint(sattl.(int))
+				// a default value of seem to be set into this field bypassing
+				// the IntBetween(1800, 604800) validation check ignore
+				// this zero values here
+				if v != 0 {
+					lbr.Overrides.PersistenceTTL = &v
+				}
+			}
+
+			if saattr, ok := ov["session_affinity_attributes"]; ok {
+				attr := saattr.(map[string]interface{})
+				v := &cloudflare.LoadBalancerRuleOverridesSessionAffinityAttrs{}
+				if ss, ok := attr["samesite"]; ok {
+					v.SameSite = ss.(string)
+					lbr.Overrides.SessionAffinityAttrs = v
+				}
+				if sec, ok := attr["secure"]; ok {
+					v.Secure = sec.(string)
+					lbr.Overrides.SessionAffinityAttrs = v
+				}
+			}
+
+			if ttl, ok := ov["ttl"]; ok {
+				lbr.Overrides.TTL = uint(ttl.(int))
+			}
+
+			if sp, ok := ov["steering_policy"]; ok {
+				lbr.Overrides.SteeringPolicy = sp.(string)
+			}
+
+			if fb, ok := ov["fallback_pool"]; ok {
+				lbr.Overrides.FallbackPool = fb.(string)
+			}
+
+			if dp, ok := ov["default_pools"]; ok {
+				lbr.Overrides.DefaultPools = expandInterfaceToStringList(dp)
+			}
+
+			if pp, ok := ov["pop_pools"]; ok {
+				expandedPopPools, err := expandGeoPools(pp, "pop")
+				if err != nil {
+					return nil, err
+				}
+				lbr.Overrides.PoPPools = expandedPopPools
+			}
+
+			if rp, ok := ov["region_pools"]; ok {
+				expandedRegionPools, err := expandGeoPools(rp, "region")
+				if err != nil {
+					return nil, err
+				}
+				lbr.Overrides.RegionPools = expandedRegionPools
+			}
+		}
+
+		if fixedResponseData, ok := r["fixed_response"]; ok {
+			frd := fixedResponseData.(map[string]interface{})
+			// we don't add this into our LB unless one of the cases below is true
+			fr := &cloudflare.LoadBalancerFixedResponseData{}
+			if mb, ok := frd["message_body"]; ok {
+				fr.MessageBody = mb.(string)
+				lbr.FixedResponse = fr
+			}
+			if sc, ok := frd["status_code"]; ok {
+				scint, err := strconv.ParseInt(sc.(string), 10, 64)
+				if err != nil {
+					return nil, err
+				}
+				fr.StatusCode = int(scint)
+				lbr.FixedResponse = fr
+			}
+			if ct, ok := frd["content_type"]; ok {
+				fr.ContentType = ct.(string)
+				lbr.FixedResponse = fr
+			}
+			if l, ok := frd["location"]; ok {
+				fr.Location = l.(string)
+				lbr.FixedResponse = fr
+			}
+
+		}
+		rules = append(rules, lbr)
+	}
+	return rules, nil
 }
 
 func expandSessionAffinityAttrs(attrs interface{}) (*cloudflare.SessionAffinityAttributes, error) {
