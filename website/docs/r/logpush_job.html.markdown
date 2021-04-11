@@ -26,6 +26,9 @@ Please see
 for how to use that resource and the third party provider documentation if you
 choose to automate the intermediate step of fetching the ownership challenge contents.
 
+~> **Important:** If you're using this approach, the `destination_conf` values must
+match identically in all resources. Otherwise the challenge validation will fail.
+
 ```hcl
 resource "cloudflare_logpush_ownership_challenge" "ownership_challenge" {
   zone_id = "d41d8cd98f00b204e9800998ecf8427e"
@@ -43,7 +46,7 @@ resource "cloudflare_logpush_job" "example_job" {
   name = "My-logpush-job"
   logpull_options = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
   destination_conf = "s3://my-bucket-path?region=us-west-2"
-  ownership_challenge = aws_s3_bucket_object.challenge_file.body
+  ownership_challenge = data.aws_s3_bucket_object.challenge_file.body
   dataset = "http_requests"
 }
 ```
