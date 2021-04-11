@@ -13,47 +13,38 @@
 
 ## Building The Provider
 
+For ease of building the provider, Terraform 0.14 is assumed. Before 0.14, the
+approaches to using a development binary is difficult and error prone.
+
 Clone repository to: `$GOPATH/src/github.com/cloudflare/terraform-provider-cloudflare`
 
-```sh
-$ mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com/terraform-providers
-$ git clone https://github.com/cloudflare/terraform-provider-cloudflare.git
-```
+Once the local repository is present, change into that directory and run `make
+build-dev`. This will create a new binary in the same directory which will
+be loaded for your Terraform operations.
 
-Since Terraform 0.13, all providers (including local ones) require a version and
-need to meet stricter load conditions. To simplify this there is a `make` target
-available which will handle building and putting the executable in the correct
-place.
+Create the following file in your home directory. Note: This file can live
+anywhere and isn't restricted to your home directory if you would like it
+elsewhere.
 
 ```
-make build-and-install-dev-version
-```
-
-Once this completes, you will need to update your Terraform provider
-configuration to reference version 99.0.0 (the version of the development build)
-in order to use it. Example configuration:
-
-```hcl
-terraform {
-  required_version = ">= 0.13"
-  required_providers {
-    cloudflare = {
-      source = "cloudflare/cloudflare"
-      version = "99.0.0"
-    }
+provider_installation {
+  dev_overrides {
+    "cloudflare/cloudflare" = "<GOPATH>/src/github.com/cloudflare/terraform-provider-cloudflare"
   }
+
+  # For all other providers, install them directly from their origin provider
+  # registries as normal. If you omit this, Terraform will _only_ use
+  # the dev_overrides block, and so no other providers will be available.
+  direct {}
 }
 ```
 
-Be sure to remove any additional configuration from your `~/.terraformrc` and
-`.terraform` directories to prevent load issues. You will also need to update
-*all* `version` references to use 99.0.0 in order to fully initialise the 
-development provider. If you see other versions (like the example below) you
-need to track them down and remove them.
+You will need to replace `<GOPATH>` with the **full path** to your GOPATH where
+the repository lives, no `~` shorthand.
 
-```
-Finding cloudflare/cloudflare versions matching "99.0.0, ~> 2.*"...
-```
+Once this is in place, you can run your Terraform operations prefixed with
+`TF_CLI_CONFIG_FILE=/path/to/the/config/file` and it will load in your custom
+overrides. Full details can be found on the [Terraform CLI guide][tf cli guide].
 
 ## Developing the Provider
 
@@ -101,4 +92,5 @@ Stepping through the above commands:
 If you wish to remove a dependency, you can remove the reference from
 `go.mod` and use the same commands above but omit the initial `go get`.
 
-[go modules]: https://github.com/golang/go/wiki/Modules
+[tf cli guide]: https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers
+[go modules]: https://github.com/golang/go/wiki/Modules]
