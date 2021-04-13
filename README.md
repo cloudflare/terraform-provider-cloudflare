@@ -46,6 +46,13 @@ Once this is in place, you can run your Terraform operations prefixed with
 `TF_CLI_CONFIG_FILE=/path/to/the/config/file` and it will load in your custom
 overrides. Full details can be found on the [Terraform CLI guide][tf cli guide].
 
+## Migrating to Terraform from using the Dashboard
+
+Do you have an existing Cloudflare account (or many!) that you'd like to transition
+to be managed via Terraform? Check out [cf-terraforming](https://github.com/cloudflare/cf-terraforming)
+which is a tool Cloudflare has built to help dump the existing resources and
+import them into Terraform.
+
 ## Developing the Provider
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org)
