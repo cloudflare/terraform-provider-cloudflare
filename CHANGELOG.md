@@ -2,6 +2,18 @@
 
 **New resource**: `cloudflare_access_ca_certificate` ([#995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/995))
 
+**Improvements**
+
+* `resource/cloudflare_access_application`: Improve documentation for `Import` usage ([#1002](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1002))
+* `resource/cloudflare_logpush_job`: Update documentation to reflect requirements for `destination_conf` to match across all uses ([#1024](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1024)) 
+* `resource/cloudflare_custom_hostname_fallback`: Better handle service lag when updating existing resources by attempting retries ([#1014](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1014)) 
+* `resource/cloudflare_waf_group`: Simplify error handling using inbuilt helpers ([#1015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1015)) 
+* `resource/cloudflare_waf_rule`: Simplify error handling using inbuilt helpers ([#1015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1015)) 
+* `resource/cloudflare_waf_package`: Simplify error handling using inbuilt helpers ([#1015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1015)) 
+* `resource/cloudflare_access_group`: Add support for `login_method` ([#1018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1018))
+* provider: Update to cloudflare-go v0.16.0 ([#1018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1018))
+* provider: Update to terraform-plugin-sdk v1.16.1 ([#1003](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1003))
+
 ## 2.19.2 (March 15th, 2021)
 
 **Fixes**
