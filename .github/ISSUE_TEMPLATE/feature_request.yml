@@ -13,7 +13,7 @@ body:
   attributes:
     label: Current Terraform version
     description: |
-      Run `terraform version` to show the version, and include the output below.
+      Run `terraform -v` to show the version, and include the output below.
       This will record which version was current at the time of your feature request,
       to help manage the request backlog.
 
