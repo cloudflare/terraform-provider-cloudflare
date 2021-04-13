@@ -36,10 +36,10 @@ resource "cloudflare_load_balancer" "bar" {
     name = "example rule"
     condition = "http.request.uri.path contains \"testing\""
     fixed_response = {
-      "message_body" = "hello"
-      "status_code" = "200"
-      "content_type" = "html"
-      "location" = "www.example.com"
+      message_body = "hello"
+      status_code = 200
+      content_type = "html"
+      location = "www.example.com"
     }
   }
 }
