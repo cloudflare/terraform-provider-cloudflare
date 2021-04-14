@@ -162,7 +162,10 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "rules lb"),
 					resource.TestCheckResourceAttr(name, "rules.0.name", "test rule 1"),
 					resource.TestCheckResourceAttr(name, "rules.0.condition", "dns.qry.type == 28"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides", "test rule 1"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.#", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.steering_policy", "geo"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.samesite", "Auto"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.#", "2"),
 					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.message_body", "hello"),
 				),
@@ -484,10 +487,10 @@ resource "cloudflare_load_balancer" "%[3]s" {
     name = "test rule 2"
     condition = "dns.qry.type == 28"
     fixed_response = {
-      "message_body" = "hello"
-      "status_code" = "200"
-      "content_type" = "html"
-      "location" = "www.example.com"
+      message_body = "hello"
+      status_code = "200"
+      content_type = "html"
+      location = "www.example.com"
     }
   }
 }`, zoneID, zone, id)
