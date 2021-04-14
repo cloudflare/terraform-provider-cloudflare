@@ -128,6 +128,8 @@ resource "cloudflare_certificate_pack" "%[3]s" {
 }
 
 func TestAccCertificatePackDedicatedCustom(t *testing.T) {
+	t.Skip("Pending investigation into ACM entitlements")
+
 	rnd := generateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
