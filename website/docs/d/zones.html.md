@@ -114,7 +114,7 @@ values must match in order to be included, see below for full list.
 
 ## Attributes Reference
 
-- `zones` - A map of zone details. Full list below:
+- `zones` - A list of zone objects. Object format:
 
 **zones**
 
