@@ -13,6 +13,7 @@
 * `resource/cloudflare_access_group`: Add support for `login_method` ([#1018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1018))
 * provider: Update to cloudflare-go v0.16.0 ([#1018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1018))
 * provider: Update to terraform-plugin-sdk v1.16.1 ([#1003](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1003))
+* `resource/cloudflare_load_balancer`: Add support for `rules` ([#1016](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1016)) 
 
 ## 2.19.2 (March 15th, 2021)
 
