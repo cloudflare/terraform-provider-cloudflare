@@ -240,17 +240,23 @@ func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface
 func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *schema.ResourceData) cloudflare.AccessPolicy {
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
-		policy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		if value != nil {
+			policy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	require := d.Get("require").([]interface{})
 	for _, value := range require {
-		policy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		if value != nil {
+			policy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	include := d.Get("include").([]interface{})
 	for _, value := range include {
-		policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		if value != nil {
+			policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	return policy
