@@ -166,8 +166,9 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.steering_policy", "geo"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.secure", "Auto"),
-					resource.TestCheckResourceAttr(name, "rules.#", "2"),
+					resource.TestCheckResourceAttr(name, "rules.#", "3"),
 					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.message_body", "hello"),
+					resource.TestCheckResourceAttr(name, "rules.2.overrides.0.region_pools.0.region", "ENAM"),
 				),
 			},
 		},
@@ -491,6 +492,16 @@ resource "cloudflare_load_balancer" "%[3]s" {
       status_code = "200"
       content_type = "html"
       location = "www.example.com"
+    }
+  }
+  rules {
+    name = "test rule 3"
+    condition = "dns.qry.type == 28"
+    overrides {
+      region_pools {
+		    region = "ENAM"
+		    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+	    }
     }
   }
 }`, zoneID, zone, id)
