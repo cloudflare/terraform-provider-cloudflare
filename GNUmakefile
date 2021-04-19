@@ -71,7 +71,7 @@ clean-dev:
 	@echo "Removing development version ($(dev_version))"
 	@rm -f terraform-provider-cloudflare_$(dev_version)
 
-build-dev: clean-dev-version
+build-dev: clean-dev
 	@echo "Building development version ($(dev_version))"
 	go build -o terraform-provider-cloudflare_$(dev_version)
 
