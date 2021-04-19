@@ -168,7 +168,7 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.#", "3"),
 					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.message_body", "hello"),
-					resource.TestCheckResourceAttr(name, "rules.2.overrides.0.region_pools.0.region", "ENAM"),
+					resource.TestCheckResourceAttr(name, "rules.2.overrides.0.region_pools.#", "1"),
 				),
 			},
 		},
