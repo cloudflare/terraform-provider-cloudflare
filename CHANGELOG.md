@@ -1,5 +1,14 @@
 ## Unreleased
 
+**Improvements**
+
+* provider: Update to terraform-plugin-sdk v1.17.0 ([#1035](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1035))
+ 
+**Fixes**
+
+* `resource/cloudflare_access_policy`: Allow empty slices in blocks when building policies ([#1034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1034))
+* `resource/cloudflare_load_balancer`: Fix `override` attributes `pop_pools` and `region_pools` referencing incorrect values causing a panic ([#1039](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1039))
+ 
 ## 2.20.0 (April 15th, 2021)
 
 **New resource**: `cloudflare_access_ca_certificate` ([#995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/995))
