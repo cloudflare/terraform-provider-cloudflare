@@ -10,7 +10,7 @@ body:
       For general usage questions, please see: https://www.terraform.io/community.html.
 - type: textarea
   attributes:
-    label: Current Terraform version
+    label: Current Terraform and Cloudflare provider version
     description: |
       Run `terraform -v` to show the version, and include the output below.
       This will record which version was current at the time of your feature request,
