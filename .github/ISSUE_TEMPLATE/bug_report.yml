@@ -20,7 +20,7 @@ body:
         required: true
 - type: textarea
   attributes:
-    label: Terraform version
+    label: Terraform and Cloudflare provider version
     description: |
       Run `terraform -v` to show the version of Terraform and providers you are 
       using. If you are not running the latest version of Terraform or the 
