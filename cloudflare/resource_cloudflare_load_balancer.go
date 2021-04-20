@@ -663,11 +663,11 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.pop_pools", idx)); ok {
-				om["pop_pools"] = flattenGeoPools(o.PoPPools, "rules_pop")
+				om["pop_pools"] = flattenGeoPools(o.PoPPools, "pop")
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.region_pools", idx)); ok {
-				om["region_pools"] = flattenGeoPools(o.RegionPools, "rules_region")
+				om["region_pools"] = flattenGeoPools(o.RegionPools, "region")
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes", idx)); o.SessionAffinityAttrs != nil && ok {
