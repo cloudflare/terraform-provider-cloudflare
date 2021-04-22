@@ -20,10 +20,18 @@ resource "cloudflare_load_balancer_pool" "foo" {
     name = "example-1"
     address = "192.0.2.1"
     enabled = false
+    header {
+      header = "Host"
+      values = ["example-1"]
+    }
   }
   origins {
     name = "example-2"
     address = "192.0.2.2"
+    header {
+      header = "Host"
+      values = ["example-2"]
+    }
   }
   description = "example load balancer pool"
   enabled = false
@@ -51,6 +59,12 @@ The **origins** block supports:
 * `address` - (Required) The IP address (IPv4 or IPv6) of the origin, or the publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare.
 * `weight` - (Optional) The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked. Default: 1.
 * `enabled` - (Optional) Whether to enable (the default) this origin within the Pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
+* `header` - (Optional)  The HTTP request headers. For security reasons, this header also needs to be a subdomain of the overall zone. Fields documented below.
+
+**header** requires the following:
+
+* `header` - (Required) The header name.
+* `values` - (Required) A list of string values for the header.
 
 ## Attributes Reference
 

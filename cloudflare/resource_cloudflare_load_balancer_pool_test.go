@@ -32,6 +32,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
+					resource.TestCheckResourceAttr(name, "header.#", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
@@ -60,6 +61,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
+					resource.TestCheckResourceAttr(name, "header.#", "1"),
 				),
 			},
 		},
@@ -202,14 +204,22 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
   origins {
     name = "example-1"
-    address = "1.1.1.2"
+    address = "192.0.2.1"
     enabled = false
     weight = 1.0
+    header {
+    	name = "Host"
+    	values = os.Getenv("CLOUDFLARE_DOMAIN")
+ 	}
   }
   origins {
     name = "example-2"
-    address = "1.1.1.3"
+    address = "192.0.2.2"
     weight = 0.5
+    header {
+    	name = "Host"
+    	values = os.Getenv("CLOUDFLARE_DOMAIN")
+ 	}
   }
   check_regions = ["WEU"]
   description = "tfacc-fully-specified"
