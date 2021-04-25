@@ -2,7 +2,7 @@
 
 **Improvements**
 
-* provider: Update to terraform-plugin-sdk v1.17.0 ([#1035](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1035))
+* provider: Update to terraform-plugin-sdk v1.17.1 ([#1035](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1035), [#1043](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1043))
  
 **Fixes**
 
