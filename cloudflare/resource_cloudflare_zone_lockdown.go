@@ -52,6 +52,7 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 			"configurations": {
 				Type:     schema.TypeSet,
 				MinItems: 1,
+				MaxItems: 250,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
