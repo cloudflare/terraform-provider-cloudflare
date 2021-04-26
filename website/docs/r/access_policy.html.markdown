@@ -26,6 +26,10 @@ resource "cloudflare_access_policy" "test_policy" {
   include {
     email = ["test@example.com"]
   }
+  
+  require {
+    email = ["test@example.com"]
+  }
 }
 
 # Allowing `test@example.com` to access but only when coming from a
@@ -41,7 +45,7 @@ resource "cloudflare_access_policy" "test_policy" {
     email = ["test@example.com"]
   }
 
-  require = {
+  require {
     ip = [var.office_ip]
   }
 }
