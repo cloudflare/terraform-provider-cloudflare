@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -51,7 +52,7 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 			},
 			"ownership_challenge": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 		},
 	}
@@ -118,6 +119,12 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("error finding logpush job: %v", err)
 	}
 
+	var re = regexp.MustCompile(`^((datadog|splunk)://|s3://.+endpoint=)`)
+
+	if job.OwnershipChallenge == "" && !re.MatchString(job.DestinationConf) {
+		return fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
+	}
+
 	log.Printf("[DEBUG] Creating Cloudflare Logpush Job from struct: %+v", job)
 
 	j, err := client.CreateLogpushJob(context.Background(), d.Get("zone_id").(string), job)
@@ -141,6 +148,12 @@ func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}
 	job, err := getJobFromResource(d)
 	if err != nil {
 		return fmt.Errorf("error finding logpush job: %v", err)
+	}
+
+	var re = regexp.MustCompile(`^((datadog|splunk)://|s3://.+endpoint=)`)
+
+	if job.OwnershipChallenge == "" && !re.MatchString(job.DestinationConf) {
+		return fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Logpush Job from struct: %+v", job)
