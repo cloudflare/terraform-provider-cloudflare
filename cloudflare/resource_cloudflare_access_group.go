@@ -129,6 +129,13 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 				Type: schema.TypeString,
 			},
 		},
+		"device_posture": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"gsuite": {
 			Type:     schema.TypeList,
 			Optional: true,
@@ -532,6 +539,10 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 				case "login_method":
 					group = append(group, cloudflare.AccessGroupLoginMethod{LoginMethod: struct {
 						ID string `json:"id"`
+					}{ID: value.(string)}})
+				case "device_posture":
+					group = append(group, cloudflare.AccessGroupDevicePosture{DevicePosture: struct {
+						ID string `json:"integration_uid"`
 					}{ID: value.(string)}})
 				}
 			}

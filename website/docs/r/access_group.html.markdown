@@ -83,6 +83,7 @@ conditions which can be applied. The conditions are:
   Custom values are also supported. Example: `auth_method = ["swk"]`
 * `geo` - (Optional) A list of country codes. Example: `geo = ["US"]`
 * `login_method` - (Optional) A list of identity provider ids. Example: `login_method = [cloudflare_access_identity_provider.my_idp.id]`
+* `device_posture` - (Optional) A list of device_posture integration_uids. Example: `device_posture = [cloudflare_access_device_posture.demo.id]`
 * `gsuite` - (Optional) Use GSuite as the authentication mechanism. Example:
 
   ```hcl
