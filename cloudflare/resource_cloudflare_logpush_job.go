@@ -68,14 +68,22 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, error) {
 		}
 	}
 
+	destConf := d.Get("destination_conf").(string)
+	ownershipChallenge := d.Get("ownership_challenge").(string)
+	var re = regexp.MustCompile(`^((datadog|splunk)://|s3://.+endpoint=)`)
+
+	if ownershipChallenge == "" && !re.MatchString(destConf) {
+		return cloudflare.LogpushJob{}, fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
+	}
+
 	job := cloudflare.LogpushJob{
 		ID:                 id,
 		Enabled:            d.Get("enabled").(bool),
 		Name:               d.Get("name").(string),
 		Dataset:            d.Get("dataset").(string),
 		LogpullOptions:     d.Get("logpull_options").(string),
-		DestinationConf:    d.Get("destination_conf").(string),
-		OwnershipChallenge: d.Get("ownership_challenge").(string),
+		DestinationConf:    destConf,
+		OwnershipChallenge: ownershipChallenge,
 	}
 
 	return job, nil
@@ -119,12 +127,6 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("error finding logpush job: %v", err)
 	}
 
-	var re = regexp.MustCompile(`^((datadog|splunk)://|s3://.+endpoint=)`)
-
-	if job.OwnershipChallenge == "" && !re.MatchString(job.DestinationConf) {
-		return fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
-	}
-
 	log.Printf("[DEBUG] Creating Cloudflare Logpush Job from struct: %+v", job)
 
 	j, err := client.CreateLogpushJob(context.Background(), d.Get("zone_id").(string), job)
@@ -148,12 +150,6 @@ func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}
 	job, err := getJobFromResource(d)
 	if err != nil {
 		return fmt.Errorf("error finding logpush job: %v", err)
-	}
-
-	var re = regexp.MustCompile(`^((datadog|splunk)://|s3://.+endpoint=)`)
-
-	if job.OwnershipChallenge == "" && !re.MatchString(job.DestinationConf) {
-		return fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Logpush Job from struct: %+v", job)
