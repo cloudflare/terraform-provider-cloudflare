@@ -125,11 +125,10 @@ var originsElem = &schema.Resource{
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					"name": {
+					"header": {
 						Type:     schema.TypeString,
 						Required: true,
 					},
-
 					"values": {
 						Type:     schema.TypeSet,
 						Required: true,

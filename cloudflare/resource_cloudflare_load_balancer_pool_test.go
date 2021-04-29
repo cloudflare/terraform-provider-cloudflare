@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"time"
@@ -46,6 +47,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
+	headerValue := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -53,7 +55,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd, headerValue),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// checking our overrides of default values worked
@@ -61,7 +63,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
-					resource.TestCheckResourceAttr(name, "header.#", "1"),
+					resource.TestCheckResourceAttr(name, "origins.0.header.0.header", "Host"),
 				),
 			},
 		},
@@ -192,13 +194,13 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
   origins {
     name = "example-1"
-    address = "1.1.1.2"
+    address = "192.0.2.1"
     enabled = true
   }
 }`, id)
 }
 
-func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string) string {
+func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string, headerValue string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
@@ -208,8 +210,8 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     enabled = false
     weight = 1.0
     header {
-    	name = "Host"
-    	values = os.Getenv("CLOUDFLARE_DOMAIN")
+    	header = "Host"
+    	values = ["test1.%[2]s"]
  	}
   }
   origins {
@@ -217,8 +219,8 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     address = "192.0.2.2"
     weight = 0.5
     header {
-    	name = "Host"
-    	values = os.Getenv("CLOUDFLARE_DOMAIN")
+    	header = "Host"
+    	values = ["test2.%[2]s"]
  	}
   }
   check_regions = ["WEU"]
@@ -227,6 +229,6 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   minimum_origins = 2
   // monitor = abcd TODO: monitor resource
   notification_email = "someone@example.com"
-}`, id)
+}`, id, headerValue)
 	// TODO add field to config after creating monitor resource
 }
