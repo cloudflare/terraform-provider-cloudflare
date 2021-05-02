@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -51,7 +52,7 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 			},
 			"ownership_challenge": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 		},
 	}
@@ -67,14 +68,22 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, error) {
 		}
 	}
 
+	destConf := d.Get("destination_conf").(string)
+	ownershipChallenge := d.Get("ownership_challenge").(string)
+	var re = regexp.MustCompile(`^((datadog|splunk)://|s3://.+endpoint=)`)
+
+	if ownershipChallenge == "" && !re.MatchString(destConf) {
+		return cloudflare.LogpushJob{}, fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
+	}
+
 	job := cloudflare.LogpushJob{
 		ID:                 id,
 		Enabled:            d.Get("enabled").(bool),
 		Name:               d.Get("name").(string),
 		Dataset:            d.Get("dataset").(string),
 		LogpullOptions:     d.Get("logpull_options").(string),
-		DestinationConf:    d.Get("destination_conf").(string),
-		OwnershipChallenge: d.Get("ownership_challenge").(string),
+		DestinationConf:    destConf,
+		OwnershipChallenge: ownershipChallenge,
 	}
 
 	return job, nil
