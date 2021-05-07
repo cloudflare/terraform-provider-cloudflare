@@ -49,9 +49,6 @@ func resourceCloudflareWaitingRoom() *schema.Resource {
 			"path": {
 				Type:     schema.TypeString,
 				Optional: true,
-				StateFunc: func(i interface{}) string {
-					return strings.ToLower(i.(string))
-				},
 			},
 
 			"total_active_users": {
