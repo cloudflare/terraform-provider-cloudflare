@@ -173,7 +173,7 @@ func resourceCloudflareWaitingRoomUpdate(d *schema.ResourceData, meta interface{
 
 	waitingRoom := buildWaitingRoom(d)
 
-	err := client.UpdateWaitingRoom(context.Background(), zoneID, waitingRoomID, waitingRoom)
+	_, err := client.ChangeWaitingRoom(context.Background(), zoneID, waitingRoomID, waitingRoom)
 
 	if err != nil {
 		name := d.Get("name").(string)
@@ -211,11 +211,11 @@ func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{
 
 	err := resourceCloudflareWaitingRoomReadFromWaitingRoomId(d, meta, zoneID, waitingRoomID)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to find waiting room %s/%s: %s", zoneID, waitingRoomID, err)
+		return nil, fmt.Errorf("Unable to find waiting room %s/%s: %v", zoneID, waitingRoomID, err)
 	}
 
 	if d.Id() != waitingRoomID {
-		return nil, fmt.Errorf("Unable to find waiting room %s/%s: %s", zoneID, waitingRoomID, err)
+		return nil, fmt.Errorf("Unable to find waiting room %s/%s", zoneID, waitingRoomID)
 	}
 	d.Set("zone_id", zoneID)
 
