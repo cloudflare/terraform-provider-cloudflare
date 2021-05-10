@@ -10,6 +10,8 @@ description: |-
 
 Provides a Cloudflare page rule resource.
 
+> **Hands-on:** Try the [Host a Static Website with S3 and Cloudflare](https://learn.hashicorp.com/tutorials/terraform/provider-release-publish?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial on HashiCorp Learn. In this tutorial, you will set up a static website using AWS S3 as an object store and Cloudflare for DNS, SSL and CDN, then create Cloudflare page rules (using `cloudflare_page_rule`) to always redirect HTTPS and temporarily redirect certain paths.
+
 ## Example Usage
 
 ```hcl
