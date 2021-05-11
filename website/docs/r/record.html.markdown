@@ -10,8 +10,6 @@ description: |-
 
 Provides a Cloudflare record resource.
 
-> **Hands-on:** Try the [Host a Static Website with S3 and Cloudflare](https://learn.hashicorp.com/tutorials/terraform/provider-release-publish?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial on HashiCorp Learn. In this tutorial, you will set up a static website using AWS S3 as an object store and Cloudflare for DNS, SSL and CDN (using `cloudflare_record`), then create Cloudflare page rules to always redirect HTTPS and temporarily redirect certain paths.
-
 ## Example Usage
 
 ```hcl

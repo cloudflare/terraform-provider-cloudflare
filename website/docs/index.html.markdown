@@ -12,9 +12,11 @@ The Cloudflare provider is used to interact with resources supported by
 Cloudflare. The provider needs to be configured with the proper credentials
 before it can be used.
 
-> **Hands-on:** Try the [Host a Static Website with S3 and Cloudflare](https://learn.hashicorp.com/tutorials/terraform/provider-release-publish?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial on HashiCorp Learn. In this tutorial, you will set up a static website using AWS S3 as an object store and Cloudflare for DNS, SSL and CDN, then create Cloudflare page rules to always redirect HTTPS and temporarily redirect certain paths.
-
 Use the navigation to the left to read about the available resources.
+
+## Getting Started
+
+Try the [Host a Static Website with S3 and Cloudflare](https://learn.hashicorp.com/tutorials/terraform/provider-release-publish?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial on HashiCorp Learn. In this tutorial, you will set up a static website using AWS S3 as an object store and Cloudflare for DNS, SSL and CDN, then create Cloudflare page rules to always redirect HTTPS and temporarily redirect certain paths.
 
 ## Example Usage
 
