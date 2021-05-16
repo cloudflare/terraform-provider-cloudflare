@@ -303,16 +303,13 @@ func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 
 func flattenLoadBalancerOrigins(d *schema.ResourceData, origins []cloudflare.LoadBalancerOrigin) *schema.Set {
 	flattened := make([]interface{}, 0)
-	for idx, o := range origins {
+	for _, o := range origins {
 		cfg := map[string]interface{}{
 			"name":    o.Name,
 			"address": o.Address,
 			"enabled": o.Enabled,
 			"weight":  o.Weight,
-		}
-
-		if _, ok := d.GetOkExists(fmt.Sprintf("origins.%d.header", idx)); ok {
-			cfg["header"] = o.Header
+			"header":  flattenLoadBalancerPoolHeader(o.Header),
 		}
 
 		flattened = append(flattened, cfg)

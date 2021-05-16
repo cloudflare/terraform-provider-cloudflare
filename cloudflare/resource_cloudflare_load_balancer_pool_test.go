@@ -3,7 +3,9 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"os"
+	"regexp"
 	"testing"
 
 	"time"
@@ -63,7 +65,21 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
-					resource.TestCheckResourceAttr(name, "origins.0.header.0.header", "Host"),
+
+					func(state *terraform.State) error {
+						for _, rs := range state.RootModule().Resources {
+							for k, v := range rs.Primary.Attributes {
+								r, _ := regexp.Compile("origins.*\\.header.*\\.header")
+
+								if r.MatchString(k) {
+									if v == "Host" {
+										return nil
+									}
+								}
+							}
+						}
+						return errors.New("Not equal")
+					},
 				),
 			},
 		},
