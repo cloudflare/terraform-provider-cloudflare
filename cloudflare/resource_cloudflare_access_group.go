@@ -553,6 +553,7 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 	commonName := ""
 	authMethod := ""
 	geos := []string{}
+	loginMethod := []string{}
 	oktaID := ""
 	oktaGroups := []string{}
 	gsuiteID := ""
@@ -599,6 +600,10 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 			case "geo":
 				for _, geo := range groupValue.(map[string]interface{}) {
 					geos = append(geos, geo.(string))
+				}
+			case "login_method":
+				for _, method := range groupValue.(map[string]interface{}) {
+					loginMethod = append(loginMethod, method.(string))
 				}
 			case "okta":
 				oktaCfg := groupValue.(map[string]interface{})
@@ -670,6 +675,12 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 	if len(geos) > 0 {
 		data = append(data, map[string]interface{}{
 			"geo": geos,
+		})
+	}
+
+	if len(loginMethod) > 0 {
+		data = append(data, map[string]interface{}{
+			"login_method": loginMethod,
 		})
 	}
 
