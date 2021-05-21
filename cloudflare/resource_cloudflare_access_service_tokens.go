@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -18,6 +20,8 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessServiceTokenImport,
 		},
+
+		CustomizeDiff: customdiff.ComputedIf("expires_at", resourceCloudflareAccessServiceTokenExpireDiff),
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -37,14 +41,46 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 			"client_id": {
 				Type:     schema.TypeString,
 				Computed: true,
+				ForceNew: true,
 			},
 			"client_secret": {
 				Type:      schema.TypeString,
 				Computed:  true,
 				Sensitive: true,
+				ForceNew:  true,
+			},
+			"expires_at": {
+				Type:     schema.TypeString,
+				Computed: true,
+				ForceNew: true,
+			},
+			"min_days_for_renewal": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
 			},
 		},
 	}
+}
+
+func resourceCloudflareAccessServiceTokenExpireDiff(d *schema.ResourceDiff, m interface{}) bool {
+	mindays := d.Get("min_days_for_renewal").(int)
+	if mindays > 0 {
+		expires_at := d.Get("expires_at").(string)
+
+		if expires_at != "" {
+			expected_expiration_date, _ := time.Parse(time.RFC3339, expires_at)
+
+			expiration_date := time.Now().Add(time.Duration(mindays) * 24 * time.Hour)
+
+			if expiration_date.After(expected_expiration_date) {
+				d.SetNewComputed("client_secret")
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta interface{}) error {
@@ -71,6 +107,7 @@ func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta inter
 		if token.ID == d.Id() {
 			d.Set("name", token.Name)
 			d.Set("client_id", token.ClientID)
+			d.Set("expires_at", token.ExpiresAt.Format(time.RFC3339))
 		}
 	}
 
@@ -100,6 +137,7 @@ func resourceCloudflareAccessServiceTokenCreate(d *schema.ResourceData, meta int
 	d.Set("name", serviceToken.Name)
 	d.Set("client_id", serviceToken.ClientID)
 	d.Set("client_secret", serviceToken.ClientSecret)
+	d.Set("expires_at", serviceToken.ExpiresAt.Format(time.RFC3339))
 
 	resourceCloudflareAccessServiceTokenRead(d, meta)
 
