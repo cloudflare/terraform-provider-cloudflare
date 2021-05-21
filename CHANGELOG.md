@@ -6,7 +6,8 @@
 * `resource/cloudflare_logpush_job`: Allow `ownership_challenge` to be optional to account for Datadog, Splunk or S3-Compatible endpoints ([#1048](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1048))
 * `resource/cloudflare_access_group`: Add support for `login_method` ([#1066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1066))
 * `resource/cloudflare_load_balancer`: Add support for `promixity` based steering ([#1072](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1072))
- 
+* `resource/cloudflare_access_application`: Prevent bad CORS configuration when credentials and all origins are permitted ([#1073](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1073))
+
 **Fixes**
 
 * `resource/cloudflare_access_policy`: Allow empty slices in blocks when building policies ([#1034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1034))
