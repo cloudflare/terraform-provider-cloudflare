@@ -199,11 +199,11 @@ func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
-	%[3]s_id                  = "%[4]s"
-	name                      = "%[1]s"
-	domain                    = "%[1]s.%[2]s"
-	session_duration          = "24h"
-	auto_redirect_to_identity = false
+  %[3]s_id                  = "%[4]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[2]s"
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
 }
 `, rnd, domain, identifier.Type, identifier.Value)
 }
@@ -258,7 +258,7 @@ resource "cloudflare_access_application" "%[1]s" {
   domain                    = "%[1]s.%[3]s"
   session_duration          = "24h"
   custom_deny_message       = "denied!"
-	custom_deny_url           = "https://www.cloudflare.com"
+  custom_deny_url           = "https://www.cloudflare.com"
 }
 `, rnd, zoneID, domain)
 }
@@ -435,6 +435,66 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 	})
 }
 
+func TestAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`CORS credentials are not permitted when all origins are allowed`)),
+			},
+		},
+	})
+}
+
+func TestAccessApplicationMisconfiguredCORSCredentialsAllowingWildcardOrigins(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(rnd, zone, zoneID),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`CORS credentials are not permitted when all origins are allowed`)),
+			},
+		},
+	})
+}
+
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
     resource "cloudflare_access_application" "%[1]s" {
@@ -490,6 +550,38 @@ func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID st
       zone_id          = "%[3]s"
       domain           = "%[1]s.%[2]s"
       session_duration = "24z"
+  }
+  `, resourceID, zone, zoneID)
+}
+
+func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name             = "%[1]s-updated"
+      zone_id          = "%[3]s"
+      domain           = "%[1]s.%[2]s"
+
+      cors_headers {
+        allowed_methods = ["GET"]
+        allow_all_origins = true
+        allow_credentials = true
+      }
+  }
+  `, resourceID, zone, zoneID)
+}
+
+func testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name             = "%[1]s-updated"
+      zone_id          = "%[3]s"
+      domain           = "%[1]s.%[2]s"
+
+      cors_headers {
+        allowed_methods = ["GET"]
+        allowed_origins = ["*"]
+        allow_credentials = true
+      }
   }
   `, resourceID, zone, zoneID)
 }

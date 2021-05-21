@@ -350,6 +350,15 @@ func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplic
 		CORSConfig.AllowCredentials = d.Get("cors_headers.0.allow_credentials").(bool)
 		CORSConfig.MaxAge = d.Get("cors_headers.0.max_age").(int)
 
+		// Prevent misconfigurations of CORS when `Access-Control-Allow-Origin` is
+		// a wildcard (aka all origins) and using credentials.
+		// See https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
+		if CORSConfig.AllowCredentials {
+			if contains(CORSConfig.AllowedOrigins, "*") || CORSConfig.AllowAllOrigins {
+				return nil, errors.New("CORS credentials are not permitted when all origins are allowed")
+			}
+		}
+
 		// Ensure that should someone forget to set allowed methods (either
 		// individually or *), we throw an error to prevent getting into an
 		// unrecoverable state.
