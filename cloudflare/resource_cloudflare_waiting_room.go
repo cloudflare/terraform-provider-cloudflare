@@ -107,38 +107,11 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		Path:                  d.Get("path").(string),
 		TotalActiveUsers:      d.Get("total_active_users").(int),
 		NewUsersPerMinute:     d.Get("new_users_per_minute").(int),
-		CustomPageHtml:        d.Get("custom_page_html").(string),
+		CustomPageHTML:        d.Get("custom_page_html").(string),
 		SessionDuration:       d.Get("session_duration").(int),
 		QueueAll:              d.Get("queue_all").(bool),
 		DisableSessionRenewal: d.Get("disable_session_renewal").(bool),
 	}
-}
-
-func resourceCloudflareWaitingRoomReadFromWaitingRoomId(d *schema.ResourceData, meta interface{}, zoneID, waitingRoomID string) error {
-	client := meta.(*cloudflare.API)
-	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
-	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[WARN] Removing waiting room from state because it's not found in API")
-			d.SetId("")
-			return nil
-		}
-		name := d.Get("name").(string)
-		return fmt.Errorf("Error getting waiting room %q: %s", name, err)
-	}
-	d.SetId(waitingRoom.ID)
-	d.Set("name", waitingRoom.Name)
-	d.Set("description", waitingRoom.Description)
-	d.Set("suspended", waitingRoom.Suspended)
-	d.Set("host", waitingRoom.Host)
-	d.Set("path", waitingRoom.Path)
-	d.Set("queue_all", waitingRoom.QueueAll)
-	d.Set("new_users_per_minute", waitingRoom.NewUsersPerMinute)
-	d.Set("total_active_users", waitingRoom.TotalActiveUsers)
-	d.Set("session_duration", waitingRoom.SessionDuration)
-	d.Set("disable_session_renewal", waitingRoom.DisableSessionRenewal)
-	d.Set("custom_page_html", waitingRoom.CustomPageHtml)
-	return nil
 }
 
 func resourceCloudflareWaitingRoomCreate(d *schema.ResourceData, meta interface{}) error {
@@ -160,10 +133,33 @@ func resourceCloudflareWaitingRoomCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudflareWaitingRoomRead(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Id()
 	zoneID := d.Get("zone_id").(string)
 
-	return resourceCloudflareWaitingRoomReadFromWaitingRoomId(d, meta, zoneID, waitingRoomID)
+	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
+	if err != nil {
+		if strings.Contains(err.Error(), "HTTP status 404") {
+			log.Printf("[WARN] Removing waiting room from state because it's not found in API")
+			d.SetId("")
+			return nil
+		}
+		name := d.Get("name").(string)
+		return fmt.Errorf("Error getting waiting room %q: %s", name, err)
+	}
+	d.SetId(waitingRoom.ID)
+	d.Set("name", waitingRoom.Name)
+	d.Set("description", waitingRoom.Description)
+	d.Set("suspended", waitingRoom.Suspended)
+	d.Set("host", waitingRoom.Host)
+	d.Set("path", waitingRoom.Path)
+	d.Set("queue_all", waitingRoom.QueueAll)
+	d.Set("new_users_per_minute", waitingRoom.NewUsersPerMinute)
+	d.Set("total_active_users", waitingRoom.TotalActiveUsers)
+	d.Set("session_duration", waitingRoom.SessionDuration)
+	d.Set("disable_session_renewal", waitingRoom.DisableSessionRenewal)
+	d.Set("custom_page_html", waitingRoom.CustomPageHTML)
+	return nil
 }
 
 func resourceCloudflareWaitingRoomUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -199,6 +195,7 @@ func resourceCloudflareWaitingRoomDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
 	var waitingRoomID string
@@ -208,16 +205,15 @@ func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{
 	} else {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/waitingRoomID\" for import", d.Id())
 	}
-
-	err := resourceCloudflareWaitingRoomReadFromWaitingRoomId(d, meta, zoneID, waitingRoomID)
+	
+	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to find waiting room %s/%s: %v", zoneID, waitingRoomID, err)
+		return nil, fmt.Errorf("failed to fetch Waiting room %s", waitingRoomID)
 	}
 
-	if d.Id() != waitingRoomID {
-		return nil, fmt.Errorf("Unable to find waiting room %s/%s", zoneID, waitingRoomID)
-	}
+	d.SetId(waitingRoom.ID)
 	d.Set("zone_id", zoneID)
 
+	resourceCloudflareWaitingRoomRead(d, meta)
 	return []*schema.ResourceData{d}, nil
 }
