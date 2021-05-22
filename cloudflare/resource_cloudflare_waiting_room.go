@@ -192,7 +192,7 @@ func resourceCloudflareWaitingRoomDelete(d *schema.ResourceData, meta interface{
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("Error updating waiting room %q: %s", name, err)
+		return fmt.Errorf("Error deleting waiting room %q: %s", name, err)
 	}
 
 	return nil
