@@ -3,6 +3,9 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
+	"os"
+	"regexp"
 	"testing"
 
 	"time"
@@ -32,6 +35,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
+					resource.TestCheckResourceAttr(name, "header.#", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
@@ -45,6 +49,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
+	headerValue := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -52,7 +57,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd, headerValue),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// checking our overrides of default values worked
@@ -60,6 +65,21 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
+
+					func(state *terraform.State) error {
+						for _, rs := range state.RootModule().Resources {
+							for k, v := range rs.Primary.Attributes {
+								r, _ := regexp.Compile("origins.*\\.header.*\\.header")
+
+								if r.MatchString(k) {
+									if v == "Host" {
+										return nil
+									}
+								}
+							}
+						}
+						return errors.New("Not equal")
+					},
 				),
 			},
 		},
@@ -190,26 +210,34 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
   origins {
     name = "example-1"
-    address = "1.1.1.2"
+    address = "192.0.2.1"
     enabled = true
   }
 }`, id)
 }
 
-func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string) string {
+func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string, headerValue string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
   origins {
     name = "example-1"
-    address = "1.1.1.2"
+    address = "192.0.2.1"
     enabled = false
     weight = 1.0
+    header {
+    	header = "Host"
+    	values = ["test1.%[2]s"]
+ 	}
   }
   origins {
     name = "example-2"
-    address = "1.1.1.3"
+    address = "192.0.2.2"
     weight = 0.5
+    header {
+    	header = "Host"
+    	values = ["test2.%[2]s"]
+ 	}
   }
   check_regions = ["WEU"]
   description = "tfacc-fully-specified"
@@ -217,6 +245,6 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   minimum_origins = 2
   // monitor = abcd TODO: monitor resource
   notification_email = "someone@example.com"
-}`, id)
+}`, id, headerValue)
 	// TODO add field to config after creating monitor resource
 }
