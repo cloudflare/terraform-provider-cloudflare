@@ -205,7 +205,7 @@ func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{
 	} else {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/waitingRoomID\" for import", d.Id())
 	}
-	
+
 	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Waiting room %s", waitingRoomID)
