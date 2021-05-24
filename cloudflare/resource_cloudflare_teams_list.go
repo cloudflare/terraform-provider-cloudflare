@@ -24,8 +24,7 @@ func resourceCloudflareTeamsList() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"account_id": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Required: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -101,7 +100,6 @@ func resourceCloudflareTeamsListRead(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return fmt.Errorf("Error finding Teams List %q: %s", d.Id(), err)
 	}
-
 	d.Set("items", convertListItemsToSchema(listItems))
 
 	return nil
@@ -167,7 +165,7 @@ func resourceCloudflareTeamsListImport(d *schema.ResourceData, meta interface{})
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/accessApplicationID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/teamsListID\"", d.Id())
 	}
 
 	accountID, teamsListID := attributes[0], attributes[1]
@@ -203,7 +201,9 @@ func setListItemDiff(patchList *cloudflare.PatchTeamsList, oldItems []string, ne
 
 func convertListItemsToSchema(listItems []cloudflare.TeamsListItem) []string {
 	itemValues := []string{}
-	for _, item := range listItems {
+	// The API returns items in reverse order so we iterate backwards for correct ordering.
+	for i := len(listItems) - 1; i >= 0; i-- {
+		item := listItems[i]
 		itemValues = append(itemValues, item.Value)
 	}
 

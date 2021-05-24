@@ -25,8 +25,7 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"account_id": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Required: true,
 			},
 			"type": {
 				Type:         schema.TypeString,

@@ -28,6 +28,7 @@ func TestAccCloudflareTeamsListBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "SERIAL"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "items.#", "2"),
 					resource.TestCheckResourceAttr(name, "items.0", "asdf-1234"),
 				),
 			},
