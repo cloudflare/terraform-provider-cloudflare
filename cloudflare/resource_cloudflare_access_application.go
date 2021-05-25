@@ -27,13 +27,11 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			"account_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				Computed:      true,
 				ConflictsWith: []string{"zone_id"},
 			},
 			"zone_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				Computed:      true,
 				ConflictsWith: []string{"account_id"},
 			},
 			"aud": {
@@ -47,6 +45,12 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			"domain": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "self_hosted",
+				ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file"}, false),
 			},
 			"session_duration": {
 				Type:     schema.TypeString,
@@ -144,10 +148,12 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	client := meta.(*cloudflare.API)
 
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
+	appType := d.Get("type").(string)
 
 	newAccessApplication := cloudflare.AccessApplication{
 		Name:                   d.Get("name").(string),
 		Domain:                 d.Get("domain").(string),
+		Type:                   cloudflare.AccessApplicationType(appType),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
@@ -217,6 +223,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
+	d.Set("type", accessApplication.Type)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
 	d.Set("custom_deny_message", accessApplication.CustomDenyMessage)
@@ -235,11 +242,13 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 	client := meta.(*cloudflare.API)
 
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
+	appType := d.Get("type").(string)
 
 	updatedAccessApplication := cloudflare.AccessApplication{
 		ID:                     d.Id(),
 		Name:                   d.Get("name").(string),
 		Domain:                 d.Get("domain").(string),
+		Type:                   cloudflare.AccessApplicationType(appType),
 		SessionDuration:        d.Get("session_duration").(string),
 		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
 		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),

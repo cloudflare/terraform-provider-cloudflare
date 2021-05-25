@@ -19,6 +19,7 @@ resource "cloudflare_access_application" "staging_app" {
   zone_id                   = "1d5fdc9e88c8a8c4518b068cd94331fe"
   name                      = "staging application"
   domain                    = "staging.example.com"
+  type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
 }
@@ -28,6 +29,7 @@ resource "cloudflare_access_application" "staging_app" {
   zone_id          = "1d5fdc9e88c8a8c4518b068cd94331fe"
   name             = "staging application"
   domain           = "staging.example.com"
+  type             = "self_hosted"
   session_duration = "24h"
   cors_headers {
     allowed_methods = ["GET", "POST", "OPTIONS"]
@@ -49,6 +51,8 @@ The following arguments are supported:
 * `name` - (Required) Friendly name of the Access Application.
 * `domain` - (Required) The complete URL of the asset you wish to put
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
+* `type` - (Optional) The application type. Defaults to `self_hosted`. Valid
+  values are `self_hosted`, `ssh`, `vnc`, or `file`.
 * `session_duration` - (Optional) How often a user will be forced to
   re-authorise. Must be in the format `"48h"` or `"2h45m"`.
   Valid time units are `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`. Defaults to `24h`.
