@@ -1,5 +1,8 @@
 ## Unreleased
 
+**New resource**: `cloudflare_device_posture_rule` ([#1058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1058))
+**New resource**: `cloudflare_teams_list` ([#1058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1058))
+
 **Improvements**
 
 * provider: Update to terraform-plugin-sdk v1.17.1 ([#1035](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1035), [#1043](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1043))
