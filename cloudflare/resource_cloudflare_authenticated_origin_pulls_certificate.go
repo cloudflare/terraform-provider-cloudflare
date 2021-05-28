@@ -207,6 +207,10 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateImport(d *schema.Resou
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/type/certID\"", d.Id())
 	}
 	zoneID, aopType, certID := idAttr[0], idAttr[1], idAttr[2]
+	if aopType != "per-zone" && aopType != "per-hostname" {
+		return nil, fmt.Errorf("invalid aop type (\"%s\") specified, should be either format \"per-zone\" or \"per-hostname\"", aopType)
+	}
+
 	d.Set("zone_id", zoneID)
 	d.Set("type", aopType)
 	d.SetId(certID)
