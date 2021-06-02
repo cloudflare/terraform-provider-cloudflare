@@ -88,7 +88,8 @@ func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APIToken
 	for _, p := range policies {
 		policy := p.(map[string]interface{})
 
-		permissionGroups := expandInterfaceToStringList(policy["permission_groups"])
+		permissionGroups := expandSetToStringList(policy["permission_groups"])
+
 		if len(permissionGroups) == 0 {
 			continue
 		}
