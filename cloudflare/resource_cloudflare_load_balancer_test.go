@@ -175,6 +175,33 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLoadBalancer_LatitudeLongitude(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigLatitudeLongitude(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// checking our overrides of default values worked
+					resource.TestCheckResourceAttr(name, "latitude", "23.5"),
+					resource.TestCheckResourceAttr(name, "longitude", "-11.1"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 	t.Parallel()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -504,5 +531,17 @@ resource "cloudflare_load_balancer" "%[3]s" {
 	    }
     }
   }
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigLatitudeLongitude(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-latitude-longitude-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  latitude = 23.5
+  longitude = -11.1
 }`, zoneID, zone, id)
 }

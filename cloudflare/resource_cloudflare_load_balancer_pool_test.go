@@ -3,16 +3,15 @@ package cloudflare
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
 	"regexp"
 	"testing"
-
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/pkg/errors"
 )
 
 func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
@@ -65,7 +64,8 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
-
+					resource.TestCheckResourceAttr(name, "latitude", "12.3"),
+					resource.TestCheckResourceAttr(name, "longitude", "55"),
 					func(state *terraform.State) error {
 						for _, rs := range state.RootModule().Resources {
 							for k, v := range rs.Primary.Attributes {
@@ -239,6 +239,8 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     	values = ["test2.%[2]s"]
  	}
   }
+  latitude = 12.3
+  longitude = 55
   check_regions = ["WEU"]
   description = "tfacc-fully-specified"
   enabled = false

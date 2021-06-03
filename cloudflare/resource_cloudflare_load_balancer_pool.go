@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 
 	"time"
@@ -50,6 +51,18 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  1,
+			},
+
+			"latitude": {
+				Type:         schema.TypeFloat,
+				Optional:     true,
+				ValidateFunc: validation.FloatBetween(-90, 90),
+			},
+
+			"longitude": {
+				Type:         schema.TypeFloat,
+				Optional:     true,
+				ValidateFunc: validation.FloatBetween(-180, 180),
 			},
 
 			"check_regions": {
@@ -111,7 +124,7 @@ var originsElem = &schema.Resource{
 			Type:         schema.TypeFloat,
 			Optional:     true,
 			Default:      1.0,
-			ValidateFunc: floatBetween(0.0, 1.0),
+			ValidateFunc: validation.FloatBetween(0.0, 1.0),
 		},
 
 		"enabled": {
@@ -151,6 +164,15 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 		Origins:        expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
 		Enabled:        d.Get("enabled").(bool),
 		MinimumOrigins: d.Get("minimum_origins").(int),
+	}
+
+	if lat, ok := d.GetOk("latitude"); ok {
+		f := float32(lat.(float64))
+		loadBalancerPool.Latitude = &f
+	}
+	if long, ok := d.GetOk("longitude"); ok {
+		f := float32(long.(float64))
+		loadBalancerPool.Longitude = &f
 	}
 
 	if checkRegions, ok := d.GetOk("check_regions"); ok {
@@ -196,6 +218,15 @@ func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta inter
 		Origins:        expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
 		Enabled:        d.Get("enabled").(bool),
 		MinimumOrigins: d.Get("minimum_origins").(int),
+	}
+
+	if lat, ok := d.GetOk("latitude"); ok {
+		f := float32(lat.(float64))
+		loadBalancerPool.Latitude = &f
+	}
+	if long, ok := d.GetOk("longitude"); ok {
+		f := float32(long.(float64))
+		loadBalancerPool.Longitude = &f
 	}
 
 	if checkRegions, ok := d.GetOk("check_regions"); ok {
@@ -290,6 +321,15 @@ func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 	d.Set("created_on", loadBalancerPool.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerPool.ModifiedOn.Format(time.RFC3339Nano))
 
+	if lat := loadBalancerPool.Latitude; lat != nil {
+		f := math.Round(float64(*lat)*10000) / 10000 // set precision
+		d.Set("latitude", &f)
+	}
+	if long := loadBalancerPool.Longitude; long != nil {
+		f := math.Round(float64(*long)*10000) / 10000 // set precision
+		d.Set("longitude", &f)
+	}
+
 	if err := d.Set("origins", flattenLoadBalancerOrigins(d, loadBalancerPool.Origins)); err != nil {
 		log.Printf("[WARN] Error setting origins on load balancer pool %q: %s", d.Id(), err)
 	}
@@ -328,22 +368,4 @@ func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta inter
 	}
 
 	return nil
-}
-
-// floatBetween returns a validate function that can be used in schema definitions.
-func floatBetween(min, max float64) schema.SchemaValidateFunc {
-	return func(i interface{}, k string) (s []string, es []error) {
-		v, ok := i.(float64)
-		if !ok {
-			es = append(es, fmt.Errorf("expected type of %s to be float64", k))
-			return
-		}
-
-		if v < min || v > max {
-			es = append(es, fmt.Errorf("expected %s to be within %v and %v", k, min, max))
-			return
-		}
-
-		return
-	}
 }
