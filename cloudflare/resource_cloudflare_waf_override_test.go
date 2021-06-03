@@ -62,6 +62,44 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWAFOverrideGroupOnly(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// overrides endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_waf_override.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareWAFOverrideDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWAFOverrideGroupsOnlyConfig(zoneID, zoneName, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "urls.#", "1"),
+					resource.TestCheckResourceAttr(name, "urls.0", fmt.Sprintf("%s/group-only-override", zoneName)),
+					resource.TestCheckResourceAttr(name, "groups.ea8687e59929c1fd05ba97574ad43f77", "default"),
+					resource.TestCheckResourceAttr(name, "rewrite_action.default", "block"),
+					resource.TestCheckResourceAttr(name, "rewrite_action.challenge", "block"),
+					resource.TestCheckNoResourceAttr(name, "rules"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareWAFOverrideBasicConfig(zoneID, zoneName, name string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_waf_override" "%[3]s" {
@@ -70,6 +108,21 @@ func testAccCheckCloudflareWAFOverrideBasicConfig(zoneID, zoneName, name string)
 			rules = {
 				"100015": "disable"
 			}
+			groups = {
+				"ea8687e59929c1fd05ba97574ad43f77": "default"
+			}
+			rewrite_action = {
+				"default": "block",
+  			"challenge": "block",
+			}
+		}`, zoneID, zoneName, name)
+}
+
+func testAccCheckCloudflareWAFOverrideGroupsOnlyConfig(zoneID, zoneName, name string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_waf_override" "%[3]s" {
+			zone_id = "%[1]s"
+			urls = ["%[2]s/group-only-override"]
 			groups = {
 				"ea8687e59929c1fd05ba97574ad43f77": "default"
 			}
