@@ -60,6 +60,8 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
+					resource.TestCheckResourceAttr(name, "latitude", "12.3"),
+					resource.TestCheckResourceAttr(name, "longitude", "55"),
 				),
 			},
 		},
@@ -211,6 +213,8 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     address = "1.1.1.3"
     weight = 0.5
   }
+  latitude = 12.3
+  longitude = 55
   check_regions = ["WEU"]
   description = "tfacc-fully-specified"
   enabled = false
