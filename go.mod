@@ -6,7 +6,7 @@ require (
 	github.com/cloudflare/cloudflare-go v0.22.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
-	github.com/hashicorp/terraform-plugin-sdk v1.17.2
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.4.3
 	github.com/pkg/errors v0.9.1
 	golang.org/x/net v0.0.0-20210908191846-a5e095526f91
 	golang.org/x/text v0.3.7 // indirect
