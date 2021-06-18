@@ -45,6 +45,8 @@ The list item in **configurations** block supports:
 * `target` - (Required) The request property to target. Allowed values: "ip", "ip_range"
 * `value` - (Required) The value to target. Depends on target's type. IP addresses should just be standard IPv4/IPv6 notation i.e. `198.51.100.4` or `2001:db8::/32` and IP ranges in CIDR format i.e. `198.51.0.0/16`.
 
+In order to add multiple IP addresses to the same rule each IP address needs to be wrapped in its own **configurations** block.
+
 ## Attributes Reference
 
 The following attributes are exported:
