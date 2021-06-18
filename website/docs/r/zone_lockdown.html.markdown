@@ -13,17 +13,17 @@ Provides a Cloudflare Zone Lockdown resource. Zone Lockdown allows you to define
 ## Example Usage
 
 ```hcl
-# Restrict access to these endpoints to requests from a known IP address.
+# Restrict access to these endpoints to requests from a known IP address range.
 resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
   zone_id     = "d41d8cd98f00b204e9800998ecf8427e"
   paused      = "false"
-  description = "Restrict access to these endpoints to requests from a known IP address"
+  description = "Restrict access to these endpoints to requests from a known IP address range"
   urls = [
     "api.mysite.com/some/endpoint*",
   ]
   configurations {
-    target = "ip"
-    value = "198.51.100.4"
+    target = "ip_range"
+    value = "198.51.100.0/16"
   }
 }
 ```
@@ -46,6 +46,27 @@ The list item in **configurations** block supports:
 * `value` - (Required) The value to target. Depends on target's type. IP addresses should just be standard IPv4/IPv6 notation i.e. `198.51.100.4` or `2001:db8::/32` and IP ranges in CIDR format i.e. `198.51.0.0/16`.
 
 In order to add multiple IP addresses to the same rule each IP address needs to be wrapped in its own **configurations** block.
+
+```
+# Restrict access to these endpoints to requests from two known IP addresses.
+resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
+  zone_id     = "d41d8cd98f00b204e9800998ecf8427e"
+  paused      = "false"
+  description = "Restrict access to these endpoints to requests from two known IP addresses"
+  urls = [
+    "api.mysite.com/some/endpoint*",
+  ]
+  configurations {
+    target = "ip"
+    value = "198.51.100.4"
+  }
+  
+  configurations {
+    target = "ip"
+    value = "198.51.100.5"
+  }
+}
+```
 
 ## Attributes Reference
 
