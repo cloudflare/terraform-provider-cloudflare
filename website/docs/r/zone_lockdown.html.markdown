@@ -47,7 +47,7 @@ The list item in **configurations** block supports:
 
 In order to add multiple IP addresses to the same rule each IP address needs to be wrapped in its own **configurations** block.
 
-```
+```hcl
 # Restrict access to these endpoints to requests from two known IP addresses.
 resource "cloudflare_zone_lockdown" "endpoint_lockdown" {
   zone_id     = "d41d8cd98f00b204e9800998ecf8427e"
