@@ -3,10 +3,11 @@ package cloudflare
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
 	"regexp"
 	"testing"
+
+	"github.com/pkg/errors"
 
 	"time"
 
@@ -62,6 +63,11 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "enabled", "false"),
+					resource.TestCheckResourceAttr(name, "load_shedding.#", "1"),
+					resource.TestCheckResourceAttr(name, "load_shedding.0.default_percent", "55"),
+					resource.TestCheckResourceAttr(name, "load_shedding.0.default_policy", "random"),
+					resource.TestCheckResourceAttr(name, "load_shedding.0.session_percent", "12"),
+					resource.TestCheckResourceAttr(name, "load_shedding.0.session_policy", "hash"),
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
@@ -238,6 +244,12 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     	header = "Host"
     	values = ["test2.%[2]s"]
  	}
+  }
+  load_shedding {
+	default_percent = 55
+	default_policy = "random"
+	session_percent = 12
+	session_policy = "hash"
   }
   check_regions = ["WEU"]
   description = "tfacc-fully-specified"
