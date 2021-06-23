@@ -141,6 +141,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_rate_limit":                             resourceCloudflareRateLimit(),
 			"cloudflare_record":                                 resourceCloudflareRecord(),
 			"cloudflare_spectrum_application":                   resourceCloudflareSpectrumApplication(),
+			"cloudflare_static_route":                           resourceCloudflareStaticRoute(),
 			"cloudflare_teams_list":                             resourceCloudflareTeamsList(),
 			"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
 			"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
