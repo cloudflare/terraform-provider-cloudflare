@@ -267,8 +267,12 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 // subscription rate plan.
 func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool, d *schema.ResourceData) error {
 	if isNewPlan {
-		if err := client.ZoneSetPlan(context.Background(), zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
-			return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
+		// A free rate plan is the default so no need to explicitly make another
+		// HTTP call to set it.
+		if subscriptionIDOfRatePlans[planID] != planIDFree {
+			if err := client.ZoneSetPlan(context.Background(), zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
+				return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
+			}
 		}
 	} else {
 		if err := client.ZoneUpdatePlan(context.Background(), zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
