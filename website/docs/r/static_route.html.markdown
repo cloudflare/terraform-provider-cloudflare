@@ -45,7 +45,7 @@ The following arguments are supported:
 
 ## Import
 
-An existing Magic Firewall Ruleset can be imported using the account ID and ruleset ID
+An existing static route can be imported using the account ID and static route ID
 
 ```
 $ terraform import cloudflare_static_route.example d41d8cd98f00b204e9800998ecf8427e/cb029e245cfdd66dc8d2e570d5dd3322
