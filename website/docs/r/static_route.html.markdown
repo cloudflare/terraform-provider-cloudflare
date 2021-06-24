@@ -9,7 +9,7 @@ description: |-
 # cloudflare_static_route
 
 Provides a resource, that manages Cloudflare static routes for Magic Transit or Magic WAN. 
-Static routes are Used to route traffic through GRE tunnels.
+Static routes are used to route traffic through GRE tunnels.
 
 ## Example Usage
 
