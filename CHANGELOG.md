@@ -8,6 +8,7 @@
 * `resource/waf_override`: Allow `rules` to be optional ([#1090](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1090))
 * `resource/cloudflare_zone`: Don't attempt to set free zone rate plans as that is already the default ([#1102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1102))
 * `resource/cloudflare_access_application`: Ability to set `type` for Applications ([#1076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1076))
+* `resource/cloudflare_zone_lockdown`: Update documentation to show examples of multiple configurations ([#1106](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1106))
 
 ## 2.21.0 (May 26th, 2021)
 
