@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.22.0 (June 25th, 2021)
+
 - **New resource**: `cloudflare_static_route` ([#1098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1098))
 
 **Improvements**
