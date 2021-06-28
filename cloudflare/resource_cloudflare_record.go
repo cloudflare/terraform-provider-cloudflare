@@ -565,7 +565,7 @@ func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([
 	d.Set("zone_id", zoneID)
 	d.SetId(recordID)
 
-	resourceCloudflareZoneRead(d, meta)
+	resourceCloudflareRecordRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
