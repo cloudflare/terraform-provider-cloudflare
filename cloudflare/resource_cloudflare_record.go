@@ -440,7 +440,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	if record.Priority != nil {
 		priority := record.Priority
 		p := *priority
-		d.Set("priority", fmt.Sprintf("%d", int(p)))
+		d.Set("priority", int(p))
 	}
 
 	return nil
