@@ -2,8 +2,10 @@
 
 **Improvements**
 
+- **New resource**: `cloudflare_waiting_room` ([#1053](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1053)) 
+
 * `datasource/cloudflare_waf_rules`: Export `default_mode` as an attribute ([#1079](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1079))
-* 
+
 ## 2.22.0 (June 25th, 2021)
 
 - **New resource**: `cloudflare_static_route` ([#1098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1098))
