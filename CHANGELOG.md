@@ -1,8 +1,8 @@
 ## Unreleased
 
-**Improvements**
-
 - **New resource**: `cloudflare_waiting_room` ([#1053](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1053)) 
+
+**Improvements**
 
 * `datasource/cloudflare_waf_rules`: Export `default_mode` as an attribute ([#1079](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1079))
 
