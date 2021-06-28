@@ -63,10 +63,10 @@ func testAccCheckCloudflareWaitingRoomDestroy(s *terraform.State) error {
 func testAccCloudflareWaitingRoom(resourceName, waitingRoomName, zoneID, domain, path string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_waiting_room" "%[1]s" {
-	name                    = "%[2]s"
-	zone_id                 = "%[3]s"
-	host                    = "www.%[4]s"
-	new_users_per_minute    = 400
+  name                    = "%[2]s"
+  zone_id                 = "%[3]s"
+  host                    = "www.%[4]s"
+  new_users_per_minute    = 400
   total_active_users      = 405
   path                    = "%[5]s"
   session_duration        = 10
