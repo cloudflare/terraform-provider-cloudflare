@@ -87,6 +87,10 @@ func dataSourceCloudflareWAFRules() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
+						"default_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -155,6 +159,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 				"group_name":    rule.Group.Name,
 				"package_id":    pkg.ID,
 				"allowed_modes": rule.AllowedModes,
+				"default_mode":  rule.DefaultMode,
 			})
 			ruleIds = append(ruleIds, rule.ID)
 		}
