@@ -27,11 +27,13 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			"account_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
+				Computed:      true,
 				ConflictsWith: []string{"zone_id"},
 			},
 			"zone_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
+				Computed:      true,
 				ConflictsWith: []string{"account_id"},
 			},
 			"aud": {
