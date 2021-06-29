@@ -8,7 +8,7 @@
 
 **Fixes**
 
-* `datasource/cloudflare_access_application`: Revert removal of schema changes causing existing applications unable to re-apply ([#1118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1118))
+* `resource/cloudflare_access_application`: Revert removal of schema changes causing existing applications unable to re-apply ([#1118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1118))
 
 ## 2.22.0 (June 25th, 2021)
 
