@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.23.0 (June 30th, 2021)
+
 - **New resource**: `cloudflare_waiting_room` ([#1053](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1053)) 
 
 **Improvements**
