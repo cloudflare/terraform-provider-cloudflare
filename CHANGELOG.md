@@ -1,8 +1,13 @@
 ## Unreleased
 
+**Improvements**
+
+* `resource/cloudflare_logpush_job`: Add support for `"nel_reports"` as a dataset ([#1122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1122))
+
 **Fixes**
 
 * `resource/cloudflare_record`: Use correct `Import` method on resource ([#1116](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1116))
+* `resource/cloudflare_worker_cron_trigger`: Account for deletion of scripts and force a refresh of triggers ([#1121](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1121))
 
 ## 2.23.0 (June 30th, 2021)
 
