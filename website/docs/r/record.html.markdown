@@ -52,6 +52,7 @@ The following arguments are supported:
 * `ttl` - (Optional) The TTL of the record ([automatic: '1'](https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record))
 * `priority` - (Optional) The priority of the record
 * `proxied` - (Optional) Whether the record gets Cloudflare's origin protection; defaults to `false`.
+* `allow_overwrite` - (Optional) Allow creation of this record in Terraform to overwrite an existing record, if any. This does not affect the ability to update the record in Terraform and does not prevent other resources within Terraform or manual changes outside Terraform from overwriting this record. `false` by default. **This configuration is not recommended for most environments**.
 
 ## Attributes Reference
 

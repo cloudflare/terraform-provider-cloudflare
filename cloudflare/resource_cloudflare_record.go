@@ -281,6 +281,11 @@ func resourceCloudflareRecord() *schema.Resource {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
+			"allow_overwrite": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 		},
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Second),
@@ -369,6 +374,27 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		r, err := client.CreateDNSRecord(context.Background(), newRecord.ZoneID, newRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
+
+				if d.Get("allow_overwrite").(bool) {
+					log.Printf("[DEBUG] Cloudflare Record already exists however we are overwriting it")
+					zone, _ := client.ZoneDetails(context.Background(), d.Get("zone_id").(string))
+					r := cloudflare.DNSRecord{
+						Name: d.Get("name").(string) + "." + zone.Name,
+						Type: d.Get("type").(string),
+					}
+					rs, _ := client.DNSRecords(context.Background(), d.Get("zone_id").(string), r)
+
+					if len(rs) != 1 {
+						return resource.RetryableError(fmt.Errorf("attempted to override existing record however didn't find an exact match"))
+					}
+
+					// Here we need to set the ID as the state will not have one and in order
+					// for Terraform to operate on it, we need an anchor.
+					d.SetId(rs[0].ID)
+
+					return resource.NonRetryableError(resourceCloudflareRecordUpdate(d, meta))
+				}
+
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
 			}
 
