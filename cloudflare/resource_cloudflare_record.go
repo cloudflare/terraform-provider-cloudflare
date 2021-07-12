@@ -374,8 +374,8 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		r, err := client.CreateDNSRecord(context.Background(), newRecord.ZoneID, newRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
-				var r cloudflare.DNSRecord
 				if d.Get("allow_overwrite").(bool) {
+					var r cloudflare.DNSRecord
 					log.Printf("[DEBUG] Cloudflare Record already exists however we are overwriting it")
 					zone, _ := client.ZoneDetails(context.Background(), d.Get("zone_id").(string))
 					if d.Get("name").(string) == "@" {
