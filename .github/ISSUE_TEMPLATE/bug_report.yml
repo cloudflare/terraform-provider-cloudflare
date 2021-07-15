@@ -59,7 +59,7 @@ body:
       Be sure to redact or sanitise any sensitive information (such as API keys or tokens) in 
       your logs.
   validations:
-    required: false
+    required: true
 - type: textarea
   attributes:
     label: Panic output

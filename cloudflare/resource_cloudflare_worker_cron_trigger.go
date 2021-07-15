@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -58,6 +59,12 @@ func resourceCloudflareWorkerCronTriggerRead(d *schema.ResourceData, meta interf
 
 	s, err := client.ListWorkerCronTriggers(context.Background(), scriptName)
 	if err != nil {
+		// If the script is removed, we also need to remove the triggers.
+		if strings.Contains(err.Error(), "workers.api.error.script_not_found") {
+			d.SetId("")
+			return nil
+		}
+
 		return fmt.Errorf("failed to read Worker Cron Trigger: %s", err)
 	}
 

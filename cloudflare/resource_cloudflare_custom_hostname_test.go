@@ -246,6 +246,36 @@ resource "cloudflare_custom_hostname" "%[2]s" {
 `, zoneID, rnd, domain)
 }
 
+func testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%[2]s" {
+  zone_id = "%[1]s"
+  hostname = "%[2]s.%[3]s"
+}
+`, zoneID, rnd, domain)
+}
+func TestAccCloudflareCustomHostnameWithNoSSL(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckNoResourceAttr(resourceName, "ssl"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T) {
 	t.Parallel()
 
