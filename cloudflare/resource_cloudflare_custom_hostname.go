@@ -41,7 +41,7 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 			},
 			"ssl": {
 				Type:     schema.TypeList,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					SchemaVersion: 1,
 					Schema: map[string]*schema.Schema{
@@ -177,21 +177,21 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 
 	d.Set("hostname", customHostname.Hostname)
 	d.Set("ssl.custom_origin_server", customHostname.CustomOriginServer)
+	if customHostname.SSL != nil {
+		d.Set("ssl.0.type", customHostname.SSL.Type)
+		d.Set("ssl.0.method", customHostname.SSL.Method)
+		d.Set("ssl.0.wildcard", customHostname.SSL.Wildcard)
+		d.Set("ssl.0.status", customHostname.SSL.Status)
+		d.Set("ssl.0.cname_target", customHostname.SSL.CnameTarget)
+		d.Set("ssl.0.cname_name", customHostname.SSL.CnameName)
+		d.Set("ssl.0.custom_certificate", customHostname.SSL.CustomCertificate)
+		d.Set("ssl.0.custom_key", customHostname.SSL.CustomKey)
 
-	d.Set("ssl.0.type", customHostname.SSL.Type)
-	d.Set("ssl.0.method", customHostname.SSL.Method)
-	d.Set("ssl.0.wildcard", customHostname.SSL.Wildcard)
-	d.Set("ssl.0.status", customHostname.SSL.Status)
-	d.Set("ssl.0.cname_target", customHostname.SSL.CnameTarget)
-	d.Set("ssl.0.cname_name", customHostname.SSL.CnameName)
-	d.Set("ssl.0.custom_certificate", customHostname.SSL.CustomCertificate)
-	d.Set("ssl.0.custom_key", customHostname.SSL.CustomKey)
-
-	d.Set("ssl.0.settings.0.http2", customHostname.SSL.Settings.HTTP2)
-	d.Set("ssl.0.settings.0.tls13", customHostname.SSL.Settings.TLS13)
-	d.Set("ssl.0.settings.0.min_tls_version", customHostname.SSL.Settings.MinTLSVersion)
-	d.Set("ssl.0.settings.0.ciphers", flattenStringList(customHostname.SSL.Settings.Ciphers))
-
+		d.Set("ssl.0.settings.0.http2", customHostname.SSL.Settings.HTTP2)
+		d.Set("ssl.0.settings.0.tls13", customHostname.SSL.Settings.TLS13)
+		d.Set("ssl.0.settings.0.min_tls_version", customHostname.SSL.Settings.MinTLSVersion)
+		d.Set("ssl.0.settings.0.ciphers", flattenStringList(customHostname.SSL.Settings.Ciphers))
+	}
 	ownershipVerificationCfg := map[string]interface{}{}
 	ownershipVerificationCfg["type"] = customHostname.OwnershipVerification.Type
 	ownershipVerificationCfg["value"] = customHostname.OwnershipVerification.Value
@@ -269,10 +269,12 @@ func resourceCloudflareCustomHostnameImport(d *schema.ResourceData, meta interfa
 // buildCustomHostname takes the existing schema and returns a
 // `cloudflare.CustomHostname`.
 func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
-	return cloudflare.CustomHostname{
+	ch := cloudflare.CustomHostname{
 		Hostname:           d.Get("hostname").(string),
 		CustomOriginServer: d.Get("custom_origin_server").(string),
-		SSL: cloudflare.CustomHostnameSSL{
+	}
+	if _, ok := d.GetOk("ssl"); ok {
+		ch.SSL = &cloudflare.CustomHostnameSSL{
 			Method:            d.Get("ssl.0.method").(string),
 			Type:              d.Get("ssl.0.type").(string),
 			Wildcard:          &[]bool{d.Get("ssl.0.wildcard").(bool)}[0],
@@ -286,6 +288,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 				MinTLSVersion: d.Get("ssl.0.settings.0.min_tls_version").(string),
 				Ciphers:       expandInterfaceToStringList(d.Get("ssl.0.settings.0.ciphers").([]interface{})),
 			},
-		},
+		}
 	}
+	return ch
 }
