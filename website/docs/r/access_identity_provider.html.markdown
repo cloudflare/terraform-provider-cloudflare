@@ -45,6 +45,18 @@ resource "cloudflare_access_identity_provider" "jumpcloud_saml" {
     idp_public_cert = "MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQ...GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"
   }
 }
+
+# okta
+resource "cloudflare_access_identity_provider" "okta" {
+  account_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  name       = "Okta"
+  type       = "okta"
+  config {
+    client_id     = "example"
+    client_secret = "secret_key"
+    api_token     = "okta_api_token"
+  }
+}
 ```
 
 Please refer to the [developers.cloudflare.com Access documentation][access_identity_provider_guide]
