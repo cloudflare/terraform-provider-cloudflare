@@ -91,6 +91,12 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 				Optional: true,
 			},
 
+			"load_shedding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     loadShedElem,
+			},
+
 			"created_on": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -156,6 +162,38 @@ var originsElem = &schema.Resource{
 	},
 }
 
+var loadShedElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"default_percent": {
+			Type:         schema.TypeFloat,
+			Default:      0,
+			Optional:     true,
+			ValidateFunc: validation.FloatBetween(0, 100),
+		},
+
+		"default_policy": {
+			Type:         schema.TypeString,
+			Default:      "",
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"", "hash", "random"}, false),
+		},
+
+		"session_percent": {
+			Type:         schema.TypeFloat,
+			Default:      0,
+			Optional:     true,
+			ValidateFunc: validation.FloatBetween(0, 100),
+		},
+
+		"session_policy": {
+			Type:         schema.TypeString,
+			Default:      "",
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"", "hash"}, false),
+		},
+	},
+}
+
 func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -185,6 +223,10 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 
 	if monitor, ok := d.GetOk("monitor"); ok {
 		loadBalancerPool.Monitor = monitor.(string)
+	}
+
+	if shed, ok := d.GetOk("load_shedding"); ok {
+		loadBalancerPool.LoadShedding = expandLoadBalancerLoadShedding(shed.(*schema.Set))
 	}
 
 	if notificationEmail, ok := d.GetOk("notification_email"); ok {
@@ -241,6 +283,10 @@ func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta inter
 		loadBalancerPool.Monitor = monitor.(string)
 	}
 
+	if shed, ok := d.GetOk("load_shedding"); ok {
+		loadBalancerPool.LoadShedding = expandLoadBalancerLoadShedding(shed.(*schema.Set))
+	}
+
 	if notificationEmail, ok := d.GetOk("notification_email"); ok {
 		loadBalancerPool.NotificationEmail = notificationEmail.(string)
 	}
@@ -275,6 +321,22 @@ func flattenLoadBalancerPoolHeader(header map[string][]string) *schema.Set {
 		flattened = append(flattened, cfg)
 	}
 	return schema.NewSet(HashByMapKey("header"), flattened)
+}
+
+func expandLoadBalancerLoadShedding(s *schema.Set) *cloudflare.LoadBalancerLoadShedding {
+	if s == nil {
+		return nil
+	}
+	for _, iface := range s.List() {
+		o := iface.(map[string]interface{})
+		return &cloudflare.LoadBalancerLoadShedding{
+			DefaultPercent: float32(o["default_percent"].(float64)),
+			DefaultPolicy:  o["default_policy"].(string),
+			SessionPercent: float32(o["session_percent"].(float64)),
+			SessionPolicy:  o["session_policy"].(string),
+		}
+	}
+	return nil
 }
 
 func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.LoadBalancerOrigin) {
@@ -334,6 +396,10 @@ func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 		log.Printf("[WARN] Error setting origins on load balancer pool %q: %s", d.Id(), err)
 	}
 
+	if err := d.Set("load_shedding", flattenLoadBalancerLoadShedding(loadBalancerPool.LoadShedding)); err != nil {
+		log.Printf("[WARN] Error setting load_shedding on load balancer pool %q: %s", d.Id(), err)
+	}
+
 	if err := d.Set("check_regions", schema.NewSet(schema.HashString, flattenStringList(loadBalancerPool.CheckRegions))); err != nil {
 		log.Printf("[WARN] Error setting check_regions on load balancer pool %q: %s", d.Id(), err)
 	}
@@ -355,6 +421,18 @@ func flattenLoadBalancerOrigins(d *schema.ResourceData, origins []cloudflare.Loa
 		flattened = append(flattened, cfg)
 	}
 	return schema.NewSet(schema.HashResource(originsElem), flattened)
+}
+
+func flattenLoadBalancerLoadShedding(ls *cloudflare.LoadBalancerLoadShedding) *schema.Set {
+	if ls == nil {
+		return nil
+	}
+	return schema.NewSet(schema.HashResource(loadShedElem), []interface{}{map[string]interface{}{
+		"default_percent": math.Round(float64(ls.DefaultPercent)*1000) / 1000,
+		"default_policy":  ls.DefaultPolicy,
+		"session_percent": math.Round(float64(ls.SessionPercent)*1000) / 1000,
+		"session_policy":  ls.SessionPolicy,
+	}})
 }
 
 func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta interface{}) error {
