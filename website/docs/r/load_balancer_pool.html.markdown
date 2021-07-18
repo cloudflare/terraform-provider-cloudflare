@@ -33,6 +33,8 @@ resource "cloudflare_load_balancer_pool" "foo" {
       values = ["example-2"]
     }
   }
+  latitude = 55
+  longitude = -12
   description = "example load balancer pool"
   enabled = false
   minimum_origins = 1
@@ -59,6 +61,8 @@ The following arguments are supported:
 * `minimum_origins` - (Optional) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next available pool. Default: 1.
 * `monitor` - (Optional) The ID of the Monitor to use for health checking origins within this pool.
 * `notification_email` - (Optional) The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
+* `latitude` - (Optional) The latitude this pool is physically located at; used for proximity steering. Values should be between -90 and 90.
+* `longitude` - (Optional) The longitude this pool is physically located at; used for proximity steering. Values should be between -180 and 180.
 
 The **origins** block supports:
 
