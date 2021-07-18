@@ -5,7 +5,9 @@
 * `resource/cloudflare_logpush_job`: Add support for `"nel_reports"` as a dataset ([#1122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1122))
 * `resource/cloudflare_custom_hostname`: Allow SSL options to be optional when not required ([#1131](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1131))
 * `resource/cloudflare_access_identity_provider`: Support optional Okta API token ([#1119](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1119))
-
+* `resource/cloudflare_load_balancer_pool`: Add support for load shedding ([#1108](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1108))
+* `resource/cloudflare_load_balancer_pool`: Add support for longitude and latitude ([#1093](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1093))
+* 
 **Fixes**
 
 * `resource/cloudflare_record`: Use correct `Import` method on resource ([#1116](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1116))
