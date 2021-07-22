@@ -30,7 +30,7 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 			"type": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall"}, false),
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -59,32 +59,64 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 			},
 			"input": {
 				Type:     schema.TypeList,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The Teams List id.",
 						},
 						"path": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The path to the file.",
 						},
 						"exists": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "Checks if the file should exist.",
 						},
 						"thumbprint": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The thumbprint of the file certificate.",
 						},
 						"sha256": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The sha256 hash of the file.",
 						},
 						"running": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "Checks if the application should be running",
+						},
+						"require_all": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "True if all drives must be encrypted.",
+						},
+						"enabled": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "True if the firewall must be enabled.",
+						},
+						"version": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The operating system semantic version.",
+						},
+						"operator": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{">", ">=", "<", "<=", "=="}, true),
+							Description:  "The version comparison operator.",
+						},
+						"domain": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The domain that the client must join.",
 						},
 					},
 				},
@@ -237,7 +269,21 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if running, ok := d.GetOk("input.0.running"); ok {
 			input.Running = running.(bool)
 		}
-
+		if require_all, ok := d.GetOk("input.0.require_all"); ok {
+			input.RequireAll = require_all.(bool)
+		}
+		if enabled, ok := d.GetOk("input.0.enabled"); ok {
+			input.Enabled = enabled.(bool)
+		}
+		if version, ok := d.GetOk("input.0.version"); ok {
+			input.Version = version.(string)
+		}
+		if operator, ok := d.GetOk("input.0.operator"); ok {
+			input.Operator = operator.(string)
+		}
+		if domain, ok := d.GetOk("input.0.domain"); ok {
+			input.Domain = domain.(string)
+		}
 		rule.Input = input
 	}
 }
@@ -275,12 +321,17 @@ func convertMatchToSchema(matches []cloudflare.DevicePostureRuleMatch) []map[str
 
 func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]interface{} {
 	m := map[string]interface{}{
-		"id":         input.ID,
-		"path":       input.Path,
-		"exists":     input.Exists,
-		"thumbprint": input.Thumbprint,
-		"sha256":     input.Sha256,
-		"running":    input.Running,
+		"id":          input.ID,
+		"path":        input.Path,
+		"exists":      input.Exists,
+		"thumbprint":  input.Thumbprint,
+		"sha256":      input.Sha256,
+		"running":     input.Running,
+		"require_all": input.RequireAll,
+		"enabled":     input.Enabled,
+		"version":     input.Version,
+		"operator":    input.Operator,
+		"domain":      input.Domain,
 	}
 
 	return []map[string]interface{}{m}
