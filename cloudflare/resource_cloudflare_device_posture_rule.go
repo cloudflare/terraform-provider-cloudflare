@@ -60,6 +60,7 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 			"input": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
@@ -75,6 +76,7 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 						"exists": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Computed:    true,
 							Description: "Checks if the file should exist.",
 						},
 						"thumbprint": {
@@ -90,16 +92,19 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 						"running": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Computed:    true,
 							Description: "Checks if the application should be running",
 						},
 						"require_all": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Computed:    true,
 							Description: "True if all drives must be encrypted.",
 						},
 						"enabled": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Computed:    true,
 							Description: "True if the firewall must be enabled.",
 						},
 						"version": {
@@ -142,7 +147,6 @@ func resourceCloudflareDevicePostureRuleCreate(d *schema.ResourceData, meta inte
 	}
 
 	setDevicePostureRuleInput(&newDevicePostureRule, d)
-
 	log.Printf("[DEBUG] Creating Cloudflare Device Posture Rule from struct: %+v", newDevicePostureRule)
 
 	rule, err := client.CreateDevicePostureRule(context.Background(), accountID, newDevicePostureRule)
@@ -197,7 +201,6 @@ func resourceCloudflareDevicePostureRuleUpdate(d *schema.ResourceData, meta inte
 	}
 
 	setDevicePostureRuleInput(&updatedDevicePostureRule, d)
-
 	log.Printf("[DEBUG] Updating Cloudflare Device Posture Rule from struct: %+v", updatedDevicePostureRule)
 
 	devicePostureRule, err := client.UpdateDevicePostureRule(context.Background(), accountID, updatedDevicePostureRule)
