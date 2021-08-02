@@ -5,9 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
@@ -439,75 +437,89 @@ func TestAccCloudflareRuleset_MagicTransitSingleRule(t *testing.T) {
 	})
 }
 
-// func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T) {
-// 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T) {
+	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
-// 	rnd := generateRandomResourceName()
-// 	name := fmt.Sprintf("cloudflare_ruleset.%s", rnd)
-// 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_ruleset.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-// 	var MagicFirewallRuleset cloudflare.MagicFirewallRuleset
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheckAccount(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetMagicTransitSingle(rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "description", fmt.Sprintf("%s magic transit ruleset description", rnd)),
+					resource.TestCheckResourceAttr(name, "rules.#", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.action", "allow"),
+					resource.TestCheckResourceAttr(name, "rules.0.description", "Allow TCP Ephemeral Ports"),
+					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "rules.0.expression", "tcp.dstport in { 32768..65535 }"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "rules.#", "2"),
+					resource.TestCheckResourceAttr(name, "rules.0.action", "block"),
+					resource.TestCheckResourceAttr(name, "rules.0.description", "Block UDP Ephemeral Ports"),
+					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "rules.0.expression", "udp.dstport in { 32768..65535 }"),
+					resource.TestCheckResourceAttr(name, "rules.1.action", "allow"),
+					resource.TestCheckResourceAttr(name, "rules.1.description", "Allow TCP Ephemeral Ports"),
+					resource.TestCheckResourceAttr(name, "rules.1.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "rules.1.expression", "tcp.dstport in { 32768..65535 }"),
+				),
+			},
+		},
+	})
+}
 
-// 	resource.Test(t, resource.TestCase{
-// 		PreCheck:  func() { testAccPreCheckAccount(t) },
-// 		Providers: testAccProviders,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: testAccCheckCloudflareMagicFirewallRulesetSingleRule(rnd, rnd, rnd, accountID),
-// 				Check: resource.ComposeTestCheckFunc(
-// 					testAccCheckCloudflareMagicFirewallRulesetExists(name, &MagicFirewallRuleset),
-// 					resource.TestCheckResourceAttr(
-// 						name, "name", rnd),
-// 					resource.TestCheckResourceAttr(name, "rules.#", "1"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.action", "allow"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.description", "Allow TCP Ephemeral Ports"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.expression", "tcp.dstport in { 32768..65535 }"),
-// 				),
-// 			},
-// 			{
-// 				Config: testAccCheckCloudflareMagicFirewallRulesetUpdateWithHigherPriority(rnd, rnd, rnd, accountID),
-// 				Check: resource.ComposeTestCheckFunc(
-// 					testAccCheckCloudflareMagicFirewallRulesetExists(name, &MagicFirewallRuleset),
-// 					resource.TestCheckResourceAttr(
-// 						name, "name", rnd),
-// 					resource.TestCheckResourceAttr(name, "rules.#", "2"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.action", "block"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.description", "Block UDP Ephemeral Ports"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
-// 					resource.TestCheckResourceAttr(name, "rules.0.expression", "udp.dstport in { 32768..65535 }"),
-// 					resource.TestCheckResourceAttr(name, "rules.1.action", "allow"),
-// 					resource.TestCheckResourceAttr(name, "rules.1.description", "Allow TCP Ephemeral Ports"),
-// 					resource.TestCheckResourceAttr(name, "rules.1.enabled", "true"),
-// 					resource.TestCheckResourceAttr(name, "rules.1.expression", "tcp.dstport in { 32768..65535 }"),
-// 				),
-// 			},
-// 		},
-// 	})
-// }
+func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    account_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s magic transit ruleset description"
+    kind        = "root"
+    phase       = "magic_transit"
 
-func testAccCheckCloudflareRulesetExists(n string, ruleset *cloudflare.Ruleset) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// rs, ok := s.RootModule().Resources[n]
-		// if !ok {
-		// 	return fmt.Errorf("Not found: %s", n)
-		// }
+    rules {
+      action = "allow"
+      expression = "tcp.dstport in { 32768..65535 }"
+      description = "Allow TCP Ephemeral Ports"
+    }
+  }`, rnd, name, accountID)
+}
 
-		// if rs.Primary.ID == "" {
-		// 	return fmt.Errorf("No Magic Firewall Ruleset is set")
-		// }
+func testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, name, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    account_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s magic transit ruleset description"
+    kind        = "root"
+    phase       = "magic_transit"
 
-		// var foundRuleset cloudflare.Ruleset
-		// client := testAccProvider.Meta().(*cloudflare.API)
-		// foundRuleset, err := client.GetZoneRuleset(context.Background(), rs.Primary.ID)
-		// if err != nil {
-		// 	return err
-		// }
+    rules {
+      action = "block"
+      expression = "udp.dstport in { 32768..65535 }"
+      description = "Block UDP Ephemeral Ports"
+      enabled = true
+    }
 
-		// *ruleset = foundRuleset
-
-		return nil
-	}
+    rules {
+      action = "allow"
+      expression = "tcp.dstport in { 32768..65535 }"
+      description = "Allow TCP Ephemeral Ports"
+      enabled = true
+    }
+  }`, rnd, name, accountID)
 }
 
 func testAccCheckCloudflareRulesetCustomWAFBasic(rnd, name, accountID string) string {
