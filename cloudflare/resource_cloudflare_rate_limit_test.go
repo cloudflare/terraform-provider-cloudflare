@@ -111,6 +111,7 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "match.0.request.0.methods.#", "6"),
 					resource.TestCheckResourceAttr(name, "match.0.request.0.schemes.#", "2"),
 					resource.TestMatchResourceAttr(name, "match.0.request.0.url_pattern", regexp.MustCompile("tfacc-full")),
+					resource.TestCheckResourceAttr(name, "match.0.response.0.origin_traffic", "false"),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.statuses.#", "5"),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.#", "2"),
 					resource.TestCheckResourceAttr(name, "match.0.response.0.headers.0.name", "Test"),

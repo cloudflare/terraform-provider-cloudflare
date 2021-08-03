@@ -50,6 +50,10 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"api_token": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"apps_domain": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -312,6 +316,7 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 			IDPConfig.Attributes = attrData
 		}
 
+		IDPConfig.APIToken = d.Get("config.0.api_token").(string)
 		IDPConfig.AppsDomain = d.Get("config.0.apps_domain").(string)
 		IDPConfig.AuthURL = d.Get("config.0.auth_url").(string)
 		IDPConfig.CentrifyAccount = d.Get("config.0.centrify_account").(string)
@@ -346,6 +351,7 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 	}
 
 	m := map[string]interface{}{
+		"api_token":            options.APIToken,
 		"apps_domain":          options.AppsDomain,
 		"attributes":           attributes,
 		"auth_url":             options.AuthURL,

@@ -33,10 +33,18 @@ resource "cloudflare_load_balancer_pool" "foo" {
       values = ["example-2"]
     }
   }
+  latitude = 55
+  longitude = -12
   description = "example load balancer pool"
   enabled = false
   minimum_origins = 1
   notification_email = "someone@example.com"
+  load_shedding {
+    default_percent = 55
+    default_policy = "random"
+    session_percent = 12
+    session_policy = "hash"
+  }
 }
 ```
 
@@ -48,10 +56,13 @@ The following arguments are supported:
 * `origins` - (Required) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. It's a complex value. See description below.
 * `check_regions` - (Optional) A list of regions (specified by region code) from which to run health checks. Empty means every Cloudflare data center (the default), but requires an Enterprise plan. Region codes can be found [here](https://support.cloudflare.com/hc/en-us/articles/115000540888-Load-Balancing-Geographic-Regions).
 * `description` - (Optional) Free text description.
+* `load_shedding` - (Optional) Setting for controlling load shedding for this pool.
 * `enabled` - (Optional) Whether to enable (the default) this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
 * `minimum_origins` - (Optional) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next available pool. Default: 1.
 * `monitor` - (Optional) The ID of the Monitor to use for health checking origins within this pool.
 * `notification_email` - (Optional) The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
+* `latitude` - (Optional) The latitude this pool is physically located at; used for proximity steering. Values should be between -90 and 90.
+* `longitude` - (Optional) The longitude this pool is physically located at; used for proximity steering. Values should be between -180 and 180.
 
 The **origins** block supports:
 
@@ -60,6 +71,12 @@ The **origins** block supports:
 * `weight` - (Optional) The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked. Default: 1.
 * `enabled` - (Optional) Whether to enable (the default) this origin within the Pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
 * `header` - (Optional)  The HTTP request headers. For security reasons, this header also needs to be a subdomain of the overall zone. Fields documented below.
+
+The **load_shedding** block supports:
+* `default_percent` - (Optional) Percent of traffic to shed 0 - 100.
+* `default_policy` - (Optional) Method of shedding traffic "", "hash" or "random".
+* `session_percent` - (Optional) Percent of session traffic to shed 0 - 100.
+* `session_policy` - (Optional) Method of shedding session traffic "" or "hash".
 
 **header** requires the following:
 

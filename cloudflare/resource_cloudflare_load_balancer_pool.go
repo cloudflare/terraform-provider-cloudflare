@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 
 	"time"
@@ -52,6 +53,18 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 				Default:  1,
 			},
 
+			"latitude": {
+				Type:         schema.TypeFloat,
+				Optional:     true,
+				ValidateFunc: validation.FloatBetween(-90, 90),
+			},
+
+			"longitude": {
+				Type:         schema.TypeFloat,
+				Optional:     true,
+				ValidateFunc: validation.FloatBetween(-180, 180),
+			},
+
 			"check_regions": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -76,6 +89,12 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 			"notification_email": {
 				Type:     schema.TypeString,
 				Optional: true,
+			},
+
+			"load_shedding": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     loadShedElem,
 			},
 
 			"created_on": {
@@ -111,7 +130,7 @@ var originsElem = &schema.Resource{
 			Type:         schema.TypeFloat,
 			Optional:     true,
 			Default:      1.0,
-			ValidateFunc: floatBetween(0.0, 1.0),
+			ValidateFunc: validation.FloatBetween(0.0, 1.0),
 		},
 
 		"enabled": {
@@ -143,6 +162,38 @@ var originsElem = &schema.Resource{
 	},
 }
 
+var loadShedElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"default_percent": {
+			Type:         schema.TypeFloat,
+			Default:      0,
+			Optional:     true,
+			ValidateFunc: validation.FloatBetween(0, 100),
+		},
+
+		"default_policy": {
+			Type:         schema.TypeString,
+			Default:      "",
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"", "hash", "random"}, false),
+		},
+
+		"session_percent": {
+			Type:         schema.TypeFloat,
+			Default:      0,
+			Optional:     true,
+			ValidateFunc: validation.FloatBetween(0, 100),
+		},
+
+		"session_policy": {
+			Type:         schema.TypeString,
+			Default:      "",
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"", "hash"}, false),
+		},
+	},
+}
+
 func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -151,6 +202,15 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 		Origins:        expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
 		Enabled:        d.Get("enabled").(bool),
 		MinimumOrigins: d.Get("minimum_origins").(int),
+	}
+
+	if lat, ok := d.GetOk("latitude"); ok {
+		f := float32(lat.(float64))
+		loadBalancerPool.Latitude = &f
+	}
+	if long, ok := d.GetOk("longitude"); ok {
+		f := float32(long.(float64))
+		loadBalancerPool.Longitude = &f
 	}
 
 	if checkRegions, ok := d.GetOk("check_regions"); ok {
@@ -163,6 +223,10 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 
 	if monitor, ok := d.GetOk("monitor"); ok {
 		loadBalancerPool.Monitor = monitor.(string)
+	}
+
+	if shed, ok := d.GetOk("load_shedding"); ok {
+		loadBalancerPool.LoadShedding = expandLoadBalancerLoadShedding(shed.(*schema.Set))
 	}
 
 	if notificationEmail, ok := d.GetOk("notification_email"); ok {
@@ -198,6 +262,15 @@ func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta inter
 		MinimumOrigins: d.Get("minimum_origins").(int),
 	}
 
+	if lat, ok := d.GetOk("latitude"); ok {
+		f := float32(lat.(float64))
+		loadBalancerPool.Latitude = &f
+	}
+	if long, ok := d.GetOk("longitude"); ok {
+		f := float32(long.(float64))
+		loadBalancerPool.Longitude = &f
+	}
+
 	if checkRegions, ok := d.GetOk("check_regions"); ok {
 		loadBalancerPool.CheckRegions = expandInterfaceToStringList(checkRegions.(*schema.Set).List())
 	}
@@ -208,6 +281,10 @@ func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta inter
 
 	if monitor, ok := d.GetOk("monitor"); ok {
 		loadBalancerPool.Monitor = monitor.(string)
+	}
+
+	if shed, ok := d.GetOk("load_shedding"); ok {
+		loadBalancerPool.LoadShedding = expandLoadBalancerLoadShedding(shed.(*schema.Set))
 	}
 
 	if notificationEmail, ok := d.GetOk("notification_email"); ok {
@@ -244,6 +321,22 @@ func flattenLoadBalancerPoolHeader(header map[string][]string) *schema.Set {
 		flattened = append(flattened, cfg)
 	}
 	return schema.NewSet(HashByMapKey("header"), flattened)
+}
+
+func expandLoadBalancerLoadShedding(s *schema.Set) *cloudflare.LoadBalancerLoadShedding {
+	if s == nil {
+		return nil
+	}
+	for _, iface := range s.List() {
+		o := iface.(map[string]interface{})
+		return &cloudflare.LoadBalancerLoadShedding{
+			DefaultPercent: float32(o["default_percent"].(float64)),
+			DefaultPolicy:  o["default_policy"].(string),
+			SessionPercent: float32(o["session_percent"].(float64)),
+			SessionPolicy:  o["session_policy"].(string),
+		}
+	}
+	return nil
 }
 
 func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.LoadBalancerOrigin) {
@@ -290,8 +383,21 @@ func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 	d.Set("created_on", loadBalancerPool.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", loadBalancerPool.ModifiedOn.Format(time.RFC3339Nano))
 
+	if lat := loadBalancerPool.Latitude; lat != nil {
+		f := math.Round(float64(*lat)*10000) / 10000 // set precision
+		d.Set("latitude", &f)
+	}
+	if long := loadBalancerPool.Longitude; long != nil {
+		f := math.Round(float64(*long)*10000) / 10000 // set precision
+		d.Set("longitude", &f)
+	}
+
 	if err := d.Set("origins", flattenLoadBalancerOrigins(d, loadBalancerPool.Origins)); err != nil {
 		log.Printf("[WARN] Error setting origins on load balancer pool %q: %s", d.Id(), err)
+	}
+
+	if err := d.Set("load_shedding", flattenLoadBalancerLoadShedding(loadBalancerPool.LoadShedding)); err != nil {
+		log.Printf("[WARN] Error setting load_shedding on load balancer pool %q: %s", d.Id(), err)
 	}
 
 	if err := d.Set("check_regions", schema.NewSet(schema.HashString, flattenStringList(loadBalancerPool.CheckRegions))); err != nil {
@@ -317,6 +423,18 @@ func flattenLoadBalancerOrigins(d *schema.ResourceData, origins []cloudflare.Loa
 	return schema.NewSet(schema.HashResource(originsElem), flattened)
 }
 
+func flattenLoadBalancerLoadShedding(ls *cloudflare.LoadBalancerLoadShedding) *schema.Set {
+	if ls == nil {
+		return nil
+	}
+	return schema.NewSet(schema.HashResource(loadShedElem), []interface{}{map[string]interface{}{
+		"default_percent": math.Round(float64(ls.DefaultPercent)*1000) / 1000,
+		"default_policy":  ls.DefaultPolicy,
+		"session_percent": math.Round(float64(ls.SessionPercent)*1000) / 1000,
+		"session_policy":  ls.SessionPolicy,
+	}})
+}
+
 func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -328,22 +446,4 @@ func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta inter
 	}
 
 	return nil
-}
-
-// floatBetween returns a validate function that can be used in schema definitions.
-func floatBetween(min, max float64) schema.SchemaValidateFunc {
-	return func(i interface{}, k string) (s []string, es []error) {
-		v, ok := i.(float64)
-		if !ok {
-			es = append(es, fmt.Errorf("expected type of %s to be float64", k))
-			return
-		}
-
-		if v < min || v > max {
-			es = append(es, fmt.Errorf("expected %s to be within %v and %v", k, min, max))
-			return
-		}
-
-		return
-	}
 }

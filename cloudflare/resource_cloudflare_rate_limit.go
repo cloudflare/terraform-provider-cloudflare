@@ -553,6 +553,8 @@ func flattenRateLimitResponseMatcher(cfg cloudflare.RateLimitResponseMatcher) []
 
 	if cfg.OriginTraffic != nil {
 		data["origin_traffic"] = *cfg.OriginTraffic
+	} else {
+		data["origin_traffic"] = false
 	}
 
 	if len(cfg.Statuses) > 0 {
