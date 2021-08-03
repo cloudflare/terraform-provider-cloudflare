@@ -18,9 +18,9 @@ func resourceCloudflareRuleset() *schema.Resource {
 		Read:   resourceCloudflareRulesetRead,
 		Update: resourceCloudflareRulesetUpdate,
 		Delete: resourceCloudflareRulesetDelete,
-		// Importer: &schema.ResourceImporter{
-		// 	State: resourceCloudflareRulesetImport,
-		// },
+		Importer: &schema.ResourceImporter{
+			State: resourceCloudflareRulesetImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -284,23 +284,9 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 	return resourceCloudflareRulesetRead(d, meta)
 }
 
-// func resourceCloudflareRulesetImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-// 	client := meta.(*cloudflare.API)
-// 	attributes := strings.SplitN(d.Id(), "/", 2)
-
-// 	if len(attributes) != 2 {
-// 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/rulesetID\"", d.Id())
-// 	}
-
-// 	accountID, rulesetID := attributes[0], attributes[1]
-// 	d.SetId(rulesetID)
-// 	d.Set("account_id", accountID)
-// 	client.AccountID = accountID
-
-// 	resourceCloudflareRulesetRead(d, meta)
-
-// 	return []*schema.ResourceData{d}, nil
-// }
+func resourceCloudflareRulesetImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	return nil, errors.New("Import is not yet supported for Rulesets")
+}
 
 func resourceCloudflareRulesetRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
