@@ -69,6 +69,23 @@ The input structure depends on the device posture rule type.
 * `thumbprint` - (Optional) The thumbprint of the application certificate.
 * `running` - (Optional) Checks if the application should be running.
 
+**os_version** allows the following:
+
+* `version` = (Required) The operating system semantic version.
+* `operator` = (Required) The version comparison operator in (>,>=,<,<=,==)
+
+**domain_joined**
+
+* `domain` = (Required) The domain that the client must join.
+
+**firewall**
+
+* `enabled` = (Required) True if the firewall must be enabled.
+
+**disk_encryption**
+
+* `require_all` = (Required) True if all drives must be encrypted.
+
 ## Attributes Reference
 
 The following additional attributes are exported:
