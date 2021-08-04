@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.25.0 (August 4th, 2021)
+
 **Improvements**
 
 * `resource/cloudflare_access_device_posture_rule`: Add support for `domain_joined`, `firewall`, `os_version`, and `disk_encryption` ([#1137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1137))
