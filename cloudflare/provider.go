@@ -157,6 +157,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_zone_settings_override":                 resourceCloudflareZoneSettingsOverride(),
 			"cloudflare_zone":                                   resourceCloudflareZone(),
 			"cloudflare_zone_dnssec":                            resourceCloudflareZoneDNSSEC(),
+			"cloudflare_notification_policy":                    resourceCloudflareNotificationPolicy(),
 		},
 	}
 
