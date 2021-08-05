@@ -11,7 +11,7 @@
 -	[Terraform](https://www.terraform.io/downloads.html) 0.12.x
 -	[Go](https://golang.org/doc/install) 1.15 (to build the provider plugin)
 
-## Building The Provider
+## Building The Provider 
 
 For ease of building the provider, Terraform 0.14 is assumed. Before 0.14, the
 approaches to using a development binary is difficult and error prone.
@@ -21,6 +21,8 @@ Clone repository to: `$GOPATH/src/github.com/cloudflare/terraform-provider-cloud
 Once the local repository is present, change into that directory and run `make
 build-dev`. This will create a new binary in the same directory which will
 be loaded for your Terraform operations.
+
+### Using the customer provider locally
 
 Create the following file in your home directory. Note: This file can live
 anywhere and isn't restricted to your home directory if you would like it
@@ -45,6 +47,10 @@ the repository lives, no `~` shorthand.
 Once this is in place, you can run your Terraform operations prefixed with
 `TF_CLI_CONFIG_FILE=/path/to/the/config/file` and it will load in your custom
 overrides. Full details can be found on the [Terraform CLI guide][tf cli guide].
+
+### Using the custom provider in Terraform Cloud
+
+Hashicorp maintain a [help centre article](https://support.hashicorp.com/hc/en-us/articles/360016992613-Using-custom-and-community-providers-in-Terraform-Cloud-and-Enterprise) and an [in-depth walk through](https://www.terraform.io/docs/cloud/run/install-software.html#installing-terraform-providers) on this process.
 
 ## Migrating to Terraform from using the Dashboard
 
