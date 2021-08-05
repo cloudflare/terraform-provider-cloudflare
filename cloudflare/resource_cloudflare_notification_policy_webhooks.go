@@ -90,11 +90,7 @@ func resourceCloudflareNotificationPolicyWebhooksRead(d *schema.ResourceData, me
 	if err != nil {
 		return fmt.Errorf("error retrieving notification webhooks %s: %s", name, err)
 	}
-	id, err := uuid.Parse(notificationWebhooks.Result.ID)
-	if err != nil {
-		return fmt.Errorf("error setting notification webhooks %s: %s", name, err)
-	}
-	d.Set("id", id.String())
+
 	d.Set("name", notificationWebhooks.Result.Name)
 	d.Set("url", notificationWebhooks.Result.URL)
 	d.Set("created", notificationWebhooks.Result.CreatedAt.Format(time.RFC3339))
