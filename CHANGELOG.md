@@ -1,6 +1,7 @@
 ## Unreleased
 
 **New resource**: `cloudflare_notification_policy` ([#1138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1138)) 
+**New resource**: `cloudflare_notification_policy_webhooks` ([#1151](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1151)) 
 
 ## 2.25.0 (August 4th, 2021)
 
