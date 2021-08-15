@@ -96,6 +96,7 @@ func Provider() terraform.ResourceProvider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"cloudflare_api_token_permission_groups": dataSourceCloudflareApiTokenPermissionGroups(),
 			"cloudflare_ip_ranges":                   dataSourceCloudflareIPRanges(),
+			"cloudflare_origin_ca_root_certificate":  dataSourceCloudflareOriginCARootCertificate(),
 			"cloudflare_waf_groups":                  dataSourceCloudflareWAFGroups(),
 			"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
 			"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
