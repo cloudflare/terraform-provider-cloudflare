@@ -1,7 +1,7 @@
 ---
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_origin_ca_root_certificate"
-sidebar_current: "docs-cloudflare-datasource-origin_ca_root_certificate"
+sidebar_current: "docs-cloudflare-datasource-origin-ca-root-certificate"
 description: |-
   Get Cloudflare Origin CA root certificate.
 ---
