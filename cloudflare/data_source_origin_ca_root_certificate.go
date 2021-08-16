@@ -33,7 +33,7 @@ func dataSourceCloudflareOriginCARootCertificateRead(d *schema.ResourceData, met
 	algorithm := strings.ToLower(fmt.Sprintf("%v", d.Get("algorithm")))
 	certBytes, err := cloudflare.OriginCARootCertificate(algorithm)
 	if err != nil {
-		return fmt.Errorf("failed to fetch Cloudflare IP ranges: %s", err)
+		return fmt.Errorf("failed to fetch Cloudflare Origin CA root %s certificate: %s", algorithm, err)
 	}
 
 	cert := string(certBytes[:])
