@@ -1,7 +1,7 @@
 ---
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_ip_ranges"
-sidebar_current: "docs-cloudflare-datasource-ip_ranges"
+sidebar_current: "docs-cloudflare-datasource-ip-ranges"
 description: |-
   Get information on Cloudflare IP ranges.
 ---
