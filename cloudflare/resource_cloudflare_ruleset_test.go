@@ -410,33 +410,6 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithIDBasedOverrides(t *testing.T
 	})
 }
 
-func TestAccCloudflareRuleset_MagicTransitSingleRule(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
-
-	t.Parallel()
-	rnd := generateRandomResourceName()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_ruleset." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareRulesetMagicTransitSingleRule(rnd, rnd, rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "allow"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "Allow TCP Ephemeral Ports"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "tcp.dstport in { 32768..65535 }"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
@@ -894,43 +867,4 @@ func testAccCheckCloudflareRulesetManagedWAFWithIDBasedOverrides(rnd, name, zone
       enabled = false
     }
   }`, rnd, name, zoneID, zoneName)
-}
-
-func testAccCheckCloudflareRulesetMagicTransitSingleRule(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-
-    rules {
-      action = "allow"
-      expression = "tcp.dstport in { 32768..65535 }"
-      description = "Allow TCP Ephemeral Ports"
-      enabled = "true"
-    }
-  }`, ID, name, description, accountID)
-}
-
-func testAccCheckCloudflareRulesetMagicTransitUpdateWithHigherPriority(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-
-    rules  {
-      action = "block"
-      expression = "udp.dstport in { 32768..65535 }"
-      description = "Block UDP Ephemeral Ports"
-      enabled = "true"
-    }
-
-    rules {
-      action = "allow"
-      expression = "tcp.dstport in { 32768..65535 }"
-      description = "Allow TCP Ephemeral Ports"
-      enabled = "true"
-    }
-  }`, ID, name, description, accountID)
 }

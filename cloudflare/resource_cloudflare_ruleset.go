@@ -116,6 +116,10 @@ func resourceCloudflareRuleset() *schema.Resource {
 													Optional: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
+															"value": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
 															"expression": {
 																Type:     schema.TypeString,
 																Optional: true,
