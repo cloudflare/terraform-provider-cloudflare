@@ -8,7 +8,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareNotificationPolicyWebhooks() *schema.Resource {
