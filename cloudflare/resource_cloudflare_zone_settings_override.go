@@ -45,7 +45,6 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 			"initial_settings": {
 				Type:     schema.TypeList,
 				Computed: true,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: resourceCloudflareZoneSettingsSchema,
 				},

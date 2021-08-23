@@ -81,13 +81,9 @@ func resourceCloudflareZone() *schema.Resource {
 			"meta": {
 				Type:     schema.TypeMap,
 				Computed: true,
-				Elem: &schema.Schema: map[string]*schema.Schema{
-						"wildcard_proxiable": {
-							Type: schema.TypeBool,
-						},
-						"phishing_detected": {
-							Type: schema.TypeBool,
-						},
+				Elem: &schema.Schema{
+					Type:     schema.TypeBool,
+					Computed: true,
 				},
 			},
 			"status": {

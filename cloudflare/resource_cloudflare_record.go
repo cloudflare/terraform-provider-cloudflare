@@ -62,7 +62,8 @@ func resourceCloudflareRecord() *schema.Resource {
 			},
 
 			"data": {
-				Type:          schema.TypeMap,
+				Type:          schema.TypeList,
+				MaxItems:      1,
 				Optional:      true,
 				ConflictsWith: []string{"value"},
 				Elem: &schema.Resource{

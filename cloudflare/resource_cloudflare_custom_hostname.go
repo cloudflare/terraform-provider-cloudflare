@@ -126,39 +126,17 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 			"ownership_verification": {
 				Type:     schema.TypeMap,
 				Computed: true,
-				Elem: &schema.Resource{
-					SchemaVersion: 1,
-					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"value": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
+				Elem: &schema.Schema{
+					Type:     schema.TypeString,
+					Computed: true,
 				},
 			},
 			"ownership_verification_http": {
 				Type:     schema.TypeMap,
 				Computed: true,
-				Elem: &schema.Resource{
-					SchemaVersion: 1,
-					Schema: map[string]*schema.Schema{
-						"http_url": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"http_body": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
+				Elem: &schema.Schema{
+					Type:     schema.TypeString,
+					Computed: true,
 				},
 			},
 		},

@@ -239,7 +239,8 @@ var rulesElem = &schema.Resource{
 		},
 
 		"fixed_response": {
-			Type:     schema.TypeMap,
+			Type:     schema.TypeList,
+			MaxItems: 1,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
