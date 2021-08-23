@@ -72,11 +72,11 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	if configuration, configurationOk := d.GetOk("configuration"); configurationOk {
-		config := configuration.(map[string]interface{})
-
-		newRule.Configuration = cloudflare.AccessRuleConfiguration{
-			Target: config["target"].(string),
-			Value:  config["value"].(string),
+		for _, config := range configuration.([]interface{}) {
+			newRule.Configuration = cloudflare.AccessRuleConfiguration{
+				Target: config.(map[string]interface{})["target"].(string),
+				Value:  config.(map[string]interface{})["value"].(string),
+			}
 		}
 	}
 
@@ -142,9 +142,11 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("notes", accessRuleResponse.Result.Notes)
 	log.Printf("[DEBUG] read configuration: %#v", d.Get("configuration"))
 
-	configuration := map[string]interface{}{}
-	configuration["target"] = accessRuleResponse.Result.Configuration.Target
-	configuration["value"] = accessRuleResponse.Result.Configuration.Value
+	configuration := []map[string]interface{}{}
+	configuration = append(configuration, map[string]interface{}{
+		"target": accessRuleResponse.Result.Configuration.Target,
+		"value":  accessRuleResponse.Result.Configuration.Value,
+	})
 
 	d.Set("configuration", configuration)
 
@@ -155,17 +157,17 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	newRule := cloudflare.AccessRule{
+	updatedRule := cloudflare.AccessRule{
 		Notes: d.Get("notes").(string),
 		Mode:  d.Get("mode").(string),
 	}
 
 	if configuration, configurationOk := d.GetOk("configuration"); configurationOk {
-		config := configuration.(map[string]interface{})
-
-		newRule.Configuration = cloudflare.AccessRuleConfiguration{
-			Target: config["target"].(string),
-			Value:  config["value"].(string),
+		for _, config := range configuration.([]interface{}) {
+			updatedRule.Configuration = cloudflare.AccessRuleConfiguration{
+				Target: config.(map[string]interface{})["target"].(string),
+				Value:  config.(map[string]interface{})["value"].(string),
+			}
 		}
 	}
 
@@ -174,12 +176,12 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			_, err = client.UpdateAccountAccessRule(context.Background(), client.AccountID, d.Id(), newRule)
+			_, err = client.UpdateAccountAccessRule(context.Background(), client.AccountID, d.Id(), updatedRule)
 		} else {
-			_, err = client.UpdateUserAccessRule(context.Background(), d.Id(), newRule)
+			_, err = client.UpdateUserAccessRule(context.Background(), d.Id(), updatedRule)
 		}
 	} else {
-		_, err = client.UpdateZoneAccessRule(context.Background(), zoneID, d.Id(), newRule)
+		_, err = client.UpdateZoneAccessRule(context.Background(), zoneID, d.Id(), updatedRule)
 	}
 
 	if err != nil {
