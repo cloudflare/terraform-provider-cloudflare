@@ -3,7 +3,7 @@ layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_ruleset"
 sidebar_current: "docs-cloudflare-resource-ruleset"
 description: |-
-  Provides a resource which manages Cloudflare Rulesets.
+  Provides a resource which manages Cloudflare rulesets.
 ---
 
 # cloudflare_ruleset
@@ -32,7 +32,7 @@ resource "cloudflare_ruleset" "magic_transit_example" {
   }
 }
 
-# Zone level managed WAF
+# Zone-level WAF Managed Ruleset
 resource "cloudflare_ruleset" "zone_level_managed_waf" {
   zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
   name        = "managed WAF"
@@ -46,16 +46,16 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
       id = "efb7b8c949ac4650a09736fc376e9aee"
     }
     expression = "true"
-    description = "Execute Cloudflare Managed Ruleset on my zone-level phase ruleset"
+    description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
     enabled = true
   }
 }
 
-# Zone level WAF with category based overrides
+# Zone-level WAF with tag-based overrides
 resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overrides" {
   zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
-  name        = "managed WAF with category based overrides"
-  description = "managed WAF with category based overrides ruleset description"
+  name        = "managed WAF with tag-based overrides"
+  description = "managed WAF with tag-based overrides ruleset description"
   kind        = "zone"
   phase       = "http_request_firewall_managed"
 
@@ -89,72 +89,72 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
 
 The following arguments are supported:
 
-* `account_id` - (Optional) The ID of the account where the Ruleset is being created. Conflicts with `"zone_id"`.
-* `description` - (Required) Brief summary of the Ruleset and the intended use.
+* `account_id` - (Optional) The ID of the account where the ruleset is being created. Conflicts with `"zone_id"`.
+* `description` - (Required) Brief summary of the ruleset and its intended use.
 * `kind` - (Required) Type of Ruleset to create. Valid values are `"custom"`, `"managed"`, `"root"`, `"schema"` or `"zone"`.
-* `name` - (Required) Name for the Ruleset.
-* `phase` - (Required) Point in the request/response lifecycle where the Ruleset should be created. Valid values are `"ddos_l4"`, `"ddos_l7"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_request_main"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_response_firewall_managed"`, `"magic_transit"` or `"http_ratelimit"`.
-* `rules` - (Required) List of rules to apply to the Ruleset. (see [below for nested schema](#nestedblock--rules))
+* `name` - (Required) Name of the ruleset.
+* `phase` - (Required) Point in the request/response lifecycle where the ruleset will be created. Valid values are `"ddos_l4"`, `"ddos_l7"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_request_main"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_response_firewall_managed"`, `"magic_transit"`, or `"http_ratelimit"`.
+* `rules` - (Required) List of rules to apply to the ruleset (refer to the [nested schema](#nestedblock--rules)).
 * `shareable_entitlement_name` - (Optional) Name of entitlement that is shareable between entities.
-* `zone_id` - (Optional) The ID of the zone where the Ruleset is being created. Conflicts with `"account_id"`.
+* `zone_id` - (Optional) The ID of the zone where the ruleset is being created. Conflicts with `"account_id"`.
 
 <a id="nestedblock--rules"></a>
 **Nested schema for `rules`**
 
-* `action_parameters` - (Required) List of parameters for actions to apply to the Ruleset Rule. (see [below for nested schema](#nestedblock--action-parameters))
-* `action` - (Required) Action to take with Ruleset Rule. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"` or  `"skip"`.
-* `description` - (Optional) Brief summary of the Ruleset Rule and the intended use.
-* `enabled` - (Optional) Whether the Ruleset is active.
-* `expression` - (Required) Firewall Rules expression language based on Wireshark display filters. See [documentation](https://developers.cloudflare.com/firewall/cf-firewall-language) for all available fields, operators and functions.
-* `id` - (Read only) Unique Rule identifier.
+* `action_parameters` - (Required) List of parameters that configure the behavior of the ruleset rule action (refer to the [nested schema](#nestedblock--action-parameters)).
+* `action` - (Required) Action to perform in the ruleset rule. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `description` - (Optional) Brief summary of the ruleset rule and its intended use.
+* `enabled` - (Optional) Whether the rule is active.
+* `expression` - (Required) Criteria for an HTTP request to trigger the ruleset rule action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.
+* `id` - (Read only) Unique rule identifier.
 * `ref` - (Read only) Rule reference.
-* `version`- (Read only) Version of the Ruleset that is to be deployed.
+* `version`- (Read only) Version of the ruleset to deploy.
 
 <a id="nestedblock--action-parameters"></a>
 **Nested schema for `action_parameters`**
 
-* `id` - (Optional) Action parameter identifier to target.
+* `id` - (Optional) Identifier of the action parameter to modify.
 * `increment` - (Optional)
 * `overrides` - (Optional) List of override configurations to apply to the Ruleset Rule. (see [below for nested schema](#nestedblock--action-parameters-overrides))
 * `products` - (Optional) Products to target with the actions. Valid values are `"bic"`, `"hot"`, `"ratelimit"`, `"securityLevel"`, `"uablock"`, `"waf"` or `"zonelockdown"`.
-* `ruleset` - (Optional) Which Ruleset to target. Valid value is `"current"`.
-* `uri` - (Optional) List of URI properties to configure for the Ruleset Rule when performing URL rewrite transformation rule. (see [below for nested schema](#nestedblock--action-parameters-uri))
+* `ruleset` - (Optional) Which ruleset to target. Valid value is `"current"`.
+* `uri` - (Optional) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-uri)).
 * `version` - (Optional)
 
 <a id="nestedblock--action-parameters-uri"></a>
 **Nested schema for `uri`**
 
-* `path` - (Optional) Path configuration for URL rewriting. (see [below for nested schema](#nestedblock--action-parameters-uri-shared))
-* `query` - (Optional) Query parameter configuration for URL rewriting. (see [below for nested schema](#nestedblock--action-parameters-uri-shared))
+* `path` - (Optional) URI path configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
+* `query` - (Optional) Query string configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
 
 <a id="nestedblock--action-parameters-uri-shared"></a>
 **Nested schema for `path`/`query`**
 
-* `expression` - (Optional) Input and output pattern of the expression to apply to the URI path or query parameter component.
-* `value` - (Optional) Static value to rewrite the value to.
+* `expression` - (Optional) Expression that defines the updated (dynamic) value of the URI path or query string component. Conflicts with `value`.
+* `value` - (Optional) Static string value of the updated URI path or query string component. Conflicts with `expression`.
 
 <a id="nestedblock--action-parameters-overrides"></a>
 **Nested schema for `overrides`**
 
-* `categories` - (Optional) List of category based overrides. (see [below for nested schema](#nestedblock--action-parameters-overrides-categories))
-* `enabled` - (Optional) Whether the Ruleset Rule override is active.
-* `rules` - (Optional) List of rule based overrides. . (see [below for nested schema](#nestedblock--action-parameters-overrides-rules))
+* `categories` - (Optional) List of tag-based overrides (refer to the [nested schema](#nestedblock--action-parameters-overrides-categories)).
+* `enabled` - (Optional) Defines if the current ruleset-level override enables or disables the ruleset.
+* `rules` - (Optional) List of rule-based overrides (refer to the [nested schema](#nestedblock--action-parameters-overrides-rules)).
 
 <a id="nestedblock--action-parameters-overrides-categories"></a>
 **Nested schema for `categories`**
 
-* `category` - (Optional) Category name to apply the Ruleset Rule override to.
-* `action` - (Optional) Action to take with Ruleset Rule override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"` or  `"skip"`.
-* `enabled` - (Optional) Whether the Ruleset Rule override is active.
+* `category` - (Optional) Tag name to apply the ruleset rule override to.
+* `action` - (Optional) Action to perform in the tag-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `enabled` - (Optional) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 
 <a id="nestedblock--action-parameters-overrides-rules"></a>
 **Nested schema for `rules`**
 
 * `id` - (Optional) Rule ID to apply the override to.
-* `action` - (Optional) Action to take with Ruleset Rule override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"` or  `"skip"`.
-* `enabled` - (Optional) Whether the Ruleset Rule override is active.
-* `score_threshold` - (Optional) Anomaly score thresold to apply to Ruleset Rule override. Only applicable for modsecurity based Rulesets.
+* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `enabled` - (Optional) Defines if the current rule-level override enables or disables the rule.
+* `score_threshold` - (Optional) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
 
 ## Import
 
-Importing Rulesets is not currently supported.
+Currently, you cannot import rulesets.
