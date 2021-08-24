@@ -115,7 +115,7 @@ The following arguments are supported:
 
 * `id` - (Optional) Identifier of the action parameter to modify.
 * `increment` - (Optional)
-* `overrides` - (Optional) List of override configurations to apply to the Ruleset Rule. (see [below for nested schema](#nestedblock--action-parameters-overrides))
+* `overrides` - (Optional) List of override configurations to apply to the ruleset (refer to the [nested schema](#nestedblock--action-parameters-overrides)).
 * `products` - (Optional) Products to target with the actions. Valid values are `"bic"`, `"hot"`, `"ratelimit"`, `"securityLevel"`, `"uablock"`, `"waf"` or `"zonelockdown"`.
 * `ruleset` - (Optional) Which ruleset to target. Valid value is `"current"`.
 * `uri` - (Optional) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-uri)).
