@@ -39,6 +39,7 @@ The following arguments are supported:
 * `suspended` - (Optional) If suspended, the traffic doesn't go to the waiting room. Default: false.
 * `description` - (Optional) A description to let users add more details about the waiting room.
 * `session_duration` - (Optional) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. Default: 5
+* `json_response_enabled` - (Optional) If true, requests to the waiting room with the header Accept: application/json will receive a JSON response object.
 
 ## Attributes Reference
 

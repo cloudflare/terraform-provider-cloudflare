@@ -37,6 +37,7 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "new_users_per_minute", "400"),
 					resource.TestCheckResourceAttr(name, "total_active_users", "405"),
 					resource.TestCheckResourceAttr(name, "session_duration", "10"),
+					resource.TestCheckResourceAttr(name, "json_response_enabled", "true"),
 				),
 			},
 		},
@@ -75,6 +76,7 @@ resource "cloudflare_waiting_room" "%[1]s" {
   disable_session_renewal = true
   suspended               = true
   queue_all               = false
+  json_response_enabled.  = true
 }
 `, resourceName, waitingRoomName, zoneID, domain, path)
 }
