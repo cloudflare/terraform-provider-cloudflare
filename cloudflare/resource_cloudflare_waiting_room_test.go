@@ -76,7 +76,7 @@ resource "cloudflare_waiting_room" "%[1]s" {
   disable_session_renewal = true
   suspended               = true
   queue_all               = false
-  json_response_enabled  = true
+  json_response_enabled   = true
 }
 `, resourceName, waitingRoomName, zoneID, domain, path)
 }
