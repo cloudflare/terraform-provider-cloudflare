@@ -10,6 +10,8 @@ description: |-
 
 Provides a Cloudflare Zone resource. Zone is the basic resource for working with Cloudflare and is roughly equivalent to a domain name that the user purchases.
 
+-> **Note:** If you are attempting to sign up a subdomain of a zone you must first have Subdomain Support entitlement for your account _and_ provide `account_id` in your Terraform provider configuration. 
+
 ## Example Usage
 
 ```hcl
