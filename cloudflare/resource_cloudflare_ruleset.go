@@ -414,6 +414,10 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 				switch pKey {
 				case "id":
 					rule.ActionParameters.ID = pValue.(string)
+				case "ruleset":
+					rule.ActionParameters.Ruleset = pValue.(string)
+				case "increment":
+					rule.ActionParameters.Increment = pValue.(int)
 				case "overrides":
 					categories := []cloudflare.RulesetRuleActionParametersCategories{}
 					rules := []cloudflare.RulesetRuleActionParametersRules{}
