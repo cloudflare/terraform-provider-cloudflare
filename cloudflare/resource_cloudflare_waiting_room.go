@@ -90,6 +90,10 @@ func resourceCloudflareWaitingRoom() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
+			"json_response_enabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 		},
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Second),
@@ -109,6 +113,7 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		NewUsersPerMinute:     d.Get("new_users_per_minute").(int),
 		CustomPageHTML:        d.Get("custom_page_html").(string),
 		SessionDuration:       d.Get("session_duration").(int),
+		JsonResponseEnabled:   d.Get("json_response_enabled").(bool),
 		QueueAll:              d.Get("queue_all").(bool),
 		DisableSessionRenewal: d.Get("disable_session_renewal").(bool),
 	}
@@ -159,6 +164,7 @@ func resourceCloudflareWaitingRoomRead(d *schema.ResourceData, meta interface{})
 	d.Set("session_duration", waitingRoom.SessionDuration)
 	d.Set("disable_session_renewal", waitingRoom.DisableSessionRenewal)
 	d.Set("custom_page_html", waitingRoom.CustomPageHTML)
+	d.Set("json_response_enabled", waitingRoom.JsonResponseEnabled)
 	return nil
 }
 
