@@ -5,6 +5,10 @@
 * **New resource**: `cloudflare_ruleset` ([#1143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1143)) 
 * **New datasource**: `cloudflare_origin_ca_root_certificate` ([#1158](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1158)) 
  
+**Improvements**
+
+* `resource/cloudflare_waiting_room`: Add support for `json_response_enabled` as an argument ([#1122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1122))
+ 
 ## 2.25.0 (August 4th, 2021)
 
 **Improvements**
