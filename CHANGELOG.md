@@ -3,6 +3,7 @@
 * **New resource**: `cloudflare_notification_policy` ([#1138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1138)) 
 * **New resource**: `cloudflare_notification_policy_webhooks` ([#1151](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1151)) 
 * **New resource**: `cloudflare_ruleset` ([#1143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1143)) 
+* **New resource**: `cloudflare_teams_location` ([#1154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1154)) 
 * **New datasource**: `cloudflare_origin_ca_root_certificate` ([#1158](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1158)) 
  
 **Improvements**
