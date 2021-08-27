@@ -564,6 +564,16 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 }
 
 func TestAccCloudflareRuleset_TransformationRuleURIPath(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -593,6 +603,16 @@ func TestAccCloudflareRuleset_TransformationRuleURIPath(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_TransformationRuleURIQuery(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -622,6 +642,16 @@ func TestAccCloudflareRuleset_TransformationRuleURIQuery(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_TransformationRuleHeaders(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
