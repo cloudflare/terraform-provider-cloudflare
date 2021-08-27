@@ -20,10 +20,11 @@ func TestAccCloudflareRecord_Import(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name),
 			},
 			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"allow_overwrite"},
 			},
 		},
 	})
