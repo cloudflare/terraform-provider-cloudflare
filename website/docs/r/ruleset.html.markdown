@@ -83,6 +83,88 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
     enabled = false
   }
 }
+
+# Rewrite the URI path component to a static path
+resource "cloudflare_ruleset" "transform_uri_rule_path" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "transformation rule for URI path"
+  description = "change the URI path to a new static path"
+  kind        = "zone"
+  phase       = "http_request_transform"
+
+  rules {
+    action = "rewrite"
+    action_parameters {
+      uri {
+        path {
+          value = "/my-new-route"
+        }
+      }
+    }
+
+    expression = "(http.host eq \"example.com\" and http.uri.path eq \"/old-path\")"
+    description = "URI transformation path example"
+    enabled = true
+  }
+}
+
+# Rewrite the URI query component to a static query
+resource "cloudflare_ruleset" "transform_uri_rule_query" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "transformation rule for URI query parameter"
+  description = "change the URI query to a new static query"
+  kind        = "zone"
+  phase       = "http_request_transform"
+
+  rules {
+    action = "rewrite"
+    action_parameters {
+      uri {
+        query {
+          value = "old=new_again"
+        }
+      }
+    }
+
+    expression = "true"
+    description = "URI transformation query example"
+    enabled = true
+  }
+}
+
+# Rewrite HTTP headers to a modified values
+resource "cloudflare_ruleset" "transform_uri_http_headers" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "transformation rule for HTTP headers"
+  description = "modify HTTP headers before reaching origin"
+  kind        = "zone"
+  phase       = "http_request_late_transform"
+
+rules {
+  action = "rewrite"
+  action_parameters {
+    headers {
+      name      = "example-http-header-1"
+      operation = "set"
+      value     = "my-http-header-value-1"
+    }
+
+    headers {
+      name       = "example-http-header-2"
+      operation  = "set"
+      expression = "cf.zone.name"
+    }
+
+    headers {
+      name      = "example-http-header-3-to-remove"
+      operation = "remove"
+    }
+
+    expression = "true"
+    description = "example header transformation rule"
+    enabled = false
+  }
+}
 ```
 
 ## Argument Reference
