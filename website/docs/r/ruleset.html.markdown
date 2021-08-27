@@ -87,7 +87,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
 # Rewrite the URI path component to a static path
 resource "cloudflare_ruleset" "transform_uri_rule_path" {
   zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
-  name        = "transformation rule for URI path"
+  name        = "transform rule for URI path"
   description = "change the URI path to a new static path"
   kind        = "zone"
   phase       = "http_request_transform"
@@ -103,7 +103,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
     }
 
     expression = "(http.host eq \"example.com\" and http.uri.path eq \"/old-path\")"
-    description = "URI transformation path example"
+    description = "example URI path transform rule"
     enabled = true
   }
 }
@@ -111,7 +111,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
 # Rewrite the URI query component to a static query
 resource "cloudflare_ruleset" "transform_uri_rule_query" {
   zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
-  name        = "transformation rule for URI query parameter"
+  name        = "transform rule for URI query parameter"
   description = "change the URI query to a new static query"
   kind        = "zone"
   phase       = "http_request_transform"
@@ -135,7 +135,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
 # Rewrite HTTP headers to a modified values
 resource "cloudflare_ruleset" "transform_uri_http_headers" {
   zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
-  name        = "transformation rule for HTTP headers"
+  name        = "transform rule for HTTP headers"
   description = "modify HTTP headers before reaching origin"
   kind        = "zone"
   phase       = "http_request_late_transform"
@@ -161,7 +161,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
       }
 
       expression = "true"
-      description = "example header transformation rule"
+      description = "example request header transform rule"
       enabled = false
     }
   }
@@ -202,7 +202,7 @@ The following arguments are supported:
 * `products` - (Optional) Products to target with the actions. Valid values are `"bic"`, `"hot"`, `"ratelimit"`, `"securityLevel"`, `"uablock"`, `"waf"` or `"zonelockdown"`.
 * `ruleset` - (Optional) Which ruleset to target. Valid value is `"current"`.
 * `uri` - (Optional) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-uri)).
-* `headers` - (Optional) List of HTTP header configurations to perform rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-headers)).
+* `headers` - (Optional) List of HTTP header modifications to perform in the ruleset rule (refer to the [nested schema](#nestedblock--action-parameters-headers)).
 * `version` - (Optional)
 
 <a id="nestedblock--action-parameters-uri"></a>
@@ -214,10 +214,10 @@ The following arguments are supported:
 <a id="nestedblock--action-parameters-headers"></a>
 **Nested schema for `headers`**
 
-* `name` - (Optional) Name of the HTTP header to target.
-* `operation` - (Optional) Action to perform on this HTTP header. Valid values are `"set"` or `"remove"`.
+* `name` - (Optional) Name of the HTTP request header to target.
+* `operation` - (Optional) Action to perform on the HTTP request header. Valid values are `"set"` or `"remove"`.
 * `expression` - (Optional) Use a value dynamically determined by the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions. Conflicts with `value`.
-* `value` - (Optional) Static value to provide as a value. Conflicts with `expression`.
+* `value` - (Optional) Static value to provide as the HTTP request header value. Conflicts with `expression`.
 
 <a id="nestedblock--action-parameters-uri-shared"></a>
 **Nested schema for `path`/`query`**
