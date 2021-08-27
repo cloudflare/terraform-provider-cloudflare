@@ -109,11 +109,13 @@ func resourceCloudflareRuleset() *schema.Resource {
 									"uri": {
 										Type:     schema.TypeList,
 										Optional: true,
+										MaxItems: 1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"path": {
 													Type:     schema.TypeList,
 													Optional: true,
+													MaxItems: 1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"value": {
@@ -130,6 +132,7 @@ func resourceCloudflareRuleset() *schema.Resource {
 												"query": {
 													Type:     schema.TypeList,
 													Optional: true,
+													MaxItems: 1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"value": {
@@ -453,6 +456,29 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 						rule.ActionParameters.Overrides = &cloudflare.RulesetRuleActionParametersOverrides{
 							Categories: categories,
 							Rules:      rules,
+						}
+					}
+
+				case "uri":
+					for _, uriValue := range pValue.([]interface{}) {
+						if val, ok := uriValue.(map[string]interface{})["path"]; ok && len(val.([]interface{})) > 0 {
+							uriPathConfig := val.([]interface{})[0].(map[string]interface{})
+							rule.ActionParameters.URI = &cloudflare.RulesetRuleActionParametersURI{
+								Path: &cloudflare.RulesetRuleActionParametersURIPath{
+									Value:      uriPathConfig["value"].(string),
+									Expression: uriPathConfig["expression"].(string),
+								},
+							}
+						}
+
+						if val, ok := uriValue.(map[string]interface{})["query"]; ok && len(val.([]interface{})) > 0 {
+							uriQueryConfig := val.([]interface{})[0].(map[string]interface{})
+							rule.ActionParameters.URI = &cloudflare.RulesetRuleActionParametersURI{
+								Query: &cloudflare.RulesetRuleActionParametersURIQuery{
+									Value:      uriQueryConfig["value"].(string),
+									Expression: uriQueryConfig["expression"].(string),
+								},
+							}
 						}
 					}
 
