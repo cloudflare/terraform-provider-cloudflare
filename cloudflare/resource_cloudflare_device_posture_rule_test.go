@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -11,6 +12,16 @@ import (
 )
 
 func TestAccCloudflareDevicePostureRuleSerialNumber(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -37,6 +48,16 @@ func TestAccCloudflareDevicePostureRuleSerialNumber(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRuleOsVersion(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -64,6 +85,16 @@ func TestAccCloudflareDevicePostureRuleOsVersion(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRuleDomainJoined(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -90,6 +121,16 @@ func TestAccCloudflareDevicePostureRuleDomainJoined(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRuleFirewall(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -117,6 +158,16 @@ func TestAccCloudflareDevicePostureRuleFirewall(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRuleDiskEncryption(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
