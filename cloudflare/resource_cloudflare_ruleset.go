@@ -153,6 +153,30 @@ func resourceCloudflareRuleset() *schema.Resource {
 											},
 										},
 									},
+									"headers": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"value": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"expression": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"operation": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 									"increment": {
 										Type:     schema.TypeInt,
 										Optional: true,
@@ -481,6 +505,20 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 							}
 						}
 					}
+
+				case "headers":
+					headers := make(map[string]cloudflare.RulesetRuleActionParametersHTTPHeader)
+					for _, headerList := range pValue.([]interface{}) {
+						name := headerList.(map[string]interface{})["name"].(string)
+
+						headers[name] = cloudflare.RulesetRuleActionParametersHTTPHeader{
+							Value:      headerList.(map[string]interface{})["value"].(string),
+							Expression: headerList.(map[string]interface{})["expression"].(string),
+							Operation:  headerList.(map[string]interface{})["operation"].(string),
+						}
+					}
+
+					rule.ActionParameters.Headers = headers
 
 				default:
 					log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for action parameters: %s", pKey)

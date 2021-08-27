@@ -140,29 +140,30 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
   kind        = "zone"
   phase       = "http_request_late_transform"
 
-rules {
-  action = "rewrite"
-  action_parameters {
-    headers {
-      name      = "example-http-header-1"
-      operation = "set"
-      value     = "my-http-header-value-1"
-    }
+  rules {
+    action = "rewrite"
+    action_parameters {
+      headers {
+        name      = "example-http-header-1"
+        operation = "set"
+        value     = "my-http-header-value-1"
+      }
 
-    headers {
-      name       = "example-http-header-2"
-      operation  = "set"
-      expression = "cf.zone.name"
-    }
+      headers {
+        name       = "example-http-header-2"
+        operation  = "set"
+        expression = "cf.zone.name"
+      }
 
-    headers {
-      name      = "example-http-header-3-to-remove"
-      operation = "remove"
-    }
+      headers {
+        name      = "example-http-header-3-to-remove"
+        operation = "remove"
+      }
 
-    expression = "true"
-    description = "example header transformation rule"
-    enabled = false
+      expression = "true"
+      description = "example header transformation rule"
+      enabled = false
+    }
   }
 }
 ```
@@ -201,6 +202,7 @@ The following arguments are supported:
 * `products` - (Optional) Products to target with the actions. Valid values are `"bic"`, `"hot"`, `"ratelimit"`, `"securityLevel"`, `"uablock"`, `"waf"` or `"zonelockdown"`.
 * `ruleset` - (Optional) Which ruleset to target. Valid value is `"current"`.
 * `uri` - (Optional) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-uri)).
+* `headers` - (Optional) List of HTTP header configurations to perform rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-headers)).
 * `version` - (Optional)
 
 <a id="nestedblock--action-parameters-uri"></a>
@@ -208,6 +210,14 @@ The following arguments are supported:
 
 * `path` - (Optional) URI path configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
 * `query` - (Optional) Query string configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
+
+<a id="nestedblock--action-parameters-headers"></a>
+**Nested schema for `headers`**
+
+* `name` - (Optional) Name of the HTTP header to target.
+* `operation` - (Optional) Action to perform on this HTTP header. Valid values are `"set"` or `"remove"`.
+* `expression` - (Optional) Use a value dynamically determined by the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions. Conflicts with `value`.
+* `value` - (Optional) Static value to provide as a value. Conflicts with `expression`.
 
 <a id="nestedblock--action-parameters-uri-shared"></a>
 **Nested schema for `path`/`query`**
