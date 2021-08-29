@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 2.26.1 (August 30th, 2021)
+
+**Fixes**
+
+* `resource/cloudflare_ruleset`: Send a single payload for rules instead of many individual payloads to prevent overwriting previous rules ([#1171](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1171))
+
 ## 2.26.0 (August 27th, 2021)
 
 * **New resource**: `cloudflare_notification_policy` ([#1138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1138)) 
