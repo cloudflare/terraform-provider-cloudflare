@@ -21,7 +21,7 @@ func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 
 	t.Parallel()
 	rnd := generateRandomResourceName()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -29,16 +29,16 @@ func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRulesetCustomWAFBasic(rnd, "my basic WAF ruleset", accountID),
+				Config: testAccCheckCloudflareRulesetCustomWAFBasic(rnd, "my basic WAF ruleset", zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "my basic WAF ruleset"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
-					resource.TestCheckResourceAttr(resourceName, "kind", "custom"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_custom"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "log"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "challenge"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(ip.geoip.country eq \"GB\" or ip.geoip.country eq \"FR\") or cf.threat_score > 0"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" ruleset rule description"),
 				),
 			},
@@ -605,21 +605,21 @@ func testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, name, accountID stri
   }`, rnd, name, accountID)
 }
 
-func testAccCheckCloudflareRulesetCustomWAFBasic(rnd, name, accountID string) string {
+func testAccCheckCloudflareRulesetCustomWAFBasic(rnd, name, zoneID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
-    account_id  = "%[3]s"
+    zone_id     = "%[3]s"
     name        = "%[2]s"
     description = "%[1]s ruleset description"
-    kind        = "custom"
+    kind        = "zone"
     phase       = "http_request_firewall_custom"
 
     rules {
-      action = "log"
-      expression = "true"
+      action = "challenge"
+      expression = "(ip.geoip.country eq \"GB\" or ip.geoip.country eq \"FR\") or cf.threat_score > 0"
       description = "%[1]s ruleset rule description"
     }
-  }`, rnd, name, accountID)
+  }`, rnd, name, zoneID)
 }
 
 func testAccCheckCloudflareRulesetManagedWAF(rnd, name, zoneID, zoneName string) string {

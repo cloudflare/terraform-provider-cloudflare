@@ -264,23 +264,19 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 		return errors.Wrap(err, fmt.Sprintf("error creating ruleset %s", d.Get("name").(string)))
 	}
 
-	for i, rule := range rules {
-		if rule.Action == string(cloudflare.RulesetRuleActionExecute) {
-			rulesetEntryPoint := cloudflare.Ruleset{
-				Description: d.Get("description").(string),
-				Rules:       []cloudflare.RulesetRule{rules[i]},
-			}
+	rulesetEntryPoint := cloudflare.Ruleset{
+		Description: d.Get("description").(string),
+		Rules:       rules,
+	}
 
-			if accountID != "" {
-				_, err = client.UpdateAccountRulesetPhase(context.Background(), accountID, rs.Phase, rulesetEntryPoint)
-			} else {
-				_, err = client.UpdateZoneRulesetPhase(context.Background(), zoneID, rs.Phase, rulesetEntryPoint)
-			}
+	if accountID != "" {
+		_, err = client.UpdateAccountRulesetPhase(context.Background(), accountID, rs.Phase, rulesetEntryPoint)
+	} else {
+		_, err = client.UpdateZoneRulesetPhase(context.Background(), zoneID, rs.Phase, rulesetEntryPoint)
+	}
 
-			if err != nil {
-				return errors.Wrap(err, fmt.Sprintf("error updating ruleset phase entrypoint %s", d.Get("name").(string)))
-			}
-		}
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("error updating ruleset phase entrypoint %s", d.Get("name").(string)))
 	}
 
 	d.SetId(ruleset.ID)
