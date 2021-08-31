@@ -11,11 +11,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-func resourceCloudflareTeamsAccountConfiguration() *schema.Resource {
+func resourceCloudflareTeamsAccount() *schema.Resource {
 	return &schema.Resource{
-		Read:   resourceCloudflareTeamsAccountConfigurationRead,
-		Update: resourceCloudflareTeamsAccountConfigurationUpdate,
-		Create: resourceCloudflareTeamsAccountConfigurationUpdate,
+		Read:   resourceCloudflareTeamsAccountRead,
+		Update: resourceCloudflareTeamsAccountUpdate,
+		Create: resourceCloudflareTeamsAccountUpdate,
 		// This resource is a top-level account configuration and cant be "deleted"
 		Delete: func(_ *schema.ResourceData, _ interface{}) error { return nil },
 		Importer: &schema.ResourceImporter{
@@ -97,14 +97,14 @@ var antivirusSchema = map[string]*schema.Schema{
 	},
 }
 
-func resourceCloudflareTeamsAccountConfigurationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsAccountRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	configuration, err := client.TeamsAccountConfiguration(context.Background(), accountID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
-			log.Printf("[INFO] Teams Account config %s doesnt exists", d.Id())
+			log.Printf("[INFO] Teams Account config %s does not exists", d.Id())
 			d.SetId("")
 			return nil
 		}
@@ -137,7 +137,7 @@ func resourceCloudflareTeamsAccountConfigurationRead(d *schema.ResourceData, met
 	return nil
 }
 
-func resourceCloudflareTeamsAccountConfigurationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	blockPageConfig := inflateBlockPageConfig(d.Get("block_page"))
@@ -165,7 +165,7 @@ func resourceCloudflareTeamsAccountConfigurationUpdate(d *schema.ResourceData, m
 	}
 
 	d.SetId(accountID)
-	return resourceCloudflareTeamsAccountConfigurationRead(d, meta)
+	return resourceCloudflareTeamsAccountRead(d, meta)
 }
 
 func resourceCloudflareTeamsAccountImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
@@ -179,7 +179,7 @@ func resourceCloudflareTeamsAccountImport(d *schema.ResourceData, meta interface
 	log.Printf("[DEBUG] Importing Cloudflare Teams Account configuration for account %s", accountID)
 
 	d.Set("account_id", accountID)
-	err := resourceCloudflareTeamsAccountConfigurationRead(d, meta)
+	err := resourceCloudflareTeamsAccountRead(d, meta)
 	return []*schema.ResourceData{d}, err
 }
 

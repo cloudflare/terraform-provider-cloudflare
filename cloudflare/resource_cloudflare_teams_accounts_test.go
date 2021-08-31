@@ -29,35 +29,33 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareTeamsAccountConfigBasic(rnd, accountID),
+				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "tls_decrypt_enabled", "true"),
-					resource.TestCheckResourceAttr(name, "activity_log_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "block_page.0.name", rnd),
 					resource.TestCheckResourceAttr(name, "block_page.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "block_page.0.footer_text", "hello"),
 					resource.TestCheckResourceAttr(name, "block_page.0.header_text", "hello"),
 					resource.TestCheckResourceAttr(name, "block_page.0.background_color", "#000000"),
-					resource.TestCheckResourceAttr(name, "block_page.0.logo_path", "https://google.com"),
+					resource.TestCheckResourceAttr(name, "block_page.0.logo_path", "https://example.com"),
 				),
 			},
 		},
 	})
 }
 
-func testAccCloudflareTeamsAccountConfigBasic(rnd, accountID string) string {
+func testAccCloudflareTeamsAccountBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_teams_account" "%[1]s" {
   account_id  = "%[2]s"
   tls_decrypt_enabled = true
-  activity_log_enabled = true
   block_page {
 	name="%[1]s"
 	enabled=true
     footer_text="hello"
     header_text="hello"
-    logo_path="https://google.com"
+    logo_path="https://example.com"
     background_color="#000000"
   }
   antivirus {
