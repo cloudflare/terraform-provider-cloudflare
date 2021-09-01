@@ -34,6 +34,15 @@ func resourceCloudflareArgoTunnel() *schema.Resource {
 				Required:  true,
 				Sensitive: true,
 			},
+			"cname": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The generated CNAME for the named tunnel",
+			},
+			"uuid": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -55,10 +64,30 @@ func resourceCloudflareArgoTunnelCreate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceCloudflareArgoTunnelRead(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+
+	attributes := strings.Split(d.Id(), "/")
+
+	if len(attributes) != 2 {
+		return fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/argoTunnelUUID\"", d.Id())
+	}
+
+	accID, tunnelID := attributes[0], attributes[1]
+
+	tunnel, err := client.ArgoTunnel(context.Background(), accID, tunnelID)
+	if err != nil {
+		return fmt.Errorf("failed to fetch Argo Tunnel %s: %w", tunnelID, err)
+	}
+
+	d.Set("name", tunnel.Name)
+	d.Set("cname", fmt.Sprintf("%s.argotunnel.com", tunnelID))
+	d.Set("uuid", tunnelID)
+	d.SetId(tunnel.ID)
+
 	return nil
 }
 
-func resourceCloudflareArgoTunnelUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareArgoTunnelUpdate(_ *schema.ResourceData, _ interface{}) error {
 	return nil
 }
 
@@ -82,24 +111,8 @@ func resourceCloudflareArgoTunnelDelete(d *schema.ResourceData, meta interface{}
 }
 
 func resourceCloudflareArgoTunnelImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-	attributes := strings.Split(d.Id(), "/")
 
-	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/argoTunnelUUID\"", d.Id())
-	}
+	err := resourceCloudflareArgoTunnelRead(d, meta)
 
-	accID, tunnelID := attributes[0], attributes[1]
-
-	tunnel, err := client.ArgoTunnel(context.Background(), accID, tunnelID)
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch Argo Tunnel %s", tunnelID))
-	}
-
-	d.Set("name", tunnel.Name)
-	d.SetId(tunnel.ID)
-
-	resourceCloudflareArgoTunnelRead(d, meta)
-
-	return []*schema.ResourceData{d}, nil
+	return []*schema.ResourceData{d}, err
 }
