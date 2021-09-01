@@ -251,6 +251,19 @@ func resourceCloudflareRuleset() *schema.Resource {
 											},
 										},
 									},
+									"matched_data": {
+										Type:     schema.TypeList,
+										Optional: true,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"public_key": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -564,6 +577,10 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 							Categories: categories,
 							Rules:      rules,
 						}
+					}
+				case "matched_data":
+					rule.ActionParameters.MatchedData = &cloudflare.RulesetRuleActionParametersMatchedData{
+						PublicKey: pValue.([]interface{})[0].(map[string]interface{})["public_key"].(string),
 					}
 
 				case "uri":
