@@ -870,6 +870,10 @@ func expandRevertibleZoneSettings(d *schema.ResourceData, readOnlySettings []str
 		initialVal := d.Get(initialKey)
 		currentKey := fmt.Sprintf("settings.0.%s", k)
 
+		if k == "zero_rtt" {
+			k = "0rtt"
+		}
+
 		// if the value was never set we don't need to revert it
 		if currentVal, ok := d.GetOk(currentKey); ok && !schemaValueEquals(initialVal, currentVal) {
 
