@@ -24,10 +24,12 @@ func resourceCloudflareArgoTunnel() *schema.Resource {
 			"account_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"cname": {
 				Type:     schema.TypeString,
@@ -37,6 +39,7 @@ func resourceCloudflareArgoTunnel() *schema.Resource {
 				Type:      schema.TypeString,
 				Required:  true,
 				Sensitive: true,
+				ForceNew:  true,
 			},
 		},
 	}
