@@ -29,6 +29,10 @@ func resourceCloudflareArgoTunnel() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"cname": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"secret": {
 				Type:      schema.TypeString,
 				Required:  true,
@@ -55,6 +59,15 @@ func resourceCloudflareArgoTunnelCreate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceCloudflareArgoTunnelRead(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+	accID := d.Get("account_id").(string)
+
+	tunnel, err := client.ArgoTunnel(context.Background(), accID, d.Id())
+	if err != nil {
+		return fmt.Errorf("failed to fetch Argo Tunnel: %w", err)
+	}
+
+	d.Set("cname", fmt.Sprintf("%s.argotunnel.com", tunnel.ID))
 	return nil
 }
 
@@ -97,6 +110,7 @@ func resourceCloudflareArgoTunnelImport(d *schema.ResourceData, meta interface{}
 	}
 
 	d.Set("name", tunnel.Name)
+	d.Set("cname", fmt.Sprintf("%s.argotunnel.com", tunnel.ID))
 	d.SetId(tunnel.ID)
 
 	resourceCloudflareArgoTunnelRead(d, meta)
