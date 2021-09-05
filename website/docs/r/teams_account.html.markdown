@@ -8,7 +8,7 @@ Provides a Cloudflare Teams Account resource.
 
 # cloudflare_teams_account
 
-Provides a Cloudflare Teams Account resource. The Teams Account resource defines configuration for secure web gateway. 
+Provides a Cloudflare Teams Account resource. The Teams Account resource defines configuration for secure web gateway.
 
 ## Example Usage
 
@@ -18,10 +18,10 @@ resource "cloudflare_teams_account" "main" {
   tls_decrypt_enabled = true
 
   block_page {
-    footer_text="hello"
-    header_text="hello"
-    logo_path="https://google.com"
-    background_color="#000000"
+    footer_text = "hello"
+    header_text = "hello"
+    logo_path = "https://google.com"
+    background_color = "#000000"
   }
 }
 ```
@@ -45,9 +45,9 @@ The **block_page** block supports:
 
 ## Import
 
-Since a Teams account does not have a unique resource ID, configuration can be imported using a composite ID formed with
-the account ID and a random ID to satisfy the Terraform syntax.
+Since a Teams account does not have a unique resource ID, configuration can be
+imported using the account ID.
 
 ```
-$ terraform import cloudflare_teams_account.main cb029e245cfdd66dc8d2e570d5dd3322/anything
+$ terraform import cloudflare_teams_account.example cb029e245cfdd66dc8d2e570d5dd3322
 ```

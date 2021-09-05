@@ -58,13 +58,13 @@ resource "cloudflare_teams_rule" "%[1]s" {
   account_id = "%[2]s"
   description = "desc"
   precedence = 12302
-  action="override"
-  filters=["l4"]
-  traffic="any(dns.domains[*] == \"com.stupidchess\")"
+  action = "override"
+  filters = ["l4"]
+  traffic = "any(dns.domains[*] == \"com.stupidchess\")"
   rule_settings {
     block_page_enabled = false
-    block_page_reason= "cuz"
-	override_host="host.com"
+    block_page_reason = "cuz"
+    override_host = "host.com"
   }
 }
 `, rnd, accountID)

@@ -48,21 +48,21 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 func testAccCloudflareTeamsAccountBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_teams_account" "%[1]s" {
-  account_id  = "%[2]s"
+  account_id = "%[2]s"
   tls_decrypt_enabled = true
   block_page {
-	name="%[1]s"
-	enabled=true
-    footer_text="hello"
-    header_text="hello"
-    logo_path="https://example.com"
-    background_color="#000000"
+    name = "%[1]s"
+    enabled = true
+    footer_text = "hello"
+    header_text = "hello"
+    logo_path = "https://example.com"
+    background_color = "#000000"
   }
   antivirus {
-	enabled_download_phase = true
-	enabled_upload_phase = false
-	fail_closed = true
-	}
+    enabled_download_phase = true
+    enabled_upload_phase = false
+    fail_closed = true
+  }
 }
 `, rnd, accountID)
 }

@@ -8,7 +8,8 @@ Provides a Cloudflare Teams Location resource.
 
 # cloudflare_teams_location
 
-Provides a Cloudflare Teams Location resource. Teams Locations are referenced when creating secure web gateway policies.
+Provides a Cloudflare Teams Location resource. Teams Locations are referenced
+when creating secure web gateway policies.
 
 ## Example Usage
 
@@ -18,10 +19,10 @@ resource "cloudflare_teams_location" "corporate_office" {
   account_id  = "1d5fdc9e88c8a8c4518b068cd94331fe"
   client_default = true
   networks {
-    network = "72.79.58.254/32"
+    network = "203.0.113.1/32"
   }
   networks {
-    network = "72.79.58.253/32"
+    network = "203.0.113.2/32"
   }
 }
 ```

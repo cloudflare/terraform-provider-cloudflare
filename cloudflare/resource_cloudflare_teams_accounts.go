@@ -169,16 +169,9 @@ func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceCloudflareTeamsAccountImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 2)
+	d.SetId(d.Id())
+	d.Set("account_id", d.Id())
 
-	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/teamsAccountID\"", d.Id())
-	}
-
-	accountID := attributes[0]
-	log.Printf("[DEBUG] Importing Cloudflare Teams Account configuration for account %s", accountID)
-
-	d.Set("account_id", accountID)
 	err := resourceCloudflareTeamsAccountRead(d, meta)
 	return []*schema.ResourceData{d}, err
 }
@@ -210,7 +203,6 @@ func inflateBlockPageConfig(blockPage interface{}) *cloudflare.TeamsBlockPage {
 		BackgroundColor: blockPageMap["background_color"].(string),
 		Name:            blockPageMap["name"].(string),
 	}
-
 }
 
 func flattenAntivirusConfig(antivirusConfig *cloudflare.TeamsAntivirus) []interface{} {
