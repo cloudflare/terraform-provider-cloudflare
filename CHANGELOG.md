@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **New resource**: `cloudflare_teams_account` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173)) 
+* **New resource**: `cloudflare_teams_rule` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173))
+
 **Fixes**
 
 * `resource/cloudflare_zone_settings_override`: remap `zero_rtt` => `0rtt` for resource delete ([#1175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1175))
