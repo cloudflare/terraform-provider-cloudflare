@@ -10,14 +10,15 @@ import (
 
 func TestAccCloudflareRecord_Import(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	name := "cloudflare_record.foobar"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name),
+				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd),
 			},
 			{
 				ResourceName:            name,
