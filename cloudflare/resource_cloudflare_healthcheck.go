@@ -243,7 +243,8 @@ func resourceCloudflareHealthcheckCreate(d *schema.ResourceData, meta interface{
 
 		d.SetId(hc.ID)
 
-		return resource.NonRetryableError(resourceCloudflareHealthcheckRead(d, meta))
+		resourceCloudflareHealthcheckRead(d, meta)
+		return nil
 	})
 }
 
