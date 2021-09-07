@@ -109,7 +109,8 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 				return resource.RetryableError(fmt.Errorf("expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			return nil
 		})
 	case aopType == "per-hostname":
 		perHostnameAOPCert := cloudflare.PerHostnameAuthenticatedOriginPullsCertificateParams{
@@ -132,7 +133,8 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 				return resource.RetryableError(fmt.Errorf("expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			return nil
 		})
 	}
 	return nil
