@@ -12,6 +12,8 @@ import (
 )
 
 func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// overrides endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
@@ -63,6 +65,8 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareWAFOverrideGroupOnly(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// overrides endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.

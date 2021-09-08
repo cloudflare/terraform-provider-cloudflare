@@ -142,3 +142,13 @@ func skipMagicTransitTestForNonConfiguredDefaultZone(t *testing.T) {
 		t.Skipf("Skipping acceptance test as %s is not configured for Magic Transit", testAccCloudflareZoneID)
 	}
 }
+
+// skipV1WAFTestForNonConfiguredDefaultZone ignores the V1 WAF test assertions
+// as the versions are mutually exclusive and the default zone ID uses V2 WAF.
+// This will allow those who intentionally want to run the test to do so while
+// keeping CI sane.
+func skipV1WAFTestForNonConfiguredDefaultZone(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
+		t.Skipf("Skipping acceptance test as %s is using WAF v2 and cannot assert v1 resource configurations", testAccCloudflareZoneID)
+	}
+}

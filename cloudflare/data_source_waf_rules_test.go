@@ -11,6 +11,8 @@ import (
 )
 
 func TestAccCloudflareWAFRules_NoFilter(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -32,6 +34,8 @@ func TestAccCloudflareWAFRules_NoFilter(t *testing.T) {
 }
 
 func TestAccCloudflareWAFRules_MatchDescription(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -53,6 +57,8 @@ func TestAccCloudflareWAFRules_MatchDescription(t *testing.T) {
 }
 
 func TestAccCloudflareWAFRules_MatchMode(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()

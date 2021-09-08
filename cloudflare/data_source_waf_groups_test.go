@@ -11,6 +11,8 @@ import (
 )
 
 func TestAccCloudflareWAFGroups_NoFilter(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -32,6 +34,8 @@ func TestAccCloudflareWAFGroups_NoFilter(t *testing.T) {
 }
 
 func TestAccCloudflareWAFGroups_MatchName(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -53,6 +57,8 @@ func TestAccCloudflareWAFGroups_MatchName(t *testing.T) {
 }
 
 func TestAccCloudflareWAFGroups_MatchMode(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()

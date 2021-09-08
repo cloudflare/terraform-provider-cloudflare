@@ -12,6 +12,8 @@ import (
 )
 
 func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "100000"
@@ -48,6 +50,8 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareWAFRule_CreateThenUpdate_SimpleModes(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "950000"

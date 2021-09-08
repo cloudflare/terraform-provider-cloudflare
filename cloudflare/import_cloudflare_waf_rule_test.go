@@ -9,6 +9,8 @@ import (
 )
 
 func TestAccCloudflareWAFRule_Import(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "100001"
