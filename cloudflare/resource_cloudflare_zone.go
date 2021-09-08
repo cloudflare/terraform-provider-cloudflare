@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"golang.org/x/net/idna"
@@ -249,8 +248,8 @@ func resourceCloudflareZoneDelete(d *schema.ResourceData, meta interface{}) erro
 func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]interface{} {
 	cfg := map[string]interface{}{}
 
-	cfg["wildcard_proxiable"] = strconv.FormatBool(meta.WildcardProxiable)
-	cfg["phishing_detected"] = strconv.FormatBool(meta.PhishingDetected)
+	cfg["wildcard_proxiable"] = meta.WildcardProxiable
+	cfg["phishing_detected"] = meta.PhishingDetected
 
 	log.Printf("[DEBUG] flattenMeta %#v", cfg)
 
