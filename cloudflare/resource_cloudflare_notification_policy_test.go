@@ -9,6 +9,9 @@ import (
 )
 
 func TestAccCloudflareNotificationPolicy(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the notification
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	updatedPolicyName := "updated test SSL policy from terraform provider"
