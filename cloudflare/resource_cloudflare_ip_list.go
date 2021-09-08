@@ -131,7 +131,6 @@ func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) erro
 
 	for _, i := range items {
 		item = make(map[string]interface{})
-		item["id"] = i.ID
 		item["value"] = i.IP
 		item["comment"] = i.Comment
 
