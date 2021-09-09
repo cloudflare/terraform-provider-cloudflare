@@ -57,8 +57,8 @@ func testCheckCloudflareNotificationPolicy(name, accountID string) string {
     enabled     =  true
     alert_type  = "universal_ssl_event_type"
     email_integration {
-      name =  "test@cloudflare.com"
-      id   =  ""
+      name =  ""
+      id   =  "test@example.com"
     }
   }`, name, accountID)
 }
@@ -72,8 +72,8 @@ func testCheckCloudflareNotificationPolicyUpdated(resName, policyName, policyDes
     enabled     =  true
     alert_type  = "universal_ssl_event_type"
     email_integration {
-      name =  "test@cloudflare.com"
-      id   =  ""
+      name =  ""
+      id   =  "test@example.com"
     }
   }`, resName, policyName, policyDesc, accountID)
 }
