@@ -11,21 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
-var teamsRuleActions = []string{
-	"allow",
-	"block",
-	"safesearch",
-	"ytrestricted",
-	"on",
-	"off",
-	"scan",
-	"noscan",
-	"isolate",
-	"noisolate",
-	"override",
-	"l4_override",
-}
-
 func resourceCloudflareTeamsRule() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceCloudflareTeamsRuleRead,
@@ -59,7 +44,7 @@ func resourceCloudflareTeamsRule() *schema.Resource {
 			},
 			"action": {
 				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice(teamsRuleActions, false),
+				ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesActionValues(), false),
 				Required:     true,
 			},
 			"filters": {
