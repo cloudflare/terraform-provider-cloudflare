@@ -498,7 +498,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithIDBasedOverrides(t *testing.T
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.#", "1"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "efb7b8c949ac4650a09736fc376e9aee"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.#", "1"),
+
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "5de7edfa648c4d6891dc3e7f84534ffa"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.action", "log"),
@@ -546,8 +546,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 			{
 				Config: testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "rules.#", "2"),
 					resource.TestCheckResourceAttr(name, "rules.0.action", "block"),
 					resource.TestCheckResourceAttr(name, "rules.0.description", "Block UDP Ephemeral Ports"),

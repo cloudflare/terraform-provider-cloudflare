@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -92,6 +93,7 @@ func resourceCloudflareRuleset() *schema.Resource {
 						},
 						"action_parameters": {
 							Type:     schema.TypeList,
+							MaxItems: 1,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -313,7 +315,10 @@ func resourceCloudflareRulesetRead(d *schema.ResourceData, meta interface{}) err
 
 	d.Set("name", ruleset.Name)
 	d.Set("description", ruleset.Description)
-	d.Set("rules", buildStateFromRulesetRules(ruleset.Rules))
+
+	if err := d.Set("rules", buildStateFromRulesetRules(ruleset.Rules)); err != nil {
+		log.Fatalf("failed to set rules: %s", err)
+	}
 
 	return nil
 }
@@ -361,30 +366,71 @@ func resourceCloudflareRulesetDelete(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
-// receives the current rules and returns an interface for the state file
-func buildStateFromRulesetRules(r []cloudflare.RulesetRule) interface{} {
-	var ruleset []interface{}
-	var rulesetRule map[string]interface{}
-
-	for _, rule := range r {
-		rulesetRule = make(map[string]interface{})
-
-		rulesetRule["expression"] = rule.Expression
-		rulesetRule["action"] = rule.Action
-		if rule.Description != "" {
-			rulesetRule["description"] = rule.Description
+// buildStateFromRulesetRules receives the current ruleset rules and returns an
+// interface for the state file
+func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
+	var rulesData []map[string]interface{}
+	for _, r := range rules {
+		rule := map[string]interface{}{
+			"id":         r.ID,
+			"expression": r.Expression,
+			"action":     r.Action,
+			"enabled":    r.Enabled,
 		}
 
-		if rule.Enabled {
-			rulesetRule["enabled"] = "true"
-		} else {
-			rulesetRule["enabled"] = "false"
+		if r.Description != "" {
+			rule["description"] = r.Description
 		}
 
-		ruleset = append(ruleset, rulesetRule)
+		if !reflect.ValueOf(r.ActionParameters).IsNil() {
+			var actionParameters []map[string]interface{}
+			var overrides []map[string]interface{}
+			var idBasedOverrides []map[string]interface{}
+			var categoryBasedOverrides []map[string]interface{}
+
+			if !reflect.ValueOf(r.ActionParameters.Overrides).IsNil() {
+				for _, overrideRule := range r.ActionParameters.Overrides.Rules {
+					idBasedOverrides = append(idBasedOverrides, map[string]interface{}{
+						"id":              overrideRule.ID,
+						"action":          overrideRule.Action,
+						"enabled":         overrideRule.Enabled,
+						"score_threshold": overrideRule.ScoreThreshold,
+					})
+				}
+
+				for _, overrideRule := range r.ActionParameters.Overrides.Categories {
+					categoryBasedOverrides = append(categoryBasedOverrides, map[string]interface{}{
+						"category": overrideRule.Category,
+						"action":   overrideRule.Action,
+						"enabled":  overrideRule.Enabled,
+					})
+				}
+
+				overrides = append(overrides, map[string]interface{}{
+					"categories": categoryBasedOverrides,
+					"rules":      idBasedOverrides,
+					"enabled":    r.ActionParameters.Overrides.Enabled,
+				})
+			}
+
+			actionParameters = append(actionParameters, map[string]interface{}{
+				"id":        r.ActionParameters.ID,
+				"increment": r.ActionParameters.Increment,
+				// "headers":   r.ActionParameters.Headers,
+				"overrides": overrides,
+				"products":  r.ActionParameters.Products,
+				"ruleset":   r.ActionParameters.Ruleset,
+				"uri":       r.ActionParameters.URI,
+				// "version":   r.ActionParameters.Version,
+			})
+
+			rule["action_parameters"] = actionParameters
+		}
+
+		rulesData = append(rulesData, rule)
 	}
 
-	return ruleset
+	return rulesData
 }
 
 // receives the resource config and builds a ruleset rule array
