@@ -429,6 +429,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			var categoryBasedOverrides []map[string]interface{}
 			var headers []map[string]interface{}
 			var uri []map[string]interface{}
+			var matchedData []map[string]interface{}
 
 			if !reflect.ValueOf(r.ActionParameters.Overrides).IsNil() {
 				for _, overrideRule := range r.ActionParameters.Overrides.Rules {
@@ -495,14 +496,21 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				})
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.MatchedData).IsNil() {
+				matchedData = append(matchedData, map[string]interface{}{
+					"public_key": r.ActionParameters.MatchedData.PublicKey,
+				})
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
-				"id":        r.ActionParameters.ID,
-				"increment": r.ActionParameters.Increment,
-				"headers":   headers,
-				"overrides": overrides,
-				"products":  r.ActionParameters.Products,
-				"ruleset":   r.ActionParameters.Ruleset,
-				"uri":       uri,
+				"id":           r.ActionParameters.ID,
+				"increment":    r.ActionParameters.Increment,
+				"headers":      headers,
+				"overrides":    overrides,
+				"products":     r.ActionParameters.Products,
+				"ruleset":      r.ActionParameters.Ruleset,
+				"uri":          uri,
+				"matched_data": matchedData,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -579,8 +587,10 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 						}
 					}
 				case "matched_data":
-					rule.ActionParameters.MatchedData = &cloudflare.RulesetRuleActionParametersMatchedData{
-						PublicKey: pValue.([]interface{})[0].(map[string]interface{})["public_key"].(string),
+					for i := range pValue.([]interface{}) {
+						rule.ActionParameters.MatchedData = &cloudflare.RulesetRuleActionParametersMatchedData{
+							PublicKey: pValue.([]interface{})[i].(map[string]interface{})["public_key"].(string),
+						}
 					}
 
 				case "uri":
