@@ -7,6 +7,7 @@
 
 * provider: Update to cloudflare-go v0.22.0 ([#1184](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1184)
 * `resource/cloudflare_ruleset`: add support for Transform Rules ([#1169](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1169))
+* `resource/cloudflare_ruleset`: add support for WAF payload logging ([#1174](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1174))
 
 **Fixes**
 
