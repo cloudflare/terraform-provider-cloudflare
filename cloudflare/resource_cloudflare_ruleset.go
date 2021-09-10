@@ -414,6 +414,8 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			var overrides []map[string]interface{}
 			var idBasedOverrides []map[string]interface{}
 			var categoryBasedOverrides []map[string]interface{}
+			var headers []map[string]interface{}
+			var uri []map[string]interface{}
 
 			if !reflect.ValueOf(r.ActionParameters.Overrides).IsNil() {
 				for _, overrideRule := range r.ActionParameters.Overrides.Rules {
@@ -440,15 +442,54 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				})
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.Headers).IsNil() {
+				for headerName, header := range r.ActionParameters.Headers {
+					headers = append(headers, map[string]interface{}{
+						"name":       headerName,
+						"value":      header.Value,
+						"expression": header.Expression,
+						"operation":  header.Operation,
+					})
+				}
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.URI).IsNil() {
+				var query []map[string]interface{}
+				var path []map[string]interface{}
+				originValue := false
+				if r.ActionParameters.URI.Origin {
+					originValue = true
+				}
+
+				if !reflect.ValueOf(r.ActionParameters.URI.Query).IsNil() {
+					query = append(query, map[string]interface{}{
+						"value":      r.ActionParameters.URI.Query.Value,
+						"expression": r.ActionParameters.URI.Query.Expression,
+					})
+				}
+
+				if !reflect.ValueOf(r.ActionParameters.URI.Path).IsNil() {
+					path = append(path, map[string]interface{}{
+						"value":      r.ActionParameters.URI.Path.Value,
+						"expression": r.ActionParameters.URI.Path.Expression,
+					})
+				}
+
+				uri = append(uri, map[string]interface{}{
+					"origin": originValue,
+					"query":  query,
+					"path":   path,
+				})
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
 				"id":        r.ActionParameters.ID,
 				"increment": r.ActionParameters.Increment,
-				// "headers":   r.ActionParameters.Headers,
+				"headers":   headers,
 				"overrides": overrides,
 				"products":  r.ActionParameters.Products,
 				"ruleset":   r.ActionParameters.Ruleset,
-				"uri":       r.ActionParameters.URI,
-				// "version":   r.ActionParameters.Version,
+				"uri":       uri,
 			})
 
 			rule["action_parameters"] = actionParameters
