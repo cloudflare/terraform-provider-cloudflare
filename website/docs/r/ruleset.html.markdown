@@ -204,7 +204,13 @@ The following arguments are supported:
 * `ruleset` - (Optional) Which ruleset to target. Valid value is `"current"`.
 * `uri` - (Optional) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-uri)).
 * `headers` - (Optional) List of HTTP header modifications to perform in the ruleset rule (refer to the [nested schema](#nestedblock--action-parameters-headers)).
+* `matched_data` - (Optional) List of properties to configure WAF payload logging (refer to the [nested schema](#nestedblock--action-parameters-matched-data)).
 * `version` - (Optional)
+
+<a id="nestedblock--action-parameters-matched-data"></a>
+**Nested schema for `matched_data`**
+
+* `public_key` - (Optional) Public key to use within WAF Ruleset payload logging to view the HTTP request parameters. You can generate a public key [using the `matched-data-cli` command-line tool](https://developers.cloudflare.com/waf/managed-rulesets/payload-logging/command-line/generate-key-pair) or [in the Cloudflare dashboard](https://developers.cloudflare.com/waf/managed-rulesets/payload-logging/configure).
 
 <a id="nestedblock--action-parameters-uri"></a>
 **Nested schema for `uri`**
