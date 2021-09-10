@@ -8,7 +8,8 @@ description: |-
 
 # cloudflare_ruleset
 
-The Cloudflare Ruleset Engine allows you to create and deploy rules and rulesets.
+The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
+allows you to create and deploy rules and rulesets.
 The engine syntax, inspired by the Wireshark Display Filter language, is the
 same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
 in different products, allowing you to configure several products using the same
@@ -83,6 +84,89 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
     enabled = false
   }
 }
+
+# Rewrite the URI path component to a static path
+resource "cloudflare_ruleset" "transform_uri_rule_path" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "transform rule for URI path"
+  description = "change the URI path to a new static path"
+  kind        = "zone"
+  phase       = "http_request_transform"
+
+  rules {
+    action = "rewrite"
+    action_parameters {
+      uri {
+        path {
+          value = "/my-new-route"
+        }
+      }
+    }
+
+    expression = "(http.host eq \"example.com\" and http.uri.path eq \"/old-path\")"
+    description = "example URI path transform rule"
+    enabled = true
+  }
+}
+
+# Rewrite the URI query component to a static query
+resource "cloudflare_ruleset" "transform_uri_rule_query" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "transform rule for URI query parameter"
+  description = "change the URI query to a new static query"
+  kind        = "zone"
+  phase       = "http_request_transform"
+
+  rules {
+    action = "rewrite"
+    action_parameters {
+      uri {
+        query {
+          value = "old=new_again"
+        }
+      }
+    }
+
+    expression = "true"
+    description = "URI transformation query example"
+    enabled = true
+  }
+}
+
+# Rewrite HTTP headers to a modified values
+resource "cloudflare_ruleset" "transform_uri_http_headers" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "transform rule for HTTP headers"
+  description = "modify HTTP headers before reaching origin"
+  kind        = "zone"
+  phase       = "http_request_late_transform"
+
+  rules {
+    action = "rewrite"
+    action_parameters {
+      headers {
+        name      = "example-http-header-1"
+        operation = "set"
+        value     = "my-http-header-value-1"
+      }
+
+      headers {
+        name       = "example-http-header-2"
+        operation  = "set"
+        expression = "cf.zone.name"
+      }
+
+      headers {
+        name      = "example-http-header-3-to-remove"
+        operation = "remove"
+      }
+
+      expression = "true"
+      description = "example request header transform rule"
+      enabled = false
+    }
+  }
+}
 ```
 
 ## Argument Reference
@@ -119,6 +203,7 @@ The following arguments are supported:
 * `products` - (Optional) Products to target with the actions. Valid values are `"bic"`, `"hot"`, `"ratelimit"`, `"securityLevel"`, `"uablock"`, `"waf"` or `"zonelockdown"`.
 * `ruleset` - (Optional) Which ruleset to target. Valid value is `"current"`.
 * `uri` - (Optional) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations (refer to the [nested schema](#nestedblock--action-parameters-uri)).
+* `headers` - (Optional) List of HTTP header modifications to perform in the ruleset rule (refer to the [nested schema](#nestedblock--action-parameters-headers)).
 * `version` - (Optional)
 
 <a id="nestedblock--action-parameters-uri"></a>
@@ -126,6 +211,14 @@ The following arguments are supported:
 
 * `path` - (Optional) URI path configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
 * `query` - (Optional) Query string configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
+
+<a id="nestedblock--action-parameters-headers"></a>
+**Nested schema for `headers`**
+
+* `name` - (Optional) Name of the HTTP request header to target.
+* `operation` - (Optional) Action to perform on the HTTP request header. Valid values are `"set"` or `"remove"`.
+* `expression` - (Optional) Use a value dynamically determined by the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions. Conflicts with `value`.
+* `value` - (Optional) Static value to provide as the HTTP request header value. Conflicts with `expression`.
 
 <a id="nestedblock--action-parameters-uri-shared"></a>
 **Nested schema for `path`/`query`**
