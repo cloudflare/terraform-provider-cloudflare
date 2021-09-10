@@ -6,7 +6,8 @@
 **Fixes**
 
 * `resource/cloudflare_zone_settings_override`: remap `zero_rtt` => `0rtt` for resource delete ([#1175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1175))
- 
+* `resource/cloudflare_ruleset`: fix state handling for terraform-plugin-sdk v2 ([#1183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1183))
+
 ## 2.26.1 (August 30th, 2021)
 
 **Fixes**
