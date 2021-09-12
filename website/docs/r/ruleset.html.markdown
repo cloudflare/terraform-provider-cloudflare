@@ -167,6 +167,32 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
     }
   }
 }
+
+# HTTP rate limit for an API route
+resource "cloudflare_ruleset" "rate_limiting_example" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "restrict API requests count"
+  description = "apply HTTP rate limiting for a route"
+  kind        = "zone"
+  phase       = "http_ratelimit"
+
+  rules {
+    action = "block"
+    ratelimit {
+      characteristics = [
+        "cf.colo.id",
+        "ip.src"
+      ]
+      period = 60
+      requests_per_period = 100
+      mitigation_timeout = 600
+    }
+
+    expression = "(http.request.uri.path matches \"^/api/\")"
+    description = "rate limit for API"
+    enabled = true
+  }
+}
 ```
 
 ## Argument Reference
@@ -191,8 +217,18 @@ The following arguments are supported:
 * `enabled` - (Optional) Whether the rule is active.
 * `expression` - (Required) Criteria for an HTTP request to trigger the ruleset rule action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.
 * `id` - (Read only) Unique rule identifier.
+* `ratelimit` - (Optional) List of parameters that configure HTTP rate limiting behaviour (refer to the [nested schema](#nestedblock--ratelimiting-parameters)).
 * `ref` - (Read only) Rule reference.
 * `version`- (Read only) Version of the ruleset to deploy.
+
+<a id="nestedblock--ratelimiting-parameters"></a>
+**Nested schema for `ratelimit`**
+
+* `characteristics` - (Optional) List of parameters that define how Cloudflare tracks the request rate for this rule.
+* `period` - (Optional) The period of time to consider (in seconds) when evaluating the request rate.
+* `requests_per_period` - (Optional) The number of requests over the period of time that will trigger the Rate Limiting rule.
+* `mitigation_timeout` - (Optional) Once the request rate is reached, the Rate Limiting rule blocks further requests for the period of time defined in this field.
+* `mitigation_expression` - (Optional) Scope of the mitigation action. Allows you to specify an action scope different from the rule scope. Refer to the [rate limiting parameters documentation](https://developers.cloudflare.com/firewall/cf-rulesets/custom-rules/rate-limiting/parameters) for full details.
 
 <a id="nestedblock--action-parameters"></a>
 **Nested schema for `action_parameters`**
