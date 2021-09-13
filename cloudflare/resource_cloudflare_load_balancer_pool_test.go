@@ -213,6 +213,8 @@ func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
+  latitude = 12.3
+  longitude = 55
   origins {
     name = "example-1"
     address = "192.0.2.1"
