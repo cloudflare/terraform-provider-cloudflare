@@ -96,7 +96,7 @@ func testAccCheckCloudflareWAFGroupDestroy(s *terraform.State) error {
 		}
 
 		if group.Mode != "on" {
-			return fmt.Errorf("Expected mode to be reset to on, got: %s", group.Mode)
+			return fmt.Errorf("expected mode to be reset to on, got: %s", group.Mode)
 		}
 	}
 

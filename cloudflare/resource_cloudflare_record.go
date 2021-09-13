@@ -354,7 +354,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	// Validate value based on type
 	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return fmt.Errorf("Error validating record name %q: %s", newRecord.Name, err)
+		return fmt.Errorf("error validating record name %q: %s", newRecord.Name, err)
 	}
 
 	var proxiedVal *bool
@@ -366,7 +366,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	// Validate type
 	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
-		return fmt.Errorf("Error validating record type %q: %s", newRecord.Type, err)
+		return fmt.Errorf("error validating record type %q: %s", newRecord.Type, err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
@@ -555,7 +555,7 @@ func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) er
 
 	err := client.DeleteDNSRecord(context.Background(), zoneID, d.Id())
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Record: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Record: %s", err)
 	}
 
 	return nil

@@ -154,7 +154,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("Error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err)
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -169,7 +169,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("Error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err)
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -190,12 +190,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.Resou
 	case aopType == "per-zone":
 		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
 	case aopType == "per-hostname":
 		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("Error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}
 	}
 	return nil

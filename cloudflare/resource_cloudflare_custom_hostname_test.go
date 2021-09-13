@@ -350,7 +350,7 @@ func TestAccCloudflareCustomHostnameImport(t *testing.T) {
 func testAccCheckCloudflareCustomHostnameRecreated(before, after *cloudflare.CustomHostname) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
-			return fmt.Errorf("Expected change of CustomHostname Ids, but both were %v", before.ID)
+			return fmt.Errorf("expected change of CustomHostname Ids, but both were %v", before.ID)
 		}
 		return nil
 	}
@@ -360,7 +360,7 @@ func testAccCheckCloudflareCustomHostnameExists(n string, customHostname *cloudf
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

@@ -45,7 +45,7 @@ func testAccCheckCloudflareZoneDNSSECDataSourceID(n string) resource.TestCheckFu
 		all := s.RootModule().Resources
 		rs, ok := all[n]
 		if !ok {
-			return fmt.Errorf("Can't find Zone DNSSEC data source: %s", n)
+			return fmt.Errorf("can't find Zone DNSSEC data source: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

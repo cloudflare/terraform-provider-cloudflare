@@ -114,7 +114,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 
 	err = d.Set("zones", zoneDetails)
 	if err != nil {
-		return fmt.Errorf("Error setting zones: %s", err)
+		return fmt.Errorf("error setting zones: %s", err)
 	}
 
 	d.SetId(stringListChecksum(zoneIds))

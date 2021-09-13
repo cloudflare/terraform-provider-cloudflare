@@ -120,7 +120,7 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 		return resourceCloudflareWAFRuleRead(d, meta)
 	}
 
-	return fmt.Errorf("Unable to find WAF Rule %s", ruleID)
+	return fmt.Errorf("unable to find WAF Rule %s", ruleID)
 }
 
 func resourceCloudflareWAFRuleDelete(d *schema.ResourceData, meta interface{}) error {

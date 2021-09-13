@@ -91,10 +91,10 @@ func testAccCheckCloudflareWAFPackageDestroy(s *terraform.State) error {
 		}
 
 		if pkg.Sensitivity != "high" {
-			return fmt.Errorf("Expected sensitivity to be reset to high, got: %s", pkg.Sensitivity)
+			return fmt.Errorf("expected sensitivity to be reset to high, got: %s", pkg.Sensitivity)
 		}
 		if pkg.ActionMode != "challenge" {
-			return fmt.Errorf("Expected action_mode to be reset to challenge, got: %s", pkg.ActionMode)
+			return fmt.Errorf("expected action_mode to be reset to challenge, got: %s", pkg.ActionMode)
 		}
 	}
 

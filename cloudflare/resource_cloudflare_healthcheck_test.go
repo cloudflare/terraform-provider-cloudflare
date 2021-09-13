@@ -83,8 +83,7 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
 					func(state *terraform.State) error {
 						if initialID != healthcheck.ID {
-							return fmt.Errorf("wanted update but healthcheck got recreated (id changed %q -> %q)",
-								initialID, healthcheck.ID)
+							return fmt.Errorf("wanted update but healthcheck got recreated (id changed %q -> %q)", initialID, healthcheck.ID)
 						}
 						return nil
 					},
@@ -150,7 +149,7 @@ func testAccCheckCloudflareHealthcheckExists(n string, zoneID string, load *clou
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

@@ -135,7 +135,7 @@ func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding zone lockdown %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding zone lockdown %q: %s", d.Id(), err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Zone Lockdown read configuration: %#v", zoneLockdownResponse)
@@ -217,7 +217,7 @@ func resourceCloudflareZoneLockdownDelete(d *schema.ResourceData, meta interface
 	_, err := client.DeleteZoneLockdown(context.Background(), zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Zone Lockdown: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Zone Lockdown: %s", err)
 	}
 
 	return nil

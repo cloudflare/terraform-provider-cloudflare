@@ -118,7 +118,7 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Filter %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Filter %q: %s", d.Id(), err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Filter read configuration: %#v", filter)
@@ -178,7 +178,7 @@ func resourceCloudflareFilterDelete(d *schema.ResourceData, meta interface{}) er
 	err := client.DeleteFilter(context.Background(), zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Filter: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Filter: %s", err)
 	}
 
 	return nil

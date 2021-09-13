@@ -533,7 +533,7 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 
 	r, err := client.CreatePageRule(context.Background(), zoneID, newPageRule)
 	if err != nil {
-		return fmt.Errorf("Failed to create page rule: %s", err)
+		return fmt.Errorf("failed to create page rule: %s", err)
 	}
 
 	if r.ID == "" {
@@ -565,7 +565,7 @@ func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 			d.SetId("")
 			return nil
 		} else {
-			return fmt.Errorf("Error finding page rule %q: %s", d.Id(), err)
+			return fmt.Errorf("error finding page rule %q: %s", d.Id(), err)
 		}
 	}
 	log.Printf("[DEBUG] Cloudflare Page Rule read configuration: %#v", pageRule)
@@ -581,7 +581,7 @@ func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	for _, pageRuleAction := range pageRule.Actions {
 		key, value, err := transformFromCloudflarePageRuleAction(&pageRuleAction)
 		if err != nil {
-			return fmt.Errorf("Failed to parse page rule action: %s", err)
+			return fmt.Errorf("failed to parse page rule action: %s", err)
 		}
 		actions[key] = value
 	}
@@ -645,7 +645,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
 	if err := client.UpdatePageRule(context.Background(), zoneID, d.Id(), updatePageRule); err != nil {
-		return fmt.Errorf("Failed to update Cloudflare Page Rule: %s", err)
+		return fmt.Errorf("failed to update Cloudflare Page Rule: %s", err)
 	}
 
 	return resourceCloudflarePageRuleRead(d, meta)
@@ -658,7 +658,7 @@ func resourceCloudflarePageRuleDelete(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zoneID, d.Id())
 
 	if err := client.DeletePageRule(context.Background(), zoneID, d.Id()); err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Page Rule: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Page Rule: %s", err)
 	}
 
 	return nil

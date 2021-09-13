@@ -101,7 +101,7 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 		}
 
 		if rule.Mode != "default" && rule.Mode != "on" {
-			return fmt.Errorf("Expected mode to be reset to default, got: %s", rule.Mode)
+			return fmt.Errorf("expected mode to be reset to default, got: %s", rule.Mode)
 		}
 	}
 

@@ -81,8 +81,7 @@ func TestAccCloudflareIPListUpdateDescription(t *testing.T) {
 					testAccCheckCloudflareIPListExists(name, &IPList),
 					func(state *terraform.State) error {
 						if initialID != IPList.ID {
-							return fmt.Errorf("wanted update but IPList got recreated (id changed %q -> %q)",
-								initialID, IPList.ID)
+							return fmt.Errorf("wanted update but IPList got recreated (id changed %q -> %q)", initialID, IPList.ID)
 						}
 						return nil
 					},
@@ -131,8 +130,7 @@ func TestAccCloudflareIPListUpdate(t *testing.T) {
 					testAccCheckCloudflareIPListExists(name, &IPList),
 					func(state *terraform.State) error {
 						if initialID != IPList.ID {
-							return fmt.Errorf("wanted update but IPList got recreated (id changed %q -> %q)",
-								initialID, IPList.ID)
+							return fmt.Errorf("wanted update but IPList got recreated (id changed %q -> %q)", initialID, IPList.ID)
 						}
 						return nil
 					},
@@ -147,7 +145,7 @@ func testAccCheckCloudflareIPListExists(n string, list *cloudflare.IPList) resou
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

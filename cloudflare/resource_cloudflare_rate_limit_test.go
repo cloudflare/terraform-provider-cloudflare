@@ -161,8 +161,7 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 					func(state *terraform.State) error {
 						if initialRateLimitId != rateLimit.ID {
 							// rate limit change shows resource was recreated, we want in place update
-							return fmt.Errorf("rate limit id is different after second config applied ( %s -> %s )",
-								initialRateLimitId, rateLimit.ID)
+							return fmt.Errorf("rate limit id is different after second config applied ( %s -> %s )", initialRateLimitId, rateLimit.ID)
 						}
 						return nil
 					},
@@ -202,8 +201,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 					testAccCheckCloudflareRateLimitIDIsValid(name, zoneID),
 					func(state *terraform.State) error {
 						if initialRateLimitId == rateLimit.ID {
-							return fmt.Errorf("rate limit id is unchanged even after we thought we deleted it ( %s )",
-								rateLimit.ID)
+							return fmt.Errorf("rate limit id is unchanged even after we thought we deleted it ( %s )", rateLimit.ID)
 						}
 						return nil
 					},
@@ -270,7 +268,7 @@ func testAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateL
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -297,7 +295,7 @@ func testAccCheckCloudflareRateLimitIDIsValid(n, expectedZoneID string) resource
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

@@ -260,7 +260,7 @@ func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{})
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Access Group %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Access Group %q: %s", d.Id(), err)
 	}
 
 	d.Set("name", accessGroup.Name)

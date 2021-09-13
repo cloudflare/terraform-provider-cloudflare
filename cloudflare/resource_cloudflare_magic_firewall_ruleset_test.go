@@ -67,8 +67,7 @@ func TestAccCloudflareMagicFirewallRulesetUpdateName(t *testing.T) {
 					testAccCheckCloudflareMagicFirewallRulesetExists(name, &MagicFirewallRuleset),
 					func(state *terraform.State) error {
 						if initialID == MagicFirewallRuleset.ID {
-							return fmt.Errorf("forced recreation but Magic Firewall Ruleset got updated (id %q)",
-								MagicFirewallRuleset.ID)
+							return fmt.Errorf("forced recreation but Magic Firewall Ruleset got updated (id %q)", MagicFirewallRuleset.ID)
 						}
 						return nil
 					},
@@ -111,8 +110,7 @@ func TestAccCloudflareMagicFirewallRulesetUpdateDescription(t *testing.T) {
 					testAccCheckCloudflareMagicFirewallRulesetExists(name, &MagicFirewallRuleset),
 					func(state *terraform.State) error {
 						if initialID != MagicFirewallRuleset.ID {
-							return fmt.Errorf("wanted update but Magic Firewall Ruleset got recreated (id changed %q -> %q)",
-								initialID, MagicFirewallRuleset.ID)
+							return fmt.Errorf("wanted update but Magic Firewall Ruleset got recreated (id changed %q -> %q)", initialID, MagicFirewallRuleset.ID)
 						}
 						return nil
 					},
@@ -205,7 +203,7 @@ func testAccCheckCloudflareMagicFirewallRulesetExists(n string, ruleset *cloudfl
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

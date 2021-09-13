@@ -120,7 +120,7 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -166,7 +166,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 		r, _ := client.DownloadWorker(context.Background(), &params)
 
 		if r.Script != "" {
-			return fmt.Errorf("Worker script with id %s still exists", rs.Primary.ID)
+			return fmt.Errorf("worker script with id %s still exists", rs.Primary.ID)
 		}
 	}
 

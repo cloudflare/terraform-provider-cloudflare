@@ -218,7 +218,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Access Application %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Access Application %q: %s", d.Id(), err)
 	}
 
 	d.Set("name", accessApplication.Name)

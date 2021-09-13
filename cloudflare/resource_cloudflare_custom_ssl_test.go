@@ -73,7 +73,7 @@ func testAccCheckCloudflareCustomSSLExists(n string, customSSL *cloudflare.ZoneC
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

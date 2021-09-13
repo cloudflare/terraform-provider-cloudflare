@@ -104,7 +104,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n st
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
@@ -126,7 +126,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
@@ -160,12 +160,12 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terrafo
 		if rs.Primary.Attributes["type"] == "per-zone" {
 			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 			if err == nil {
-				return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 			}
 		} else if rs.Primary.Attributes["type"] == "per-hostname" {
 			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 			if err == nil {
-				return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 			}
 		}
 	}

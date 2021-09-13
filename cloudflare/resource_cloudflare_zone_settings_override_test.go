@@ -81,7 +81,7 @@ func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -170,7 +170,7 @@ func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]i
 				continue
 			}
 			if !reflect.DeepEqual(zs.Value, initialSettings[zs.ID]) {
-				return fmt.Errorf("Final setting for %q: %+v not equal to initial setting: %+v", zs.ID, zs.Value, initialSettings[zs.ID])
+				return fmt.Errorf("final setting for %q: %+v not equal to initial setting: %+v", zs.ID, zs.Value, initialSettings[zs.ID])
 			}
 		}
 		return nil

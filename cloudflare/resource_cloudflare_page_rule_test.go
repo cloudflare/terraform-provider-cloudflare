@@ -659,7 +659,7 @@ func TestAccCloudflarePageRuleCacheTTLByStatus(t *testing.T) {
 func testAccCheckCloudflarePageRuleRecreated(before, after *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
-			return fmt.Errorf("Expected change of PageRule Ids, but both were %v", before.ID)
+			return fmt.Errorf("expected change of PageRule Ids, but both were %v", before.ID)
 		}
 		return nil
 	}
@@ -716,8 +716,7 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 		}
 
 		if len(pageRule.Actions) != 2 {
-			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v",
-				2, len(pageRule.Actions), pageRule.Actions)
+			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 2, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -766,8 +765,7 @@ func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 		}
 
 		if len(pageRule.Actions) != 4 {
-			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v",
-				4, len(pageRule.Actions), pageRule.Actions)
+			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 4, len(pageRule.Actions), pageRule.Actions)
 		}
 
 		return nil
@@ -778,7 +776,7 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -805,7 +803,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)

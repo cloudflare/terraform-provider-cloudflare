@@ -94,7 +94,7 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	if err != nil {
-		return fmt.Errorf("Failed to create access rule: %s", err)
+		return fmt.Errorf("failed to create access rule: %s", err)
 	}
 
 	if r.Result.ID == "" {
@@ -132,7 +132,7 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding access rule %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding access rule %q: %s", d.Id(), err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
@@ -185,7 +185,7 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 	}
 
 	if err != nil {
-		return fmt.Errorf("Failed to update Access Rule: %s", err)
+		return fmt.Errorf("failed to update Access Rule: %s", err)
 	}
 
 	return resourceCloudflareAccessRuleRead(d, meta)
@@ -210,7 +210,7 @@ func resourceCloudflareAccessRuleDelete(d *schema.ResourceData, meta interface{}
 	}
 
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Access Rule: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Access Rule: %s", err)
 	}
 
 	return nil
