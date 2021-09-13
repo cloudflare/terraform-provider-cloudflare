@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -489,12 +490,18 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			}
 
 			if !reflect.ValueOf(r.ActionParameters.Headers).IsNil() {
-				for headerName, header := range r.ActionParameters.Headers {
+				sortedHeaders := make([]string, 0, len(r.ActionParameters.Headers))
+				for headerName := range r.ActionParameters.Headers {
+					sortedHeaders = append(sortedHeaders, headerName)
+				}
+				sort.Strings(sortedHeaders)
+
+				for _, headerName := range sortedHeaders {
 					headers = append(headers, map[string]interface{}{
 						"name":       headerName,
-						"value":      header.Value,
-						"expression": header.Expression,
-						"operation":  header.Operation,
+						"value":      r.ActionParameters.Headers[headerName].Value,
+						"expression": r.ActionParameters.Headers[headerName].Expression,
+						"operation":  r.ActionParameters.Headers[headerName].Operation,
 					})
 				}
 			}
