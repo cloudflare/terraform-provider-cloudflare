@@ -196,7 +196,7 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.#", "3"),
-					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.message_body", "hello"),
+					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.0.message_body", "hello"),
 					resource.TestCheckResourceAttr(name, "rules.2.overrides.0.region_pools.#", "1"),
 				),
 			},
@@ -529,9 +529,9 @@ resource "cloudflare_load_balancer" "%[3]s" {
   rules {
     name = "test rule 2"
     condition = "dns.qry.type == 28"
-    fixed_response = {
+    fixed_response {
       message_body = "hello"
-      status_code = "200"
+      status_code = 200
       content_type = "html"
       location = "www.example.com"
     }
@@ -546,17 +546,5 @@ resource "cloudflare_load_balancer" "%[3]s" {
 	    }
     }
   }
-}`, zoneID, zone, id)
-}
-
-func testAccCheckCloudflareLoadBalancerConfigLatitudeLongitude(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-latitude-longitude-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  latitude = 23.5
-  longitude = -11.1
 }`, zoneID, zone, id)
 }

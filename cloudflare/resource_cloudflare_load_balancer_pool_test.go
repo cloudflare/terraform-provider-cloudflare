@@ -62,10 +62,12 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "enabled", "false"),
 					resource.TestCheckResourceAttr(name, "load_shedding.#", "1"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.default_percent", "55"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.default_policy", "random"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.session_percent", "12"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.session_policy", "hash"),
+					resource.TestCheckTypeSetElemNestedAttrs(name, "load_shedding.*", map[string]string{
+						"default_percent": "55",
+						"default_policy":  "random",
+						"session_percent": "12",
+						"session_policy":  "hash",
+					}),
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
