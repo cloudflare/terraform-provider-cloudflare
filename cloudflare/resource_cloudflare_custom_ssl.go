@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -125,23 +126,33 @@ func resourceCloudflareCustomSslCreate(d *schema.ResourceData, meta interface{})
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 	zcso, err := expandToZoneCustomSSLOptions(d)
 	if err != nil {
-		return fmt.Errorf("Failed to create custom ssl cert: %s", err)
+		return fmt.Errorf("failed to create custom ssl cert: %s", err)
 	}
 
 	res, err := client.CreateSSL(context.Background(), zoneID, zcso)
 	if err != nil {
-		return fmt.Errorf("Failed to create custom ssl cert: %s", err)
+		return fmt.Errorf("failed to create custom ssl cert: %s", err)
 	}
 
 	if res.ID == "" {
-		return fmt.Errorf("Failed to find custom ssl in Create response: id was empty")
+		return fmt.Errorf("failed to find custom ssl in Create response: id was empty")
 	}
 
-	d.SetId(res.ID)
+	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		cert, err := client.SSLDetails(context.Background(), zoneID, res.ID)
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom ssl cert: %s", err))
+		}
 
-	log.Printf("[INFO] Cloudflare Custom SSL ID: %s", d.Id())
+		if cert.Status != "active" {
+			return resource.RetryableError(fmt.Errorf("waiting for certificate to become active"))
+		}
 
-	return resourceCloudflareCustomSslRead(d, meta)
+		d.SetId(res.ID)
+
+		resourceCloudflareCustomSslRead(d, meta)
+		return nil
+	})
 }
 
 func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -211,30 +222,11 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	zcso.BundleMethod = record.BundleMethod
 	customSslOpts := flattenCustomSSLOptions(zcso)
 
-	// fill in fields that the api doesn't return
-	data, dataOk := d.GetOk("custom_ssl_options")
-	newData := make(map[string]string)
-	if dataOk {
-		for id, value := range data.(map[string]interface{}) {
-			newValue := value.(string)
-			newData[id] = newValue
-		}
-	}
-	if val, ok := newData["%"]; ok {
-		customSslOpts["%"] = val
-	}
-	if val, ok := newData["geo_restrictions"]; ok {
-		customSslOpts["geo_restrictions"] = val
-	}
-	if val, ok := newData["type"]; ok {
-		customSslOpts["type"] = val
-	}
-
 	d.SetId(record.ID)
 	d.Set("hosts", record.Hosts)
 	d.Set("issuer", record.Issuer)
 	d.Set("signature", record.Signature)
-	if err := d.Set("custom_ssl_options", customSslOpts); err != nil {
+	if err := d.Set("custom_ssl_options", []interface{}{customSslOpts}); err != nil {
 		return fmt.Errorf("[WARN] Error reading custom ssl opts %q: %s", d.Id(), err)
 	}
 	d.Set("status", record.Status)
@@ -318,16 +310,18 @@ func expandToZoneCustomSSLOptions(d *schema.ResourceData) (cloudflare.ZoneCustom
 
 	newData := make(map[string]interface{})
 	if dataOk {
-		for id, value := range data.(map[string]interface{}) {
-			var newValue interface{}
-			if id == "geo_restrictions" {
-				newValue = cloudflare.ZoneCustomSSLGeoRestrictions{
-					Label: value.(string),
+		for _, cert := range data.([]interface{}) {
+			for id, value := range cert.(map[string]interface{}) {
+				var newValue interface{}
+				if id == "geo_restrictions" {
+					newValue = cloudflare.ZoneCustomSSLGeoRestrictions{
+						Label: value.(string),
+					}
+				} else {
+					newValue = value.(string)
 				}
-			} else {
-				newValue = value.(string)
+				newData[id] = newValue
 			}
-			newData[id] = newValue
 		}
 	}
 
@@ -350,9 +344,10 @@ func flattenCustomSSLOptions(sslopt cloudflare.ZoneCustomSSLOptions) map[string]
 		"certificate":   sslopt.Certificate,
 		"private_key":   sslopt.PrivateKey,
 		"bundle_method": sslopt.BundleMethod,
+		"type":          sslopt.Type,
 	}
 
-	if sslopt.GeoRestrictions != nil {
+	if sslopt.GeoRestrictions.Label != "" && sslopt.GeoRestrictions.Label != "custom" {
 		data["geo_restrictions"] = sslopt.GeoRestrictions.Label
 	}
 
