@@ -163,8 +163,6 @@ func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "proxied", "true"),
 					resource.TestCheckResourceAttr(name, "ttl", "0"),
 					resource.TestCheckResourceAttr(name, "steering_policy", "proximity"),
-					resource.TestCheckResourceAttr(name, "pop_pools.#", "1"),
-					resource.TestCheckResourceAttr(name, "region_pools.#", "1"),
 				),
 			},
 		},
@@ -487,14 +485,6 @@ resource "cloudflare_load_balancer" "%[3]s" {
   description = "tf-acctest load balancer using proximity-balancing"
   proxied = true // can't set ttl with proxied
   steering_policy = "proximity"
-  pop_pools {
-    pop = "LAX"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-  region_pools {
-    region = "WNAM"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
 }`, zoneID, zone, id)
 }
 
