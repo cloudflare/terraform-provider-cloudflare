@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -88,6 +89,7 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 						"settings": {
 							Type:     schema.TypeList,
 							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								SchemaVersion: 1,
 								Schema: map[string]*schema.Schema{
@@ -155,9 +157,9 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 
 	d.Set("hostname", customHostname.Hostname)
 	d.Set("custom_origin_server", customHostname.CustomOriginServer)
+	var sslConfig []map[string]interface{}
 
-	if customHostname.SSL != nil {
-		sslConfig := []map[string]interface{}{}
+	if !reflect.ValueOf(customHostname.SSL).IsNil() {
 		sslConfig = append(sslConfig, map[string]interface{}{
 			"type":               customHostname.SSL.Type,
 			"method":             customHostname.SSL.Method,
@@ -171,16 +173,13 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 				"http2":           customHostname.SSL.Settings.HTTP2,
 				"tls13":           customHostname.SSL.Settings.TLS13,
 				"min_tls_version": customHostname.SSL.Settings.MinTLSVersion,
+				"ciphers":         customHostname.SSL.Settings.Ciphers,
 			}},
 		})
+	}
 
-		if len(customHostname.SSL.Settings.Ciphers) > 0 {
-			sslConfig[0]["settings"].([]map[string]interface{})[0]["ciphers"] = customHostname.SSL.Settings.Ciphers
-		} else {
-			sslConfig[0]["settings"].([]map[string]interface{})[0]["ciphers"] = []string{}
-		}
-
-		d.Set("ssl", sslConfig)
+	if err := d.Set("ssl", sslConfig); err != nil {
+		return fmt.Errorf("failed to see ssl")
 	}
 
 	ownershipVerificationCfg := map[string]interface{}{
@@ -270,6 +269,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 		Hostname:           d.Get("hostname").(string),
 		CustomOriginServer: d.Get("custom_origin_server").(string),
 	}
+
 	if _, ok := d.GetOk("ssl"); ok {
 		ch.SSL = &cloudflare.CustomHostnameSSL{
 			Method:            d.Get("ssl.0.method").(string),
@@ -283,11 +283,8 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 				HTTP2:         d.Get("ssl.0.settings.0.http2").(string),
 				TLS13:         d.Get("ssl.0.settings.0.tls13").(string),
 				MinTLSVersion: d.Get("ssl.0.settings.0.min_tls_version").(string),
+				Ciphers:       expandInterfaceToStringList(d.Get("ssl.0.settings.0.ciphers").(*schema.Set).List()),
 			},
-		}
-
-		if len(d.Get("ssl.0.settings.0.ciphers").(*schema.Set).List()) > 0 {
-			ch.SSL.Settings.Ciphers = expandInterfaceToStringList(d.Get("ssl.0.settings.0.ciphers").(*schema.Set).List())
 		}
 	}
 
