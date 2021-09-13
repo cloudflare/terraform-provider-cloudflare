@@ -113,6 +113,7 @@ func Provider() terraform.ResourceProvider {
 			"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
 			"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
 			"cloudflare_access_mutual_tls_certificate":          resourceCloudflareAccessMutualTLSCertificate(),
+			"cloudflare_access_keys_configuration":              resourceCloudflareAccessKeysConfiguration(),
 			"cloudflare_account_member":                         resourceCloudflareAccountMember(),
 			"cloudflare_api_token":                              resourceCloudflareApiToken(),
 			"cloudflare_argo":                                   resourceCloudflareArgo(),
