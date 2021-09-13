@@ -12,6 +12,13 @@ func TestAccCloudflareNotificationPolicy(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the notification
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	updatedPolicyName := "updated test SSL policy from terraform provider"
