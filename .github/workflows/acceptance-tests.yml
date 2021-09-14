@@ -9,6 +9,8 @@ on:
     - 'LICENSE'
     - 'GNUmakefile'
     - 'website/**'
+    - 'docs/**'
+    - '.changelog/**'
 
 jobs:
 
