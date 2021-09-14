@@ -75,4 +75,8 @@ build-dev: clean-dev
 	@echo "Building development version ($(dev_version))"
 	go build -o terraform-provider-cloudflare_$(dev_version)
 
-.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-dev clean-dev
+generate-changelog:
+	@echo "==> Generating changelog..."
+	@sh -c "'$(CURDIR)/scripts/generate-changelog.sh'"
+
+.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-dev clean-dev generate-changelog
