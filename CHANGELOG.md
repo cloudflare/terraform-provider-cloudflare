@@ -1,5 +1,10 @@
 ## 2.27.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_teams_account` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173))
+* **New Resource:** `cloudflare_teams_account` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173))
+
 ## 2.26.1 (August 30th, 2021)
 
 **Fixes**
