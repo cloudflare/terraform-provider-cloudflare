@@ -1,9 +1,24 @@
 ## 2.27.0 (Unreleased)
 
+NOTES:
+
+* provider: Update to cloudflare-go v0.22.0 ([#1184](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1184))
+
 FEATURES:
 
 * **New Resource:** `cloudflare_teams_account` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173))
 * **New Resource:** `cloudflare_teams_account` ([#1173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1173))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for HTTP rate limiting ([#1179](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1179))
+* resource/cloudflare_ruleset: add support for Transform Rules ([#1169](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1169))
+* resource/cloudflare_ruleset: add support for WAF payload logging ([#1174](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1174))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: fix state handling for terraform-plugin-sdk v2 ([#1183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1183))
+* resource/cloudflare_zone_settings_override: remap `zero_rtt` => `0rtt` for resource delete ([#1175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1175))
 
 ## 2.26.1 (August 30th, 2021)
 
