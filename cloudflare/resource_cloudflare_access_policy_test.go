@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
-func TestAccAccessPolicyServiceToken(t *testing.T) {
+func TestAccCloudflareAccessPolicyServiceToken(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -43,7 +43,7 @@ func TestAccAccessPolicyServiceToken(t *testing.T) {
 	})
 }
 
-func TestAccAccessPolicyAnyServiceToken(t *testing.T) {
+func TestAccCloudflareAccessPolicyAnyServiceToken(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -68,7 +68,7 @@ func TestAccAccessPolicyAnyServiceToken(t *testing.T) {
 	})
 }
 
-func TestAccAccessPolicyWithZoneID(t *testing.T) {
+func TestAccCloudflareAccessPolicyWithZoneID(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -197,7 +197,7 @@ func testAccessPolicyWithZoneIDUpdated(resourceID, zone, zoneID string) string {
 	`, resourceID, zone, zoneID)
 }
 
-func TestAccessPolicyGroup(t *testing.T) {
+func TestAccCloudflareAccessPolicyGroup(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -254,7 +254,7 @@ func testAccessPolicyGroupConfig(resourceID, zone, accountID string) string {
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyMTLS(t *testing.T) {
+func TestAccCloudflareAccessPolicyMTLS(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -302,7 +302,7 @@ func testAccessPolicyMTLSConfig(resourceID, zone, accountID string) string {
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyCommonName(t *testing.T) {
+func TestAccCloudflareAccessPolicyCommonName(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -350,7 +350,7 @@ func testAccessPolicyCommonNameConfig(resourceID, zone, accountID string) string
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyEmailDomain(t *testing.T) {
+func TestAccCloudflareAccessPolicyEmailDomain(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -398,7 +398,7 @@ func testAccessPolicyEmailDomainConfig(resourceID, zone, accountID string) strin
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyEmails(t *testing.T) {
+func TestAccCloudflareAccessPolicyEmails(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -448,7 +448,7 @@ func testAccessPolicyEmailsConfig(resourceID, zone, accountID string) string {
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyEveryone(t *testing.T) {
+func TestAccCloudflareAccessPolicyEveryone(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -496,7 +496,7 @@ func testAccessPolicyEveryoneConfig(resourceID, zone, accountID string) string {
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyIPs(t *testing.T) {
+func TestAccCloudflareAccessPolicyIPs(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -546,7 +546,7 @@ func testAccessPolicyIPsConfig(resourceID, zone, accountID string) string {
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyAuthMethod(t *testing.T) {
+func TestAccCloudflareAccessPolicyAuthMethod(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -594,7 +594,7 @@ func testAccessPolicyAuthMethodConfig(resourceID, zone, accountID string) string
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyGeo(t *testing.T) {
+func TestAccCloudflareAccessPolicyGeo(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -644,7 +644,7 @@ func testAccessPolicyGeoConfig(resourceID, zone, accountID string) string {
 	`, resourceID, zone, accountID)
 }
 
-func TestAccessPolicyOkta(t *testing.T) {
+func TestAccCloudflareAccessPolicyOkta(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
