@@ -11,3 +11,9 @@ Hashicorp maintain a [help centre article](https://support.hashicorp.com/hc/en-u
 Refer to [this example env.yml](https://github.com/env0/templates/blob/aab3b93db25cbf79395cec869e1e87a2a493bbd7/community-providers/pingdom/env0.yml). The basic procedure is to build the custom provider, host it somewhere 
 accessible to env0 and install it into the environment as a part of your `deploy` 
 and `destroy` steps.
+
+## Everything else
+
+Make sure your git repository is at the point in time you want to generate the provider and run `make build`. It will generate the binary which you can then use with [implied local mirror directories](https://www.terraform.io/docs/cli/config/config-file.html#implied-local-mirror-directories) or [explicit installation method configuration](https://www.terraform.io/docs/cli/config/config-file.html#explicit-installation-method-configuration) in your CI/CD environment.
+
+If you'd like to use local overrides, see ["using the provider" section from the development environment setup](development.md#using-the-provider) guide.
