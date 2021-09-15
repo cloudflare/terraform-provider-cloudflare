@@ -9,7 +9,7 @@
 ## Quickstarts
 
 - [Using the provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest)
-- [Developing the provider](https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/docs/DEVELOPMENT.md)
+- [Developing the provider](https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/docs/development.md)
 
 ## Migrating to Terraform from using the Dashboard
 
