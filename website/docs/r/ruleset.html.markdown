@@ -160,11 +160,11 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
         name      = "example-http-header-3-to-remove"
         operation = "remove"
       }
-
-      expression = "true"
-      description = "example request header transform rule"
-      enabled = false
     }
+    
+    expression = "true"
+    description = "example request header transform rule"
+    enabled = false
   }
 }
 
