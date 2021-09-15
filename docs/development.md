@@ -2,13 +2,13 @@
 
 ## Requirements
 
-- [Terraform](https://www.terraform.io/downloads.html) 0.12+ (to run acceptance tests)
-- [Go](https://golang.org/doc/install) 1.15 (to build the provider plugin)
+- [Terraform](https://www.terraform.io/downloads.html) 0.14+ (to run acceptance tests)
+- [Go](https://golang.org/doc/install) 1.17 (to build the provider plugin)
 
 ## Quick Start
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org)
-installed on your machine (version 1.15+ is *required*). You'll also need to
+installed on your machine (version 1.17+ is *required*). You'll also need to
 correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well
 as adding `$GOPATH/bin` to your `$PATH`.
 
@@ -32,8 +32,8 @@ $ make testacc
 
 With Terraform v0.14 and later, [development overrides for provider developers](https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers) can be leveraged in order to use the provider built from source.
 
-To do this, populate a Terraform CLI configuration file (`~/.terraformrc` for 
-all platforms other than Windows; `terraform.rc` in the `%APPDATA%` directory 
+To do this, populate a Terraform CLI configuration file (`~/.terraformrc` for
+all platforms other than Windows; `terraform.rc` in the `%APPDATA%` directory
 when using Windows) with at least the following options:
 
 ```
@@ -52,6 +52,6 @@ provider_installation {
 You will need to replace `<GOPATH>` with the **full path** to your GOPATH where
 the repository lives, no `~` shorthand.
 
-Once you have this file in place, you can run `make build-dev` which will 
+Once you have this file in place, you can run `make build-dev` which will
 build a development version of the binary in the repository that Terraform
 will use instead of the version from the remote registry.
