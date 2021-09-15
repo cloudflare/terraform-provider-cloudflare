@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Cloudflare Support
+    url: https://dash.cloudflare.com/redirect?account=support
+    about: Get in contact with Support regarding account or zone issues not related to Terraform.
+  - name: Cloudflare Community
+    url: https://community.cloudflare.com/
+    about: Start a new discussion with the community for guidance or assistance with an issue.
