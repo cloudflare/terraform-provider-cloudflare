@@ -10,6 +10,7 @@
 
 ## Quickstarts
 
+- [Getting started with Cloudflare and Terraform](https://developers.cloudflare.com/terraform/installing)
 - [Developing the provider](docs/development.md)
 
 ## Documentation
