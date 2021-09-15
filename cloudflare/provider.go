@@ -191,7 +191,7 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	c.Transport = logging.NewTransport("Cloudflare", c.Transport)
 	options = append(options, cloudflare.HTTPClient(c))
 
-	ua := fmt.Sprintf("terraform/%s (+https://www.terraform.io) terraform-plugin-sdk/%s terraform-provider-cloudflare/%s", terraformVersion, meta.SDKVersionString(), version.ProviderVersion)
+	ua := fmt.Sprintf("terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s", terraformVersion, meta.SDKVersionString(), version.ProviderVersion)
 	options = append(options, cloudflare.UserAgent(ua))
 
 	config := Config{Options: options}
