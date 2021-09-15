@@ -697,3 +697,120 @@ func testAccessPolicyOktaConfig(resourceID, zone, accountID string) string {
 
 	`, resourceID, zone, accountID)
 }
+
+func TestAccessPolicyPurposeJustification(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_policy." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessPolicyPurposeJustificationConfig(rnd, zone, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
+					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
+				),
+			},
+		},
+	})
+}
+
+func testAccessPolicyPurposeJustificationConfig(resourceID, zone, accountID string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_access_application" "%[1]s" {
+			name       = "%[1]s"
+			account_id = "%[3]s"
+			domain     = "%[1]s.%[2]s"
+		}
+
+		resource "cloudflare_access_policy" "%[1]s" {
+			application_id = "${cloudflare_access_application.%[1]s.id}"
+			name           = "%[1]s"
+			account_id     = "%[3]s"
+			decision       = "allow"
+			precedence     = "1"
+
+			include {
+				email = ["a@example.com", "b@example.com"]
+			}
+
+			purpose_justification_required = "true"
+			purpose_justification_prompt = "Why should we let you in?"
+		}
+
+	`, resourceID, zone, accountID)
+}
+
+func TestAccessPolicyApprovalGroup(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_policy." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessPolicyApprovalGroupConfig(rnd, zone, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
+					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
+					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.0", "test1@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.1", "test2@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.2", "test3@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.1.email_addresses.0", "test4@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.0.approvals_needed", "2"),
+					resource.TestCheckResourceAttr(name, "approval_group.1.approvals_needed", "1"),
+				),
+			},
+		},
+	})
+}
+
+func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_access_application" "%[1]s" {
+			name       = "%[1]s"
+			account_id = "%[3]s"
+			domain     = "%[1]s.%[2]s"
+		}
+
+		resource "cloudflare_access_policy" "%[1]s" {
+			application_id = "${cloudflare_access_application.%[1]s.id}"
+			name           = "%[1]s"
+			account_id     = "%[3]s"
+			decision       = "allow"
+			precedence     = "1"
+
+			purpose_justification_required = "true"
+			purpose_justification_prompt = "Why should we let you in?"
+
+			include {
+				email = ["a@example.com", "b@example.com"]
+			}
+
+			approval_group {
+				email_addresses = ["test1@cloudflare.com", "test2@cloudflare.com", "test3@cloudflare.com"]
+				approvals_needed = "2"
+			}
+
+			approval_group {
+				email_addresses = ["test4@cloudflare.com"]
+				approvals_needed = "1"
+			}
+		}
+	`, resourceID, zone, accountID)
+}
