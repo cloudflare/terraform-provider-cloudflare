@@ -1,15 +1,21 @@
+<a href="https://terraform.io">
+    <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" alt="Terraform logo" title="Terraform" align="right" height="50" />
+</a>
+
 # Cloudflare Terraform Provider
 
 - Website: https://www.terraform.io
-- [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
+- Chat: [Gitter](https://gitter.im/hashicorp-terraform/Lobby)
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
-
-<img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
 
 ## Quickstarts
 
-- [Using the provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest)
-- [Developing the provider](https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/docs/development.md)
+- [Developing the provider](docs/development.md)
+
+## Documentation
+
+Full, comprehensive documentation is available on the [Terraform Registry](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs). [API documentation](https://api.cloudflare.com) and [Developer documentation](https://developers.cloudflare.com) is also available 
+for non-Terraform or service specific information.
 
 ## Migrating to Terraform from using the Dashboard
 
@@ -18,3 +24,6 @@ to be managed via Terraform? Check out [cf-terraforming](https://github.com/clou
 which is a tool Cloudflare has built to help dump the existing resources and
 import them into Terraform.
 
+## Contributing
+
+To contribute, please read the [contribution guidelines](docs/contributing.md).
