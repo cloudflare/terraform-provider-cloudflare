@@ -1,0 +1,3 @@
+```release-note:note
+provider: Update to cloudflare-go v0.22.0
+```
