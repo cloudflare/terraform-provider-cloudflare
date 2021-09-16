@@ -49,12 +49,12 @@ func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{
 		}
 		return err
 	}
-	
+
 	var memberIDs []string
 	for _, role := range member.Roles {
 		memberIDs = append(memberIDs, role.ID)
 	}
-	
+
 	d.Set("email_address", member.User.Email)
 	d.Set("role_ids", memberIDs)
 	d.SetId(d.Id())
