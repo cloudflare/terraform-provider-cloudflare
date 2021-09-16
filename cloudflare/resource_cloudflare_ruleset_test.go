@@ -778,6 +778,56 @@ func TestAccCloudflareRuleset_TransformationRuleHeaders(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ActionParametersMultipleSkips(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersMultipleSkips(rnd, "multiple skips for managed rulesets", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "multiple skips for managed rulesets"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "3"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "skip"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.rulesets.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rulesets\")"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "skip Cloudflare Manage ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.1.action", "skip"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.0.rules.efb7b8c949ac4650a09736fc376e9aee", "5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.expression", "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rules\")"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.description", "skip Wordpress rule and SQLi rule"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.enabled", "true"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.2.action", "execute"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -1329,6 +1379,68 @@ func testAccCheckCloudflareRulesetRateLimit(rnd, name, zoneID, zoneName string) 
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http rate limit"
       enabled = true
-		}
-	}`, rnd, name, zoneID, zoneName)
+    }
+  }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetActionParametersMultipleSkips(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_firewall_managed"
+
+    rules {
+      action = "skip"
+      action_parameters {
+        rulesets = ["efb7b8c949ac4650a09736fc376e9aee"]
+      }
+      expression = "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rulesets\")"
+      description = "skip Cloudflare Manage ruleset"
+      enabled = true
+    }
+
+    rules {
+      action = "skip"
+      action_parameters {
+        # efb7b8c949ac4650a09736fc376e9aee is the ruleset ID of the Cloudflare Managed rules
+        rules = {
+          "efb7b8c949ac4650a09736fc376e9aee" = "5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760"
+        }
+      }
+      expression = "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rules\")"
+      description = "skip Wordpress rule and SQLi rule"
+      enabled = true
+    }
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = "efb7b8c949ac4650a09736fc376e9aee"
+        version = "latest"
+        overrides {
+          rules {
+            id = "5de7edfa648c4d6891dc3e7f84534ffa"
+            action = "block"
+            enabled = true
+          }
+          rules {
+            id = "75a0060762034a6cb663fd51a02344cb"
+            action = "log"
+            enabled = true
+          }
+          categories {
+            category = "wordpress"
+            action = "js_challenge"
+            enabled = true
+          }
+        }
+      }
+      expression = "true"
+      description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
 }

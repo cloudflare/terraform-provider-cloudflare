@@ -187,11 +187,25 @@ func resourceCloudflareRuleset() *schema.Resource {
 									"version": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"ruleset": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validation.StringInSlice([]string{"current"}, false),
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"rulesets": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+									"rules": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
 									},
 									"overrides": {
 										Type:     schema.TypeList,
@@ -463,6 +477,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			var headers []map[string]interface{}
 			var uri []map[string]interface{}
 			var matchedData []map[string]interface{}
+			actionParameterRules := make(map[string]string)
 
 			if !reflect.ValueOf(r.ActionParameters.Overrides).IsNil() {
 				for _, overrideRule := range r.ActionParameters.Overrides.Rules {
@@ -541,6 +556,12 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				})
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.Rules).IsNil() {
+				for k, v := range r.ActionParameters.Rules {
+					actionParameterRules[k] = strings.Join(v, ",")
+				}
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
 				"id":           r.ActionParameters.ID,
 				"increment":    r.ActionParameters.Increment,
@@ -548,8 +569,11 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"overrides":    overrides,
 				"products":     r.ActionParameters.Products,
 				"ruleset":      r.ActionParameters.Ruleset,
+				"rulesets":     r.ActionParameters.Rulesets,
+				"rules":        actionParameterRules,
 				"uri":          uri,
 				"matched_data": matchedData,
+				"version":      r.ActionParameters.Version,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -598,8 +622,25 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 					switch pKey {
 					case "id":
 						rule.ActionParameters.ID = pValue.(string)
+					case "version":
+						rule.ActionParameters.Version = pValue.(string)
 					case "ruleset":
 						rule.ActionParameters.Ruleset = pValue.(string)
+					case "rulesets":
+						var rulesetsValues []string
+						for _, v := range pValue.(*schema.Set).List() {
+							rulesetsValues = append(rulesetsValues, v.(string))
+						}
+						rule.ActionParameters.Rulesets = rulesetsValues
+					case "rules":
+						apRules := make(map[string][]string)
+
+						for name, data := range pValue.(map[string]interface{}) {
+							ruleValues := strings.Split(data.(string), ",")
+							apRules[name] = ruleValues
+						}
+
+						rule.ActionParameters.Rules = apRules
 					case "increment":
 						rule.ActionParameters.Increment = pValue.(int)
 					case "overrides":
