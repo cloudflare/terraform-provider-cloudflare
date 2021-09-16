@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -634,9 +635,16 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 						rule.ActionParameters.Rulesets = rulesetsValues
 					case "rules":
 						apRules := make(map[string][]string)
-
 						for name, data := range pValue.(map[string]interface{}) {
-							ruleValues := strings.Split(data.(string), ",")
+							// regex (not string.Split) needs to be used here to account for
+							// whitespace from the end user in the map value.
+							split := regexp.MustCompile("\\s*,\\s*").Split(data.(string), -1)
+							ruleValues := []string{}
+
+							for i := range split {
+								ruleValues = append(ruleValues, split[i])
+							}
+
 							apRules[name] = ruleValues
 						}
 
