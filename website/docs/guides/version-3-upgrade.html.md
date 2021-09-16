@@ -59,7 +59,7 @@ In line with [HashiCorp's Terraform 1.x compatibility promises],
 we will be dropping support for Terraform 0.13 and older within in the
 Cloudflare provider. This will allow us to focus on moving the provider forward
 with Terraform core. Please be aware, should you raise an issue with the
-Cloudflare provider using Terraform core < 0.13, you will be asked to replicate
+Cloudflare provider using Terraform core < 0.14, you will be asked to replicate
 on a newer version before the issue is triaged by maintainers.
 
 ## HTTP user agent changes
@@ -225,7 +225,7 @@ resource "cloudflare_record" "..." {
 }
 ```
 
-[comby.live playground URL](bit.ly/3C9zfj6)
+[comby.live playground URL](https://bit.ly/3C9zfj6)
 
 [comby]: https://comby.dev
 [HashiCorp's Terraform 1.x compatibility promises]: https://www.terraform.io/docs/language/v1-compatibility-promises.html

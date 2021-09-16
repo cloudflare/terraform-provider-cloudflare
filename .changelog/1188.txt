@@ -1,0 +1,47 @@
+```release-note:note
+provider: Golang version has been upgraded to 1.17.x
+```
+
+```release-note:note
+provider: terraform-plugin-sdk has been upgraded to 2.x
+```
+
+```release-note:note
+provider: Minimum Terraform version is now 0.14.x
+```
+
+```release-note:note
+provider: HTTP user agent is now "terraform/<version> terraform-plugin-sdk/<version> terraform-provider-cloudflare/<version>"
+```
+
+```release-note:breaking-change
+resource/cloudflare_access_rule: `configuration` is now a `TypeList` instead of a `TypeMap`
+```
+
+```release-note:enhancement
+resource/cloudflare_custom_hostname: `status` is now `Computed` as the value isn't managed by an end user
+```
+
+```release-note:enhancement
+resource/cloudflare_custom_hostname: `settings` is now `Optional`/`Computed` to reflect the stricter schema validation introduced in terraform-plugin-sdk v2
+```
+
+```release-note:enhancement
+resource/cloudflare_custom_hostname: `settings.ciphers` is now a `TypeSet` internally to handle suppress ordering changes. Schema representation remains the same
+```
+
+```release-note:breaking-change
+resource/cloudflare_custom_ssl: `custom_ssl_options` is now a `TypeList` instead of `TypeMap`
+```
+
+```release-note:breaking-change
+resource/cloudflare_load_balancer: `fixed_response` is now a `TypeList` instead of a `TypeMap`
+```
+
+```release-note:breaking-change
+resource/cloudflare_load_balancer: fixed_response.status_code` is now a `TypeInt` instead of a `TypeString`
+```
+
+```release-note:breaking-change
+resource/cloudflare_record: `data` is now a `TypeList` instead of a `TypeMap`
+```
