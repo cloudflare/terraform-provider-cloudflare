@@ -4,10 +4,6 @@
 
 # Cloudflare Terraform Provider
 
-- Website: https://www.terraform.io
-- Chat: [Gitter](https://gitter.im/hashicorp-terraform/Lobby)
-- Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
-
 ## Quickstarts
 
 - [Getting started with Cloudflare and Terraform](https://developers.cloudflare.com/terraform/installing)
