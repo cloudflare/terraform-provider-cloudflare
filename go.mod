@@ -3,7 +3,7 @@ module github.com/cloudflare/terraform-provider-cloudflare
 go 1.15
 
 require (
-	github.com/cloudflare/cloudflare-go v0.22.0
+	github.com/cloudflare/cloudflare-go v0.23.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-changelog v0.0.0-20210524171758-89e3f9b77949 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2
