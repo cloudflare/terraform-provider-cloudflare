@@ -3,10 +3,10 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"log"
+
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"log"
-	"strings"
 )
 
 func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
@@ -39,12 +39,12 @@ func resourceCloudflareAccessKeysConfigurationRead(d *schema.ResourceData, meta 
 
 	keysConfig, err := client.AccessKeysConfig(context.Background(), accountID)
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access Keys Configuration %s not enabled for account %s", d.Id(), accountID)
+		if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(12109) {
+			log.Printf("[INFO] Access Keys Configuration not enabled for account %s", accountID)
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Keys Configuration %s: %s", d.Id(), err)
+		return fmt.Errorf("error finding Access Keys Configuration %s: %s", accountID, err)
 	}
 
 	d.SetId(accountID)
@@ -74,7 +74,7 @@ func resourceCloudflareAccessKeysConfigurationUpdate(d *schema.ResourceData, met
 
 	_, err := client.UpdateAccessKeysConfig(context.Background(), accountID, keysConfigUpdateReq)
 	if err != nil {
-		return fmt.Errorf("error updating Access Keys Configuration %s for account %s: %s", d.Id(), accountID, err)
+		return fmt.Errorf("error updating Access Keys Configuration for account %s: %s", accountID, err)
 	}
 
 	return resourceCloudflareAccessKeysConfigurationRead(d, meta)
