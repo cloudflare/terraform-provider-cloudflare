@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
-func TestAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *testing.T) {
+func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -35,7 +35,7 @@ resource "cloudflare_access_keys_configuration" "%[1]s" {
 }`, rnd, accountID, days)
 }
 
-func TestAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(t *testing.T) {
+func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
