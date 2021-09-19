@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccAccessServiceTokenCreate(t *testing.T) {
+func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
@@ -63,7 +63,7 @@ func TestAccAccessServiceTokenCreate(t *testing.T) {
 	})
 }
 
-func TestAccAccessServiceTokenUpdate(t *testing.T) {
+func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
@@ -120,7 +120,7 @@ func TestAccAccessServiceTokenUpdate(t *testing.T) {
 	})
 }
 
-func TestAccAccessServiceTokenUpdateWithExpiration(t *testing.T) {
+func TestAccCloudflareAccessServiceTokenUpdateWithExpiration(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
@@ -201,7 +201,7 @@ func testAccCheckCloudflareAccessServiceTokenRenewed(n string, oldResourceState 
 	}
 }
 
-func TestAccAccessServiceTokenDelete(t *testing.T) {
+func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.

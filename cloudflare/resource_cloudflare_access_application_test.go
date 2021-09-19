@@ -448,7 +448,7 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 	})
 }
 
-func TestAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
+func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -478,7 +478,7 @@ func TestAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *test
 	})
 }
 
-func TestAccessApplicationMisconfiguredCORSCredentialsAllowingWildcardOrigins(t *testing.T) {
+func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildcardOrigins(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.

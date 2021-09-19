@@ -210,7 +210,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 			return nil
 		}
 		return errors.Wrap(err,
-			fmt.Sprintf("Error reading spectrum application resource from API for resource %s in zone %s", zoneID, applicationID))
+			fmt.Sprintf("Error reading spectrum application resource from API for resource %s in zone %s", applicationID, zoneID))
 	}
 
 	d.Set("protocol", application.Protocol)
