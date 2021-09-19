@@ -26,7 +26,7 @@ resource "cloudflare_access_policy" "test_policy" {
   include {
     email = ["test@example.com"]
   }
-  
+
   require {
     email = ["test@example.com"]
   }
@@ -64,10 +64,18 @@ The following arguments are supported:
   Allowed values: `allow`, `deny`, `non_identity`, `bypass`
 * `name` - (Required) Friendly name of the Access Application.
 * `precedence` - (Required) The unique precedence for policies on a single application. Integer.
+* `purpose_justification_required` - (Optional) Boolean of whether to prompt the user for a justification for accessing the resource.
+* `purpose_justification_prompt` - (Optional) String to present to the user when purpose justification is enabled.
 * `require` - (Optional) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
 * `exclude` - (Optional) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
 * `include` - (Required) A series of access conditions, see [Access Groups](/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).
+* `approval_group` - (Optional) List of approval group blocks for configuring additional approvals (refer to the [nested schema](#nestedblock--approval-group)).
 
+<a id="#nestedblock--approval-group"></a>
+**Nested schema for `approval_group`**
+
+* `email_addresses` - (Optional) List of emails to request approval from.
+* `approvals_needed` - (Optional) Number of approvals needed.
 
 ## Import
 

@@ -766,10 +766,10 @@ func TestAccCloudflareAccessPolicyApprovalGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
 					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
-					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.0", "test1@cloudflare.com"),
-					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.1", "test2@cloudflare.com"),
-					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.2", "test3@cloudflare.com"),
-					resource.TestCheckResourceAttr(name, "approval_group.1.email_addresses.0", "test4@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.0", "test1@example.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.1", "test2@example.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.2", "test3@example.com"),
+					resource.TestCheckResourceAttr(name, "approval_group.1.email_addresses.0", "test4@example.com"),
 					resource.TestCheckResourceAttr(name, "approval_group.0.approvals_needed", "2"),
 					resource.TestCheckResourceAttr(name, "approval_group.1.approvals_needed", "1"),
 				),
@@ -801,12 +801,12 @@ func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) str
       }
 
       approval_group {
-        email_addresses = ["test1@cloudflare.com", "test2@cloudflare.com", "test3@cloudflare.com"]
+        email_addresses = ["test1@example.com", "test2@example.com", "test3@example.com"]
         approvals_needed = "2"
       }
 
       approval_group {
-        email_addresses = ["test4@cloudflare.com"]
+        email_addresses = ["test4@example.com"]
         approvals_needed = "1"
       }
     }
