@@ -185,7 +185,9 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 		for _, apiApprovalGroup := range accessPolicy.ApprovalGroups {
 			approvalGroups = append(approvalGroups, apiAccessPolicyApprovalGroupToSchema(apiApprovalGroup))
 		}
-		d.Set("approvalGroups", approvalGroups)
+		if err := d.Set("approval_group", approvalGroups); err != nil {
+			return fmt.Errorf("failed to set approval_group attribute: %s", err)
+		}
 	}
 
 	return nil

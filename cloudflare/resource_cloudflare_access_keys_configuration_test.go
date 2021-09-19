@@ -9,6 +9,16 @@ import (
 )
 
 func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -36,6 +46,16 @@ resource "cloudflare_access_keys_configuration" "%[1]s" {
 }
 
 func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
