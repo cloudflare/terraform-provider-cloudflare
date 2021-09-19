@@ -105,7 +105,7 @@ var AccessPolicyApprovalGroupElement = &schema.Resource{
 	},
 }
 
-func APIAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprovalGroup) map[string]interface{} {
+func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprovalGroup) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["approvals_needed"] = approvalGroup.ApprovalsNeeded
 
@@ -119,7 +119,7 @@ func APIAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 	return data
 }
 
-func SchemaAccessPolicyApprovalGroupToApi(data map[string]interface{}) cloudflare.AccessApprovalGroup {
+func schemaAccessPolicyApprovalGroupToAPI(data map[string]interface{}) cloudflare.AccessApprovalGroup {
 	var approvalGroup cloudflare.AccessApprovalGroup
 
 	approvalGroup.ApprovalsNeeded, _ = data["approvals_needed"].(int)
@@ -183,7 +183,7 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 	if len(accessPolicy.ApprovalGroups) != 0 {
 		approvalGroups := make([]map[string]interface{}, 0, len(accessPolicy.ApprovalGroups))
 		for _, apiApprovalGroup := range accessPolicy.ApprovalGroups {
-			approvalGroups = append(approvalGroups, APIAccessPolicyApprovalGroupToSchema(apiApprovalGroup))
+			approvalGroups = append(approvalGroups, apiAccessPolicyApprovalGroupToSchema(apiApprovalGroup))
 		}
 		d.Set("approvalGroups", approvalGroups)
 	}
@@ -346,7 +346,7 @@ func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *sche
 	approvalGroups := d.Get("approval_group").([]interface{})
 	for _, approvalGroup := range approvalGroups {
 		approvalGroupAsMap := approvalGroup.(map[string]interface{})
-		policy.ApprovalGroups = append(policy.ApprovalGroups, SchemaAccessPolicyApprovalGroupToApi(approvalGroupAsMap))
+		policy.ApprovalGroups = append(policy.ApprovalGroups, schemaAccessPolicyApprovalGroupToAPI(approvalGroupAsMap))
 	}
 
 	return policy
