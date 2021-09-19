@@ -173,11 +173,11 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 	}
 
 	if accessPolicy.PurposeJustificationRequired != nil {
-		d.Set("purpose_justification_required", *accessPolicy.PurposeJustificationRequired)
+		d.Set("purpose_justification_required", accessPolicy.PurposeJustificationRequired)
 	}
 
 	if accessPolicy.PurposeJustificationPrompt != nil {
-		d.Set("purpose_justification_prompt", *accessPolicy.PurposeJustificationPrompt)
+		d.Set("purpose_justification_prompt", accessPolicy.PurposeJustificationPrompt)
 	}
 
 	if len(accessPolicy.ApprovalGroups) != 0 {
