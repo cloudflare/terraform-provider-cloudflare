@@ -42,16 +42,11 @@ and `sed` for simple replacements however we will be providing examples using
 structure. NB: the attached examples are intentionally simple and you may want
 to make them more specific to suit your use case or environment.
 
-As some schema changes have been made, this will also mean the state
-representation could have changed. In these scenarios, it is recommended that
-you either:
-
-1. Recreate the resources using the newer version of the schema; or
-2. Manually update the state files to reflect the new structure.
-
-We opted not to perform schema migrations on behalf of the end user as the
-changes from `TypeMap` to `TypeList` introduced many validation improvements
-which may weed out malformed resources, and we couldn't cover all edge cases.
+As some schema changes have been made, state migrators have been included in the
+newer versions. As the majority of the changes are `TypeMap` => `TypeList` we
+recommend verifying the upgrade yourself on a non-production resource first
+as `TypeMap` did include some undocumented behaviour which has been removed in
+`terraform-sdk-plugin` v2 and will not be the same across the versions.
 
 ## Terraform 0.13 and older versions no longer supported
 

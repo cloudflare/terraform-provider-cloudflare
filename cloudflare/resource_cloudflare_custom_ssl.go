@@ -26,6 +26,8 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 			State: resourceCloudflareCustomSslImport,
 		},
 
+		SchemaVersion: 1,
+
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -115,6 +117,14 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 			"priority": {
 				Type:     schema.TypeInt,
 				Computed: true,
+			},
+		},
+
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareCustomSSLV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareCustomSSLStateUpgradeV1,
+				Version: 0,
 			},
 		},
 	}

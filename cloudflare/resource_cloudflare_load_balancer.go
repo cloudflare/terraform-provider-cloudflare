@@ -25,7 +25,8 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 			State: resourceCloudflareLoadBalancerImport,
 		},
 
-		SchemaVersion: 0,
+		SchemaVersion: 1,
+
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -138,6 +139,14 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 			"modified_on": {
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+		},
+
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareLoadBalancerV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareLoadBalancerStateUpgradeV1,
+				Version: 0,
 			},
 		},
 	}
