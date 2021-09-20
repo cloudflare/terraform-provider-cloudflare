@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareRecord() *schema.Resource {
@@ -62,7 +61,8 @@ func resourceCloudflareRecord() *schema.Resource {
 			},
 
 			"data": {
-				Type:          schema.TypeMap,
+				Type:          schema.TypeList,
+				MaxItems:      1,
 				Optional:      true,
 				ConflictsWith: []string{"value"},
 				Elem: &schema.Resource{
@@ -319,7 +319,8 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	newDataMap := make(map[string]interface{})
 
 	if dataOk {
-		for id, value := range data.(map[string]interface{}) {
+		dataMap := data.([]interface{})[0]
+		for id, value := range dataMap.(map[string]interface{}) {
 			newData, err := transformToCloudflareDNSData(newRecord.Type, id, value)
 			if err != nil {
 				return err
@@ -353,7 +354,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	// Validate value based on type
 	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return fmt.Errorf("Error validating record name %q: %s", newRecord.Name, err)
+		return fmt.Errorf("error validating record name %q: %s", newRecord.Name, err)
 	}
 
 	var proxiedVal *bool
@@ -365,7 +366,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	// Validate type
 	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
-		return fmt.Errorf("Error validating record type %q: %s", newRecord.Type, err)
+		return fmt.Errorf("error validating record type %q: %s", newRecord.Type, err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
@@ -416,9 +417,9 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 		d.SetId(r.Result.ID)
 
-		log.Printf("[INFO] Cloudflare Record ID: %s", d.Id())
+		resourceCloudflareRecordRead(d, meta)
 
-		return resource.NonRetryableError(resourceCloudflareRecordRead(d, meta))
+		return nil
 	})
 }
 
@@ -443,7 +444,8 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	readDataMap := make(map[string]interface{})
 
 	if dataOk {
-		for id, value := range data.(map[string]interface{}) {
+		dataMap := data.([]interface{})[0]
+		for id, value := range dataMap.(map[string]interface{}) {
 			newData, err := transformToCloudflareDNSData(record.Type, id, value)
 			if err != nil {
 				return err
@@ -453,7 +455,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 			readDataMap[id] = newData
 		}
 
-		record.Data = readDataMap
+		record.Data = []interface{}{readDataMap}
 	}
 
 	d.SetId(record.ID)
@@ -463,7 +465,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("ttl", record.TTL)
 	d.Set("proxied", record.Proxied)
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
-	d.Set("data", expandStringMap(record.Data))
+	d.Set("data", record.Data)
 	d.Set("modified_on", record.ModifiedOn.Format(time.RFC3339Nano))
 	if err := d.Set("metadata", expandStringMap(record.Meta)); err != nil {
 		log.Printf("[WARN] Error setting metadata: %s", err)
@@ -540,7 +542,8 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %s", err))
 		}
 
-		return resource.NonRetryableError(resourceCloudflareRecordRead(d, meta))
+		resourceCloudflareRecordRead(d, meta)
+		return nil
 	})
 }
 
@@ -552,7 +555,7 @@ func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) er
 
 	err := client.DeleteDNSRecord(context.Background(), zoneID, d.Id())
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Record: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Record: %s", err)
 	}
 
 	return nil
@@ -639,14 +642,14 @@ func transformToCloudflareDNSData(recordType string, id string, value interface{
 		case strings.ToUpper(recordType) == "SRV",
 			strings.ToUpper(recordType) == "CAA",
 			strings.ToUpper(recordType) == "DNSKEY":
-			newValue, err = strconv.Atoi(value.(string))
+			newValue, err = value.(string), nil
 		case strings.ToUpper(recordType) == "NAPTR":
 			newValue, err = value.(string), nil
 		}
 	case contains(dnsTypeIntFields, id):
-		newValue, err = strconv.Atoi(value.(string))
+		newValue, err = value, nil
 	case contains(dnsTypeFloatFields, id):
-		newValue, err = strconv.ParseFloat(value.(string), 32)
+		newValue, err = value, nil
 	default:
 		newValue, err = value.(string), nil
 	}

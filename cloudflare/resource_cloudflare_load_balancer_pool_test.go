@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 )
 
@@ -62,10 +62,12 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "enabled", "false"),
 					resource.TestCheckResourceAttr(name, "load_shedding.#", "1"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.default_percent", "55"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.default_policy", "random"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.session_percent", "12"),
-					resource.TestCheckResourceAttr(name, "load_shedding.2749995019.session_policy", "hash"),
+					resource.TestCheckTypeSetElemNestedAttrs(name, "load_shedding.*", map[string]string{
+						"default_percent": "55",
+						"default_policy":  "random",
+						"session_percent": "12",
+						"session_policy":  "hash",
+					}),
 					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
 					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
@@ -117,8 +119,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					func(state *terraform.State) error {
 						if initialId == loadBalancerPool.ID {
-							return fmt.Errorf("load balancer pool id is unchanged even after we thought we deleted it ( %s )",
-								loadBalancerPool.ID)
+							return fmt.Errorf("load balancer pool id is unchanged even after we thought we deleted it ( %s )", loadBalancerPool.ID)
 						}
 						return nil
 					},
@@ -149,7 +150,7 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -180,15 +181,13 @@ func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *clo
 			}
 
 			if timeStamp != serverVal {
-				return fmt.Errorf("state value of %s: %s is different than server created value: %s",
-					timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
+				return fmt.Errorf("state value of %s: %s is different than server created value: %s", timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
 			}
 
 			// check retrieved values are reasonable
 			// note this could fail if local time is out of sync with server time
 			if timeStamp.Before(testStartTime) {
-				return fmt.Errorf("State value of %s: %s should be greater than test start time: %s",
-					timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
+				return fmt.Errorf("state value of %s: %s should be greater than test start time: %s", timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
 			}
 		}
 

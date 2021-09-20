@@ -16,7 +16,7 @@ Provides a Cloudflare custom ssl resource.
 # Add a custom ssl certificate to the domain
 resource "cloudflare_custom_ssl" "foossl" {
   zone_id = "${var.cloudflare_zone_id}"
-  custom_ssl_options = {
+  custom_ssl_options {
     "certificate" = "-----INSERT CERTIFICATE-----"
     "private_key" = "-----INSERT PRIVATE KEY-----"
     "bundle_method" = "ubiquitous",

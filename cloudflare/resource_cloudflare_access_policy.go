@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareAccessPolicy() *schema.Resource {
@@ -153,7 +153,7 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Access Policy %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Access Policy %q: %s", d.Id(), err)
 	}
 
 	d.Set("name", accessPolicy.Name)
@@ -185,7 +185,9 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 		for _, apiApprovalGroup := range accessPolicy.ApprovalGroups {
 			approvalGroups = append(approvalGroups, apiAccessPolicyApprovalGroupToSchema(apiApprovalGroup))
 		}
-		d.Set("approvalGroups", approvalGroups)
+		if err := d.Set("approval_group", approvalGroups); err != nil {
+			return fmt.Errorf("failed to set approval_group attribute: %s", err)
+		}
 	}
 
 	return nil

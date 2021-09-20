@@ -7,8 +7,8 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceCloudflareWAFPackages() *schema.Resource {
@@ -133,7 +133,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 
 	err = d.Set("packages", packageDetails)
 	if err != nil {
-		return fmt.Errorf("Error setting WAF packages: %s", err)
+		return fmt.Errorf("error setting WAF packages: %s", err)
 	}
 
 	d.SetId(stringListChecksum(packageIds))

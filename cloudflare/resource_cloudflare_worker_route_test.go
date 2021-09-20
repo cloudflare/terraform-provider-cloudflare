@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 const (
@@ -171,7 +171,7 @@ func testAccCheckCloudflareWorkerRouteExists(n string, route *cloudflare.WorkerR
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -186,7 +186,7 @@ func testAccCheckCloudflareWorkerRouteExists(n string, route *cloudflare.WorkerR
 		}
 
 		if foundRoute.ID != routeId {
-			return fmt.Errorf("Worker route with id %s not found", routeId)
+			return fmt.Errorf("worker route with id %s not found", routeId)
 		}
 
 		*route = foundRoute
@@ -209,7 +209,7 @@ func testAccCheckCloudflareWorkerRouteDestroy(s *terraform.State) error {
 		}
 
 		if route.ID != "" {
-			return fmt.Errorf("Worker route with id %s still exists", route.ID)
+			return fmt.Errorf("worker route with id %s still exists", route.ID)
 		}
 
 	}

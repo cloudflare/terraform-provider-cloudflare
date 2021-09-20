@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareCustomHostnameBasic(t *testing.T) {
@@ -155,8 +155,6 @@ func TestAccCloudflareCustomHostnameWithCustomSSLSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.2"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.0", "ECDHE-RSA-AES128-GCM-SHA256"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.1", "AES128-SHA"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -206,8 +204,6 @@ func TestAccCloudflareCustomHostnameUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.2"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.0", "ECDHE-RSA-AES128-GCM-SHA256"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.1", "AES128-SHA"),
 				),
 			},
 			{
@@ -218,8 +214,6 @@ func TestAccCloudflareCustomHostnameUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.1"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.0", "ECDHE-RSA-AES128-GCM-SHA256"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.1", "AES128-SHA"),
 				),
 			},
 		},
@@ -332,11 +326,22 @@ func TestAccCloudflareCustomHostnameImport(t *testing.T) {
 				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"ssl.#", "ssl.0.certificate_authority", "ssl.0.cname_name", "ssl.0.cname_target", "ssl.0.custom_certificate", "ssl.0.custom_key", "ssl.0.method", "ssl.0.status", "ssl.0.type", "ssl.0.wildcard"},
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ImportStateVerifyIgnore: []string{
+					"ssl.#",
+					"ssl.0.certificate_authority",
+					"ssl.0.cname_name",
+					"ssl.0.cname_target",
+					"ssl.0.custom_certificate",
+					"ssl.0.custom_key",
+					"ssl.0.method",
+					"ssl.0.status",
+					"ssl.0.type",
+					"ssl.0.wildcard",
+				},
 			},
 		},
 	})
@@ -345,7 +350,7 @@ func TestAccCloudflareCustomHostnameImport(t *testing.T) {
 func testAccCheckCloudflareCustomHostnameRecreated(before, after *cloudflare.CustomHostname) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
-			return fmt.Errorf("Expected change of CustomHostname Ids, but both were %v", before.ID)
+			return fmt.Errorf("expected change of CustomHostname Ids, but both were %v", before.ID)
 		}
 		return nil
 	}
@@ -355,7 +360,7 @@ func testAccCheckCloudflareCustomHostnameExists(n string, customHostname *cloudf
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

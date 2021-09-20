@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
@@ -156,7 +156,7 @@ func resourceCloudflareStaticRouteDelete(d *schema.ResourceData, meta interface{
 
 	_, err := client.DeleteMagicTransitStaticRoute(context.Background(), d.Id())
 	if err != nil {
-		return fmt.Errorf("Error deleting Static Route: %s", err)
+		return fmt.Errorf("error deleting Static Route: %s", err)
 	}
 
 	return nil

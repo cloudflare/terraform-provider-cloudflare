@@ -12,8 +12,8 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
@@ -196,7 +196,7 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.#", "3"),
-					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.message_body", "hello"),
+					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.0.message_body", "hello"),
 					resource.TestCheckResourceAttr(name, "rules.2.overrides.0.region_pools.#", "1"),
 				),
 			},
@@ -259,8 +259,7 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 					func(state *terraform.State) error {
 						if initialId != loadBalancer.ID {
 							// want in place update
-							return fmt.Errorf("load balancer id is different after second config applied ( %s -> %s )",
-								initialId, loadBalancer.ID)
+							return fmt.Errorf("load balancer id is different after second config applied ( %s -> %s )", initialId, loadBalancer.ID)
 						}
 						return nil
 					},
@@ -300,8 +299,7 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
 					func(state *terraform.State) error {
 						if initialId == loadBalancer.ID {
-							return fmt.Errorf("load balancer id is unchanged even after we thought we deleted it ( %s )",
-								loadBalancer.ID)
+							return fmt.Errorf("load balancer id is unchanged even after we thought we deleted it ( %s )", loadBalancer.ID)
 						}
 						return nil
 					},
@@ -332,7 +330,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -355,7 +353,7 @@ func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZoneID string) resou
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -386,15 +384,13 @@ func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.
 			}
 
 			if timeStamp != serverVal {
-				return fmt.Errorf("state value of %s: %s is different than server created value: %s",
-					timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
+				return fmt.Errorf("state value of %s: %s is different than server created value: %s", timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
 			}
 
 			// check retrieved values are reasonable
 			// note this could fail if local time is out of sync with server time
 			if timeStamp.Before(testStartTime) {
-				return fmt.Errorf("State value of %s: %s should be greater than test start time: %s",
-					timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
+				return fmt.Errorf("state value of %s: %s should be greater than test start time: %s", timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
 			}
 		}
 
@@ -529,9 +525,9 @@ resource "cloudflare_load_balancer" "%[3]s" {
   rules {
     name = "test rule 2"
     condition = "dns.qry.type == 28"
-    fixed_response = {
+    fixed_response {
       message_body = "hello"
-      status_code = "200"
+      status_code = 200
       content_type = "html"
       location = "www.example.com"
     }
@@ -546,17 +542,5 @@ resource "cloudflare_load_balancer" "%[3]s" {
 	    }
     }
   }
-}`, zoneID, zone, id)
-}
-
-func testAccCheckCloudflareLoadBalancerConfigLatitudeLongitude(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-latitude-longitude-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  latitude = 23.5
-  longitude = -11.1
 }`, zoneID, zone, id)
 }

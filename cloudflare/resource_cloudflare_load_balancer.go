@@ -10,8 +10,8 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -239,7 +239,8 @@ var rulesElem = &schema.Resource{
 		},
 
 		"fixed_response": {
-			Type:     schema.TypeMap,
+			Type:     schema.TypeList,
+			MaxItems: 1,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -617,23 +618,24 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 
 		if fr := r.FixedResponse; fr != nil {
 			frm := map[string]interface{}{}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.message_body", idx)); ok {
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.message_body", idx)); ok {
 				frm["message_body"] = fr.MessageBody
-				m["fixed_response"] = frm // only set if one of these has is true
+				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
 			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.status_code", idx)); ok {
-				frm["status_code"] = strconv.FormatInt(int64(fr.StatusCode), 10)
-				m["fixed_response"] = frm // only set if one of these has is true
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.status_code", idx)); ok {
+				frm["status_code"] = fr.StatusCode
+				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
 			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.content_type", idx)); ok {
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.content_type", idx)); ok {
 				frm["content_type"] = fr.ContentType
-				m["fixed_response"] = frm // only set if one of these has is true
+				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
 			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.location", idx)); ok {
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.location", idx)); ok {
 				frm["location"] = fr.Location
-				m["fixed_response"] = frm // only set if one of these has is true
+				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
 			}
 		}
+
 		if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides", idx)); ok {
 			o := r.Overrides
 			om := map[string]interface{}{}
@@ -771,20 +773,17 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 			}
 		}
 
-		if fixedResponseData, ok := r["fixed_response"]; ok {
+		for _, fixedResponseData := range r["fixed_response"].([]interface{}) {
 			frd := fixedResponseData.(map[string]interface{})
 			// we don't add this into our LB unless one of the cases below is true
 			fr := &cloudflare.LoadBalancerFixedResponseData{}
+
 			if mb, ok := frd["message_body"]; ok {
 				fr.MessageBody = mb.(string)
 				lbr.FixedResponse = fr
 			}
 			if sc, ok := frd["status_code"]; ok {
-				scint, err := strconv.ParseInt(sc.(string), 10, 64)
-				if err != nil {
-					return nil, err
-				}
-				fr.StatusCode = int(scint)
+				fr.StatusCode = sc.(int)
 				lbr.FixedResponse = fr
 			}
 			if ct, ok := frd["content_type"]; ok {
@@ -795,10 +794,11 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 				fr.Location = l.(string)
 				lbr.FixedResponse = fr
 			}
-
 		}
+
 		rules = append(rules, lbr)
 	}
+
 	return rules, nil
 }
 

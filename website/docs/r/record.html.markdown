@@ -28,7 +28,7 @@ resource "cloudflare_record" "_sip_tls" {
   name    = "_sip._tls"
   type    = "SRV"
 
-  data = {
+  data {
     service  = "_sip"
     proto    = "_tls"
     name     = "terraform-srv"

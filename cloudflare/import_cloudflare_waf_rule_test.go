@@ -5,10 +5,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccCloudflareWAFRule_Import(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "100001"

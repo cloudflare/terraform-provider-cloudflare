@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
@@ -71,7 +71,7 @@ func dataSourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}
 
 	dnssec, err := client.ZoneDNSSECSetting(context.Background(), zoneID)
 	if err != nil {
-		return fmt.Errorf("Error finding Zone DNSSEC %q: %s", zoneID, err)
+		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
 	}
 
 	d.Set("zone_id", zoneID)

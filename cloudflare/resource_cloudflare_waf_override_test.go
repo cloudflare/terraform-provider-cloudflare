@@ -7,11 +7,13 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// overrides endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
@@ -63,6 +65,8 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareWAFOverrideGroupOnly(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// overrides endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.

@@ -9,15 +9,13 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/version"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 )
 
-// Provider returns a terraform.ResourceProvider.
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"email": {
@@ -194,9 +192,7 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	c.Transport = logging.NewTransport("Cloudflare", c.Transport)
 	options = append(options, cloudflare.HTTPClient(c))
 
-	tfUserAgent := httpclient.TerraformUserAgent(terraformVersion)
-	providerUserAgent := fmt.Sprintf("terraform-provider-cloudflare/%s", version.ProviderVersion)
-	ua := fmt.Sprintf("%s %s", tfUserAgent, providerUserAgent)
+	ua := fmt.Sprintf("terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s", terraformVersion, meta.SDKVersionString(), version.ProviderVersion)
 	options = append(options, cloudflare.UserAgent(ua))
 
 	config := Config{Options: options}

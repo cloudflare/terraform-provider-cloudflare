@@ -12,8 +12,8 @@ import (
 	"reflect"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -45,7 +45,6 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 			"initial_settings": {
 				Type:     schema.TypeList,
 				Computed: true,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: resourceCloudflareZoneSettingsSchema,
 				},
@@ -598,8 +597,8 @@ func resourceCloudflareZoneSettingsOverrideRead(d *schema.ResourceData, meta int
 
 	log.Printf("[DEBUG] Read CloudflareZone Settings: %#v", zoneSettings)
 
-	d.Set("status", zone.Status)
-	d.Set("type", zone.Type)
+	d.Set("zone_status", zone.Status)
+	d.Set("zone_type", zone.Type)
 
 	newZoneSettings := flattenZoneSettings(d, zoneSettings.Result, false)
 	// if polish is off (or we don't know) we need to ignore what comes back from the api for webp

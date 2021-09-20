@@ -2,7 +2,9 @@ name: Acceptance Tests
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - sdk-v2
     paths-ignore:
     - 'README.md'
     - 'CHANGELOG.md'

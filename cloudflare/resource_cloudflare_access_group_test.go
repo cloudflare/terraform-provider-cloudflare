@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func init() {
@@ -395,7 +395,7 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessId
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -464,7 +464,7 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
@@ -480,7 +480,7 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 func testAccCheckCloudflareAccessGroupRecreated(before, after *cloudflare.AccessGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
-			return fmt.Errorf("Expected change of AccessGroup Ids, but both were %v", before.ID)
+			return fmt.Errorf("expected change of AccessGroup Ids, but both were %v", before.ID)
 		}
 		return nil
 	}

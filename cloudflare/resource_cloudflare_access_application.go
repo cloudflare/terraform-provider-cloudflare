@@ -8,8 +8,8 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -218,7 +218,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Access Application %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Access Application %q: %s", d.Id(), err)
 	}
 
 	d.Set("name", accessApplication.Name)

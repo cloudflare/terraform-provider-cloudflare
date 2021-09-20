@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
@@ -157,8 +157,7 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					func(state *terraform.State) error {
 						if initialId != loadBalancerMonitor.ID {
-							return fmt.Errorf("wanted update but monitor got recreated (id changed %q -> %q)",
-								initialId, loadBalancerMonitor.ID)
+							return fmt.Errorf("wanted update but monitor got recreated (id changed %q -> %q)", initialId, loadBalancerMonitor.ID)
 						}
 						return nil
 					},
@@ -193,8 +192,7 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
 					func(state *terraform.State) error {
 						if initialId == loadBalancerMonitor.ID {
-							return fmt.Errorf("load balancer monitor id is unchanged even after we thought we deleted it ( %s )",
-								loadBalancerMonitor.ID)
+							return fmt.Errorf("load balancer monitor id is unchanged even after we thought we deleted it ( %s )", loadBalancerMonitor.ID)
 						}
 						return nil
 					},
@@ -225,7 +223,7 @@ func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -256,15 +254,13 @@ func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonito
 			}
 
 			if timeStamp != serverVal {
-				return fmt.Errorf("state value of %s: %s is different than server created value: %s",
-					timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
+				return fmt.Errorf("state value of %s: %s is different than server created value: %s", timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
 			}
 
 			// check retrieved values are reasonable
 			// note this could fail if local time is out of sync with server time
 			if timeStamp.Before(testStartTime) {
-				return fmt.Errorf("State value of %s: %s should be greater than test start time: %s",
-					timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
+				return fmt.Errorf("state value of %s: %s should be greater than test start time: %s", timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
 			}
 		}
 

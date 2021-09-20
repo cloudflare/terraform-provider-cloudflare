@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
@@ -83,8 +83,7 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
 					func(state *terraform.State) error {
 						if initialID != healthcheck.ID {
-							return fmt.Errorf("wanted update but healthcheck got recreated (id changed %q -> %q)",
-								initialID, healthcheck.ID)
+							return fmt.Errorf("wanted update but healthcheck got recreated (id changed %q -> %q)", initialID, healthcheck.ID)
 						}
 						return nil
 					},
@@ -150,7 +149,7 @@ func testAccCheckCloudflareHealthcheckExists(n string, zoneID string, load *clou
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

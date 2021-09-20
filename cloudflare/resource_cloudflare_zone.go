@@ -4,15 +4,14 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"golang.org/x/net/idna"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 // we enforce the use of the Cloudflare API 'legacy_id' field until the mapping of plan is fixed in cloudflare-go
@@ -81,15 +80,9 @@ func resourceCloudflareZone() *schema.Resource {
 			"meta": {
 				Type:     schema.TypeMap,
 				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"wildcard_proxiable": {
-							Type: schema.TypeBool,
-						},
-						"phishing_detected": {
-							Type: schema.TypeBool,
-						},
-					},
+				Elem: &schema.Schema{
+					Type:     schema.TypeBool,
+					Computed: true,
 				},
 			},
 			"status": {
@@ -132,7 +125,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	zone, err := client.CreateZone(context.Background(), zoneName, jumpstart, account, zoneType)
 
 	if err != nil {
-		return fmt.Errorf("Error creating zone %q: %s", zoneName, err)
+		return fmt.Errorf("error creating zone %q: %s", zoneName, err)
 	}
 
 	d.SetId(zone.ID)
@@ -142,7 +135,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 			_, err := client.ZoneSetPaused(context.Background(), zone.ID, paused.(bool))
 
 			if err != nil {
-				return fmt.Errorf("Error updating zone_id %q: %s", zone.ID, err)
+				return fmt.Errorf("error updating zone_id %q: %s", zone.ID, err)
 			}
 		}
 	}
@@ -171,7 +164,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Zone %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Zone %q: %s", d.Id(), err)
 	}
 
 	// In the cases where the zone isn't completely setup yet, we need to
@@ -210,7 +203,7 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		_, err := client.ZoneSetPaused(context.Background(), zoneID, paused.(bool))
 
 		if err != nil {
-			return fmt.Errorf("Error updating zone_id %q: %s", zoneID, err)
+			return fmt.Errorf("error updating zone_id %q: %s", zoneID, err)
 		}
 	}
 
@@ -246,7 +239,7 @@ func resourceCloudflareZoneDelete(d *schema.ResourceData, meta interface{}) erro
 	_, err := client.DeleteZone(context.Background(), zoneID)
 
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Zone: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Zone: %s", err)
 	}
 
 	return nil
@@ -255,8 +248,8 @@ func resourceCloudflareZoneDelete(d *schema.ResourceData, meta interface{}) erro
 func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]interface{} {
 	cfg := map[string]interface{}{}
 
-	cfg["wildcard_proxiable"] = strconv.FormatBool(meta.WildcardProxiable)
-	cfg["phishing_detected"] = strconv.FormatBool(meta.PhishingDetected)
+	cfg["wildcard_proxiable"] = meta.WildcardProxiable
+	cfg["phishing_detected"] = meta.PhishingDetected
 
 	log.Printf("[DEBUG] flattenMeta %#v", cfg)
 
@@ -271,12 +264,12 @@ func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool, 
 		// HTTP call to set it.
 		if subscriptionIDOfRatePlans[planID] != planIDFree {
 			if err := client.ZoneSetPlan(context.Background(), zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
-				return fmt.Errorf("Error setting plan %s for zone %q: %s", planID, zoneID, err)
+				return fmt.Errorf("error setting plan %s for zone %q: %s", planID, zoneID, err)
 			}
 		}
 	} else {
 		if err := client.ZoneUpdatePlan(context.Background(), zoneID, subscriptionIDOfRatePlans[planID]); err != nil {
-			return fmt.Errorf("Error updating plan %s for zone %q: %s", planID, zoneID, err)
+			return fmt.Errorf("error updating plan %s for zone %q: %s", planID, zoneID, err)
 		}
 	}
 

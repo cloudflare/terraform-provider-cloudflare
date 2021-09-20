@@ -3,12 +3,13 @@ package cloudflare
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccCloudflareStaticRouteExists(t *testing.T) {
@@ -45,7 +46,7 @@ func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTr
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -125,8 +126,7 @@ func TestAccCloudflareStaticRouteUpdateWeight(t *testing.T) {
 					testAccCheckCloudflareStaticRouteExists(name, &StaticRoute),
 					func(state *terraform.State) error {
 						if initialID == StaticRoute.ID {
-							return fmt.Errorf("forced recreation but Static Route got updated (id %q)",
-								StaticRoute.ID)
+							return fmt.Errorf("forced recreation but Static Route got updated (id %q)", StaticRoute.ID)
 						}
 						return nil
 					},

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareNotificationPolicy() *schema.Resource {
@@ -121,7 +121,6 @@ func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("error retrieving notification policy %s: %s", name, err)
 	}
 
-	d.Set("id", policy.Result.ID)
 	d.Set("name", policy.Result.Name)
 	d.Set("enabled", policy.Result.Enabled)
 	d.Set("alert_type", policy.Result.AlertType)

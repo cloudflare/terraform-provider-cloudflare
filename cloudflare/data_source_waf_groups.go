@@ -7,8 +7,8 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceCloudflareWAFGroups() *schema.Resource {
@@ -142,7 +142,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 
 	err = d.Set("groups", groupDetails)
 	if err != nil {
-		return fmt.Errorf("Error setting WAF groups: %s", err)
+		return fmt.Errorf("error setting WAF groups: %s", err)
 	}
 
 	d.SetId(stringListChecksum(groupIds))

@@ -5,10 +5,20 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccCloudflareNotificationPolicy(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the notification
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	updatedPolicyName := "updated test SSL policy from terraform provider"
@@ -54,8 +64,8 @@ func testCheckCloudflareNotificationPolicy(name, accountID string) string {
     enabled     =  true
     alert_type  = "universal_ssl_event_type"
     email_integration {
-      name =  "test@cloudflare.com"
-      id   =  ""
+      name =  ""
+      id   =  "test@example.com"
     }
   }`, name, accountID)
 }
@@ -69,8 +79,8 @@ func testCheckCloudflareNotificationPolicyUpdated(resName, policyName, policyDes
     enabled     =  true
     alert_type  = "universal_ssl_event_type"
     email_integration {
-      name =  "test@cloudflare.com"
-      id   =  ""
+      name =  ""
+      id   =  "test@example.com"
     }
   }`, resName, policyName, policyDesc, accountID)
 }

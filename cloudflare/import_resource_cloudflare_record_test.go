@@ -5,19 +5,20 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccCloudflareRecord_Import(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	name := "cloudflare_record.foobar"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name),
+				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd),
 			},
 			{
 				ResourceName:            name,
