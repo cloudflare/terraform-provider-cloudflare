@@ -23,8 +23,7 @@ func resourceCloudflareRecord() *schema.Resource {
 			State: resourceCloudflareRecordImport,
 		},
 
-		SchemaVersion: 1,
-		MigrateState:  resourceCloudflareRecordMigrateState,
+		SchemaVersion: 2,
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -291,6 +290,13 @@ func resourceCloudflareRecord() *schema.Resource {
 			Create: schema.DefaultTimeout(30 * time.Second),
 			Update: schema.DefaultTimeout(30 * time.Second),
 		},
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareRecordV1().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareRecordStateUpgradeV2,
+				Version: 1,
+			},
+		},
 	}
 }
 
@@ -445,17 +451,19 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 
 	if dataOk {
 		dataMap := data.([]interface{})[0]
-		for id, value := range dataMap.(map[string]interface{}) {
-			newData, err := transformToCloudflareDNSData(record.Type, id, value)
-			if err != nil {
-				return err
-			} else if newData == nil {
-				continue
+		if dataMap != nil {
+			for id, value := range dataMap.(map[string]interface{}) {
+				newData, err := transformToCloudflareDNSData(record.Type, id, value)
+				if err != nil {
+					return err
+				} else if newData == nil {
+					continue
+				}
+				readDataMap[id] = newData
 			}
-			readDataMap[id] = newData
-		}
 
-		record.Data = []interface{}{readDataMap}
+			record.Data = []interface{}{readDataMap}
+		}
 	}
 
 	d.SetId(record.ID)
