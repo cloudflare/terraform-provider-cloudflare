@@ -13,7 +13,7 @@ BREAKING CHANGES:
 NOTES:
 
 * provider: Golang version has been upgraded to 1.17 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
-* provider: HTTP user agent is now "terraform/<version> terraform-plugin-sdk/<version> terraform-provider-cloudflare/<version>" ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* provider: HTTP user agent is now "terraform/:version terraform-plugin-sdk/:version terraform-provider-cloudflare/:version" ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
 * provider: Minimum Terraform core version is now 0.14 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
 * provider: terraform-plugin-sdk has been upgraded to 2.x ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
 
