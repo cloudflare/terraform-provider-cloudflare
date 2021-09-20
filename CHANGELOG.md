@@ -1,5 +1,28 @@
 ## 3.0.0 (Unreleased)
 
+[2.x to 3.x upgrade guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-3-upgrade)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_access_rule: `configuration` is now a `TypeList` instead of a `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* resource/cloudflare_custom_ssl: `custom_ssl_options` is now a `TypeList` instead of `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* resource/cloudflare_load_balancer: `fixed_response` is now a `TypeList` instead of a `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* resource/cloudflare_load_balancer: fixed_response.status_code` is now a `TypeInt` instead of a `TypeString` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* resource/cloudflare_record: `data` is now a `TypeList` instead of a `TypeMap` ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+
+NOTES:
+
+* provider: Golang version has been upgraded to 1.17 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* provider: HTTP user agent is now "terraform/<version> terraform-plugin-sdk/<version> terraform-provider-cloudflare/<version>" ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* provider: Minimum Terraform core version is now 0.14 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* provider: terraform-plugin-sdk has been upgraded to 2.x ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_custom_hostname: `settings.ciphers` is now a `TypeSet` internally to handle suppress ordering changes. Schema representation remains the same ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* resource/cloudflare_custom_hostname: `settings` is now `Optional`/`Computed` to reflect the stricter schema validation introduced in terraform-plugin-sdk v2 ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+* resource/cloudflare_custom_hostname: `status` is now `Computed` as the value isn't managed by an end user ([#1188](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1188))
+
 ## 2.27.0 (September 20th, 2021)
 
 NOTES:
