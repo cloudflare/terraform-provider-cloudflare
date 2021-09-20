@@ -22,6 +22,8 @@ func resourceCloudflareAccessRule() *schema.Resource {
 			State: resourceCloudflareAccessRuleImport,
 		},
 
+		SchemaVersion: 1,
+
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
 				Type:     schema.TypeString,
@@ -57,6 +59,14 @@ func resourceCloudflareAccessRule() *schema.Resource {
 						},
 					},
 				},
+			},
+		},
+
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareAccessRuleV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareAccessRuleStateUpgradeV1,
+				Version: 0,
 			},
 		},
 	}
