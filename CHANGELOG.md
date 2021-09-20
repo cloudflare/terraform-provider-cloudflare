@@ -1,4 +1,6 @@
-## 3.0.0 (Unreleased)
+## 3.1.0 (Unreleased)
+
+## 3.0.0 (September 20th, 2021)
 
 [2.x to 3.x upgrade guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-3-upgrade)
 
