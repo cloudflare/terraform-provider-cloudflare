@@ -15,7 +15,7 @@ provider: Minimum Terraform core version is now 0.14
 ```
 
 ```release-note:note
-provider: HTTP user agent is now "terraform/<version> terraform-plugin-sdk/<version> terraform-provider-cloudflare/<version>"
+provider: HTTP user agent is now "terraform/:version terraform-plugin-sdk/:version terraform-provider-cloudflare/:version"
 ```
 
 ```release-note:breaking-change
