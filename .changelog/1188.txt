@@ -1,5 +1,9 @@
+```release-note:upgrade-guide
+[2.x to 3.x upgrade guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-3-upgrade)
+```
+
 ```release-note:note
-provider: Golang version has been upgraded to 1.17.x
+provider: Golang version has been upgraded to 1.17
 ```
 
 ```release-note:note
@@ -7,7 +11,7 @@ provider: terraform-plugin-sdk has been upgraded to 2.x
 ```
 
 ```release-note:note
-provider: Minimum Terraform version is now 0.14.x
+provider: Minimum Terraform core version is now 0.14
 ```
 
 ```release-note:note
