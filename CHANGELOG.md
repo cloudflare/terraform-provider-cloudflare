@@ -1,4 +1,6 @@
-## 3.1.0 (Unreleased)
+## 3.2.0 (Unreleased)
+
+## 3.1.0 (September 21st, 2021)
 
 ENHANCEMENTS:
 
