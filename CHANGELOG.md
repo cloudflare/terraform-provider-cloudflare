@@ -1,5 +1,9 @@
 ## 3.1.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for ddos_l7 configuration ([#1212](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1212))
+
 ## 3.0.1 (September 21st, 2021)
 
 ENHANCEMENTS:
