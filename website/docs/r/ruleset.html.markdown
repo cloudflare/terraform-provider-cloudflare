@@ -291,6 +291,7 @@ The following arguments are supported:
 * `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
 * `enabled` - (Optional) Defines if the current rule-level override enables or disables the rule.
 * `score_threshold` - (Optional) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
+* `sensitivity_level` - (Optional) Sensitivity level for a ruleset rule override.
 
 ## Import
 

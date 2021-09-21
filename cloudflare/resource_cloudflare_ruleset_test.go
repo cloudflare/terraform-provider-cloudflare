@@ -828,6 +828,50 @@ func TestAccCloudflareRuleset_ActionParametersMultipleSkips(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersHTTPDDosOverride(rnd, "multiple skips for managed rulesets", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "multiple skips for managed rulesets"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "ddos_l7"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "execute"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "4d21379b4f9f4bb088e0729962c8b3cf"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "fdfdac75430c4c47a959592f0aa5e68a"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.sensitivity_level", "low"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "override HTTP DDoS ruleset rule"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -1440,6 +1484,33 @@ func testAccCheckCloudflareRulesetActionParametersMultipleSkips(rnd, name, zoneI
       }
       expression = "true"
       description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetActionParametersHTTPDDosOverride(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "ddos_l7"
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = "4d21379b4f9f4bb088e0729962c8b3cf"
+        overrides {
+          rules {
+            id = "fdfdac75430c4c47a959592f0aa5e68a" # requests with odd HTTP headers or URI path
+            sensitivity_level = "low"
+          }
+        }
+      }
+      expression = "true"
+      description = "override HTTP DDoS ruleset rule"
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
