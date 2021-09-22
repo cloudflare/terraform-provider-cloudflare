@@ -33,8 +33,8 @@ func TestAccCloudflareAccountMemberBasic(t *testing.T) {
 
 func testCloudflareAccountMemberBasicConfig(resourceID, emailAddress string) string {
 	return fmt.Sprintf(`
-				resource "cloudflare_account_member" "%[1]s" {
-					email_address = "%[2]s"
-					role_ids = [ "05784afa30c1afe1440e79d9351c7430" ]
-				}`, resourceID, emailAddress)
+  resource "cloudflare_account_member" "%[1]s" {
+    email_address = "%[2]s"
+    role_ids = [ "05784afa30c1afe1440e79d9351c7430" ]
+  }`, resourceID, emailAddress)
 }
