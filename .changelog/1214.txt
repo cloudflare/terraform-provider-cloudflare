@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_origin_ca_certificate: ignore `requested_validity` changes due to the value decreasing but still store it
+```

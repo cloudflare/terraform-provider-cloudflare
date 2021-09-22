@@ -56,10 +56,8 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 			"requested_validity": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				Computed:     true,
 				ValidateFunc: validation.IntInSlice([]int{7, 30, 90, 365, 730, 1095, 5475}),
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 		},
 	}
@@ -83,12 +81,11 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 		certInput.CSR = csr.(string)
 	}
 
-	requestValidity, ok := d.GetOk("requested_validity")
-	if ok {
+	if requestValidity, ok := d.GetOk("requested_validity"); ok {
 		certInput.RequestValidity = requestValidity.(int)
 	}
 
-	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: hostnames %v", hostnames)
+	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: %#v", certInput)
 	cert, err := client.CreateOriginCertificate(context.Background(), certInput)
 
 	if err != nil {
