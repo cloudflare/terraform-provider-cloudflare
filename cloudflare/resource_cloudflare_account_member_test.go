@@ -9,7 +9,7 @@ import (
 
 func TestAccCloudflareAccountMemberBasic(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "cloudflare_account_mamber." + rnd
+	name := "cloudflare_account_member." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
