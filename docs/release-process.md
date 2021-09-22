@@ -23,6 +23,6 @@ semantic versioning patch version is bumped.
   Bumping the minor version is usually fine here unless you are intending on 
   releasing a major version bump. 
 - Create a new GitHub release with the release title exactly matching the tag 
-  (e.g. `v2.22.0`) and copy the entries from the CHANGELOG to the release notes.
+  (e.g. `v2.27.0`) and copy the entries from the CHANGELOG to the release notes.
 - A GitHub Action will now build the binaries, documentation and distribute them 
   to the Terraform registry for the [Cloudflare provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest).
