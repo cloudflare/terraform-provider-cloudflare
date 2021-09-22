@@ -20,9 +20,9 @@ func TestAccCloudflareAccountMemberBasic(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccountMemberBasicConfig(rnd, fmt.Sprintf("%s@domain.com", rnd)),
+				Config: testCloudflareAccountMemberBasicConfig(rnd, fmt.Sprintf("%s@example.com", rnd)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "email_address", fmt.Sprintf("%s@domain.com", rnd)),
+					resource.TestCheckResourceAttr(name, "email_address", fmt.Sprintf("%s@example.com", rnd)),
 					resource.TestCheckResourceAttr(name, "role_ids.#", "1"),
 					resource.TestCheckResourceAttr(name, "role_ids.0", "05784afa30c1afe1440e79d9351c7430"),
 				),
