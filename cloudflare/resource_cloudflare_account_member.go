@@ -39,7 +39,7 @@ func resourceCloudflareAccountMember() *schema.Resource {
 func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
-	_, err := client.AccountMember(context.Background(), client.AccountID, d.Id())
+	member, err := client.AccountMember(context.Background(), client.AccountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Member not found") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -50,6 +50,13 @@ func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
+	var memberIDs []string
+	for _, role := range member.Roles {
+		memberIDs = append(memberIDs, role.ID)
+	}
+
+	d.Set("email_address", member.User.Email)
+	d.Set("role_ids", memberIDs)
 	d.SetId(d.Id())
 
 	return nil
