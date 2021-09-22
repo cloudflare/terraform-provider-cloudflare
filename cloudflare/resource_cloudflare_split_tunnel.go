@@ -6,12 +6,13 @@ import (
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
-func resourceCloudflareSplitTunnelInclude() *schema.Resource {
+func resourceCloudflareSplitTunnel() *schema.Resource {
 	return &schema.Resource{
-		Read: resourceCloudflareSplitTunnelIncludeRead,
-		Update: resourceCloudflareSplitTunnelIncludeUpdate,
+		Read: resourceCloudflareSplitTunnelRead,
+		Update: resourceCloudflareSplitTunnelUpdate,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -21,8 +22,14 @@ func resourceCloudflareSplitTunnelInclude() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"mode": {
+				Type:			schema.TypeString,
+				Required: true,
+				Description: "The mode of the split tunnel policy. Either 'include' or 'exclude'.",
+				ValidateFunc: validation.StringInSlice([]string{"include", "exclude"}, false),
+			},
 			"tunnels": {
-				Computed: true,
+				Required: true,
 				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -48,13 +55,14 @@ func resourceCloudflareSplitTunnelInclude() *schema.Resource {
 	}
 }
 
-func resourceCloudflareSplitTunnelIncludeRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSplitTunnelRead(d *schema.ResourceData, meta interface{}) error {
   client := meta.(*cloudflare.API)
   accountID := d.Get("account_id").(string)
+	mode := d.Get("mode").(string)
 
-  splitTunnel, err := client.SplitTunnelInclude(context.Background(), accountID)
+  splitTunnel, err := client.ListSplitTunnel(context.Background(), accountID, mode)
   if err != nil {
-    return fmt.Errorf("Error finding Include Split Tunnels %q", err)
+    return fmt.Errorf("Error finding %q Split Tunnels %q", mode, err)
   }
 
   tunnelList := make(map[string]interface{}, 0)
@@ -68,36 +76,20 @@ func resourceCloudflareSplitTunnelIncludeRead(d *schema.ResourceData, meta inter
 
   err = d.Set("tunnels", tunnelList)
   if err != nil {
-    return fmt.Errorf("error setting Include Split Tunnels: %s", err)
+    return fmt.Errorf("Error setting %q Split Tunnels: %q", mode, err)
   }
   return nil
 }
 
-func resourceCloudflareSplitTunnelIncludeUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
+	mode := d.Get("mode").(string)
 
 	// get all of the existing split tunnels
-  existingSplitTunnel, err := client.SplitTunnelInclude(context.Background(), accountID)
-	if err != nil {
-		return fmt.Errorf("Error finding Include Split Tunnels %q", err)
-	}
-
+	existingTunnels := d.Get("tunnels")
 	tunnelList := make([]interface{}, 0)
-	for _, t := range existingSplitTunnel {
-		tun := cloudflare.SplitTunnel{}
-		if inputAddress, ok := t.GetOk("address"); ok {
-			tun.Address = inputAddress.(string)
-		}
-		if inputHost, ok := t.GetOk("host"); ok {
-			tun.Host = inputHost.(string)
-		}
-		if inputDescription, ok := t.GetOk("description"); ok {
-			tun.Description = inputDescription.(string)
-		}
-
-		tunnelList = append(tunnelList, tun)
-	}
+	tunnelList = append(tunnelList, existingTunnels)
 
 	// add the new split tunnel
 	newTunnel := cloudflare.SplitTunnel{}
@@ -113,15 +105,17 @@ func resourceCloudflareSplitTunnelIncludeUpdate(d *schema.ResourceData, meta int
 
 	tunnelList.append(tunnelList, newTunnel)
 
-	err = d.Set("tunnels", tunnelList)
+	err := d.Set("tunnels", tunnelList)
 	if err != nil {
-		return fmt.Errorf("error setting Include Split Tunnels: %s", err)
+		return fmt.Errorf("Error setting %q Split Tunnels: %q", mode, err)
 	}
 
-	newSplitTunnel, err := client.UpdateSplitTunnelInclude(context.Background(), accountID, tunnelList)
+	d.SetId(accountID)
+
+	newSplitTunnel, err := client.UpdateSplitTunnel(context.Background(), accountID, mode, tunnelList)
 	if err != nil {
-		return fmt.Errorf("Error updating Include Split Tunnels %q", err)
+		return fmt.Errorf("Error updating %q Split Tunnels %q", mode, err)
 	}
 
-	return resourceCloudflareSplitTunnelIncludeRead(d, meta)
+	return resourceCloudflareSplitTunnelRead(d, meta)
 }
