@@ -1,5 +1,9 @@
 ## 3.2.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_origin_ca_certificate: ignore `requested_validity` changes due to the value decreasing but still store it ([#1214](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1214))
+
 ## 3.1.0 (September 21st, 2021)
 
 ENHANCEMENTS:
