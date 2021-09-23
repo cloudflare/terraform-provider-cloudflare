@@ -1,5 +1,9 @@
 ## 3.2.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* provider: add support for debugging via debuggers (like delve) ([#1217](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1217))
+
 BUG FIXES:
 
 * resource/cloudflare_account_member: handle role changes made in the dashboard ([#1202](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1202))
