@@ -2,12 +2,22 @@ package cloudflare
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccCloudflareAccountMemberBasic(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
+	// permission to manage account members.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
 	rnd := generateRandomResourceName()
 	name := "cloudflare_account_member." + rnd
 
