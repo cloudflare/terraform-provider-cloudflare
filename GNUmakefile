@@ -73,7 +73,7 @@ clean-dev:
 
 build-dev: clean-dev
 	@echo "Building development version ($(dev_version))"
-	go build -o terraform-provider-cloudflare_$(dev_version)
+	go build -gcflags="all=-N -l" -o terraform-provider-cloudflare_$(dev_version)
 
 generate-changelog:
 	@echo "==> Generating changelog..."
