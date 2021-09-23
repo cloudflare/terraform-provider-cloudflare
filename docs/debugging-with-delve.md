@@ -4,7 +4,8 @@ In the past, the only way to know what was happening in Terraform was to drop
 something like this around your code.
 
 ```
-log.Println("[DEBUG] Something happened!")log.Printf("[DEBUG] broken thing: %#v", thing)
+log.Println("[DEBUG] Something happened!")
+log.Printf("[DEBUG] broken thing: %#v", thing)
 ```
 
 This is incredibly tedious, and you end up wasting time going back and forth on 
