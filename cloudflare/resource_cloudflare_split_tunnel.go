@@ -121,6 +121,9 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 
 	d.SetId(accountID)
 
+	return resourceCloudflareSplitTunnelRead(d, meta)
+}
+
 func resourceCloudflareSplitTunnelDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
