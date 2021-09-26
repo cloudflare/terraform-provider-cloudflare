@@ -3,5 +3,5 @@ cloudflare_teams_account
 ```
 
 ```release-note:new-resource
-cloudflare_teams_account
+cloudflare_teams_rule
 ```

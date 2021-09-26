@@ -1,8 +1,13 @@
 name: Acceptance Tests
-
+concurrency: 
+  group: acceptance-tests
+  cancel-in-progress: true
+  
 on:
+  workflow_dispatch:
   push:
-    branches: [ master ]
+    branches:
+      - master
     paths-ignore:
     - 'README.md'
     - 'CHANGELOG.md'
@@ -13,7 +18,6 @@ on:
     - '.changelog/**'
 
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -35,7 +39,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: ^1.15
+        go-version: ^1.17
       id: go
 
     - name: Check out code into the Go module directory

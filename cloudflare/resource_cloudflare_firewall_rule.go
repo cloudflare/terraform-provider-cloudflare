@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareFirewallRule() *schema.Resource {
@@ -139,7 +139,7 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Firewall Rule %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Firewall Rule %q: %s", d.Id(), err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Firewall Rule read configuration: %#v", firewallRule)
@@ -212,7 +212,7 @@ func resourceCloudflareFirewallRuleDelete(d *schema.ResourceData, meta interface
 	err := client.DeleteFirewallRule(context.Background(), zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Firewall Rule: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Firewall Rule: %s", err)
 	}
 
 	return nil

@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -131,7 +131,6 @@ func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) erro
 
 	for _, i := range items {
 		item = make(map[string]interface{})
-		item["id"] = i.ID
 		item["value"] = i.IP
 		item["comment"] = i.Comment
 

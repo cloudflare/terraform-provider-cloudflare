@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareWAFGroup() *schema.Resource {
@@ -118,7 +118,7 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 		return resourceCloudflareWAFGroupRead(d, meta)
 	}
 
-	return fmt.Errorf("Unable to find WAF Group %s", groupID)
+	return fmt.Errorf("unable to find WAF Group %s", groupID)
 }
 
 func resourceCloudflareWAFGroupDelete(d *schema.ResourceData, meta interface{}) error {

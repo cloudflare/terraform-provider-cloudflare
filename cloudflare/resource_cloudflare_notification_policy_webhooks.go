@@ -8,7 +8,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/google/uuid"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareNotificationPolicyWebhooks() *schema.Resource {
@@ -93,7 +93,7 @@ func resourceCloudflareNotificationPolicyWebhooksRead(d *schema.ResourceData, me
 
 	d.Set("name", notificationWebhooks.Result.Name)
 	d.Set("url", notificationWebhooks.Result.URL)
-	d.Set("created", notificationWebhooks.Result.CreatedAt.Format(time.RFC3339))
+	d.Set("created_at", notificationWebhooks.Result.CreatedAt.Format(time.RFC3339))
 	d.Set("type", notificationWebhooks.Result.Type)
 
 	if notificationWebhooks.Result.LastSuccess != nil {

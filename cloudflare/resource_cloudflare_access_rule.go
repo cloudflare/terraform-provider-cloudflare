@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareAccessRule() *schema.Resource {
@@ -21,6 +21,8 @@ func resourceCloudflareAccessRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessRuleImport,
 		},
+
+		SchemaVersion: 1,
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
@@ -39,11 +41,11 @@ func resourceCloudflareAccessRule() *schema.Resource {
 				Optional: true,
 			},
 			"configuration": {
-				Type:             schema.TypeMap,
+				Type:             schema.TypeList,
+				MaxItems:         1,
 				Required:         true,
 				ForceNew:         true,
 				DiffSuppressFunc: configurationDiffSuppress,
-				ValidateFunc:     validateAccessRuleConfiguration,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"target": {
@@ -59,6 +61,14 @@ func resourceCloudflareAccessRule() *schema.Resource {
 				},
 			},
 		},
+
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareAccessRuleV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareAccessRuleStateUpgradeV1,
+				Version: 0,
+			},
+		},
 	}
 }
 
@@ -72,11 +82,11 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	if configuration, configurationOk := d.GetOk("configuration"); configurationOk {
-		config := configuration.(map[string]interface{})
-
-		newRule.Configuration = cloudflare.AccessRuleConfiguration{
-			Target: config["target"].(string),
-			Value:  config["value"].(string),
+		for _, config := range configuration.([]interface{}) {
+			newRule.Configuration = cloudflare.AccessRuleConfiguration{
+				Target: config.(map[string]interface{})["target"].(string),
+				Value:  config.(map[string]interface{})["value"].(string),
+			}
 		}
 	}
 
@@ -94,7 +104,7 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	if err != nil {
-		return fmt.Errorf("Failed to create access rule: %s", err)
+		return fmt.Errorf("failed to create access rule: %s", err)
 	}
 
 	if r.Result.ID == "" {
@@ -132,7 +142,7 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding access rule %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding access rule %q: %s", d.Id(), err)
 	}
 
 	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
@@ -142,9 +152,11 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("notes", accessRuleResponse.Result.Notes)
 	log.Printf("[DEBUG] read configuration: %#v", d.Get("configuration"))
 
-	configuration := map[string]interface{}{}
-	configuration["target"] = accessRuleResponse.Result.Configuration.Target
-	configuration["value"] = accessRuleResponse.Result.Configuration.Value
+	configuration := []map[string]interface{}{}
+	configuration = append(configuration, map[string]interface{}{
+		"target": accessRuleResponse.Result.Configuration.Target,
+		"value":  accessRuleResponse.Result.Configuration.Value,
+	})
 
 	d.Set("configuration", configuration)
 
@@ -155,17 +167,17 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	newRule := cloudflare.AccessRule{
+	updatedRule := cloudflare.AccessRule{
 		Notes: d.Get("notes").(string),
 		Mode:  d.Get("mode").(string),
 	}
 
 	if configuration, configurationOk := d.GetOk("configuration"); configurationOk {
-		config := configuration.(map[string]interface{})
-
-		newRule.Configuration = cloudflare.AccessRuleConfiguration{
-			Target: config["target"].(string),
-			Value:  config["value"].(string),
+		for _, config := range configuration.([]interface{}) {
+			updatedRule.Configuration = cloudflare.AccessRuleConfiguration{
+				Target: config.(map[string]interface{})["target"].(string),
+				Value:  config.(map[string]interface{})["value"].(string),
+			}
 		}
 	}
 
@@ -174,16 +186,16 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			_, err = client.UpdateAccountAccessRule(context.Background(), client.AccountID, d.Id(), newRule)
+			_, err = client.UpdateAccountAccessRule(context.Background(), client.AccountID, d.Id(), updatedRule)
 		} else {
-			_, err = client.UpdateUserAccessRule(context.Background(), d.Id(), newRule)
+			_, err = client.UpdateUserAccessRule(context.Background(), d.Id(), updatedRule)
 		}
 	} else {
-		_, err = client.UpdateZoneAccessRule(context.Background(), zoneID, d.Id(), newRule)
+		_, err = client.UpdateZoneAccessRule(context.Background(), zoneID, d.Id(), updatedRule)
 	}
 
 	if err != nil {
-		return fmt.Errorf("Failed to update Access Rule: %s", err)
+		return fmt.Errorf("failed to update Access Rule: %s", err)
 	}
 
 	return resourceCloudflareAccessRuleRead(d, meta)
@@ -208,7 +220,7 @@ func resourceCloudflareAccessRuleDelete(d *schema.ResourceData, meta interface{}
 	}
 
 	if err != nil {
-		return fmt.Errorf("Error deleting Cloudflare Access Rule: %s", err)
+		return fmt.Errorf("error deleting Cloudflare Access Rule: %s", err)
 	}
 
 	return nil

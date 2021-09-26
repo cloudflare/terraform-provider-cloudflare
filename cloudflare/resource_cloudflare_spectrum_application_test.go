@@ -10,8 +10,8 @@ import (
 	"os"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func init() {
@@ -173,8 +173,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 					func(state *terraform.State) error {
 						if initialID != spectrumApp.ID {
 							// want in place update
-							return fmt.Errorf("spectrum application id is different after second config applied ( %s -> %s )",
-								initialID, spectrumApp.ID)
+							return fmt.Errorf("spectrum application id is different after second config applied ( %s -> %s )", initialID, spectrumApp.ID)
 						}
 						return nil
 					},
@@ -214,8 +213,7 @@ func TestAccCloudflareSpectrumApplication_CreateAfterManualDestroy(t *testing.T)
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					func(state *terraform.State) error {
 						if initialID == spectrumApp.ID {
-							return fmt.Errorf("spectrum application id is unchanged even after we thought we deleted it ( %s )",
-								spectrumApp.ID)
+							return fmt.Errorf("spectrum application id is unchanged even after we thought we deleted it ( %s )", spectrumApp.ID)
 						}
 						return nil
 					},
@@ -246,7 +244,7 @@ func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *clou
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -269,7 +267,7 @@ func testAccCheckCloudflareSpectrumApplicationIDIsValid(n string) resource.TestC
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

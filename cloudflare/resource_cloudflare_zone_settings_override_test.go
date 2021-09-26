@@ -7,30 +7,11 @@ import (
 	"testing"
 
 	"reflect"
-	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
-
-func TestAccCloudflareZoneSettingsOverride_Empty(t *testing.T) {
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	name := "cloudflare_zone_settings_override.test"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZoneSettingsEmpty(name),
-				),
-			},
-		},
-	})
-}
 
 func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -51,18 +32,12 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettings(name),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.brotli", "on"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.challenge_ttl", "2700"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.security_level", "high"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.h2_prioritization", "on"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.zero_rtt", "off"),
-					resource.TestCheckResourceAttr(
-						name, "settings.0.universal_ssl", "off"),
+					resource.TestCheckResourceAttr(name, "settings.0.brotli", "on"),
+					resource.TestCheckResourceAttr(name, "settings.0.challenge_ttl", "2700"),
+					resource.TestCheckResourceAttr(name, "settings.0.security_level", "high"),
+					resource.TestCheckResourceAttr(name, "settings.0.h2_prioritization", "on"),
+					resource.TestCheckResourceAttr(name, "settings.0.zero_rtt", "off"),
+					resource.TestCheckResourceAttr(name, "settings.0.universal_ssl", "off"),
 				),
 			},
 		},
@@ -102,42 +77,11 @@ func TestAccCloudflareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareZoneSettingsEmpty(n string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("Not found: %s", n)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No Zone ID is set")
-		}
-
-		// Test if universal_ssl is not read from the API when it's not provided in the configuration
-		if rs.Primary.Attributes["initial_settings.0.universal_ssl"] != "" {
-			return fmt.Errorf("initial_settings.0.universal_ssl is not empty when it should be")
-		}
-
-		for k, v := range rs.Primary.Attributes {
-			if strings.Contains(k, "initial_settings") && k != "initial_settings_read_at" && !strings.Contains(k, "#") {
-				currentSettingKey := strings.TrimPrefix(k, "initial_")
-
-				currentVal := rs.Primary.Attributes[currentSettingKey]
-				if currentVal != "" && currentVal != "0" {
-					return fmt.Errorf("Current setting for %q: %q is not equal to initial setting for %q: %q",
-						currentSettingKey, rs.Primary.Attributes[currentSettingKey], k, v)
-				}
-			}
-		}
-		return nil
-	}
-}
-
 func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -226,7 +170,7 @@ func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]i
 				continue
 			}
 			if !reflect.DeepEqual(zs.Value, initialSettings[zs.ID]) {
-				return fmt.Errorf("Final setting for %q: %+v not equal to initial setting: %+v", zs.ID, zs.Value, initialSettings[zs.ID])
+				return fmt.Errorf("final setting for %q: %+v not equal to initial setting: %+v", zs.ID, zs.Value, initialSettings[zs.ID])
 			}
 		}
 		return nil

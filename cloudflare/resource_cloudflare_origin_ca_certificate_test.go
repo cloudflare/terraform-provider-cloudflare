@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
@@ -79,7 +79,7 @@ func testAccCheckCloudflareOriginCACertificateExists(name string, cert *cloudfla
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
 
 		if rs.Primary.ID == "" {
@@ -105,12 +105,12 @@ func testAccCheckCloudflareOriginCACertificateAttributes(zone string, cert *clou
 		}
 		expected := schema.NewSet(schema.HashString, []interface{}{zone, fmt.Sprintf("*.%s", zone)})
 		if actual.Difference(expected).Len() > 0 {
-			return fmt.Errorf("Incorrect hostnames: expected %v, got %v", expected, actual)
+			return fmt.Errorf("incorrect hostnames: expected %v, got %v", expected, actual)
 		}
 
 		block, _ := pem.Decode([]byte(cert.Certificate))
 		if block == nil {
-			return fmt.Errorf("Bad certificate: %s", cert.Certificate)
+			return fmt.Errorf("bad certificate: %s", cert.Certificate)
 		}
 
 		_, err := x509.ParseCertificate(block.Bytes)
@@ -119,7 +119,7 @@ func testAccCheckCloudflareOriginCACertificateAttributes(zone string, cert *clou
 		}
 
 		if !cert.ExpiresOn.After(time.Now()) {
-			return fmt.Errorf("Expiration date of new cert is in the past: %s", cert.ExpiresOn.Format(time.RFC3339))
+			return fmt.Errorf("expiration date of new cert is in the past: %s", cert.ExpiresOn.Format(time.RFC3339))
 		}
 
 		return nil

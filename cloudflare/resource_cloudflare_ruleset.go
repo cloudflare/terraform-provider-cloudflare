@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"regexp"
 	"sort"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -187,11 +188,25 @@ func resourceCloudflareRuleset() *schema.Resource {
 									"version": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"ruleset": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ValidateFunc: validation.StringInSlice([]string{"current"}, false),
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"rulesets": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+									"rules": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
 									},
 									"overrides": {
 										Type:     schema.TypeList,
@@ -244,6 +259,10 @@ func resourceCloudflareRuleset() *schema.Resource {
 															},
 															"score_threshold": {
 																Type:     schema.TypeInt,
+																Optional: true,
+															},
+															"sensitivity_level": {
+																Type:     schema.TypeString,
 																Optional: true,
 															},
 														},
@@ -319,7 +338,7 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 		Phase:       d.Get("phase").(string),
 	}
 
-	rules, err := buildRulesetRulesFromResource(d.Get("rules"))
+	rules, err := buildRulesetRulesFromResource(d.Get("phase").(string), d.Get("rules"))
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
 	}
@@ -401,7 +420,7 @@ func resourceCloudflareRulesetUpdate(d *schema.ResourceData, meta interface{}) e
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	rules, err := buildRulesetRulesFromResource(d.Get("rules"))
+	rules, err := buildRulesetRulesFromResource(d.Get("phase").(string), d.Get("rules"))
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
 	}
@@ -463,14 +482,16 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			var headers []map[string]interface{}
 			var uri []map[string]interface{}
 			var matchedData []map[string]interface{}
+			actionParameterRules := make(map[string]string)
 
 			if !reflect.ValueOf(r.ActionParameters.Overrides).IsNil() {
 				for _, overrideRule := range r.ActionParameters.Overrides.Rules {
 					idBasedOverrides = append(idBasedOverrides, map[string]interface{}{
-						"id":              overrideRule.ID,
-						"action":          overrideRule.Action,
-						"enabled":         overrideRule.Enabled,
-						"score_threshold": overrideRule.ScoreThreshold,
+						"id":                overrideRule.ID,
+						"action":            overrideRule.Action,
+						"enabled":           overrideRule.Enabled,
+						"score_threshold":   overrideRule.ScoreThreshold,
+						"sensitivity_level": overrideRule.SensitivityLevel,
 					})
 				}
 
@@ -541,6 +562,12 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				})
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.Rules).IsNil() {
+				for k, v := range r.ActionParameters.Rules {
+					actionParameterRules[k] = strings.Join(v, ",")
+				}
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
 				"id":           r.ActionParameters.ID,
 				"increment":    r.ActionParameters.Increment,
@@ -548,8 +575,11 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"overrides":    overrides,
 				"products":     r.ActionParameters.Products,
 				"ruleset":      r.ActionParameters.Ruleset,
+				"rulesets":     r.ActionParameters.Rulesets,
+				"rules":        actionParameterRules,
 				"uri":          uri,
 				"matched_data": matchedData,
+				"version":      r.ActionParameters.Version,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -575,7 +605,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 }
 
 // receives the resource config and builds a ruleset rule array
-func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, error) {
+func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.RulesetRule, error) {
 	var rulesetRules []cloudflare.RulesetRule
 
 	rules, ok := r.([]interface{})
@@ -598,8 +628,32 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 					switch pKey {
 					case "id":
 						rule.ActionParameters.ID = pValue.(string)
+					case "version":
+						rule.ActionParameters.Version = pValue.(string)
 					case "ruleset":
 						rule.ActionParameters.Ruleset = pValue.(string)
+					case "rulesets":
+						var rulesetsValues []string
+						for _, v := range pValue.(*schema.Set).List() {
+							rulesetsValues = append(rulesetsValues, v.(string))
+						}
+						rule.ActionParameters.Rulesets = rulesetsValues
+					case "rules":
+						apRules := make(map[string][]string)
+						for name, data := range pValue.(map[string]interface{}) {
+							// regex (not string.Split) needs to be used here to account for
+							// whitespace from the end user in the map value.
+							split := regexp.MustCompile("\\s*,\\s*").Split(data.(string), -1)
+							ruleValues := []string{}
+
+							for i := range split {
+								ruleValues = append(ruleValues, split[i])
+							}
+
+							apRules[name] = ruleValues
+						}
+
+						rule.ActionParameters.Rules = apRules
 					case "increment":
 						rule.ActionParameters.Increment = pValue.(int)
 					case "overrides":
@@ -623,11 +677,18 @@ func buildRulesetRulesFromResource(r interface{}) ([]cloudflare.RulesetRule, err
 							if val, ok := overrideParamValue.(map[string]interface{})["rules"]; ok {
 								for _, rule := range val.([]interface{}) {
 									rData := rule.(map[string]interface{})
+
+									var enabled *bool
+									if phase != string(cloudflare.RulesetPhaseDDoSL7) {
+										enabled = &[]bool{rData["enabled"].(bool)}[0]
+									}
+
 									rules = append(rules, cloudflare.RulesetRuleActionParametersRules{
-										ID:             rData["id"].(string),
-										Action:         rData["action"].(string),
-										Enabled:        rData["enabled"].(bool),
-										ScoreThreshold: rData["score_threshold"].(int),
+										ID:               rData["id"].(string),
+										Action:           rData["action"].(string),
+										Enabled:          enabled,
+										ScoreThreshold:   rData["score_threshold"].(int),
+										SensitivityLevel: rData["sensitivity_level"].(string),
 									})
 								}
 							}

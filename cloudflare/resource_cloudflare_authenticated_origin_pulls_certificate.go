@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
@@ -109,7 +109,8 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 				return resource.RetryableError(fmt.Errorf("expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			return nil
 		})
 	case aopType == "per-hostname":
 		perHostnameAOPCert := cloudflare.PerHostnameAuthenticatedOriginPullsCertificateParams{
@@ -132,7 +133,8 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 				return resource.RetryableError(fmt.Errorf("expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			return resource.NonRetryableError(resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta))
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			return nil
 		})
 	}
 	return nil
@@ -152,7 +154,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("Error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err)
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -167,7 +169,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("Error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err)
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -188,12 +190,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.Resou
 	case aopType == "per-zone":
 		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("Error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
 		}
 	case aopType == "per-hostname":
 		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("Error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
+			return fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
 		}
 	}
 	return nil

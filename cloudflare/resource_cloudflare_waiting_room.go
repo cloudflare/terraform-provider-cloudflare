@@ -8,7 +8,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWaitingRoom() *schema.Resource {
@@ -129,7 +129,7 @@ func resourceCloudflareWaitingRoomCreate(d *schema.ResourceData, meta interface{
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("Error creating waiting room %q: %s", name, err)
+		return fmt.Errorf("error creating waiting room %q: %s", name, err)
 	}
 
 	d.SetId(waitingRoom.ID)
@@ -150,7 +150,7 @@ func resourceCloudflareWaitingRoomRead(d *schema.ResourceData, meta interface{})
 			return nil
 		}
 		name := d.Get("name").(string)
-		return fmt.Errorf("Error getting waiting room %q: %s", name, err)
+		return fmt.Errorf("error getting waiting room %q: %s", name, err)
 	}
 	d.SetId(waitingRoom.ID)
 	d.Set("name", waitingRoom.Name)
@@ -179,7 +179,7 @@ func resourceCloudflareWaitingRoomUpdate(d *schema.ResourceData, meta interface{
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("Error updating waiting room %q: %s", name, err)
+		return fmt.Errorf("error updating waiting room %q: %s", name, err)
 	}
 
 	return resourceCloudflareWaitingRoomRead(d, meta)
@@ -194,7 +194,7 @@ func resourceCloudflareWaitingRoomDelete(d *schema.ResourceData, meta interface{
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("Error deleting waiting room %q: %s", name, err)
+		return fmt.Errorf("error deleting waiting room %q: %s", name, err)
 	}
 
 	return nil

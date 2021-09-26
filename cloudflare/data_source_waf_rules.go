@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareWAFRules() *schema.Resource {
@@ -174,7 +174,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 
 	err = d.Set("rules", ruleDetails)
 	if err != nil {
-		return fmt.Errorf("Error setting WAF rules: %s", err)
+		return fmt.Errorf("error setting WAF rules: %s", err)
 	}
 
 	d.SetId(stringListChecksum(ruleIds))

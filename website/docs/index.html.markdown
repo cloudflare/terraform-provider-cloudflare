@@ -20,8 +20,6 @@ Try the [Host a Static Website with S3 and Cloudflare](https://learn.hashicorp.c
 
 ## Example Usage
 
-### Terraform >= 0.13
-
 ```hcl
 # Configure the Cloudflare provider using the required_providers stanza required with Terraform 0.13 and beyond
 # You may optionally use version directive to prevent breaking changes occurring unannounced.
@@ -29,36 +27,14 @@ terraform {
   required_providers {
     cloudflare = {
       source = "cloudflare/cloudflare"
-      version = "~> 2.0"
+      version = "~> 3.0"
     }
   }
 }
 
-provider "cloudflare" { 
+provider "cloudflare" {
   email   = var.cloudflare_email
   api_key = var.cloudflare_api_key
-}
-
-# Create a record
-resource "cloudflare_record" "www" {
-  # ...
-}
-
-# Create a page rule
-resource "cloudflare_page_rule" "www" {
-  # ...
-}
-```
-
-### Terraform < 0.13
-
-```hcl
-# Configure the Cloudflare provider.
-# You may optionally use version directive to prevent breaking changes occurring unannounced.
-provider "cloudflare" {
-  version = "~> 2.0"
-  email   = "${var.cloudflare_email}"
-  api_key = "${var.cloudflare_api_key}"
 }
 
 # Create a record
@@ -84,8 +60,8 @@ The following arguments are supported:
   with the `CLOUDFLARE_API_TOKEN` shell environment variable. This is an
   alternative to `email`+`api_key`. If both are specified, `api_token` will be
   used over `email`+`api_key` fields.
-* `api_user_service_key` - (Optional) The Cloudflare API User Service Key. This can also be specified 
-  with the `CLOUDFLARE_API_USER_SERVICE_KEY` shell environment variable. The value is 
+* `api_user_service_key` - (Optional) The Cloudflare API User Service Key. This can also be specified
+  with the `CLOUDFLARE_API_USER_SERVICE_KEY` shell environment variable. The value is
   to be used in combination with an `api_token`, or `email` and `api_key`.
   This is used for a specific set of endpoints, such as creating Origin CA certificates.
 * `rps` - (Optional) RPS limit to apply when making calls to the API. Default: 4.

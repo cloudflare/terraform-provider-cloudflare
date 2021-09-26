@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/customdiff"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessServiceToken() *schema.Resource {
@@ -63,7 +63,7 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessServiceTokenExpireDiff(d *schema.ResourceDiff, m interface{}) bool {
+func resourceCloudflareAccessServiceTokenExpireDiff(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
 	mindays := d.Get("min_days_for_renewal").(int)
 	if mindays > 0 {
 		expires_at := d.Get("expires_at").(string)

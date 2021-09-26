@@ -11,8 +11,8 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareOriginCACertificate() *schema.Resource {
@@ -56,10 +56,8 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 			"requested_validity": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				Computed:     true,
 				ValidateFunc: validation.IntInSlice([]int{7, 30, 90, 365, 730, 1095, 5475}),
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 		},
 	}
@@ -83,16 +81,15 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 		certInput.CSR = csr.(string)
 	}
 
-	requestValidity, ok := d.GetOk("requested_validity")
-	if ok {
+	if requestValidity, ok := d.GetOk("requested_validity"); ok {
 		certInput.RequestValidity = requestValidity.(int)
 	}
 
-	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: hostnames %v", hostnames)
+	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: %#v", certInput)
 	cert, err := client.CreateOriginCertificate(context.Background(), certInput)
 
 	if err != nil {
-		return fmt.Errorf("Error creating origin certificate: %s", err)
+		return fmt.Errorf("error creating origin certificate: %s", err)
 	}
 
 	d.SetId(cert.ID)
@@ -113,7 +110,7 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding OriginCACertificate %q: %s", certID, err)
+		return fmt.Errorf("error finding OriginCACertificate %q: %s", certID, err)
 	}
 
 	if cert.RevokedAt != (time.Time{}) {
@@ -157,7 +154,7 @@ func resourceCloudflareOriginCACertificateDelete(d *schema.ResourceData, meta in
 	_, err := client.RevokeOriginCertificate(context.Background(), certID)
 
 	if err != nil {
-		return fmt.Errorf("Error revoking Cloudflare OriginCACertificate: %s", err)
+		return fmt.Errorf("error revoking Cloudflare OriginCACertificate: %s", err)
 	}
 
 	d.SetId("")

@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareAccessPolicy() *schema.Resource {
@@ -66,8 +66,70 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 				Required: true,
 				Elem:     AccessGroupOptionSchemaElement,
 			},
+			"purpose_justification_required": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+			"purpose_justification_prompt": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				RequiredWith: []string{"purpose_justification_required"},
+			},
+			"approval_group": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     AccessPolicyApprovalGroupElement,
+			},
 		},
 	}
+}
+
+var AccessPolicyApprovalGroupElement = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"email_list_uuid": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"email_addresses": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+		"approvals_needed": {
+			Type:         schema.TypeInt,
+			Required:     true,
+			ValidateFunc: validation.IntAtLeast(0),
+		},
+	},
+}
+
+func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprovalGroup) map[string]interface{} {
+	data := make(map[string]interface{})
+	data["approvals_needed"] = approvalGroup.ApprovalsNeeded
+
+	if approvalGroup.EmailAddresses != nil {
+		data["email_addresses"] = approvalGroup.EmailAddresses
+	}
+
+	if approvalGroup.EmailListUuid != "" {
+		data["email_list_uuid"] = approvalGroup.EmailListUuid
+	}
+	return data
+}
+
+func schemaAccessPolicyApprovalGroupToAPI(data map[string]interface{}) cloudflare.AccessApprovalGroup {
+	var approvalGroup cloudflare.AccessApprovalGroup
+
+	approvalGroup.ApprovalsNeeded, _ = data["approvals_needed"].(int)
+	approvalGroup.EmailListUuid, _ = data["email_list_uuid"].(string)
+
+	if emailAddresses, ok := data["email_addresses"].([]interface{}); ok {
+		approvalGroup.EmailAddresses = expandInterfaceToStringList(emailAddresses)
+	}
+
+	return approvalGroup
 }
 
 func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}) error {
@@ -91,7 +153,7 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Access Policy %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Access Policy %q: %s", d.Id(), err)
 	}
 
 	d.Set("name", accessPolicy.Name)
@@ -108,6 +170,24 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 
 	if err := d.Set("include", TransformAccessGroupForSchema(accessPolicy.Include)); err != nil {
 		return fmt.Errorf("failed to set include attribute: %s", err)
+	}
+
+	if accessPolicy.PurposeJustificationRequired != nil {
+		d.Set("purpose_justification_required", accessPolicy.PurposeJustificationRequired)
+	}
+
+	if accessPolicy.PurposeJustificationPrompt != nil {
+		d.Set("purpose_justification_prompt", accessPolicy.PurposeJustificationPrompt)
+	}
+
+	if len(accessPolicy.ApprovalGroups) != 0 {
+		approvalGroups := make([]map[string]interface{}, 0, len(accessPolicy.ApprovalGroups))
+		for _, apiApprovalGroup := range accessPolicy.ApprovalGroups {
+			approvalGroups = append(approvalGroups, apiAccessPolicyApprovalGroupToSchema(apiApprovalGroup))
+		}
+		if err := d.Set("approval_group", approvalGroups); err != nil {
+			return fmt.Errorf("failed to set approval_group attribute: %s", err)
+		}
 	}
 
 	return nil
@@ -257,6 +337,18 @@ func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *sche
 		if value != nil {
 			policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
 		}
+	}
+
+	purposeJustificationRequired := d.Get("purpose_justification_required").(bool)
+	policy.PurposeJustificationRequired = &purposeJustificationRequired
+
+	purposeJustificationPrompt := d.Get("purpose_justification_prompt").(string)
+	policy.PurposeJustificationPrompt = &purposeJustificationPrompt
+
+	approvalGroups := d.Get("approval_group").([]interface{})
+	for _, approvalGroup := range approvalGroups {
+		approvalGroupAsMap := approvalGroup.(map[string]interface{})
+		policy.ApprovalGroups = append(policy.ApprovalGroups, schemaAccessPolicyApprovalGroupToAPI(approvalGroupAsMap))
 	}
 
 	return policy

@@ -9,10 +9,10 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func init() {
@@ -152,7 +152,7 @@ func testAccCheckCloudflareZonesDataSourceID(n string) resource.TestCheckFunc {
 		all := s.RootModule().Resources
 		rs, ok := all[n]
 		if !ok {
-			return fmt.Errorf("Can't find zones data source: %s", n)
+			return fmt.Errorf("can't find zones data source: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -167,7 +167,7 @@ func testAccCheckCloudflareZonesReturned(n string, a string, check func(int) boo
 		all := s.RootModule().Resources
 		rs, ok := all[n]
 		if !ok {
-			return fmt.Errorf("Can't find zones data source: %s", n)
+			return fmt.Errorf("can't find zones data source: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
@@ -176,7 +176,7 @@ func testAccCheckCloudflareZonesReturned(n string, a string, check func(int) boo
 
 		count, _ := strconv.Atoi(rs.Primary.Attributes[a])
 		if !check(count) {
-			return fmt.Errorf("Error evaluating %s.%s actual count: %d", n, a, count)
+			return fmt.Errorf("error evaluating %s.%s actual count: %d", n, a, count)
 		}
 		return nil
 	}

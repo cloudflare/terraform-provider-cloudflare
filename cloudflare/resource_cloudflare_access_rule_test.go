@@ -2,10 +2,9 @@ package cloudflare
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccAccessRuleASN(t *testing.T) {
@@ -20,8 +19,18 @@ func TestAccAccessRuleASN(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
-					resource.TestCheckResourceAttr(name, "configuration.target", "asn"),
-					resource.TestCheckResourceAttr(name, "configuration.value", "AS112"),
+					resource.TestCheckResourceAttr(name, "configuration.0.target", "asn"),
+					resource.TestCheckResourceAttr(name, "configuration.0.value", "AS112"),
+				),
+			},
+			{
+				// Note: Only notes + mode can be changed in place.
+				Config: testAccessRuleAccountConfig("block", "this is updated notes", "asn", "AS112"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
+					resource.TestCheckResourceAttr(name, "mode", "block"),
+					resource.TestCheckResourceAttr(name, "configuration.0.target", "asn"),
+					resource.TestCheckResourceAttr(name, "configuration.0.value", "AS112"),
 				),
 			},
 		},
@@ -36,15 +45,22 @@ func TestAccAccessRuleIPRange(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccessRuleAccountConfig("challenge", "this is notes", "ip_range", "104.16.0.0/20"),
-				ExpectError: regexp.MustCompile("ip_range with ipv4 address must be a /16 or /24, got a /20"),
-			}, {
 				Config: testAccessRuleAccountConfig("challenge", "this is notes", "ip_range", "104.16.0.0/24"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
-					resource.TestCheckResourceAttr(name, "configuration.target", "ip_range"),
-					resource.TestCheckResourceAttr(name, "configuration.value", "104.16.0.0/24"),
+					resource.TestCheckResourceAttr(name, "configuration.0.target", "ip_range"),
+					resource.TestCheckResourceAttr(name, "configuration.0.value", "104.16.0.0/24"),
+				),
+			},
+			{
+				// Note: Only notes + mode can be changed in place.
+				Config: testAccessRuleAccountConfig("block", "this is updated notes", "ip_range", "104.16.0.0/24"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
+					resource.TestCheckResourceAttr(name, "mode", "block"),
+					resource.TestCheckResourceAttr(name, "configuration.0.target", "ip_range"),
+					resource.TestCheckResourceAttr(name, "configuration.0.value", "104.16.0.0/24"),
 				),
 			},
 		},
@@ -56,7 +72,7 @@ func testAccessRuleAccountConfig(mode, notes, target, value string) string {
 resource "cloudflare_access_rule" "test" {
   notes = "%[2]s"
   mode = "%[1]s"
-  configuration =	 {
+  configuration {
     target = "%[3]s"
     value = "%[4]s"
   }

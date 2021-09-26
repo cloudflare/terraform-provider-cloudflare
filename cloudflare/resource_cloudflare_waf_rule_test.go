@@ -7,11 +7,13 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "100000"
@@ -48,6 +50,8 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareWAFRule_CreateThenUpdate_SimpleModes(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	ruleID := "950000"
@@ -97,7 +101,7 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 		}
 
 		if rule.Mode != "default" && rule.Mode != "on" {
-			return fmt.Errorf("Expected mode to be reset to default, got: %s", rule.Mode)
+			return fmt.Errorf("expected mode to be reset to default, got: %s", rule.Mode)
 		}
 	}
 

@@ -7,11 +7,13 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareWAFGroup_CreateThenUpdate(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	groupID, err := testAccGetWAFGroup(zoneID)
@@ -94,7 +96,7 @@ func testAccCheckCloudflareWAFGroupDestroy(s *terraform.State) error {
 		}
 
 		if group.Mode != "on" {
-			return fmt.Errorf("Expected mode to be reset to on, got: %s", group.Mode)
+			return fmt.Errorf("expected mode to be reset to on, got: %s", group.Mode)
 		}
 	}
 

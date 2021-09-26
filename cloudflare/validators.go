@@ -24,7 +24,7 @@ func validateRecordType(t string, proxied bool) error {
 			`Invalid type %q. Valid types are "A", "AAAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CAA", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI" or "PTR.`, t)
 	}
 
-	return fmt.Errorf("Type %q cannot be proxied", t)
+	return fmt.Errorf("type %q cannot be proxied", t)
 }
 
 // validateRecordName ensures that based on supplied record type, the name content matches

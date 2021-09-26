@@ -6,11 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareWAFRules_NoFilter(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -32,6 +34,8 @@ func TestAccCloudflareWAFRules_NoFilter(t *testing.T) {
 }
 
 func TestAccCloudflareWAFRules_MatchDescription(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -53,6 +57,8 @@ func TestAccCloudflareWAFRules_MatchDescription(t *testing.T) {
 }
 
 func TestAccCloudflareWAFRules_MatchMode(t *testing.T) {
+	skipV1WAFTestForNonConfiguredDefaultZone(t)
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -77,7 +83,7 @@ func testAccCheckCloudflareWAFRulesDataSourceID(n string) resource.TestCheckFunc
 		all := s.RootModule().Resources
 		rs, ok := all[n]
 		if !ok {
-			return fmt.Errorf("Can't find WAF Rules data source: %s", n)
+			return fmt.Errorf("can't find WAF Rules data source: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

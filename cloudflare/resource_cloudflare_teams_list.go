@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareTeamsList() *schema.Resource {
@@ -89,7 +89,7 @@ func resourceCloudflareTeamsListRead(d *schema.ResourceData, meta interface{}) e
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error finding Teams List %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Teams List %q: %s", d.Id(), err)
 	}
 
 	d.Set("name", list.Name)
@@ -98,7 +98,7 @@ func resourceCloudflareTeamsListRead(d *schema.ResourceData, meta interface{}) e
 
 	listItems, _, err := client.TeamsListItems(context.Background(), accountID, d.Id())
 	if err != nil {
-		return fmt.Errorf("Error finding Teams List %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding Teams List %q: %s", d.Id(), err)
 	}
 	d.Set("items", convertListItemsToSchema(listItems))
 

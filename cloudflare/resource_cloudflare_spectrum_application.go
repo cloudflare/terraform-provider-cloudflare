@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -210,7 +210,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 			return nil
 		}
 		return errors.Wrap(err,
-			fmt.Sprintf("Error reading spectrum application resource from API for resource %s in zone %s", zoneID, applicationID))
+			fmt.Sprintf("Error reading spectrum application resource from API for resource %s in zone %s", applicationID, zoneID))
 	}
 
 	d.Set("protocol", application.Protocol)

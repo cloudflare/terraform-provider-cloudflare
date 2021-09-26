@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareZoneDNSSEC(t *testing.T) {
@@ -45,7 +45,7 @@ func testAccCheckCloudflareZoneDNSSECDataSourceID(n string) resource.TestCheckFu
 		all := s.RootModule().Resources
 		rs, ok := all[n]
 		if !ok {
-			return fmt.Errorf("Can't find Zone DNSSEC data source: %s", n)
+			return fmt.Errorf("can't find Zone DNSSEC data source: %s", n)
 		}
 
 		if rs.Primary.ID == "" {

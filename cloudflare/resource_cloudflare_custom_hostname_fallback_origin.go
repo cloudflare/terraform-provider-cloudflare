@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
@@ -102,7 +102,8 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
 		d.SetId(id)
 
-		return resource.NonRetryableError(resourceCloudflareCustomHostnameFallbackOriginRead(d, meta))
+		resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
+		return nil
 	})
 
 }
@@ -125,7 +126,8 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 			return resource.NonRetryableError(errors.Wrap(err, "failed to update custom hostname fallback origin"))
 		}
 
-		return resource.NonRetryableError(resourceCloudflareCustomHostnameFallbackOriginRead(d, meta))
+		resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
+		return nil
 	})
 }
 

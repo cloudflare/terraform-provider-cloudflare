@@ -4,13 +4,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
+
+const (
+	// Provider name for single configuration testing
+	ProviderNameCloudflare = "cloudflare"
 )
 
 var (
-	testAccProviders map[string]terraform.ResourceProvider
+	testAccProviders map[string]*schema.Provider
 	testAccProvider  *schema.Provider
 
 	// Integration test account ID
@@ -28,20 +32,20 @@ var (
 )
 
 func init() {
-	testAccProvider = Provider().(*schema.Provider)
-	testAccProviders = map[string]terraform.ResourceProvider{
-		"cloudflare": testAccProvider,
+	testAccProvider = Provider()
+	testAccProviders = map[string]*schema.Provider{
+		ProviderNameCloudflare: testAccProvider,
 	}
 }
 
 func TestProvider(t *testing.T) {
-	if err := Provider().(*schema.Provider).InternalValidate(); err != nil {
+	if err := Provider().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }
 
 func TestProvider_impl(t *testing.T) {
-	var _ terraform.ResourceProvider = Provider()
+	var _ *schema.Provider = Provider()
 }
 
 type preCheckFunc = func(*testing.T)
@@ -136,5 +140,15 @@ func generateRandomResourceName() string {
 func skipMagicTransitTestForNonConfiguredDefaultZone(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
 		t.Skipf("Skipping acceptance test as %s is not configured for Magic Transit", testAccCloudflareZoneID)
+	}
+}
+
+// skipV1WAFTestForNonConfiguredDefaultZone ignores the V1 WAF test assertions
+// as the versions are mutually exclusive and the default zone ID uses V2 WAF.
+// This will allow those who intentionally want to run the test to do so while
+// keeping CI sane.
+func skipV1WAFTestForNonConfiguredDefaultZone(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
+		t.Skipf("Skipping acceptance test as %s is using WAF v2 and cannot assert v1 resource configurations", testAccCloudflareZoneID)
 	}
 }
