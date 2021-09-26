@@ -14,6 +14,7 @@ func resourceCloudflareSplitTunnel() *schema.Resource {
 		Read:   resourceCloudflareSplitTunnelRead,
 		Create: resourceCloudflareSplitTunnelCreate,
 		Update: resourceCloudflareSplitTunnelUpdate,
+		Delete: resourceCloudflareSplitTunnelDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -140,6 +141,8 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("error setting %q Split Tunnels: %q", mode, err)
 	}
 
+
+func resourceCloudflareSplitTunnelDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
