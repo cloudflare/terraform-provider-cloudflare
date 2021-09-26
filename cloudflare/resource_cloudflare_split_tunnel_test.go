@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccCloudflareSplitTunnelInclude(t *testing.T) {
@@ -64,7 +64,7 @@ func testAccCheckCloudflareSplitTunnelIncludeDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.ListSplitTunnel(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.Attributes["mode"])
+		_, err := client.ListSplitTunnels(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.Attributes["mode"])
 		if err == nil {
 			return fmt.Errorf("Split Tunnel Include still exists")
 		}
@@ -126,7 +126,7 @@ func testAccCheckCloudflareSplitTunnelExcludeDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.ListSplitTunnel(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.Attributes["mode"])
+		_, err := client.ListSplitTunnels(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.Attributes["mode"])
 		if err == nil {
 			return fmt.Errorf("Split Tunnel Exclude still exists")
 		}

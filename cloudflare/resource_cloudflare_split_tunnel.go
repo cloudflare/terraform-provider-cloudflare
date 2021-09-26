@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareSplitTunnel() *schema.Resource {
@@ -63,7 +63,7 @@ func resourceCloudflareSplitTunnelRead(d *schema.ResourceData, meta interface{})
 
 	splitTunnel, err := client.ListSplitTunnels(context.Background(), accountID, mode)
 	if err != nil {
-		return fmt.Errorf("Error finding %q Split Tunnels %q", mode, err)
+		return fmt.Errorf("error finding %q Split Tunnels %q", mode, err)
 	}
 
 	tunnelList := make([]cloudflare.SplitTunnel, 0)
@@ -77,7 +77,7 @@ func resourceCloudflareSplitTunnelRead(d *schema.ResourceData, meta interface{})
 
 	err = d.Set("tunnels", tunnelList)
 	if err != nil {
-		return fmt.Errorf("Error setting %q Split Tunnels: %q", mode, err)
+		return fmt.Errorf("error setting %q tunnels attribute: %q", mode, err)
 	}
 
 	return nil
@@ -97,7 +97,7 @@ func resourceCloudflareSplitTunnelCreate(d *schema.ResourceData, meta interface{
 
 	err := d.Set("tunnels", newTunnel)
 	if err != nil {
-		return fmt.Errorf("Error creating new split tunnel: %q", err)
+		return fmt.Errorf("error creating new split tunnel: %q", err)
 	}
 
 	return nil
@@ -132,12 +132,12 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 
 	newSplitTunnels, err := client.UpdateSplitTunnel(context.Background(), accountID, mode, tunnelList)
 	if err != nil {
-		return fmt.Errorf("Error updating %q Split Tunnels %q", mode, err)
+		return fmt.Errorf("error updating %q Split Tunnels %q", mode, err)
 	}
 
 	d.Set("tunnels", newSplitTunnels)
 	if err != nil {
-		return fmt.Errorf("Error setting %q Split Tunnels: %q", mode, err)
+		return fmt.Errorf("error setting %q Split Tunnels: %q", mode, err)
 	}
 
 	return nil
