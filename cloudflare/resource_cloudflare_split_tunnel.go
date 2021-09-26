@@ -12,7 +12,7 @@ import (
 func resourceCloudflareSplitTunnel() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceCloudflareSplitTunnelRead,
-		Create: resourceCloudflareSplitTunnelCreate,
+		Create: resourceCloudflareSplitTunnelUpdate, // Intentionally identical to Update as the resource is always present
 		Update: resourceCloudflareSplitTunnelUpdate,
 		Delete: resourceCloudflareSplitTunnelDelete,
 		Importer: &schema.ResourceImporter{
@@ -79,26 +79,6 @@ func resourceCloudflareSplitTunnelRead(d *schema.ResourceData, meta interface{})
 	err = d.Set("tunnels", tunnelList)
 	if err != nil {
 		return fmt.Errorf("error setting %q tunnels attribute: %q", mode, err)
-	}
-
-	return nil
-}
-
-func resourceCloudflareSplitTunnelCreate(d *schema.ResourceData, meta interface{}) error {
-	newTunnel := cloudflare.SplitTunnel{}
-	if inputAddress, ok := d.GetOk("address"); ok {
-		newTunnel.Address = inputAddress.(string)
-	}
-	if inputHost, ok := d.GetOk("host"); ok {
-		newTunnel.Host = inputHost.(string)
-	}
-	if inputDescription, ok := d.GetOk("description"); ok {
-		newTunnel.Description = inputDescription.(string)
-	}
-
-	err := d.Set("tunnels", newTunnel)
-	if err != nil {
-		return fmt.Errorf("error creating new split tunnel: %q", err)
 	}
 
 	return nil
