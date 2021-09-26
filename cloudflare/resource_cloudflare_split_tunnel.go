@@ -109,8 +109,6 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 
 	tunnelList = append(tunnelList, newTunnel)
 
-	d.SetId(accountID)
-
 	newSplitTunnels, err := client.UpdateSplitTunnel(context.Background(), accountID, mode, tunnelList)
 	if err != nil {
 		return fmt.Errorf("error updating %q Split Tunnels %q", mode, err)
@@ -121,6 +119,7 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("error setting %q Split Tunnels: %q", mode, err)
 	}
 
+	d.SetId(accountID)
 
 func resourceCloudflareSplitTunnelDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
