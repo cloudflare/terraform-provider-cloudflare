@@ -7,6 +7,7 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/pkg/errors"
 )
 
 func resourceCloudflareSplitTunnel() *schema.Resource {
@@ -64,21 +65,11 @@ func resourceCloudflareSplitTunnelRead(d *schema.ResourceData, meta interface{})
 
 	splitTunnel, err := client.ListSplitTunnels(context.Background(), accountID, mode)
 	if err != nil {
-		return fmt.Errorf("error finding %q Split Tunnels %q", mode, err)
+		return fmt.Errorf("error finding %q Split Tunnels: %s", mode, err)
 	}
 
-	tunnelList := make([]cloudflare.SplitTunnel, 0)
-	for _, t := range splitTunnel {
-		tunnelList = append(tunnelList, cloudflare.SplitTunnel{
-			Address:     t.Address,
-			Host:        t.Host,
-			Description: t.Description,
-		})
-	}
-
-	err = d.Set("tunnels", tunnelList)
-	if err != nil {
-		return fmt.Errorf("error setting %q tunnels attribute: %q", mode, err)
+	if err := d.Set("tunnels", flattenSplitTunnels(splitTunnel)); err != nil {
+		return fmt.Errorf("error setting %q tunnels attribute: %s", mode, err)
 	}
 
 	return nil
@@ -89,34 +80,18 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
 
-	// get all of the existing split tunnels
-	existingTunnels := d.Get("tunnels")
-	tunnels := existingTunnels.([]cloudflare.SplitTunnel)
-	tunnelList := make([]cloudflare.SplitTunnel, 0)
-	tunnelList = append(tunnelList, tunnels...)
-
-	// add the new split tunnel
-	newTunnel := cloudflare.SplitTunnel{}
-	if inputAddress, ok := d.GetOk("address"); ok {
-		newTunnel.Address = inputAddress.(string)
+	tunnelList, err := expandSplitTunnels(d.Get("tunnels").([]interface{}))
+	if err != nil {
+		return fmt.Errorf("error updating %q Split Tunnels: %s", mode, err)
 	}
-	if inputHost, ok := d.GetOk("host"); ok {
-		newTunnel.Host = inputHost.(string)
-	}
-	if inputDescription, ok := d.GetOk("description"); ok {
-		newTunnel.Description = inputDescription.(string)
-	}
-
-	tunnelList = append(tunnelList, newTunnel)
 
 	newSplitTunnels, err := client.UpdateSplitTunnel(context.Background(), accountID, mode, tunnelList)
 	if err != nil {
-		return fmt.Errorf("error updating %q Split Tunnels %q", mode, err)
+		return fmt.Errorf("error updating %q Split Tunnels: %s", mode, err)
 	}
 
-	d.Set("tunnels", newSplitTunnels)
-	if err != nil {
-		return fmt.Errorf("error setting %q Split Tunnels: %q", mode, err)
+	if err := d.Set("tunnels", flattenSplitTunnels(newSplitTunnels)); err != nil {
+		return fmt.Errorf("error setting %q tunnels attribute: %s", mode, err)
 	}
 
 	d.SetId(accountID)
@@ -139,4 +114,40 @@ func resourceCloudflareSplitTunnelImport(d *schema.ResourceData, meta interface{
 	resourceCloudflareSplitTunnelRead(d, meta)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+// flattenSplitTunnels accepts the cloudflare.SplitTunnel struct and returns the
+// schema representation for use in Terraform state.
+func flattenSplitTunnels(tunnels []cloudflare.SplitTunnel) []interface{} {
+	schemaTunnels := make([]interface{}, 0)
+
+	for _, t := range tunnels {
+		schemaTunnels = append(schemaTunnels, map[string]interface{}{
+			"address":     t.Address,
+			"host":        t.Host,
+			"description": t.Description,
+		})
+	}
+
+	return schemaTunnels
+}
+
+// expandSplitTunnels accepts the schema representation of Split Tunnels and
+// returns a fully qualified struct.
+func expandSplitTunnels(tunnels []interface{}) ([]cloudflare.SplitTunnel, error) {
+	tunnelList := make([]cloudflare.SplitTunnel, 0)
+
+	for _, tunnel := range tunnels {
+		if tunnel.(map[string]interface{})["address"].(string) != "" && tunnel.(map[string]interface{})["host"].(string) != "" {
+			return []cloudflare.SplitTunnel{}, errors.New("address and host are mutually exclusive and cannot be applied together in the same block")
+		}
+
+		tunnelList = append(tunnelList, cloudflare.SplitTunnel{
+			Address:     tunnel.(map[string]interface{})["address"].(string),
+			Host:        tunnel.(map[string]interface{})["host"].(string),
+			Description: tunnel.(map[string]interface{})["description"].(string),
+		})
+	}
+
+	return tunnelList, nil
 }
