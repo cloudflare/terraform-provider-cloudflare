@@ -100,6 +100,13 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudflareSplitTunnelDelete(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
+	mode := d.Get("mode").(string)
+
+	client.UpdateSplitTunnel(context.Background(), accountID, mode, nil)
+
+	d.SetId("")
 	return nil
 }
 
