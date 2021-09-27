@@ -48,3 +48,11 @@ The following arguments are supported:
 - `address` - (Optional) The address in CIDR format to include in the tunnel configuration. Conflicts with `"host"`.
 - `host` - (Optional) The domain name to include in the tunnel configuration. Conflicts with `"address"`.
 - `description` - (Optional) The description of the tunnel.
+
+## Import
+
+Split Tunnels can be imported using the account identifer.
+
+```
+$ terraform import cloudflare_split_tunnel.example 1d5fdc9e88c8a8c4518b068cd94331fe
+```
