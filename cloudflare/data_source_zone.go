@@ -97,7 +97,14 @@ func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("status", zone.Status)
 	d.Set("paused", zone.Paused)
 	d.Set("plan", zone.Plan.Name)
-	d.Set("name_servers", zone.NameServers)
-	d.Set("vanity_name_servers", zone.VanityNS)
+
+	if err := d.Set("name_servers", zone.NameServers); err != nil {
+		return fmt.Errorf("failed to set name_servers attribute: %s", err)
+	}
+
+	if err := d.Set("vanity_name_servers", zone.VanityNS); err != nil {
+		return fmt.Errorf("failed to set vanity_name_servers attribute: %s", err)
+	}
+
 	return nil
 }
