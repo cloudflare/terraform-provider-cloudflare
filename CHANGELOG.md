@@ -1,5 +1,9 @@
 ## 3.2.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_zone` ([#1213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1213))
+
 ENHANCEMENTS:
 
 * provider: add support for debugging via debuggers (like delve) ([#1217](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1217))
