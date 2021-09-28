@@ -44,13 +44,17 @@ func dataSourceCloudflareZone() *schema.Resource {
 				Computed: true,
 			},
 			"name_servers": {
-				Type:     schema.TypeList,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 				Computed: true,
 			},
 			"vanity_name_servers": {
-				Type:     schema.TypeList,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 				Computed: true,
 			},
 		},
@@ -74,7 +78,7 @@ func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) erro
 		}
 
 		if zonesResp.Total > 1 {
-			return fmt.Errorf("more than one zone was returned; consider using `cloudflare_zones` data source with filtering to target the zone more specifically")
+			return fmt.Errorf("more than one zone was returned; consider adding the `account_id` to the existing resource or use the `cloudflare_zones` data source with filtering to target the zone more specifically")
 		}
 
 		if zonesResp.Total == 0 {
@@ -84,7 +88,7 @@ func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) erro
 		zone = zonesResp.Result[0]
 	} else {
 		var err error
-		zone, err = client.ZoneDetails(context.Background(), zoneID.(string))
+		zone, err = client.ZoneDetails(context.Background(), zoneID)
 		if err != nil {
 			return fmt.Errorf("error getting zone details: %s", err)
 		}
