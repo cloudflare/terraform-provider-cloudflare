@@ -3,9 +3,10 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"log"
 )
 
 func dataSourceCloudflareZone() *schema.Resource {
@@ -14,10 +15,10 @@ func dataSourceCloudflareZone() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				Computed:      true,
-				ConflictsWith: []string{"name"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ExactlyOneOf: []string{"zone_id", "name"},
 			},
 			"account_id": {
 				Type:     schema.TypeString,
@@ -25,10 +26,10 @@ func dataSourceCloudflareZone() *schema.Resource {
 				Computed: true,
 			},
 			"name": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				Computed:      true,
-				ConflictsWith: []string{"zone_id"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ExactlyOneOf: []string{"zone_id", "name"},
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -59,27 +60,13 @@ func dataSourceCloudflareZone() *schema.Resource {
 func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] Reading Zones")
 	client := meta.(*cloudflare.API)
-
-	zoneID, zoneIDExists := d.GetOk("zone_id")
-	zoneID = zoneID.(string)
-
-	name, nameExists := d.GetOk("name")
-	name = name.(string)
-
-	accountID := d.Get("account_id")
-	accountID = accountID.(string)
-
-	if nameExists && zoneIDExists {
-		return fmt.Errorf("zone_id and name arguments can't be used together")
-	}
-
-	if !nameExists && !zoneIDExists {
-		return fmt.Errorf("either zone_id or name must be set")
-	}
+	zoneID := d.Get("zone_id").(string)
+	name := d.Get("name").(string)
+	accountID := d.Get("account_id").(string)
 
 	var zone cloudflare.Zone
-	if nameExists && !zoneIDExists { // if only the name was provided
-		zoneFilter := cloudflare.WithZoneFilters(name.(string), accountID.(string), "")
+	if name != "" && zoneID == "" {
+		zoneFilter := cloudflare.WithZoneFilters(name, accountID, "")
 		zonesResp, err := client.ListZonesContext(context.Background(), zoneFilter)
 
 		if err != nil {
