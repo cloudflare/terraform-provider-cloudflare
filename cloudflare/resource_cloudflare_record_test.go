@@ -190,7 +190,16 @@ func TestAccCloudflareRecord_CAA(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigCAA(rnd, zoneID, fmt.Sprintf("tf-acctest-caa.%s", domain)),
+				Config: testAccCheckCloudflareRecordConfigCAA(rnd, zoneID, fmt.Sprintf("tf-acctest-caa.%s", domain), 600),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(resourceName, "data.0.flags", "0"),
+					resource.TestCheckResourceAttr(resourceName, "data.0.tag", "issue"),
+					resource.TestCheckResourceAttr(resourceName, "data.0.value", "letsencrypt.org"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigCAA(rnd, zoneID, fmt.Sprintf("tf-acctest-caa.%s", domain), 300),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(resourceName, "data.0.flags", "0"),
@@ -636,7 +645,7 @@ resource "cloudflare_record" "%[3]s" {
 }`, zoneID, name, rnd)
 }
 
-func testAccCheckCloudflareRecordConfigCAA(resourceName, zoneID, name string) string {
+func testAccCheckCloudflareRecordConfigCAA(resourceName, zoneID, name string, ttl int) string {
 	return fmt.Sprintf(`
 resource "cloudflare_record" "%[1]s" {
   zone_id = "%[2]s"
@@ -647,8 +656,8 @@ resource "cloudflare_record" "%[1]s" {
     value = "letsencrypt.org"
   }
   type = "CAA"
-  ttl = 600
-}`, resourceName, zoneID, name)
+  ttl = %[4]d
+}`, resourceName, zoneID, name, ttl)
 }
 
 func testAccCheckCloudflareRecordConfigProxied(zoneID, domain, name, rnd string) string {
