@@ -766,6 +766,7 @@ func TestAccCloudflareAccessPolicyApprovalGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
 					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
+					resource.TestCheckResourceAttr(name, "approval_required", "true"),
 					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.0", "test1@example.com"),
 					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.1", "test2@example.com"),
 					resource.TestCheckResourceAttr(name, "approval_group.0.email_addresses.2", "test3@example.com"),
@@ -795,6 +796,7 @@ func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) str
 
       purpose_justification_required = "true"
       purpose_justification_prompt = "Why should we let you in?"
+      approval_required = "true"
 
       include {
         email = ["a@example.com", "b@example.com"]
