@@ -507,7 +507,8 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	newDataMap := make(map[string]interface{})
 
 	if dataOk {
-		for id, value := range data.(map[string]interface{}) {
+		dataMap := data.([]interface{})[0]
+		for id, value := range dataMap.(map[string]interface{}) {
 			newData, err := transformToCloudflareDNSData(updateRecord.Type, id, value)
 			if err != nil {
 				return err
