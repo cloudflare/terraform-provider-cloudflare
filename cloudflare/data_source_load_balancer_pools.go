@@ -133,7 +133,7 @@ func dataSourceCloudflareLoadBalancerPoolsRead(d *schema.ResourceData, meta inte
 	}
 
 	if err := d.Set("pools", pools); err != nil {
-		return fmt.Errorf("error setting load balaner pools: %w", err)
+		return fmt.Errorf("error setting load balancer pools: %w", err)
 	}
 
 	d.SetId(stringListChecksum(poolIds))
