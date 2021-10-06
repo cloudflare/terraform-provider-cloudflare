@@ -23,7 +23,7 @@ testacc: fmtcheck
 
 vet:
 	@echo "go vet ."
-	@go vet ./... ; if [ $$? -eq 1 ]; then \
+	@go vet ./... ; if [ $$? -ne 0 ]; then \
 		echo ""; \
 		echo "Vet found suspicious constructs. Please check the reported constructs"; \
 		echo "and fix them if necessary before submitting the code for review."; \
