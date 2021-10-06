@@ -79,4 +79,19 @@ generate-changelog:
 	@echo "==> Generating changelog..."
 	@sh -c "'$(CURDIR)/scripts/generate-changelog.sh'"
 
-.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-dev clean-dev generate-changelog
+golangci-lint:
+	@golangci-lint run ./$(PKG_NAME)/... --config .golintci.yml
+
+tools:
+	cd tools && go install github.com/bflad/tfproviderdocs
+	cd tools && go install github.com/client9/misspell/cmd/misspell
+	cd tools && go install github.com/golangci/golangci-lint/cmd/golangci-lint
+	cd tools && go install github.com/hashicorp/go-changelog/cmd/changelog-build
+
+depscheck:
+	@echo "==> Checking source code with go mod tidy..."
+	@go mod tidy
+	@git diff --exit-code -- go.mod go.sum || \
+		(echo; echo "Unexpected difference in go.mod/go.sum files. Run 'go mod tidy' command or revert any go.mod/go.sum changes and commit."; exit 1)
+
+.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-dev clean-dev generate-changelog golangci-lint tools depscheck

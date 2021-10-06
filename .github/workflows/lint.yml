@@ -11,7 +11,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: latest
-          args: "--config .golintci.yaml"
+          args: "--config .golintci.yml"
           only-new-issues: true # only show new issues in the PR, not all.
 
   tfproviderlint:
