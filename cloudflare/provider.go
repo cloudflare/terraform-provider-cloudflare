@@ -164,6 +164,7 @@ func Provider() *schema.Provider {
 			"cloudflare_zone_dnssec":                            resourceCloudflareZoneDNSSEC(),
 			"cloudflare_notification_policy":                    resourceCloudflareNotificationPolicy(),
 			"cloudflare_notification_policy_webhooks":           resourceCloudflareNotificationPolicyWebhooks(),
+			"cloudflare_split_tunnel":                           resourceCloudflareSplitTunnel(),
 		},
 	}
 
