@@ -1,5 +1,9 @@
 ## 3.2.0 (Unreleased)
 
+NOTES:
+
+* provider: cloudflare-go has been upgraded to v0.25.0 ([#1236](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1236))
+
 FEATURES:
 
 * **New Data Source:** `cloudflare_zone` ([#1213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1213))
