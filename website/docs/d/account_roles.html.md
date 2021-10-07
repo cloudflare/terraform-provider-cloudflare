@@ -8,12 +8,12 @@ description: |-
 
 # cloudflare_account_roles
 
-Use this data source to lookup [Account Roles][1]
+Use this data source to lookup [Account Roles][1].
 
 ## Example usage
 
 ```hcl
-data cloudflare_account_roles account_roles {
+data "cloudflare_account_roles" "account_roles" {
     account_id = var.cloudflare_account_id
 }
 
@@ -24,7 +24,7 @@ locals {
   }
 }
 
-resource cloudflare_account_member member {
+resource "cloudflare_account_member" "member" {
   ...
   role_ids = [
     local.roles_by_name["Administrator"].id
@@ -38,7 +38,7 @@ resource cloudflare_account_member member {
 
 ## Attributes Reference
 
-- `roles` - A list of roles object. Object format:
+- `roles` - A list of roles object. See below for nested attributes.
 
 **roles**
 
