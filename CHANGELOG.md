@@ -1,5 +1,9 @@
 ## 3.3.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_load_balancer_pool: add support for origin steering ([#1240](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1240))
+
 BUG FIXES:
 
 * resource/cloudflare_access_policy: handle empty `nil` values for building policies ([#1237](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1237))
