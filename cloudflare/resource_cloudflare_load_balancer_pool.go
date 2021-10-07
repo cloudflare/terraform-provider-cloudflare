@@ -97,6 +97,12 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 				Elem:     loadShedElem,
 			},
 
+			"origin_steering": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     originSteeringElem,
+			},
+
 			"created_on": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -194,6 +200,17 @@ var loadShedElem = &schema.Resource{
 	},
 }
 
+var originSteeringElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"policy": {
+			Type:         schema.TypeString,
+			Default:      "random",
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"", "hash", "random"}, false),
+		},
+	},
+}
+
 func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
@@ -227,6 +244,10 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 
 	if shed, ok := d.GetOk("load_shedding"); ok {
 		loadBalancerPool.LoadShedding = expandLoadBalancerLoadShedding(shed.(*schema.Set))
+	}
+
+	if steering, ok := d.GetOk("origin_steering"); ok {
+		loadBalancerPool.OriginSteering = expandLoadBalancerOriginSteering(steering.(*schema.Set))
 	}
 
 	if notificationEmail, ok := d.GetOk("notification_email"); ok {
@@ -287,6 +308,10 @@ func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta inter
 		loadBalancerPool.LoadShedding = expandLoadBalancerLoadShedding(shed.(*schema.Set))
 	}
 
+	if steering, ok := d.GetOk("origin_steering"); ok {
+		loadBalancerPool.OriginSteering = expandLoadBalancerOriginSteering(steering.(*schema.Set))
+	}
+
 	if notificationEmail, ok := d.GetOk("notification_email"); ok {
 		loadBalancerPool.NotificationEmail = notificationEmail.(string)
 	}
@@ -334,6 +359,19 @@ func expandLoadBalancerLoadShedding(s *schema.Set) *cloudflare.LoadBalancerLoadS
 			DefaultPolicy:  o["default_policy"].(string),
 			SessionPercent: float32(o["session_percent"].(float64)),
 			SessionPolicy:  o["session_policy"].(string),
+		}
+	}
+	return nil
+}
+
+func expandLoadBalancerOriginSteering(s *schema.Set) *cloudflare.LoadBalancerOriginSteering {
+	if s == nil {
+		return nil
+	}
+	for _, iface := range s.List() {
+		o := iface.(map[string]interface{})
+		return &cloudflare.LoadBalancerOriginSteering{
+			Policy: o["policy"].(string),
 		}
 	}
 	return nil
@@ -400,11 +438,36 @@ func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interfa
 		log.Printf("[WARN] Error setting load_shedding on load balancer pool %q: %s", d.Id(), err)
 	}
 
+	if err := d.Set("origin_steering", flattenLoadBalancerOriginSteering(loadBalancerPool.OriginSteering)); err != nil {
+		log.Printf("[WARN] Error setting origin_steering on load balancer pool %q: %s", d.Id(), err)
+	}
+
 	if err := d.Set("check_regions", schema.NewSet(schema.HashString, flattenStringList(loadBalancerPool.CheckRegions))); err != nil {
 		log.Printf("[WARN] Error setting check_regions on load balancer pool %q: %s", d.Id(), err)
 	}
 
 	return nil
+}
+
+func flattenLoadBalancerLoadShedding(ls *cloudflare.LoadBalancerLoadShedding) *schema.Set {
+	if ls == nil {
+		return nil
+	}
+	return schema.NewSet(schema.HashResource(loadShedElem), []interface{}{map[string]interface{}{
+		"default_percent": math.Round(float64(ls.DefaultPercent)*1000) / 1000,
+		"default_policy":  ls.DefaultPolicy,
+		"session_percent": math.Round(float64(ls.SessionPercent)*1000) / 1000,
+		"session_policy":  ls.SessionPolicy,
+	}})
+}
+
+func flattenLoadBalancerOriginSteering(os *cloudflare.LoadBalancerOriginSteering) *schema.Set {
+	if os == nil {
+		return nil
+	}
+	return schema.NewSet(schema.HashResource(originSteeringElem), []interface{}{map[string]interface{}{
+		"policy": os.Policy,
+	}})
 }
 
 func flattenLoadBalancerOrigins(d *schema.ResourceData, origins []cloudflare.LoadBalancerOrigin) *schema.Set {
@@ -421,18 +484,6 @@ func flattenLoadBalancerOrigins(d *schema.ResourceData, origins []cloudflare.Loa
 		flattened = append(flattened, cfg)
 	}
 	return schema.NewSet(schema.HashResource(originsElem), flattened)
-}
-
-func flattenLoadBalancerLoadShedding(ls *cloudflare.LoadBalancerLoadShedding) *schema.Set {
-	if ls == nil {
-		return nil
-	}
-	return schema.NewSet(schema.HashResource(loadShedElem), []interface{}{map[string]interface{}{
-		"default_percent": math.Round(float64(ls.DefaultPercent)*1000) / 1000,
-		"default_policy":  ls.DefaultPolicy,
-		"session_percent": math.Round(float64(ls.SessionPercent)*1000) / 1000,
-		"session_policy":  ls.SessionPolicy,
-	}})
 }
 
 func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta interface{}) error {

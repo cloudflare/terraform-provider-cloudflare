@@ -73,6 +73,10 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
 					resource.TestCheckResourceAttr(name, "latitude", "12.3"),
 					resource.TestCheckResourceAttr(name, "longitude", "55"),
+					resource.TestCheckResourceAttr(name, "origin_steering.#", "1"),
+					resource.TestCheckTypeSetElemNestedAttrs(name, "origin_steering.*", map[string]string{
+						"policy": "random",
+					}),
 					func(state *terraform.State) error {
 						for _, rs := range state.RootModule().Resources {
 							for k, v := range rs.Primary.Attributes {
@@ -257,6 +261,10 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
 
   latitude = 12.3
   longitude = 55
+
+  origin_steering {
+    policy = "random"
+  }
 
   check_regions = ["WEU"]
   description = "tfacc-fully-specified"
