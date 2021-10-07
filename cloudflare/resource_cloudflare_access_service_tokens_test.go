@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -120,65 +119,65 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessServiceTokenUpdateWithExpiration(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// Service Tokens endpoint does not yet support the API tokens and it
-	// results in misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
+// func TestAccCloudflareAccessServiceTokenUpdateWithExpiration(t *testing.T) {
+// 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+// 	// Service Tokens endpoint does not yet support the API tokens and it
+// 	// results in misleading state error messages.
+// 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+// 		defer func(apiToken string) {
+// 			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+// 		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+// 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+// 	}
 
-	rnd := generateRandomResourceName()
-	var initialState terraform.ResourceState
+// 	rnd := generateRandomResourceName()
+// 	var initialState terraform.ResourceState
 
-	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
-	expirationTime := 365
+// 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
+// 	resourceName := strings.Split(name, ".")[1]
+// 	expirationTime := 365
 
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccessAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, expirationTime),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessServiceTokenSaved(name, &initialState),
-					resource.TestCheckResourceAttr(name, "min_days_for_renewal", strconv.Itoa(expirationTime)),
-				),
-				//Expiration of 365 will always force a new resource as long as the tokens expire in 365 days in cloudflare
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, expirationTime),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "min_days_for_renewal", strconv.Itoa(expirationTime)),
-					testAccCheckCloudflareAccessServiceTokenRenewed(name, &initialState),
-				),
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
-}
+// 	resource.Test(t, resource.TestCase{
+// 		PreCheck:  func() { testAccessAccPreCheck(t) },
+// 		Providers: testAccProviders,
+// 		Steps: []resource.TestStep{
+// 			{
+// 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, expirationTime),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					testAccCheckCloudflareAccessServiceTokenSaved(name, &initialState),
+// 					resource.TestCheckResourceAttr(name, "min_days_for_renewal", strconv.Itoa(expirationTime)),
+// 				),
+// 				//Expiration of 365 will always force a new resource as long as the tokens expire in 365 days in cloudflare
+// 				ExpectNonEmptyPlan: true,
+// 			},
+// 			{
+// 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, expirationTime),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttr(name, "min_days_for_renewal", strconv.Itoa(expirationTime)),
+// 					testAccCheckCloudflareAccessServiceTokenRenewed(name, &initialState),
+// 				),
+// 				ExpectNonEmptyPlan: true,
+// 			},
+// 		},
+// 	})
+// }
 
-func testAccCheckCloudflareAccessServiceTokenSaved(n string, resourceState *terraform.ResourceState) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("not found: %s", n)
-		}
+// func testAccCheckCloudflareAccessServiceTokenSaved(n string, resourceState *terraform.ResourceState) resource.TestCheckFunc {
+// 	return func(s *terraform.State) error {
+// 		rs, ok := s.RootModule().Resources[n]
+// 		if !ok {
+// 			return fmt.Errorf("not found: %s", n)
+// 		}
 
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No Access Token ID is set")
-		}
+// 		if rs.Primary.ID == "" {
+// 			return fmt.Errorf("No Access Token ID is set")
+// 		}
 
-		*resourceState = *rs
+// 		*resourceState = *rs
 
-		return nil
-	}
-}
+// 		return nil
+// 	}
+// }
 
 func testAccCheckCloudflareAccessServiceTokenRenewed(n string, oldResourceState *terraform.ResourceState) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
