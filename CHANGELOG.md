@@ -1,5 +1,9 @@
 ## 3.3.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_access_policy: handle empty `nil` values for building policies ([#1237](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1237))
+
 ## 3.2.0 (October 7th, 2021)
 
 NOTES:
