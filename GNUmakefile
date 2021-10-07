@@ -6,7 +6,7 @@ VERSION=$(shell git describe --tags --always)
 
 default: build
 
-build: fmtcheck
+build: vet fmtcheck
 	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
 
 sweep:
