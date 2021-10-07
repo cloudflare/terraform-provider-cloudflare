@@ -8,29 +8,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        make_target: [test, vet]
 
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.15
+          go-version: ^1.17
         id: go
-
       - name: Check out code repository source code
         uses: actions/checkout@v2.3.4
-
       - uses: actions/cache@v2.1.6
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      # https://help.github.com/en/actions/reference/workflow-commands-for-github-actions
-      - name: Set build variables
-        run: |
-          echo "MAKE_TARGET=${{ matrix.make_target }}" >> $GITHUB_ENV
-      - name: Run ${{matrix.make_target}}
-        run: |
-          make $MAKE_TARGET
+          key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+      - name: Vet
+        run: make vet
+      - name: Test
+        run: make test

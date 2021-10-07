@@ -1,8 +1,8 @@
 name: Acceptance Tests
-concurrency: 
+concurrency:
   group: acceptance-tests
   cancel-in-progress: true
-  
+
 on:
   workflow_dispatch:
   push:
@@ -48,9 +48,7 @@ jobs:
     - uses: actions/cache@v2.1.6
       with:
         path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+        key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
     - name: Pre-Sweeper
       run: go test ./cloudflare -v -sweep="1"

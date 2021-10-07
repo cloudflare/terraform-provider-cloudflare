@@ -6,7 +6,7 @@ VERSION=$(shell git describe --tags --always)
 
 default: build
 
-build: fmtcheck
+build: vet fmtcheck
 	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
 
 sweep:
@@ -23,7 +23,7 @@ testacc: fmtcheck
 
 vet:
 	@echo "go vet ."
-	@go vet ./... ; if [ $$? -eq 1 ]; then \
+	@go vet ./... ; if [ $$? -ne 0 ]; then \
 		echo ""; \
 		echo "Vet found suspicious constructs. Please check the reported constructs"; \
 		echo "and fix them if necessary before submitting the code for review."; \
@@ -79,4 +79,19 @@ generate-changelog:
 	@echo "==> Generating changelog..."
 	@sh -c "'$(CURDIR)/scripts/generate-changelog.sh'"
 
-.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-dev clean-dev generate-changelog
+golangci-lint:
+	@golangci-lint run ./$(PKG_NAME)/... --config .golintci.yml
+
+tools:
+	cd tools && go install github.com/bflad/tfproviderdocs
+	cd tools && go install github.com/client9/misspell/cmd/misspell
+	cd tools && go install github.com/golangci/golangci-lint/cmd/golangci-lint
+	cd tools && go install github.com/hashicorp/go-changelog/cmd/changelog-build
+
+depscheck:
+	@echo "==> Checking source code with go mod tidy..."
+	@go mod tidy
+	@git diff --exit-code -- go.mod go.sum || \
+		(echo; echo "Unexpected difference in go.mod/go.sum files. Run 'go mod tidy' command or revert any go.mod/go.sum changes and commit."; exit 1)
+
+.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-dev clean-dev generate-changelog golangci-lint tools depscheck

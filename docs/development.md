@@ -28,6 +28,10 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 $ make testacc
 ```
 
+You can also install other optional (but great to have tools) using `make tools`.
+Most of these tools run in CI automatically but helps having these locally to
+either hook into your editor or debug CI failures.
+
 ## Using the Provider
 
 With Terraform v0.14 and later, [development overrides for provider developers](https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers) can be leveraged in order to use the provider built from source.
