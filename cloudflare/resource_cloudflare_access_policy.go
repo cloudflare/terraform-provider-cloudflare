@@ -75,6 +75,10 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 				Optional:     true,
 				RequiredWith: []string{"purpose_justification_required"},
 			},
+			"approval_required": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"approval_group": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -178,6 +182,10 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 
 	if accessPolicy.PurposeJustificationPrompt != nil {
 		d.Set("purpose_justification_prompt", accessPolicy.PurposeJustificationPrompt)
+	}
+
+	if accessPolicy.ApprovalRequired != nil {
+		d.Set("approval_required", accessPolicy.ApprovalRequired)
 	}
 
 	if len(accessPolicy.ApprovalGroups) != 0 {
@@ -344,6 +352,9 @@ func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *sche
 
 	purposeJustificationPrompt := d.Get("purpose_justification_prompt").(string)
 	policy.PurposeJustificationPrompt = &purposeJustificationPrompt
+
+	approvalRequired := d.Get("approval_required").(bool)
+	policy.ApprovalRequired = &approvalRequired
 
 	approvalGroups := d.Get("approval_group").([]interface{})
 	for _, approvalGroup := range approvalGroups {
