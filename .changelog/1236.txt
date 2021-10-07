@@ -1,0 +1,3 @@
+```release-note:note
+provider: cloudflare-go has been upgraded to v0.25.0
+```
