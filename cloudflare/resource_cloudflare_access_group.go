@@ -394,17 +394,23 @@ func resourceCloudflareAccessGroupImport(d *schema.ResourceData, meta interface{
 func appendConditionalAccessGroupFields(group cloudflare.AccessGroup, d *schema.ResourceData) cloudflare.AccessGroup {
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
-		group.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		if value != nil {
+			group.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	require := d.Get("require").([]interface{})
 	for _, value := range require {
-		group.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		if value != nil {
+			group.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	include := d.Get("include").([]interface{})
 	for _, value := range include {
-		group.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		if value != nil {
+			group.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	return group
