@@ -92,7 +92,7 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"cloudflare_account_roles":               dataSourceCloudflareAcountRoles(),
+			"cloudflare_account_roles":               dataSourceCloudflareAccountRoles(),
 			"cloudflare_api_token_permission_groups": dataSourceCloudflareApiTokenPermissionGroups(),
 			"cloudflare_ip_ranges":                   dataSourceCloudflareIPRanges(),
 			"cloudflare_origin_ca_root_certificate":  dataSourceCloudflareOriginCARootCertificate(),

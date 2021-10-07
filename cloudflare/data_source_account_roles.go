@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudflareAcountRoles() *schema.Resource {
+func dataSourceCloudflareAccountRoles() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareAcountRolesRead,
+		Read: dataSourceCloudflareAccountRolesRead,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -43,7 +43,7 @@ func dataSourceCloudflareAcountRoles() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareAcountRolesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareAccountRolesRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 

@@ -9,14 +9,15 @@ import (
 )
 
 func TestAccCloudflareAccountRoles(t *testing.T) {
-	name := "data.cloudflare_account_roles.some"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("data.cloudflare_account_roles.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccCloudflareAccountRolesConfig,
+				Config: testAccCloudflareAccountRolesConfig(name),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCloudflareAccountRolesDataSourceId(name),
 					resource.TestCheckResourceAttr(name, "roles.#", "1"),
@@ -42,6 +43,6 @@ func testAccCloudflareAccountRolesDataSourceId(n string) resource.TestCheckFunc 
 	}
 }
 
-const testAccCloudflareAccountRolesConfig = `
-data "cloudflare_account_roles" "some" {}
-`
+func testAccCloudflareAccountRolesConfig(name string) string {
+	return fmt.Sprintf(`data "cloudflare_account_roles" "%[1]s" {}`, name)
+}
