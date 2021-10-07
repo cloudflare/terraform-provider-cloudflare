@@ -99,6 +99,7 @@ func Provider() *schema.Provider {
 			"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
 			"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
 			"cloudflare_zones":                       dataSourceCloudflareZones(),
+			"cloudflare_zone":                        dataSourceCloudflareZone(),
 			"cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
 		},
 
