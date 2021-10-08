@@ -1,5 +1,9 @@
 ## 3.3.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_account_roles` ([#1238](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1238))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_load_balancer_pool: add support for origin steering ([#1240](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1240))
