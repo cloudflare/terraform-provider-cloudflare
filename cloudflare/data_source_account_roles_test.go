@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -11,16 +12,17 @@ import (
 func TestAccCloudflareAccountRoles(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_account_roles.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: testAccCloudflareAccountRolesConfig(name),
+			{
+				Config: testAccCloudflareAccountRolesConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCloudflareAccountRolesDataSourceId(name),
-					resource.TestCheckResourceAttr(name, "roles.#", "1"),
+					resource.TestCheckResourceAttr(name, "roles.#", "20"),
 				),
 			},
 		},
@@ -43,6 +45,8 @@ func testAccCloudflareAccountRolesDataSourceId(n string) resource.TestCheckFunc 
 	}
 }
 
-func testAccCloudflareAccountRolesConfig(name string) string {
-	return fmt.Sprintf(`data "cloudflare_account_roles" "%[1]s" {}`, name)
+func testAccCloudflareAccountRolesConfig(name string, accountID string) string {
+	return fmt.Sprintf(`data "cloudflare_account_roles" "%[1]s" {
+		account_id = "%[2]s"
+	}`, name, accountID)
 }
