@@ -142,6 +142,15 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"http_only_cookie_attribute": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"same_site_cookie_attribute": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -153,14 +162,16 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	appType := d.Get("type").(string)
 
 	newAccessApplication := cloudflare.AccessApplication{
-		Name:                   d.Get("name").(string),
-		Domain:                 d.Get("domain").(string),
-		Type:                   cloudflare.AccessApplicationType(appType),
-		SessionDuration:        d.Get("session_duration").(string),
-		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
-		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
-		CustomDenyMessage:      d.Get("custom_deny_message").(string),
-		CustomDenyURL:          d.Get("custom_deny_url").(string),
+		Name:                    d.Get("name").(string),
+		Domain:                  d.Get("domain").(string),
+		Type:                    cloudflare.AccessApplicationType(appType),
+		SessionDuration:         d.Get("session_duration").(string),
+		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(bool),
+		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
+		CustomDenyMessage:       d.Get("custom_deny_message").(string),
+		CustomDenyURL:           d.Get("custom_deny_url").(string),
+		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
+		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -231,6 +242,8 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("custom_deny_message", accessApplication.CustomDenyMessage)
 	d.Set("custom_deny_url", accessApplication.CustomDenyURL)
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
+	d.Set("http_only_cookie_attribute", accessApplication.HttpOnlyCookieAttribute)
+	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -247,15 +260,17 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 	appType := d.Get("type").(string)
 
 	updatedAccessApplication := cloudflare.AccessApplication{
-		ID:                     d.Id(),
-		Name:                   d.Get("name").(string),
-		Domain:                 d.Get("domain").(string),
-		Type:                   cloudflare.AccessApplicationType(appType),
-		SessionDuration:        d.Get("session_duration").(string),
-		AutoRedirectToIdentity: d.Get("auto_redirect_to_identity").(bool),
-		EnableBindingCookie:    d.Get("enable_binding_cookie").(bool),
-		CustomDenyMessage:      d.Get("custom_deny_message").(string),
-		CustomDenyURL:          d.Get("custom_deny_url").(string),
+		ID:                      d.Id(),
+		Name:                    d.Get("name").(string),
+		Domain:                  d.Get("domain").(string),
+		Type:                    cloudflare.AccessApplicationType(appType),
+		SessionDuration:         d.Get("session_duration").(string),
+		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(bool),
+		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
+		CustomDenyMessage:       d.Get("custom_deny_message").(string),
+		CustomDenyURL:           d.Get("custom_deny_url").(string),
+		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
+		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 	}
 
 	if len(allowedIDPList) > 0 {
