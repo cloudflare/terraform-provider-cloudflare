@@ -872,6 +872,45 @@ func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetAccountLevelCustomWAFRule(rnd, "account level custom rulesets", accountID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall", "kind", "custom"),
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall", "phase", "http_request_firewall_custom"),
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall", "name", "Custom Ruleset for my account"),
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall", "rules.0.action", "block"),
+
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall_root", "kind", "root"),
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall_root", "phase", "http_request_firewall_custom"),
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall_root", "name", "Firewall Custom root"),
+					resource.TestCheckResourceAttr(resourceName+"_account_custom_firewall_root", "rules.0.action", "execute"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -1514,4 +1553,40 @@ func testAccCheckCloudflareRulesetActionParametersHTTPDDosOverride(rnd, name, zo
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetAccountLevelCustomWAFRule(rnd, name, accountID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s_account_custom_firewall" {
+    account_id  = "%[3]s"
+    name        = "Custom Ruleset for my account"
+    description = "example block rule"
+    kind        = "custom"
+    phase       = "http_request_firewall_custom"
+
+    rules {
+      action = "block"
+      expression = "(http.host eq \"%[4]s\")"
+      description = "SID"
+      enabled = true
+    }
+  }
+
+  resource "cloudflare_ruleset" "%[1]s_account_custom_firewall_root" {
+    account_id  = "%[3]s"
+    name        = "Firewall Custom root"
+    description = ""
+    kind        = "root"
+    phase       = "http_request_firewall_custom"
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = cloudflare_ruleset.%[1]s_account_custom_firewall.id
+      }
+      expression = "(cf.zone.name eq \"example.com\")"
+      description = ""
+      enabled = true
+    }
+  }`, rnd, name, accountID, zoneName)
 }

@@ -331,10 +331,13 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
+	rulesetName := d.Get("name").(string)
+	rulesetDescription := d.Get("description").(string)
+	rulesetKind := d.Get("kind").(string)
 	rs := cloudflare.Ruleset{
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Kind:        d.Get("kind").(string),
+		Name:        rulesetName,
+		Description: rulesetDescription,
+		Kind:        rulesetKind,
 		Phase:       d.Get("phase").(string),
 	}
 
@@ -355,22 +358,26 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating ruleset %s", d.Get("name").(string)))
+		return errors.Wrap(err, fmt.Sprintf("error creating ruleset %s", rulesetName))
 	}
 
 	rulesetEntryPoint := cloudflare.Ruleset{
-		Description: d.Get("description").(string),
+		Description: rulesetDescription,
 		Rules:       rules,
 	}
 
-	if accountID != "" {
-		_, err = client.UpdateAccountRulesetPhase(context.Background(), accountID, rs.Phase, rulesetEntryPoint)
-	} else {
-		_, err = client.UpdateZoneRulesetPhase(context.Background(), zoneID, rs.Phase, rulesetEntryPoint)
-	}
+	// For "custom" rulesets, we don't send a follow up PUT it to the entrypoint
+	// endpoint.
+	if rulesetKind != string(cloudflare.RulesetKindCustom) {
+		if accountID != "" {
+			_, err = client.UpdateAccountRulesetPhase(context.Background(), accountID, rs.Phase, rulesetEntryPoint)
+		} else {
+			_, err = client.UpdateZoneRulesetPhase(context.Background(), zoneID, rs.Phase, rulesetEntryPoint)
+		}
 
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating ruleset phase entrypoint %s", d.Get("name").(string)))
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("error updating ruleset phase entrypoint %s", rulesetName))
+		}
 	}
 
 	d.SetId(ruleset.ID)
