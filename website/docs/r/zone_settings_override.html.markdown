@@ -140,7 +140,7 @@ The following attributes are exported:
 
 * `id` - The zone ID.
 * `initial_settings` - Settings present in the zone at the time the resource is created. This will be used to restore the original settings when this resource is destroyed. Shares the same schema as the `settings` attribute (Above).
-* `intial_settings_read_at` - Time when this resource was created and the `initial_settings` were set.
+* `initial_settings_read_at` - Time when this resource was created and the `initial_settings` were set.
 * `readonly_settings` - Which of the current `settings` are not able to be set by the user. Which settings these are is determined by plan level and user permissions.
 * `zone_status`. A full zone implies that DNS is hosted with Cloudflare. A partial zone is typically a partner-hosted zone or a CNAME setup.
 * `zone_type`. Status of the zone. Valid values: active, pending, initializing, moved, deleted, deactivated.
