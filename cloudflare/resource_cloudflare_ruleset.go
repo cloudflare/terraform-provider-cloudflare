@@ -218,6 +218,11 @@ func resourceCloudflareRuleset() *schema.Resource {
 													Type:     schema.TypeBool,
 													Optional: true,
 												},
+												"action": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice(cloudflare.RulesetRuleActionValues(), false),
+												},
 												"categories": {
 													Type:     schema.TypeList,
 													Optional: true,
