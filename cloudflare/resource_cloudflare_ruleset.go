@@ -665,11 +665,11 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 					case "overrides":
 						categories := []cloudflare.RulesetRuleActionParametersCategories{}
 						rules := []cloudflare.RulesetRuleActionParametersRules{}
-						var enabledOverrides bool
+						var enabledOverrides *bool
 						var actionOverrides string
 
 						for _, overrideParamValue := range pValue.([]interface{}) {
-							enabledOverrides = overrideParamValue.(map[string]interface{})["enabled"].(bool)
+							enabledOverrides = &[]bool{overrideParamValue.(map[string]interface{})["enabled"].(bool)}[0]
 							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
 								actionOverrides = val.(string)
 							}
