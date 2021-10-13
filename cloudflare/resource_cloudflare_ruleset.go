@@ -512,6 +512,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 					"categories": categoryBasedOverrides,
 					"rules":      idBasedOverrides,
 					"enabled":    r.ActionParameters.Overrides.Enabled,
+					"action":	  r.ActionParameters.Overrides.Action,
 				})
 			}
 
@@ -664,8 +665,15 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 					case "overrides":
 						categories := []cloudflare.RulesetRuleActionParametersCategories{}
 						rules := []cloudflare.RulesetRuleActionParametersRules{}
+						var enabledOverrides bool
+						var actionOverrides string
 
 						for _, overrideParamValue := range pValue.([]interface{}) {
+							enabledOverrides = overrideParamValue.(map[string]interface{})["enabled"].(bool)
+							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
+								actionOverrides = val.(string)
+							}
+
 							// Category based overrides
 							if val, ok := overrideParamValue.(map[string]interface{})["categories"]; ok {
 								for _, category := range val.([]interface{}) {
@@ -703,6 +711,13 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 							rule.ActionParameters.Overrides = &cloudflare.RulesetRuleActionParametersOverrides{
 								Categories: categories,
 								Rules:      rules,
+								Enabled: 	enabledOverrides,
+								Action:		actionOverrides,
+							}
+						} else {
+							rule.ActionParameters.Overrides = &cloudflare.RulesetRuleActionParametersOverrides{
+								Enabled: 	enabledOverrides,
+								Action:		actionOverrides,
 							}
 						}
 
