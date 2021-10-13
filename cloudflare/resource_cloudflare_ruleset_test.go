@@ -1490,7 +1490,7 @@ func testAccCheckCloudflareRulesetActionParametersOverridesActionEnabled(rnd, na
         version = "latest"
         overrides {
           action = "log"
-		  enabled = true
+          enabled = true
         }
       }
       expression = "true"
