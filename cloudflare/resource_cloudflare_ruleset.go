@@ -218,11 +218,6 @@ func resourceCloudflareRuleset() *schema.Resource {
 													Type:     schema.TypeBool,
 													Optional: true,
 												},
-												"action": {
-													Type:         schema.TypeString,
-													Optional:     true,
-													ValidateFunc: validation.StringInSlice(cloudflare.RulesetRuleActionValues(), false),
-												},
 												"categories": {
 													Type:     schema.TypeList,
 													Optional: true,
@@ -519,7 +514,6 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 					"categories": categoryBasedOverrides,
 					"rules":      idBasedOverrides,
 					"enabled":    r.ActionParameters.Overrides.Enabled,
-					"action":     r.ActionParameters.Overrides.Action,
 				})
 			}
 
@@ -670,19 +664,10 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 					case "increment":
 						rule.ActionParameters.Increment = pValue.(int)
 					case "overrides":
-						var overrideConfiguration cloudflare.RulesetRuleActionParametersOverrides
-						var categories []cloudflare.RulesetRuleActionParametersCategories
-						var rules []cloudflare.RulesetRuleActionParametersRules
+						categories := []cloudflare.RulesetRuleActionParametersCategories{}
+						rules := []cloudflare.RulesetRuleActionParametersRules{}
 
 						for _, overrideParamValue := range pValue.([]interface{}) {
-							if phase != string(cloudflare.RulesetPhaseDDoSL7) {
-								overrideConfiguration.Enabled = &[]bool{overrideParamValue.(map[string]interface{})["enabled"].(bool)}[0]
-							}
-
-							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
-								overrideConfiguration.Action = val.(string)
-							}
-
 							// Category based overrides
 							if val, ok := overrideParamValue.(map[string]interface{})["categories"]; ok {
 								for _, category := range val.([]interface{}) {
@@ -717,12 +702,10 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 						}
 
 						if len(categories) > 0 || len(rules) > 0 {
-							overrideConfiguration.Categories = categories
-							overrideConfiguration.Rules = rules
-						}
-
-						if !reflect.DeepEqual(overrideConfiguration, cloudflare.RulesetRuleActionParametersOverrides{}) {
-							rule.ActionParameters.Overrides = &overrideConfiguration
+							rule.ActionParameters.Overrides = &cloudflare.RulesetRuleActionParametersOverrides{
+								Categories: categories,
+								Rules:      rules,
+							}
 						}
 
 					case "matched_data":
