@@ -12,6 +12,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_access_policy: handle empty `nil` values for building policies ([#1237](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1237))
+* resource/cloudflare_ruleset: don't attempt to update "custom" rulesets using the phase entrypoint ([#1245](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1245))
 
 ## 3.2.0 (October 7th, 2021)
 
