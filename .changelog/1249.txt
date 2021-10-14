@@ -1,3 +1,0 @@
-```release-note:enhancement
-resource/cloudflare_ruleset: add support for 'Action' and 'Enabled' action_parameters > overrides attributes
-```
