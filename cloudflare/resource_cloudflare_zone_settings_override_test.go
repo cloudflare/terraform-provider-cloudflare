@@ -191,6 +191,7 @@ resource "cloudflare_zone_settings_override" "test" {
 	settings {
 		brotli = "on"
 		challenge_ttl = 2700
+		ciphers = ["ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-ECDSA-CHACHA20-POLY1305"]
 		security_level = "high"
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"

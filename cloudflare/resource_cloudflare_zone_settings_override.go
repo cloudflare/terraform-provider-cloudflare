@@ -118,6 +118,15 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		ValidateFunc: validation.StringInSlice([]string{"aggressive", "basic", "simplified"}, false),
 	},
 
+	"ciphers": {
+		Type:     schema.TypeList,
+		Optional: true,
+		Computed: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+
 	"challenge_ttl": {
 		Type:     schema.TypeInt,
 		Optional: true,
