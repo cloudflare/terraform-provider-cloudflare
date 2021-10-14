@@ -106,7 +106,6 @@ func dataSourceCloudflareAccessGroupsRead(d *schema.ResourceData, meta interface
 		return nil
 	}
 
-	d.Set("groups", groups)
 	if err != nil {
 		return fmt.Errorf("error setting access groups: %s", err)
 	}
@@ -123,7 +122,10 @@ func dataSourceCloudflareAccessGroupsRead(d *schema.ResourceData, meta interface
 		})
 		groupIds = append(groupIds, g.ID)
 	}
-
+	err = d.Set("groups", groupDetails)
+	if err != nil {
+		return fmt.Errorf("error setting access groups: %s", err)
+	}
 	d.SetId(stringListChecksum(groupIds))
 	return nil
 }
