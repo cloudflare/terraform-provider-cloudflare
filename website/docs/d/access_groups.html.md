@@ -12,7 +12,7 @@ Use this data source to look up [Access Groups][1].
 
 ## Example Usage
 
-The example below matches all Access Groups that contain the word `example` and are currently `on`. The matched Access Groups are then returned as output.
+The example below matches all Access Groups that are part of the `zone_id` `12345`.  Access groups can also be looked up by `account_id`. The matched Access Groups are then returned as output.
 
 ```hcl
 data "cloudflare_access_groups" "test" {
