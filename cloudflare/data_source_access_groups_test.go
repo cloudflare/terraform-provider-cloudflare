@@ -62,11 +62,11 @@ func testAccCloudflareAccessGroupsDataSourceId(n string) resource.TestCheckFunc 
 		rs, ok := all[n]
 
 		if !ok {
-			return fmt.Errorf("can't find Account Roles data source: %s", n)
+			return fmt.Errorf("can't find Access Groups data source: %s", n)
 		}
 
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("Snapshot Account Roles source ID not set")
+			return fmt.Errorf("Snapshot Access Groups source ID not set")
 		}
 		return nil
 	}

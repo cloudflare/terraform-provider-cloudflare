@@ -62,9 +62,7 @@ func dataSourceCloudflareAccessGroups() *schema.Resource {
 
 func paginateAllGroups(readAccessGroupHandler func (ctx context.Context, accountID string, pageOpts cloudflare.PaginationOptions) ([]cloudflare.AccessGroup, cloudflare.ResultInfo, error), filter string) ([]cloudflare.AccessGroup, error) {
 	var groups []cloudflare.AccessGroup
-	paginationOptions := cloudflare.PaginationOptions{
-		PerPage: 100,
-	}
+	paginationOptions := cloudflare.PaginationOptions{}
 
 	for {
 		groupPage, resultInfo, err := readAccessGroupHandler(context.Background(), filter, paginationOptions)
