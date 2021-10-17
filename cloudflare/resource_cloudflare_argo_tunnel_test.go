@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -37,6 +38,7 @@ func TestAccCloudflareArgoTunnelCreate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
+					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.argotunnel\\.com")),
 				),
 			},
 		},
