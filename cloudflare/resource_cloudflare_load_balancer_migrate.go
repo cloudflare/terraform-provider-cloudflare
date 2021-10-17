@@ -2,7 +2,6 @@ package cloudflare
 
 import (
 	"context"
-	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -54,7 +53,7 @@ func resourceCloudflareLoadBalancerV0() *schema.Resource {
 }
 
 func resourceCloudflareLoadBalancerStateUpgradeV1(_ context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
-	if !reflect.ValueOf(rawState["rules"]).IsNil() {
+	if rawState["rules"] != nil {
 		for i := range rawState["rules"].([]interface{}) {
 			rawState["rules"].([]interface{})[i].(map[string]interface{})["fixed_response"] = []interface{}{rawState["rules"].([]interface{})[i].(map[string]interface{})["fixed_response"]}
 		}
