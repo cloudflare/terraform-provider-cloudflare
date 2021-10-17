@@ -8,7 +8,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/aws/aws-sdk-go v1.40.35 // indirect
-	github.com/cloudflare/cloudflare-go v0.25.0
+	github.com/cloudflare/cloudflare-go v0.26.0
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/uuid v1.3.0
