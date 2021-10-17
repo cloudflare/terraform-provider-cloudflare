@@ -275,6 +275,7 @@ The following arguments are supported:
 
 * `categories` - (Optional) List of tag-based overrides (refer to the [nested schema](#nestedblock--action-parameters-overrides-categories)).
 * `enabled` - (Optional) Defines if the current ruleset-level override enables or disables the ruleset.
+* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"js_challenge"`, `"log"`.
 * `rules` - (Optional) List of rule-based overrides (refer to the [nested schema](#nestedblock--action-parameters-overrides-rules)).
 
 <a id="nestedblock--action-parameters-overrides-categories"></a>
