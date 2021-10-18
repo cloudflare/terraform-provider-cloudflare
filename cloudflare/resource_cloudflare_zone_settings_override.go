@@ -492,6 +492,47 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Optional:     true,
 		Computed:     true,
 	},
+
+	"orange_to_orange": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
+	"filter_logs_to_cloudflare": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
+	"log_to_cloudflare": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
+	"visitor_ip": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
+	"proxy_read_timeout": {
+		Type:     schema.TypeString,
+		Optional: true,
+		Computed: true,
+	},
+
+	"binary_ast": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
 }
 
 var fetchAsSingleSetting = []string{

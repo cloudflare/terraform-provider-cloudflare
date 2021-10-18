@@ -1,0 +1,23 @@
+```release-note:enhancement
+resource/cloudflare_zone_setting_override: add support for overriding `binary_ast`
+```
+
+```release-note:enhancement
+resource/cloudflare_zone_setting_override: add support for overriding `filter_logs_to_cloudflare`
+```
+
+```release-note:enhancement
+resource/cloudflare_zone_setting_override: add support for overriding `log_to_cloudflare`
+```
+
+```release-note:enhancement
+resource/cloudflare_zone_setting_override: add support for overriding `orange_to_orange`
+```
+
+```release-note:enhancement
+resource/cloudflare_zone_setting_override: add support for overriding `visitor_ip`
+```
+
+```release-note:enhancement
+resource/cloudflare_zone_setting_override: add support for overriding `proxy_read_timeout`
+```
