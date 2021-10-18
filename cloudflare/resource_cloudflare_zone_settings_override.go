@@ -646,6 +646,8 @@ func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetti
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})}
 		} else if s.ID == "security_header" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
+		} else if listValues, ok := s.Value.([]interface{}); ok {
+			cfg[s.ID] = listValues
 		} else if strValue, ok := s.Value.(string); ok {
 			cfg[s.ID] = strValue
 		} else if floatValue, ok := s.Value.(float64); ok {
