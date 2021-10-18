@@ -60,7 +60,7 @@ func dataSourceCloudflareAccessGroups() *schema.Resource {
 	}
 }
 
-func paginateAllGroups(readAccessGroupHandler func (ctx context.Context, accountID string, pageOpts cloudflare.PaginationOptions) ([]cloudflare.AccessGroup, cloudflare.ResultInfo, error), filter string) ([]cloudflare.AccessGroup, error) {
+func paginateAllGroups(readAccessGroupHandler func(ctx context.Context, accountID string, pageOpts cloudflare.PaginationOptions) ([]cloudflare.AccessGroup, cloudflare.ResultInfo, error), filter string) ([]cloudflare.AccessGroup, error) {
 	var groups []cloudflare.AccessGroup
 	paginationOptions := cloudflare.PaginationOptions{}
 
@@ -88,7 +88,7 @@ func dataSourceCloudflareAccessGroupsRead(d *schema.ResourceData, meta interface
 	accountID := d.Get("account_id").(string)
 
 	var filter string
-	var handler func (ctx context.Context, accountID string, pageOpts cloudflare.PaginationOptions) ([]cloudflare.AccessGroup, cloudflare.ResultInfo, error)
+	var handler func(ctx context.Context, accountID string, pageOpts cloudflare.PaginationOptions) ([]cloudflare.AccessGroup, cloudflare.ResultInfo, error)
 
 	if accountID != "" {
 		filter = accountID
@@ -114,8 +114,8 @@ func dataSourceCloudflareAccessGroupsRead(d *schema.ResourceData, meta interface
 	groupDetails := make([]interface{}, 0)
 	for _, g := range groups {
 		groupDetails = append(groupDetails, map[string]interface{}{
-			"id": g.ID,
-			"name": g.Name,
+			"id":      g.ID,
+			"name":    g.Name,
 			"include": TransformAccessGroupForSchema(g.Include),
 			"exclude": TransformAccessGroupForSchema(g.Exclude),
 			"require": TransformAccessGroupForSchema(g.Require),
