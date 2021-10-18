@@ -91,22 +91,26 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 
 ### String Values
 
-* `cache_level`. Allowed values: "aggressive" (default) - delivers a different resource each time the query string changes, "basic" - delivers resources from cache when there is no query string, "simplified" - delivers the same resource to everyone independent of the query string.
-* `cname_flattening`. Allowed values: "flatten_at_root" (default), "flatten_all", "flatten_none".
-* `h2_prioritization`. Allowed values: "on", "off" (default), "custom".
-* `image_resizing`. Allowed values: "on", "off" (default), "open".
-* `min_tls_version`. Allowed values: "1.0" (default), "1.1", "1.2", "1.3".
-* `polish`. Allowed values: "off" (default), "lossless", "lossy".
-* `pseudo_ipv4`. Allowed values: "off" (default), "add_header", "overwrite_header".
-* `security_level`. Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium" (default), "high", "under_attack".
-* `ssl`. Allowed values: "off" (default), "flexible", "full", "strict", "origin_pull".
-* `tls_1_3`. Allowed values: "off" (default), "on", "zrt".
+* `cache_level` - Allowed values: "aggressive" (default) - delivers a different resource each time the query string changes, "basic" - delivers resources from cache when there is no query string, "simplified" - delivers the same resource to everyone independent of the query string.
+* `cname_flattening` - Allowed values: "flatten_at_root" (default), "flatten_all", "flatten_none".
+* `h2_prioritization` - Allowed values: "on", "off" (default), "custom".
+* `image_resizing` - Allowed values: "on", "off" (default), "open".
+* `min_tls_version` - Allowed values: "1.0" (default), "1.1", "1.2", "1.3".
+* `polish` - Allowed values: "off" (default), "lossless", "lossy".
+* `pseudo_ipv4` - Allowed values: "off" (default), "add_header", "overwrite_header".
+* `security_level` - Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium" (default), "high", "under_attack".
+* `ssl` - Allowed values: "off" (default), "flexible", "full", "strict", "origin_pull".
+* `tls_1_3` - Allowed values: "off" (default), "on", "zrt".
 
 ### Integer Values
 
 * `browser_cache_ttl` (default: `14400`)
 * `challenge_ttl` (default: `1800`)
 * `max_upload` (default: `100`)
+
+### List Objects
+
+* `ciphers` - An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
 
 ### Nested Objects
 
