@@ -15,7 +15,8 @@ import (
 
 func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	name := "cloudflare_zone_settings_override.test"
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_settings_override." + rnd
 
 	initialSettings := make(map[string]interface{})
 	resource.Test(t, resource.TestCase{
@@ -23,13 +24,13 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetInitialZoneSettings(t, zoneID, initialSettings),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneID),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettings(name),
 					resource.TestCheckResourceAttr(name, "settings.0.brotli", "on"),
@@ -38,6 +39,7 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "settings.0.h2_prioritization", "on"),
 					resource.TestCheckResourceAttr(name, "settings.0.zero_rtt", "off"),
 					resource.TestCheckResourceAttr(name, "settings.0.universal_ssl", "off"),
+					resource.TestCheckResourceAttr(name, "settings.0.ciphers.#", "2"),
 				),
 			},
 		},
@@ -47,7 +49,8 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 
 func TestAccCloudflareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	name := "cloudflare_zone_settings_override.test"
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_settings_override." + rnd
 
 	initialSettings := make(map[string]interface{})
 	resource.Test(t, resource.TestCase{
@@ -55,19 +58,19 @@ func TestAccCloudflareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetInitialZoneSettings(t, zoneID, initialSettings),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneID),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigNormal(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettings(name),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID),
+				Config: testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneSettings(name),
 				),
@@ -177,17 +180,17 @@ func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]i
 	}
 }
 
-func testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(zoneID string) string {
+func testAccCheckCloudflareZoneSettingsOverrideConfigEmpty(rnd, zoneID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_zone_settings_override" "test" {
-	zone_id = "%s"
-}`, zoneID)
+resource "cloudflare_zone_settings_override" "%[1]s" {
+	zone_id = "%[2]s"
+}`, rnd, zoneID)
 }
 
-func testAccCheckCloudflareZoneSettingsOverrideConfigNormal(zoneID string) string {
+func testAccCheckCloudflareZoneSettingsOverrideConfigNormal(rnd, zoneID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_zone_settings_override" "test" {
-	zone_id = "%s"
+resource "cloudflare_zone_settings_override" "%[1]s" {
+	zone_id = "%[2]s"
 	settings {
 		brotli = "on"
 		challenge_ttl = 2700
@@ -207,5 +210,5 @@ resource "cloudflare_zone_settings_override" "test" {
 		}
 		zero_rtt = "off"
 	}
-}`, zoneID)
+}`, rnd, zoneID)
 }
