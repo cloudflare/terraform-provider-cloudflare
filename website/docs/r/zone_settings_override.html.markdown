@@ -62,18 +62,22 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `always_online` (default: `on`)
 * `always_use_https` (default: `off`)
 * `automatic_https_rewrites` (default value depends on the zone's plan level)
+* `binary_ast` (default: `off`)
 * `brotli` (default: `off`)
 * `browser_check` (default: `on`)
 * `development_mode` (default: `off`)
 * `email_obfuscation` (default: `on`)
+* `filter_logs_to_cloudflare` (default: `off`)
 * `hotlink_protection` (default: `off`)
 * `http2` (default: `off`)
 * `http3` (default: `off`)
 * `ip_geolocation` (default: `on`)
 * `ipv6` (default: `off`)
+* `log_to_cloudflare` (default: `off`)
 * `mirage` (default: `off`)
 * `opportunistic_encryption` (default value depends on the zone's plan level)
 * `opportunistic_onion` (default: `off`)
+* `orange_to_orange` (default: `off`)
 * `origin_error_page_pass_thru` (default: `off`)
 * `prefetch_preload` (default: `off`)
 * `privacy_pass` (default: `on`)
@@ -84,6 +88,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `tls_client_auth` (default: `on`)
 * `true_client_ip_header` (default: `off`)
 * `universal_ssl` (default: `on`)
+* `visitor_ip` (default: `off`)
 * `waf` (default: `off`)
 * `webp` (default: `off`). Note that the value specified will be ignored unless `polish` is turned on (i.e. is "lossless" or "lossy")
 * `websockets` (default: `off`)
@@ -97,6 +102,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `image_resizing` - Allowed values: "on", "off" (default), "open".
 * `min_tls_version` - Allowed values: "1.0" (default), "1.1", "1.2", "1.3".
 * `polish` - Allowed values: "off" (default), "lossless", "lossy".
+* `proxy_read_timeout` (default: "100")
 * `pseudo_ipv4` - Allowed values: "off" (default), "add_header", "overwrite_header".
 * `security_level` - Allowed values: "off" (Enterprise only), "essentially_off", "low", "medium" (default), "high", "under_attack".
 * `ssl` - Allowed values: "off" (default), "flexible", "full", "strict", "origin_pull".
