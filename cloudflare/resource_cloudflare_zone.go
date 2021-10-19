@@ -214,16 +214,32 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		d.Set("plan", zone.PlanPending.LegacyID)
 	}
 
-	if change := d.HasChange("plan"); change {
-		// If we're upgrading from a free plan, we need to use POST (not PUT) as the
-		// the subscription needs to be created, not modified despite the resource
-		// already existing.
+	if d.HasChanges("plan", "type") {
 		existingPlan, newPlan := d.GetChange("plan")
-		wasFreePlan := existingPlan.(string) == "free"
-		planID := newPlan.(string)
+		newType := d.Get("type")
 
-		if err := setRatePlan(client, zoneID, planID, wasFreePlan, d); err != nil {
-			return err
+		if newPlan.(string) != planIDEnterprise && newType.(string) == "partial" {
+			return fmt.Errorf("error updating zone_id %q: type = \"partial\" requires plan = \"%s\"", zoneID, planIDEnterprise)
+		}
+
+		if change := d.HasChange("plan"); change {
+			// If we're upgrading from a free plan, we need to use POST (not PUT) as the
+			// the subscription needs to be created, not modified despite the resource
+			// already existing.
+			wasFreePlan := existingPlan.(string) == "free"
+			planID := newPlan.(string)
+
+			if err := setRatePlan(client, zoneID, planID, wasFreePlan, d); err != nil {
+				return err
+			}
+		}
+
+		if d.HasChange("type") && !d.IsNewResource() {
+			log.Printf("[DEBUG] Setting type for zone with id %s to: %s", d.Id(), newType.(string))
+
+			if _, err := client.ZoneSetType(context.Background(), d.Id(), newType.(string)); err != nil {
+				return err
+			}
 		}
 	}
 
