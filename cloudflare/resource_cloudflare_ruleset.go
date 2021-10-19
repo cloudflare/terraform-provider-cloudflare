@@ -330,6 +330,23 @@ func resourceCloudflareRuleset() *schema.Resource {
 								},
 							},
 						},
+						"exposed_credential_check": {
+							Type:     schema.TypeList,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"username_expression": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"password_expression": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -625,6 +642,17 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			rule["ratelimit"] = rateLimit
 		}
 
+		if !reflect.ValueOf(r.ExposedCredentialCheck).IsNil() {
+			var exposedCredentialCheck []map[string]interface{}
+
+			exposedCredentialCheck = append(exposedCredentialCheck, map[string]interface{}{
+				"username_expression": r.ExposedCredentialCheck.UsernameExpression,
+				"password_expression": r.ExposedCredentialCheck.PasswordExpression,
+			})
+
+			rule["exposed_credential_check"] = exposedCredentialCheck
+		}
+
 		rulesData = append(rulesData, rule)
 	}
 
@@ -811,6 +839,23 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for ratelimit: %s", pKey)
+					}
+				}
+			}
+		}
+
+		if len(resourceRule["exposed_credential_check"].([]interface{})) > 0 {
+			rule.ExposedCredentialCheck = &cloudflare.RulesetRuleExposedCredentialCheck{}
+			for _, parameter := range resourceRule["exposed_credential_check"].([]interface{}) {
+				for pKey, pValue := range parameter.(map[string]interface{}) {
+					switch pKey {
+					case "username_expression":
+						rule.ExposedCredentialCheck.UsernameExpression = pValue.(string)
+					case "password_expression":
+						rule.ExposedCredentialCheck.PasswordExpression = pValue.(string)
+
+					default:
+						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for exposed_credential_check: %s", pKey)
 					}
 				}
 			}

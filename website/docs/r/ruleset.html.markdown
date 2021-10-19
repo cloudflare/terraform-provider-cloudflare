@@ -220,6 +220,7 @@ The following arguments are supported:
 * `expression` - (Required) Criteria for an HTTP request to trigger the ruleset rule action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.
 * `id` - (Read only) Unique rule identifier.
 * `ratelimit` - (Optional) List of parameters that configure HTTP rate limiting behaviour (refer to the [nested schema](#nestedblock--ratelimiting-parameters)).
+* `exposed_credential_check` - (Optional) List of parameters that configure exposed credential checks (refer to the [nested schema](#nestedblock--exposed-credential-check-parameters)).
 * `ref` - (Read only) Rule reference.
 * `version`- (Read only) Version of the ruleset to deploy.
 
@@ -231,6 +232,12 @@ The following arguments are supported:
 * `requests_per_period` - (Optional) The number of requests over the period of time that will trigger the Rate Limiting rule.
 * `mitigation_timeout` - (Optional) Once the request rate is reached, the Rate Limiting rule blocks further requests for the period of time defined in this field.
 * `mitigation_expression` - (Optional) Scope of the mitigation action. Allows you to specify an action scope different from the rule scope. Refer to the [rate limiting parameters documentation](https://developers.cloudflare.com/firewall/cf-rulesets/custom-rules/rate-limiting/parameters) for full details.
+
+<a id="#nestedblock--exposed-credential-check-parameters"></a>
+**Nested schema for `exposed_credential_check`**
+
+* `username_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "username" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
+* `password_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "password" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
 
 <a id="nestedblock--action-parameters"></a>
 **Nested schema for `action_parameters`**

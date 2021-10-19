@@ -1002,6 +1002,48 @@ func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetExposedCredentialCheck(rnd, "example exposed credential check", accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "example exposed credential check"),
+					resource.TestCheckResourceAttr(resourceName, "description", "This ruleset includes a rule checking for exposed credentials."),
+					resource.TestCheckResourceAttr(resourceName, "kind", "custom"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_custom"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "log"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "http.request.method == \"POST\" && http.request.uri == \"/login.php\""),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example exposed credential check"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.0.username_expression", "url_decode(http.request.body.form[\"username\"][0])"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.0.password_expression", "url_decode(http.request.body.form[\"password\"][0])"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -1734,4 +1776,27 @@ func testAccCheckCloudflareRulesetTransformationRuleURIPathAndQueryCombination(r
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetExposedCredentialCheck(rnd, name, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    account_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "This ruleset includes a rule checking for exposed credentials."
+    kind        = "custom"
+    phase       = "http_request_firewall_custom"
+
+    rules {
+      action = "log"
+      expression = "http.request.method == \"POST\" && http.request.uri == \"/login.php\""
+      enabled = true
+      description = "example exposed credential check"
+      exposed_credential_check {
+        username_expression = "url_decode(http.request.body.form[\"username\"][0])"
+        password_expression = "url_decode(http.request.body.form[\"password\"][0])"
+      }
+    }
+  }
+`, rnd, name, accountID)
 }
