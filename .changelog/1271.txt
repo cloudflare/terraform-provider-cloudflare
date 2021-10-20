@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: allow setting `uri` and `path` action parmeters together in a single rule
+```
