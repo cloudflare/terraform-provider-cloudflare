@@ -89,6 +89,20 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
 				Description: "Configure API client to always use that account",
 			},
+
+			"api_hostname": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_HOSTNAME", "api.cloudflare.com"),
+				Description: "Configure the hostname used by the API client",
+			},
+
+			"api_base_path": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_BASE_PATH", "/client/v4"),
+				Description: "Configure the base path used by the API client",
+			},
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -183,9 +197,12 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, error) {
+	baseURL := cloudflare.BaseURL(
+		"https://" + d.Get("api_hostname").(string) + d.Get("api_base_path").(string),
+	)
 	limitOpt := cloudflare.UsingRateLimit(float64(d.Get("rps").(int)))
 	retryOpt := cloudflare.UsingRetryPolicy(d.Get("retries").(int), d.Get("min_backoff").(int), d.Get("max_backoff").(int))
-	options := []cloudflare.Option{limitOpt, retryOpt}
+	options := []cloudflare.Option{limitOpt, retryOpt, baseURL}
 
 	if d.Get("api_client_logging").(bool) {
 		options = append(options, cloudflare.UsingLogger(log.New(os.Stderr, "", log.LstdFlags)))
