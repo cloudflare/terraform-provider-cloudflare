@@ -15,6 +15,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	accountLevelRulesetDeleteURL = "https://api.cloudflare.com/#account-rulesets-delete-account-ruleset"
+	zoneLevelRulesetDeleteURL    = "https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset"
+	duplicateRulesetError        = "failed to create ruleset %q as a similar configuration already exists. If you are migrating from the Dashboard, you will need to first manually remove it using the API (%s) before you can configure it in Terraform. Otherwise, you have hit the entitlements quota and should contact your account team."
+)
+
 func resourceCloudflareRuleset() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudflareRulesetCreate,
@@ -363,6 +369,14 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if err != nil {
+		if strings.Contains(err.Error(), "exceeded maximum number") {
+			deleteRulesetURL := accountLevelRulesetDeleteURL
+			if accountID == "" {
+				deleteRulesetURL = zoneLevelRulesetDeleteURL
+			}
+			return fmt.Errorf(duplicateRulesetError, rulesetName, deleteRulesetURL)
+		}
+
 		return errors.Wrap(err, fmt.Sprintf("error creating ruleset %s", rulesetName))
 	}
 
