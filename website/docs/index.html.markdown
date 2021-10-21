@@ -77,3 +77,5 @@ The following arguments are supported:
 * `account_id` - (Optional) Configure API client with this account ID, so calls use the account API rather than the (default) user API.
   This is required for other users in your account to have access to the resources you manage.
   This can also be specified with the `CLOUDFLARE_ACCOUNT_ID` shell environment variable.
+* `api_hostname` - (Optional) Configure the API client to use a specific hostname. Default: "api.cloudflare.com"
+* `api_base_path` - (Optional) Configure the API client to use a specific base path. Default: "/client/v4"
