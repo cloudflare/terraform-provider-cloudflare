@@ -1,5 +1,9 @@
 ## 3.4.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* provider: add the ability to configure a different hostname and base path for the API client ([#1270](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1270))
+
 ## 3.3.0 (October 20th, 2021)
 
 FEATURES:
