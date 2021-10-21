@@ -747,26 +747,25 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 						}
 
 					case "uri":
+						var uriParameterConfig cloudflare.RulesetRuleActionParametersURI
 						for _, uriValue := range pValue.([]interface{}) {
 							if val, ok := uriValue.(map[string]interface{})["path"]; ok && len(val.([]interface{})) > 0 {
 								uriPathConfig := val.([]interface{})[0].(map[string]interface{})
-								rule.ActionParameters.URI = &cloudflare.RulesetRuleActionParametersURI{
-									Path: &cloudflare.RulesetRuleActionParametersURIPath{
-										Value:      uriPathConfig["value"].(string),
-										Expression: uriPathConfig["expression"].(string),
-									},
+								uriParameterConfig.Path = &cloudflare.RulesetRuleActionParametersURIPath{
+									Value:      uriPathConfig["value"].(string),
+									Expression: uriPathConfig["expression"].(string),
 								}
 							}
 
 							if val, ok := uriValue.(map[string]interface{})["query"]; ok && len(val.([]interface{})) > 0 {
 								uriQueryConfig := val.([]interface{})[0].(map[string]interface{})
-								rule.ActionParameters.URI = &cloudflare.RulesetRuleActionParametersURI{
-									Query: &cloudflare.RulesetRuleActionParametersURIQuery{
-										Value:      uriQueryConfig["value"].(string),
-										Expression: uriQueryConfig["expression"].(string),
-									},
+								uriParameterConfig.Query = &cloudflare.RulesetRuleActionParametersURIQuery{
+									Value:      uriQueryConfig["value"].(string),
+									Expression: uriQueryConfig["expression"].(string),
 								}
 							}
+
+							rule.ActionParameters.URI = &uriParameterConfig
 						}
 
 					case "headers":

@@ -728,6 +728,49 @@ func TestAccCloudflareRuleset_TransformationRuleURIQuery(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_TransformationRuleURIPathAndQueryCombination(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetTransformationRuleURIPathAndQueryCombination(rnd, "uri combination of path and query", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "uri combination of path and query"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_transform"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.uri.0.path.0.value", "/path/to/url"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.uri.0.query.0.expression", "concat(\"requestUrl=\", http.request.full_uri)"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example for combining URI action parameters for path and query"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_TransformationRuleHeaders(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -1662,4 +1705,32 @@ func testAccCheckCloudflareRulesetAccountLevelCustomWAFRule(rnd, name, accountID
       enabled = true
     }
   }`, rnd, name, accountID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetTransformationRuleURIPathAndQueryCombination(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_transform"
+
+    rules {
+      action = "rewrite"
+      action_parameters {
+        uri {
+          query {
+            expression = "concat(\"requestUrl=\", http.request.full_uri)"
+          }
+          path {
+            value = "/path/to/url"
+          }
+        }
+      }
+      expression = "true"
+      description = "example for combining URI action parameters for path and query"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
 }
