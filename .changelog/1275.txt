@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: allow action parameter override `enabled` to be true/false or uninitialised
+```

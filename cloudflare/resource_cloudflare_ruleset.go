@@ -352,7 +352,7 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 		Phase:       d.Get("phase").(string),
 	}
 
-	rules, err := buildRulesetRulesFromResource(d.Get("phase").(string), d.Get("rules"))
+	rules, err := buildRulesetRulesFromResource(d)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
 	}
@@ -446,7 +446,7 @@ func resourceCloudflareRulesetUpdate(d *schema.ResourceData, meta interface{}) e
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	rules, err := buildRulesetRulesFromResource(d.Get("phase").(string), d.Get("rules"))
+	rules, err := buildRulesetRulesFromResource(d)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
 	}
@@ -632,15 +632,15 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 }
 
 // receives the resource config and builds a ruleset rule array
-func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.RulesetRule, error) {
+func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.RulesetRule, error) {
 	var rulesetRules []cloudflare.RulesetRule
 
-	rules, ok := r.([]interface{})
+	rules, ok := d.Get("rules").([]interface{})
 	if !ok {
 		return nil, errors.New("unable to create interface array type assertion")
 	}
 
-	for _, v := range rules {
+	for rulesCounter, v := range rules {
 		var rule cloudflare.RulesetRule
 
 		resourceRule, ok := v.(map[string]interface{})
@@ -688,9 +688,9 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 						var categories []cloudflare.RulesetRuleActionParametersCategories
 						var rules []cloudflare.RulesetRuleActionParametersRules
 
-						for _, overrideParamValue := range pValue.([]interface{}) {
-							if phase != string(cloudflare.RulesetPhaseDDoSL7) {
-								overrideConfiguration.Enabled = &[]bool{overrideParamValue.(map[string]interface{})["enabled"].(bool)}[0]
+						for overrideCounter, overrideParamValue := range pValue.([]interface{}) {
+							if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter)); ok {
+								overrideConfiguration.Enabled = &[]bool{value.(bool)}[0]
 							}
 
 							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
@@ -711,12 +711,12 @@ func buildRulesetRulesFromResource(phase string, r interface{}) ([]cloudflare.Ru
 
 							// Rule ID based overrides
 							if val, ok := overrideParamValue.(map[string]interface{})["rules"]; ok {
-								for _, rule := range val.([]interface{}) {
+								for ruleOverrideCounter, rule := range val.([]interface{}) {
 									rData := rule.(map[string]interface{})
 
 									var enabled *bool
-									if phase != string(cloudflare.RulesetPhaseDDoSL7) {
-										enabled = &[]bool{rData["enabled"].(bool)}[0]
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
+										enabled = &[]bool{value.(bool)}[0]
 									}
 
 									rules = append(rules, cloudflare.RulesetRuleActionParametersRules{

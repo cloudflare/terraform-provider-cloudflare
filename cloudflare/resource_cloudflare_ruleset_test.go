@@ -909,6 +909,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesAction(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "efb7b8c949ac4650a09736fc376e9aee"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.version", "latest"),
+					resource.TestCheckNoResourceAttr(resourceName, "rules.0.action_parameters.0.enabled"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.action", "log"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.enabled", "true"),
