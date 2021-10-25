@@ -84,13 +84,28 @@ func TestAccCloudflareZonePartialSetup(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithPartialSetup(rnd, "foo.net", "true", "false", "free"),
+				Config: testZoneConfigWithPartialSetup(rnd, "foo.net", "true", "false", "enterprise"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone", "foo.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareZoneFreePartialSetup(t *testing.T) {
+	rnd := generateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testZoneConfigWithPartialSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free"),
+				ExpectError: regexp.MustCompile("type = \"partial\" requires plan = \"enterprise\""),
 			},
 		},
 	})
