@@ -6,6 +6,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_ruleset: allow action parameter override `enabled` to be true/false or uninitialised ([#1275](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1275))
 * resource/cloudflare_ruleset: allow setting `uri` and `path` action parmeters together in a single rule ([#1271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1271))
 
 ## 3.3.0 (October 20th, 2021)
