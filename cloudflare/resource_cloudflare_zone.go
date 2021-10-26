@@ -116,13 +116,8 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	zoneName := d.Get("zone").(string)
 	jumpstart := d.Get("jump_start").(bool)
 	zoneType := d.Get("type").(string)
-	zonePlan := d.Get("plan").(string)
 	account := cloudflare.Account{
 		ID: client.AccountID,
-	}
-
-	if zonePlan != planIDEnterprise && zoneType == "partial" {
-		return fmt.Errorf("error creating zone %q: type = \"partial\" requires plan = \"%s\"", zoneName, planIDEnterprise)
 	}
 
 	log.Printf("[INFO] Creating Cloudflare Zone: name %s", zoneName)
@@ -230,10 +225,6 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 	if d.HasChanges("plan", "type") {
 		existingPlan, newPlan := d.GetChange("plan")
 		newType := d.Get("type")
-
-		if newPlan.(string) != planIDEnterprise && newType.(string) == "partial" {
-			return fmt.Errorf("error updating zone_id %q: type = \"partial\" requires plan = \"%s\"", zoneID, planIDEnterprise)
-		}
 
 		if change := d.HasChange("plan"); change {
 			// If we're upgrading from a free plan, we need to use POST (not PUT) as the

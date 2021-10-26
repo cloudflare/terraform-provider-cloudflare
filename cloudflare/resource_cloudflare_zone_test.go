@@ -2,7 +2,6 @@ package cloudflare
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -96,21 +95,6 @@ func TestAccCloudflareZonePartialSetup(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZoneFreePartialSetup(t *testing.T) {
-	rnd := generateRandomResourceName()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config:      testZoneConfigWithPartialSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free"),
-				ExpectError: regexp.MustCompile("type = \"partial\" requires plan = \"enterprise\""),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareZoneFullSetup(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
@@ -170,24 +154,6 @@ func TestAccCloudflareZoneSetPlanAndType(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareZoneSetIncomaptiblePlanAndType(t *testing.T) {
-	rnd := generateRandomResourceName()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testZoneConfigWithExplicitFullSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free"),
-			},
-			{
-				Config:      testZoneConfigWithPartialSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free"),
-				ExpectError: regexp.MustCompile("type = \"partial\" requires plan = \"enterprise\""),
 			},
 		},
 	})
