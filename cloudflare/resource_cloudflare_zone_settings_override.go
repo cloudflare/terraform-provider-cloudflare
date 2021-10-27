@@ -533,6 +533,13 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Optional:     true,
 		Computed:     true,
 	},
+
+	"early_hints": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
 }
 
 var fetchAsSingleSetting = []string{
