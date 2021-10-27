@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -15,6 +16,19 @@ func dataSourceCloudflareLoadBalancerPools() *schema.Resource {
 		Read: dataSourceCloudflareLoadBalancerPoolsRead,
 
 		Schema: map[string]*schema.Schema{
+			"filter": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"pools": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -105,6 +119,11 @@ func dataSourceCloudflareLoadBalancerPoolsRead(d *schema.ResourceData, meta inte
 	log.Printf("[DEBUG] Reading Load Balancer Pools")
 	client := meta.(*cloudflare.API)
 
+	filter, err := expandFilterLoadBalancerPools(d.Get("filter"))
+	if err != nil {
+		return err
+	}
+
 	poolsObj, err := client.ListLoadBalancerPools(context.Background())
 	if err != nil {
 		return fmt.Errorf("error listing load balancer pools: %w", err)
@@ -113,6 +132,10 @@ func dataSourceCloudflareLoadBalancerPoolsRead(d *schema.ResourceData, meta inte
 	poolIds := make([]string, 0)
 	pools := make([]map[string]interface{}, 0, len(poolsObj))
 	for _, p := range poolsObj {
+		if filter.Name != nil && !filter.Name.Match([]byte(p.Name)) {
+			continue
+		}
+
 		pools = append(pools, map[string]interface{}{
 			"id":                 p.ID,
 			"name":               p.Name,
@@ -138,4 +161,28 @@ func dataSourceCloudflareLoadBalancerPoolsRead(d *schema.ResourceData, meta inte
 
 	d.SetId(stringListChecksum(poolIds))
 	return nil
+}
+
+type searchLoadBalancerPools struct {
+	Name *regexp.Regexp
+}
+
+func expandFilterLoadBalancerPools(d interface{}) (*searchLoadBalancerPools, error) {
+	cfg := d.([]interface{})
+	filter := &searchLoadBalancerPools{}
+	if len(cfg) == 0 || cfg[0] == nil {
+		return filter, nil
+	}
+
+	m := cfg[0].(map[string]interface{})
+	name, ok := m["name"]
+	if ok {
+		match, err := regexp.Compile(name.(string))
+		if err != nil {
+			return nil, err
+		}
+		filter.Name = match
+	}
+
+	return filter, nil
 }

@@ -12,16 +12,28 @@ Use this data source to look up [Load Balancer Pools][1].
 
 ## Example Usage
 
-The example below list all configured Load Balancer Pools. The list is then returned as output.
+The example below list all configured Load Balancer Pools that starts by the `default-`. The matched list is then returned as output.
 
 ```hcl
 data "cloudflare_load_balancer_pools" "test" {
+  filter {
+    name = "^default-.*"
+  }
 }
 
 output "lb_pools" {
   value = data.cloudflare_load_balancer_pools.test.pools
 }
 ```
+
+## Argument Reference
+
+* `filter` - (Optional) One or more values used to look up Load Balancer pools. If more than one value is given all
+values must match in order to be included, see below for full list.
+
+**filter**
+
+* `name` - (Optional) A regular expression matching the name of the Load Balancer pool to lookup.
 
 ## Attributes Reference
 
