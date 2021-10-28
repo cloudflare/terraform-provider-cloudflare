@@ -17,7 +17,6 @@ func dataSourceCloudflareOriginCARootCertificate() *schema.Resource {
 			"algorithm": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"rsa", "ecc"}, true),
 			},
 

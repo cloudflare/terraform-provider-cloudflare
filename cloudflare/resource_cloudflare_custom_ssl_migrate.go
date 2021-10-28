@@ -18,11 +18,11 @@ func resourceCloudflareCustomSSLV0() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"certificate": {
 							Type:     schema.TypeString,
-							Optional: false,
+							Required: true,
 						},
 						"private_key": {
 							Type:      schema.TypeString,
-							Optional:  false,
+							Required:  true,
 							Sensitive: true,
 						},
 						"bundle_method": {
