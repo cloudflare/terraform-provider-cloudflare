@@ -46,7 +46,6 @@ func resourceCloudflareStaticRoute() *schema.Resource {
 			"weight": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				Required: false,
 				// API does not allow to reset weights when attribute isn't send. To avoid generating unnecessary changes
 				// we will trigger a re-create when weights change
 				ForceNew: true,
