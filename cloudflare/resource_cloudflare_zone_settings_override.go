@@ -546,6 +546,7 @@ var fetchAsSingleSetting = []string{
 	"binary_ast",
 	"h2_prioritization",
 	"image_resizing",
+	"early_hints",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta interface{}) error {
