@@ -180,7 +180,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
         "ECDHE-RSA-AES128-GCM-SHA256",
         "AES128-SHA"
       ]
-	  early_hints = "off"
+      early_hints = "off"
     }
   }
 }
@@ -237,7 +237,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
         "ECDHE-RSA-AES128-GCM-SHA256",
         "AES128-SHA"
       ]
-	  early_hints = "off"
+      early_hints = "off"
     }
   }
 }
