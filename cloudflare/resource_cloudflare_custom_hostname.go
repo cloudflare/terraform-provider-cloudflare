@@ -115,6 +115,11 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 											Type: schema.TypeString,
 										},
 									},
+									"early_hints": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
 								},
 							},
 						},

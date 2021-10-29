@@ -180,6 +180,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
         "ECDHE-RSA-AES128-GCM-SHA256",
         "AES128-SHA"
       ]
+	  early_hints = "off"
     }
   }
 }
@@ -204,6 +205,7 @@ func TestAccCloudflareCustomHostnameUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.2"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.early_hints", "off"),
 				),
 			},
 			{
@@ -214,6 +216,7 @@ func TestAccCloudflareCustomHostnameUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.1"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.early_hints", "off"),
 				),
 			},
 		},
@@ -234,6 +237,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
         "ECDHE-RSA-AES128-GCM-SHA256",
         "AES128-SHA"
       ]
+	  early_hints = "off"
     }
   }
 }

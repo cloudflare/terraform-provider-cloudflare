@@ -1,0 +1,4 @@
+
+```release-note:enhancement
+resource/cloudflare_custom_hostname: add `settings.early_hints` to ssl schema
+```
