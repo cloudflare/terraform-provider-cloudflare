@@ -533,12 +533,20 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Optional:     true,
 		Computed:     true,
 	},
+
+	"early_hints": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
 }
 
 var fetchAsSingleSetting = []string{
 	"binary_ast",
 	"h2_prioritization",
 	"image_resizing",
+	"early_hints",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(d *schema.ResourceData, meta interface{}) error {

@@ -66,6 +66,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 * `brotli` (default: `off`)
 * `browser_check` (default: `on`)
 * `development_mode` (default: `off`)
+* `early_hints` (default: `off`)
 * `email_obfuscation` (default: `on`)
 * `filter_logs_to_cloudflare` (default: `off`)
 * `hotlink_protection` (default: `off`)

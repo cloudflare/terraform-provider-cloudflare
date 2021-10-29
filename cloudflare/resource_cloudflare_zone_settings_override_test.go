@@ -36,6 +36,7 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "settings.0.brotli", "on"),
 					resource.TestCheckResourceAttr(name, "settings.0.challenge_ttl", "2700"),
 					resource.TestCheckResourceAttr(name, "settings.0.security_level", "high"),
+					resource.TestCheckResourceAttr(name, "settings.0.early_hints", "on"),
 					resource.TestCheckResourceAttr(name, "settings.0.h2_prioritization", "on"),
 					resource.TestCheckResourceAttr(name, "settings.0.zero_rtt", "off"),
 					resource.TestCheckResourceAttr(name, "settings.0.universal_ssl", "off"),
@@ -195,6 +196,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		brotli = "on"
 		challenge_ttl = 2700
 		ciphers = ["ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-ECDSA-CHACHA20-POLY1305"]
+		early_hints = "on"
 		security_level = "high"
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"
