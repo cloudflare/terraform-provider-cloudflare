@@ -151,6 +151,15 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"logo_url": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"skip_interstitial": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 		},
 	}
 }
@@ -172,6 +181,8 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
+		LogoURL:                 d.Get("logo_url").(string),
+		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -244,6 +255,8 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
 	d.Set("http_only_cookie_attribute", accessApplication.HttpOnlyCookieAttribute)
 	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
+	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
+	d.Set("logo_url", accessApplication.LogoURL)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -271,6 +284,8 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
+		LogoURL:                 d.Get("logo_url").(string),
+		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {

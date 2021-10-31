@@ -255,6 +255,58 @@ func TestAccCloudflareAccessApplicationWithSameSiteCookieAttribute(t *testing.T)
 	})
 }
 
+func TestAccCloudflareAccessApplicationWithLogoURL(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "logo_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationWithSkipInterstitial(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "skip_interstitial", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
@@ -368,6 +420,32 @@ resource "cloudflare_access_application" "%[1]s" {
   type                       = "self_hosted"
   session_duration           = "24h"
   same_site_cookie_attribute = "strict"
+}
+`, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                    = "%[2]s"
+  name                       = "%[1]s"
+  domain                     = "%[1]s.%[3]s"
+  type                       = "self_hosted"
+  session_duration           = "24h"
+  skip_interstitial          = true
+}
+`, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                    = "%[2]s"
+  name                       = "%[1]s"
+  domain                     = "%[1]s.%[3]s"
+  type                       = "self_hosted"
+  session_duration           = "24h"
+  logo_url          		 = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
 }
 `, rnd, zoneID, domain)
 }
