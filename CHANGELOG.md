@@ -3,6 +3,9 @@
 ENHANCEMENTS:
 
 * provider: add the ability to configure a different hostname and base path for the API client ([#1270](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1270))
+* resource/cloudflare_access_application: add support for 'skip_interstitial' and 'logo_url' properties ([#1262](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1262))
+* resource/cloudflare_custom_hostname: add `settings.early_hints` to ssl schema ([#1286](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1286))
+* resource/cloudflare_ruleset: add support for exposed credential checks ([#1263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1263))
 * resource/cloudflare_zone_setting_override: add support for overriding `early_hints` ([#1285](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1285))
 
 BUG FIXES:
