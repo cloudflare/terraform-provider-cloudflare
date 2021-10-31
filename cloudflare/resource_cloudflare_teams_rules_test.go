@@ -39,12 +39,11 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", "desc"),
 					resource.TestCheckResourceAttr(name, "precedence", "12302"),
-					resource.TestCheckResourceAttr(name, "action", "override"),
-					resource.TestCheckResourceAttr(name, "filters.0", "l4"),
-					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"com.stupidchess\")"),
+					resource.TestCheckResourceAttr(name, "action", "block"),
+					resource.TestCheckResourceAttr(name, "filters.0", "dns"),
+					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"example.com\")"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "false"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_reason", "cuz"),
-					resource.TestCheckResourceAttr(name, "rule_settings.0.override_host", "host.com"),
 				),
 			},
 		},
@@ -58,13 +57,12 @@ resource "cloudflare_teams_rule" "%[1]s" {
   account_id = "%[2]s"
   description = "desc"
   precedence = 12302
-  action = "override"
-  filters = ["l4"]
-  traffic = "any(dns.domains[*] == \"com.stupidchess\")"
+  action = "block"
+  filters = ["dns"]
+  traffic = "any(dns.domains[*] == \"example.com\")"
   rule_settings {
     block_page_enabled = false
     block_page_reason = "cuz"
-    override_host = "host.com"
   }
 }
 `, rnd, accountID)

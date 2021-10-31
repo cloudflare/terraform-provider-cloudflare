@@ -59,7 +59,7 @@ func TestAccCertificatePackAdvancedDigicert(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "type", "advanced"),
 					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
-					resource.TestCheckResourceAttr(name, "validation_method", "http"),
+					resource.TestCheckResourceAttr(name, "validation_method", "txt"),
 					resource.TestCheckResourceAttr(name, "validity_days", "365"),
 					resource.TestCheckResourceAttr(name, "certificate_authority", "digicert"),
 					resource.TestCheckResourceAttr(name, "cloudflare_branding", "false"),
@@ -78,7 +78,7 @@ resource "cloudflare_certificate_pack" "%[3]s" {
     "%[3]s.%[2]s",
     "%[2]s"
   ]
-  validation_method = "http"
+  validation_method = "txt"
   validity_days = 365
   certificate_authority = "digicert"
   cloudflare_branding = false
