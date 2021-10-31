@@ -115,6 +115,11 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 											Type: schema.TypeString,
 										},
 									},
+									"early_hints": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+									},
 								},
 							},
 						},
@@ -174,6 +179,7 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 				"tls13":           customHostname.SSL.Settings.TLS13,
 				"min_tls_version": customHostname.SSL.Settings.MinTLSVersion,
 				"ciphers":         customHostname.SSL.Settings.Ciphers,
+				"early_hints":     customHostname.SSL.Settings.EarlyHints,
 			}},
 		})
 	}
@@ -284,6 +290,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 				TLS13:         d.Get("ssl.0.settings.0.tls13").(string),
 				MinTLSVersion: d.Get("ssl.0.settings.0.min_tls_version").(string),
 				Ciphers:       expandInterfaceToStringList(d.Get("ssl.0.settings.0.ciphers").(*schema.Set).List()),
+				EarlyHints:    d.Get("ssl.0.settings.0.early_hints").(string),
 			},
 		}
 	}

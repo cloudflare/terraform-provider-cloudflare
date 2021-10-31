@@ -48,6 +48,7 @@ The following arguments are supported:
 * `min_tls_version` - (Optional) Lowest version of TLS this certificate should
   support. Valid values are `"1.0"`, `"1.1"`, `"1.2"` and `"1.3"`.
 * `ciphers` - (Optional) List of SSL/TLS ciphers to associate with this certificate.
+* `early_hints` - (Optional) Whether or not early hints should be supported. Valid values are `"on"` or `"off"`.
 
 ## Attributes Reference
 
