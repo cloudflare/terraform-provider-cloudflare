@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"os"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -37,6 +38,29 @@ func resourceCloudflareFilter() *schema.Resource {
 				Required: true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return strings.TrimSpace(new) == old
+				},
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					var api *cloudflare.API
+					var err error
+
+					// Establish a bare bones cloudflare client to make the validation call.
+					if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+						api, err = cloudflare.NewWithAPIToken(os.Getenv("CLOUDFLARE_API_TOKEN"), cloudflare.UserAgent("terraform-provider-cloudflare/unknown"))
+						if err != nil {
+							log.Fatal(err)
+						}
+					} else {
+						api, err = cloudflare.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"), cloudflare.UserAgent("terraform-provider-cloudflare/unknown"))
+						if err != nil {
+							log.Fatal(err)
+						}
+					}
+
+					expression := val.(string)
+					if err := api.ValidateFilterExpression(context.Background(), expression); err != nil {
+						errs = append(errs, fmt.Errorf("filter expression is invalid: %s", err))
+					}
+					return
 				},
 			},
 			"description": {

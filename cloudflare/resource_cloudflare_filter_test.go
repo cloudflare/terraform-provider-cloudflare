@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -42,7 +43,7 @@ func testSweepCloudflareFilterSweeper(r string) error {
 	return nil
 }
 
-func TestAccFilterSimple(t *testing.T) {
+func TestAccCloudflareFilter_Simple(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -67,6 +68,57 @@ func TestAccFilterSimple(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareFilter_InvalidExpressionWithAPIToken(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN to confirm users depending on API
+	// tokens can also work with the filter validation.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testFilterInvalidExpression(rnd, zoneID),
+				ExpectError: regexp.MustCompile("filter expression is invalid"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareFilter_InvalidExpressionWithAPIKey(t *testing.T) {
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testFilterInvalidExpression(rnd, zoneID),
+				ExpectError: regexp.MustCompile("filter expression is invalid"),
+			},
+		},
+	})
+}
+
+func testFilterInvalidExpression(resourceID, zoneID string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_filter" "%[1]s" {
+		  zone_id = "%[2]s"
+		  paused = "true"
+		  description = "example"
+		  expression = "(foo eq \"bar\")"
+		}
+		`, resourceID, zoneID)
+}
+
 func testFilterConfig(resourceID, zoneID, paused, description, expression string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_filter" "%[1]s" {
@@ -89,7 +141,7 @@ EOF
 }
 `
 
-func TestAccFilterWhitespace(t *testing.T) {
+func TestAccCloudflareFilter_Whitespace(t *testing.T) {
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -105,7 +157,7 @@ func TestAccFilterWhitespace(t *testing.T) {
 	})
 }
 
-func TestAccFilterHTMLEntity(t *testing.T) {
+func TestAccCloudflareFilter_HTMLEntity(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
