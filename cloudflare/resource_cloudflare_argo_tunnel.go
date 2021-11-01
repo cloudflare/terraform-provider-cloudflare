@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const argoTunnelCNAME = "argotunnel.com"
+const argoTunnelCNAME = "cfargotunnel.com"
 
 func resourceCloudflareArgoTunnel() *schema.Resource {
 	return &schema.Resource{
