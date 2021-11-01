@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_rule: allow "ip6" to be a padded or unpadded value and compare correctly
+```

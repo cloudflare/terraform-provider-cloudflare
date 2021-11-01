@@ -258,12 +258,13 @@ func resourceCloudflareAccessRuleImport(d *schema.ResourceData, meta interface{}
 
 func configurationDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
 	switch {
-	case d.Get("configuration.target") == "country" &&
-		k == "configuration.value":
+	case d.Get("configuration.0.target") == "ip6" && k == "configuration.0.value":
+		existingIP := net.ParseIP(old)
+		incomingIP := net.ParseIP(new)
+		return existingIP.Equal(incomingIP)
+	case d.Get("configuration.0.target") == "country" && k == "configuration.0.value":
 		return strings.ToUpper(old) == strings.ToUpper(new)
-	case d.Get("configuration.target") == "asn" &&
-		k == "configuration.value":
-
+	case d.Get("configuration.0.target") == "asn" && k == "configuration.0.value":
 		if !strings.HasPrefix(strings.ToUpper(new), "AS") {
 			new = "AS" + strings.ToUpper(new)
 		}
