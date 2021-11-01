@@ -7,15 +7,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccAccessRuleASN(t *testing.T) {
-	name := "cloudflare_access_rule.test"
+func TestAccCloudflareAccessRule_ASN(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessRuleAccountConfig("challenge", "this is notes", "asn", "AS112"),
+				Config: testAccessRuleAccountConfig("challenge", "this is notes", "asn", "AS112", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
@@ -25,7 +26,7 @@ func TestAccAccessRuleASN(t *testing.T) {
 			},
 			{
 				// Note: Only notes + mode can be changed in place.
-				Config: testAccessRuleAccountConfig("block", "this is updated notes", "asn", "AS112"),
+				Config: testAccessRuleAccountConfig("block", "this is updated notes", "asn", "AS112", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
 					resource.TestCheckResourceAttr(name, "mode", "block"),
@@ -37,15 +38,16 @@ func TestAccAccessRuleASN(t *testing.T) {
 	})
 }
 
-func TestAccAccessRuleIPRange(t *testing.T) {
-	name := "cloudflare_access_rule.test"
+func TestAccCloudflareAccessRule_IPRange(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessRuleAccountConfig("challenge", "this is notes", "ip_range", "104.16.0.0/24"),
+				Config: testAccessRuleAccountConfig("challenge", "this is notes", "ip_range", "104.16.0.0/24", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
@@ -55,7 +57,7 @@ func TestAccAccessRuleIPRange(t *testing.T) {
 			},
 			{
 				// Note: Only notes + mode can be changed in place.
-				Config: testAccessRuleAccountConfig("block", "this is updated notes", "ip_range", "104.16.0.0/24"),
+				Config: testAccessRuleAccountConfig("block", "this is updated notes", "ip_range", "104.16.0.0/24", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "notes", "this is updated notes"),
 					resource.TestCheckResourceAttr(name, "mode", "block"),
@@ -67,16 +69,46 @@ func TestAccAccessRuleIPRange(t *testing.T) {
 	})
 }
 
-func testAccessRuleAccountConfig(mode, notes, target, value string) string {
+func TestAccCloudflareAccessRule_IPv6(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_rule." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessRuleAccountConfig("block", "this is notes", "ip6", "2001:0db8::", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
+					resource.TestCheckResourceAttr(name, "mode", "block"),
+					resource.TestCheckResourceAttr(name, "configuration.0.target", "ip6"),
+					resource.TestCheckResourceAttr(name, "configuration.0.value", "2001:0db8:0000:0000:0000:0000:0000:0000"),
+				),
+			},
+			{
+				Config: testAccessRuleAccountConfig("block", "this is notes", "ip6", "2001:0db8:0000:0000:0000:0000:0000:0000", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "notes", "this is notes"),
+					resource.TestCheckResourceAttr(name, "mode", "block"),
+					resource.TestCheckResourceAttr(name, "configuration.0.target", "ip6"),
+					resource.TestCheckResourceAttr(name, "configuration.0.value", "2001:0db8:0000:0000:0000:0000:0000:0000"),
+				),
+			},
+		},
+	})
+}
+
+func testAccessRuleAccountConfig(mode, notes, target, value, rnd string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_rule" "test" {
+resource "cloudflare_access_rule" "%[5]s" {
   notes = "%[2]s"
   mode = "%[1]s"
   configuration {
     target = "%[3]s"
     value = "%[4]s"
   }
-}`, mode, notes, target, value)
+}`, mode, notes, target, value, rnd)
 }
 
 func TestValidateAccessRuleConfigurationIPRange(t *testing.T) {
