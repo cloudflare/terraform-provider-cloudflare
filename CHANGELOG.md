@@ -1,5 +1,9 @@
 ## 3.5.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_origin_ca_certificate: reintroduce `DiffSuppressFunc` for `requested_validity` changes to handle all schema/SDK combinations ([#1289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1289))
+
 ## 3.4.0 (November 1st, 2021)
 
 ENHANCEMENTS:
