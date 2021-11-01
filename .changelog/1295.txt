@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_argo: call `Read` for `Import` operations
+```
