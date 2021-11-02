@@ -43,7 +43,7 @@ jobs:
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v2.3.5
+      uses: actions/checkout@v2.4.0
 
     - uses: actions/cache@v2.1.6
       with:
