@@ -116,6 +116,7 @@ func Provider() *schema.Provider {
 			"cloudflare_zones":                       dataSourceCloudflareZones(),
 			"cloudflare_zone":                        dataSourceCloudflareZone(),
 			"cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
+			"cloudflare_access_identity_provider":    dataSourceCloudflareAccessIdentityProvider(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
