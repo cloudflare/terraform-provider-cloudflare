@@ -2,12 +2,13 @@ package cloudflare
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccCloudflareZoneBasic(t *testing.T) {
+func TestAccCloudflareZone_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 
@@ -29,7 +30,7 @@ func TestAccCloudflareZoneBasic(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZoneBasicWithJumpStartEnabled(t *testing.T) {
+func TestAccCloudflareZone_BasicWithJumpStartEnabled(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 
@@ -52,7 +53,7 @@ func TestAccCloudflareZoneBasicWithJumpStartEnabled(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZoneWithPlan(t *testing.T) {
+func TestAccCloudflareZone_WithPlan(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 
@@ -74,7 +75,7 @@ func TestAccCloudflareZoneWithPlan(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZonePartialSetup(t *testing.T) {
+func TestAccCloudflareZone_PartialSetup(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 
@@ -95,7 +96,7 @@ func TestAccCloudflareZonePartialSetup(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZoneFullSetup(t *testing.T) {
+func TestAccCloudflareZone_FullSetup(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 
@@ -194,7 +195,7 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareZoneWithEnterprisePlan(t *testing.T) {
+func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 
@@ -283,6 +284,27 @@ func TestPlanIDFallsBackToEmptyIfUnknown(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestAccCloudflareZone_SetType(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone." + rnd
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testZoneConfigWithExplicitFullSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise"),
+			},
+			{
+				Config: testZoneConfigWithPartialSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "type", "partial"),
+				),
+			},
+		},
+	})
 }
 
 func testZoneConfigWithPartialSetup(resourceID, zoneName, paused, jumpStart, plan string) string {
