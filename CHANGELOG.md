@@ -1,5 +1,9 @@
 ## 3.5.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_zone: support changing `type` values ([#1301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1301))
+
 BUG FIXES:
 
 * resource/cloudflare_access_rule: allow "ip6" to be a padded or unpadded value and compare correctly ([#1294](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1294))
