@@ -27,10 +27,6 @@ func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -47,18 +43,19 @@ func dataSourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta
 		return err
 	}
 
-	providers := []cloudflare.AccessIdentityProvider{}
+	var providers []cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
 		providers, err = client.AccessIdentityProviders(context.Background(), identifier.Value)
 	} else {
 		providers, err = client.ZoneLevelAccessIdentityProviders(context.Background(), identifier.Value)
 	}
+
 	if err != nil {
 		return fmt.Errorf("error listing Access Identity Providers: %s", err)
 	}
 
 	if len(providers) == 0 {
-		return fmt.Errorf("no Access Identity Provider found")
+		return fmt.Errorf("no Access Identity Providers found")
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
@@ -70,7 +67,7 @@ func dataSourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta
 	}
 
 	if accessIdentityProvider.ID == "" {
-		return fmt.Errorf("no Access Identity Provider matching name '%s'", name)
+		return fmt.Errorf("no Access Identity Provider matching name %q", name)
 	}
 
 	d.SetId(accessIdentityProvider.ID)

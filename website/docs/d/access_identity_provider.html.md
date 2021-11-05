@@ -8,7 +8,7 @@ description: |-
 
 # cloudflare_access_identity_provider
 
-Use this data source to lookup an [Access Identity Providers][access_identity_provider_guide] by name
+Use this data source to lookup a single [Access Identity Provider][access_identity_provider_guide] by name.
 
 ## Example usage
 
@@ -34,9 +34,9 @@ The following arguments are supported:
 
 -> **Note:** It's required that an `account_id` or `zone_id` is provided.
 
-* `account_id` - (Optional) The account for which to look for an Access Identity Provider (Conflicts with `zone_id`)
-
-* `zone_id` - (Optional) The Zone's ID Conflicts with `account_id`)
+* `account_id` - (Optional) The account for which to look for an Access Identity Provider. Conflicts with `zone_id`.
+* `zone_id` - (Optional) The Zone's ID. Conflicts with `account_id`.
+* `name` - (Required) Access Identity Provider name to search for.
 
 ## Attributes Reference
 

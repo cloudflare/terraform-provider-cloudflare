@@ -10,7 +10,6 @@ import (
 )
 
 func TestAccCloudflareAccessIdentityProviderDataSource_PreventZoneIdAndAccountIdConflicts(t *testing.T) {
-
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
@@ -28,8 +27,9 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventZoneIdAndAccountId
 func testCloudflareAccessIdentityProviderDataSourceConfigConflictingFields(rnd string) string {
 	return fmt.Sprintf(`
 data "cloudflare_access_identity_provider" "%[1]s" {
-  account_id    = "123abc"
-  zone_id = "abc123"
+  account_id = "123abc"
+  zone_id    = "abc123"
+  name       = "foo"
 }
 `, rnd)
 }
@@ -51,7 +51,9 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventNoInputSpecify(t *
 
 func testCloudflareAccessIdentityProviderDataSourceNoInput(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {}
+data "cloudflare_access_identity_provider" "%[1]s" {
+	name = "foo"
+}
 `, rnd)
 }
 
