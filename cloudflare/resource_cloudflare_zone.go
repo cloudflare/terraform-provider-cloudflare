@@ -146,6 +146,13 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
+	if ztype, ok := d.GetOk("type"); ok {
+		_, err := client.ZoneSetType(context.Background(), zone.ID, ztype.(string))
+		if err != nil {
+			return fmt.Errorf("error setting type on zone ID %q: %s", zone.ID, err)
+		}
+	}
+
 	return resourceCloudflareZoneRead(d, meta)
 }
 
@@ -203,7 +210,15 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		_, err := client.ZoneSetPaused(context.Background(), zoneID, paused.(bool))
 
 		if err != nil {
-			return fmt.Errorf("error updating zone_id %q: %s", zoneID, err)
+			return fmt.Errorf("error setting paused for zone ID %q: %s", zoneID, err)
+		}
+	}
+
+	if ztype, ok := d.GetOkExists("type"); ok && d.HasChange("type") {
+		_, err := client.ZoneSetType(context.Background(), zoneID, ztype.(string))
+
+		if err != nil {
+			return fmt.Errorf("error setting type for on zone ID %q: %s", zoneID, err)
 		}
 	}
 
