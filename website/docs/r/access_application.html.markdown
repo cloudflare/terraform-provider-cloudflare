@@ -46,54 +46,54 @@ The following arguments are supported:
 
 -> **Note:** It's required that an `account_id` or `zone_id` is provided and in most cases using either is fine. However, if you're using a scoped access token, you must provide the argument that matches the token's scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
 
-* `account_id` - (Optional) The account to which the access application should be added. Conflicts with `zone_id`.
-* `zone_id` - (Optional) The DNS zone to which the access application should be added. Conflicts with `account_id`.
-* `name` - (Required) Friendly name of the Access Application.
-* `domain` - (Required) The complete URL of the asset you wish to put
+- `account_id` - (Optional) The account to which the access application should be added. Conflicts with `zone_id`.
+- `zone_id` - (Optional) The DNS zone to which the access application should be added. Conflicts with `account_id`.
+- `name` - (Required) Friendly name of the Access Application.
+- `domain` - (Required) The complete URL of the asset you wish to put
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
-* `type` - (Optional) The application type. Defaults to `self_hosted`. Valid
+- `type` - (Optional) The application type. Defaults to `self_hosted`. Valid
   values are `self_hosted`, `ssh`, `vnc`, or `file`.
-* `session_duration` - (Optional) How often a user will be forced to
+- `session_duration` - (Optional) How often a user will be forced to
   re-authorise. Must be in the format `"48h"` or `"2h45m"`.
   Valid time units are `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`. Defaults to `24h`.
-* `cors_headers` - (Optional) CORS configuration for the Access Application. See
+- `cors_headers` - (Optional) CORS configuration for the Access Application. See
   below for reference structure.
-* `allowed_idps` - (Optional) The identity providers selected for the application.
-
+- `allowed_idps` - (Optional) The identity providers selected for the application.
 
 **cors_headers** allows the following:
 
-* `allowed_methods` - (Optional) List of methods to expose via CORS.
-* `allowed_origins` - (Optional) List of origins permitted to make CORS requests.
-* `allowed_headers` - (Optional) List of HTTP headers to expose via CORS.
-* `allow_all_methods` - (Optional) Boolean value to determine whether all
+- `allowed_methods` - (Optional) List of methods to expose via CORS.
+- `allowed_origins` - (Optional) List of origins permitted to make CORS requests.
+- `allowed_headers` - (Optional) List of HTTP headers to expose via CORS.
+- `allow_all_methods` - (Optional) Boolean value to determine whether all
   methods are exposed.
-* `allow_all_origins` - (Optional) Boolean value to determine whether all
+- `allow_all_origins` - (Optional) Boolean value to determine whether all
   origins are permitted to make CORS requests.
-* `allow_all_headers` - (Optional) Boolean value to determine whether all
+- `allow_all_headers` - (Optional) Boolean value to determine whether all
   HTTP headers are exposed.
-* `allow_credentials` - (Optional) Boolean value to determine if credentials
+- `allow_credentials` - (Optional) Boolean value to determine if credentials
   (cookies, authorization headers, or TLS client certificates) are included with
   requests.
-* `max_age` - (Optional) Integer representing the maximum time a preflight
+- `max_age` - (Optional) Integer representing the maximum time a preflight
   request will be cached.
-* `auto_redirect_to_identity` - (Optional) Option to skip identity provider
+- `auto_redirect_to_identity` - (Optional) Option to skip identity provider
   selection if only one is configured in allowed_idps. Defaults to `false`
   (disabled).
-* `enable_binding_cookie` - (Optional) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
-* `custom_deny_message` - (Optional) Option that returns a custom error message when a user is denied access to the application.
-* `custom_deny_url` - (Optional) Option that redirects to a custom URL when a user is denied access to the application.
+- `enable_binding_cookie` - (Optional) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
+- `custom_deny_message` - (Optional) Option that returns a custom error message when a user is denied access to the application.
+- `custom_deny_url` - (Optional) Option that redirects to a custom URL when a user is denied access to the application.
+- `app_launcher_visible` - (Optional) Option to show/hide applications in App Launcher. Defaults to `true`.
 
 ## Attributes Reference
 
 The following additional attributes are exported:
 
-* `id` - ID of the application
-* `aud` - Application Audience (AUD) Tag of the application
-* `domain` - Domain of the application
-* `session_duration` - Length of session for the application before prompting for a sign in
-* `auto_redirect_to_identity` - If the IdP selection page is skipped or not
-* `allowed_idps` - The identity providers selected for the application
+- `id` - ID of the application
+- `aud` - Application Audience (AUD) Tag of the application
+- `domain` - Domain of the application
+- `session_duration` - Length of session for the application before prompting for a sign in
+- `auto_redirect_to_identity` - If the IdP selection page is skipped or not
+- `allowed_idps` - The identity providers selected for the application
 
 ## Import
 
