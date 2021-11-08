@@ -20,6 +20,153 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessApplicationImport,
 		},
+<<<<<<< HEAD
+=======
+
+		Schema: map[string]*schema.Schema{
+			"account_id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"zone_id"},
+			},
+			"zone_id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"account_id"},
+			},
+			"aud": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"domain": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "self_hosted",
+				ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file"}, false),
+			},
+			"session_duration": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "24h",
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					v := val.(string)
+					_, err := time.ParseDuration(v)
+					if err != nil {
+						errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`, key))
+					}
+					return
+				},
+			},
+			"cors_headers": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"allowed_methods": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"allowed_origins": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"allowed_headers": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"allow_all_methods": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"allow_all_origins": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"allow_all_headers": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"allow_credentials": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"max_age": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							ValidateFunc: validation.IntBetween(-1, 86400),
+						},
+					},
+				},
+			},
+			"auto_redirect_to_identity": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"enable_binding_cookie": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"allowed_idps": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"custom_deny_message": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"custom_deny_url": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"http_only_cookie_attribute": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"same_site_cookie_attribute": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"logo_url": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"skip_interstitial": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"app_launcher_visible": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
+			},
+		},
+>>>>>>> 425dd626 (Add app_launcher_visible to Access Application)
 	}
 }
 
@@ -42,6 +189,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
+		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -116,6 +264,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
 	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
 	d.Set("logo_url", accessApplication.LogoURL)
+	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -145,6 +294,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
+		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {
