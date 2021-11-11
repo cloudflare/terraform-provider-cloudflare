@@ -823,7 +823,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 				for pKey, pValue := range parameter.(map[string]interface{}) {
 					switch pKey {
 					case "characteristics":
-						characteristicKeys := make([]string, 0)
+						characteristicKeys := []string{"cf.colo.id"}
 						for _, v := range pValue.(*schema.Set).List() {
 							characteristicKeys = append(characteristicKeys, v.(string))
 						}
