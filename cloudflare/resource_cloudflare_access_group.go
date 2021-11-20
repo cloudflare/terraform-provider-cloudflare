@@ -730,7 +730,7 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 	}
 
 	if len(groups) > 0 {
-		data["groups"] = groups
+		data["group"] = groups
 	}
 
 	if len(devicePostureRuleIDs) > 0 {
