@@ -10,28 +10,8 @@ import (
 
 func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareAccessIdentityProviderRead,
-
-		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ExactlyOneOf: []string{"zone_id", "account_id"},
-			},
-			"zone_id": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ExactlyOneOf: []string{"zone_id", "account_id"},
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-		},
+		Schema: dataSourceCloudflareAccessIdentityProviderSchema(),
+		Read:   dataSourceCloudflareAccessIdentityProviderRead,
 	}
 }
 
