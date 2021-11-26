@@ -38,7 +38,7 @@ func TestAccCloudflareArgoTunnelCreate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
-					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.argotunnel\\.com")),
+					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.cfargotunnel\\.com")),
 				),
 			},
 		},
