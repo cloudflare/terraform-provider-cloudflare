@@ -1,5 +1,9 @@
 ## 3.5.0 (Unreleased)
 
+NOTES:
+
+* provider: split schema definition from resource CRUD operations ([#1321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1321))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_zone: support changing `type` values ([#1301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1301))
