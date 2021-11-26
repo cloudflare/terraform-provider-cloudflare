@@ -11,27 +11,13 @@ import (
 
 func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareWorkerCronTriggerSchema(),
 		Create: resourceCloudflareWorkerCronTriggerUpdate,
 		Read:   resourceCloudflareWorkerCronTriggerRead,
 		Update: resourceCloudflareWorkerCronTriggerUpdate,
 		Delete: resourceCloudflareWorkerCronTriggerDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWorkerCronTriggerImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"script_name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"schedules": {
-				Type:     schema.TypeSet,
-				Required: true,
-				MinItems: 1,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
 		},
 	}
 }

@@ -11,7 +11,6 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 // we enforce the use of the Cloudflare API 'legacy_id' field until the mapping of plan is fixed in cloudflare-go
@@ -41,71 +40,13 @@ var subscriptionIDOfRatePlans = map[string]string{
 
 func resourceCloudflareZone() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareZoneSchema(),
 		Create: resourceCloudflareZoneCreate,
 		Read:   resourceCloudflareZoneRead,
 		Update: resourceCloudflareZoneUpdate,
 		Delete: resourceCloudflareZoneDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"zone": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: zoneDiffFunc,
-			},
-			"jump_start": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"paused": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"vanity_name_servers": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"plan": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validation.StringInSlice([]string{planIDFree, planIDPro, planIDBusiness, planIDEnterprise}, false),
-			},
-			"meta": {
-				Type:     schema.TypeMap,
-				Computed: true,
-				Elem: &schema.Schema{
-					Type:     schema.TypeBool,
-					Computed: true,
-				},
-			},
-			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"type": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"full", "partial"}, false),
-				Default:      "full",
-				Optional:     true,
-			},
-			"name_servers": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"verification_key": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 	}
 }

@@ -13,6 +13,7 @@ import (
 
 func resourceCloudflareAccessServiceToken() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareAccessServiceTokenSchema(),
 		Create: resourceCloudflareAccessServiceTokenCreate,
 		Read:   resourceCloudflareAccessServiceTokenRead,
 		Update: resourceCloudflareAccessServiceTokenUpdate,
@@ -22,44 +23,6 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.ComputedIf("expires_at", resourceCloudflareAccessServiceTokenExpireDiff),
-
-		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"zone_id"},
-			},
-			"zone_id": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"account_id"},
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"client_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-				ForceNew: true,
-			},
-			"client_secret": {
-				Type:      schema.TypeString,
-				Computed:  true,
-				Sensitive: true,
-				ForceNew:  true,
-			},
-			"expires_at": {
-				Type:     schema.TypeString,
-				Computed: true,
-				ForceNew: true,
-			},
-			"min_days_for_renewal": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  0,
-			},
-		},
 	}
 }
 

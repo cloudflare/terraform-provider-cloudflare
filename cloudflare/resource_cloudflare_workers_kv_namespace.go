@@ -12,19 +12,13 @@ import (
 
 func resourceCloudflareWorkersKVNamespace() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareWorkersKVNamespaceSchema(),
 		Create: resourceCloudflareWorkersKVNamespaceCreate,
 		Read:   resourceCloudflareWorkersKVNamespaceRead,
 		Update: resourceCloudflareWorkersKVNamespaceUpdate,
 		Delete: resourceCloudflareWorkersKVNamespaceDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWorkersKVNamespaceImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"title": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
 		},
 	}
 }

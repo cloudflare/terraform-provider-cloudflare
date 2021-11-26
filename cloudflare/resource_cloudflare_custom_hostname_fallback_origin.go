@@ -14,29 +14,13 @@ import (
 
 func resourceCloudflareCustomHostnameFallbackOrigin() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareCustomHostnameFallbackOriginSchema(),
 		Create: resourceCloudflareCustomHostnameFallbackOriginCreate,
 		Read:   resourceCloudflareCustomHostnameFallbackOriginRead,
 		Update: resourceCloudflareCustomHostnameFallbackOriginUpdate,
 		Delete: resourceCloudflareCustomHostnameFallbackOriginDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareCustomHostnameFallbackOriginImport,
-		},
-
-		SchemaVersion: 0,
-		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Required: true,
-			},
-			"origin": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 	}
 }

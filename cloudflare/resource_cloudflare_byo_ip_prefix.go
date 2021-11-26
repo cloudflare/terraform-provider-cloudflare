@@ -6,37 +6,18 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareBYOIPPrefix() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareBYOIPPrefixSchema(),
 		Create: resourceCloudflareBYOIPPrefixCreate,
 		Read:   resourceCloudflareBYOIPPrefixRead,
 		Update: resourceCloudflareBYOIPPrefixUpdate,
 		Delete: resourceCloudflareBYOIPPrefixDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareBYOIPPrefixImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"prefix_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
-			},
-			"advertisement": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-				Computed:     true,
-				Optional:     true,
-			},
 		},
 	}
 }

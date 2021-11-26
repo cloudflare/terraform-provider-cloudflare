@@ -11,24 +11,13 @@ import (
 
 func resourceCloudflareLogpullRetention() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareLogpullRetentionSchema(),
 		Create: resourceCloudflareLogpullRetentionSet,
 		Read:   resourceCloudflareLogpullRetentionRead,
 		Update: resourceCloudflareLogpullRetentionSet,
 		Delete: resourceCloudflareLogpullRetentionDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareLogpullRetentionImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"enabled": {
-				Type:     schema.TypeBool,
-				Required: true,
-			},
 		},
 	}
 }

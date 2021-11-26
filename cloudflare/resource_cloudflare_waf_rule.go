@@ -11,6 +11,7 @@ import (
 
 func resourceCloudflareWAFRule() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareWAFRuleSchema(),
 		Create: resourceCloudflareWAFRuleCreate,
 		Read:   resourceCloudflareWAFRuleRead,
 		Update: resourceCloudflareWAFRuleUpdate,
@@ -18,35 +19,6 @@ func resourceCloudflareWAFRule() *schema.Resource {
 
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWAFRuleImport,
-		},
-
-		SchemaVersion: 0,
-		Schema: map[string]*schema.Schema{
-			"rule_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
-			"zone_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
-			"group_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-
-			"package_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-
-			"mode": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
 		},
 	}
 }

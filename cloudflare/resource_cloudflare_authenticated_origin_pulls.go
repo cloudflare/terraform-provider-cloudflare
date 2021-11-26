@@ -12,32 +12,13 @@ import (
 
 func resourceCloudflareAuthenticatedOriginPulls() *schema.Resource {
 	return &schema.Resource{
-		// AOP is a toggleable feature, editing is the same as creating.
+		Schema: resourceCloudflareAuthenticatedOriginPullsSchema(),
 		Create: resourceCloudflareAuthenticatedOriginPullsCreate,
 		Read:   resourceCloudflareAuthenticatedOriginPullsRead,
 		Update: resourceCloudflareAuthenticatedOriginPullsCreate,
 		Delete: resourceCloudflareAuthenticatedOriginPullsDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAuthenticatedOriginPullsImport,
-		},
-		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"hostname": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"authenticated_origin_pulls_certificate": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"enabled": {
-				Type:     schema.TypeBool,
-				Required: true,
-			},
 		},
 	}
 }
