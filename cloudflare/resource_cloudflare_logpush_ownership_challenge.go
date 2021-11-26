@@ -11,27 +11,11 @@ import (
 
 func resourceCloudflareLogpushOwnershipChallenge() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareLogpushOwnershipChallengeSchema(),
 		Create: resourceCloudflareLogpushOwnershipChallengeCreate,
 		Update: resourceCloudflareLogpushOwnershipChallengeCreate,
 		Read:   resourceCloudflareLogpushOwnershipChallengeNoop,
 		Delete: resourceCloudflareLogpushOwnershipChallengeNoop,
-
-		SchemaVersion: 0,
-		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"destination_conf": {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Required: true,
-			},
-			"ownership_challenge_filename": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-		},
 	}
 }
 

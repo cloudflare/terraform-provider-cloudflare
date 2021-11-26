@@ -12,26 +12,13 @@ import (
 
 func resourceCloudflareAccountMember() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareAccountMemberSchema(),
 		Create: resourceCloudflareAccountMemberCreate,
 		Read:   resourceCloudflareAccountMemberRead,
 		Update: resourceCloudflareAccountMemberUpdate,
 		Delete: resourceCloudflareAccountMemberDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccountMemberImport,
-		},
-
-		SchemaVersion: 0,
-		Schema: map[string]*schema.Schema{
-			"email_address": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
-			"role_ids": {
-				Type:     schema.TypeSet,
-				Required: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
 		},
 	}
 }

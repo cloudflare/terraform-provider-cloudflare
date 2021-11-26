@@ -11,24 +11,13 @@ import (
 
 func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareAccessKeysConfigurationSchema(),
 		Read:   resourceCloudflareAccessKeysConfigurationRead,
 		Create: resourceCloudflareAccessKeysConfigurationCreate,
 		Update: resourceCloudflareAccessKeysConfigurationUpdate,
-		Delete: resourceCloudflareKeysConfigDelete,
+		Delete: resourceCloudflareKeysConfigurationDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareKeysConfigImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"key_rotation_interval_days": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Computed: true,
-			},
+			State: resourceCloudflareKeysConfigurationImport,
 		},
 	}
 }
@@ -80,13 +69,13 @@ func resourceCloudflareAccessKeysConfigurationUpdate(d *schema.ResourceData, met
 	return resourceCloudflareAccessKeysConfigurationRead(d, meta)
 }
 
-func resourceCloudflareKeysConfigDelete(_ *schema.ResourceData, _ interface{}) error {
+func resourceCloudflareKeysConfigurationDelete(_ *schema.ResourceData, _ interface{}) error {
 	// keys configuration share the same lifetime as an organization, and can not be
 	// explicitly deleted by the user. so this is a no-op.
 	return nil
 }
 
-func resourceCloudflareKeysConfigImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareKeysConfigurationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	accountID := d.Id()
 
 	d.SetId(accountID)

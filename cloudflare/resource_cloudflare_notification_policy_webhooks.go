@@ -13,47 +13,13 @@ import (
 
 func resourceCloudflareNotificationPolicyWebhooks() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareNotificationPolicyWebhooksSchema(),
 		Create: resourceCloudflareNotificationPolicyWebhooksCreate,
 		Read:   resourceCloudflareNotificationPolicyWebhooksRead,
 		Update: resourceCloudflareNotificationPolicyWebhooksUpdate,
 		Delete: resourceCloudflareNotificationPolicyWebhooksDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareNotificationPolicyWebhooksImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"url": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"secret": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"created_at": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"last_success": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"last_failure": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 	}
 }

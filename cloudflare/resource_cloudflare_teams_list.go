@@ -8,44 +8,17 @@ import (
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareTeamsList() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareTeamsListSchema(),
 		Create: resourceCloudflareTeamsListCreate,
 		Read:   resourceCloudflareTeamsListRead,
 		Update: resourceCloudflareTeamsListUpdate,
 		Delete: resourceCloudflareTeamsListDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareTeamsListImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"type": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"SERIAL", "URL", "DOMAIN", "EMAIL"}, false),
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"items": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
 		},
 	}
 }

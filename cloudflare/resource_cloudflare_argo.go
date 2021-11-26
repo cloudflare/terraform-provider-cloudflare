@@ -7,38 +7,18 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareArgo() *schema.Resource {
 	return &schema.Resource{
-		// Pointing `Create` to the `Update `method is intentional. Argo
-		// settings are always present, it's just whether or not the value
-		// is "on" or "off".
+		Schema: resourceCloudflareArgoSchema(),
 		Create: resourceCloudflareArgoUpdate,
 		Read:   resourceCloudflareArgoRead,
 		Update: resourceCloudflareArgoUpdate,
 		Delete: resourceCloudflareArgoDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareArgoImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"tiered_caching": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-				Optional:     true,
-			},
-			"smart_routing": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-				Optional:     true,
-			},
 		},
 	}
 }

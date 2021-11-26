@@ -13,30 +13,13 @@ import (
 
 func resourceCloudflareWorkerRoute() *schema.Resource {
 	return &schema.Resource{
+		Schema: resourceCloudflareWorkerRouteSchema(),
 		Create: resourceCloudflareWorkerRouteCreate,
 		Read:   resourceCloudflareWorkerRouteRead,
 		Update: resourceCloudflareWorkerRouteUpdate,
 		Delete: resourceCloudflareWorkerRouteDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWorkerRouteImport,
-		},
-
-		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-
-			"pattern": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
-			"script_name": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 		},
 	}
 }

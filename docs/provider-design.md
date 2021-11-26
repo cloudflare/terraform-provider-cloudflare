@@ -16,6 +16,20 @@ And here are some things that **should not** be included in the Terraform provid
 - Creating and parsing JSON from resources. Instead, `cloudflare-go` should be managing all structs, interfaces and types.
 - Additional formatting of payloads and remapping of fields. Aim to maintain a 1:1 mapping to the public API for your schema which limits duplicating remapping logic in other tools such as [cf-terraforming].
 
+## File naming conventions
+
+Within the provider (`/cloudflare` directory), we have some filename conventions to help organise and assign responsibility.
+
+| Filename pattern        | Description |
+|-------------------------|-------------|
+| `schema_*.go`           | Used to denote a schema for a particular resource and/or datasource. This file should only contain the structure of the schema and any behaviours associated with it |
+| `schema_*_migrate.go`   | Manages and implements schema migration paths. Supersedes `resource_*_migrate.go` |
+| `resource_*.go`         | Defines the CRUD operations and resource definition |
+| `resource_*_test.go`    | Contains test asserts for the named resource |
+| `resource_*_migrate.go` | Manages and implements resource migration paths. Deprecated in favour of `schema_*_migrate.go` files to migrate schemas |
+| `data_source_*.go`      | Defines a data source type and behaviours |
+| `data_source_*_test.go` | Contains test asserts for the named data source |
+
 
 ## Data Sources
 
