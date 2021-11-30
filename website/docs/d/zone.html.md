@@ -46,7 +46,7 @@ data "cloudflare_zone" "example" {
 }
 
 resource "cloudflare_record" "example" {
-  zone_id = cloudflare_zone.example.id
+  zone_id = data.cloudflare_zone.example.id
   name    = "www"
   value   = "203.0.113.1"
   type    = "A"
