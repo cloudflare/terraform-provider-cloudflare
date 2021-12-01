@@ -105,7 +105,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
       }
     }
 
-    expression = "(http.host eq \"example.com\" and http.uri.path eq \"/old-path\")"
+    expression = "(http.host eq \"example.com\" and http.request.uri.path eq \"/old-path\")"
     description = "example URI path transform rule"
     enabled = true
   }
