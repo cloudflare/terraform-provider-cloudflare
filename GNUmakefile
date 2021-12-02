@@ -83,10 +83,8 @@ golangci-lint:
 	@golangci-lint run ./$(PKG_NAME)/... --config .golintci.yml
 
 tools:
-	cd tools && go install github.com/bflad/tfproviderdocs
-	cd tools && go install github.com/client9/misspell/cmd/misspell
-	cd tools && go install github.com/golangci/golangci-lint/cmd/golangci-lint
-	cd tools && go install github.com/hashicorp/go-changelog/cmd/changelog-build
+	@echo "==> Installing development tooling..."
+	go generate -tags tools tools/tools.go
 
 depscheck:
 	@echo "==> Checking source code with go mod tidy..."
