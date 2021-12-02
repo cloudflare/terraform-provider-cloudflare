@@ -21,8 +21,37 @@ test: fmtcheck
 testacc: fmtcheck
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m -parallel 1
 
+lint: tools terraform-provider-lint golangci-lint
+
+terraform-provider-lint: tools
+	$$(go env GOPATH)/bin/tfproviderlintx \
+	 -R003=false \
+	 -R011=false \
+	 -R012=false \
+	 -S006=false \
+	 -S013=false \
+	 -S014=false \
+	 -S020=false \
+	 -S022=false \
+	 -S023=false \
+	 -AT001=false \
+	 -AT002=false \
+	 -AT003=false \
+	 -AT006=false \
+	 -AT012=false \
+	 -R013=false \
+	 -XAT001=false \
+	 -XR001=false \
+	 -XR002=false \
+	 -XR003=false \
+	 -XR004=false \
+	 -XR005=false \
+	 -XS001=false \
+	 -XS002=false \
+	 ./cloudflare/
+
 vet:
-	@echo "go vet ."
+	@echo "==> Running go vet ."
 	@go vet ./... ; if [ $$? -ne 0 ]; then \
 		echo ""; \
 		echo "Vet found suspicious constructs. Please check the reported constructs"; \
