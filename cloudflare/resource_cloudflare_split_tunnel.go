@@ -75,8 +75,13 @@ func resourceCloudflareSplitTunnelDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudflareSplitTunnelImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	accountID := d.Get("account_id").(string)
-	mode := d.Get("mode").(string)
+	attributes := strings.SplitN(d.Id(), "/", 2)
+
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/mode\"", d.Id())
+	}
+
+	accountID, mode := attributes[0], attributes[1]
 
 	d.Set("mode", mode)
 	d.Set("account_id", accountID)
