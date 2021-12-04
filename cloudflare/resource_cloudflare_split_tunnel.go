@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
