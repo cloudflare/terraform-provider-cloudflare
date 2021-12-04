@@ -9,8 +9,7 @@ description: |-
 # cloudflare_split_tunnel
 
 Provides a Cloudflare Split Tunnel resource. Split tunnels are used to either
-include or exclude lists of routes from the WARP client's tunnel.  A
-single resource should be used choosing either the `include` or `exclude` mode.
+include or exclude lists of routes from the WARP client's tunnel.
 
 ## Example Usage
 
@@ -41,7 +40,7 @@ resource "cloudflare_split_tunnel" "example_split_tunnel_include" {
 The following arguments are supported:
 
 - `account_id` - (Required) The account to which the device posture rule should be added.
-- `mode` - (Required) The split tunnel mode.  Valid values are `include` or `exclude`.
+- `mode` - (Required) The split tunnel mode. Valid values are `include` or `exclude`.
 - `tunnels` - (Required) The value of the tunnel attributes (refer to the [nested schema](#nestedblock--tunnels)).
 
 <a id="nestedblock--tunnels"></a>
