@@ -3,7 +3,7 @@ layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_split_tunnel"
 sidebar_current: "docs-cloudflare-resource-split-tunnel"
 description: |-
-  Provides a Cloudflare Split Tunnel Exclude resource.
+  Provides a Cloudflare Split Tunnel resource.
 ---
 
 # cloudflare_split_tunnel
@@ -40,6 +40,7 @@ resource "cloudflare_split_tunnel" "example_split_tunnel_include" {
 The following arguments are supported:
 
 - `account_id` - (Required) The account to which the device posture rule should be added.
+- `mode` - (Required) The split tunnel mode. Valid values are `include` or `exclude`.
 - `tunnels` - (Required) The value of the tunnel attributes (refer to the [nested schema](#nestedblock--tunnels)).
 
 <a id="nestedblock--tunnels"></a>
@@ -51,8 +52,8 @@ The following arguments are supported:
 
 ## Import
 
-Split Tunnels can be imported using the account identifer.
+Split Tunnels can be imported using the account identifer and mode.
 
 ```
-$ terraform import cloudflare_split_tunnel.example 1d5fdc9e88c8a8c4518b068cd94331fe
+$ terraform import cloudflare_split_tunnel.example 1d5fdc9e88c8a8c4518b068cd94331fe/exclude
 ```
