@@ -16,8 +16,10 @@ BUG FIXES:
 
 * resource/cloudflare_access_rule: allow "ip6" to be a padded or unpadded value and compare correctly ([#1294](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1294))
 * resource/cloudflare_argo: call `Read` for `Import` operations ([#1295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1295))
+* resource/cloudflare_argo_tunnel: fix import mechanism ([#1329](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1329))
 * resource/cloudflare_argo_tunnel: update CNAME to use `cfargotunnel.com` ([#1293](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1293))
 * resource/cloudflare_origin_ca_certificate: reintroduce `DiffSuppressFunc` for `requested_validity` changes to handle all schema/SDK combinations ([#1289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1289))
+* resource/cloudflare_split_tunnel: import now works by specifying accountId/mode ([#1313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1313))
 
 ## 3.4.0 (November 1st, 2021)
 
