@@ -387,7 +387,7 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 			return nil
 		}
 		return errors.Wrap(err,
-			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", zoneID, loadBalancerID))
+			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", loadBalancerID, zoneID))
 	}
 
 	d.Set("name", loadBalancer.Name)
