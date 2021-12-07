@@ -181,6 +181,12 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if domain, ok := d.GetOk("input.0.domain"); ok {
 			input.Domain = domain.(string)
 		}
+		if complianceStatus, ok := d.GetOk("input.0.compliance_status"); ok {
+			input.ComplianceStatus = complianceStatus.(string)
+		}
+		if connectionID, ok := d.GetOk("input.0.connection_id"); ok {
+			input.ConnectionID = connectionID.(string)
+		}
 		rule.Input = input
 	}
 }
@@ -218,17 +224,19 @@ func convertMatchToSchema(matches []cloudflare.DevicePostureRuleMatch) []map[str
 
 func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]interface{} {
 	m := map[string]interface{}{
-		"id":          input.ID,
-		"path":        input.Path,
-		"exists":      input.Exists,
-		"thumbprint":  input.Thumbprint,
-		"sha256":      input.Sha256,
-		"running":     input.Running,
-		"require_all": input.RequireAll,
-		"enabled":     input.Enabled,
-		"version":     input.Version,
-		"operator":    input.Operator,
-		"domain":      input.Domain,
+		"id":                input.ID,
+		"path":              input.Path,
+		"exists":            input.Exists,
+		"thumbprint":        input.Thumbprint,
+		"sha256":            input.Sha256,
+		"running":           input.Running,
+		"require_all":       input.RequireAll,
+		"enabled":           input.Enabled,
+		"version":           input.Version,
+		"operator":          input.Operator,
+		"domain":            input.Domain,
+		"compliance_status": input.ComplianceStatus,
+		"connection_id":     input.ConnectionID,
 	}
 
 	return []map[string]interface{}{m}
