@@ -476,7 +476,6 @@ resource "cloudflare_access_application" "%[1]s" {
 `, rnd, zoneID, domain)
 }
 
-
 func testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
