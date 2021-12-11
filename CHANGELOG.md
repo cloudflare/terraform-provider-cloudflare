@@ -10,6 +10,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_ruleset: add support for rewriting HTTP response headers ([#1339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1339))
 * resource/cloudflare_zone: support changing `type` values ([#1301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1301))
 
 BUG FIXES:
