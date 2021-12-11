@@ -42,6 +42,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
+		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -116,6 +117,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
 	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
 	d.Set("logo_url", accessApplication.LogoURL)
+	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -145,6 +147,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
+		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {

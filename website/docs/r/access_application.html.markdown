@@ -60,7 +60,6 @@ The following arguments are supported:
   below for reference structure.
 * `allowed_idps` - (Optional) The identity providers selected for the application.
 
-
 **cors_headers** allows the following:
 
 * `allowed_methods` - (Optional) List of methods to expose via CORS.
@@ -83,6 +82,7 @@ The following arguments are supported:
 * `enable_binding_cookie` - (Optional) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
 * `custom_deny_message` - (Optional) Option that returns a custom error message when a user is denied access to the application.
 * `custom_deny_url` - (Optional) Option that redirects to a custom URL when a user is denied access to the application.
+* `app_launcher_visible` - (Optional) Option to show/hide applications in App Launcher. Defaults to `true`.
 
 ## Attributes Reference
 

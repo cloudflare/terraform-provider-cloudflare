@@ -148,6 +148,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional: true,
 			Default:  false,
 		},
+		"app_launcher_visible": {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  true,
+		},
 	}
 }
 
