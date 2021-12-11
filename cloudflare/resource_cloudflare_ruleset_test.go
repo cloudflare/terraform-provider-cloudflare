@@ -1,12 +1,73 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/pkg/errors"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_ruleset", &resource.Sweeper{
+		Name: "cloudflare_ruleset",
+		F:    testSweepCloudflareRuleset,
+	})
+}
+
+func testSweepCloudflareRuleset(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	// Clean up the account level rulesets
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	accountRulesets, accountRulesetsErr := client.ListAccountRulesets(context.Background(), accountID)
+	if accountRulesetsErr != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare Account Rulesets: %s", accountRulesetsErr)
+	}
+
+	if len(accountRulesets) == 0 {
+		log.Print("[DEBUG] No Cloudflare Account Rulesets to sweep")
+		return nil
+	}
+
+	for _, ruleset := range accountRulesets {
+		log.Printf("[INFO] Deleting Cloudflare Account Ruleset ID: %s", ruleset.ID)
+		client.DeleteAccountRuleset(context.Background(), accountID, ruleset.ID)
+	}
+
+	// .. and zone level rulesets
+	zone := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zone == "" {
+		return errors.New("CLOUDFLARE_ZONE_ID must be set")
+	}
+
+	zoneRulesets, zoneRulesetsErr := client.ListZoneRulesets(context.Background(), zoneID)
+	if zoneRulesetsErr != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare Zone Rulesets: %s", zoneRulesetsErr)
+	}
+
+	if len(zoneRulesets) == 0 {
+		log.Print("[DEBUG] No Cloudflare Zone Rulesets to sweep")
+		return nil
+	}
+
+	for _, ruleset := range zoneRulesets {
+		log.Printf("[INFO] Deleting Cloudflare Zone Ruleset ID: %s", ruleset.ID)
+		client.DeleteZoneRuleset(context.Background(), zoneID, ruleset.ID)
+	}
+
+	return nil
+}
 
 func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
