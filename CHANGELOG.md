@@ -10,6 +10,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: add support for `app_launcher_visible` to the schema ([#1303](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1303))
 * resource/cloudflare_ruleset: add support for rewriting HTTP response headers ([#1339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1339))
 * resource/cloudflare_zone: support changing `type` values ([#1301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1301))
 
@@ -21,6 +22,7 @@ BUG FIXES:
 * resource/cloudflare_argo_tunnel: update CNAME to use `cfargotunnel.com` ([#1293](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1293))
 * resource/cloudflare_origin_ca_certificate: reintroduce `DiffSuppressFunc` for `requested_validity` changes to handle all schema/SDK combinations ([#1289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1289))
 * resource/cloudflare_split_tunnel: import now works by specifying accountId/mode ([#1313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1313))
+* resource/cloudflare_teams_list: ignore `items` ordering ([#1338](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1338))
 
 ## 3.4.0 (November 1st, 2021)
 
