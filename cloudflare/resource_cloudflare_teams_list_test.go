@@ -47,6 +47,36 @@ func TestAccCloudflareTeamsListBasic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareTeamsListReordered(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareTeamsListDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsListConfigBasic(rnd, accountID),
+			},
+			{
+				Config: testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID),
+			},
+		},
+	})
+}
+
 func testAccCloudflareTeamsListConfigBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_teams_list" "%[1]s" {
@@ -55,6 +85,18 @@ resource "cloudflare_teams_list" "%[1]s" {
 	description = "My description"
 	type        = "SERIAL"
 	items       = ["asdf-1234", "asdf-5678"]
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+	account_id  = "%[2]s"
+	name        = "%[1]s"
+	description = "My description"
+	type        = "SERIAL"
+	items       = ["asdf-5678", "asdf-1234"]
 }
 `, rnd, accountID)
 }
