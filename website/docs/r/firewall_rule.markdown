@@ -13,6 +13,9 @@ A filter expression permits selecting traffic by multiple criteria allowing grea
 
 Filter expressions needs to be created first before using Firewall Rule. See [Filter](filter.html).
 
+If you want to configure Custom Firewall rules, you need to use [cloudflare_ruleset](ruleset.html), because Custom Rules are built upon the
+[Cloudflare Ruleset Engine](https://developers.cloudflare.com/ruleset-engine/).
+
 ## Example Usage
 
 ```hcl
