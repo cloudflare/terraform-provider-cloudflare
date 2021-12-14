@@ -52,7 +52,7 @@ The following arguments are supported:
 * `domain` - (Required) The complete URL of the asset you wish to put
   Cloudflare Access in front of. Can include subdomains or paths. Or both.
 * `type` - (Optional) The application type. Defaults to `self_hosted`. Valid
-  values are `self_hosted`, `ssh`, `vnc`, or `file`.
+  values are `self_hosted`, `ssh`, `vnc`, `file` or `bookmark`.
 * `session_duration` - (Optional) How often a user will be forced to
   re-authorise. Must be in the format `"48h"` or `"2h45m"`.
   Valid time units are `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`. Defaults to `24h`.
