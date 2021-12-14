@@ -420,7 +420,7 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 				githubID = githubCfg["identity_provider_id"].(string)
 				githubName = githubCfg["name"].(string)
 				githubTeams = append(githubTeams, githubCfg["team"].(string))
-			case "azure":
+			case "azureAD":
 				azureCfg := groupValue.(map[string]interface{})
 				azureID = azureCfg["identity_provider_id"].(string)
 				azureIDs = append(azureIDs, azureCfg["id"].(string))
