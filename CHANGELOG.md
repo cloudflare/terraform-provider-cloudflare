@@ -1,4 +1,6 @@
-## 3.5.0 (Unreleased)
+## 3.6.0 (Unreleased)
+
+## 3.5.0 (December 14th, 2021)
 
 NOTES:
 
