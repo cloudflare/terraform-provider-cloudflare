@@ -18,7 +18,7 @@ func resourceCloudflareSplitTunnel() *schema.Resource {
 		Update: resourceCloudflareSplitTunnelUpdate,
 		Delete: resourceCloudflareSplitTunnelDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: resourceCloudflareSplitTunnelImport,
 		},
 	}
 }
