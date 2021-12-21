@@ -24,6 +24,10 @@ resource/cloudflare_example: Add `not_broken` attribute
 ```
 ``````
 
+### Skipping changelog entries
+
+In order to skip/pass the automated checks where a CHANGELOG entry is not required, apply the `workflow/skip-changelog-entry` label.
+
 ### Pull Request Types to CHANGELOG
 
 The CHANGELOG is intended to show operator-impacting changes to the codebase for a particular version. If every change or commit to the code resulted in an entry, the CHANGELOG would become less useful for operators. The lists below are general guidelines and examples for when a decision needs to be made to decide whether a change should have an entry.
