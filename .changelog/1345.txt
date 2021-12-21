@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_split_tunnel: import will now use correct import function
+```
