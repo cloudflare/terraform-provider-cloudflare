@@ -60,6 +60,9 @@ func resourceCloudflareTeamsRuleRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("identity", rule.Identity); err != nil {
 		return fmt.Errorf("error parsing rule identity")
 	}
+	if err := d.Set("device_posture", rule.DevicePosture); err != nil {
+		return fmt.Errorf("error parsing rule device_posture")
+	}
 	if err := d.Set("version", int64(rule.Version)); err != nil {
 		return fmt.Errorf("error parsing rule version")
 	}
@@ -81,15 +84,16 @@ func resourceCloudflareTeamsRuleCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	newTeamsRule := cloudflare.TeamsRule{
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Precedence:  uint64(d.Get("precedence").(int)),
-		Enabled:     d.Get("enabled").(bool),
-		Action:      cloudflare.TeamsGatewayAction(d.Get("action").(string)),
-		Filters:     filters,
-		Traffic:     d.Get("traffic").(string),
-		Identity:    d.Get("identity").(string),
-		Version:     uint64(d.Get("version").(int)),
+		Name:          d.Get("name").(string),
+		Description:   d.Get("description").(string),
+		Precedence:    uint64(d.Get("precedence").(int)),
+		Enabled:       d.Get("enabled").(bool),
+		Action:        cloudflare.TeamsGatewayAction(d.Get("action").(string)),
+		Filters:       filters,
+		Traffic:       d.Get("traffic").(string),
+		Identity:      d.Get("identity").(string),
+		DevicePosture: d.Get("device_posture").(string),
+		Version:       uint64(d.Get("version").(int)),
 	}
 
 	if settings != nil {
@@ -118,16 +122,17 @@ func resourceCloudflareTeamsRuleUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	teamsRule := cloudflare.TeamsRule{
-		ID:          d.Id(),
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Precedence:  uint64(d.Get("precedence").(int)),
-		Enabled:     d.Get("enabled").(bool),
-		Action:      cloudflare.TeamsGatewayAction(d.Get("action").(string)),
-		Filters:     filters,
-		Traffic:     d.Get("traffic").(string),
-		Identity:    d.Get("identity").(string),
-		Version:     uint64(d.Get("version").(int)),
+		ID:            d.Id(),
+		Name:          d.Get("name").(string),
+		Description:   d.Get("description").(string),
+		Precedence:    uint64(d.Get("precedence").(int)),
+		Enabled:       d.Get("enabled").(bool),
+		Action:        cloudflare.TeamsGatewayAction(d.Get("action").(string)),
+		Filters:       filters,
+		Traffic:       d.Get("traffic").(string),
+		Identity:      d.Get("identity").(string),
+		DevicePosture: d.Get("device_posture").(string),
+		Version:       uint64(d.Get("version").(int)),
 	}
 
 	if settings != nil {
