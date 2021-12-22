@@ -94,7 +94,7 @@ func flattenFallbackDomains(domains []cloudflare.FallbackDomain) []interface{} {
 		schemaDomains = append(schemaDomains, map[string]interface{}{
 			"suffix":      d.Suffix,
 			"description": d.Description,
-			"dns_server":  d.DNSServer,
+			"dns_server":  flattenStringList(d.DNSServer),
 
 		})
 	}
@@ -111,7 +111,7 @@ func expandFallbackDomains(domains []interface{}) ([]cloudflare.FallbackDomain, 
 		domainList = append(domainList, cloudflare.FallbackDomain{
 			Suffix:      domain.(map[string]interface{})["suffix"].(string),
 			Description: domain.(map[string]interface{})["description"].(string),
-			DNSServer:   domain.(map[string]interface{})["dns_server"].([]string),
+			DNSServer:   expandInterfaceToStringList(domain.(map[string]interface{})["dns_server"]),
 		})
 	}
 

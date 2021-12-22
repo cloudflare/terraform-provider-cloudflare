@@ -29,6 +29,9 @@ func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 						Type:        schema.TypeList,
 						Optional:    true,
 						Description: "A list of IP addresses to handle domain resolution.",
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
 					},
 				},
 			},
