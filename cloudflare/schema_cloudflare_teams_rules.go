@@ -46,6 +46,10 @@ func resourceCloudflareTeamsRuleSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"device_posture": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
 		"version": {
 			Type:     schema.TypeInt,
 			Computed: true,
