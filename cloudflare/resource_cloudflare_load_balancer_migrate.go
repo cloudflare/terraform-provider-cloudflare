@@ -53,8 +53,10 @@ func resourceCloudflareLoadBalancerV0() *schema.Resource {
 }
 
 func resourceCloudflareLoadBalancerStateUpgradeV1(_ context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
-	for i := range rawState["rules"].([]interface{}) {
-		rawState["rules"].([]interface{})[i].(map[string]interface{})["fixed_response"] = []interface{}{rawState["rules"].([]interface{})[i].(map[string]interface{})["fixed_response"]}
+	if rawState["rules"] != nil {
+		for i := range rawState["rules"].([]interface{}) {
+			rawState["rules"].([]interface{})[i].(map[string]interface{})["fixed_response"] = []interface{}{rawState["rules"].([]interface{})[i].(map[string]interface{})["fixed_response"]}
+		}
 	}
 
 	return rawState, nil
