@@ -13,13 +13,16 @@ import (
 
 const (
 	changelogEntryFileFormat      = ".changelog/%d.txt"
-	skipLabel                     = "workflow/skip-changelog-entry"
 	changelogProcessDocumentation = "https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/docs/changelog-process.md"
 )
 
 var (
 	changelogEntryPresent = false
 )
+
+func getSkipLabels() []string {
+	return []string{"workflow/skip-changelog-entry", "dependencies"}
+}
 
 func main() {
 	ctx := context.Background()
@@ -61,9 +64,11 @@ func main() {
 	}
 
 	for _, label := range pullRequest.Labels {
-		if label.GetName() == skipLabel {
-			log.Printf("%s label found, exiting as changelog is not required\n", skipLabel)
-			os.Exit(0)
+		for _, skipLabel := range getSkipLabels() {
+			if label.GetName() == skipLabel {
+				log.Printf("%s label found, exiting as changelog is not required\n", label.GetName())
+				os.Exit(0)
+			}
 		}
 	}
 
@@ -90,7 +95,7 @@ func main() {
 		"\n```\n~~~\n\n" +
 		"If you do not require a release note to be included, please add the `workflow/skip-changelog-entry` label."
 
-	_, _, err = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
+	_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
 		Body: &body,
 	})
 
