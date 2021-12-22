@@ -111,7 +111,7 @@ func expandFallbackDomains(domains []interface{}) ([]cloudflare.FallbackDomain, 
 		domainList = append(domainList, cloudflare.FallbackDomain{
 			Suffix:      domain.(map[string]interface{})["suffix"].(string),
 			Description: domain.(map[string]interface{})["description"].(string),
-			DNSServer:   domain.(map[string]interface{})["dns_server"].(string),
+			DNSServer:   domain.(map[string]interface{})["dns_server"].([]string),
 		})
 	}
 
