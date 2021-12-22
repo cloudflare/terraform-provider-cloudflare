@@ -26,7 +26,7 @@ func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 						Description: "A description of the fallback domain, displayed in the client UI.",
 					},
 					"dns_server": {
-						Type:        schema.TypeString,
+						Type:        schema.TypeList,
 						Optional:    true,
 						Description: "A list of IP addresses to handle domain resolution.",
 					},
