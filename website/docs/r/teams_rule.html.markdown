@@ -45,6 +45,7 @@ The following arguments are supported:
 * `filters` - (Optional) The protocol or layer to evaluate the traffic and identity expressions.
 * `traffic` - (Optional) The wirefilter expression to be used for traffic matching.
 * `identity` - (Optional) The wirefilter expression to be used for identity matching.
+* `device_posture` - (Optional) The wirefilter expression to be used for device_posture check matching.
 * `rule_settings` - (Optional) Additional rule settings.
 
 The **rule_settings** block supports:

@@ -1,5 +1,10 @@
 ## 3.6.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_load_balancer: handle empty `rules` for `resourceCloudflareLoadBalancerStateUpgradeV1` ([#1257](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1257))
+* resource/cloudflare_split_tunnel: import will now use correct import function ([#1345](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1345))
+
 ## 3.5.0 (December 14th, 2021)
 
 NOTES:
