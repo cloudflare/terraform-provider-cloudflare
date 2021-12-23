@@ -424,6 +424,33 @@ resource "cloudflare_access_application" "%[1]s" {
 `, rnd, zoneID, domain, accountID)
 }
 
+func testAccCloudflareAccessApplicationConfigWithGatewayRules(rnd, zoneID, domain string, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_teams_rule" "%[1]s" {
+	name = "%[1]s"
+	account_id = "%[4]s"
+	description = "desc"
+	precedence = 12302
+	action = "block"
+	filters = ["dns"]
+	traffic = "any(dns.domains[*] == \"example.com\")"
+	rule_settings {
+		block_page_enabled = false
+		block_page_reason = "cuz"
+	}
+}
+resource "cloudflare_access_application" "%[1]s" {
+	zone_id                   = "%[2]s"
+	name                      = "%[1]s"
+	private_address           = "%[1]s.%[3]s"
+	type                      = "private_ip"
+	session_duration          = "24h"
+	auto_redirect_to_identity = true
+	gateway_rules              = [cloudflare_teams_rule.%[1]s.id]
+}
+`, rnd, zoneID, domain, accountID)
+}
+
 func testAccCloudflareAccessApplicationConfigWithHttpOnlyCookieAttribute(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {

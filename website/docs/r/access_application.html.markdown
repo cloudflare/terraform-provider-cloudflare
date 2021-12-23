@@ -49,16 +49,17 @@ The following arguments are supported:
 * `account_id` - (Optional) The account to which the access application should be added. Conflicts with `zone_id`.
 * `zone_id` - (Optional) The DNS zone to which the access application should be added. Conflicts with `account_id`.
 * `name` - (Required) Friendly name of the Access Application.
-* `domain` - (Required) The complete URL of the asset you wish to put
-  Cloudflare Access in front of. Can include subdomains or paths. Or both.
+* `domain` - (Required if application type is NOT `private_ip` or `private_dns`) The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.
+* `private_address` - (Required if the application type IS `private_ip` or `private_dns`) The private address of the asset you wish to put Cloudflare Access in front of. Can include private IPs or hostnames.
 * `type` - (Optional) The application type. Defaults to `self_hosted`. Valid
-  values are `self_hosted`, `ssh`, `vnc`, `file` or `bookmark`.
+  values are `self_hosted`, `ssh`, `vnc`, `file`, `bookmark`, `private_ip`, `private_dns`.
 * `session_duration` - (Optional) How often a user will be forced to
   re-authorise. Must be in the format `"48h"` or `"2h45m"`.
   Valid time units are `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`. Defaults to `24h`.
 * `cors_headers` - (Optional) CORS configuration for the Access Application. See
   below for reference structure.
 * `allowed_idps` - (Optional) The identity providers selected for the application.
+* `gateway_rules` = (Required if application type is `private_ip` and `private_dns`) Associated Teams Rules for the application.
 
 **cors_headers** allows the following:
 

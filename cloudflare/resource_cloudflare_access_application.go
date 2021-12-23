@@ -43,6 +43,16 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
+		PrivateAddress:					 d.Get("private_address").(string),
+	}
+
+	gatewayRules := d.Get("gateway_rules").([]interface{})
+	for _, value := range gatewayRules {
+		if value != nil {
+			newAccessApplication.GatewayRules = append(newAccessApplication.GatewayRules, cloudflare.AccessApplicationGatewayRule{
+				ID: value,
+			})
+		}
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -118,6 +128,8 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
 	d.Set("logo_url", accessApplication.LogoURL)
 	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
+	d.Set("private_address", accessApplication.PrivateAddress)
+  d.Set("gateway_rules", accessApplication.GatewayRules)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -148,6 +160,16 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
+		PrivateAddress:					 d.Get("private_address").(string),
+	}
+
+	gatewayRules := d.Get("gateway_rules").([]interface{})
+	for _, value := range gatewayRules {
+		if value != nil {
+			updatedAccessApplication.GatewayRules = append(updatedAccessApplication.GatewayRules, cloudflare.AccessApplicationGatewayRule{
+				ID: value,
+			})
+		}
 	}
 
 	if len(allowedIDPList) > 0 {
