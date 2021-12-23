@@ -1,5 +1,10 @@
 ## 3.6.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: add bookmark type to apptypes ([#1343](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1343))
+* resource/cloudflare_teams_rules: GATE-2273: Adds support for device posture gateway rules ([#1353](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1353))
+
 BUG FIXES:
 
 * resource/cloudflare_load_balancer: handle empty `rules` for `resourceCloudflareLoadBalancerStateUpgradeV1` ([#1257](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1257))
