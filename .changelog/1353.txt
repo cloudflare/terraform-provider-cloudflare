@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_teams_rules: GATE-2273: Adds support for device posture gateway rules
+```
