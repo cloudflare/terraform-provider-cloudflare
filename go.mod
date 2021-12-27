@@ -79,7 +79,7 @@ require (
 	github.com/chavacava/garif v0.0.0-20210405164556-e8a0a408d6af // indirect
 	github.com/daixiang0/gci v0.2.9 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/denis-tingajkin/go-header v0.4.2 // indirect
+	github.com/denis-tingaikin/go-header v0.4.2 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/esimonov/ifshort v1.0.3 // indirect
 	github.com/ettle/strcase v0.1.1 // indirect
