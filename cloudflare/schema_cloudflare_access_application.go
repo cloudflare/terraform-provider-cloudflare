@@ -40,7 +40,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file", "bookmark"}, false),
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
