@@ -44,6 +44,7 @@ func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{
 
 	d.Set("email_address", member.User.Email)
 	d.Set("role_ids", memberIDs)
+	d.Set("status", member.Status)
 	d.SetId(d.Id())
 
 	return nil
@@ -65,6 +66,7 @@ func resourceCloudflareAccountMemberDelete(d *schema.ResourceData, meta interfac
 func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interface{}) error {
 	memberEmailAddress := d.Get("email_address").(string)
 	requestedMemberRoles := d.Get("role_ids").(*schema.Set).List()
+	memberStatus := d.Get("status").(string)
 
 	client := meta.(*cloudflare.API)
 
@@ -73,7 +75,16 @@ func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interfac
 		accountMemberRoleIDs = append(accountMemberRoleIDs, roleID.(string))
 	}
 
-	r, err := client.CreateAccountMember(context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs)
+	var r cloudflare.AccountMember
+	var err error
+
+	if memberStatus != "" {
+		r, err = client.CreateAccountMemberWithStatus(
+			context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs, memberStatus)
+	} else {
+		r, err = client.CreateAccountMember(
+			context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs)
+	}
 
 	if err != nil {
 		return fmt.Errorf("error creating Cloudflare account member: %s", err)
@@ -82,6 +93,8 @@ func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interfac
 	if r.ID == "" {
 		return fmt.Errorf("failed to find ID in create response; resource was empty")
 	}
+
+	d.Set("status", r.Status)
 
 	d.SetId(r.ID)
 
@@ -92,13 +105,17 @@ func resourceCloudflareAccountMemberUpdate(d *schema.ResourceData, meta interfac
 	client := meta.(*cloudflare.API)
 	accountRoles := []cloudflare.AccountRole{}
 	memberRoles := d.Get("role_ids").(*schema.Set).List()
+	memberStatus := d.Get("status").(string)
 
 	for _, r := range memberRoles {
 		accountRole, _ := client.AccountRole(context.Background(), client.AccountID, r.(string))
 		accountRoles = append(accountRoles, accountRole)
 	}
 
-	updatedAccountMember := cloudflare.AccountMember{Roles: accountRoles}
+	updatedAccountMember := cloudflare.AccountMember{
+		Roles: accountRoles,
+		Status: memberStatus,
+	}
 	_, err := client.UpdateAccountMember(context.Background(), client.AccountID, d.Id(), updatedAccountMember)
 	if err != nil {
 		return fmt.Errorf("failed to update Cloudflare account member: %s", err)
@@ -135,6 +152,7 @@ func resourceCloudflareAccountMemberImport(d *schema.ResourceData, meta interfac
 
 	d.Set("email_address", member.User.Email)
 	d.Set("role_ids", memberIDs)
+	d.Set("status", member.Status)
 	d.SetId(accountMemberID)
 
 	return []*schema.ResourceData{d}, nil
