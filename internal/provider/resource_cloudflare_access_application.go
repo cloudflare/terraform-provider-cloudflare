@@ -64,6 +64,14 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		newAccessApplication.CorsHeaders = CORSConfig
 	}
 
+	if _, ok := d.GetOk("saas_app"); ok {
+		saasApp, err := convertSaasSchemaToStruct(d)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		newAccessApplication.SaasApplication = saasApp
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
 
 	identifier, err := initIdentifier(d)
@@ -133,6 +141,11 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		return diag.FromErr(fmt.Errorf("error setting Access Application CORS header configuration: %w", corsConfigErr))
 	}
 
+	saasConfig := convertSaasStructToSchema(d, accessApplication.SaasApplication)
+	if saasConfigErr := d.Set("saas_app", saasConfig); saasConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Application SaaS app configuration: %w", saasConfigErr))
+	}
+
 	return nil
 }
 
@@ -160,6 +173,10 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
 	}
 
+	if appType != "saas" {
+		updatedAccessApplication.Domain = d.Get("domain").(string)
+	}
+
 	if len(allowedIDPList) > 0 {
 		updatedAccessApplication.AllowedIdps = allowedIDPList
 	}
@@ -170,6 +187,14 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 			return diag.FromErr(err)
 		}
 		updatedAccessApplication.CorsHeaders = CORSConfig
+	}
+
+	if _, ok := d.GetOk("saas_app"); ok {
+		saasConfig, err := convertSaasSchemaToStruct(d)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		updatedAccessApplication.SaasApplication = saasConfig
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication))

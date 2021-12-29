@@ -37,15 +37,17 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Description: "Friendly name of the Access Application.",
 		},
 		"domain": {
-			Type:        schema.TypeString,
-			Required:    true,
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true, // REVIEW
+			// Required:    true,
 			Description: "The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.",
 		},
 		"type": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file"}, false),
 			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "ssh", "vnc", "file"})),
 		},
 		"session_duration": {
@@ -117,6 +119,28 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Optional:     true,
 						ValidateFunc: validation.IntBetween(-1, 86400),
 						Description:  "The maximum time a preflight request will be cached.",
+					},
+				},
+			},
+		},
+		"saas_app": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"sp_entity_id": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					"consumer_service_url": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					"name_id_format": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						Default:      "email",
+						ValidateFunc: validation.StringInSlice([]string{"email", "id"}, false),
 					},
 				},
 			},
@@ -258,6 +282,31 @@ func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.Acces
 	m["allowed_methods"] = flattenStringList(headers.AllowedMethods)
 	m["allowed_headers"] = flattenStringList(headers.AllowedHeaders)
 	m["allowed_origins"] = flattenStringList(headers.AllowedOrigins)
+
+	return []interface{}{m}
+}
+
+func convertSaasSchemaToStruct(d *schema.ResourceData) (*cloudflare.SaasApplication, error) {
+	SaasConfig := cloudflare.SaasApplication{}
+	if _, ok := d.GetOk("saas_app"); ok {
+		SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
+		SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
+		SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
+	}
+
+	return &SaasConfig, nil
+}
+
+func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasApplication) []interface{} {
+	if _, ok := d.GetOk("saas_app"); !ok {
+		return []interface{}{}
+	}
+
+	m := map[string]interface{}{
+		"sp_entity_id":         app.SPEntityID,
+		"consumer_service_url": app.ConsumerServiceUrl,
+		"name_id_format":       app.NameIDFormat,
+	}
 
 	return []interface{}{m}
 }
