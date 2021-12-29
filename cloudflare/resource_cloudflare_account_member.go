@@ -75,16 +75,8 @@ func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interfac
 		accountMemberRoleIDs = append(accountMemberRoleIDs, roleID.(string))
 	}
 
-	var r cloudflare.AccountMember
-	var err error
-
-	if memberStatus != "" {
-		r, err = client.CreateAccountMemberWithStatus(
-			context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs, memberStatus)
-	} else {
-		r, err = client.CreateAccountMember(
-			context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs)
-	}
+	r, err := client.CreateAccountMemberWithStatus(
+		context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs, memberStatus)
 
 	if err != nil {
 		return fmt.Errorf("error creating Cloudflare account member: %s", err)
