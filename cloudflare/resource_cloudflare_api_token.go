@@ -156,7 +156,7 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("policy", policies)
 	d.Set("status", t.Status)
 	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
-	d.Set("modified_on", time.Now().Format(time.RFC3339Nano))
+	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
 
 	var ipIn []string
 	var ipNotIn []string
