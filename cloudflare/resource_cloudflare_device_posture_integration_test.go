@@ -22,6 +22,16 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
+	token := os.Getenv("WORKSPACE_ONE_API_TOKEN")
+	if token == "" {
+		t.Fatal("Missing workspace one api token")
+	}
+
+	id := os.Getenv("WORKSPACE_ONE_API_ID")
+	if id == "" {
+		t.Fatal("Missing wokspace one api id")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_integration.%s", rnd)
 
@@ -33,7 +43,7 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareDevicePostureIntegrationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID),
+				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID, id, token),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -48,7 +58,7 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 	})
 }
 
-func testAccCloudflareDevicePostureIntegration(rnd, accountID string) string {
+func testAccCloudflareDevicePostureIntegration(rnd, accountID, ws1ID, ws1Token string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_device_posture_integration" "%[1]s" {
 	account_id                = "%[2]s"
@@ -58,11 +68,11 @@ resource "cloudflare_device_posture_integration" "%[1]s" {
 	config {
 		api_url       =  "https://example.com/api-url"
 		auth_url      =  "https://test.uemauth.vmwservices.com/connect/token"
-		client_id     =  "client-id"
-		client_secret =  "client-secret"
+		client_id     =  "%[3]s"
+		client_secret =  "%[4]s"
 	}
 }
-`, rnd, accountID)
+`, rnd, accountID, ws1ID, ws1Token)
 }
 
 func testAccCheckCloudflareDevicePostureIntegrationDestroy(s *terraform.State) error {
