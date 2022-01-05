@@ -26,7 +26,7 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, ApiIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttrSet(name, "application_id"),
@@ -53,7 +53,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, ApiIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttrSet(name, "application_id"),
@@ -65,7 +65,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 	})
 }
 
-func testAccCloudflareAccessCACertificateBasic(resourceName, domain string, identifier AccessIdentifier) string {
+func testAccCloudflareAccessCACertificateBasic(resourceName, domain string, identifier ApiIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
 	name     = "%[1]s"

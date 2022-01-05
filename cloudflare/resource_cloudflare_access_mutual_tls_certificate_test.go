@@ -36,7 +36,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: AccountType, Value: accountID}, cert, domain),
+				Config: testAccessMutualTLSCertificateConfigBasic(rnd, ApiIdentifier{Type: AccountType, Value: accountID}, cert, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -45,7 +45,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccessMutualTLSCertificateUpdated(rnd, AccessIdentifier{Type: AccountType, Value: accountID}, cert),
+				Config: testAccessMutualTLSCertificateUpdated(rnd, ApiIdentifier{Type: AccountType, Value: accountID}, cert),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -81,7 +81,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}, cert, domain),
+				Config: testAccessMutualTLSCertificateConfigBasic(rnd, ApiIdentifier{Type: ZoneType, Value: zoneID}, cert, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -90,7 +90,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccessMutualTLSCertificateUpdated(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}, cert),
+				Config: testAccessMutualTLSCertificateUpdated(rnd, ApiIdentifier{Type: ZoneType, Value: zoneID}, cert),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -128,7 +128,7 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 	return nil
 }
 
-func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier AccessIdentifier, cert, domain string) string {
+func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier ApiIdentifier, cert, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	name                 = "%[1]s"
@@ -139,7 +139,7 @@ resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 `, rnd, identifier.Type, identifier.Value, cert, domain)
 }
 
-func testAccessMutualTLSCertificateUpdated(rnd string, identifier AccessIdentifier, cert string) string {
+func testAccessMutualTLSCertificateUpdated(rnd string, identifier ApiIdentifier, cert string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	name                 = "%[1]s"

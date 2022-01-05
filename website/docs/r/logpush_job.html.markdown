@@ -82,10 +82,32 @@ resource "cloudflare_logpush_job" "example_job" {
 The following arguments are supported:
 
 * `name` - (Required) The name of the logpush job to create. Must match the regular expression `^[a-zA-Z0-9\-\.]*$`.
-* `zone_id` - (Required) The zone ID where the logpush job should be created.
-* `destination_conf` - (Required) Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#destination).
-* `dataset` - (Required) Which type of dataset resource to use. Available values are `"firewall_events"`, `"http_requests"`, `"spectrum_events"` and `"nel_reports"`.
+* `destination_conf` - (Required) Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/reference/logpush-api-configuration#destination).
+* `dataset` - (Required) Which type of dataset resource to use. Available values are
+  - account-scoped: `"audit_logs"`, `"gateway_dns"`, `"gateway_http"`, `"gateway_network"`
+  - zone-scoped: `"dns_logs"`, `"firewall_events"`, `"http_requests"`, `"spectrum_events"`, `"nel_reports"`
+* `account_id` - (Optional `*`) The account ID where the logpush job should be created.
+* `zone_id` - (Optional `*`) The zone ID where the logpush job should be created.
 * `logpull_options` - (Optional) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpull options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
 * `ownership_challenge` - (Optional) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage,
   Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
 * `enabled` - (Optional) Whether to enable the job.
+
+`*` - One of `account_id` or `zone_id` are required.
+
+## Import
+
+Logpush jobs can be imported using a composite ID formed of:
+
+* `Identifier Type` - Either `account` or `zone`.
+* `Identifier ID` - The ID of the account or zone.
+* `jobID` - The Logpush Job ID to import.
+
+- Import an account-scoped job using: `account/:accountID/:jobID`
+```
+$ terraform import cloudflare_logpush_job.example account/1d5fdc9e88c8a8c4518b068cd94331fe/54321
+```
+- import a zone-scoped job using `zone/:zoneID/:jobID`
+```
+$ terraform import cloudflare_logpush_job.example zone/d41d8cd98f00b204e9800998ecf8427e/54321
+```

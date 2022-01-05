@@ -67,7 +67,7 @@ func TestAccCloudflareAccessIdentityProviderOneTimePin(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, ApiIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
@@ -84,7 +84,7 @@ func TestAccCloudflareAccessIdentityProviderOneTimePin(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, ApiIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
@@ -188,7 +188,7 @@ func TestAccCloudflareAccessIdentityProviderSAML(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier AccessIdentifier) string {
+func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier ApiIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[1]s" {
   %[2]s_id = "%[3]s"

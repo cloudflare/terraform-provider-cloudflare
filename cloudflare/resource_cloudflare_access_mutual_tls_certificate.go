@@ -176,7 +176,7 @@ func resourceCloudflareAccessMutualTLSCertificateImport(d *schema.ResourceData, 
 
 	identifierType, identifierID, accessMutualTLSCertificateID := attributes[0], attributes[1], attributes[2]
 
-	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
+	if ApiIdentifierType(identifierType) != AccountType && ApiIdentifierType(identifierType) != ZoneType {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessMutualTLSCertificateID\" or \"zone/zoneID/accessMutualTLSCertificateID\"", d.Id())
 	}
 
