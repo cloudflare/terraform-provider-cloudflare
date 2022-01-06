@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/cloudflare_logpush_job: add support for account-level logpush jobs
+resource/cloudflare_logpush_ownership_challenge: add support for account-level logpush ownership challenges
+```
