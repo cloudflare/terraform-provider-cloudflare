@@ -142,6 +142,7 @@ func Provider() *schema.Provider {
 			"cloudflare_custom_pages":                           resourceCloudflareCustomPages(),
 			"cloudflare_custom_ssl":                             resourceCloudflareCustomSsl(),
 			"cloudflare_device_posture_rule":                    resourceCloudflareDevicePostureRule(),
+      "cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
 			"cloudflare_fallback_domain":                        resourceCloudflareFallbackDomain(),
 			"cloudflare_filter":                                 resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
