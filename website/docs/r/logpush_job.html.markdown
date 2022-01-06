@@ -99,15 +99,16 @@ The following arguments are supported:
 
 Logpush jobs can be imported using a composite ID formed of:
 
-* `Identifier Type` - Either `account` or `zone`.
-* `Identifier ID` - The ID of the account or zone.
+* `identifierType` - Either `account` or `zone`.
+* `identifierID` - The ID of the account or zone.
 * `jobID` - The Logpush Job ID to import.
 
-- Import an account-scoped job using: `account/:accountID/:jobID`
+Import an account-scoped job using `account/:accountID/:jobID`
 ```
 $ terraform import cloudflare_logpush_job.example account/1d5fdc9e88c8a8c4518b068cd94331fe/54321
 ```
-- import a zone-scoped job using `zone/:zoneID/:jobID`
+
+Import a zone-scoped job using `zone/:zoneID/:jobID`
 ```
 $ terraform import cloudflare_logpush_job.example zone/d41d8cd98f00b204e9800998ecf8427e/54321
 ```
