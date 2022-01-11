@@ -1,5 +1,9 @@
 ## 3.7.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_device_posture_integration` ([#1340](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1340))
+
 ## 3.6.0 (December 23rd, 2021)
 
 ENHANCEMENTS:

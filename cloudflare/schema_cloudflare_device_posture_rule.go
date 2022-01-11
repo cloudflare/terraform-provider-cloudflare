@@ -14,7 +14,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one"}, false),
 		},
 		"name": {
 			Type:     schema.TypeString,
@@ -106,6 +106,17 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "The domain that the client must join.",
+					},
+					"connection_id": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The workspace one connection id.",
+					},
+					"compliance_status": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"compliant", "noncompliant"}, true),
+						Description:  "The workspace one device compliance status.",
 					},
 				},
 			},
