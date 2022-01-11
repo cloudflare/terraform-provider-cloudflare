@@ -191,8 +191,8 @@ func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/jobID\" or \"zone/zoneID/jobID\"", d.Id())
 	}
 
-	identifier := AccessIdentifier {
-		Type: AccessIdentifierType(idAttr[0]),
+	identifier := AccessIdentifier{
+		Type:  AccessIdentifierType(idAttr[0]),
 		Value: idAttr[1],
 	}
 	logpushJobID := idAttr[2]

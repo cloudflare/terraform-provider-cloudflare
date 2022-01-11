@@ -149,7 +149,7 @@ type AccessIdentifier struct {
 
 // Add string representation to consistently print this in log messages
 func (i AccessIdentifier) String() string {
-       return fmt.Sprintf("%s (%s)", i.Type, i.Value)
+	return fmt.Sprintf("%s (%s)", i.Type, i.Value)
 }
 
 // AccessIdentifierType represents the identifier type for access resources
