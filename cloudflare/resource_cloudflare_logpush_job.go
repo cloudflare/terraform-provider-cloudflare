@@ -201,11 +201,11 @@ func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}
 
 	if identifier.Type == AccountType {
 		if err := d.Set("account_id", identifier.Value); err != nil {
-			return fmt.Errorf("failed to set account_id: %w", err)
+			return nil, fmt.Errorf("failed to set account_id: %w", err)
 		}
 	} else {
 		if err := d.Set("zone_id", identifier.Value); err != nil {
-			return fmt.Errorf("failed to set zone_id: %w", err)
+			return nil, fmt.Errorf("failed to set zone_id: %w", err)
 		}
 	}
 	d.SetId(logpushJobID)
