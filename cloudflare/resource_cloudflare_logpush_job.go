@@ -25,7 +25,7 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 	}
 }
 
-func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *ApiIdentifier, error) {
+func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessIdentifier, error) {
 	id := 0
 
 	identifier, err := initIdentifier(d)
@@ -187,12 +187,12 @@ func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}
 	// split the id so we can lookup
 	idAttr := strings.Split(d.Id(), "/")
 
-	if len(idAttr) != 3 || (ApiIdentifierType(idAttr[0]) != AccountType && ApiIdentifierType(idAttr[0]) != ZoneType) || idAttr[1] == "" || idAttr[2] == "" {
+	if len(idAttr) != 3 || (AccessIdentifierType(idAttr[0]) != AccountType && AccessIdentifierType(idAttr[0]) != ZoneType) || idAttr[1] == "" || idAttr[2] == "" {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/jobID\" or \"zone/zoneID/jobID\"", d.Id())
 	}
 
-	identifier := ApiIdentifier{
-		Type: ApiIdentifierType(idAttr[0]),
+	identifier := AccessIdentifier {
+		Type: AccessIdentifierType(idAttr[0]),
 		Value: idAttr[1],
 	}
 	logpushJobID := idAttr[2]

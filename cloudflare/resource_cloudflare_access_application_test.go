@@ -29,7 +29,7 @@ func TestAccCloudflareAccessApplicationBasic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, ApiIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -52,7 +52,7 @@ func TestAccCloudflareAccessApplicationBasic(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, ApiIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -333,7 +333,7 @@ func TestAccCloudflareAccessApplicationWithAppLauncherVisible(t *testing.T) {
 	})
 }
 
-func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier ApiIdentifier) string {
+func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
   %[3]s_id                  = "%[4]s"

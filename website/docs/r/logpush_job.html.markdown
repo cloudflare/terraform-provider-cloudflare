@@ -84,16 +84,14 @@ The following arguments are supported:
 * `name` - (Required) The name of the logpush job to create. Must match the regular expression `^[a-zA-Z0-9\-\.]*$`.
 * `destination_conf` - (Required) Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/reference/logpush-api-configuration#destination).
 * `dataset` - (Required) Which type of dataset resource to use. Available values are
-  - account-scoped: `"audit_logs"`, `"gateway_dns"`, `"gateway_http"`, `"gateway_network"`
-  - zone-scoped: `"dns_logs"`, `"firewall_events"`, `"http_requests"`, `"spectrum_events"`, `"nel_reports"`
-* `account_id` - (Optional `*`) The account ID where the logpush job should be created.
-* `zone_id` - (Optional `*`) The zone ID where the logpush job should be created.
+  - [account-scoped](https://developers.cloudflare.com/logs/reference/log-fields/account): `"audit_logs"`, `"gateway_dns"`, `"gateway_http"`, `"gateway_network"`
+  - [zone-scoped](https://developers.cloudflare.com/logs/reference/log-fields/zone): `"firewall_events"`, `"http_requests"`, `"spectrum_events"`, `"nel_reports"`
+* `account_id` - (Optional) The account ID where the logpush job should be created. Either `account_id` or `zone_id` are required.
+* `zone_id` - (Optional) The zone ID where the logpush job should be created. Either `account_id` or `zone_id` are required.
 * `logpull_options` - (Optional) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpull options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
 * `ownership_challenge` - (Optional) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage,
   Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
 * `enabled` - (Optional) Whether to enable the job.
-
-`*` - One of `account_id` or `zone_id` are required.
 
 ## Import
 

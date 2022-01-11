@@ -115,7 +115,7 @@ func resourceCloudflareAccessCACertificateImport(d *schema.ResourceData, meta in
 
 	identifierType, identifierID, accessCACertificateID := attributes[0], attributes[1], attributes[2]
 
-	if ApiIdentifierType(identifierType) != AccountType && ApiIdentifierType(identifierType) != ZoneType {
+	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessCACertificateID\" or \"zone/zoneID/accessCACertificateID\"", d.Id())
 	}
 

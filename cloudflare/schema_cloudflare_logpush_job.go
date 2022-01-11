@@ -28,7 +28,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"dataset": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"dns_logs", "firewall_events", "http_requests", "spectrum_events", "nel_reports", "audit_logs", "gateway_dns", "gateway_http", "gateway_network"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"firewall_events", "http_requests", "spectrum_events", "nel_reports", "audit_logs", "gateway_dns", "gateway_http", "gateway_network"}, false),
 		},
 		"logpull_options": {
 			Type:     schema.TypeString,

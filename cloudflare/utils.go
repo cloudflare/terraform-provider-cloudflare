@@ -141,45 +141,45 @@ func getAccountIDFromZoneID(d *schema.ResourceData, client *cloudflare.API) (str
 	return accountID, nil
 }
 
-// ApiIdentifier represents the identifier provided in a resource to access the API
-type ApiIdentifier struct {
-	Type  ApiIdentifierType
+// AccessIdentifier represents the identifier provided in a resource
+type AccessIdentifier struct {
+	Type  AccessIdentifierType
 	Value string
 }
 
 // Add string representation to consistently print this in log messages
-func (i ApiIdentifier) String() string {
-	return fmt.Sprintf("%s (%s)", i.Type, i.Value)
+func (i AccessIdentifier) String() string {
+       return fmt.Sprintf("%s (%s)", i.Type, i.Value)
 }
 
-// ApiIdentifierType represents a scope used to access the API (account or zone)
-type ApiIdentifierType string
+// AccessIdentifierType represents the identifier type for access resources
+type AccessIdentifierType string
 
 const (
-	// AccountType is the identifier type for an account
-	AccountType ApiIdentifierType = "account"
+	// AccountType is the access identifier type for an account
+	AccountType AccessIdentifierType = "account"
 
-	// ZoneType is the identifier type for a zone
-	ZoneType ApiIdentifierType = "zone"
+	// ZoneType is the access identifier type for a zone
+	ZoneType AccessIdentifierType = "zone"
 )
 
-func initIdentifier(d *schema.ResourceData) (*ApiIdentifier, error) {
+func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	if accountID == "" && zoneID == "" {
-		return nil, fmt.Errorf("error in resource definition: zone_id or account_id required")
+		return nil, fmt.Errorf("error creating Access resource: zone_id or account_id required")
 	}
 
 	if accountID != "" {
 		d.Set("account_id", accountID)
-		return &ApiIdentifier{
+		return &AccessIdentifier{
 			Type:  AccountType,
 			Value: accountID,
 		}, nil
 	}
 
 	d.Set("zone_id", zoneID)
-	return &ApiIdentifier{
+	return &AccessIdentifier{
 		Type:  ZoneType,
 		Value: zoneID,
 	}, nil
