@@ -115,6 +115,45 @@ func TestAccCloudflareLoadBalancerMonitor_TcpFullySpecified(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLoadBalancerMonitor_PremiumTypes(t *testing.T) {
+	t.Parallel()
+	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigUDPICMP(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					// check we can create one of the correct type
+					resource.TestCheckResourceAttr(name, "type", "udp_icmp"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigICMPPing(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					// check we can create one of the correct type
+					resource.TestCheckResourceAttr(name, "type", "icmp_ping"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigSMTP(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
+					// checking our overrides of default values worked
+					resource.TestCheckResourceAttr(name, "type", "smtp"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
 	t.Parallel()
 
@@ -329,6 +368,41 @@ resource "cloudflare_load_balancer_monitor" "test" {
   port = 8080
   description = "this is a very weird tcp load balancer"
 }`
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigUDPICMP(resourceName string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_monitor" "%s" {
+  type = "udp_icmp"
+  timeout = 2
+  interval = 60
+  retries = 5
+  port = 8080
+  description = "test setup udp_icmp"
+}`, resourceName)
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigICMPPing(resourceName string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_monitor" "%s" {
+  type = "icmp_ping"
+  timeout = 2
+  interval = 60
+  retries = 5
+  description = "test setup icmp_ping"
+}`, resourceName)
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigSMTP(resourceName string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_monitor" "%s" {
+  type = "smtp"
+  timeout = 2
+  interval = 60
+  retries = 5
+  port = 8080
+  description = "test setup smtp"
+}`, resourceName)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired() string {

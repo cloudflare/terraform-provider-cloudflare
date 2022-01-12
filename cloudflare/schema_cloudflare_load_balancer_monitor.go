@@ -49,7 +49,7 @@ func resourceCloudflareLoadBalancerMonitorSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "http",
-			ValidateFunc: validation.StringInSlice([]string{"http", "https", "tcp"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"http", "https", "tcp", "udp_icmp", "icmp_ping", "smtp"}, false),
 		},
 
 		"created_on": {
