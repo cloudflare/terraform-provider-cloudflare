@@ -38,7 +38,7 @@ resource "cloudflare_firewall_rule" "wordpress" {
 The following arguments are supported:
 
 * `zone_id` - (Required) The DNS zone to which the Filter should be added.
-* `action` - (Required) The action to apply to a matched request. Allowed values: "block", "challenge", "allow", "js_challenge", "bypass". Enterprise plan also allows "log".
+* `action` - (Required) The action to apply to a matched request. Allowed values: "block", "challenge", "allow", "js_challenge", "managed_challenge", "bypass". Enterprise plan also allows "log".
 * `priority` - (Optional) The priority of the rule to allow control of processing order. A lower number indicates high priority. If not provided, any rules with a priority will be sequenced before those without.
 * `paused` - (Optional) Whether this filter based firewall rule is currently paused. Boolean value.
 * `description` - (Optional) A description of the rule to help identify it.
