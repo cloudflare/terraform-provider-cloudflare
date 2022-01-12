@@ -21,7 +21,7 @@ func resourceCloudflareFirewallRuleSchema() map[string]*schema.Schema {
 		"action": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "allow", "js_challenge", "log", "bypass"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "allow", "js_challenge", "managed_challenge", "log", "bypass"}, false),
 		},
 		"priority": {
 			Type:         schema.TypeInt,
