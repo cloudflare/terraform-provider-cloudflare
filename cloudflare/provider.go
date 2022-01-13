@@ -106,6 +106,7 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
+			"cloudflare_access_organization":         dataSourceCloudflareAccessOrganization(),
 			"cloudflare_access_identity_provider":    dataSourceCloudflareAccessIdentityProvider(),
 			"cloudflare_account_roles":               dataSourceCloudflareAccountRoles(),
 			"cloudflare_api_token_permission_groups": dataSourceCloudflareApiTokenPermissionGroups(),
