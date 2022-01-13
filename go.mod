@@ -2,6 +2,8 @@ module github.com/cloudflare/terraform-provider-cloudflare
 
 go 1.17
 
+replace github.com/cloudflare/cloudflare-go => github.com/trjstewart/cloudflare-go v0.31.0
+
 require (
 	cloud.google.com/go v0.94.0 // indirect
 	cloud.google.com/go/storage v1.16.1 // indirect
