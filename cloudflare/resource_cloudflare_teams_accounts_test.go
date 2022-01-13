@@ -33,6 +33,7 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "tls_decrypt_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "fips.0.tls", "true"),
 					resource.TestCheckResourceAttr(name, "block_page.0.name", rnd),
 					resource.TestCheckResourceAttr(name, "block_page.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "block_page.0.footer_text", "hello"),
@@ -57,6 +58,9 @@ resource "cloudflare_teams_account" "%[1]s" {
     header_text = "hello"
     logo_path = "https://example.com"
     background_color = "#000000"
+  }
+  fips {
+	tls = true
   }
   antivirus {
     enabled_download_phase = true

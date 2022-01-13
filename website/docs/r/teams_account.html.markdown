@@ -33,6 +33,7 @@ The following arguments are supported:
 * `account_id` - (Required) The account to which the teams location should be added.
 * `tls_decrypt_enabled` - (Optional) Indicator that decryption of TLS traffic is enabled.
 * `block_page` - (Optional) Configuration for a custom block page.
+* `fips` - (Optional) Configure compliance with Federal Information Processing Standards
 * `antivirus` - (Optional) Configuration for antivirus traffic scanning.
 
 The **block_page** block supports:
@@ -42,6 +43,9 @@ The **block_page** block supports:
 * `header_text` - (Optional) Block page footer text.
 * `logo_path` - (Optional) URL of block page logo.
 * `background_color` - (Optional) Hex code of block page background color.
+
+The **FIPS** block supports:
+* `tls` - (Optional) Only allow FIPS-compliant TLS configuration
 
 ## Import
 
