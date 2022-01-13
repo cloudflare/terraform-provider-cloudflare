@@ -7,9 +7,15 @@ import (
 
 func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"account_id": {
+			Type:         schema.TypeString,
+			Optional:     true,
+			ExactlyOneOf: []string{"account_id", "zone_id"},
+		},
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:         schema.TypeString,
+			Optional:     true,
+			ExactlyOneOf: []string{"account_id", "zone_id"},
 		},
 		"enabled": {
 			Type:     schema.TypeBool,
@@ -22,7 +28,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"dataset": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"firewall_events", "http_requests", "spectrum_events", "nel_reports"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"firewall_events", "http_requests", "spectrum_events", "nel_reports", "audit_logs", "gateway_dns", "gateway_http", "gateway_network"}, false),
 		},
 		"logpull_options": {
 			Type:     schema.TypeString,
