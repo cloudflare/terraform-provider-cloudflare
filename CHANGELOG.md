@@ -4,6 +4,15 @@ FEATURES:
 
 * **New Resource:** `cloudflare_device_posture_integration` ([#1340](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1340))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_firewall_rule: add support for managed_challenge action ([#1378](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1378))
+* resource/cloudflare_load_balancer_monitor: added support for smtp, icmp_ping, and udp_icmp monitors ([#1371](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1371))
+
+BUG FIXES:
+
+* resource/cloudflare_api_token: modified_on is now read correctly ([#1368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1368))
+
 ## 3.6.0 (December 23rd, 2021)
 
 ENHANCEMENTS:
