@@ -3,11 +3,14 @@
 FEATURES:
 
 * **New Resource:** `cloudflare_device_posture_integration` ([#1340](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1340))
+* **New Resource:** `cloudflare_fallback_domain` ([#1356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1356))
 
 ENHANCEMENTS:
 
 * resource/cloudflare_firewall_rule: add support for managed_challenge action ([#1378](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1378))
 * resource/cloudflare_load_balancer_monitor: added support for smtp, icmp_ping, and udp_icmp monitors ([#1371](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1371))
+* resource/cloudflare_logpush_job: add support for account-level logpush jobs ([#1311](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1311))
+* resource/cloudflare_logpush_ownership_challenge: add support for account-level logpush ownership challenges ([#1311](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1311))
 
 BUG FIXES:
 
@@ -15,7 +18,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
-* `github.com/cloudflare/cloudflare-go` v0.29.0 => v0.30.0 ([#1380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1380))
+* `github.com/cloudflare/cloudflare-go` v0.29.0 => v0.30.0 ([#1379](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1379))
 
 ## 3.6.0 (December 23rd, 2021)
 
