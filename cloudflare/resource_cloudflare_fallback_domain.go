@@ -16,7 +16,7 @@ func resourceCloudflareFallbackDomain() *schema.Resource {
 		Update: resourceCloudflareFallbackDomainUpdate,
 		Delete: resourceCloudflareFallbackDomainDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: resourceCloudflareFallbackDomainImport,
 		},
 	}
 }
@@ -73,7 +73,7 @@ func resourceCloudflareFallbackDomainDelete(d *schema.ResourceData, meta interfa
 func resourceCloudflareFallbackDomainImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	accountID := d.Id()
 
-	if (accountID == "") {
+	if accountID == "" {
 		return nil, fmt.Errorf("must provide account ID")
 	}
 
@@ -95,7 +95,6 @@ func flattenFallbackDomains(domains []cloudflare.FallbackDomain) []interface{} {
 			"suffix":      d.Suffix,
 			"description": d.Description,
 			"dns_server":  flattenStringList(d.DNSServer),
-
 		})
 	}
 
