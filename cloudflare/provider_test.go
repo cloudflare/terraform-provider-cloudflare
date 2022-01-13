@@ -123,6 +123,16 @@ func testAccPreCheckLogpushToken(t *testing.T) {
 	}
 }
 
+func testAccPreCheckWorkspaceOne(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_ID must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_TOKEN"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_TOKEN must be set for this acceptance test")
+	}
+}
+
 func testAccPreCheckBYOIPPrefix(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
 		t.Skip("Skipping acceptance test as CLOUDFLARE_BYO_IP_PREFIX_ID is not set")

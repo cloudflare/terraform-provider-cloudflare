@@ -22,22 +22,16 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	token := os.Getenv("WORKSPACE_ONE_API_TOKEN")
-	if token == "" {
-		t.Fatal("Missing workspace one api token")
-	}
-
-	id := os.Getenv("WORKSPACE_ONE_API_ID")
-	if id == "" {
-		t.Fatal("Missing wokspace one api id")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_integration.%s", rnd)
+
+	id := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_ID")
+	token := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_TOKEN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccessAccPreCheck(t)
+			testAccPreCheckWorkspaceOne(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareDevicePostureIntegrationDestroy,
