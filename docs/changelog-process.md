@@ -114,6 +114,10 @@ Use resource/datasource/provider prefixes where appropriate.
 ```release-note:note
 resource/cloudflare_example: Example resource now does X slightly differently
 ```
+
+```release-note:dependency
+`cloudflare-go` v0.1.0 => v0.1.1
+```
 ``````
 
 #### Changes that should _not_ have a CHANGELOG entry
