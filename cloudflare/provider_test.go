@@ -124,12 +124,20 @@ func testAccPreCheckLogpushToken(t *testing.T) {
 }
 
 func testAccPreCheckWorkspaceOne(t *testing.T) {
-	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_ID"); v == "" {
-		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_ID must be set for this acceptance test")
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID must be set for this acceptance test")
 	}
 
-	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_TOKEN"); v == "" {
-		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_TOKEN must be set for this acceptance test")
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_URL"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_URL must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL must be set for this acceptance test")
 	}
 }
 
