@@ -25,30 +25,36 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_integration.%s", rnd)
 
+	clientID := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID")
+	clientSecret := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET")
+	apiURL := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_URL")
+	authURL := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL")
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccessAccPreCheck(t)
+			testAccPreCheckWorkspaceOne(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareDevicePostureIntegrationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID),
+				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, authURL),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "workspace_one"),
 					resource.TestCheckResourceAttr(name, "interval", "24h"),
-					resource.TestCheckResourceAttr(name, "config.0.auth_url", "https://test.uemauth.vmwservices.com/connect/token"),
-					resource.TestCheckResourceAttr(name, "config.0.api_url", "https://example.com/api-url"),
-					resource.TestCheckResourceAttr(name, "config.0.client_id", "client-id"),
+					resource.TestCheckResourceAttr(name, "config.0.auth_url", authURL),
+					resource.TestCheckResourceAttr(name, "config.0.api_url", apiURL),
+					resource.TestCheckResourceAttr(name, "config.0.client_id", clientID),
 				),
 			},
 		},
 	})
 }
 
-func testAccCloudflareDevicePostureIntegration(rnd, accountID string) string {
+func testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, authURL string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_device_posture_integration" "%[1]s" {
 	account_id                = "%[2]s"
@@ -56,13 +62,13 @@ resource "cloudflare_device_posture_integration" "%[1]s" {
 	type                      = "workspace_one"
 	interval                  = "24h"
 	config {
-		api_url       =  "https://example.com/api-url"
-		auth_url      =  "https://test.uemauth.vmwservices.com/connect/token"
-		client_id     =  "client-id"
-		client_secret =  "client-secret"
+		api_url       =  "%[5]s"
+		auth_url      =  "%[6]s"
+		client_id     =  "%[3]s"
+		client_secret =  "%[4]s"
 	}
 }
-`, rnd, accountID)
+`, rnd, accountID, clientID, clientSecret, apiURL, authURL)
 }
 
 func testAccCheckCloudflareDevicePostureIntegrationDestroy(s *terraform.State) error {
