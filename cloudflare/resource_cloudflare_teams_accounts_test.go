@@ -40,7 +40,15 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "block_page.0.header_text", "hello"),
 					resource.TestCheckResourceAttr(name, "block_page.0.background_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "block_page.0.logo_path", "https://example.com"),
+					resource.TestCheckResourceAttr(name, "logging.0.redact_pii", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.dns.0.log_all", "false"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.dns.0.log_blocks", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.http.0.log_all", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.http.0.log_blocks", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_all", "false"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_blocks", "true"),
 				),
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -66,6 +74,23 @@ resource "cloudflare_teams_account" "%[1]s" {
     enabled_download_phase = true
     enabled_upload_phase = false
     fail_closed = true
+  }
+  logging {
+    redact_pii = true
+    settings_by_rule_type {
+      dns {
+        log_all = false
+        log_blocks = true
+      }
+      http {
+        log_all = true
+        log_blocks = true
+      }
+      l4 {
+        log_all = false
+        log_blocks = true
+      }
+    }
   }
 }
 `, rnd, accountID)

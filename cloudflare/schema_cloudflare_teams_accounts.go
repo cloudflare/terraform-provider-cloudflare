@@ -40,6 +40,18 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Type:     schema.TypeBool,
 			Optional: true,
 		},
+		"url_browser_isolation_enabled": {
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		"logging": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: loggingSchema,
+			},
+		},
 	}
 }
 
@@ -87,6 +99,57 @@ var antivirusSchema = map[string]*schema.Schema{
 		Required: true,
 	},
 	"fail_closed": {
+		Type:     schema.TypeBool,
+		Required: true,
+	},
+}
+
+var loggingSchema = map[string]*schema.Schema{
+	"settings_by_rule_type": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Required: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"dns": {
+					Type:     schema.TypeList,
+					MaxItems: 1,
+					Required: true,
+					Elem: &schema.Resource{
+						Schema: loggingEnabledSchema,
+					},
+				},
+				"http": {
+					Type:     schema.TypeList,
+					MaxItems: 1,
+					Required: true,
+					Elem: &schema.Resource{
+						Schema: loggingEnabledSchema,
+					},
+				},
+				"l4": {
+					Type:     schema.TypeList,
+					MaxItems: 1,
+					Required: true,
+					Elem: &schema.Resource{
+						Schema: loggingEnabledSchema,
+					},
+				},
+			},
+		},
+	},
+	"redact_pii": {
+		Type:     schema.TypeBool,
+		Required: true,
+	},
+}
+
+var loggingEnabledSchema = map[string]*schema.Schema{
+	"log_all": {
+		Type:     schema.TypeBool,
+		Required: true,
+	},
+	"log_blocks": {
 		Type:     schema.TypeBool,
 		Required: true,
 	},
