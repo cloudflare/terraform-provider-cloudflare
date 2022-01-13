@@ -13,6 +13,10 @@ BUG FIXES:
 
 * resource/cloudflare_api_token: modified_on is now read correctly ([#1368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1368))
 
+DEPENDENCIES:
+
+* `github.com/cloudflare/cloudflare-go` v0.29.0 => v0.30.0 ([#1380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1380))
+
 ## 3.6.0 (December 23rd, 2021)
 
 ENHANCEMENTS:
