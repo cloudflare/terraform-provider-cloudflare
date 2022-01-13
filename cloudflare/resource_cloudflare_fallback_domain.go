@@ -41,10 +41,7 @@ func resourceCloudflareFallbackDomainUpdate(d *schema.ResourceData, meta interfa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	domainList, err := expandFallbackDomains(d.Get("domains").([]interface{}))
-	if err != nil {
-		return fmt.Errorf("error updating Fallback Domains: %w", err)
-	}
+	domainList := expandFallbackDomains(d.Get("domains").([]interface{}))
 
 	newFallbackDomains, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
 	if err != nil {
@@ -106,7 +103,7 @@ func flattenFallbackDomains(domains []cloudflare.FallbackDomain) []interface{} {
 
 // expandFallbackDomains accepts the schema representation of Fallback Domains and
 // returns a fully qualified struct.
-func expandFallbackDomains(domains []interface{}) ([]cloudflare.FallbackDomain, error) {
+func expandFallbackDomains(domains []interface{}) []cloudflare.FallbackDomain {
 	domainList := make([]cloudflare.FallbackDomain, 0)
 
 	for _, domain := range domains {
@@ -117,5 +114,5 @@ func expandFallbackDomains(domains []interface{}) ([]cloudflare.FallbackDomain, 
 		})
 	}
 
-	return domainList, nil
+	return domainList
 }
