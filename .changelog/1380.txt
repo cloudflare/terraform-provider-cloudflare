@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_teams_accounts: Add the `fips` field for configuring FIPS-compliant TLS.
+```

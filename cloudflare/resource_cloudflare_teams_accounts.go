@@ -62,6 +62,12 @@ func resourceCloudflareTeamsAccountRead(d *schema.ResourceData, meta interface{}
 			return errors.Wrap(err, "error parsing account activity log enablement")
 		}
 	}
+
+	if configuration.Settings.FIPS != nil {
+		if err := d.Set("fips", flattenFIPSConfig(configuration.Settings.FIPS)); err != nil {
+			return errors.Wrap(err, "error parsing account FIPS config")
+		}
+	}
 	return nil
 }
 
@@ -69,11 +75,13 @@ func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	blockPageConfig := inflateBlockPageConfig(d.Get("block_page"))
+	fipsConfig := inflateFIPSConfig(d.Get("fips"))
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
 		Settings: cloudflare.TeamsAccountSettings{
 			Antivirus: antivirusConfig,
 			BlockPage: blockPageConfig,
+			FIPS:      fipsConfig,
 		},
 	}
 
@@ -153,5 +161,23 @@ func inflateAntivirusConfig(antivirus interface{}) *cloudflare.TeamsAntivirus {
 		EnabledDownloadPhase: avMap["enabled_download_phase"].(bool),
 		EnabledUploadPhase:   avMap["enabled_upload_phase"].(bool),
 		FailClosed:           avMap["fail_closed"].(bool),
+	}
+}
+
+func flattenFIPSConfig(fips *cloudflare.TeamsFIPS) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"tls": fips.TLS,
+	}}
+}
+
+func inflateFIPSConfig(fipsList interface{}) *cloudflare.TeamsFIPS {
+	list := fipsList.([]interface{})
+	if len(list) != 1 {
+		return nil
+	}
+
+	m := list[0].(map[string]interface{})
+	return &cloudflare.TeamsFIPS{
+		TLS: m["tls"].(bool),
 	}
 }

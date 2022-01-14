@@ -16,6 +16,14 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 				Schema: blockPageSchema,
 			},
 		},
+		"fips": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: fipsSchema,
+			},
+		},
 		"antivirus": {
 			Type:     schema.TypeList,
 			MaxItems: 1,
@@ -33,6 +41,13 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Optional: true,
 		},
 	}
+}
+
+var fipsSchema = map[string]*schema.Schema{
+	"tls": {
+		Type:     schema.TypeBool,
+		Optional: true,
+	},
 }
 
 var blockPageSchema = map[string]*schema.Schema{
