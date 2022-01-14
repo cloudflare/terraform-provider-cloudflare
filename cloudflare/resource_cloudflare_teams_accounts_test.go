@@ -47,6 +47,8 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.http.0.log_blocks", "true"),
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_all", "false"),
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_blocks", "true"),
+					resource.TestCheckResourceAttr(name, "proxy.0.tcp", "true"),
+					resource.TestCheckResourceAttr(name, "proxy.0.udp", "false"),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -74,6 +76,10 @@ resource "cloudflare_teams_account" "%[1]s" {
     enabled_download_phase = true
     enabled_upload_phase = false
     fail_closed = true
+  }
+  proxy {
+    tcp = true
+    udp = false
   }
   logging {
     redact_pii = true

@@ -52,6 +52,14 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 				Schema: loggingSchema,
 			},
 		},
+		"proxy": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: proxySchema,
+			},
+		},
 	}
 }
 
@@ -99,6 +107,17 @@ var antivirusSchema = map[string]*schema.Schema{
 		Required: true,
 	},
 	"fail_closed": {
+		Type:     schema.TypeBool,
+		Required: true,
+	},
+}
+
+var proxySchema = map[string]*schema.Schema{
+	"tcp": {
+		Type:     schema.TypeBool,
+		Required: true,
+	},
+	"udp": {
 		Type:     schema.TypeBool,
 		Required: true,
 	},

@@ -29,6 +29,11 @@ resource "cloudflare_teams_account" "main" {
     fail_closed = true
   }
   
+  proxy {
+    tcp = true
+    udp = true
+  }
+  
   url_browser_isolation_enabled = true
   
   logging {
@@ -79,6 +84,11 @@ The **antivirus** block supports:
 * `enabled_download_phase` - (Optional) Scan on file download.
 * `enabled_upload_phase` - (Optional) San on file upload.
 * `fail_closed` - (Optional) Block requests for files that cannot be scanned.
+
+* The **proxy** block supports:
+
+* `tcp` - (Required) Whether gateway proxy is enabled on gateway devices for tcp traffic.
+* `udp` - (Required) Whether gateway proxy is enabled on gateway devices for udp traffic.
 
 The **logging** block supports:
 

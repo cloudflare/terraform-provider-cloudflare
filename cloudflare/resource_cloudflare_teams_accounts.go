@@ -86,6 +86,15 @@ func resourceCloudflareTeamsAccountRead(d *schema.ResourceData, meta interface{}
 		}
 	}
 
+	deviceSettings, err := client.TeamsAccountDeviceConfiguration(context.Background(), accountID)
+	if err != nil {
+		return fmt.Errorf("error finding Teams Account device settings %q: %s", d.Id(), err)
+	}
+
+	if err := d.Set("proxy", flattenTeamsDeviceSettings(&deviceSettings)); err != nil {
+		return errors.Wrap(err, "error parsing teams account device settings")
+	}
+
 	return nil
 }
 
@@ -96,6 +105,7 @@ func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface
 	fipsConfig := inflateFIPSConfig(d.Get("fips"))
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
+	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
 		Settings: cloudflare.TeamsAccountSettings{
 			Antivirus: antivirusConfig,
@@ -128,6 +138,12 @@ func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface
 	if loggingConfig != nil {
 		if _, err := client.TeamsAccountUpdateLoggingConfiguration(context.Background(), accountID, *loggingConfig); err != nil {
 			return fmt.Errorf("error updating Teams Account logging settings for account %q: %s", accountID, err)
+		}
+	}
+
+	if deviceConfig != nil {
+		if _, err := client.TeamsAccountDeviceUpdateConfiguration(context.Background(), accountID, *deviceConfig); err != nil {
+			return fmt.Errorf("error updating Teams Account proxy settings for account %q: %s", accountID, err)
 		}
 	}
 
@@ -199,6 +215,13 @@ func flattenAntivirusConfig(antivirusConfig *cloudflare.TeamsAntivirus) []interf
 		"enabled_download_phase": antivirusConfig.EnabledDownloadPhase,
 		"enabled_upload_phase":   antivirusConfig.EnabledUploadPhase,
 		"fail_closed":            antivirusConfig.FailClosed,
+	}}
+}
+
+func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"tcp": deviceSettings.GatewayProxyEnabled,
+		"udp": deviceSettings.GatewayProxyUDPEnabled,
 	}}
 }
 
@@ -290,5 +313,23 @@ func inflateLoggingSettings(log interface{}) *cloudflare.TeamsLoggingSettings {
 			},
 		},
 		RedactPii: logSettings["redact_pii"].(bool),
+	}
+}
+
+func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
+	deviceList := device.([]interface{})
+
+	if len(deviceList) != 1 {
+		return nil
+	}
+
+	deviceSettings, ok := deviceList[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	return &cloudflare.TeamsDeviceSettings{
+		GatewayProxyEnabled:    deviceSettings["tcp"].(bool),
+		GatewayProxyUDPEnabled: deviceSettings["udp"].(bool),
 	}
 }
