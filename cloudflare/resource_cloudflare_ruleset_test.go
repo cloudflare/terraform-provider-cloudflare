@@ -475,6 +475,60 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithTopSkipAndLastS
 	})
 }
 
+func TestAccCloudflareRuleset_SkipPhaseAndProducts(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetSkipPhaseAndProducts(rnd, "skip phases and product", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "skip phases and product"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "3"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "skip"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.ruleset", "current"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", fmt.Sprintf(`http.host eq "%s"`, zoneName)),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "not this zone"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.1.action", "skip"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.0.phases.#", "2"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.1.action_parameters.0.phases.*", "http_ratelimit"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.1.action_parameters.0.phases.*", "http_request_firewall_managed"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.2.action", "skip"),
+					resource.TestCheckResourceAttr(resourceName, "rules.2.action_parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.2.action_parameters.0.products.#", "2"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.2.action_parameters.0.products.*", "zoneLockdown"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.2.action_parameters.0.products.*", "uaBlock"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryBasedOverrides(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -1568,6 +1622,47 @@ func testAccCheckCloudflareRulesetManagedWAFDeployMultipleWithTopSkipAndLastSkip
       }
       description = "not this path either"
       expression = "(http.host eq \"%[4]s\" and http.request.uri.path contains \"/httpbin/\")"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetSkipPhaseAndProducts(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_firewall_managed"
+
+    rules {
+      action = "skip"
+      action_parameters {
+        ruleset = "current"
+      }
+      description = "not this zone"
+      expression = "http.host eq \"%[4]s\""
+      enabled = true
+    }
+
+    rules {
+      action = "skip"
+      action_parameters {
+        phases = ["http_ratelimit", "http_request_firewall_managed"]
+      }
+      expression = "http.request.uri.path contains \"/skip-phase/\""
+      description = ""
+      enabled = true
+    }
+
+    rules {
+      action = "skip"
+      action_parameters {
+        products = ["zoneLockdown", "uaBlock"]
+      }
+      expression = "http.request.uri.path contains \"/skip-products/\""
+      description = ""
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)

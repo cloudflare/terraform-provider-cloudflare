@@ -92,6 +92,13 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										Type: schema.TypeString,
 									},
 								},
+								"phases": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+								},
 								"uri": {
 									Type:     schema.TypeList,
 									Optional: true,

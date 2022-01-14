@@ -297,6 +297,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"headers":      headers,
 				"overrides":    overrides,
 				"products":     r.ActionParameters.Products,
+				"phases":       r.ActionParameters.Phases,
 				"ruleset":      r.ActionParameters.Ruleset,
 				"rulesets":     r.ActionParameters.Rulesets,
 				"rules":        actionParameterRules,
@@ -365,6 +366,24 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 					case "version":
 						if rule.ActionParameters.Version != "" {
 							rule.ActionParameters.Version = pValue.(string)
+						}
+					case "products":
+						var products []string
+						for _, product := range pValue.(*schema.Set).List() {
+							products = append(products, product.(string))
+						}
+
+						if len(products) > 0 {
+							rule.ActionParameters.Products = products
+						}
+					case "phases":
+						var phases []string
+						for _, phase := range pValue.(*schema.Set).List() {
+							phases = append(phases, phase.(string))
+						}
+
+						if len(phases) > 0 {
+							rule.ActionParameters.Phases = phases
 						}
 					case "ruleset":
 						rule.ActionParameters.Ruleset = pValue.(string)
