@@ -363,7 +363,9 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 					case "id":
 						rule.ActionParameters.ID = pValue.(string)
 					case "version":
-						rule.ActionParameters.Version = pValue.(string)
+						if rule.ActionParameters.Version != "" {
+							rule.ActionParameters.Version = pValue.(string)
+						}
 					case "ruleset":
 						rule.ActionParameters.Ruleset = pValue.(string)
 					case "rulesets":
