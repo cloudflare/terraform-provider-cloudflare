@@ -1,5 +1,13 @@
 ## 3.8.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_teams_accounts: Add the `fips` field for configuring FIPS-compliant TLS. ([#1380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1380))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: conditionally set action parameter "version" ([#1388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1388))
+
 ## 3.7.0 (January 13th, 2022)
 
 FEATURES:
