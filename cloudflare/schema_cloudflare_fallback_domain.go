@@ -10,14 +10,25 @@ func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Required: true,
 		},
+		"include_default_domains": {
+			Optional: true,
+			Type:     schema.TypeBool,
+			Default:  true,
+		},
+		"restore_default_domains_on_delete": {
+			Optional: true,
+			Type:     schema.TypeBool,
+			Default:  true,
+		},
 		"domains": {
-			Required: true,
+			Optional: true,
+			Computed: true,
 			Type:     schema.TypeList,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"suffix": {
 						Type:        schema.TypeString,
-						Optional:    true,
+						Required:    true,
 						Description: "The domain suffix to match when resolving locally.",
 					},
 					"description": {

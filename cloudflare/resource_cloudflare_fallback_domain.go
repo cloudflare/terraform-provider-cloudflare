@@ -2,11 +2,20 @@ package cloudflare
 
 import (
 	"context"
+	"log"
 	"fmt"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+// use this since we cannot use const for lists
+func default_domains() []string {
+	return []string{
+		"intranet", "internal", "private", "localdomain", "domain", "lan", "home",
+		"host", "corp", "local", "localhost", "home.arpa", "invalid", "test",
+	}
+}
 
 func resourceCloudflareFallbackDomain() *schema.Resource {
 	return &schema.Resource{
@@ -18,6 +27,7 @@ func resourceCloudflareFallbackDomain() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareFallbackDomainImport,
 		},
+		CustomizeDiff: resourceCloudflareFallbackDomainDiff,
 	}
 }
 
@@ -42,6 +52,7 @@ func resourceCloudflareFallbackDomainUpdate(d *schema.ResourceData, meta interfa
 	accountID := d.Get("account_id").(string)
 
 	domainList := expandFallbackDomains(d.Get("domains").([]interface{}))
+	log.Printf("[INFO] Updating Cloudflare Fallback Domain: %s", domainList)
 
 	newFallbackDomains, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
 	if err != nil {
@@ -61,7 +72,11 @@ func resourceCloudflareFallbackDomainDelete(d *schema.ResourceData, meta interfa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.UpdateFallbackDomain(context.Background(), accountID, nil)
+	domainList := make([]cloudflare.FallbackDomain, 0)
+	if d.Get("restore_default_domains_on_delete").(bool) == true {
+		domainList = getDefaultDomains()
+	}
+	_, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
 	if err != nil {
 		return err
 	}
@@ -115,4 +130,35 @@ func expandFallbackDomains(domains []interface{}) []cloudflare.FallbackDomain {
 	}
 
 	return domainList
+}
+
+func getDefaultDomains() []cloudflare.FallbackDomain {
+	domainList := make([]cloudflare.FallbackDomain, 0)
+
+	for _, domain := range default_domains() {
+		domainList = append(domainList, cloudflare.FallbackDomain{
+			Suffix: domain,
+		})
+	}
+
+	return domainList
+}
+
+func resourceCloudflareFallbackDomainDiff(_ context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	_, include_n := diff.GetChange("include_default_domains")
+	_, domains_n := diff.GetChange("domains")
+	domains_y := domains_n.([]interface{})
+
+	var domainList []interface{}
+	if include_n.(bool) {
+		domainList = flattenFallbackDomains(getDefaultDomains())
+	}
+	for _, domain := range domains_y {
+		domainList = append(domainList, domain.(map[string]interface{}))
+	}
+	if err := diff.SetNew("domains", domainList); err != nil {
+		return fmt.Errorf("error including default domains: %w", err)
+	}
+
+	return nil
 }
