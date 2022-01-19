@@ -13,7 +13,7 @@ func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 		"include_default_domains": {
 			Optional: true,
 			Type:     schema.TypeBool,
-			Default:  true,
+			Default:  false,
 		},
 		"restore_default_domains_on_delete": {
 			Optional: true,

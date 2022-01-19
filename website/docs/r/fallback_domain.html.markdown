@@ -55,7 +55,7 @@ The following arguments are supported:
 
 - `account_id` - (Required) The account to which the device posture rule should be added.
 - `domains` - (Required) The value of the domain attributes (refer to the [nested schema](#nestedblock--domains)).
-- `include_default_domains` - (Optional) Indicator to add specified domains to default list of domains (shown in `explicit` example).  Defaults to `false`.
+- `include_default_domains` - (Optional) Indicator to include default domains (shown in `explicit` example) to specified list of domains.  Defaults to `false`.
 - `restore_default_domains_on_delete` - (Optional) Indicator to reset domains to default list upon delete.  Otherwise, list will be empty.  Defaults to `true`.
 
 <a id="nestedblock--domains"></a>
