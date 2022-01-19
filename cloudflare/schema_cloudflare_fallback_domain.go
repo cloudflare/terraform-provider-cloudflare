@@ -10,29 +10,14 @@ func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"include_default_domains": {
-			Optional: true,
-			Type:     schema.TypeBool,
-			Default:  false,
-		},
-		"restore_default_domains_on_delete": {
-			Optional: true,
-			Type:     schema.TypeBool,
-			Default:  true,
-		},
-		// `domains` should really be a schema.TypeSet, but there's an SDK bug that breaks
-		// default domain support. `dns_servers` ends up as a list of `nil` values in
-		// the ResourceDiff GetChange() result.
-		// See: https://github.com/hashicorp/terraform-plugin-sdk/issues/497
 		"domains": {
-			Optional: true,
-			Computed: true,
+			Required: true,
 			Type:     schema.TypeList,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"suffix": {
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 						Description: "The domain suffix to match when resolving locally.",
 					},
 					"description": {
