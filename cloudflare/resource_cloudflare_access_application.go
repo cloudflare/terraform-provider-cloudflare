@@ -43,14 +43,14 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
-		PrivateAddress:					 d.Get("private_address").(string),
+		PrivateAddress:          d.Get("private_address").(string),
 	}
 
-	gatewayRules := d.Get("gateway_rules").([]interface{})
+	gatewayRules := d.Get("gateway_rules").([]cloudflare.AccessApplicationGatewayRule)
 	for _, value := range gatewayRules {
-		if value != nil {
+		if value.ID != "" {
 			newAccessApplication.GatewayRules = append(newAccessApplication.GatewayRules, cloudflare.AccessApplicationGatewayRule{
-				ID: value,
+				ID: value.ID,
 			})
 		}
 	}
@@ -129,12 +129,23 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("logo_url", accessApplication.LogoURL)
 	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
 	d.Set("private_address", accessApplication.PrivateAddress)
-  d.Set("gateway_rules", accessApplication.GatewayRules)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
 		return fmt.Errorf("error setting Access Application CORS header configuration: %s", corsConfigErr)
 	}
+
+	gatewayRules := accessApplication.GatewayRules
+	gatewayRulesSchema := make([]interface{}, len(accessApplication.GatewayRules))
+
+	for _, value := range gatewayRules {
+		if value.ID != "" {
+			gatewayRulesSchema = append(gatewayRulesSchema, map[string]interface{}{
+				"id": value.ID,
+			})
+		}
+	}
+	d.Set("gateway_rules", gatewayRulesSchema)
 
 	return nil
 }
@@ -160,14 +171,14 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
-		PrivateAddress:					 d.Get("private_address").(string),
+		PrivateAddress:          d.Get("private_address").(string),
 	}
 
-	gatewayRules := d.Get("gateway_rules").([]interface{})
+	gatewayRules := d.Get("gateway_rules").([]cloudflare.AccessApplicationGatewayRule)
 	for _, value := range gatewayRules {
-		if value != nil {
+		if value.ID != "" {
 			updatedAccessApplication.GatewayRules = append(updatedAccessApplication.GatewayRules, cloudflare.AccessApplicationGatewayRule{
-				ID: value,
+				ID: value.ID,
 			})
 		}
 	}

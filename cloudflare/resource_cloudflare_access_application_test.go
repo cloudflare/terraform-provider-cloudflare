@@ -333,6 +333,35 @@ func TestAccCloudflareAccessApplicationWithAppLauncherVisible(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplicationConfigWithGatewayRules(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithGatewayRules(rnd, zoneID, domain, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "private_address", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "private_ip"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "true"),
+					resource.TestCheckResourceAttr(name, "gateway_rules.#", "1"),
+					resource.TestCheckResourceAttr(name, "gateway_rules.0.account_id", accountID),
+					resource.TestCheckResourceAttr(name, "gateway_rules.0.name", rnd),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
