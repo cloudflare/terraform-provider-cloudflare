@@ -70,6 +70,7 @@ func TestAccCloudflareFallbackDomain_with_restore_on_delete(t *testing.T) {
 
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	default_domain_count := len(default_domains())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -86,6 +87,17 @@ func TestAccCloudflareFallbackDomain_with_restore_on_delete(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "domains.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.com"),
 					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "2.2.2.2"),
+				),
+			},
+			{
+				// test only changing `include_default_domains`
+				Config: testAccCloudflareFallbackDomain(rnd, accountID, "true", "true", "example domain", "example.com", "2.2.2.2"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "domains.#", fmt.Sprintf("%d", default_domain_count + 1)),
+					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.description", default_domain_count), "example domain"),
+					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.suffix", default_domain_count), "example.com"),
+					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.dns_server.0", default_domain_count), "2.2.2.2"),
 				),
 			},
 		},

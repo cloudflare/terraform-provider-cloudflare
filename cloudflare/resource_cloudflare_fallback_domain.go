@@ -52,7 +52,7 @@ func resourceCloudflareFallbackDomainUpdate(d *schema.ResourceData, meta interfa
 	accountID := d.Get("account_id").(string)
 
 	domainList := expandFallbackDomains(d.Get("domains").([]interface{}))
-	log.Printf("[INFO] Updating Cloudflare Fallback Domain: %s", domainList)
+	log.Printf("[INFO] Updating Cloudflare Fallback Domain: %v", domainList)
 
 	newFallbackDomains, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
 	if err != nil {
@@ -73,8 +73,11 @@ func resourceCloudflareFallbackDomainDelete(d *schema.ResourceData, meta interfa
 	accountID := d.Get("account_id").(string)
 
 	domainList := make([]cloudflare.FallbackDomain, 0)
-	if d.Get("restore_default_domains_on_delete").(bool) == true {
+	if d.Get("restore_default_domains_on_delete").(bool) {
+		log.Printf("[INFO] Deleting Fallback Domains and restoring default entries.")
 		domainList = getDefaultDomains()
+	} else {
+		log.Printf("[INFO] Deleting Fallback Domains without restoring default entries.")
 	}
 	_, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
 	if err != nil {
