@@ -1,4 +1,35 @@
-## 3.7.0 (Unreleased)
+## 3.8.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: smoother handling of UI/API collisions during migrations ([#1393](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1393))
+* resource/cloudflare_teams_accounts: Add the `fips` field for configuring FIPS-compliant TLS. ([#1380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1380))
+
+BUG FIXES:
+
+* resource/cloudflare_ruleset: conditionally set action parameter "version" ([#1388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1388))
+
+## 3.7.0 (January 13th, 2022)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_device_posture_integration` ([#1340](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1340))
+* **New Resource:** `cloudflare_fallback_domain` ([#1356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1356))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_firewall_rule: add support for managed_challenge action ([#1378](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1378))
+* resource/cloudflare_load_balancer_monitor: added support for smtp, icmp_ping, and udp_icmp monitors ([#1371](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1371))
+* resource/cloudflare_logpush_job: add support for account-level logpush jobs ([#1311](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1311))
+* resource/cloudflare_logpush_ownership_challenge: add support for account-level logpush ownership challenges ([#1311](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1311))
+
+BUG FIXES:
+
+* resource/cloudflare_api_token: modified_on is now read correctly ([#1368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1368))
+
+DEPENDENCIES:
+
+* `github.com/cloudflare/cloudflare-go` v0.29.0 => v0.30.0 ([#1379](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1379))
 
 ## 3.6.0 (December 23rd, 2021)
 

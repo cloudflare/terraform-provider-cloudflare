@@ -123,6 +123,24 @@ func testAccPreCheckLogpushToken(t *testing.T) {
 	}
 }
 
+func testAccPreCheckWorkspaceOne(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_URL"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_URL must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL must be set for this acceptance test")
+	}
+}
+
 func testAccPreCheckBYOIPPrefix(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
 		t.Skip("Skipping acceptance test as CLOUDFLARE_BYO_IP_PREFIX_ID is not set")

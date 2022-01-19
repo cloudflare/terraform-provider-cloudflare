@@ -1,21 +1,27 @@
 name: Lint
-on: [push, pull_request]
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
-  # golangci:
-  #   name: golangci-lint
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: golangci-lint
-  #       uses: golangci/golangci-lint-action@v2
-  #       with:
-  #         version: latest
-  #         args: "--config .golintci.yml"
-  #         only-new-issues: true # only show new issues in the PR, not all.
+  golangci:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # needed for `only-new-issues` to compare diffs
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+          args: "--config .golintci.yml"
+          only-new-issues: true
 
   tfproviderlint:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
