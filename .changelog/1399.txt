@@ -3,5 +3,5 @@ resource/cloudflare_fallback_domain: Add `include_default_domains` (default: tru
 ```
 
 ```release-note:bug
-resource/cloudflare_fallback_domain: default entries are removed, including when resource is destroyed.
+resource/cloudflare_fallback_domain: default entries are now included by default and restored on delete.
 ```
