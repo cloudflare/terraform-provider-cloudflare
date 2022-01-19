@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_fallback_domain: Add `include_default_domains` (default: true) and `restore_default_domains_on_default` (default: true) fields.
+```
+
+```release-note:bug
+resource/cloudflare_fallback_domain: default entries are removed, including when resource is destroyed.
+```
