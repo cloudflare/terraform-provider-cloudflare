@@ -2,14 +2,14 @@ package cloudflare
 
 import (
 	"context"
-	"log"
 	"fmt"
+	"log"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// use this since we cannot use const for lists
+// use this since we cannot use const for lists.
 func default_domains() []string {
 	return []string{
 		"intranet", "internal", "private", "localdomain", "domain", "lan", "home",

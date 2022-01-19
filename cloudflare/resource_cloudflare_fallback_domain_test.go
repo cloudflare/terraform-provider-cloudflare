@@ -30,7 +30,7 @@ func TestAccCloudflareFallbackDomain_no_restore_on_delete(t *testing.T) {
 		PreCheck: func() {
 			testAccessAccPreCheck(t)
 		},
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -47,7 +47,7 @@ func TestAccCloudflareFallbackDomain_no_restore_on_delete(t *testing.T) {
 				Config: testAccCloudflareFallbackDomain(rnd, accountID, "true", "false", "second example domain", "example_two.com", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "domains.#", fmt.Sprintf("%d", default_domain_count + 1)),
+					resource.TestCheckResourceAttr(name, "domains.#", fmt.Sprintf("%d", default_domain_count+1)),
 					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.description", default_domain_count), "second example domain"),
 					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.suffix", default_domain_count), "example_two.com"),
 					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.dns_server.0", default_domain_count), "1.1.1.1"),
@@ -76,7 +76,7 @@ func TestAccCloudflareFallbackDomain_with_restore_on_delete(t *testing.T) {
 		PreCheck: func() {
 			testAccessAccPreCheck(t)
 		},
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -94,7 +94,7 @@ func TestAccCloudflareFallbackDomain_with_restore_on_delete(t *testing.T) {
 				Config: testAccCloudflareFallbackDomain(rnd, accountID, "true", "true", "example domain", "example.com", "2.2.2.2"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "domains.#", fmt.Sprintf("%d", default_domain_count + 1)),
+					resource.TestCheckResourceAttr(name, "domains.#", fmt.Sprintf("%d", default_domain_count+1)),
 					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.description", default_domain_count), "example domain"),
 					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.suffix", default_domain_count), "example.com"),
 					resource.TestCheckResourceAttr(name, fmt.Sprintf("domains.%d.dns_server.0", default_domain_count), "2.2.2.2"),
