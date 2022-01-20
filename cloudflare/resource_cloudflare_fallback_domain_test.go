@@ -9,6 +9,7 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/pkg/errors"
 )
 
 func TestAccCloudflareFallbackDomain(t *testing.T) {
@@ -33,22 +34,22 @@ func TestAccCloudflareFallbackDomain(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareFallbackDomain(rnd, accountID, "example domain", "example.com", "2.2.2.2"),
+				Config: testAccCloudflareFallbackDomain(rnd, accountID, "example domain", "example.com", "1.0.0.1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.com"),
-					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "2.2.2.2"),
+					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.0.0.1"),
 				),
 			},
 			{
-				Config: testAccCloudflareFallbackDomain(rnd, accountID, "second example domain", "example_two.com", "1.1.1.1"),
+				Config: testAccCloudflareFallbackDomain(rnd, accountID, "second example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "second example domain"),
-					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example_two.com"),
+					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
 					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.1.1.1"),
 				),
 			},
@@ -78,8 +79,8 @@ func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
 		}
 
 		result, _ := client.ListFallbackDomains(context.Background(), rs.Primary.ID)
-		if len(result) != len(default_domains) {
-			return fmt.Errorf("Deleted Fallback Domains resource has %d domains instead of expected %d default entries.", len(result), len(default_domains))
+		if len(result) == 0 {
+			return errors.New("deleted Fallback Domain resource has does not include default domains")
 		}
 	}
 

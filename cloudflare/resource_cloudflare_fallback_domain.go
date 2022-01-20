@@ -8,11 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var default_domains = []string{
-	"intranet", "internal", "private", "localdomain", "domain", "lan", "home",
-	"host", "corp", "local", "localhost", "home.arpa", "invalid", "test",
-}
-
 func resourceCloudflareFallbackDomain() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareFallbackDomainSchema(),
@@ -66,7 +61,7 @@ func resourceCloudflareFallbackDomainDelete(d *schema.ResourceData, meta interfa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.UpdateFallbackDomain(context.Background(), accountID, getDefaultDomains())
+	err := client.RestoreFallbackDomainDefaults(context.Background(), accountID)
 	if err != nil {
 		return err
 	}
@@ -116,18 +111,6 @@ func expandFallbackDomains(domains []interface{}) []cloudflare.FallbackDomain {
 			Suffix:      domain.(map[string]interface{})["suffix"].(string),
 			Description: domain.(map[string]interface{})["description"].(string),
 			DNSServer:   expandInterfaceToStringList(domain.(map[string]interface{})["dns_server"]),
-		})
-	}
-
-	return domainList
-}
-
-func getDefaultDomains() []cloudflare.FallbackDomain {
-	domainList := make([]cloudflare.FallbackDomain, 0)
-
-	for _, domain := range default_domains {
-		domainList = append(domainList, cloudflare.FallbackDomain{
-			Suffix: domain,
 		})
 	}
 
