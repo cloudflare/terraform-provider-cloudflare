@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -192,6 +194,8 @@ func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interfac
 		"override_host":       settings.OverrideHost,
 		"l4override":          flattenTeamsL4Override(settings.L4Override),
 		"biso_admin_controls": flattenTeamsRuleBisoAdminControls(settings.BISOAdminControls),
+		"check_session":       flattenTeamsCheckSessionSettings(settings.CheckSession),
+		"add_headers":         flattenTeamsAddHeaders(settings.AddHeaders),
 	}}
 }
 
@@ -214,6 +218,9 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 
 	bisoAdminControls := inflateTeamsRuleBisoAdminControls(settingsMap["biso_admin_controls"].([]interface{}))
 
+	checkSessionSettings := inflateTeamsCheckSessionSettings(settingsMap["check_session"].([]interface{}))
+	addHeaders := inflateTeamsAddHeaders(settingsMap["add_headers"].(map[string]interface{}))
+
 	return &cloudflare.TeamsRuleSettings{
 		BlockPageEnabled:  enabled,
 		BlockReason:       reason,
@@ -221,6 +228,8 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 		OverrideHost:      overrideHost,
 		L4Override:        l4Override,
 		BISOAdminControls: bisoAdminControls,
+		CheckSession:      checkSessionSettings,
+		AddHeaders:        addHeaders,
 	}
 }
 
@@ -231,6 +240,20 @@ func flattenTeamsRuleBisoAdminControls(settings *cloudflare.TeamsBISOAdminContro
 	return []interface{}{map[string]interface{}{
 		"disable_printing":   settings.DisablePrinting,
 		"disable_copy_paste": settings.DisableCopyPaste,
+		"disable_download":   settings.DisableDownload,
+		"disable_upload":     settings.DisableUpload,
+		"disable_keyboard":   settings.DisableKeyboard,
+	}}
+}
+
+func flattenTeamsCheckSessionSettings(settings *cloudflare.TeamsCheckSessionSettings) []interface{} {
+	if settings == nil {
+		return nil
+	}
+	duration := settings.Duration.Duration.String()
+	return []interface{}{map[string]interface{}{
+		"enforce":  settings.Enforce,
+		"duration": duration,
 	}}
 }
 
@@ -242,10 +265,67 @@ func inflateTeamsRuleBisoAdminControls(settings interface{}) *cloudflare.TeamsBI
 	settingsMap := settingsList[0].(map[string]interface{})
 	disablePrinting := settingsMap["disable_printing"].(bool)
 	disableCopyPaste := settingsMap["disable_copy_paste"].(bool)
+	disableDownload := settingsMap["disable_download"].(bool)
+	disableUpload := settingsMap["disable_upload"].(bool)
+	disableKeyboard := settingsMap["disable_keyboard"].(bool)
 	return &cloudflare.TeamsBISOAdminControlSettings{
 		DisablePrinting:  disablePrinting,
 		DisableCopyPaste: disableCopyPaste,
+		DisableDownload:  disableDownload,
+		DisableUpload:    disableUpload,
+		DisableKeyboard:  disableKeyboard,
 	}
+}
+
+func inflateTeamsCheckSessionSettings(settings interface{}) *cloudflare.TeamsCheckSessionSettings {
+	settingsList := settings.([]interface{})
+	if len(settingsList) != 1 {
+		return nil
+	}
+	settingsMap := settingsList[0].(map[string]interface{})
+	enforce := settingsMap["enforce"].(bool)
+	durationString := settingsMap["duration"].(string)
+
+	dur, err := time.ParseDuration(durationString)
+	if err != nil {
+		return nil
+	}
+
+	duration := cloudflare.Duration{Duration: dur}
+
+	return &cloudflare.TeamsCheckSessionSettings{
+		Enforce:  enforce,
+		Duration: duration,
+	}
+}
+
+func inflateTeamsAddHeaders(settings interface{}) http.Header {
+	settingsMap := settings.(map[string]interface{})
+
+	ret := http.Header{}
+	for key := range settingsMap {
+		v, ok := settingsMap[key].(string)
+		if !ok {
+			continue
+		}
+		ret[key] = []string{v}
+	}
+
+	return ret
+}
+
+func flattenTeamsAddHeaders(settings http.Header) interface{} {
+	if settings == nil {
+		return nil
+	}
+
+	ret := make(map[string]interface{})
+	for header := range settings {
+		len := len(settings[header])
+		ret[header] = settings[header][len-1]
+	}
+
+	return ret
 }
 
 func flattenTeamsL4Override(settings *cloudflare.TeamsL4OverrideSettings) []interface{} {
@@ -256,7 +336,6 @@ func flattenTeamsL4Override(settings *cloudflare.TeamsL4OverrideSettings) []inte
 		"ip":   settings.IP,
 		"port": settings.Port,
 	}}
-
 }
 
 func inflateTeamsL4Override(settings interface{}) *cloudflare.TeamsL4OverrideSettings {

@@ -99,6 +99,21 @@ var teamsRuleSettings = map[string]*schema.Schema{
 			Schema: teamsBisoAdminControls,
 		},
 	},
+	"check_session": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: teamsCheckSessionSettings,
+		},
+	},
+	"add_headers": {
+		Type:     schema.TypeMap,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
 }
 
 var teamsL4OverrideSettings = map[string]*schema.Schema{
@@ -120,5 +135,16 @@ var teamsBisoAdminControls = map[string]*schema.Schema{
 	"disable_copy_paste": {
 		Type:     schema.TypeBool,
 		Optional: true,
+	},
+}
+
+var teamsCheckSessionSettings = map[string]*schema.Schema{
+	"enforce": {
+		Type:     schema.TypeBool,
+		Required: true,
+	},
+	"duration": {
+		Type:     schema.TypeString,
+		Required: true,
 	},
 }

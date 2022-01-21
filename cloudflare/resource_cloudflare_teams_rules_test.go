@@ -44,6 +44,8 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"example.com\")"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "false"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_reason", "cuz"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.check_session.enforce", "true"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.check_session.duration", "200s"),
 				),
 			},
 		},
@@ -63,6 +65,10 @@ resource "cloudflare_teams_rule" "%[1]s" {
   rule_settings {
     block_page_enabled = false
     block_page_reason = "cuz"
+	check_session {
+		enforce = true
+		duration = "200s"
+	}
   }
 }
 `, rnd, accountID)

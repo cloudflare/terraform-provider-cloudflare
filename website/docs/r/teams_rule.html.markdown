@@ -15,19 +15,15 @@ Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gatew
 ```hcl
 resource "cloudflare_teams_rule" "rule1" {
   name = "office"
-  account_id  = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id  = "d57c3de47a013c03ca7e237dd3e61d7d"
   description = "desc"
   precedence = 1
-  action = "l4_override"
-  filters = ["l4"]
-  traffic = "any(dns.domains[*] == \"com.example\")"
+  action = "block"
+  filters = ["http"]
+  traffic = "http.request.uri == \"https://www.example.com/malicious\""
   rule_settings {
-    block_page_enabled = false
+    block_page_enabled = true
     block_page_reason = "access not permitted"
-    l4override {
-      port = 1234
-      ip = "192.0.2.1"
-    }
   }
 }
 ```
