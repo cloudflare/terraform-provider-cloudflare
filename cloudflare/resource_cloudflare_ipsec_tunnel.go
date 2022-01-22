@@ -94,7 +94,7 @@ func resourceCloudflareIPsecTunnelUpdate(d *schema.ResourceData, meta interface{
 		return errors.Wrap(err, fmt.Sprintf("error updating IPsec tunnel %q", d.Id()))
 	}
 
-	return resourceCloudflareStaticRouteRead(d, meta)
+	return resourceCloudflareIPsecTunnelRead(d, meta)
 }
 
 func resourceCloudflareIPsecTunnelDelete(d *schema.ResourceData, meta interface{}) error {
