@@ -6,7 +6,7 @@ description: |-
   Provides a resource which manages IPsec tunnels for Magic Transit.
 ---
 
-# cloudflare_static_route
+# cloudflare_ipsec_tunnel
 
 Provides a resource, that manages IPsec tunnels for Magic Transit.
 
