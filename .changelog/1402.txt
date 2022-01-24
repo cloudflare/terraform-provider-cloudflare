@@ -1,0 +1,8 @@
+
+```release-note:enhancement
+resource/cloudflare_cloudflare_teams_rules: Add `check_session` and `add_headers` attributes to settings
+```
+
+```release-note:enhancement
+resource/cloudflare_cloudflare_teams_rules: Add `disable_download`, `disable_keyboard`, and `disable_upload` attributes to `BISOAdminControls`
+```
