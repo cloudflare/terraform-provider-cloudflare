@@ -52,7 +52,7 @@ func testAccCheckCloudflareIPsecTunnelExists(n string, tunnel *cloudflare.MagicT
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundIPsecTunnel, err := client.GetMagicTransitIPsecTunnel(context.Background(), rs.Primary.ID)
+		foundIPsecTunnel, err := client.GetMagicTransitIPsecTunnel(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
