@@ -9,6 +9,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_ruleset: conditionally set action parameter "version" ([#1388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1388))
+* resource/cloudflare_ruleset: fix handling of `false` values for category/rule overrides ([#1405](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1405))
 
 ## 3.7.0 (January 13th, 2022)
 
