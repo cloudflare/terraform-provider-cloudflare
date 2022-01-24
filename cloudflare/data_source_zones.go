@@ -22,6 +22,10 @@ func dataSourceCloudflareZones() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"account_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -83,7 +87,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 
 	zoneFilter := cloudflare.WithZoneFilters(
 		zoneLookupValue,
-		"",
+		filter.accountID,
 		filter.status,
 	)
 
@@ -156,10 +160,16 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 		filter.status = status.(string)
 	}
 
+	accountID, ok := m["account_id"]
+	if ok {
+		filter.accountID = accountID.(string)
+	}
+
 	return filter, nil
 }
 
 type searchFilter struct {
+	accountID  string
 	name       string
 	regexValue *regexp.Regexp
 	lookupType string
