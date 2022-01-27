@@ -54,6 +54,7 @@ The following arguments are supported:
 * `l4override` - (Optional) Settings to forward layer 4 traffic (refer to the [nested schema](#nestedblock--rule-settings-l4override)).
 * `check_session` - (Optional) Configure how session check behaves (refer to the [nested schema](#nestedblock--rule-settings-check-session)).
 * `add_headers` - (Optional, Map) Add custom headers to allowed requests in the form of key-value pairs.
+* `biso_admin_controls` - (Optional) Configure how browser isolation behaves (refer to the [nested schema](#nestedblock--rule-settings-biso-admin-controls)).
 
 <a id="nestedblock--rule-settings-l4override"></a>
 **Nested schema for `l4override`**
@@ -66,6 +67,15 @@ The following arguments are supported:
 
 * `enforce` - (Optional) Enable session enforcement for this rule.
 * `duration` - (Optional) Configure how fresh the session needs to be to be considered valid.
+
+<a id="nestedblock--rule-settings-biso-admin-controls"></a>
+**Nested schema for `biso_admin_controls`**
+
+* `disable_printing` - (Boolean) Disable printing.
+* `disable_copy_paste` - (Boolean) Disable copy-paste.
+* `disable_download` - (Boolean) Disable download.
+* `disable_upload` - (Boolean) Disable upload.
+* `disable_keyboard` - (Boolean) Disable keyboard usage.
 
 ## Import
 

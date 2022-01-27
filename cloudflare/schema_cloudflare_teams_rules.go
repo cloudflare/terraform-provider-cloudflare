@@ -136,6 +136,18 @@ var teamsBisoAdminControls = map[string]*schema.Schema{
 		Type:     schema.TypeBool,
 		Optional: true,
 	},
+	"disable_download": {
+		Type:     schema.TypeBool,
+		Optional: true,
+	},
+	"disable_keyboard": {
+		Type:     schema.TypeBool,
+		Optional: true,
+	},
+	"disable_upload": {
+		Type:     schema.TypeBool,
+		Optional: true,
+	},
 }
 
 var teamsCheckSessionSettings = map[string]*schema.Schema{
