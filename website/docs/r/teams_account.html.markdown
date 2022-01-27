@@ -2,7 +2,7 @@
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_teams_account"
 sidebar_current: "docs-cloudflare-resource-teams-account"
-description: |- Provides a Cloudflare Teams Account resource.
+description: Provides a Cloudflare Teams Account resource.
 ---
 
 # cloudflare_teams_account
