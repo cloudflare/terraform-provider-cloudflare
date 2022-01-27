@@ -65,13 +65,13 @@ resource "cloudflare_teams_rule" "%[1]s" {
   rule_settings {
     block_page_enabled = false
     block_page_reason = "cuz"
-	check_session {
-		enforce = true
-		duration = "3m20s"
-	}
-	add_headers = {
-		Xtest = "hi,there"
-	}
+    check_session {
+      enforce = true
+      duration = "3m20s"
+    }
+    add_headers = {
+      Xtest = "hi,there"
+    }
   }
 }
 `, rnd, accountID)
