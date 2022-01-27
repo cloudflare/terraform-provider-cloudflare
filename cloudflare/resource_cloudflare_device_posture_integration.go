@@ -39,7 +39,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(d *schema.ResourceData, me
 	if err != nil {
 		return fmt.Errorf("error creating Device Posture integration with provided config: %s", err)
 	}
-	fmt.Printf("[DEBUG] Creating Cloudflare Device Posture Integration from struct: %+v\n", newDevicePostureIntegration)
+	log.Printf("[DEBUG] Creating Cloudflare Device Posture Integration from struct: %+v\n", newDevicePostureIntegration)
 
 	// The API does not return the client_secret so it must be stored in the state func on resource create.
 	savedSecret := newDevicePostureIntegration.Config.ClientSecret

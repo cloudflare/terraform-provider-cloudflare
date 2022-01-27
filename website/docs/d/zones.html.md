@@ -55,6 +55,16 @@ data "cloudflare_zones" "example" {
 }
 ```
 
+```hcl
+# Look for all active zones in an account
+data "cloudflare_zones" "example" {
+  filter {
+    account_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
+    status     = "active"
+  }
+}
+```
+
 ### Example usage with other resources
 
 The example below matches all zones which have "example" in their value, end
@@ -99,6 +109,7 @@ values must match in order to be included, see below for full list.
 
 **filter**
 
+- `account_id` - (Optional) Only search for zones in this account.
 - `name` - (Optional) A string value to search for.
 - `lookup_type` - (Optional) The type of search to perform for the `name` value
   when querying the zone API. Valid values: `"exact"` and `"contains"`. Defaults

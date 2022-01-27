@@ -17,7 +17,7 @@ import (
 const (
 	accountLevelRulesetDeleteURL = "https://api.cloudflare.com/#account-rulesets-delete-account-ruleset"
 	zoneLevelRulesetDeleteURL    = "https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset"
-	duplicateRulesetError        = "failed to create ruleset %q as a similar configuration already exists. If you are migrating from the Dashboard, you will need to first manually remove it using the API (%s) before you can configure it in Terraform. Otherwise, you have hit the entitlements quota and should contact your account team."
+	duplicateRulesetError        = "failed to create ruleset %q as a similar configuration with rules already exists and overwriting will have unintended consequences. If you are migrating from the Dashboard, you will need to first remove the existing rules otherwise you can remove the existing phase yourself using the API (%s)."
 )
 
 func resourceCloudflareRuleset() *schema.Resource {
@@ -37,6 +37,23 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
+	rulesetPhase := d.Get("phase").(string)
+
+	var ruleset cloudflare.Ruleset
+	var sempahoreErr error
+	if accountID != "" {
+		ruleset, sempahoreErr = client.GetAccountRulesetPhase(context.Background(), accountID, rulesetPhase)
+	} else {
+		ruleset, sempahoreErr = client.GetZoneRulesetPhase(context.Background(), zoneID, rulesetPhase)
+	}
+
+	if len(ruleset.Rules) > 0 {
+		deleteRulesetURL := accountLevelRulesetDeleteURL
+		if accountID == "" {
+			deleteRulesetURL = zoneLevelRulesetDeleteURL
+		}
+		return fmt.Errorf(duplicateRulesetError, rulesetPhase, deleteRulesetURL)
+	}
 
 	rulesetName := d.Get("name").(string)
 	rulesetDescription := d.Get("description").(string)
@@ -45,35 +62,41 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 		Name:        rulesetName,
 		Description: rulesetDescription,
 		Kind:        rulesetKind,
-		Phase:       d.Get("phase").(string),
+		Phase:       rulesetPhase,
 	}
 
 	rules, err := buildRulesetRulesFromResource(d)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
+		return fmt.Errorf("error building ruleset rules from resource: %w", err)
 	}
 
 	if len(rules) > 0 {
 		rs.Rules = rules
 	}
 
-	var ruleset cloudflare.Ruleset
-	if accountID != "" {
-		ruleset, err = client.CreateAccountRuleset(context.Background(), accountID, rs)
-	} else {
-		ruleset, err = client.CreateZoneRuleset(context.Background(), zoneID, rs)
-	}
-
-	if err != nil {
-		if strings.Contains(err.Error(), "exceeded maximum number") {
-			deleteRulesetURL := accountLevelRulesetDeleteURL
-			if accountID == "" {
-				deleteRulesetURL = zoneLevelRulesetDeleteURL
-			}
-			return fmt.Errorf(duplicateRulesetError, rulesetName, deleteRulesetURL)
+	if sempahoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
+		log.Print("[DEBUG] default ruleset created by the UI with empty rules found, recreating from scratch")
+		var deleteRulesetErr error
+		if accountID != "" {
+			deleteRulesetErr = client.DeleteAccountRuleset(context.Background(), accountID, ruleset.ID)
+		} else {
+			deleteRulesetErr = client.DeleteZoneRuleset(context.Background(), zoneID, ruleset.ID)
 		}
 
-		return errors.Wrap(err, fmt.Sprintf("error creating ruleset %s", rulesetName))
+		if deleteRulesetErr != nil {
+			return fmt.Errorf("failed to delete ruleset: %w", deleteRulesetErr)
+		}
+	}
+
+	var rulesetCreateErr error
+	if accountID != "" {
+		ruleset, rulesetCreateErr = client.CreateAccountRuleset(context.Background(), accountID, rs)
+	} else {
+		ruleset, rulesetCreateErr = client.CreateZoneRuleset(context.Background(), zoneID, rs)
+	}
+
+	if rulesetCreateErr != nil {
+		return fmt.Errorf("error creating ruleset %s: %w", rulesetName, rulesetCreateErr)
 	}
 
 	rulesetEntryPoint := cloudflare.Ruleset{
@@ -85,13 +108,13 @@ func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) e
 	// endpoint.
 	if rulesetKind != string(cloudflare.RulesetKindCustom) {
 		if accountID != "" {
-			_, err = client.UpdateAccountRulesetPhase(context.Background(), accountID, rs.Phase, rulesetEntryPoint)
+			_, err = client.UpdateAccountRulesetPhase(context.Background(), accountID, rulesetPhase, rulesetEntryPoint)
 		} else {
-			_, err = client.UpdateZoneRulesetPhase(context.Background(), zoneID, rs.Phase, rulesetEntryPoint)
+			_, err = client.UpdateZoneRulesetPhase(context.Background(), zoneID, rulesetPhase, rulesetEntryPoint)
 		}
 
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("error updating ruleset phase entrypoint %s", rulesetName))
+			return fmt.Errorf("error updating ruleset phase entrypoint %s: %w", rulesetName, err)
 		}
 	}
 
@@ -124,7 +147,7 @@ func resourceCloudflareRulesetRead(d *schema.ResourceData, meta interface{}) err
 			d.SetId("")
 			return nil
 		}
-		return errors.Wrap(err, fmt.Sprintf("error reading ruleset ID: %s", d.Id()))
+		return fmt.Errorf("error reading ruleset ID %q: %w", d.Id(), err)
 	}
 
 	d.Set("name", ruleset.Name)
@@ -144,7 +167,7 @@ func resourceCloudflareRulesetUpdate(d *schema.ResourceData, meta interface{}) e
 
 	rules, err := buildRulesetRulesFromResource(d)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
+		return fmt.Errorf("error building ruleset from resource: %w", err)
 	}
 
 	description := d.Get("description").(string)
@@ -155,7 +178,7 @@ func resourceCloudflareRulesetUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating ruleset with ID %q", d.Id()))
+		return fmt.Errorf("error updating ruleset with ID %q: %w", d.Id(), err)
 	}
 
 	return resourceCloudflareRulesetRead(d, meta)
@@ -174,7 +197,7 @@ func resourceCloudflareRulesetDelete(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error deleting ruleset with ID %q", d.Id()))
+		return fmt.Errorf("error deleting ruleset with ID %q: %w", d.Id(), err)
 	}
 
 	return nil
@@ -398,6 +421,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						var rules []cloudflare.RulesetRuleActionParametersRules
 
 						for overrideCounter, overrideParamValue := range pValue.([]interface{}) {
+							//nolint:staticcheck
 							if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter)); ok {
 								overrideConfiguration.Enabled = &[]bool{value.(bool)}[0]
 							}
@@ -424,7 +448,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 									rData := rule.(map[string]interface{})
 
 									var enabled *bool
-									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
+									//nolint:staticcheck
+									if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
 										enabled = &[]bool{value.(bool)}[0]
 									}
 

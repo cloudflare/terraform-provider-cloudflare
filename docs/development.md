@@ -59,3 +59,15 @@ the repository lives, no `~` shorthand.
 Once you have this file in place, you can run `make build-dev` which will
 build a development version of the binary in the repository that Terraform
 will use instead of the version from the remote registry.
+
+## Pulling in unreleased changes from Go library (cloudflare-go)
+
+In some scenarios, you may be wanting to make changes in `cloudflare-go` and have 
+them reflected in the Terraform provider before they are released upstrewam. To do 
+this, you can update the `go.mod` file locally (do not commit it) using `go mod replace`.
+
+```
+replace github.com/cloudflare/cloudflare-go => ../cloudflare-go
+```
+
+Updating the second path to wherever the local library sits on your machine.
