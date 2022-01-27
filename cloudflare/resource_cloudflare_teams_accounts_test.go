@@ -33,6 +33,7 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "tls_decrypt_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "activity_log_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "fips.0.tls", "true"),
 					resource.TestCheckResourceAttr(name, "block_page.0.name", rnd),
 					resource.TestCheckResourceAttr(name, "block_page.0.enabled", "true"),
@@ -50,7 +51,6 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "proxy.0.tcp", "true"),
 					resource.TestCheckResourceAttr(name, "proxy.0.udp", "false"),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -61,6 +61,7 @@ func testAccCloudflareTeamsAccountBasic(rnd, accountID string) string {
 resource "cloudflare_teams_account" "%[1]s" {
   account_id = "%[2]s"
   tls_decrypt_enabled = true
+  activity_log_enabled = true
   block_page {
     name = "%[1]s"
     enabled = true
@@ -70,7 +71,7 @@ resource "cloudflare_teams_account" "%[1]s" {
     background_color = "#000000"
   }
   fips {
-	tls = true
+    tls = true
   }
   antivirus {
     enabled_download_phase = true

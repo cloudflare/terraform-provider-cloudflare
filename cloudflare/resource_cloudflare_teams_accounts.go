@@ -56,10 +56,8 @@ func resourceCloudflareTeamsAccountRead(d *schema.ResourceData, meta interface{}
 		}
 	}
 
-	if configuration.Settings.ActivityLog != nil {
-		if err := d.Set("activity_log_enabled", configuration.Settings.ActivityLog.Enabled); err != nil {
-			return fmt.Errorf("error parsing account activity log enablement: %w", err)
-		}
+	if err := d.Set("activity_log_enabled", configuration.Settings.ActivityLog.Enabled); err != nil {
+		return fmt.Errorf("error parsing account activity log enablement: %w", err)
 	}
 
 	if configuration.Settings.FIPS != nil {
