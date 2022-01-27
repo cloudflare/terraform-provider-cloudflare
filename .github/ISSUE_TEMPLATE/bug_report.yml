@@ -42,7 +42,10 @@ body:
   attributes:
     label: Terraform configuration files
     description: |
-      No need for code block backticks, this will be rendered as HCL automatically.
+      No need for code block backticks, this will be rendered as HCL automatically. 
+      Avoid using `for` loops, dynamics or data sources in your examples as they 
+      do not make for a good reproduction test case and may contain bugs in the 
+      expressions used.
     placeholder: |
       resource "example_resource" "my_resource" {
         # ..
