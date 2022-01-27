@@ -27,14 +27,13 @@ func resourceCloudflareIPsecTunnel() *schema.Resource {
 func resourceCloudflareIPsecTunnelCreate(d *schema.ResourceData, meta interface{}) error {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
-	client.AccountID = accountID
 
 	newTunnel, err := client.CreateMagicTransitIPsecTunnels(context.Background(), accountID, []cloudflare.MagicTransitIPsecTunnel{
 		IPsecTunnelFromResource(d),
 	})
 
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating IPSec tunnel %s", d.Get("name").(string)))
+		return fmt.Errorf("error creating IPSec tunnel %s: %w", d.Get("name").(string), err)
 	}
 
 	d.SetId(newTunnel[0].ID)
@@ -43,20 +42,20 @@ func resourceCloudflareIPsecTunnelCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudflareIPsecTunnelImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/tunnelID\"", d.Id())
+		return nil, errors.New(fmt.Sprintf("invalid id (\"%s\") specified, should be in format \"accountID/tunnelID\"", d.Id()))
 	}
 
 	accountID, tunnelID := attributes[0], attributes[1]
 	d.SetId(tunnelID)
 	d.Set("account_id", accountID)
-	client.AccountID = accountID
 
-	resourceCloudflareIPsecTunnelRead(d, meta)
-
+	readErr := resourceCloudflareIPsecTunnelRead(d, meta)
+	if readErr != nil {
+		return nil, readErr
+	}
 	return []*schema.ResourceData{d}, nil
 }
 
@@ -72,7 +71,7 @@ func resourceCloudflareIPsecTunnelRead(d *schema.ResourceData, meta interface{})
 			d.SetId("")
 			return nil
 		}
-		return errors.Wrap(err, fmt.Sprintf("error reading IPsec tunnel ID %q", d.Id()))
+		return fmt.Errorf("error reading IPsec tunnel ID %q: %w", d.Id(), err)
 	}
 
 	d.Set("name", tunnel.Name)
@@ -109,7 +108,7 @@ func resourceCloudflareIPsecTunnelDelete(d *schema.ResourceData, meta interface{
 
 	_, err := client.DeleteMagicTransitIPsecTunnel(context.Background(), accountID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting IPsec tunnel: %s", err)
+		return fmt.Errorf("error deleting IPsec tunnel: %w", err)
 	}
 
 	return nil
