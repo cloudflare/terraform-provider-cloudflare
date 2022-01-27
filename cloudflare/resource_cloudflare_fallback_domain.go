@@ -61,7 +61,7 @@ func resourceCloudflareFallbackDomainDelete(d *schema.ResourceData, meta interfa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.UpdateFallbackDomain(context.Background(), accountID, nil)
+	err := client.RestoreFallbackDomainDefaults(context.Background(), accountID)
 	if err != nil {
 		return err
 	}

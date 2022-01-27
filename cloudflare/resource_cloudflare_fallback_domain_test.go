@@ -1,11 +1,15 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/pkg/errors"
 )
 
 func TestAccCloudflareFallbackDomain(t *testing.T) {
@@ -23,26 +27,29 @@ func TestAccCloudflareFallbackDomain(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
+		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
 		PreCheck: func() {
 			testAccessAccPreCheck(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareFallbackDomain(rnd, accountID, "example domain", "example.com", "2.2.2.2"),
+				Config: testAccCloudflareFallbackDomain(rnd, accountID, "example domain", "example.com", "1.0.0.1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.com"),
-					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "2.2.2.2"),
+					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.0.0.1"),
 				),
 			},
 			{
-				Config: testAccCloudflareFallbackDomain(rnd, accountID, "second example domain", "example_two.com", "1.1.1.1"),
+				Config: testAccCloudflareFallbackDomain(rnd, accountID, "second example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "second example domain"),
-					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example_two.com"),
+					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
 					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.1.1.1"),
 				),
 			},
@@ -56,9 +63,26 @@ resource "cloudflare_fallback_domain" "%[1]s" {
   account_id = "%[2]s"
   domains {
     description = "%[3]s"
-    suffix = "%[4]s"
-		dns_server = ["%[5]s"]
+    suffix      = "%[4]s"
+    dns_server  = ["%[5]s"]
   }
 }
 `, rnd, accountID, description, suffix, dns_server)
+}
+
+func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
+	client := testAccProvider.Meta().(*cloudflare.API)
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_fallback_domain" {
+			continue
+		}
+
+		result, _ := client.ListFallbackDomains(context.Background(), rs.Primary.ID)
+		if len(result) == 0 {
+			return errors.New("deleted Fallback Domain resource has does not include default domains")
+		}
+	}
+
+	return nil
 }
