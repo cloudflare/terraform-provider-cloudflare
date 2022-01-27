@@ -62,7 +62,6 @@ func resourceCloudflareIPsecTunnelImport(d *schema.ResourceData, meta interface{
 func resourceCloudflareIPsecTunnelRead(d *schema.ResourceData, meta interface{}) error {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
-	client.AccountID = accountID
 
 	tunnel, err := client.GetMagicTransitIPsecTunnel(context.Background(), accountID, d.Id())
 	if err != nil {
@@ -89,7 +88,6 @@ func resourceCloudflareIPsecTunnelRead(d *schema.ResourceData, meta interface{})
 func resourceCloudflareIPsecTunnelUpdate(d *schema.ResourceData, meta interface{}) error {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
-	client.AccountID = accountID
 
 	_, err := client.UpdateMagicTransitIPsecTunnel(context.Background(), accountID, d.Id(), IPsecTunnelFromResource(d))
 	if err != nil {
@@ -102,7 +100,6 @@ func resourceCloudflareIPsecTunnelUpdate(d *schema.ResourceData, meta interface{
 func resourceCloudflareIPsecTunnelDelete(d *schema.ResourceData, meta interface{}) error {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
-	client.AccountID = accountID
 
 	log.Printf("[INFO] Deleting IPsec tunnel:  %s", d.Id())
 
