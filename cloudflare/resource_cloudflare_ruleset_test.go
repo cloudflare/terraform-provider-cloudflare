@@ -475,7 +475,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithTopSkipAndLastS
 	})
 }
 
-func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryBasedOverrides(t *testing.T) {
+func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryAndRuleBasedOverrides(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -517,6 +517,10 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryBasedOverrides(t *tes
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.action", "block"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.1.category", "joomla"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.1.action", "block"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "e3a567afc347477d9702d9047e97d760"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.enabled", "false"),
 				),
 			},
 		},
@@ -1598,6 +1602,11 @@ func testAccCheckCloudflareRulesetManagedWAFWithCategoryBasedOverrides(rnd, name
             action = "block"
             enabled = true
           }
+
+					rules {
+						id = "e3a567afc347477d9702d9047e97d760"
+						enabled = false
+					}
         }
       }
 
