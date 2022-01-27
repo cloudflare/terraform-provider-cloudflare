@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 
+* datasource/cloudflare_zones: allow filtering by account_id ([#1401](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1401))
 * resource/cloudflare_logpush_job: add support for managing `dns_logs` ([#1400](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1400))
 * resource/cloudflare_ruleset: smoother handling of UI/API collisions during migrations ([#1393](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1393))
 * resource/cloudflare_teams_accounts: Add the `fips` field for configuring FIPS-compliant TLS. ([#1380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1380))
