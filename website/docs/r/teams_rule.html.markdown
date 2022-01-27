@@ -42,18 +42,30 @@ The following arguments are supported:
 * `traffic` - (Optional) The wirefilter expression to be used for traffic matching.
 * `identity` - (Optional) The wirefilter expression to be used for identity matching.
 * `device_posture` - (Optional) The wirefilter expression to be used for device_posture check matching.
-* `rule_settings` - (Optional) Additional rule settings.
+* `rule_settings` - (Optional) Additional rule settings (refer to the [nested schema](#nestedblock--rule-settings)).
 
-The **rule_settings** block supports:
+<a id="nestedblock--rule-settings"></a>
+**Nested schema for `rule_settings`**
+
 * `block_page_enabled` - (Optional) Indicator of block page enablement.
 * `block_page_reason` - (Optional) The displayed reason for a user being blocked.
 * `override_ips` - (Optional) The IPs to override matching DNS queries with.
 * `override_host` - (Optional) The host to override matching DNS queries with.
-* `l4override` - (Optional) Settings to forward layer 4 traffic.
+* `l4override` - (Optional) Settings to forward layer 4 traffic (refer to the [nested schema](#nestedblock--rule-settings-l4override)).
+* `check_session` - (Optional) Configure how session check behaves (refer to the [nested schema](#nestedblock--rule-settings-check-session)).
+* `add_headers` - (Optional, Map) Add custom headers to allowed requests in the form of key-value pairs.
 
-The **l4override** block supports:
+<a id="nestedblock--rule-settings-l4override"></a>
+**Nested schema for `l4override`**
+
 * `ip` - (Required) Override IP to forward traffic to.
 * `port` - (Required) Override Port to forward traffic to.
+
+<a id="nestedblock--rule-settings-check-session"></a>
+**Nested schema for `check_session`**
+
+* `enforce` - (Optional) Enable session enforcement for this rule.
+* `duration` - (Optional) Configure how fresh the session needs to be to be considered valid.
 
 ## Import
 
