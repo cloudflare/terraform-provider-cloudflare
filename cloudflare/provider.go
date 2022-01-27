@@ -148,6 +148,7 @@ func Provider() *schema.Provider {
 			"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
 			"cloudflare_healthcheck":                            resourceCloudflareHealthcheck(),
 			"cloudflare_ip_list":                                resourceCloudflareIPList(),
+			"cloudflare_ipsec_tunnel":                           resourceCloudflareIPsecTunnel(),
 			"cloudflare_load_balancer_monitor":                  resourceCloudflareLoadBalancerMonitor(),
 			"cloudflare_load_balancer_pool":                     resourceCloudflareLoadBalancerPool(),
 			"cloudflare_load_balancer":                          resourceCloudflareLoadBalancer(),
