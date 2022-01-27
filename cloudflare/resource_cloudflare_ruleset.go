@@ -421,6 +421,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						var rules []cloudflare.RulesetRuleActionParametersRules
 
 						for overrideCounter, overrideParamValue := range pValue.([]interface{}) {
+							//nolint:staticcheck
 							if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter)); ok {
 								overrideConfiguration.Enabled = &[]bool{value.(bool)}[0]
 							}
@@ -447,7 +448,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 									rData := rule.(map[string]interface{})
 
 									var enabled *bool
-									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
+									//nolint:staticcheck
+									if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
 										enabled = &[]bool{value.(bool)}[0]
 									}
 
