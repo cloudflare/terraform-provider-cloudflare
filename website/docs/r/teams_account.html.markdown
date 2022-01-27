@@ -65,7 +65,7 @@ The following arguments are supported:
 * `block_page` - (Optional) Configuration for a custom block page.
 * `fips` - (Optional) Configure compliance with Federal Information Processing Standards
 * `antivirus` - (Optional) Configuration for antivirus traffic scanning.
-* `url_browser_isolation_enabled` - (Optional) Safely browse websites in Browser Isolation through a URL
+* `url_browser_isolation_enabled` - (Optional) Safely browse websites in Browser Isolation through a URL.
 
 The **block_page** block supports:
 
@@ -82,7 +82,7 @@ The **FIPS** block supports:
 The **antivirus** block supports:
 
 * `enabled_download_phase` - (Optional) Scan on file download.
-* `enabled_upload_phase` - (Optional) San on file upload.
+* `enabled_upload_phase` - (Optional) Scan on file upload.
 * `fail_closed` - (Optional) Block requests for files that cannot be scanned.
 
 * The **proxy** block supports:
