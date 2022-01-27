@@ -308,7 +308,8 @@ func inflateTeamsAddHeaders(settings interface{}) http.Header {
 		if !ok {
 			continue
 		}
-		ret[key] = []string{v}
+		s := strings.Split(v, ",")
+		ret[key] = s
 	}
 
 	return ret
@@ -320,9 +321,8 @@ func flattenTeamsAddHeaders(settings http.Header) interface{} {
 	}
 
 	ret := make(map[string]interface{})
-	for header := range settings {
-		len := len(settings[header])
-		ret[header] = settings[header][len-1]
+	for name, value := range settings {
+		ret[name] = strings.Join(value[:], ",")
 	}
 
 	return ret
