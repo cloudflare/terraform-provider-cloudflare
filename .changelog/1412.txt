@@ -1,0 +1,3 @@
+```release:enhancement
+cloudflare/schema_cloudflare_ruleset.go: Setting description to Optional to better reflect api docs
+```
