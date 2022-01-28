@@ -1,4 +1,6 @@
-## 3.8.0 (Unreleased)
+## 3.9.0 (Unreleased)
+
+## 3.8.0 (January 28th, 2022)
 
 FEATURES:
 
