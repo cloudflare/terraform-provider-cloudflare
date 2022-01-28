@@ -29,6 +29,10 @@ resource "cloudflare_teams_account" "main" {
     fail_closed = true
   }
   
+  fips {
+    tls = true
+  }
+  
   proxy {
     tcp = true
     udp = true
