@@ -1,8 +1,14 @@
 ## 3.8.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_ipsec_tunnel` ([#1404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1404))
+
 ENHANCEMENTS:
 
 * datasource/cloudflare_zones: allow filtering by account_id ([#1401](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1401))
+* resource/cloudflare_cloudflare_teams_rules: Add `check_session` and `add_headers` attributes to settings ([#1402](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1402))
+* resource/cloudflare_cloudflare_teams_rules: Add `disable_download`, `disable_keyboard`, and `disable_upload` attributes to `BISOAdminControls` ([#1402](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1402))
 * resource/cloudflare_logpush_job: add support for managing `dns_logs` ([#1400](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1400))
 * resource/cloudflare_ruleset: add skip support for `products` and `phases` ([#1391](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1391))
 * resource/cloudflare_ruleset: smoother handling of UI/API collisions during migrations ([#1393](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1393))
