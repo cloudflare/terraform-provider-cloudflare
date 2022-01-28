@@ -15,19 +15,15 @@ Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gatew
 ```hcl
 resource "cloudflare_teams_rule" "rule1" {
   name = "office"
-  account_id  = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id  = "d57c3de47a013c03ca7e237dd3e61d7d"
   description = "desc"
   precedence = 1
-  action = "l4_override"
-  filters = ["l4"]
-  traffic = "any(dns.domains[*] == \"com.example\")"
+  action = "block"
+  filters = ["http"]
+  traffic = "http.request.uri == \"https://www.example.com/malicious\""
   rule_settings {
-    block_page_enabled = false
+    block_page_enabled = true
     block_page_reason = "access not permitted"
-    l4override {
-      port = 1234
-      ip = "192.0.2.1"
-    }
   }
 }
 ```
@@ -46,18 +42,40 @@ The following arguments are supported:
 * `traffic` - (Optional) The wirefilter expression to be used for traffic matching.
 * `identity` - (Optional) The wirefilter expression to be used for identity matching.
 * `device_posture` - (Optional) The wirefilter expression to be used for device_posture check matching.
-* `rule_settings` - (Optional) Additional rule settings.
+* `rule_settings` - (Optional) Additional rule settings (refer to the [nested schema](#nestedblock--rule-settings)).
 
-The **rule_settings** block supports:
+<a id="nestedblock--rule-settings"></a>
+**Nested schema for `rule_settings`**
+
 * `block_page_enabled` - (Optional) Indicator of block page enablement.
 * `block_page_reason` - (Optional) The displayed reason for a user being blocked.
 * `override_ips` - (Optional) The IPs to override matching DNS queries with.
 * `override_host` - (Optional) The host to override matching DNS queries with.
-* `l4override` - (Optional) Settings to forward layer 4 traffic.
+* `l4override` - (Optional) Settings to forward layer 4 traffic (refer to the [nested schema](#nestedblock--rule-settings-l4override)).
+* `check_session` - (Optional) Configure how session check behaves (refer to the [nested schema](#nestedblock--rule-settings-check-session)).
+* `add_headers` - (Optional, Map) Add custom headers to allowed requests in the form of key-value pairs.
+* `biso_admin_controls` - (Optional) Configure how browser isolation behaves (refer to the [nested schema](#nestedblock--rule-settings-biso-admin-controls)).
 
-The **l4override** block supports:
+<a id="nestedblock--rule-settings-l4override"></a>
+**Nested schema for `l4override`**
+
 * `ip` - (Required) Override IP to forward traffic to.
 * `port` - (Required) Override Port to forward traffic to.
+
+<a id="nestedblock--rule-settings-check-session"></a>
+**Nested schema for `check_session`**
+
+* `enforce` - (Optional) Enable session enforcement for this rule.
+* `duration` - (Optional) Configure how fresh the session needs to be to be considered valid.
+
+<a id="nestedblock--rule-settings-biso-admin-controls"></a>
+**Nested schema for `biso_admin_controls`**
+
+* `disable_printing` - (Boolean) Disable printing.
+* `disable_copy_paste` - (Boolean) Disable copy-paste.
+* `disable_download` - (Boolean) Disable download.
+* `disable_upload` - (Boolean) Disable upload.
+* `disable_keyboard` - (Boolean) Disable keyboard usage.
 
 ## Import
 
