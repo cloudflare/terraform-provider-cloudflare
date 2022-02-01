@@ -1,0 +1,4 @@
+```release-note:bug
+resource/cloudflare_access_application: import will now include cors_headers block
+```
+
