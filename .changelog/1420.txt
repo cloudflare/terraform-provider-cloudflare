@@ -1,4 +1,4 @@
 ```release-note:bug
-resource/cloudflare_access_identity_provider: import config block settings
+resource/cloudflare_access_identity_provider: import now includes config block settings
 ```
 
