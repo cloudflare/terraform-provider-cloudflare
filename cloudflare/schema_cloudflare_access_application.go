@@ -211,7 +211,7 @@ func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplic
 }
 
 func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.AccessApplicationCorsHeaders) []interface{} {
-	if _, ok := d.GetOk("cors_headers"); !ok {
+	if _, ok := d.GetOk("cors_headers"); !ok || headers == nil {
 		return []interface{}{}
 	}
 

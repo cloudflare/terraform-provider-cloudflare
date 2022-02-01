@@ -222,6 +222,11 @@ func resourceCloudflareAccessApplicationImport(d *schema.ResourceData, meta inte
 
 	log.Printf("[DEBUG] Importing Cloudflare Access Application: id %s for account %s", accessApplicationID, accountID)
 
+	// create a non-empty cors_headers config so Read will look for an existing config
+	m := map[string]interface{}{"max_age": 30}
+	corsConfig := []interface{}{m}
+	d.Set("cors_headers", corsConfig)
+
 	d.Set("account_id", accountID)
 	d.SetId(accessApplicationID)
 
