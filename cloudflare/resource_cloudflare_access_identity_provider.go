@@ -167,6 +167,11 @@ func resourceCloudflareAccessIdentityProviderImport(d *schema.ResourceData, meta
 
 	log.Printf("[DEBUG] Importing Cloudflare Access Identity Provider: accountID=%s accessIdentityProviderID=%s", accountID, accessIdentityProviderID)
 
+	// create a non-empty config here so Read will import any existing configs
+	m := map[string]interface{}{"support_groups": true}
+	config := []interface{}{m}
+	d.Set("config", config)
+
 	d.Set("account_id", accountID)
 	d.SetId(accessIdentityProviderID)
 
