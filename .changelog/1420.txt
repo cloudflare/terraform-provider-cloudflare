@@ -1,0 +1,4 @@
+```release-note:bug
+resource/cloudflare_access_identity_provider: import config block settings
+```
+
