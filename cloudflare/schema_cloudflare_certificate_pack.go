@@ -41,8 +41,22 @@ func resourceCloudflareCertificatePackSchema() map[string]*schema.Schema {
 		"certificate_authority": {
 			Type:         schema.TypeString,
 			Optional:     true,
+			Computed:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.StringInSlice([]string{"digicert", "lets_encrypt"}, false),
+			Default:      nil,
+		},
+		"validation_records": {
+			Type:     schema.TypeList,
+			Computed: true,
+			Optional: true,
+			Elem:     sslValidationRecordsSchema(),
+		},
+		"validation_errors": {
+			Type:     schema.TypeList,
+			Computed: true,
+			Optional: true,
+			Elem:     sslValidationErrorsSchema(),
 		},
 		"cloudflare_branding": {
 			Type:     schema.TypeBool,

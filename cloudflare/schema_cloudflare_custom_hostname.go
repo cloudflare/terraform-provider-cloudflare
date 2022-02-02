@@ -46,15 +46,19 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 					"certificate_authority": {
 						Type:         schema.TypeString,
 						Optional:     true,
+						Computed:     true,
 						ValidateFunc: validation.StringInSlice([]string{"lets_encrypt", "digicert"}, false),
+						Default:      nil,
 					},
-					"cname_target": {
-						Type:     schema.TypeString,
-						Optional: true,
+					"validation_records": {
+						Type:     schema.TypeList,
+						Computed: true,
+						Elem:     sslValidationRecordsSchema(),
 					},
-					"cname_name": {
-						Type:     schema.TypeString,
-						Optional: true,
+					"validation_errors": {
+						Type:     schema.TypeList,
+						Computed: true,
+						Elem:     sslValidationErrorsSchema(),
 					},
 					"wildcard": {
 						Type:     schema.TypeBool,

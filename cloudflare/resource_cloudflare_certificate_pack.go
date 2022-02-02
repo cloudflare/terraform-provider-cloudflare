@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -77,6 +78,30 @@ func resourceCloudflareCertificatePackRead(d *schema.ResourceData, meta interfac
 
 	d.Set("type", certificatePack.Type)
 	d.Set("hosts", expandStringListToSet(certificatePack.Hosts))
+
+	if !reflect.ValueOf(certificatePack.ValidationErrors).IsNil() {
+		errors := []map[string]interface{}{}
+		for _, e := range certificatePack.ValidationErrors {
+			errors = append(errors, map[string]interface{}{"message": e.Message})
+		}
+		d.Set("validation_errors", errors)
+	}
+	if !reflect.ValueOf(certificatePack.ValidationRecords).IsNil() {
+		records := []map[string]interface{}{}
+		for _, e := range certificatePack.ValidationRecords {
+			records = append(records,
+				map[string]interface{}{
+					"cname_name":   e.CnameName,
+					"cname_target": e.CnameTarget,
+					"txt_name":     e.TxtName,
+					"txt_value":    e.TxtValue,
+					"http_body":    e.HTTPBody,
+					"http_url":     e.HTTPUrl,
+					"emails":       e.Emails,
+				})
+		}
+		d.Set("validation_records", records)
+	}
 
 	return nil
 }
