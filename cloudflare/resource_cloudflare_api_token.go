@@ -23,6 +23,13 @@ func resourceCloudflareApiToken() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareApiTokenSchemaV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareApiTokenStateUpgradeV0,
+				Version: 0,
+			},
+		},
 	}
 }
 
