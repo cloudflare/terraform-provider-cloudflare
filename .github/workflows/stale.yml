@@ -25,5 +25,5 @@ jobs:
           days-before-pr-stale: 14
           days-before-issue-close: 7
           days-before-pr-close: 7
-          any-of-issue-labels: 'triage/needs-information,triage/not-reproducible,needs-triage,triage/unresolved,workflow/pending-contributor-response,workflow/pending-op-response'
-          exempt-pr-labels: 'workflow/pending-upstream-library '
+          any-of-issue-labels: 'triage/needs-information,triage/not-reproducible,triage/unresolved,workflow/pending-contributor-response,workflow/pending-op-response'
+          exempt-pr-labels: 'workflow/pending-upstream-library'
