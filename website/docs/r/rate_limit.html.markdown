@@ -93,7 +93,7 @@ The **match.response** block supports:
 
 The **action** block supports:
 
-* `mode` - (Required) The type of action to perform. Allowable values are 'simulate', 'ban', 'challenge' and 'js_challenge'.
+* `mode` - (Required) The type of action to perform. Allowable values are 'simulate', 'ban', 'challenge', 'js_challenge' and 'managed_challenge'.
 * `timeout` - (Optional) The time in seconds as an integer to perform the mitigation action. This field is required if the `mode` is either `simulate` or `ban`. Must be the same or greater than the period (min: 1, max: 86400).
 * `response` - (Optional) Custom content-type and body to return, this overrides the custom error for the zone. This field is not required. Omission will result in default HTML error page. Definition below.
 
