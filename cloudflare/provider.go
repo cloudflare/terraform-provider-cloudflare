@@ -180,6 +180,7 @@ func Provider() *schema.Provider {
 			"cloudflare_worker_script":                          resourceCloudflareWorkerScript(),
 			"cloudflare_workers_kv_namespace":                   resourceCloudflareWorkersKVNamespace(),
 			"cloudflare_workers_kv":                             resourceCloudflareWorkerKV(),
+			"cloudflare_zone_cache_variants":                    resourceCloudflareZoneCacheVariants(),
 			"cloudflare_zone_dnssec":                            resourceCloudflareZoneDNSSEC(),
 			"cloudflare_zone_lockdown":                          resourceCloudflareZoneLockdown(),
 			"cloudflare_zone_settings_override":                 resourceCloudflareZoneSettingsOverride(),
