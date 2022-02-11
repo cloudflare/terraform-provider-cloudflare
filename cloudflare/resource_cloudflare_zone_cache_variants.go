@@ -13,7 +13,7 @@ import (
 func resourceCloudflareZoneCacheVariants() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareZoneCacheVariantsSchema(),
-		Create: resourceCloudflareZoneCacheVariantsCreate,
+		Create: resourceCloudflareZoneCacheVariantsUpdate,
 		Read:   resourceCloudflareZoneCacheVariantsRead,
 		Update: resourceCloudflareZoneCacheVariantsUpdate,
 		Delete: resourceCloudflareZoneCacheVariantsDelete,
@@ -61,18 +61,11 @@ func resourceCloudflareZoneCacheVariantsRead(d *schema.ResourceData, meta interf
 	return nil
 }
 
-func resourceCloudflareZoneCacheVariantsCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCacheVariantsUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*cloudflare.API)
+
 	zoneID := d.Get("zone_id").(string)
 	d.SetId(zoneID)
-
-	log.Printf("[INFO] Creating Zone Cache Variants for zone ID: %q", d.Id())
-
-	return resourceCloudflareZoneCacheVariantsUpdate(d, meta)
-}
-
-func resourceCloudflareZoneCacheVariantsUpdate(d *schema.ResourceData, meta interface{}) error {
-
-	client := meta.(*cloudflare.API)
 
 	variantsValue := cacheVariantsValuesFromResource(d)
 	log.Printf("[INFO] Setting Zone Cache Variants to struct: %+v for zone ID: %q", variantsValue, d.Id())
