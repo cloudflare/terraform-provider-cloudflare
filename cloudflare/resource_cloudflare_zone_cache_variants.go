@@ -29,7 +29,7 @@ func resourceCloudflareZoneCacheVariantsRead(d *schema.ResourceData, meta interf
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Zone %q not found", d.Id())
+			log.Printf("[INFO] Zone Cache Variants for zone %q not found", d.Id())
 			d.SetId("")
 			return nil
 		} else {
