@@ -1,5 +1,12 @@
 ## 3.9.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* cloudflare_ruleset: add support for "managed_challenge" action ([#1442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1442))
+* resource/certificate_pack: adds `validation_errors` and `validation_records` with same format as custom hostnames. ([#1424](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1424))
+* resource/custom_hostname: also adds missing `validation_errors`, and `certificate_authority` ([#1424](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1424))
+* resource/custom_hostname: validation tokens are now an array (`validation_records`) instead of a top level, but the only top level record that was previously here was for cname validation, txt/http/email were entirely missing. ([#1424](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1424))
+
 ## 3.8.0 (January 28th, 2022)
 
 FEATURES:
