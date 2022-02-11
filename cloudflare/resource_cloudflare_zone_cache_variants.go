@@ -38,24 +38,49 @@ func resourceCloudflareZoneCacheVariantsRead(d *schema.ResourceData, meta interf
 	}
 
 	value := zoneCacheVariants.Value
-	valueMap := map[string][]string{
-		"avif": value.Avif,
-		"bmp":  value.Bmp,
-		"gif":  value.Gif,
-		"jpeg": value.Jpeg,
-		"jpg":  value.Jpg,
-		"jp2":  value.Jp2,
-		"jpg2": value.Jpg2,
-		"png":  value.Png,
-		"tif":  value.Tif,
-		"tiff": value.Tiff,
-		"webp": value.Webp,
+
+	if err := d.Set("avif", value.Avif); err != nil {
+		return fmt.Errorf("failed to set avif: %w", err)
 	}
 
-	for k, v := range valueMap {
-		if err := d.Set(k, v); err != nil {
-			return fmt.Errorf("failed to set %v: %w", k, err)
-		}
+	if err := d.Set("bmp", value.Bmp); err != nil {
+		return fmt.Errorf("failed to set bmp: %w", err)
+	}
+
+	if err := d.Set("gif", value.Gif); err != nil {
+		return fmt.Errorf("failed to set gif: %w", err)
+	}
+
+	if err := d.Set("jpeg", value.Jpeg); err != nil {
+		return fmt.Errorf("failed to set jpeg: %w", err)
+	}
+
+	if err := d.Set("jpg", value.Jpg); err != nil {
+		return fmt.Errorf("failed to set jpg: %w", err)
+	}
+
+	if err := d.Set("jp2", value.Jp2); err != nil {
+		return fmt.Errorf("failed to set jp2: %w", err)
+	}
+
+	if err := d.Set("jpg2", value.Jpg2); err != nil {
+		return fmt.Errorf("failed to set jpg2: %w", err)
+	}
+
+	if err := d.Set("png", value.Png); err != nil {
+		return fmt.Errorf("failed to set png: %w", err)
+	}
+
+	if err := d.Set("tif", value.Tif); err != nil {
+		return fmt.Errorf("failed to set tif: %w", err)
+	}
+
+	if err := d.Set("tiff", value.Tiff); err != nil {
+		return fmt.Errorf("failed to set tiff: %w", err)
+	}
+
+	if err := d.Set("webp", value.Webp); err != nil {
+		return fmt.Errorf("failed to set webp: %w", err)
 	}
 
 	return nil
