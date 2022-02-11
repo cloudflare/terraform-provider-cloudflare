@@ -1,0 +1,11 @@
+```release-note:enhancement
+resource/custom_hostname: validation tokens are now an array (`validation_records`) instead of a top level, but the only top level record that was previously here was for cname validation, txt/http/email were entirely missing.
+```
+
+```release-note:enhancement
+resource/custom_hostname: also adds missing `validation_errors`, and `certificate_authority`
+```
+
+```release-note:enhancement
+resource/certificate_pack: adds `validation_errors` and `validation_records` with same format as custom hostnames.
+```

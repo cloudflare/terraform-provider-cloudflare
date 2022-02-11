@@ -197,6 +197,7 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.2"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.0.certificate_authority", "digicert"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -380,8 +381,8 @@ func TestAccCloudflareCustomHostname_Import(t *testing.T) {
 				ImportStateVerifyIgnore: []string{
 					"ssl.#",
 					"ssl.0.certificate_authority",
-					"ssl.0.cname_name",
-					"ssl.0.cname_target",
+					"ssl.0.validation_records",
+					"ssl.0.validation_errors",
 					"ssl.0.custom_certificate",
 					"ssl.0.custom_key",
 					"ssl.0.method",

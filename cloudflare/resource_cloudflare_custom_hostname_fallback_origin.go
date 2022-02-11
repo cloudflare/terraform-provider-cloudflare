@@ -31,7 +31,7 @@ func resourceCloudflareCustomHostnameFallbackOriginRead(d *schema.ResourceData, 
 
 	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error reading custom hostname fallback origin %q", zoneID))
+		return fmt.Errorf("error reading custom hostname fallback origin %q: %w", zoneID, err)
 	}
 
 	d.Set("origin", customHostnameFallbackOrigin.Origin)
@@ -46,7 +46,7 @@ func resourceCloudflareCustomHostnameFallbackOriginDelete(d *schema.ResourceData
 
 	err := client.DeleteCustomHostnameFallbackOrigin(context.Background(), zoneID)
 	if err != nil {
-		return errors.Wrap(err, "failed to delete custom hostname fallback origin")
+		return fmt.Errorf("failed to delete custom hostname fallback origin: %w", err)
 	}
 
 	return nil
@@ -64,16 +64,18 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
 		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
 		if err != nil {
-			if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
+			//nolint:errorlint
+			if errors.As(err, &cloudflare.APIRequestError{}) && err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
 				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
+			} else {
+				return resource.NonRetryableError(fmt.Errorf("failed to create custom hostname fallback origin: %w", err))
 			}
-			return resource.NonRetryableError(errors.Wrap(err, "failed to create custom hostname fallback origin"))
 		}
 
 		fallbackHostname, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
 
 		if err != nil {
-			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %s", err))
+			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %w", err))
 		}
 
 		// Address an eventual consistency issue where deleting a fallback hostname
@@ -104,10 +106,11 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
 		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
 		if err != nil {
-			if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
+			//nolint:errorlint
+			if errors.As(err, &cloudflare.APIRequestError{}) && err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
 				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
 			}
-			return resource.NonRetryableError(errors.Wrap(err, "failed to update custom hostname fallback origin"))
+			return resource.NonRetryableError(fmt.Errorf("failed to update custom hostname fallback origin: %w", err))
 		}
 
 		resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)

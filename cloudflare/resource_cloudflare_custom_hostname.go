@@ -40,15 +40,14 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 	var sslConfig []map[string]interface{}
 
 	if !reflect.ValueOf(customHostname.SSL).IsNil() {
-		sslConfig = append(sslConfig, map[string]interface{}{
-			"type":               customHostname.SSL.Type,
-			"method":             customHostname.SSL.Method,
-			"wildcard":           customHostname.SSL.Wildcard,
-			"status":             customHostname.SSL.Status,
-			"cname_target":       customHostname.SSL.CnameTarget,
-			"cname_name":         customHostname.SSL.CnameName,
-			"custom_certificate": customHostname.SSL.CustomCertificate,
-			"custom_key":         customHostname.SSL.CustomKey,
+		ssl := map[string]interface{}{
+			"type":                  customHostname.SSL.Type,
+			"method":                customHostname.SSL.Method,
+			"wildcard":              customHostname.SSL.Wildcard,
+			"status":                customHostname.SSL.Status,
+			"certificate_authority": customHostname.SSL.CertificateAuthority,
+			"custom_certificate":    customHostname.SSL.CustomCertificate,
+			"custom_key":            customHostname.SSL.CustomKey,
 			"settings": []map[string]interface{}{{
 				"http2":           customHostname.SSL.Settings.HTTP2,
 				"tls13":           customHostname.SSL.Settings.TLS13,
@@ -56,11 +55,35 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 				"ciphers":         customHostname.SSL.Settings.Ciphers,
 				"early_hints":     customHostname.SSL.Settings.EarlyHints,
 			}},
-		})
+		}
+		if !reflect.ValueOf(customHostname.SSL.ValidationErrors).IsNil() {
+			errors := []map[string]interface{}{}
+			for _, e := range customHostname.SSL.ValidationErrors {
+				errors = append(errors, map[string]interface{}{"message": e.Message})
+			}
+			ssl["validation_errors"] = errors
+		}
+		if !reflect.ValueOf(customHostname.SSL.ValidationRecords).IsNil() {
+			records := []map[string]interface{}{}
+			for _, e := range customHostname.SSL.ValidationRecords {
+				records = append(records,
+					map[string]interface{}{
+						"cname_name":   e.CnameName,
+						"cname_target": e.CnameTarget,
+						"txt_name":     e.TxtName,
+						"txt_value":    e.TxtValue,
+						"http_body":    e.HTTPBody,
+						"http_url":     e.HTTPUrl,
+						"emails":       e.Emails,
+					})
+			}
+			ssl["validation_records"] = records
+		}
+		sslConfig = append(sslConfig, ssl)
 	}
 
 	if err := d.Set("ssl", sslConfig); err != nil {
-		return fmt.Errorf("failed to see ssl")
+		return fmt.Errorf("failed to set ssl")
 	}
 
 	ownershipVerificationCfg := map[string]interface{}{
@@ -153,13 +176,12 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 
 	if _, ok := d.GetOk("ssl"); ok {
 		ch.SSL = &cloudflare.CustomHostnameSSL{
-			Method:            d.Get("ssl.0.method").(string),
-			Type:              d.Get("ssl.0.type").(string),
-			Wildcard:          &[]bool{d.Get("ssl.0.wildcard").(bool)}[0],
-			CnameTarget:       d.Get("ssl.0.cname_target").(string),
-			CnameName:         d.Get("ssl.0.cname_name").(string),
-			CustomCertificate: d.Get("ssl.0.custom_certificate").(string),
-			CustomKey:         d.Get("ssl.0.custom_key").(string),
+			Method:               d.Get("ssl.0.method").(string),
+			Type:                 d.Get("ssl.0.type").(string),
+			Wildcard:             &[]bool{d.Get("ssl.0.wildcard").(bool)}[0],
+			CustomCertificate:    d.Get("ssl.0.custom_certificate").(string),
+			CustomKey:            d.Get("ssl.0.custom_key").(string),
+			CertificateAuthority: d.Get("ssl.0.certificate_authority").(string),
 			Settings: cloudflare.CustomHostnameSSLSettings{
 				HTTP2:         d.Get("ssl.0.settings.0.http2").(string),
 				TLS13:         d.Get("ssl.0.settings.0.tls13").(string),
