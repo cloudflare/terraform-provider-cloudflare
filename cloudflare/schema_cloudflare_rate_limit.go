@@ -37,7 +37,7 @@ func resourceCloudflareRateLimitSchema() map[string]*schema.Schema {
 					"mode": {
 						Type:         schema.TypeString,
 						Required:     true,
-						ValidateFunc: validation.StringInSlice([]string{"simulate", "ban", "challenge", "js_challenge"}, true),
+						ValidateFunc: validation.StringInSlice([]string{"simulate", "ban", "challenge", "js_challenge", "managed_challenge"}, true),
 					},
 
 					"timeout": {
