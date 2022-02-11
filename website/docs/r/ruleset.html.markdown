@@ -214,7 +214,7 @@ The following arguments are supported:
 **Nested schema for `rules`**
 
 * `action_parameters` - (Required) List of parameters that configure the behavior of the ruleset rule action (refer to the [nested schema](#nestedblock--action-parameters)).
-* `action` - (Required) Action to perform in the ruleset rule. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `action` - (Required) Action to perform in the ruleset rule. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
 * `description` - (Optional) Brief summary of the ruleset rule and its intended use.
 * `enabled` - (Optional) Whether the rule is active.
 * `expression` - (Required) Criteria for an HTTP request to trigger the ruleset rule action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.
