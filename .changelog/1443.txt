@@ -1,3 +1,0 @@
-```release-note:new-guide
-cloudflare_ruleset: add action managed_challenge in the doc + acceptance tests
-```
