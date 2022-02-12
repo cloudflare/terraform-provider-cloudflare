@@ -62,6 +62,7 @@ func main() {
 			Body: &body,
 		})
 
+		client.Issues.RemoveLabelForIssue(ctx, owner, repo, issueNumber, "needs-triage")
 		client.Issues.AddLabelsToIssue(ctx, owner, repo, issueNumber, []string{"triage/needs-information"})
 	}
 
