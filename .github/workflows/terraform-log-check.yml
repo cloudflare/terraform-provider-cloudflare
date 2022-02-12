@@ -1,0 +1,23 @@
+name: TF_LOG=DEBUG check
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  tf-log-check:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.17
+      - run: make tools
+      - run: go run tools/cmd/tf-log-check/main.go ${{ github.event.issue.number }}
+        env:
+          GITHUB_OWNER: cloudflare
+          GITHUB_REPO: terraform-provider-cloudflare
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
