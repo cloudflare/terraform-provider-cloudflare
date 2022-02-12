@@ -1,5 +1,9 @@
 ## 3.9.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_zone_cache_variants` ([#1444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1444))
+
 ENHANCEMENTS:
 
 * cloudflare_ruleset: add support for "managed_challenge" action ([#1442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1442))
