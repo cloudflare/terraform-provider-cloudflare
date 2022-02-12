@@ -1285,6 +1285,76 @@ func TestAccCloudflareRuleset_ConditionallySetActionParameterVersion(t *testing.
 	})
 }
 
+func TestAccCloudflareRuleset_WAFManagedRulesetWithActionManagedChallenge(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetManagedWAFWithCategoryBasedOverridesActionManagedChallenge(rnd, "my managed WAF ruleset with overrides", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my managed WAF ruleset with overrides"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "execute"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "overrides to only enable wordpress rules to managed_challenge"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "efb7b8c949ac4650a09736fc376e9aee"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.category", "wordpress"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.action", "managed_challenge"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.enabled", "true"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "e3a567afc347477d9702d9047e97d760"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.action", "managed_challenge"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetManagedWAFWithActionManagedChallenge(rnd, "my basic managed WAF ruleset with action managed_challenge", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic managed WAF ruleset with action managed_challenge"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "execute"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "efb7b8c949ac4650a09736fc376e9aee"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.action", "managed_challenge"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "overrides change action to managed_challenge on the Cloudflare Manage Ruleset"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -2202,4 +2272,63 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenS
     }
   }
 `, rnd, accountID, domain)
+}
+
+func testAccCheckCloudflareRulesetManagedWAFWithCategoryBasedOverridesActionManagedChallenge(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_firewall_managed"
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = "efb7b8c949ac4650a09736fc376e9aee"
+        overrides {
+        	categories {
+            	category = "wordpress"
+            	action = "managed_challenge"
+            	enabled = true
+        	}
+			rules {
+				id = "e3a567afc347477d9702d9047e97d760"
+				action = "managed_challenge"
+				enabled = true
+			}
+        }
+      }
+
+      expression = "true"
+      description = "overrides to only enable wordpress rules to managed_challenge"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetManagedWAFWithActionManagedChallenge(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_firewall_managed"
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = "efb7b8c949ac4650a09736fc376e9aee"
+        overrides {
+			action = "managed_challenge"
+        }
+      }
+
+      expression = "true"
+      description = "overrides change action to managed_challenge on the Cloudflare Manage Ruleset"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
 }

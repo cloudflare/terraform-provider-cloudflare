@@ -284,21 +284,21 @@ The following arguments are supported:
 
 * `categories` - (Optional) List of tag-based overrides (refer to the [nested schema](#nestedblock--action-parameters-overrides-categories)).
 * `enabled` - (Optional) Defines if the current ruleset-level override enables or disables the ruleset.
-* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"js_challenge"`, `"log"`.
+* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"js_challenge"`, `"managed_challenge"`, `"log"`.
 * `rules` - (Optional) List of rule-based overrides (refer to the [nested schema](#nestedblock--action-parameters-overrides-rules)).
 
 <a id="nestedblock--action-parameters-overrides-categories"></a>
 **Nested schema for `categories`**
 
 * `category` - (Optional) Tag name to apply the ruleset rule override to.
-* `action` - (Optional) Action to perform in the tag-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `action` - (Optional) Action to perform in the tag-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
 * `enabled` - (Optional) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 
 <a id="nestedblock--action-parameters-overrides-rules"></a>
 **Nested schema for `rules`**
 
 * `id` - (Optional) Rule ID to apply the override to.
-* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
 * `enabled` - (Optional) Defines if the current rule-level override enables or disables the rule.
 * `score_threshold` - (Optional) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
 * `sensitivity_level` - (Optional) Sensitivity level for a ruleset rule override.
