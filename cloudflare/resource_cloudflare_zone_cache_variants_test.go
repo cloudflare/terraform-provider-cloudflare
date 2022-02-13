@@ -26,12 +26,7 @@ func testSweepCloudflareZoneCacheVariants(r string) error {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	log.Printf("[INFO] Deleting Zone Cache Variants for zone: %q", zoneID)
-	err := client.DeleteZoneCacheVariants(context.Background(), zoneID)
-
-	if err != nil {
-		log.Printf("[ERROR] Failed to delete Zone Cache Variants for zone %q: %v", zoneID, err)
-		return err
-	}
+	client.DeleteZoneCacheVariants(context.Background(), zoneID)
 
 	return nil
 }
