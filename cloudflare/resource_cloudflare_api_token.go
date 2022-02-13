@@ -23,6 +23,14 @@ func resourceCloudflareApiToken() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareApiTokenSchemaV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareApiTokenStateUpgradeV0,
+				Version: 0,
+			},
+		},
 	}
 }
 
@@ -88,7 +96,8 @@ func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APIToken
 	for _, p := range policies {
 		policy := p.(map[string]interface{})
 
-		permissionGroups := expandInterfaceToStringList(policy["permission_groups"])
+		permissionGroups := expandSetToStringList(policy["permission_groups"])
+
 		if len(permissionGroups) == 0 {
 			continue
 		}
