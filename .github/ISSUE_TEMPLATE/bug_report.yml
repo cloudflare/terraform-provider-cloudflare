@@ -59,8 +59,11 @@ body:
     description: |
       The output provided from prepending `TF_LOG=DEBUG` to your Terraform apply or plan. 
       **Do not truncate or trim the output as the surrounding context is useful for debugging**. 
+      
       Be sure to redact or sanitise any sensitive information (such as API keys or tokens) in 
-      your logs.
+      your logs. https://jacobbednarz.com/tf-log-redactor/ is an online tool that will handle
+      redacting the sensitive Cloudflare details from your log output for you if you don't want
+      to manually do it.
   validations:
     required: true
 - type: textarea
