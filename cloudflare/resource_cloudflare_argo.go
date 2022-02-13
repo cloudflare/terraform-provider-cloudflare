@@ -26,6 +26,8 @@ func resourceCloudflareArgo() *schema.Resource {
 func resourceCloudflareArgoRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	tieredCaching := d.Get("tiered_caching").(string)
+	smartRouting := d.Get("smart_routing").(string)
 
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 
@@ -33,19 +35,23 @@ func resourceCloudflareArgoRead(d *schema.ResourceData, meta interface{}) error 
 	d.SetId(checksum)
 	d.Set("zone_id", zoneID)
 
-	tieredCaching, err := client.ArgoTieredCaching(context.Background(), zoneID)
-	if err != nil {
-		return errors.Wrap(err, "failed to get tiered caching setting")
+	if tieredCaching != "" {
+		tieredCaching, err := client.ArgoTieredCaching(context.Background(), zoneID)
+		if err != nil {
+			return errors.Wrap(err, "failed to get tiered caching setting")
+		}
+
+		d.Set("tiered_caching", tieredCaching.Value)
 	}
 
-	d.Set("tiered_caching", tieredCaching.Value)
+	if smartRouting != "" {
+		smartRouting, err := client.ArgoSmartRouting(context.Background(), zoneID)
+		if err != nil {
+			return errors.Wrap(err, "failed to get smart routing setting")
+		}
 
-	smartRouting, err := client.ArgoSmartRouting(context.Background(), zoneID)
-	if err != nil {
-		return errors.Wrap(err, "failed to get smart routing setting")
+		d.Set("smart_routing", smartRouting.Value)
 	}
-
-	d.Set("smart_routing", smartRouting.Value)
 
 	return nil
 }

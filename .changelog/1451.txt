@@ -1,0 +1,3 @@
+```release-note:bug
+cloudflare_argo_tunnel: conditionally fetch settings based on the provided configuration
+```
