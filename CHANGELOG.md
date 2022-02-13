@@ -14,6 +14,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * cloudflare_argo_tunnel: conditionally fetch settings based on the provided configuration ([#1451](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1451))
+* resource/cloudflare_api_token: ignore ordering of `permission_group` IDs ([#1425](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1425))
 
 ## 3.8.0 (January 28th, 2022)
 
