@@ -1,5 +1,9 @@
 ## 3.10.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_api_token: revert swap from TypeList to TypeSet due to broken migration ([#1455](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1455))
+
 FEATURES:
 
 * **New Data Source:** `cloudflare_devices` ([#1453](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1453))
