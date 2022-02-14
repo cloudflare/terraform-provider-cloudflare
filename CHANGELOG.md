@@ -1,5 +1,7 @@
 ## 3.10.0 (Unreleased)
 
+## 3.9.1 (February 15th, 2022)
+
 NOTES:
 
 * resource/cloudflare_api_token: revert swap from TypeList to TypeSet due to broken migration ([#1455](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1455))
@@ -8,7 +10,7 @@ FEATURES:
 
 * **New Data Source:** `cloudflare_devices` ([#1453](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1453))
 
-## 3.9.0 (february 14th, 2022)
+## 3.9.0 (February 14th, 2022)
 
 FEATURES:
 
