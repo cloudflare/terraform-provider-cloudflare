@@ -146,6 +146,7 @@ func Provider() *schema.Provider {
 			"cloudflare_fallback_domain":                        resourceCloudflareFallbackDomain(),
 			"cloudflare_filter":                                 resourceCloudflareFilter(),
 			"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
+			"cloudflare_gre_tunnel":                             resourceCloudflareGRETunnel(),
 			"cloudflare_healthcheck":                            resourceCloudflareHealthcheck(),
 			"cloudflare_ip_list":                                resourceCloudflareIPList(),
 			"cloudflare_ipsec_tunnel":                           resourceCloudflareIPsecTunnel(),
