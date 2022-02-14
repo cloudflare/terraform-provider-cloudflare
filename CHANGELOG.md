@@ -1,4 +1,6 @@
-## 3.9.0 (Unreleased)
+## 3.10.0 (Unreleased)
+
+## 3.9.0 (february 14th, 2022)
 
 FEATURES:
 
