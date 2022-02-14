@@ -42,11 +42,8 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "action", "block"),
 					resource.TestCheckResourceAttr(name, "filters.0", "dns"),
 					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"example.com\")"),
-					resource.TestCheckResourceAttr(name, "rule_settings.0.biso_admin_controls.0.disable_printing", "true"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "false"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_reason", "cuz"),
-					resource.TestCheckResourceAttr(name, "rule_settings.0.check_session.0.enforce", "true"),
-					resource.TestCheckResourceAttr(name, "rule_settings.0.check_session.0.duration", "3m20s"),
 				),
 			},
 		},
@@ -64,19 +61,8 @@ resource "cloudflare_teams_rule" "%[1]s" {
   filters = ["dns"]
   traffic = "any(dns.domains[*] == \"example.com\")"
   rule_settings {
-    biso_admin_controls {
-      disable_printing = true
-    }
-
     block_page_enabled = false
     block_page_reason = "cuz"
-    check_session {
-      enforce = true
-      duration = "3m20s"
-    }
-    add_headers = {
-      Xtest = "hi,there"
-    }
   }
 }
 `, rnd, accountID)
