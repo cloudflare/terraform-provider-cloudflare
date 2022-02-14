@@ -109,6 +109,7 @@ func Provider() *schema.Provider {
 			"cloudflare_access_identity_provider":    dataSourceCloudflareAccessIdentityProvider(),
 			"cloudflare_account_roles":               dataSourceCloudflareAccountRoles(),
 			"cloudflare_api_token_permission_groups": dataSourceCloudflareApiTokenPermissionGroups(),
+			"cloudflare_devices":                     dataSourceCloudflareDevices(),
 			"cloudflare_ip_ranges":                   dataSourceCloudflareIPRanges(),
 			"cloudflare_origin_ca_root_certificate":  dataSourceCloudflareOriginCARootCertificate(),
 			"cloudflare_waf_groups":                  dataSourceCloudflareWAFGroups(),
