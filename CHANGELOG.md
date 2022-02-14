@@ -1,5 +1,9 @@
 ## 3.10.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_devices` ([#1453](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1453))
+
 ## 3.9.0 (february 14th, 2022)
 
 FEATURES:
