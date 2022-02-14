@@ -2,6 +2,7 @@
 
 FEATURES:
 
+* **New Resource:** `cloudflare_gre_tunnel` ([#1423](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1423))
 * **New Resource:** `cloudflare_zone_cache_variants` ([#1444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1444))
 
 ENHANCEMENTS:
