@@ -2,19 +2,18 @@
 layout: "cloudflare"
 page_title: "Cloudflare: cloudflare_devices"
 sidebar_current: "docs-cloudflare-datasource-devices"
-description: |-
-  Get information on a Cloudflare Account Devices.
+description: Get information on Cloudflare Devices.
 ---
 
 # cloudflare_devices
 
-Use this data source to lookup [Account Devices][1].
+Use this data source to lookup [Devices][1].
 
 ## Example usage
 
 ```hcl
 data "cloudflare_devices" "devices" {
-    account_id = var.cloudflare_account_id
+  account_id = "c68973221045fe805dfb9aa520153148"
 }
 ```
 
@@ -43,7 +42,4 @@ data "cloudflare_devices" "devices" {
 - `user_email` - User's email.
 - `user_name` - User's Name.
 
-
-
-
-[1]: https://api.cloudflare.com/#account-roles-properties
+[1]: https://api.cloudflare.com/#devices-list-devices

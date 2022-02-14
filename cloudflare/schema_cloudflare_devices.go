@@ -68,22 +68,22 @@ func resoureceCloudflareDevicesSchema() map[string]*schema.Schema {
 					"updated": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "When the device was updated",
+						Description: "When the device was updated.",
 					},
 					"user_id": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "User's ID",
+						Description: "User's ID.",
 					},
 					"user_email": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "User's email",
+						Description: "User's email.",
 					},
 					"user_name": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "User's Name",
+						Description: "User's Name.",
 					},
 				},
 			},

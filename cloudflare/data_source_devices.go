@@ -47,8 +47,7 @@ func dataResourceCloudflareDevicesRead(d *schema.ResourceData, meta interface{})
 		})
 	}
 
-	err = d.Set("devices", deviceDetails)
-	if err != nil {
+	if err = d.Set("devices", deviceDetails); err != nil {
 		return fmt.Errorf("error setting device details: %w", err)
 	}
 
