@@ -1,0 +1,6 @@
+```release:enhancement
+resource/cloudflare_access_rule: add support for managed_challenge action
+```
+
+https://github.com/cloudflare/terraform-provider-cloudflare/issues/1456
+https://github.com/cloudflare/terraform-provider-cloudflare/pull/1457

@@ -1,3 +1,0 @@
-```release:enhancement
-resource/cloudflare_access_rule: add support for managed_challenge action
-```
