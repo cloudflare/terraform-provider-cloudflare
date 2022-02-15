@@ -16,7 +16,7 @@ func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 		"mode": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "whitelist", "js_challenge"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "whitelist", "js_challenge", "managed_challenge"}, false),
 		},
 		"notes": {
 			Type:     schema.TypeString,
