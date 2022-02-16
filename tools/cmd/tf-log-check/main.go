@@ -11,6 +11,13 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var (
+	needsTriageLabel      = "needs-triage"
+	needsInformationLabel = "triage/needs-information"
+	bugLabel              = "kind/bug"
+	missingLogFileBody    = "Thank you for reporting this issue! For maintainers to dig into issues it is required that all issues include the entirety of `TF_LOG=DEBUG` output to be provided. The only parts that should be redacted are your user credentials in the `X-Auth-Key`, `X-Auth-Email` and `Authorization` HTTP headers. Details such as zone or account identifiers are not considered sensitive but can be redacted if you are very cautious. This log file provides additional context from Terraform, the provider and the Cloudflare API that helps in debugging issues. Without it, maintainers are very limited in what they can do and may hamper diagnosis efforts.\n\nThis issue has been marked with `triage/needs-information` and is unlikely to receive maintainer attention until the log file is provided making this a complete bug report."
+)
+
 func main() {
 	ctx := context.Background()
 	if len(os.Args) < 2 {
@@ -50,21 +57,34 @@ func main() {
 		log.Fatalf("error retrieving issue %s/%s#%d: %s", owner, repo, issueNumber, err)
 	}
 
+	if !isBugReport(issue) {
+		os.Exit(0)
+	}
+
 	if !strings.Contains(*issue.Body, "Terraform version") &&
 		!strings.Contains(*issue.Body, "Go runtime version") &&
 		!strings.Contains(*issue.Body, "CLI args") &&
 		!strings.Contains(*issue.Body, "created provider logger") &&
 		!strings.Contains(*issue.Body, "CLI command args") &&
 		!strings.Contains(*issue.Body, "provider: plugin process exited") {
-		body := "Thank you for reporting this issue! For maintainers to dig into issues it is required that all issues include the entirety of `TF_LOG=DEBUG` output to be provided. The only parts that should be redacted are your user credentials in the `X-Auth-Key`, `X-Auth-Email` and `Authorization` HTTP headers. Details such as zone or account identifiers are not considered sensitive but can be redacted if you are very cautious. This log file provides additional context from Terraform, the provider and the Cloudflare API that helps in debugging issues. Without it, maintainers are very limited in what they can do and may hamper diagnosis efforts.\n\nThis issue has been marked with `triage/needs-information` and is unlikely to receive maintainer attention until the log file is provided making this a complete bug report."
 
 		client.Issues.CreateComment(ctx, owner, repo, issueNumber, &github.IssueComment{
-			Body: &body,
+			Body: &missingLogFileBody,
 		})
 
-		client.Issues.RemoveLabelForIssue(ctx, owner, repo, issueNumber, "needs-triage")
-		client.Issues.AddLabelsToIssue(ctx, owner, repo, issueNumber, []string{"triage/needs-information"})
+		client.Issues.RemoveLabelForIssue(ctx, owner, repo, issueNumber, needsTriageLabel)
+		client.Issues.AddLabelsToIssue(ctx, owner, repo, issueNumber, []string{needsInformationLabel})
 	}
 
 	os.Exit(0)
+}
+
+func isBugReport(issue *github.Issue) bool {
+	for _, label := range issue.Labels {
+		if label.Name == &bugLabel {
+			return true
+		}
+	}
+
+	return false
 }
