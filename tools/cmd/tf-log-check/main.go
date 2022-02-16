@@ -58,6 +58,7 @@ func main() {
 	}
 
 	if !isBugReport(issue) {
+		log.Printf("not a %s report, skipping", bugLabel)
 		os.Exit(0)
 	}
 
@@ -81,7 +82,7 @@ func main() {
 
 func isBugReport(issue *github.Issue) bool {
 	for _, label := range issue.Labels {
-		if label.Name == &bugLabel {
+		if *label.Name == bugLabel {
 			return true
 		}
 	}
