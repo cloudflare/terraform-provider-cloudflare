@@ -19,6 +19,13 @@ const (
 	planIDPro        = "pro"
 	planIDBusiness   = "business"
 	planIDEnterprise = "enterprise"
+
+	planIDPartnerFree            = "partners_free"
+	planIDPartnerPro             = "partners_pro"
+	planIDPartnerBusiness        = "partners_business"
+	planIDPartnerEnterprise      = "partners_enterprise"
+	planIDPartnerWorkers         = "partners_workers_ss"
+	planIDPartnerImageEnterprise = "image_resizing_enterprise"
 )
 
 // we keep a private map and we will have a function to check and validate the descriptive name from the RatePlan API with the legacy_id
@@ -27,6 +34,13 @@ var idForName = map[string]string{
 	"Pro Website":        planIDPro,
 	"Business Website":   planIDBusiness,
 	"Enterprise Website": planIDEnterprise,
+
+	"Partners Free Plan":         planIDPartnerFree,
+	"Partners Professional Plan": planIDPartnerPro,
+	"Partners Business Plan":     planIDPartnerBusiness,
+	"Partners Enterprise Plan":   planIDPartnerEnterprise,
+	"Cloudflare Workers":         planIDPartnerWorkers,
+	"Image Resizing Ent":         planIDPartnerImageEnterprise,
 }
 
 // maintain a mapping for the subscription API term for rate plans to
@@ -36,6 +50,13 @@ var subscriptionIDOfRatePlans = map[string]string{
 	planIDPro:        "CF_PRO",
 	planIDBusiness:   "CF_BIZ",
 	planIDEnterprise: "CF_ENT",
+
+	planIDPartnerFree:            "PARTNERS_FREE",
+	planIDPartnerPro:             "PARTNERS_PRO",
+	planIDPartnerBusiness:        "PARTNERS_BIZ",
+	planIDPartnerEnterprise:      "PARTNERS_ENT",
+	planIDPartnerWorkers:         "PARTNERS_WORKERS_SS",
+	planIDPartnerImageEnterprise: "IMAGE_RESIZING_ENT",
 }
 
 func resourceCloudflareZone() *schema.Resource {
