@@ -1,5 +1,9 @@
 ## 3.10.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_access_rule: add support for managed_challenge action ([#1457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1457))
+
 ## 3.9.1 (February 15th, 2022)
 
 NOTES:
