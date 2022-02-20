@@ -30,6 +30,14 @@ func resourceCloudflareRuleset() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareRulesetImport,
 		},
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceCloudflareRulesetSchemaV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareRulesetStateUpgradeV0ToV1,
+				Version: 0,
+			},
+		},
 	}
 }
 
@@ -340,6 +348,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"period":              r.RateLimit.Period,
 				"requests_per_period": r.RateLimit.RequestsPerPeriod,
 				"mitigation_timeout":  r.RateLimit.MitigationTimeout,
+				"counting_expression": r.RateLimit.CountingExpression,
 			})
 
 			rule["ratelimit"] = rateLimit
@@ -559,8 +568,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						rule.RateLimit.RequestsPerPeriod = pValue.(int)
 					case "mitigation_timeout":
 						rule.RateLimit.MitigationTimeout = pValue.(int)
-					case "mitigation_expression":
-						rule.RateLimit.MitigationExpression = pValue.(string)
+					case "counting_expression":
+						rule.RateLimit.CountingExpression = pValue.(string)
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for ratelimit: %s", pKey)
