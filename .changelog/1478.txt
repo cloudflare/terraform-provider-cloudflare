@@ -1,0 +1,6 @@
+```release-note:enhancement
+resource/cloudflare_custom_pages: add support for managed_challenge action
+```
+
+https://github.com/cloudflare/terraform-provider-cloudflare/issues/1458
+https://github.com/cloudflare/terraform-provider-cloudflare/pull/1478
