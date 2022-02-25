@@ -7,6 +7,7 @@ BREAKING CHANGES:
 ENHANCEMENTS:
 
 * resource/cloudflare_access_rule: add support for managed_challenge action ([#1457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1457))
+* resource/cloudflare_teams_rules: Add `insecure_disable_dnssec_validation` option to settings ([#1469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1469))
 * resource/cloudflare_zone: add support for partner rate plans ([#1464](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1464))
 
 ## 3.9.1 (February 15th, 2022)
