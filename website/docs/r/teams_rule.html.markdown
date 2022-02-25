@@ -55,6 +55,7 @@ The following arguments are supported:
 * `check_session` - (Optional) Configure how session check behaves (refer to the [nested schema](#nestedblock--rule-settings-check-session)).
 * `add_headers` - (Optional, Map) Add custom headers to allowed requests in the form of key-value pairs.
 * `biso_admin_controls` - (Optional) Configure how browser isolation behaves (refer to the [nested schema](#nestedblock--rule-settings-biso-admin-controls)).
+* `insecure_disable_dnssec_validation` - (Optional) Disable DNSSEC validation (must be Allow rule)
 
 <a id="nestedblock--rule-settings-l4override"></a>
 **Nested schema for `l4override`**

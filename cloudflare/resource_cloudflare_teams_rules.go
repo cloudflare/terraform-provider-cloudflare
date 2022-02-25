@@ -188,14 +188,15 @@ func resourceCloudflareTeamsRuleImport(d *schema.ResourceData, meta interface{})
 
 func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interface{} {
 	return []interface{}{map[string]interface{}{
-		"block_page_enabled":  settings.BlockPageEnabled,
-		"block_page_reason":   settings.BlockReason,
-		"override_ips":        settings.OverrideIPs,
-		"override_host":       settings.OverrideHost,
-		"l4override":          flattenTeamsL4Override(settings.L4Override),
-		"biso_admin_controls": flattenTeamsRuleBisoAdminControls(settings.BISOAdminControls),
-		"check_session":       flattenTeamsCheckSessionSettings(settings.CheckSession),
-		"add_headers":         flattenTeamsAddHeaders(settings.AddHeaders),
+		"block_page_enabled":                 settings.BlockPageEnabled,
+		"block_page_reason":                  settings.BlockReason,
+		"override_ips":                       settings.OverrideIPs,
+		"override_host":                      settings.OverrideHost,
+		"l4override":                         flattenTeamsL4Override(settings.L4Override),
+		"biso_admin_controls":                flattenTeamsRuleBisoAdminControls(settings.BISOAdminControls),
+		"check_session":                      flattenTeamsCheckSessionSettings(settings.CheckSession),
+		"add_headers":                        flattenTeamsAddHeaders(settings.AddHeaders),
+		"insecure_disable_dnssec_validation": settings.InsecureDisableDNSSECValidation,
 	}}
 }
 
@@ -220,16 +221,18 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 
 	checkSessionSettings := inflateTeamsCheckSessionSettings(settingsMap["check_session"].([]interface{}))
 	addHeaders := inflateTeamsAddHeaders(settingsMap["add_headers"].(map[string]interface{}))
+	insecureDisableDNSSECValidation := settingsMap["insecure_disable_dnssec_validation"].(bool)
 
 	return &cloudflare.TeamsRuleSettings{
-		BlockPageEnabled:  enabled,
-		BlockReason:       reason,
-		OverrideIPs:       overrideIPs,
-		OverrideHost:      overrideHost,
-		L4Override:        l4Override,
-		BISOAdminControls: bisoAdminControls,
-		CheckSession:      checkSessionSettings,
-		AddHeaders:        addHeaders,
+		BlockPageEnabled:                enabled,
+		BlockReason:                     reason,
+		OverrideIPs:                     overrideIPs,
+		OverrideHost:                    overrideHost,
+		L4Override:                      l4Override,
+		BISOAdminControls:               bisoAdminControls,
+		CheckSession:                    checkSessionSettings,
+		AddHeaders:                      addHeaders,
+		InsecureDisableDNSSECValidation: insecureDisableDNSSECValidation,
 	}
 }
 
