@@ -306,7 +306,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
-								"mitigation_expression": {
+								"counting_expression": {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
