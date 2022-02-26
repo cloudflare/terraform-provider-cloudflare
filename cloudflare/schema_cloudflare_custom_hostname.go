@@ -22,6 +22,10 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"custom_origin_sni": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
 		"ssl": {
 			Type:     schema.TypeList,
 			Optional: true,
