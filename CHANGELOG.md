@@ -7,6 +7,7 @@ BREAKING CHANGES:
 ENHANCEMENTS:
 
 * resource/cloudflare_access_rule: add support for managed_challenge action ([#1457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1457))
+* resource/cloudflare_custom_hostname: adds support for custom_origin_sni ([#1482](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1482))
 * resource/cloudflare_teams_rules: Add `insecure_disable_dnssec_validation` option to settings ([#1469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1469))
 * resource/cloudflare_zone: add support for partner rate plans ([#1464](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1464))
 
