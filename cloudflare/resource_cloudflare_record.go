@@ -123,8 +123,8 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 					var r cloudflare.DNSRecord
 					log.Printf("[DEBUG] Cloudflare Record already exists however we are overwriting it")
 					zone, _ := client.ZoneDetails(context.Background(), d.Get("zone_id").(string))
-					sanitized_name := strings.TrimSuffix(d.Get("name"), fmt.Sprintf(".%s", zone.Name))
-					if sanitized_name == "@" || sanitized_name == zone.Name {
+					sanitizedName := strings.TrimSuffix(d.Get("name").(string), fmt.Sprintf(".%s", zone.Name))
+					if sanitizedName == "@" || sanitizedName == zone.Name {
 						r = cloudflare.DNSRecord{
 							Name: zone.Name,
 							Type: d.Get("type").(string),
