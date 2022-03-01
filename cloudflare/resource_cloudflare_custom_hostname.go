@@ -37,6 +37,7 @@ func resourceCloudflareCustomHostnameRead(d *schema.ResourceData, meta interface
 
 	d.Set("hostname", customHostname.Hostname)
 	d.Set("custom_origin_server", customHostname.CustomOriginServer)
+	d.Set("custom_origin_sni", customHostname.CustomOriginSNI)
 	var sslConfig []map[string]interface{}
 
 	if !reflect.ValueOf(customHostname.SSL).IsNil() {
@@ -172,6 +173,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 	ch := cloudflare.CustomHostname{
 		Hostname:           d.Get("hostname").(string),
 		CustomOriginServer: d.Get("custom_origin_server").(string),
+		CustomOriginSNI:    d.Get("custom_origin_sni").(string),
 	}
 
 	if _, ok := d.GetOk("ssl"); ok {

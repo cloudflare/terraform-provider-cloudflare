@@ -114,6 +114,10 @@ var teamsRuleSettings = map[string]*schema.Schema{
 			Type: schema.TypeString,
 		},
 	},
+	"insecure_disable_dnssec_validation": {
+		Type:     schema.TypeBool,
+		Optional: true,
+	},
 }
 
 var teamsL4OverrideSettings = map[string]*schema.Schema{

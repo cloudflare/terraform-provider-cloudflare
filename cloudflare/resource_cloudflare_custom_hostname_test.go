@@ -108,6 +108,7 @@ func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, "custom_origin_server", fmt.Sprintf("origin.%s.terraform.cfapi.net", rnd)),
+					resource.TestCheckResourceAttr(resourceName, "custom_origin_sni", fmt.Sprintf("origin.%s.terraform.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
@@ -126,6 +127,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
   zone_id = "%[1]s"
   hostname = "%[2]s.%[3]s"
   custom_origin_server = "origin.%[2]s.terraform.cfapi.net"
+	custom_origin_sni = "origin.%[2]s.terraform.cfapi.net"
   ssl {
     method = "txt"
   }
