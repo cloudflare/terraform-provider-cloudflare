@@ -48,7 +48,7 @@ func resourceCloudflareDevicePolicyCertificateRead(d *schema.ResourceData, meta 
 	}
 
 	d.SetId(zoneID)
-	d.Set("enabled", enabled.Result.Enable)
+	d.Set("enabled", enabled.Result.Enabled)
 	return nil
 }
 
