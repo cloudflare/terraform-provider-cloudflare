@@ -42,7 +42,7 @@ func TestAccCloudflareDevicePolicyCertificatesCreate(t *testing.T) {
 
 func testCloudflareDevicePolicyCertificates(rnd, zoneID string, enable bool) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_policy_zone_certificates" "%[1]s" {
+resource "cloudflare_device_policy_certificates" "%[1]s" {
 	zone_id = "%[2]s"
 	enabled = "%[3]t"
 }
