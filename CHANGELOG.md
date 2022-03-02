@@ -7,6 +7,7 @@ NOTES:
 FEATURES:
 
 * **New Resource:** `cloudflare_waiting_room_event` ([#1509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1509))
+* **New Resource:** `cloudflare_teams_proxy_endpoint`
 
 ENHANCEMENTS:
 
