@@ -13,9 +13,9 @@ Provides a Cloudflare device policy certificates resource. Device policy certifi
 ## Example Usage
 
 ```hcl
-resource "cloudflare_device_policy_certificates" "client_certificates" {
-  zone_id     = "1d5fdc9e88c8a8c4518b068cd94331fe"
-  enabled     = true
+resource "cloudflare_device_policy_certificates" "example" {
+  zone_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  enabled = true
 }
 ```
 
@@ -23,18 +23,19 @@ resource "cloudflare_device_policy_certificates" "client_certificates" {
 
 The following arguments are supported:
 
-* `zone_id` - (Required) The zone where certificate generation is allowed.
-* `enabled` - (Required) True if certificate generation is enabled.
+- `zone_id` - (Required) The zone ID where certificate generation is allowed.
+- `enabled` - (Required) True if certificate generation is enabled.
+
 ## Attributes Reference
 
 The following additional attributes are exported:
 
-* `id` - ID of the device policy certificates setting.
+- `id` - ID of the device policy certificates setting.
 
 ## Import
 
 Device policy certificate settings can be imported using the zone ID.
 
 ```
-$ terraform import cloudflare_device_policy_certificates.client_certificates cb029e245cfdd66dc8d2e570d5dd3322
+$ terraform import cloudflare_device_policy_certificates.example cb029e245cfdd66dc8d2e570d5dd3322
 ```
