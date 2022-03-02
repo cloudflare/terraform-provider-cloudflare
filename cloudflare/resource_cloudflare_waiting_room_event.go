@@ -29,21 +29,59 @@ func resourceCloudflareWaitingRoomEvent() *schema.Resource {
 	}
 }
 
-func buildWaitingRoomEvent(d *schema.ResourceData) cloudflare.WaitingRoomEvent {
+func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent, error) {
 	disableSessionRenewal := d.Get("disable_session_renewal").(bool)
+	eventStartTime, err := time.Parse(time.RFC3339, d.Get("event_start_time").(string))
+	if err != nil {
+		return cloudflare.WaitingRoomEvent{}, err
+	}
+	eventEndTime, err := time.Parse(time.RFC3339, d.Get("event_end_time").(string))
+	if err != nil {
+		return cloudflare.WaitingRoomEvent{}, err
+	}
+	prequeueStartTime, err := time.Parse(time.RFC3339, d.Get("prequeue_start_time").(string))
+	if err != nil {
+		return cloudflare.WaitingRoomEvent{}, err
+	}
 	return cloudflare.WaitingRoomEvent{
 		ID:                    d.Id(),
 		Name:                  d.Get("name").(string),
+		EventStartTime:        eventStartTime,
+		EventEndTime:          eventEndTime,
+		PrequeueStartTime:     prequeueStartTime,
 		Description:           d.Get("description").(string),
 		QueueingMethod:        d.Get("queueing_method").(string),
-		ShuffleAtEventStart:   d.Get("shuffle_at_evend_start").(bool),
+		ShuffleAtEventStart:   d.Get("shuffle_at_event_start").(bool),
 		Suspended:             d.Get("suspended").(bool),
 		TotalActiveUsers:      d.Get("total_active_users").(int),
 		NewUsersPerMinute:     d.Get("new_users_per_minute").(int),
 		CustomPageHTML:        d.Get("custom_page_html").(string),
 		SessionDuration:       d.Get("session_duration").(int),
 		DisableSessionRenewal: &disableSessionRenewal,
+	}, nil
+}
+
+func flattenWaitingRoomEvent(waitingRoomEvent cloudflare.WaitingRoomEvent) (map[string]interface{}, error) {
+	tfMap := map[string]interface{}{}
+
+	tfMap["id"] = waitingRoomEvent.ID
+	tfMap["name"] = waitingRoomEvent.Name
+	tfMap["event_start_time"] = waitingRoomEvent.EventStartTime.Format(time.RFC3339)
+	tfMap["event_end_time"] = waitingRoomEvent.EventEndTime.Format(time.RFC3339)
+	tfMap["prequeue_start_time"] = waitingRoomEvent.PrequeueStartTime.Format(time.RFC3339)
+	tfMap["description"] = waitingRoomEvent.Description
+	tfMap["queueing_method"] = waitingRoomEvent.QueueingMethod
+	tfMap["shuffle_at_event_start"] = waitingRoomEvent.ShuffleAtEventStart
+	tfMap["suspended"] = waitingRoomEvent.Suspended
+	tfMap["total_active_users"] = waitingRoomEvent.TotalActiveUsers
+	tfMap["new_users_per_minute"] = waitingRoomEvent.NewUsersPerMinute
+	tfMap["custom_page_html"] = waitingRoomEvent.CustomPageHTML
+	tfMap["session_duration"] = waitingRoomEvent.SessionDuration
+	if waitingRoomEvent.DisableSessionRenewal != nil {
+		tfMap["disable_session_renewal"] = waitingRoomEvent.SessionDuration
 	}
+
+	return tfMap, nil
 }
 
 func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta interface{}) error {
@@ -51,7 +89,11 @@ func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta inter
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	newWaitingRoomEvent := buildWaitingRoomEvent(d)
+	newWaitingRoomEvent, err := expandWaitingRoomEvent(d)
+	if err != nil {
+		name := d.Get("name").(string)
+		return fmt.Errorf("error building waiting room event %q: %s", name, err)
+	}
 
 	waitingRoomEvent, err := client.CreateWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, newWaitingRoomEvent)
 
@@ -67,7 +109,7 @@ func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta inter
 
 func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	waitingRoomID := d.Get("zone_id").(string)
+	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	waitingRoomEventID := d.Id()
 
@@ -82,13 +124,19 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("error getting waiting room event %q: %s", name, err)
 	}
 	d.Set("name", waitingRoomEvent.Name)
+	d.Set("event_start_time", waitingRoomEvent.EventStartTime.Format(time.RFC3339))
+	d.Set("event_end_time", waitingRoomEvent.EventEndTime.Format(time.RFC3339))
+	d.Set("prequeue_start_time", waitingRoomEvent.PrequeueStartTime.Format(time.RFC3339))
 	d.Set("description", waitingRoomEvent.Description)
+	d.Set("shuffle_at_event_start", waitingRoomEvent.ShuffleAtEventStart)
 	d.Set("suspended", waitingRoomEvent.Suspended)
-	d.Set("new_users_per_minute", waitingRoomEvent.NewUsersPerMinute)
 	d.Set("total_active_users", waitingRoomEvent.TotalActiveUsers)
-	d.Set("session_duration", waitingRoomEvent.SessionDuration)
-	d.Set("disable_session_renewal", waitingRoomEvent.DisableSessionRenewal)
+	d.Set("new_users_per_minute", waitingRoomEvent.NewUsersPerMinute)
 	d.Set("custom_page_html", waitingRoomEvent.CustomPageHTML)
+	d.Set("session_duration", waitingRoomEvent.SessionDuration)
+	if waitingRoomEvent.DisableSessionRenewal != nil {
+		d.Set("disable_session_renewal", waitingRoomEvent.SessionDuration)
+	}
 	return nil
 }
 
@@ -97,9 +145,13 @@ func resourceCloudflareWaitingRoomEventUpdate(d *schema.ResourceData, meta inter
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	waitingRoomEvent := buildWaitingRoomEvent(d)
+	waitingRoomEvent, err := expandWaitingRoomEvent(d)
+	if err != nil {
+		name := d.Get("name").(string)
+		return fmt.Errorf("error building waiting room event %q: %s", name, err)
+	}
 
-	_, err := client.ChangeWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEvent)
+	_, err = client.ChangeWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEvent)
 
 	if err != nil {
 		name := d.Get("name").(string)
