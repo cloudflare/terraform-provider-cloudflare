@@ -43,12 +43,12 @@ func resourceCloudflareWaitingRoomEventSchema() map[string]*schema.Schema {
 
 		"total_active_users": {
 			Type:     schema.TypeInt,
-			Required: true,
+			Optional: true,
 		},
 
 		"new_users_per_minute": {
 			Type:     schema.TypeInt,
-			Required: true,
+			Optional: true,
 		},
 
 		"custom_page_html": {
