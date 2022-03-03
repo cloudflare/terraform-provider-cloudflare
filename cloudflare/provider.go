@@ -178,6 +178,7 @@ func Provider() *schema.Provider {
 			"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
 			"cloudflare_waf_rule":                               resourceCloudflareWAFRule(),
 			"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
+			"cloudflare_waiting_room_event":                     resourceCloudflareWaitingRoomEvent(),
 			"cloudflare_worker_cron_trigger":                    resourceCloudflareWorkerCronTrigger(),
 			"cloudflare_worker_route":                           resourceCloudflareWorkerRoute(),
 			"cloudflare_worker_script":                          resourceCloudflareWorkerScript(),
