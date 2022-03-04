@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"log"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -341,6 +342,13 @@ func resourceCloudflareRulesetSchemaV0() *schema.Resource {
 }
 
 func resourceCloudflareRulesetStateUpgradeV0ToV1(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+	// Broadly intercept the panic generated from our inability to perform the upgrade.
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("[DEBUG] Unable to perform resourceCloudflareRulesetStateUpgradeV0ToV1")
+		}
+	}()
+
 	rawState["ratelimit"].([]map[string]interface{})[0]["counting_expression"] = rawState["ratelimit"].([]map[string]interface{})[0]["mitigation_expression"]
 	delete(rawState["ratelimit"].([]map[string]interface{})[0], "mitigation_expression")
 
