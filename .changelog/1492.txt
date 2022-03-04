@@ -1,0 +1,4 @@
+```release-note:bug
+resource/cloudflare_ruleset: fix category overrides for ddos_l7 phase
+```
+

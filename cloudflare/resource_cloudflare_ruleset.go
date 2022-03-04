@@ -460,12 +460,19 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 							// Category based overrides
 							if val, ok := overrideParamValue.(map[string]interface{})["categories"]; ok {
-								for _, category := range val.([]interface{}) {
+								for categoryOverrideCounter, category := range val.([]interface{}) {
 									cData := category.(map[string]interface{})
+
+									var enabled *bool
+									//nolint:staticcheck
+									if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.categories.%d.enabled", rulesCounter, overrideCounter, categoryOverrideCounter)); ok {
+										enabled = &[]bool{value.(bool)}[0]
+									}
+
 									categories = append(categories, cloudflare.RulesetRuleActionParametersCategories{
 										Category: cData["category"].(string),
 										Action:   cData["action"].(string),
-										Enabled:  cData["enabled"].(bool),
+										Enabled:  enabled,
 									})
 								}
 							}

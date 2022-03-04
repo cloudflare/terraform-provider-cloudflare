@@ -1165,6 +1165,9 @@ func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "4d21379b4f9f4bb088e0729962c8b3cf"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "fdfdac75430c4c47a959592f0aa5e68a"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.sensitivity_level", "low"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.category", "unusual-requests"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.action", "challenge"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "override HTTP DDoS ruleset rule"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
@@ -2099,6 +2102,10 @@ func testAccCheckCloudflareRulesetActionParametersHTTPDDosOverride(rnd, name, zo
             id = "fdfdac75430c4c47a959592f0aa5e68a" # requests with odd HTTP headers or URI path
             sensitivity_level = "low"
           }
+          categories {
+		    category = "unusual-requests"
+		    action = "challenge"
+		  }
         }
       }
       expression = "true"
