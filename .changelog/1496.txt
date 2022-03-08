@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: no need to pass the resourceCloudflareRecordUpdate to the NonRetryable handler
+```

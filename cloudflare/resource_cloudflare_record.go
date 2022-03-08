@@ -144,7 +144,11 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 					// for Terraform to operate on it, we need an anchor.
 					d.SetId(rs[0].ID)
 
-					return resource.NonRetryableError(resourceCloudflareRecordUpdate(d, meta))
+					if updateErr := resourceCloudflareRecordUpdate(d, meta); updateErr != nil {
+						return resource.NonRetryableError(updateErr)
+					}
+
+					return nil
 				}
 
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
