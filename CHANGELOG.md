@@ -12,6 +12,10 @@ ENHANCEMENTS:
 * resource/cloudflare_teams_rules: Add `insecure_disable_dnssec_validation` option to settings ([#1469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1469))
 * resource/cloudflare_zone: add support for partner rate plans ([#1464](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1464))
 
+BUG FIXES:
+
+* resource/cloudflare_record: no need to pass the resourceCloudflareRecordUpdate to the NonRetryable handler ([#1496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1496))
+
 ## 3.9.1 (February 15th, 2022)
 
 NOTES:
