@@ -1,4 +1,6 @@
-## 3.10.0 (Unreleased)
+## 3.11.0 (Unreleased)
+
+## 3.10.0 (March 9th, 2022)
 
 BREAKING CHANGES:
 
