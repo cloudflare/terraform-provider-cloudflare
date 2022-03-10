@@ -1,5 +1,9 @@
 ## 3.11.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_ruleset: don't attempt to upgrade ratelimit if it isn't set ([#1501](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1501))
+
 ## 3.10.0 (March 9th, 2022)
 
 BREAKING CHANGES:
