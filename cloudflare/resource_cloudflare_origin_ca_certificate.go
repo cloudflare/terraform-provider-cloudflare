@@ -6,7 +6,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"log"
-	"math"
 	"strings"
 	"time"
 
@@ -92,19 +91,7 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 	d.Set("expires_on", cert.ExpiresOn.Format(time.RFC3339))
 	d.Set("hostnames", hostnames)
 	d.Set("request_type", cert.RequestType)
-
-	// lazy approach to extracting the date from a known timestamp in order to
-	// `time.Parse` it correctly. Here we are getting the certificate expiry and
-	// calculating the validity as the API doesn't return it yet it is present in
-	// the schema.
-	date := strings.Split(cert.ExpiresOn.Format(time.RFC3339), "T")
-	certDate, _ := time.Parse("2006-01-02", date[0])
-	now := time.Now()
-	duration := certDate.Sub(now)
-	var validityDays int
-	validityDays = int(math.Ceil(duration.Hours() / 24))
-
-	d.Set("requested_validity", validityDays)
+	d.Set("requested_validity", cert.RequestValidity)
 
 	return nil
 }

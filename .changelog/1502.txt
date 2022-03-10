@@ -1,0 +1,3 @@
+```release-note:breaking-change
+resource/cloudflare_origin_ca_certificate: `requested_validity` is no longer calculated (to be the amount of days until the certificate expires) but is now the amount of days the certificate was requested for.
+```
