@@ -1,5 +1,9 @@
 ## 3.11.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_device_posture_integration: remove superfluous `id` from schema ([#1504](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1504))
+
 ## 3.10.1 (March 10th, 2022)
 
 BUG FIXES:
