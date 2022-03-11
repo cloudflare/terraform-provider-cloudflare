@@ -15,10 +15,12 @@ import (
 func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := generateRandomResourceName()
 	waitingRoomID := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_waiting_room_event.%s", rnd)
 	waitingRoomEventName := fmt.Sprintf("waiting_room_event_%s", rnd)
+	waitingRoomName := fmt.Sprintf("waiting_room_%s", rnd)
 	eventStartTime := time.Now()
 	eventEndTime := eventStartTime.Add(5 * time.Minute)
 
@@ -28,7 +30,7 @@ func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 		CheckDestroy: testAccCheckCloudflareWaitingRoomEventDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareWaitingRoomEvent(rnd, waitingRoomEventName, zoneID, waitingRoomID, eventStartTime, eventEndTime),
+				Config: testAccCloudflareWaitingRoomEvent(rnd, waitingRoomEventName, zoneID, waitingRoomID, eventStartTime, eventEndTime, domain, waitingRoomName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", waitingRoomEventName),
@@ -68,12 +70,28 @@ func testAccCheckCloudflareWaitingRoomEventDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCloudflareWaitingRoomEvent(resourceName, waitingRoomEventName, zoneID, waitingRoomID string, startTime, endTime time.Time) string {
+func testAccCloudflareWaitingRoomEvent(resourceName, waitingRoomEventName, zoneID, waitingRoomID string, startTime, endTime time.Time, domain, waitingRoomName string) string {
 	return fmt.Sprintf(`
+resource "cloudflare_waiting_room" "%[1]s" {
+  name                    = "%[8]s"
+  zone_id                 = "%[3]s"
+  host                    = "www.%[7]s"
+  new_users_per_minute    = 400
+  total_active_users      = 405
+  path                    = "/foobar"
+  session_duration        = 10
+  custom_page_html        = "foobar"
+  description             = "my desc"
+  disable_session_renewal = true
+  suspended               = true
+  queue_all               = false
+  json_response_enabled   = true
+}
+
 resource "cloudflare_waiting_room_event" "%[1]s" {
   name                    = "%[2]s"
   zone_id                 = "%[3]s"
-  waiting_room_id         = "%[4]s"
+  waiting_room_id         = cloudflare_waiting_room.%[4]s.id
   event_start_time        = "%[5]s"
   event_end_time          = "%[6]s"
   total_active_users      = 405
@@ -86,5 +104,5 @@ resource "cloudflare_waiting_room_event" "%[1]s" {
   description             = "my desc"
   session_duration        = 10
 }
-`, resourceName, waitingRoomEventName, zoneID, waitingRoomID, startTime.Format(time.RFC3339), endTime.Format(time.RFC3339))
+`, resourceName, waitingRoomEventName, zoneID, waitingRoomID, startTime.Format(time.RFC3339), endTime.Format(time.RFC3339), domain, waitingRoomName)
 }
