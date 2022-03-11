@@ -6,6 +6,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 	"time"
 
@@ -91,7 +92,12 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 	d.Set("expires_on", cert.ExpiresOn.Format(time.RFC3339))
 	d.Set("hostnames", hostnames)
 	d.Set("request_type", cert.RequestType)
-	d.Set("requested_validity", cert.RequestValidity)
+
+	x509Cert, err := x509.ParseCertificate([]byte(cert.Certificate))
+	if err != nil {
+		return fmt.Errorf("error parsing OriginCACertificate %q: %s", certID, err)
+	}
+	d.Set("requested_validity", calculateRequestedValidityFromCertificate(x509Cert))
 
 	return nil
 }
@@ -124,4 +130,30 @@ func validateCSR(v interface{}, k string) (ws []string, errors []error) {
 		errors = append(errors, fmt.Errorf("%q: %s", k, err.Error()))
 	}
 	return
+}
+
+func calculateRequestedValidityFromCertificate(cert *x509.Certificate) int {
+	diff := cert.NotAfter.UTC().Sub(cert.NotBefore.UTC())
+	days := math.Round(diff.Hours() / 24)
+
+	validateDays := []float64{7, 30, 90, 365, 730, 1095, 5475}
+
+	// Find the closest matching requested validity (in days) to avoid possible leap second issue.
+	i := 0
+	d := math.Abs(days - validateDays[i])
+	distanceIdx := i
+	distance := d
+	for i < len(validateDays) {
+		d := math.Abs(validateDays[i] - days)
+		if d == 0 {
+			return int(days)
+		}
+
+		if d < distance {
+			distanceIdx = i
+			distance = d
+		}
+		i++
+	}
+	return int(validateDays[distanceIdx])
 }
