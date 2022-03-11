@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_device_posture_integration: remove superfluous `id` from schema
+```
