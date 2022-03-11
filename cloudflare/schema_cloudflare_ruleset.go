@@ -99,6 +99,38 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										Type: schema.TypeString,
 									},
 								},
+								"response": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"status_code": {
+												Type:     schema.TypeSet,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Schema{
+													Type: schema.TypeInt,
+												},
+											},
+											"content_type": {
+												Type:     schema.TypeSet,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Schema{
+													Type: schema.TypeString,
+												},
+											},
+											"content": {
+												Type:     schema.TypeSet,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Schema{
+													Type: schema.TypeString,
+												},
+											},
+										},
+									},
+								},
 								"uri": {
 									Type:     schema.TypeList,
 									Optional: true,
@@ -308,6 +340,10 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 								},
 								"counting_expression": {
 									Type:     schema.TypeString,
+									Optional: true,
+								},
+								"requests_to_origin": {
+									Type:     schema.TypeBool,
 									Optional: true,
 								},
 							},

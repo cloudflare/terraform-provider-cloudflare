@@ -334,6 +334,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"rules":        actionParameterRules,
 				"uri":          uri,
 				"matched_data": matchedData,
+				"response":     r.ActionParameters.Response,
 				"version":      r.ActionParameters.Version,
 			})
 
@@ -349,6 +350,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"requests_per_period": r.RateLimit.RequestsPerPeriod,
 				"mitigation_timeout":  r.RateLimit.MitigationTimeout,
 				"counting_expression": r.RateLimit.CountingExpression,
+				"requests_to_origin":  r.Ratelimit.RequestsToOrigin,
 			})
 
 			rule["ratelimit"] = rateLimit
@@ -508,6 +510,15 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							}
 						}
 
+					case "response":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.Response = &cloudflare.RulesetRuleActionParametersBlockResponse{
+								StatusCode:  pValue.([]interface{})[i].(map[string]interface{})["status_code"].(uint16),
+								ContentType: pValue.([]interface{})[i].(map[string]interface{})["content_type"].(string),
+								Content:     pValue.([]interface{})[i].(map[string]interface{})["content"].(string),
+							}
+						}
+
 					case "uri":
 						var uriParameterConfig cloudflare.RulesetRuleActionParametersURI
 						for _, uriValue := range pValue.([]interface{}) {
@@ -570,6 +581,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						rule.RateLimit.MitigationTimeout = pValue.(int)
 					case "counting_expression":
 						rule.RateLimit.CountingExpression = pValue.(string)
+					case "requests_to_origin":
+						rule.RateLimit.RequestsToOrigin = pValue.(bool)
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for ratelimit: %s", pKey)
