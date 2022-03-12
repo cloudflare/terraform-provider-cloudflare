@@ -135,7 +135,7 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 	}
 	d.Set("session_duration", waitingRoomEvent.SessionDuration)
 	if waitingRoomEvent.DisableSessionRenewal != nil {
-		d.Set("disable_session_renewal", *waitingRoomEvent.DisableSessionRenewal)
+		d.Set("disable_session_renewal", waitingRoomEvent.DisableSessionRenewal)
 	}
 	return nil
 }
@@ -193,7 +193,7 @@ func resourceCloudflareWaitingRoomEventImport(d *schema.ResourceData, meta inter
 
 	waitingRoomEvent, err := client.WaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEventID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch Waiting room event %w", waitingRoomID)
+		return nil, fmt.Errorf("failed to fetch Waiting room event %s", waitingRoomID)
 	}
 
 	d.SetId(waitingRoomEvent.ID)
