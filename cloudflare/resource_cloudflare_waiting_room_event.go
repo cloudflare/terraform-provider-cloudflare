@@ -21,7 +21,7 @@ func resourceCloudflareWaitingRoomEvent() *schema.Resource {
 			State: resourceCloudflareWaitingRoomEventImport,
 		},
 
-		Schema: resourceCloudflareWaitingRoomSchema(),
+		Schema: resourceCloudflareWaitingRoomEventSchema(),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Second),
 			Update: schema.DefaultTimeout(30 * time.Second),
@@ -79,14 +79,14 @@ func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta inter
 	newWaitingRoomEvent, err := expandWaitingRoomEvent(d)
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error building waiting room event %q: %s", name, err)
+		return fmt.Errorf("error building waiting room event %q: %w", name, err)
 	}
 
 	waitingRoomEvent, err := client.CreateWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, newWaitingRoomEvent)
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error creating waiting room event %q: %s", name, err)
+		return fmt.Errorf("error creating waiting room event %q: %w", name, err)
 	}
 
 	d.SetId(waitingRoomEvent.ID)
@@ -108,7 +108,7 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 			return nil
 		}
 		name := d.Get("name").(string)
-		return fmt.Errorf("error getting waiting room event %q: %s", name, err)
+		return fmt.Errorf("error getting waiting room event %q: %w", name, err)
 	}
 	d.Set("name", waitingRoomEvent.Name)
 	d.Set("event_start_time", waitingRoomEvent.EventStartTime.Format(time.RFC3339))
@@ -148,14 +148,14 @@ func resourceCloudflareWaitingRoomEventUpdate(d *schema.ResourceData, meta inter
 	waitingRoomEvent, err := expandWaitingRoomEvent(d)
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error building waiting room event %q: %s", name, err)
+		return fmt.Errorf("error building waiting room event %q: %w", name, err)
 	}
 
 	_, err = client.ChangeWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEvent)
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error updating waiting room event %q: %s", name, err)
+		return fmt.Errorf("error updating waiting room event %q: %w", name, err)
 	}
 
 	return resourceCloudflareWaitingRoomEventRead(d, meta)
@@ -171,7 +171,7 @@ func resourceCloudflareWaitingRoomEventDelete(d *schema.ResourceData, meta inter
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error deleting waiting room event %q: %s", name, err)
+		return fmt.Errorf("error deleting waiting room event %q: %w", name, err)
 	}
 
 	return nil
@@ -193,7 +193,7 @@ func resourceCloudflareWaitingRoomEventImport(d *schema.ResourceData, meta inter
 
 	waitingRoomEvent, err := client.WaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEventID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch Waiting room event %s", waitingRoomID)
+		return nil, fmt.Errorf("failed to fetch Waiting room event %w", waitingRoomID)
 	}
 
 	d.SetId(waitingRoomEvent.ID)
