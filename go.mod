@@ -226,5 +226,6 @@ require (
 	mvdan.cc/unparam v0.0.0-20211214103731-d0ef000c54e5 // indirect
 )
 
-// Use custom version that supports configuration as flags until it lands upstream.
-replace github.com/hashicorp/terraform-plugin-docs v0.5.1 => github.com/jacobbednarz/terraform-plugin-docs v0.5.1-0.20211203000021-49f8b60f2070
+// Use custom version that supports configuration as flags and newer tfexec
+// until it lands upstream.
+replace github.com/hashicorp/terraform-plugin-docs v0.5.1 => github.com/jacobbednarz/terraform-plugin-docs v0.5.1-0.20220314024219-d04ad37d2ee8
