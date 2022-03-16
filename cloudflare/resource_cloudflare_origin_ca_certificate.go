@@ -93,7 +93,12 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 	d.Set("hostnames", hostnames)
 	d.Set("request_type", cert.RequestType)
 
-	x509Cert, err := x509.ParseCertificate([]byte(cert.Certificate))
+	certBlock, _ := pem.Decode([]byte(cert.Certificate))
+	if certBlock == nil {
+		return fmt.Errorf("error decoding OriginCACertificate %q: %s", certID, err)
+	}
+
+	x509Cert, err := x509.ParseCertificate(certBlock.Bytes)
 	if err != nil {
 		return fmt.Errorf("error parsing OriginCACertificate %q: %s", certID, err)
 	}
