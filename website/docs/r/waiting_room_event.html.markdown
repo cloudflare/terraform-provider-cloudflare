@@ -34,7 +34,7 @@ The following arguments are supported:
 * `total_active_users` - (Optional) The total number of active user sessions on the route at a point in time.
 * `new_users_per_minute` - (Optional) The number of new users that will be let into the route every minute.
 * `custom_page_html` - (Optional) This a templated html file that will be rendered at the edge.
-* `queueing_method` - (Optional) The queueing method to be used by the waiting room during the event. Default: fifo.
+* `queueing_method` - (Optional) The queueing method to be used by the waiting room during the event. If not specified, the event will inherit it from the waiting room.
 * `shuffle_at_event_start` - (Optional) Users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. Default: false.
 * `disable_session_renewal` - (Optional) Disables automatic renewal of session cookies. Default: false.
 * `prequeue_start_time` - (Optional) ISO 8601 timestamp that marks when to begin queueing all users before the event starts. Must occur at least 5 minutes before event_start_time.
