@@ -144,6 +144,7 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 	if waitingRoomEvent.DisableSessionRenewal != nil {
 		d.Set("disable_session_renewal", waitingRoomEvent.DisableSessionRenewal)
 	}
+
 	return nil
 }
 
