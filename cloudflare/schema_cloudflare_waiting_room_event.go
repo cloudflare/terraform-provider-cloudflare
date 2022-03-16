@@ -64,11 +64,13 @@ func resourceCloudflareWaitingRoomEventSchema() map[string]*schema.Schema {
 		"shuffle_at_event_start": {
 			Type:     schema.TypeBool,
 			Optional: true,
+			Default:  false,
 		},
 
 		"disable_session_renewal": {
 			Type:     schema.TypeBool,
 			Optional: true,
+			Default:  false,
 		},
 
 		"prequeue_start_time": {
