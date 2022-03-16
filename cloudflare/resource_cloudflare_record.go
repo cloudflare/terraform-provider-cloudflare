@@ -49,7 +49,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	proxied, proxiedOk := d.GetOkExists("proxied")
 	if proxiedOk {
-		newRecord.Proxied = &[]bool{proxied.(bool)}[0]
+		newRecord.Proxied = cloudflare.BoolPtr(proxied.(bool))
 	}
 
 	value, valueOk := d.GetOk("value")
@@ -105,7 +105,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	if proxiedOk {
 		proxiedVal = newRecord.Proxied
 	} else {
-		proxiedVal = &[]bool{false}[0]
+		proxiedVal = cloudflare.BoolPtr(false)
 	}
 
 	// Validate type
@@ -270,7 +270,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 
 	proxied, proxiedOk := d.GetOkExists("proxied")
 	if proxiedOk {
-		updateRecord.Proxied = &[]bool{proxied.(bool)}[0]
+		updateRecord.Proxied = cloudflare.BoolPtr(proxied.(bool))
 	}
 
 	if ttl, ok := d.GetOk("ttl"); ok {

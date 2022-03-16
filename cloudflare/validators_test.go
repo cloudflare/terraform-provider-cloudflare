@@ -1,18 +1,22 @@
 package cloudflare
 
-import "testing"
+import (
+	"testing"
+
+	cloudflare "github.com/cloudflare/cloudflare-go"
+)
 
 func TestValidateRecordType(t *testing.T) {
 	validTypes := map[string]*bool{
-		"A":     &[]bool{true}[0],
-		"AAAA":  &[]bool{true}[0],
-		"CNAME": &[]bool{true}[0],
-		"TXT":   &[]bool{false}[0],
-		"SRV":   &[]bool{false}[0],
-		"LOC":   &[]bool{false}[0],
-		"MX":    &[]bool{false}[0],
-		"NS":    &[]bool{false}[0],
-		"SPF":   &[]bool{false}[0],
+		"A":     cloudflare.BoolPtr(true),
+		"AAAA":  cloudflare.BoolPtr(true),
+		"CNAME": cloudflare.BoolPtr(true),
+		"TXT":   cloudflare.BoolPtr(false),
+		"SRV":   cloudflare.BoolPtr(false),
+		"LOC":   cloudflare.BoolPtr(false),
+		"MX":    cloudflare.BoolPtr(false),
+		"NS":    cloudflare.BoolPtr(false),
+		"SPF":   cloudflare.BoolPtr(false),
 	}
 	for k, v := range validTypes {
 		err := validateRecordType(k, *v)
@@ -22,15 +26,15 @@ func TestValidateRecordType(t *testing.T) {
 	}
 
 	invalidTypes := map[string]*bool{
-		"a":     &[]bool{false}[0],
-		"cName": &[]bool{false}[0],
-		"txt":   &[]bool{false}[0],
-		"SRv":   &[]bool{false}[0],
-		"foo":   &[]bool{false}[0],
-		"bar":   &[]bool{false}[0],
-		"TXT":   &[]bool{true}[0],
-		"SRV":   &[]bool{true}[0],
-		"SPF":   &[]bool{true}[0],
+		"a":     cloudflare.BoolPtr(false),
+		"cName": cloudflare.BoolPtr(false),
+		"txt":   cloudflare.BoolPtr(false),
+		"SRv":   cloudflare.BoolPtr(false),
+		"foo":   cloudflare.BoolPtr(false),
+		"bar":   cloudflare.BoolPtr(false),
+		"TXT":   cloudflare.BoolPtr(true),
+		"SRV":   cloudflare.BoolPtr(true),
+		"SPF":   cloudflare.BoolPtr(true),
 	}
 	for k, v := range invalidTypes {
 		if err := validateRecordType(k, *v); err == nil {
