@@ -6,6 +6,7 @@ run:
   modules-download-mode: readonly
 
 linters:
+  disable-all: true
   enable:
     - bodyclose    # ensure HTTP response bodies are successfully closed.
     - contextcheck # check we are passing context an inherited context.
