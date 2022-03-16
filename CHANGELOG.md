@@ -1,5 +1,9 @@
 ## 3.11.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_waiting_room_event` ([#1509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1509))
+
 BUG FIXES:
 
 * resource/cloudflare_device_posture_integration: remove superfluous `id` from schema ([#1504](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1504))
