@@ -26,7 +26,7 @@ resource "cloudflare_waiting_room_vent" "example" {
 
 The following arguments are supported:
 
-* `zone_id` - (Required) The DNS zone ID to apply to.
+* `zone_id` - (Required) The zone ID to apply to.
 * `waiting_room_id` - (Required) The Waiting Room ID the event should apply to.
 * `name` - (Required) A unique name to identify the event. Only alphanumeric characters, hyphens, and underscores are allowed.
 * `event_start_time` (Required) ISO 8601 timestamp that marks the start of the event. At this time, queued users will be processed with the event's configuration. Must occur at least 1 minute before event_end_time.
