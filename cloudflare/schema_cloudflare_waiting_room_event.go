@@ -70,7 +70,6 @@ func resourceCloudflareWaitingRoomEventSchema() map[string]*schema.Schema {
 		"disable_session_renewal": {
 			Type:     schema.TypeBool,
 			Optional: true,
-			Default:  false,
 		},
 
 		"prequeue_start_time": {
