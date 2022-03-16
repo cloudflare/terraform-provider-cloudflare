@@ -523,7 +523,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 					case "response":
 						for i := range pValue.([]interface{}) {
-							rule.ActionParameters.Response = &cloudflare.RulesetRuleActionParameterBlockResponse{
+							rule.ActionParameters.Response = &cloudflare.RulesetRuleActionParametersBlockResponse{
 								StatusCode:  uint16(pValue.([]interface{})[i].(map[string]interface{})["status_code"].(int)),
 								ContentType: pValue.([]interface{})[i].(map[string]interface{})["content_type"].(string),
 								Content:     pValue.([]interface{})[i].(map[string]interface{})["content"].(string),
