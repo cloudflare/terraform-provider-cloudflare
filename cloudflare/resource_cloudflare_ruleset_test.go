@@ -1982,13 +1982,13 @@ func testAccCheckCloudflareRulesetRateLimit(rnd, name, zoneID, zoneName string) 
 
     rules {
       action = "block"
-	  action_parameters {
-		response {
-		  status_code = 418
-		  content_type = "text/plain"
-		  content = "test content"
-		}
-	  }
+      action_parameters {
+        response {
+          status_code = 418
+          content_type = "text/plain"
+          content = "test content"
+        }
+      }
       ratelimit {
         characteristics = [
           "cf.colo.id",
@@ -1997,7 +1997,7 @@ func testAccCheckCloudflareRulesetRateLimit(rnd, name, zoneID, zoneName string) 
         period = 60
         requests_per_period = 100
         mitigation_timeout = 60
-		requests_to_origin = true
+        requests_to_origin = true
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http rate limit"
