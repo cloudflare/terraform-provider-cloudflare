@@ -87,8 +87,7 @@ func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta inter
 	waitingRoomEvent, err := client.CreateWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, newWaitingRoomEvent)
 
 	if err != nil {
-		name := d.Get("name").(string)
-		return fmt.Errorf("error creating waiting room event %q: %w", name, err)
+		return fmt.Errorf("error creating waiting room event %q: %w", d.Get("name").(string), err)
 	}
 
 	d.SetId(waitingRoomEvent.ID)
