@@ -52,7 +52,6 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 	}
 
 	return cloudflare.WaitingRoomEvent{
-		ID:                    d.Id(),
 		Name:                  d.Get("name").(string),
 		EventStartTime:        eventStartTime,
 		EventEndTime:          eventEndTime,
@@ -113,26 +112,26 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 	if !waitingRoomEvent.PrequeueStartTime.IsZero() {
 		d.Set("prequeue_start_time", waitingRoomEvent.PrequeueStartTime.Format(time.RFC3339))
 	}
-	
+
 	if waitingRoomEvent.Description != "" {
 		d.Set("description", waitingRoomEvent.Description)
 	}
-	
+
 	if waitingRoomEvent.QueueingMethod != "" {
 		d.Set("queueing_method", waitingRoomEvent.QueueingMethod)
 	}
-	
+
 	d.Set("shuffle_at_event_start", waitingRoomEvent.ShuffleAtEventStart)
 	d.Set("suspended", waitingRoomEvent.Suspended)
-	
+
 	if waitingRoomEvent.TotalActiveUsers != 0 {
 		d.Set("total_active_users", waitingRoomEvent.TotalActiveUsers)
 	}
-	
+
 	if waitingRoomEvent.NewUsersPerMinute != 0 {
 		d.Set("new_users_per_minute", waitingRoomEvent.NewUsersPerMinute)
 	}
-	
+
 	if waitingRoomEvent.CustomPageHTML != "" {
 		d.Set("custom_page_html", waitingRoomEvent.CustomPageHTML)
 	}
