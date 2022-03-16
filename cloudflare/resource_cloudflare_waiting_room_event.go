@@ -27,11 +27,8 @@ func resourceCloudflareWaitingRoomEvent() *schema.Resource {
 
 func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent, error) {
 	var disableSessionRenewal *bool
-	switch b := d.Get("disable_session_renewal").(type) {
-	case bool:
-		disableSessionRenewal = &b
-	case nil:
-		disableSessionRenewal = nil
+	if b, ok := d.GetOk("disable_session_renewal"); ok {
+		disableSessionRenewal = cloudflare.BoolPtr(b.(bool))
 	}
 	eventStartTime, err := time.Parse(time.RFC3339, d.Get("event_start_time").(string))
 	if err != nil {
