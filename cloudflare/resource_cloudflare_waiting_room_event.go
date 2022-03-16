@@ -155,8 +155,7 @@ func resourceCloudflareWaitingRoomEventUpdate(d *schema.ResourceData, meta inter
 
 	waitingRoomEvent, err := expandWaitingRoomEvent(d)
 	if err != nil {
-		name := d.Get("name").(string)
-		return fmt.Errorf("error building waiting room event %q: %w", name, err)
+		return fmt.Errorf("error building waiting room event %q: %w", d.Get("name").(string), err)
 	}
 
 	_, err = client.ChangeWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEvent)
