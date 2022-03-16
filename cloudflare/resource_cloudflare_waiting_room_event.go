@@ -46,6 +46,7 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 	if err != nil {
 		return cloudflare.WaitingRoomEvent{}, err
 	}
+
 	prequeueStartTime := time.Time{}
 	if t, ok := d.GetOk("prequeue_start_time"); ok {
 		prequeueStartTime, err = time.Parse(time.RFC3339, t.(string))
