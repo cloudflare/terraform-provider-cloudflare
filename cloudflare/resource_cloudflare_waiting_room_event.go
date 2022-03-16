@@ -41,6 +41,7 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 	if err != nil {
 		return cloudflare.WaitingRoomEvent{}, err
 	}
+
 	eventEndTime, err := time.Parse(time.RFC3339, d.Get("event_end_time").(string))
 	if err != nil {
 		return cloudflare.WaitingRoomEvent{}, err
