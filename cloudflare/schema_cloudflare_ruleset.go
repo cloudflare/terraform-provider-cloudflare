@@ -278,6 +278,26 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"response": {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"status_code": {
+												Type:     schema.TypeInt,
+												Optional: true,
+											},
+											"content_type": {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											"content": {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},
@@ -308,6 +328,10 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 								},
 								"counting_expression": {
 									Type:     schema.TypeString,
+									Optional: true,
+								},
+								"requests_to_origin": {
+									Type:     schema.TypeBool,
 									Optional: true,
 								},
 							},

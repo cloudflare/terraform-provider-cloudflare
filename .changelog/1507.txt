@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_ruleset: add support for `ratelimit.requests_to_origin`
+```
+
+```release-note:enhancement
+resource/cloudflare_ruleset: add support for `action_parameters.response` to control the response when triggering a WAF rule
+```
