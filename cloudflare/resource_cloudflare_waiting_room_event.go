@@ -176,8 +176,7 @@ func resourceCloudflareWaitingRoomEventDelete(d *schema.ResourceData, meta inter
 	err := client.DeleteWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEventID)
 
 	if err != nil {
-		name := d.Get("name").(string)
-		return fmt.Errorf("error deleting waiting room event %q: %w", name, err)
+		return fmt.Errorf("error deleting waiting room event %q: %w", d.Get("name").(string), err)
 	}
 
 	return nil
