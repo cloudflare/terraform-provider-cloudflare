@@ -30,6 +30,7 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 	if b, ok := d.GetOk("disable_session_renewal"); ok {
 		disableSessionRenewal = cloudflare.BoolPtr(b.(bool))
 	}
+
 	eventStartTime, err := time.Parse(time.RFC3339, d.Get("event_start_time").(string))
 	if err != nil {
 		return cloudflare.WaitingRoomEvent{}, err
@@ -69,17 +70,17 @@ func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta inter
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
-
+	waitingRoomEventName := d.Get("name").(string)
 	newWaitingRoomEvent, err := expandWaitingRoomEvent(d)
+
 	if err != nil {
-		name := d.Get("name").(string)
-		return fmt.Errorf("error building waiting room event %q: %w", name, err)
+		return fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err)
 	}
 
 	waitingRoomEvent, err := client.CreateWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, newWaitingRoomEvent)
 
 	if err != nil {
-		return fmt.Errorf("error creating waiting room event %q: %w", d.Get("name").(string), err)
+		return fmt.Errorf("error creating waiting room event %q: %w", waitingRoomEventName, err)
 	}
 
 	d.SetId(waitingRoomEvent.ID)
@@ -91,21 +92,22 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
-	waitingRoomEventID := d.Id()
 
-	waitingRoomEvent, err := client.WaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEventID)
+	waitingRoomEvent, err := client.WaitingRoomEvent(context.Background(), zoneID, waitingRoomID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[WARN] Removing waiting room event from state because it's not found in API")
 			d.SetId("")
 			return nil
 		}
-		name := d.Get("name").(string)
-		return fmt.Errorf("error getting waiting room event %q: %w", name, err)
+		return fmt.Errorf("error getting waiting room event %q: %w", d.Get("name").(string), err)
 	}
+
 	d.Set("name", waitingRoomEvent.Name)
 	d.Set("event_start_time", waitingRoomEvent.EventStartTime.Format(time.RFC3339))
 	d.Set("event_end_time", waitingRoomEvent.EventEndTime.Format(time.RFC3339))
+	d.Set("session_duration", waitingRoomEvent.SessionDuration)
+
 	if !waitingRoomEvent.PrequeueStartTime.IsZero() {
 		d.Set("prequeue_start_time", waitingRoomEvent.PrequeueStartTime.Format(time.RFC3339))
 	}
@@ -132,7 +134,7 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 	if waitingRoomEvent.CustomPageHTML != "" {
 		d.Set("custom_page_html", waitingRoomEvent.CustomPageHTML)
 	}
-	d.Set("session_duration", waitingRoomEvent.SessionDuration)
+
 	if waitingRoomEvent.DisableSessionRenewal != nil {
 		d.Set("disable_session_renewal", waitingRoomEvent.DisableSessionRenewal)
 	}
@@ -144,16 +146,16 @@ func resourceCloudflareWaitingRoomEventUpdate(d *schema.ResourceData, meta inter
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
-
+	waitingRoomEventName := d.Get("name").(string)
 	waitingRoomEvent, err := expandWaitingRoomEvent(d)
 	if err != nil {
-		return fmt.Errorf("error building waiting room event %q: %w", d.Get("name").(string), err)
+		return fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err)
 	}
 
 	_, err = client.ChangeWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEvent)
 
 	if err != nil {
-		return fmt.Errorf("error updating waiting room event %q: %w", d.Get("name").(string), err)
+		return fmt.Errorf("error updating waiting room event %q: %w", waitingRoomEventName, err)
 	}
 
 	return resourceCloudflareWaitingRoomEventRead(d, meta)

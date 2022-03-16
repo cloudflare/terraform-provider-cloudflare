@@ -21,8 +21,8 @@ func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waiting_room_event.%s", rnd)
 	waitingRoomEventName := fmt.Sprintf("waiting_room_event_%s", rnd)
 	waitingRoomName := fmt.Sprintf("waiting_room_%s", rnd)
-	eventStartTime := time.Now()
-	eventEndTime := eventStartTime.Add(5 * time.Minute)
+	eventStartTime := time.Now().UTC()
+	eventEndTime := eventStartTime.Add(5 * time.Minute).UTC()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -34,7 +34,7 @@ func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", waitingRoomEventName),
-					resource.TestCheckResourceAttr(name, "waiting_room_id", waitingRoomID),
+					resource.TestCheckResourceAttrSet(name, "waiting_room_id"),
 					resource.TestCheckResourceAttr(name, "event_start_time", eventStartTime.Format(time.RFC3339)),
 					resource.TestCheckResourceAttr(name, "event_end_time", eventEndTime.Format(time.RFC3339)),
 					resource.TestCheckResourceAttr(name, "description", "my desc"),
@@ -91,7 +91,7 @@ resource "cloudflare_waiting_room" "%[1]s" {
 resource "cloudflare_waiting_room_event" "%[1]s" {
   name                    = "%[2]s"
   zone_id                 = "%[3]s"
-  waiting_room_id         = cloudflare_waiting_room.%[4]s.id
+  waiting_room_id         = cloudflare_waiting_room.%[1]s.id
   event_start_time        = "%[5]s"
   event_end_time          = "%[6]s"
   total_active_users      = 405
