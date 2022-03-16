@@ -4,6 +4,11 @@ FEATURES:
 
 * **New Resource:** `cloudflare_waiting_room_event` ([#1509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1509))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `action_parameters.response` to control the response when triggering a WAF rule ([#1507](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1507))
+* resource/cloudflare_ruleset: add support for `ratelimit.requests_to_origin` ([#1507](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1507))
+
 BUG FIXES:
 
 * resource/cloudflare_device_posture_integration: remove superfluous `id` from schema ([#1504](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1504))
