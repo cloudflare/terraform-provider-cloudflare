@@ -451,7 +451,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						for overrideCounter, overrideParamValue := range pValue.([]interface{}) {
 							//nolint:staticcheck
 							if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter)); ok {
-								overrideConfiguration.Enabled = &[]bool{value.(bool)}[0]
+								overrideConfiguration.Enabled = cloudflare.BoolPtr(value.(bool))
 							}
 
 							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
@@ -465,7 +465,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 									categories = append(categories, cloudflare.RulesetRuleActionParametersCategories{
 										Category: cData["category"].(string),
 										Action:   cData["action"].(string),
-										Enabled:  cData["enabled"].(bool),
+										Enabled:  cloudflare.BoolPtr(cData["enabled"].(bool)),
 									})
 								}
 							}
@@ -478,7 +478,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 									var enabled *bool
 									//nolint:staticcheck
 									if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
-										enabled = &[]bool{value.(bool)}[0]
+										enabled = cloudflare.BoolPtr(value.(bool))
 									}
 
 									rules = append(rules, cloudflare.RulesetRuleActionParametersRules{

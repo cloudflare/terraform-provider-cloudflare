@@ -762,7 +762,7 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.characteristics.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.period", "60"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_per_period", "100"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "600"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "60"),
 				),
 			},
 		},
@@ -1984,7 +1984,7 @@ func testAccCheckCloudflareRulesetRateLimit(rnd, name, zoneID, zoneName string) 
         ]
         period = 60
         requests_per_period = 100
-        mitigation_timeout = 600
+        mitigation_timeout = 60
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http rate limit"
