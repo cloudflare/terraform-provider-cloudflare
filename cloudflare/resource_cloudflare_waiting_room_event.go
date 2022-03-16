@@ -22,10 +22,6 @@ func resourceCloudflareWaitingRoomEvent() *schema.Resource {
 		},
 
 		Schema: resourceCloudflareWaitingRoomEventSchema(),
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(30 * time.Second),
-			Update: schema.DefaultTimeout(30 * time.Second),
-		},
 	}
 }
 
