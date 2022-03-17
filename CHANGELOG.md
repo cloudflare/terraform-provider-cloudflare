@@ -1,5 +1,9 @@
 ## 3.11.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_origin_ca_certificate: `requested_validity` no longer decrements until the `expires_on` value but is now the amount of days the certificate was requested for. ([#1502](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1502))
+
 FEATURES:
 
 * **New Resource:** `cloudflare_waiting_room_event` ([#1509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1509))
