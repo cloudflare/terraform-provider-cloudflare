@@ -22,7 +22,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.11.1 // indirect
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-go v0.8.0 // indirect
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.11.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.12.0
 	github.com/hashicorp/yamux v0.0.0-20210826001029-26ff87cf9493 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
