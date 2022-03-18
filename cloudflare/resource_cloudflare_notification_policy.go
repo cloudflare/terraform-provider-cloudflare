@@ -155,7 +155,7 @@ func buildNotificationPolicy(d *schema.ResourceData) cloudflare.NotificationPoli
 	}
 
 	if filters, ok := d.GetOk("filters"); ok {
-		notificationPolicy.Filters = filters.(map[string][]string)
+		notificationPolicy.Filters = filters.([]interface{})[0].(map[string][]string)
 	}
 
 	if conditions, ok := d.GetOk("conditions"); ok {

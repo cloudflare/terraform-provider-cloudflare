@@ -25,11 +25,26 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 			Required: true,
 		},
 		"filters": {
-			Type:     schema.TypeMap,
+			Type:     schema.TypeList,
 			Optional: true,
-			Elem: &schema.Schema{
-				Type: schema.TypeList,
-				Elem: schema.TypeString,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"zones": {
+						Type: schema.TypeList,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Optional: true,
+					},
+					"services": {
+						Type: schema.TypeList,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Optional: true,
+					},
+				},
 			},
 		},
 		"created": {
