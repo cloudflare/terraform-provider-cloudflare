@@ -173,6 +173,36 @@ func TestAccCloudflarePageRule_ForwardingAndOthers(t *testing.T) {
 	})
 }
 
+func TestAccCloudflarePageRule_DisableZaraz(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	target := fmt.Sprintf("test-fwd-others.%s", domain)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleConfigDisableZaraz(zoneID, target),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists("cloudflare_page_rule.test", &pageRule),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.test", "zone_id", zoneID),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.test", "target", fmt.Sprintf("%s/", target)),
+					resource.TestCheckResourceAttr(
+						"cloudflare_page_rule.test",
+						"actions.0.disable_zaraz",
+						"true",
+					),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflarePageRule_Updated(t *testing.T) {
 	var before, after cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -956,6 +986,17 @@ resource "cloudflare_page_rule" "test" {
 		}
 	}
 }`, zoneID, target, zoneName)
+}
+
+func testAccCheckCloudflarePageRuleConfigDisableZaraz(zoneID, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "test" {
+	zone_id = "%s"
+	target = "%s"
+	actions {
+		disable_zaraz = true
+	}
+}`, zoneID, target)
 }
 
 func testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target string) string {
