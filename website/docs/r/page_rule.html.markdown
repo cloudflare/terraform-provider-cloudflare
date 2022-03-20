@@ -59,6 +59,7 @@ Action blocks support the following:
 * `disable_performance` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_railgun` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `disable_security` - (Optional) Boolean of whether this action is enabled. Default: false.
+* `disable_zaraz` - (Optional) Boolean of whether this action is enabled. Default: false.
 * `edge_cache_ttl` - (Optional) The Time To Live for the edge cache.
 * `email_obfuscation` - (Optional) Whether this action is `"on"` or `"off"`.
 * `explicit_cache_control` - (Optional) Whether origin Cache-Control action is `"on"` or `"off"`.

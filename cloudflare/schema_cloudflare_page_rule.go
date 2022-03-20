@@ -184,6 +184,12 @@ func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 						Optional: true,
 					},
 
+					"disable_zaraz": {
+						Type:     schema.TypeBool,
+						Default:  false,
+						Optional: true,
+					},
+
 					"browser_cache_ttl": {
 						Type:     schema.TypeString,
 						Optional: true,
