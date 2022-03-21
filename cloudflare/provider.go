@@ -173,6 +173,7 @@ func Provider() *schema.Provider {
 			"cloudflare_teams_list":                             resourceCloudflareTeamsList(),
 			"cloudflare_teams_location":                         resourceCloudflareTeamsLocation(),
 			"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
+			"cloudflare_teams_proxy_endpoint":                   resourceCloudflareTeamsProxyEndpoint(),
 			"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
 			"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
 			"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
