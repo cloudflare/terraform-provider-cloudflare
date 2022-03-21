@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareTeamsProxyEndpointBasic(t *testing.T) {
+func TestAccCloudflareTeamsProxyEndpoint_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -38,7 +38,7 @@ func TestAccCloudflareTeamsProxyEndpointBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "ips.0", "192.0.2.0/24"),
+					resource.TestCheckResourceAttr(name, "ips.0", "104.16.132.229/32"),
 					resource.TestMatchResourceAttr(name, "subdomain", regexp.MustCompile("^[a-zA-Z0-9]+$")),
 				),
 			},
@@ -51,7 +51,7 @@ func testAccCloudflareTeamsProxyEndpointConfigBasic(rnd, accountID string) strin
 resource "cloudflare_teams_proxy_endpoint" "%[1]s" {
   name        = "%[1]s"
   account_id  = "%[2]s"
-  ips  = ["192.0.2.0/24"]
+  ips  = ["104.16.132.229/32"]
 }
 `, rnd, accountID)
 }
