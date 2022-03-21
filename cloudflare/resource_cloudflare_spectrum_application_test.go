@@ -404,9 +404,8 @@ resource "cloudflare_spectrum_application" "%[3]s" {
     name = "%[3]s.%[2]s"
   }
 
-  origin_dns {
-    name = "%[3]s.origin.%[2]s"
-  }
+  origin_direct = ["tcp://1.2.3.4:23"]
+  origin_port   = 22
   edge_ip_connectivity = "ipv4"
 }`, zoneID, zoneName, ID)
 }
