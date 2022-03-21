@@ -55,17 +55,22 @@ func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta inter
 	d.Set("enabled", policy.Result.Enabled)
 	d.Set("alert_type", policy.Result.AlertType)
 	d.Set("description", policy.Result.Description)
-	d.Set("filters", policy.Result.Filters)
 	d.Set("conditions", policy.Result.Conditions)
 	d.Set("created", policy.Result.Created.Format(time.RFC3339))
 	d.Set("modified", policy.Result.Modified.Format(time.RFC3339))
 
+	if err := d.Set("filters", policy.Result.Filters); err != nil {
+		return fmt.Errorf("failed to set filters: %s", err)
+	}
+
 	if err := d.Set("email_integration", setNotificationMechanisms(policy.Result.Mechanisms["email"])); err != nil {
 		return fmt.Errorf("failed to set email integration: %s", err)
 	}
+
 	if err := d.Set("pagerduty_integration", setNotificationMechanisms(policy.Result.Mechanisms["pagerduty"])); err != nil {
 		return fmt.Errorf("failed to set pagerduty integration: %s", err)
 	}
+
 	if err := d.Set("webhooks_integration", setNotificationMechanisms(policy.Result.Mechanisms["webhooks"])); err != nil {
 		return fmt.Errorf("failed to set webhooks integration: %s", err)
 	}

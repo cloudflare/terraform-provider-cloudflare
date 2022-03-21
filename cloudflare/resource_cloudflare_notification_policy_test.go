@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccCloudflareNotificationPolicy(t *testing.T) {
+func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the notification
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -85,7 +85,7 @@ func testCheckCloudflareNotificationPolicyUpdated(resName, policyName, policyDes
   }`, resName, policyName, policyDesc, accountID)
 }
 
-func TestAccCloudflareNotificationPolicyWithFiltersAttribute(t *testing.T) {
+func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the notification
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
