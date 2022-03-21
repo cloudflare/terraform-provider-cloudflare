@@ -40,24 +40,25 @@ func resourceCloudflareTeamsProxyEndpointRead(d *schema.ResourceData, meta inter
 	if err := d.Set("name", endpoint.Name); err != nil {
 		return fmt.Errorf("error parsing Proxy Endpoint name")
 	}
-	
+
 	if err := d.Set("ips", endpoint.IPs); err != nil {
 		return fmt.Errorf("error parsing Proxy Endpoint IPs")
 	}
-	
+
 	if err := d.Set("subdomain", endpoint.Subdomain); err != nil {
 		return fmt.Errorf("error parsing Proxy Endpoint subdomain")
 	}
-	
+
 	return nil
 }
+
 func resourceCloudflareTeamsProxyEndpointCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
 	newProxyEndpoint := cloudflare.TeamsProxyEndpoint{
 		Name: d.Get("name").(string),
-		IPs:  inflateProxyEndpointIPs(d.Get("ips").([]interface{})),
+		IPs:  expandInterfaceToStringList(d.Get("ips").([]interface{})),
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Teams Proxy Endpoint from struct: %+v", newProxyEndpoint)
@@ -71,13 +72,14 @@ func resourceCloudflareTeamsProxyEndpointCreate(d *schema.ResourceData, meta int
 	return resourceCloudflareTeamsProxyEndpointRead(d, meta)
 
 }
+
 func resourceCloudflareTeamsProxyEndpointUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	updatedProxyEndpoint := cloudflare.TeamsProxyEndpoint{
 		ID:   d.Id(),
 		Name: d.Get("name").(string),
-		IPs:  inflateProxyEndpointIPs(d.Get("ips").([]interface{})),
+		IPs:  expandInterfaceToStringList(d.Get("ips").([]interface{})),
 	}
 
 	log.Printf("[DEBUG] Updating Cloudflare Teams Proxy Endpoint from struct: %+v", updatedProxyEndpoint)
@@ -87,7 +89,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(d *schema.ResourceData, meta int
 	if err != nil {
 		return fmt.Errorf("error updating Teams Proxy Endpoint for account %q: %s", accountID, err)
 	}
-	
+
 	if teamsProxyEndpoint.ID == "" {
 		return fmt.Errorf("failed to find Teams Proxy Endpoint ID in update response; resource was empty")
 	}
@@ -127,12 +129,4 @@ func resourceCloudflareTeamsProxyEndpointImport(d *schema.ResourceData, meta int
 
 	return []*schema.ResourceData{d}, err
 
-}
-
-func inflateProxyEndpointIPs(ips []interface{}) []string {
-	i := make([]string, len(ips))
-	for x, ip := range ips {
-		i[x] = ip.(string)
-	}
-	return i
 }
