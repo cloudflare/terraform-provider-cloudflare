@@ -58,7 +58,7 @@ func resourceCloudflareTeamsProxyEndpointCreate(d *schema.ResourceData, meta int
 	accountID := d.Get("account_id").(string)
 	newProxyEndpoint := cloudflare.TeamsProxyEndpoint{
 		Name: d.Get("name").(string),
-		IPs:  expandInterfaceToStringList(d.Get("ips").([]interface{})),
+		IPs:  expandInterfaceToStringList(d.Get("ips").(*schema.Set).List()),
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Teams Proxy Endpoint from struct: %+v", newProxyEndpoint)
@@ -79,7 +79,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(d *schema.ResourceData, meta int
 	updatedProxyEndpoint := cloudflare.TeamsProxyEndpoint{
 		ID:   d.Id(),
 		Name: d.Get("name").(string),
-		IPs:  expandInterfaceToStringList(d.Get("ips").([]interface{})),
+		IPs:  expandInterfaceToStringList(d.Get("ips").(*schema.Set).List()),
 	}
 
 	log.Printf("[DEBUG] Updating Cloudflare Teams Proxy Endpoint from struct: %+v", updatedProxyEndpoint)
