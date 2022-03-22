@@ -130,6 +130,7 @@ func Provider() *schema.Provider {
 			"cloudflare_access_policy":                          resourceCloudflareAccessPolicy(),
 			"cloudflare_access_rule":                            resourceCloudflareAccessRule(),
 			"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
+			"cloudflare_access_bookmark":                        resourceCloudflareAccessBookmark(),
 			"cloudflare_account_member":                         resourceCloudflareAccountMember(),
 			"cloudflare_api_token":                              resourceCloudflareApiToken(),
 			"cloudflare_argo_tunnel":                            resourceCloudflareArgoTunnel(),
