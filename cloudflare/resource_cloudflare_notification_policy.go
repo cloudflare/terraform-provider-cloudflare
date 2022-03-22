@@ -59,7 +59,7 @@ func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta inter
 	d.Set("created", policy.Result.Created.Format(time.RFC3339))
 	d.Set("modified", policy.Result.Modified.Format(time.RFC3339))
 
-	if err := d.Set("filters", policy.Result.Filters); err != nil {
+	if err := d.Set("filters", setNotificationFilters(policy.Result.Filters)); err != nil {
 		return fmt.Errorf("failed to set filters: %s", err)
 	}
 
@@ -129,7 +129,6 @@ func buildNotificationPolicy(d *schema.ResourceData) cloudflare.NotificationPoli
 	notificationPolicy := cloudflare.NotificationPolicy{}
 	notificationPolicy.Mechanisms = make(map[string]cloudflare.NotificationMechanismIntegrations)
 	notificationPolicy.Conditions = make(map[string]interface{})
-	notificationPolicy.Filters = make(map[string][]string)
 
 	if name, ok := d.GetOk("name"); ok {
 		notificationPolicy.Name = name.(string)
@@ -160,7 +159,7 @@ func buildNotificationPolicy(d *schema.ResourceData) cloudflare.NotificationPoli
 	}
 
 	if filters, ok := d.GetOk("filters"); ok {
-		notificationPolicy.Filters = filters.([]interface{})[0].(map[string][]string)
+		notificationPolicy.Filters = getNotificationFilters(filters.(*schema.Set))
 	}
 
 	if conditions, ok := d.GetOk("conditions"); ok {
@@ -196,4 +195,26 @@ func setNotificationMechanisms(md []cloudflare.NotificationMechanismData) *schem
 	}
 
 	return schema.NewSet(schema.HashResource(mechanismData), mechanisms)
+}
+
+func getNotificationFilters(s *schema.Set) map[string][]string {
+	filters := make(map[string][]string)
+
+	for _, v := range s.List() {
+		for key, set := range v.(map[string]interface{}) {
+			filters[key] = expandInterfaceToStringList(set.(*schema.Set).List())
+		}
+	}
+
+	return filters
+}
+
+func setNotificationFilters(m map[string][]string) []interface{} {
+	filters := map[string]*schema.Set{}
+
+	for k, v := range m {
+		filters[k] = expandStringListToSet(v)
+	}
+
+	return []interface{}{filters}
 }
