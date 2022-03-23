@@ -239,6 +239,7 @@ var pageRuleAPINilFields = []string{
 	"disable_performance",
 	"disable_railgun",
 	"disable_security",
+	"disable_zaraz",
 }
 var pageRuleAPIStringFields = []string{
 	"bypass_cache_on_cookie",

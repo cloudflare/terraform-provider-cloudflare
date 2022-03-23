@@ -58,6 +58,52 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 	})
 }
 
+func TestCalculateRequestedValidityFromCertificate(t *testing.T) {
+	testCases := []struct {
+		NotBefore time.Time
+		NotAfter  time.Time
+		expected  int
+	}{
+		{
+			NotBefore: time.Date(2022, 1, 18, 10, 48, 0, 0, time.UTC),
+			NotAfter:  time.Date(2023, 1, 18, 10, 48, 0, 0, time.UTC),
+			expected:  365,
+		},
+		{
+			NotBefore: time.Date(2022, 1, 18, 10, 48, 0, 0, time.UTC),
+			NotAfter:  time.Date(2022, 1, 25, 10, 48, 0, 0, time.UTC),
+			expected:  7,
+		},
+		// The following test cases demonstrate some possible edge cases
+		{
+			NotBefore: time.Date(2022, 1, 18, 10, 48, 0, 0, time.UTC),
+			NotAfter:  time.Date(2037, 1, 15, 10, 48, 0, 0, time.UTC),
+			expected:  5475,
+		},
+		{
+			NotBefore: time.Date(2021, 1, 18, 10, 48, 0, 0, time.UTC),
+			NotAfter:  time.Date(2022, 1, 17, 10, 48, 0, 0, time.UTC),
+			expected:  365,
+		},
+		{
+			NotBefore: time.Time{},
+			NotAfter:  time.Time{},
+			expected:  7,
+		},
+	}
+
+	for i, testCase := range testCases {
+		cert := &x509.Certificate{
+			NotBefore: testCase.NotBefore,
+			NotAfter:  testCase.NotAfter,
+		}
+		days := calculateRequestedValidityFromCertificate(cert)
+		if days != testCase.expected {
+			t.Errorf("expected %d days got %d for %d", testCase.expected, days, i)
+		}
+	}
+}
+
 func testAccCheckCloudflareOriginCACertificateDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 

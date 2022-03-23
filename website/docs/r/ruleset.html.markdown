@@ -214,12 +214,13 @@ The following arguments are supported:
 **Nested schema for `rules`**
 
 * `action_parameters` - (Required) List of parameters that configure the behavior of the ruleset rule action (refer to the [nested schema](#nestedblock--action-parameters)).
-* `action` - (Required) Action to perform in the ruleset rule. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `action` - (Required) Action to perform in the ruleset rule. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or `"skip"`.
 * `description` - (Optional) Brief summary of the ruleset rule and its intended use.
 * `enabled` - (Optional) Whether the rule is active.
 * `expression` - (Required) Criteria for an HTTP request to trigger the ruleset rule action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.
 * `id` - (Read only) Unique rule identifier.
 * `ratelimit` - (Optional) List of parameters that configure HTTP rate limiting behaviour (refer to the [nested schema](#nestedblock--ratelimiting-parameters)).
+* `response` - (Optional) List of parameters that configure the response given to end users (refer to the [nested schema](#nestedblock--response-parameters)).
 * `exposed_credential_check` - (Optional) List of parameters that configure exposed credential checks (refer to the [nested schema](#nestedblock--exposed-credential-check-parameters)).
 * `ref` - (Read only) Rule reference.
 * `version`- (Read only) Version of the ruleset to deploy.
@@ -230,8 +231,22 @@ The following arguments are supported:
 * `characteristics` - (Optional) List of parameters that define how Cloudflare tracks the request rate for this rule.
 * `period` - (Optional) The period of time to consider (in seconds) when evaluating the request rate.
 * `requests_per_period` - (Optional) The number of requests over the period of time that will trigger the Rate Limiting rule.
+* `requests_to_origin` - (Optional) Whether to include requests to origin within the Rate Limiting count.
 * `mitigation_timeout` - (Optional) Once the request rate is reached, the Rate Limiting rule blocks further requests for the period of time defined in this field.
-* `mitigation_expression` - (Optional) Scope of the mitigation action. Allows you to specify an action scope different from the rule scope. Refer to the [rate limiting parameters documentation](https://developers.cloudflare.com/firewall/cf-rulesets/custom-rules/rate-limiting/parameters) for full details.
+* `counting_expression` - (Optional) Criteria for counting HTTP requests to trigger the Rate Limiting action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.
+
+<a id="#nestedblock--exposed-credential-check-parameters"></a>
+**Nested schema for `exposed_credential_check`**
+
+* `username_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "username" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
+* `password_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "password" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
+
+<a id="nestedblock--response-parameters"></a>
+**Nested schema for `response`**
+
+* `status_code` - (Optional) HTTP status code to send in the response.
+* `content_type` - (Optional) HTTP content type to send in the response.
+* `content` - (Optional) Body content to include in the response.
 
 <a id="#nestedblock--exposed-credential-check-parameters"></a>
 **Nested schema for `exposed_credential_check`**
@@ -291,14 +306,14 @@ The following arguments are supported:
 **Nested schema for `categories`**
 
 * `category` - (Optional) Tag name to apply the ruleset rule override to.
-* `action` - (Optional) Action to perform in the tag-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `action` - (Optional) Action to perform in the tag-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or `"skip"`.
 * `enabled` - (Optional) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 
 <a id="nestedblock--action-parameters-overrides-rules"></a>
 **Nested schema for `rules`**
 
 * `id` - (Optional) Rule ID to apply the override to.
-* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or  `"skip"`.
+* `action` - (Optional) Action to perform in the rule-level override. Valid values are `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"rewrite"`, `"score"`, or `"skip"`.
 * `enabled` - (Optional) Defines if the current rule-level override enables or disables the rule.
 * `score_threshold` - (Optional) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
 * `sensitivity_level` - (Optional) Sensitivity level for a ruleset rule override.

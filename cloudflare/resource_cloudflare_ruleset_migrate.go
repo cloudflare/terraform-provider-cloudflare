@@ -341,6 +341,10 @@ func resourceCloudflareRulesetSchemaV0() *schema.Resource {
 }
 
 func resourceCloudflareRulesetStateUpgradeV0ToV1(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+	if rawState["ratelimit"] == nil {
+		return rawState, nil
+	}
+
 	rawState["ratelimit"].([]map[string]interface{})[0]["counting_expression"] = rawState["ratelimit"].([]map[string]interface{})[0]["mitigation_expression"]
 	delete(rawState["ratelimit"].([]map[string]interface{})[0], "mitigation_expression")
 

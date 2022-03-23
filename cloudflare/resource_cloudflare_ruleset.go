@@ -228,13 +228,16 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 		}
 
 		if !reflect.ValueOf(r.ActionParameters).IsNil() {
-			var actionParameters []map[string]interface{}
-			var overrides []map[string]interface{}
-			var idBasedOverrides []map[string]interface{}
-			var categoryBasedOverrides []map[string]interface{}
-			var headers []map[string]interface{}
-			var uri []map[string]interface{}
-			var matchedData []map[string]interface{}
+			var (
+				actionParameters       []map[string]interface{}
+				overrides              []map[string]interface{}
+				idBasedOverrides       []map[string]interface{}
+				categoryBasedOverrides []map[string]interface{}
+				headers                []map[string]interface{}
+				uri                    []map[string]interface{}
+				matchedData            []map[string]interface{}
+				response               []map[string]interface{}
+			)
 			actionParameterRules := make(map[string]string)
 
 			if !reflect.ValueOf(r.ActionParameters.Overrides).IsNil() {
@@ -322,6 +325,14 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				}
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.Response).IsNil() {
+				response = append(response, map[string]interface{}{
+					"status_code":  r.ActionParameters.Response.StatusCode,
+					"content_type": r.ActionParameters.Response.ContentType,
+					"content":      r.ActionParameters.Response.Content,
+				})
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
 				"id":           r.ActionParameters.ID,
 				"increment":    r.ActionParameters.Increment,
@@ -334,6 +345,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"rules":        actionParameterRules,
 				"uri":          uri,
 				"matched_data": matchedData,
+				"response":     response,
 				"version":      r.ActionParameters.Version,
 			})
 
@@ -349,6 +361,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"requests_per_period": r.RateLimit.RequestsPerPeriod,
 				"mitigation_timeout":  r.RateLimit.MitigationTimeout,
 				"counting_expression": r.RateLimit.CountingExpression,
+				"requests_to_origin":  r.RateLimit.RequestsToOrigin,
 			})
 
 			rule["ratelimit"] = rateLimit
@@ -451,7 +464,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						for overrideCounter, overrideParamValue := range pValue.([]interface{}) {
 							//nolint:staticcheck
 							if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter)); ok {
-								overrideConfiguration.Enabled = &[]bool{value.(bool)}[0]
+								overrideConfiguration.Enabled = cloudflare.BoolPtr(value.(bool))
 							}
 
 							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
@@ -465,7 +478,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 									categories = append(categories, cloudflare.RulesetRuleActionParametersCategories{
 										Category: cData["category"].(string),
 										Action:   cData["action"].(string),
-										Enabled:  cData["enabled"].(bool),
+										Enabled:  cloudflare.BoolPtr(cData["enabled"].(bool)),
 									})
 								}
 							}
@@ -478,7 +491,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 									var enabled *bool
 									//nolint:staticcheck
 									if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
-										enabled = &[]bool{value.(bool)}[0]
+										enabled = cloudflare.BoolPtr(value.(bool))
 									}
 
 									rules = append(rules, cloudflare.RulesetRuleActionParametersRules{
@@ -505,6 +518,15 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						for i := range pValue.([]interface{}) {
 							rule.ActionParameters.MatchedData = &cloudflare.RulesetRuleActionParametersMatchedData{
 								PublicKey: pValue.([]interface{})[i].(map[string]interface{})["public_key"].(string),
+							}
+						}
+
+					case "response":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.Response = &cloudflare.RulesetRuleActionParametersBlockResponse{
+								StatusCode:  uint16(pValue.([]interface{})[i].(map[string]interface{})["status_code"].(int)),
+								ContentType: pValue.([]interface{})[i].(map[string]interface{})["content_type"].(string),
+								Content:     pValue.([]interface{})[i].(map[string]interface{})["content"].(string),
 							}
 						}
 
@@ -570,6 +592,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						rule.RateLimit.MitigationTimeout = pValue.(int)
 					case "counting_expression":
 						rule.RateLimit.CountingExpression = pValue.(string)
+					case "requests_to_origin":
+						rule.RateLimit.RequestsToOrigin = pValue.(bool)
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for ratelimit: %s", pKey)
