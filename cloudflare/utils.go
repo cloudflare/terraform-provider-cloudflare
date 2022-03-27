@@ -84,6 +84,15 @@ func contains(slice []string, item string) bool {
 	return ok
 }
 
+func sliceContainsInt(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 func itemExistsInSlice(slice interface{}, item interface{}) bool {
 	s := reflect.ValueOf(slice)
 

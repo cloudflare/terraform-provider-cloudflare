@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -32,7 +33,8 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 
 	rule, err := client.WAFRule(context.Background(), zoneID, packageID, ruleID)
 	if err != nil {
-		if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1002) || err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1004) {
+		var requestError *cloudflare.RequestError
+		if errors.As(err, &requestError) && (sliceContainsInt(requestError.ErrorCodes(), 1002) || sliceContainsInt(requestError.ErrorCodes(), 1004)) {
 			d.SetId("")
 			return nil
 		}
