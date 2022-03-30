@@ -43,6 +43,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
+		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -118,6 +119,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
 	d.Set("logo_url", accessApplication.LogoURL)
 	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
+	d.Set("service_auth_401_redirect", accessApplication.ServiceAuth401Redirect)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -148,6 +150,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
+		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
 	}
 
 	if len(allowedIDPList) > 0 {

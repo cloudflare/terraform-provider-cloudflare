@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/cloudflare_access_application: Add service_auth_401_redirect
+field.
+```

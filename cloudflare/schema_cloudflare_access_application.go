@@ -153,6 +153,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional: true,
 			Default:  true,
 		},
+		"service_auth_401_redirect": {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
 	}
 }
 
