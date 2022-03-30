@@ -378,6 +378,16 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			rule["exposed_credential_check"] = exposedCredentialCheck
 		}
 
+		if !reflect.ValueOf(r.Logging).IsNil() {
+			var logging []map[string]interface{}
+
+			logging = append(logging, map[string]interface{}{
+				"enabled": r.Logging.Enabled,
+			})
+
+			rule["logging"] = logging
+		}
+
 		rulesData = append(rulesData, rule)
 	}
 
@@ -614,6 +624,21 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for exposed_credential_check: %s", pKey)
+					}
+				}
+			}
+		}
+
+		if len(resourceRule["logging"].([]interface{})) > 0 {
+			rule.Logging = &cloudflare.RulesetRuleLogging{}
+			for _, parameter := range resourceRule["logging"].([]interface{}) {
+				for pKey, pValue := range parameter.(map[string]interface{}) {
+					switch pKey {
+					case "enabled":
+						rule.Logging.Enabled = pValue.(*bool)
+
+					default:
+						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for logging: %s", pKey)
 					}
 				}
 			}

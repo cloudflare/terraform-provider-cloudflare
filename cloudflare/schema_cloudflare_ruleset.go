@@ -354,6 +354,19 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 							},
 						},
 					},
+					"logging": {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"enabled": {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+							},
+						},
+					},
 				},
 			},
 		},

@@ -1260,6 +1260,47 @@ func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_Logging(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetDisableLoggingForSkipAction(rnd, "example disable logging for skip rule", accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "example disable logging for skip rule"),
+					resource.TestCheckResourceAttr(resourceName, "description", "This ruleset includes a skip rule whose logging is disabled."),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "skip"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example disabled logging"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.0.enabled", "false"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_ConditionallySetActionParameterVersion(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -2202,6 +2243,31 @@ func testAccCheckCloudflareRulesetExposedCredentialCheck(rnd, name, accountID st
       exposed_credential_check {
         username_expression = "url_decode(http.request.body.form[\"username\"][0])"
         password_expression = "url_decode(http.request.body.form[\"password\"][0])"
+      }
+    }
+  }
+`, rnd, name, accountID)
+}
+
+func testAccCheckCloudflareRulesetDisableLoggingForSkipAction(rnd, name, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    account_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "This ruleset includes a skip rule whose logging is disabled."
+    kind        = "zone"
+    phase       = "http_request_firewall_managed"
+
+    rules {
+      action = "skip"
+      action_parameters {
+        ruleset = "current"
+      }
+      expression = "true"
+      enabled = true
+      description = "example disabled logging"
+      logging {
+        enabled = false
       }
     }
   }
