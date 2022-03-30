@@ -64,8 +64,8 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
 		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
 		if err != nil {
-			//nolint:errorlint
-			if errors.As(err, &cloudflare.APIRequestError{}) && err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
+			var requestError *cloudflare.RequestError
+			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {
 				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
 			} else {
 				return resource.NonRetryableError(fmt.Errorf("failed to create custom hostname fallback origin: %w", err))
@@ -106,8 +106,8 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
 		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
 		if err != nil {
-			//nolint:errorlint
-			if errors.As(err, &cloudflare.APIRequestError{}) && err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1414) {
+			var requestError *cloudflare.RequestError
+			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {
 				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
 			}
 			return resource.NonRetryableError(fmt.Errorf("failed to update custom hostname fallback origin: %w", err))

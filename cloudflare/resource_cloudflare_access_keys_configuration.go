@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -28,10 +29,13 @@ func resourceCloudflareAccessKeysConfigurationRead(d *schema.ResourceData, meta 
 
 	keysConfig, err := client.AccessKeysConfig(context.Background(), accountID)
 	if err != nil {
-		if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(12109) {
-			log.Printf("[INFO] Access Keys Configuration not enabled for account %s", accountID)
-			d.SetId("")
-			return nil
+		var requestError *cloudflare.RequestError
+		if errors.As(err, &requestError) {
+			if sliceContainsInt(requestError.ErrorCodes(), 12109) {
+				log.Printf("[INFO] Access Keys Configuration not enabled for account %s", accountID)
+				d.SetId("")
+				return nil
+			}
 		}
 		return fmt.Errorf("error finding Access Keys Configuration %s: %s", accountID, err)
 	}
