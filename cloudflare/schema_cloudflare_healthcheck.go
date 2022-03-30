@@ -126,9 +126,10 @@ func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 			},
 		},
 		"notification_suspended": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:       schema.TypeBool,
+			Optional:   true,
+			Default:    false,
+			Deprecated: "Use `cloudflare_notification_policy` instead.",
 		},
 		"notification_email_addresses": {
 			Type:     schema.TypeList,
@@ -136,6 +137,7 @@ func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Deprecated: "Use `cloudflare_notification_policy` instead.",
 		},
 		"created_on": {
 			Type:     schema.TypeString,

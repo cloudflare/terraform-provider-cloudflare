@@ -92,8 +92,8 @@ The following arguments are supported:
 * `address` - (Required) The hostname or IP address of the origin server to run health checks on.
 * `suspended` - (Optional) If suspended, no health checks are sent to the origin. Valid values: `true` or `false` (Default: `false`).
 * `check_regions` - (Optional) A list of regions from which to run health checks. If not set Cloudflare will pick a default region. Valid values: `WNAM`, `ENAM`, `WEU`, `EEU`, `NSAM`, `SSAM`, `OC`, `ME`, `NAF`, `SAF`, `IN`, `SEAS`, `NEAS`, `ALL_REGIONS`.
-* `notification_suspended` - (Optional) Whether the notifications are suspended or not. Useful for maintenance periods. Valid values: `true` or `false` (Default: `false`).
-* `notification_email_addresses` - (Optional) A list of email addresses we want to send the notifications to.
+* `notification_suspended` - (Optional) Whether the notifications are suspended or not. Useful for maintenance periods. Valid values: `true` or `false` (Default: `false`). *Deprecated, use `cloudflare_notification_policy` instead.*
+* `notification_email_addresses` - (Optional) A list of email addresses we want to send the notifications to. *Deprecated, use `cloudflare_notification_policy` instead.*
 * `type` - (Required) The protocol to use for the health check. Valid values: `HTTP`, `HTTPS`, `TCP`.
 * `port` - (Optional) Port number to connect to for the health check.  Valid values are in the range `0-65535` (Default: `80`).
 * `timeout` - (Optional) The timeout (in seconds) before marking the health check as failed. (Default: `5`)
