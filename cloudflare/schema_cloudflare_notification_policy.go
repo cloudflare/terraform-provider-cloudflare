@@ -24,14 +24,7 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"filters": {
-			Type:     schema.TypeMap,
-			Optional: true,
-			Elem: &schema.Schema{
-				Type: schema.TypeList,
-				Elem: schema.TypeString,
-			},
-		},
+		"filters": notificationPolicyFilterSchema(),
 		"created": {
 			Type:     schema.TypeString,
 			Computed: true,
@@ -40,10 +33,10 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Computed: true,
 		},
-		"conditions": {
-			Type:     schema.TypeMap,
-			Optional: true,
-		},
+		//"conditions": {
+		//	Type:     schema.TypeMap,
+		//	Optional: true,
+		//},
 		"email_integration": {
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -73,4 +66,54 @@ var mechanismData = &schema.Resource{
 			Optional: true,
 		},
 	},
+}
+
+func notificationPolicyFilterSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"status": {
+					Type:     schema.TypeSet,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+					Optional: true,
+				},
+				"health_check_id": {
+					Type:     schema.TypeSet,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+					Optional: true,
+				},
+				"zones": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+				},
+				"services": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+				},
+				"product": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+				},
+				"limit": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+				},
+			},
+		},
+	}
 }

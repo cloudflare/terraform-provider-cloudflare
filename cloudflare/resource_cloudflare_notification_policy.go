@@ -55,17 +55,21 @@ func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta inter
 	d.Set("enabled", policy.Result.Enabled)
 	d.Set("alert_type", policy.Result.AlertType)
 	d.Set("description", policy.Result.Description)
-	d.Set("filters", policy.Result.Filters)
-	d.Set("conditions", policy.Result.Conditions)
 	d.Set("created", policy.Result.Created.Format(time.RFC3339))
 	d.Set("modified", policy.Result.Modified.Format(time.RFC3339))
+
+	if err := d.Set("filters", flattenNotificationPolicyFilter(policy.Result.Filters)); err != nil {
+		return fmt.Errorf("failed to set filters: %s", err)
+	}
 
 	if err := d.Set("email_integration", setNotificationMechanisms(policy.Result.Mechanisms["email"])); err != nil {
 		return fmt.Errorf("failed to set email integration: %s", err)
 	}
+
 	if err := d.Set("pagerduty_integration", setNotificationMechanisms(policy.Result.Mechanisms["pagerduty"])); err != nil {
 		return fmt.Errorf("failed to set pagerduty integration: %s", err)
 	}
+
 	if err := d.Set("webhooks_integration", setNotificationMechanisms(policy.Result.Mechanisms["webhooks"])); err != nil {
 		return fmt.Errorf("failed to set webhooks integration: %s", err)
 	}
@@ -155,14 +159,36 @@ func buildNotificationPolicy(d *schema.ResourceData) cloudflare.NotificationPoli
 	}
 
 	if filters, ok := d.GetOk("filters"); ok {
-		notificationPolicy.Filters = filters.(map[string][]string)
-	}
-
-	if conditions, ok := d.GetOk("conditions"); ok {
-		notificationPolicy.Conditions = conditions.(map[string]interface{})
+		notificationPolicy.Filters = expandNotificationPolicyFilter(filters.([]interface{}))
 	}
 
 	return notificationPolicy
+}
+
+func expandNotificationPolicyFilter(list []interface{}) map[string][]string {
+	filters := make(map[string][]string)
+	for _, listItem := range list {
+		setMap := listItem.(map[string]interface{})
+		for k, mapItem := range setMap {
+			itemSet := mapItem.(*schema.Set)
+			for _, v := range itemSet.List() {
+				filters[k] = append(filters[k], v.(string))
+			}
+		}
+	}
+	return filters
+}
+
+func flattenNotificationPolicyFilter(filters map[string][]string) []interface{} {
+	filtersMap := make(map[string]interface{})
+	for k, v := range filters {
+		set := schema.NewSet(schema.HashString, []interface{}{})
+		for _, value := range v {
+			set.Add(value)
+		}
+		filtersMap[k] = set
+	}
+	return []interface{}{filtersMap}
 }
 
 func getNotificationMechanisms(s *schema.Set) []cloudflare.NotificationMechanismData {
