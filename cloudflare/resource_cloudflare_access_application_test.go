@@ -17,7 +17,7 @@ var (
 	domain = os.Getenv("CLOUDFLARE_DOMAIN")
 )
 
-func TestAccCloudflareAccessApplicationBasic(t *testing.T) {
+func TestAccCloudflareAccessApplication_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -67,7 +67,7 @@ func TestAccCloudflareAccessApplicationBasic(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithCORS(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -97,7 +97,7 @@ func TestAccCloudflareAccessApplicationWithCORS(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithAutoRedirectToIdentity(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -123,7 +123,7 @@ func TestAccCloudflareAccessApplicationWithAutoRedirectToIdentity(t *testing.T) 
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithEnableBindingCookie(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -149,7 +149,7 @@ func TestAccCloudflareAccessApplicationWithEnableBindingCookie(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithCustomDenyFields(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -176,7 +176,7 @@ func TestAccCloudflareAccessApplicationWithCustomDenyFields(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -203,7 +203,7 @@ func TestAccCloudflareAccessApplicationWithADefinedIdps(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithHttpOnlyCookieAttribute(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -229,7 +229,7 @@ func TestAccCloudflareAccessApplicationWithHttpOnlyCookieAttribute(t *testing.T)
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithSameSiteCookieAttribute(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -255,7 +255,7 @@ func TestAccCloudflareAccessApplicationWithSameSiteCookieAttribute(t *testing.T)
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithLogoURL(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -281,7 +281,7 @@ func TestAccCloudflareAccessApplicationWithLogoURL(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithSkipInterstitial(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -307,7 +307,7 @@ func TestAccCloudflareAccessApplicationWithSkipInterstitial(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplicationWithAppLauncherVisible(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
