@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -32,7 +33,8 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 
 	group, err := client.WAFGroup(context.Background(), zoneID, packageID, groupID)
 	if err != nil {
-		if err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1002) || err.(*cloudflare.APIRequestError).InternalErrorCodeIs(1003) {
+		var requestError *cloudflare.RequestError
+		if errors.As(err, &requestError) && (sliceContainsInt(requestError.ErrorCodes(), 1002) || sliceContainsInt(requestError.ErrorCodes(), 1003)) {
 			d.SetId("")
 			return nil
 		}

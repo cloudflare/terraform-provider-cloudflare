@@ -1,5 +1,9 @@
 ## 3.12.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_healthcheck: `notification_suspended` and `notification_email_addresses` attributes are being deprecated in favour of `cloudflare_notification_policy` resource instead. ([#1529](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1529))
+
 ## 3.11.0 (March 23rd, 2022)
 
 NOTES:
