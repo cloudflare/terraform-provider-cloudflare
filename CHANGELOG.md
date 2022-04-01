@@ -12,6 +12,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_access_application: Add service_auth_401_redirect field. ([#1540](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1540))
 
+BUG FIXES:
+
+* resource/cloudflare_zone_dnssec: don't try to enable DNSSEC when state is "pending" ([#1530](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1530))
+
 ## 3.11.0 (March 23rd, 2022)
 
 NOTES:
