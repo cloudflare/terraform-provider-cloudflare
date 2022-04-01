@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareAccessBookmarkBasic(t *testing.T) {
+func TestAccCloudflareAccessBookmark_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_bookmark.%s", rnd)
 
@@ -28,10 +28,8 @@ func TestAccCloudflareAccessBookmarkBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
-					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
-					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
-					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "logo_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
+					resource.TestCheckResourceAttr(name, "app_launcher_visible", "true"),
 				),
 			},
 		},
@@ -51,10 +49,8 @@ func TestAccCloudflareAccessBookmarkBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
-					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
-					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
-					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "logo_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
+					resource.TestCheckResourceAttr(name, "app_launcher_visible", "true"),
 				),
 			},
 		},
@@ -64,9 +60,9 @@ func TestAccCloudflareAccessBookmarkBasic(t *testing.T) {
 func testAccCloudflareAccessBookmarkConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_bookmark" "%[1]s" {
-  %[3]s_id                  = "%[4]s"
+  %[3]s_id             = "%[4]s"
   name                 = "%[1]s"
-  domain               = "%[1]s.%[3]s"
+  domain               = "%[1]s.%[2]s"
   logo_url             = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
   app_launcher_visible = true
 }
@@ -95,7 +91,7 @@ func testAccCheckCloudflareAccessBookmarkDestroy(s *terraform.State) error {
 	return nil
 }
 
-func TestAccCloudflareAccessBookmarkWithZoneID(t *testing.T) {
+func TestAccCloudflareAccessBookmark_WithZoneID(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -143,7 +139,7 @@ func testAccessBookmarkWithZoneID(resourceID, zone, zoneID string) string {
       name     = "%[1]s"
       zone_id  = "%[3]s"
       domain   = "%[1]s.%[2]s"
-			logo_url = "https://image.com/img"
+	  logo_url = "https://image.com/img"
     }
   `, resourceID, zone, zoneID)
 }
@@ -154,7 +150,7 @@ func testAccessBookmarkWithZoneIDUpdated(resourceID, zone, zoneID string) string
       name     = "%[1]s-updated"
       zone_id  = "%[3]s"
       domain   = "%[1]s.%[2]s"
-			logo_url = "https://image.com/img"
+	  logo_url = "https://image.com/img"
     }
   `, resourceID, zone, zoneID)
 }
