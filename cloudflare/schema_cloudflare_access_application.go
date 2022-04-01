@@ -133,7 +133,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 		"http_only_cookie_attribute": {
 			Type:     schema.TypeBool,
 			Optional: true,
-			Default:  false,
+			Computed: true,
 		},
 		"same_site_cookie_attribute": {
 			Type:     schema.TypeString,
