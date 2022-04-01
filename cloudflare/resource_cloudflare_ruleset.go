@@ -635,7 +635,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 				for pKey, pValue := range parameter.(map[string]interface{}) {
 					switch pKey {
 					case "enabled":
-						rule.Logging.Enabled = pValue.(*bool)
+						rule.Logging.Enabled = cloudflare.BoolPtr(pValue.(bool))
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for logging: %s", pKey)
