@@ -14,6 +14,7 @@ import (
 // The supported status for a Zone DNSSEC setting
 const (
 	DNSSECStatusActive   = "active"
+	DNSSECStatusPending  = "pending"
 	DNSSECStatusDisabled = "disabled"
 )
 
@@ -41,7 +42,7 @@ func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
 	}
-	if currentDNSSEC.Status != DNSSECStatusActive {
+	if currentDNSSEC.Status != DNSSECStatusActive && currentDNSSEC.Status != DNSSECStatusPending {
 		_, err := client.UpdateZoneDNSSEC(context.Background(), zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusActive})
 
 		if err != nil {
