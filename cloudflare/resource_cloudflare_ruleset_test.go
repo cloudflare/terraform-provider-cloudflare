@@ -1285,7 +1285,7 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "example disable logging for skip rule"),
 					resource.TestCheckResourceAttr(resourceName, "description", "This ruleset includes a skip rule whose logging is disabled."),
-					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "root"),
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_firewall_managed"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
@@ -2255,7 +2255,7 @@ func testAccCheckCloudflareRulesetDisableLoggingForSkipAction(rnd, name, account
     account_id  = "%[3]s"
     name        = "%[2]s"
     description = "This ruleset includes a skip rule whose logging is disabled."
-    kind        = "zone"
+    kind        = "root"
     phase       = "http_request_firewall_managed"
 
     rules {
