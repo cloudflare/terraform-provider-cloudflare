@@ -58,8 +58,10 @@ func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta inter
 	d.Set("created", policy.Result.Created.Format(time.RFC3339))
 	d.Set("modified", policy.Result.Modified.Format(time.RFC3339))
 
-	if err := d.Set("filters", flattenNotificationPolicyFilter(policy.Result.Filters)); err != nil {
-		return fmt.Errorf("failed to set filters: %s", err)
+	if policy.Result.Filters != nil && len(policy.Result.Filters) > 0 {
+		if err := d.Set("filters", flattenNotificationPolicyFilter(policy.Result.Filters)); err != nil {
+			return fmt.Errorf("failed to set filters: %s", err)
+		}
 	}
 
 	if err := d.Set("email_integration", setNotificationMechanisms(policy.Result.Mechanisms["email"])); err != nil {

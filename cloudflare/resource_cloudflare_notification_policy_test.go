@@ -11,13 +11,6 @@ import (
 )
 
 func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	updatedPolicyName := "updated test SSL policy from terraform provider"
