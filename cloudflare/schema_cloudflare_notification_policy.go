@@ -33,10 +33,6 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Computed: true,
 		},
-		//"conditions": {
-		//	Type:     schema.TypeMap,
-		//	Optional: true,
-		//},
 		"email_integration": {
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -81,9 +77,10 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional: true,
 				},
 				"health_check_id": {
-					Type:     schema.TypeSet,
-					Elem:     &schema.Schema{Type: schema.TypeString},
-					Optional: true,
+					Type:         schema.TypeSet,
+					Elem:         &schema.Schema{Type: schema.TypeString},
+					Optional:     true,
+					RequiredWith: []string{"filters.0.status"},
 				},
 				"zones": {
 					Type: schema.TypeSet,

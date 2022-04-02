@@ -80,10 +80,9 @@ func testCheckCloudflareNotificationPolicyUpdated(resName, policyName, policyDes
 func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
-	updatedPolicyName := "durable objects usage notification"
+	updatedPolicyName := "updated workers usage notification"
 	updatedPolicyDesc := "updated description"
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	zoneID := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -92,7 +91,7 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testCheckCloudflareNotificationPolicyWithFiltersAttribute(rnd, accountID, zoneID),
+				Config: testCheckCloudflareNotificationPolicyWithFiltersAttribute(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "workers usage notification"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
@@ -104,14 +103,14 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 				),
 			},
 			{
-				Config: testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(rnd, updatedPolicyName, updatedPolicyDesc, accountID, zoneID),
+				Config: testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(rnd, updatedPolicyName, updatedPolicyDesc, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedPolicyName),
 					resource.TestCheckResourceAttr(resourceName, "description", updatedPolicyDesc),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "billing_usage_alert"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.product.*", "worker_durable_objects_requests"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.product.*", "worker_requests"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.limit.*", "100"),
 				),
 			},
@@ -119,7 +118,7 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 	})
 }
 
-func testCheckCloudflareNotificationPolicyWithFiltersAttribute(name, accountID, zoneID string) string {
+func testCheckCloudflareNotificationPolicyWithFiltersAttribute(name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_notification_policy" "%[1]s" {
     name        = "workers usage notification"
@@ -137,10 +136,10 @@ func testCheckCloudflareNotificationPolicyWithFiltersAttribute(name, accountID, 
       ]
 	  limit = ["100"]
 	}
-  }`, name, accountID, zoneID)
+  }`, name, accountID)
 }
 
-func testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(name, policyName, policyDesc, accountID, zoneID string) string {
+func testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(name, policyName, policyDesc, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_notification_policy" "%[1]s" {
     name        = "%[2]s"
@@ -154,11 +153,11 @@ func testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(name, poli
     }
     filters {
       product = [
-        "worker_durable_objects_requests",
+        "worker_requests",
       ]
       limit = ["100"]
 	}
-  }`, name, policyName, policyDesc, accountID, zoneID)
+  }`, name, policyName, policyDesc, accountID)
 }
 
 func TestFlattenExpandFilters(t *testing.T) {
