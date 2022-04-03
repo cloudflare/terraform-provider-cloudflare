@@ -170,10 +170,8 @@ func buildNotificationPolicy(d *schema.ResourceData) cloudflare.NotificationPoli
 func expandNotificationPolicyFilter(list []interface{}) map[string][]string {
 	filters := make(map[string][]string)
 	for _, listItem := range list {
-		setMap := listItem.(map[string]interface{})
-		for k, mapItem := range setMap {
-			itemSet := mapItem.(*schema.Set)
-			for _, v := range itemSet.List() {
+		for k, mapItem := range listItem.(map[string]interface{}) {
+			for _, v := range mapItem.(*schema.Set).List() {
 				filters[k] = append(filters[k], v.(string))
 			}
 		}
