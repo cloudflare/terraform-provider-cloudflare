@@ -110,6 +110,21 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					},
 					Optional: true,
 				},
+				"enabled": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+				},
+				"pool_id": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:     true,
+					RequiredWith: []string{"filters.0.enabled"},
+				},
 			},
 		},
 	}
