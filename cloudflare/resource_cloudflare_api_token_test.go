@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccAPIToken(t *testing.T) {
+func TestAccAPIToken_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -42,7 +42,7 @@ func TestAccAPIToken(t *testing.T) {
 	})
 }
 
-func TestAccAPITokenAllowDeny(t *testing.T) {
+func TestAccAPIToken_AllowDeny(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -61,19 +61,19 @@ func TestAccAPITokenAllowDeny(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAPITokenConfigAllowDeny(rnd, rnd, permissionID, zoneID, false),
+				Config: testAPITokenConfigAllowDeny(rnd, permissionID, zoneID, false),
 			},
 			{
-				Config: testAPITokenConfigAllowDeny(rnd, rnd, permissionID, zoneID, true),
+				Config: testAPITokenConfigAllowDeny(rnd, permissionID, zoneID, true),
 			},
 			{
-				Config: testAPITokenConfigAllowDeny(rnd, rnd, permissionID, zoneID, false),
+				Config: testAPITokenConfigAllowDeny(rnd, permissionID, zoneID, false),
 			},
 		},
 	})
 }
 
-func TestAccAPITokenDoesNotSetConditions(t *testing.T) {
+func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -117,7 +117,7 @@ func testAccCloudflareAPITokenWithoutCondition(resourceName, rnd, permissionID s
 `, resourceName, rnd, permissionID)
 }
 
-func TestAccAPITokenSetIndividualCondition(t *testing.T) {
+func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -167,7 +167,7 @@ func testAccCloudflareAPITokenWithIndividualCondition(rnd string, permissionID s
 `, rnd, permissionID)
 }
 
-func TestAccAPITokenSetAllCondition(t *testing.T) {
+func TestAccAPIToken_SetAllCondition(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -218,7 +218,7 @@ func testAccCloudflareAPITokenWithAllCondition(rnd string, permissionID string) 
 `, rnd, permissionID)
 }
 
-func testAPITokenConfigAllowDeny(resourceID, name, permissionID, zoneID string, allowAllZonesExceptOne bool) string {
+func testAPITokenConfigAllowDeny(resourceID, permissionID, zoneID string, allowAllZonesExceptOne bool) string {
 	var add string
 	if allowAllZonesExceptOne {
 		add = fmt.Sprintf(`
@@ -236,18 +236,18 @@ func testAPITokenConfigAllowDeny(resourceID, name, permissionID, zoneID string, 
 
 	return fmt.Sprintf(`
 		resource "cloudflare_api_token" "%[1]s" {
-		  name = "%[2]s"
+		  name = "%[1]s"
 
 		  policy {
 			effect = "allow"
 			permission_groups = [
-			  "%[3]s",
+			  "%[2]s",
 			]
 			resources = {
 			  "com.cloudflare.api.account.zone.*" = "*"
 			}
 		  }
-		  %[4]s
+		  %[3]s
 		}
-		`, resourceID, name, permissionID, add)
+		`, resourceID, permissionID, add)
 }
