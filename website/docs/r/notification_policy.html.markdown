@@ -14,6 +14,7 @@ mechanisms supported are email, webhooks, and PagerDuty.
 ## Example Usage
 
 ### Basic Example
+
 ```hcl
 resource "cloudflare_notification_policy" "example" {
   account_id = "c4a7362d577a6c3019a474fd6f485821"
@@ -36,7 +37,8 @@ resource "cloudflare_notification_policy" "example" {
 }
 ```
 
-Example With Filters
+### With Filters
+
 ```hcl
 resource "cloudflare_notification_policy" "example" {
   account_id  = "c4a7362d577a6c3019a474fd6f485821"
@@ -56,7 +58,7 @@ resource "cloudflare_notification_policy" "example" {
   pagerduty_integration {
     id   =  "850129d136459401860572c5d964d27k"
   }
-  
+
   filters {
     health_check_id = ["699d98642c564d2e855e9661899b7252"]
     status           = ["Unhealthy"]
@@ -71,29 +73,49 @@ The following arguments are supported:
 * `account_id` - (Required) The ID of the account for which the notification policy has to be created.
 * `name` - (Required) The name of the notification policy.
 * `enabled` - (Required) The status of the notification policy, a boolean value.
-* `alert_type` - (Required) The event type that will trigger the dispatch of a notification.
+* `alert_type` - (Required) The event type that will trigger the dispatch of a notification (refer to the [nested schema](#nestedblock--alert-type)).
 * `email_integration` - (Optional) The email id to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required.
 * `webhooks_integration` - (Optional) The unique id of a configured webhooks endpoint to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required.
 * `pagerduty_integration` - (Optional) The unique id of a configured pagerduty endpoint to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required.
 * `description` - (Optional) Description of the notification policy.
-* `filters` - (Optional) An optional nested block of filters that applies to the selected `alert_type`. A key-value map that specifies the type of filter and the values to match against.
+* `filters` - (Optional) An optional nested block of filters that applies to the selected `alert_type`. A key-value map that specifies the type of filter and the values to match against (refer to the alert type block for available fields).
 
-## Filters
+<a id="nestedblock--alert-type"></a>
+**Nested schema for `alert_type`**
 
-| Alert Type                       | Filter          | Description                               | Example Values                                                                                                                                                                                                                                                                                    |
-|----------------------------------|-----------------|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| billing_usage_alert              |                 | billing usage exceeds threshold           |                                                                                                                                                                                                                                                                                                   |
-|                                  | product         | product name                              | "worker_requests", "worker_durable_objects_requests", "worker_durable_objects_duration", "worker_durable_objects_data_transfer", "worker_durable_objects_stored_data", "worker_durable_objects_storage_deletes", "worker_durable_objects_storage_writes", "worker_durable_objects_storage_reads"  |
-|                                  | limit           | a numerical limit                         | "100"                                                                                                                                                                                                                                                                                             |
-| health_check_status_notification |                 | health check status changes               |                                                                                                                                                                                                                                                                                                   |
-|                                  | health_check_id | health check ID                           | 699d98642c564d2e855e9661899b7252                                                                                                                                                                                                                                                                  |
-|                                  | status          | status to alert on                        | "Unhealthy", "Healthy"                                                                                                                                                                                                                                                                            |
-| g6_pool_toggle_alert             |                 | pool alerts on enable/disable status      |                                                                                                                                                                                                                                                                                                   |
-|                                  | pool_id         | load balancing pool id                    | "17b5962d775c646f3f9725cbc7a53df4"                                                                                                                                                                                                                                                                |
-|                                  | enabled         | state to alert on                         | "true", "false"                                                                                                                                                                                                                                                                                   |
-| real_origin_monitoring           |                 | Cloudflare is unable to reach your origin |                                                                                                                                                                                                                                                                                                   |
-| universal_ssl_event_type         |                 | universal certificate notices             |                                                                                                                                                                                                                                                                                                   |
-| bgp_hijack_notification          |                 | alerts for BGP hijack                     |                                                                                                                                                                                                                                                                                                   |
+* `billing_usage_alert` - (Optional) Billing usage exceeds threshold (refer to the [nested schema](#nestedblock--alert-type-billing-usage-alert)).
+* `health_check_status_notification` - (Optional) Health check status changes (refer to the [nested schema](#nestedblock--alert-type-health-check-status-notification)).
+* `g6_pool_toggle_alert` - (Optional) Pool alerts on enable/disable status (refer to the [nested schema](#nestedblock--alert-type-g6-pool-toggle-alert)).
+* `real_origin_monitoring` - (Optional) Cloudflare is unable to reach your origin (refer to the [nested schema](#nestedblock--alert-type-real-origin-monitoring)).
+* `universal_ssl_event_type` - (Optional) Universal certificate notices (refer to the [nested schema](#nestedblock--alert-type-universal-ssl-event-type)).
+* `bgp_hijack_notification` - (Optional) Alerts for BGP hijack (refer to the [nested schema](#nestedblock--alert-type-bgp-hijack-notification)).
+
+<a id="nestedblock--alert-type-billing-usage-alert"></a>
+**Nested schema for `billing_usage_alert`**
+
+* `product` - (Optional) Product name. Available values: `"worker_requests"`, `"worker_durable_objects_requests"`, `"worker_durable_objects_duration"`, `"worker_durable_objects_data_transfer"`, `"worker_durable_objects_stored_data"`, `"worker_durable_objects_storage_deletes"`, `"worker_durable_objects_storage_writes"`, `"worker_durable_objects_storage_reads"`.
+* `limit` - (Optional) A numerical limit. Example: `"100"`
+
+<a id="nestedblock--alert-type-health-check-status-notification"></a>
+**Nested schema for `health_check_status_notification`**
+
+* `health_check_id` - (Optional) Identifier health check.
+* `status` - (Optional) Status to alert on. Example: `"Unhealthy"`, `"Healthy"`.
+
+<a id="nestedblock--alert-type-g6-pool-toggle-alert"></a>
+**Nested schema for `g6_pool_toggle_alert`**
+
+* `pool_id` - (Optional) Load balancer pool identifier.
+* `enabled` - (Optional) State of the pool to alert on. Example: `"true"`, `"false"`.
+
+<a id="#nestedblock--alert-type-real-origin-monitoring"></a>
+**Nested schema for `real_origin_monitoring`**
+
+<a id="#nestedblock--alert-type-universal-ssl-event-type"></a>
+**Nested schema for `universal_ssl_event_type`**
+
+<a id="#nestedblock--alert-type-bgp-hijack-notification"></a>
+**Nested schema for `bgp_hijack_notification`**
 
 ## Import
 
