@@ -35,11 +35,11 @@ func buildAPIToken(d *schema.ResourceData) cloudflare.APIToken {
 	ipsIn := []string{}
 	ipsNotIn := []string{}
 	if ips, ok := d.GetOk("condition.0.request_ip.0.in"); ok {
-		ipsIn = expandInterfaceToStringList(ips)
+		ipsIn = expandInterfaceToStringList(ips.(*schema.Set).List())
 	}
 
 	if ips, ok := d.GetOk("condition.0.request_ip.0.not_in"); ok {
-		ipsNotIn = expandInterfaceToStringList(ips)
+		ipsNotIn = expandInterfaceToStringList(ips.(*schema.Set).List())
 	}
 
 	if len(ipsIn) > 0 || len(ipsNotIn) > 0 {
@@ -74,8 +74,6 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 
 	d.SetId(t.ID)
 	d.Set("status", t.Status)
-	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
-	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
 	d.Set("value", t.Value)
 
 	return resourceCloudflareApiTokenRead(d, meta)
@@ -88,7 +86,7 @@ func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APIToken
 	for _, p := range policies {
 		policy := p.(map[string]interface{})
 
-		permissionGroups := expandInterfaceToStringList(policy["permission_groups"])
+		permissionGroups := expandInterfaceToStringList(policy["permission_groups"].(*schema.Set).List())
 		if len(permissionGroups) == 0 {
 			continue
 		}
