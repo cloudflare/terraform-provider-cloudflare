@@ -14,6 +14,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_api_token: ignore ordering changes in `permission_groups` ([#1545](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1545))
 * resource/cloudflare_notification_policy: Fix unexpected crashes when using cloudflare_notification_policy with a filters attribute ([#1542](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1542))
 * resource/cloudflare_zone_dnssec: don't try to enable DNSSEC when state is "pending" ([#1530](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1530))
 
