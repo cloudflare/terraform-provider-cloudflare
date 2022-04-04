@@ -26,3 +26,6 @@ semantic versioning patch version is bumped.
   (e.g. `v2.27.0`) and copy the entries from the CHANGELOG to the release notes.
 - A GitHub Action will now build the binaries, documentation and distribute them 
   to the Terraform registry for the [Cloudflare provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest).
+- Once this is completed, close off the milestone for the current release and 
+  open the next that matches the CHANGELOG additions from earlier. Example: close 
+  v2.27.0 but open a v2.28.0.
