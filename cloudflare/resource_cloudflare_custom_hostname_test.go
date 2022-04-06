@@ -313,7 +313,7 @@ func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckNoResourceAttr(resourceName, "ssl"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.#", "0"),
 				),
 			},
 		},
