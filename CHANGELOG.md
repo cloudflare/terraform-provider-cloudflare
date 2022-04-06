@@ -1,4 +1,6 @@
-## 3.12.0 (Unreleased)
+## 3.13.0 (Unreleased)
+
+## 3.12.0 (April 6th, 2022)
 
 NOTES:
 
