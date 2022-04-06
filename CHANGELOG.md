@@ -1,5 +1,9 @@
 ## 3.13.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_zone: don't get stuck in endless loop for partner zone rate plans ([#1547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1547))
+
 ## 3.12.0 (April 6th, 2022)
 
 NOTES:
