@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -10,6 +11,51 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_access_mutual_tls_certificate", &resource.Sweeper{
+		Name: "cloudflare_access_mutual_tls_certificate",
+		F:    testSweepCloudflareAccessMutualTLSCertificate,
+	})
+}
+
+func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	accountCerts, err := client.AccessMutualTLSCertificates(context.Background(), accountID)
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err)
+	}
+
+	for _, cert := range accountCerts {
+		err := client.DeleteAccessMutualTLSCertificate(context.Background(), accountID, cert.ID)
+
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID)
+		}
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneCerts, err := client.ZoneAccessMutualTLSCertificates(context.Background(), zoneID)
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err)
+	}
+
+	for _, cert := range zoneCerts {
+		err := client.DeleteZoneAccessMutualTLSCertificate(context.Background(), zoneID, cert.ID)
+
+		if err != nil {
+			log.Printf("[ERROR] Failed to delete Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID)
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
