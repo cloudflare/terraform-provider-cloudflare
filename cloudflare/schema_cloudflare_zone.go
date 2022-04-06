@@ -41,8 +41,6 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 				planIDPartnerPro,
 				planIDPartnerBusiness,
 				planIDPartnerEnterprise,
-				planIDPartnerWorkers,
-				planIDPartnerImageEnterprise,
 			}, false),
 		},
 		"meta": {

@@ -236,56 +236,6 @@ func testZoneConfigWithPlan(resourceID, zoneName, paused, jumpStart, plan string
 				}`, resourceID, zoneName, paused, jumpStart, plan)
 }
 
-func TestPlanNameFallsBackToEmptyIfUnknown(t *testing.T) {
-	type args struct {
-		planName string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			"free website", args{"Free Website"}, planIDFree,
-		},
-		{
-			"enterprise", args{"Enterprise Website"}, planIDEnterprise,
-		},
-		{
-			"undefined or new", args{"New Awesome Plan Website"}, "",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := planIDForName(tt.args.planName); got != tt.want {
-				t.Errorf("planIDForName() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestPlanIDFallsBackToEmptyIfUnknown(t *testing.T) {
-	type args struct {
-		id string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{"free id", args{planIDFree}, "Free Website"},
-		{"enterprise id", args{planIDEnterprise}, "Enterprise Website"},
-		{"unknonw id", args{"bogus"}, ""},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := planNameForID(tt.args.id); got != tt.want {
-				t.Errorf("planNameForID() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestAccCloudflareZone_SetType(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_zone." + rnd
