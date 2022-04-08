@@ -1,3 +1,0 @@
-```release:enhancement
-resource/cloudflare_ruleset: Setting description to `Optional` to better reflect API requirements
-```
