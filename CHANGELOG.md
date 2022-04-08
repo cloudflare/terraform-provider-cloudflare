@@ -1,6 +1,6 @@
 ## 3.13.0 (Unreleased)
 
-## 3.12.1 (April 6th, 2022)
+## 3.12.1 (April 9th, 2022)
 
 BUG FIXES:
 
