@@ -1,5 +1,9 @@
 ## 3.13.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: Setting description to `Optional` to better reflect API requirements ([#1556](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1556))
+
 ## 3.12.1 (April 9th, 2022)
 
 BUG FIXES:
