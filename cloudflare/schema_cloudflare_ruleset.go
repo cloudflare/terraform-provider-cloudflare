@@ -73,7 +73,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 					},
 					"description": {
 						Type:     schema.TypeString,
-						Required: true,
+						Optional: true,
 					},
 					"action_parameters": {
 						Type:     schema.TypeList,
