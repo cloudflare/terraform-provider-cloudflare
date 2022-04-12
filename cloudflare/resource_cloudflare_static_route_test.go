@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccCloudflareStaticRouteExists(t *testing.T) {
+func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
@@ -44,6 +44,7 @@ func TestAccCloudflareStaticRouteExists(t *testing.T) {
 
 func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTransitStaticRoute) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("not found: %s", n)
@@ -54,7 +55,7 @@ func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTr
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundStaticRoute, err := client.GetMagicTransitStaticRoute(context.Background(), rs.Primary.ID)
+		foundStaticRoute, err := client.GetMagicTransitStaticRoute(context.Background(), accountID, rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -65,7 +66,7 @@ func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTr
 	}
 }
 
-func TestAccCloudflareStaticRouteUpdateDescription(t *testing.T) {
+func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
@@ -96,7 +97,7 @@ func TestAccCloudflareStaticRouteUpdateDescription(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareStaticRouteUpdateWeight(t *testing.T) {
+func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
