@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareIPListExists(t *testing.T) {
+func TestAccCloudflareIPList_Exists(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -43,7 +43,7 @@ func TestAccCloudflareIPListExists(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareIPListUpdateDescription(t *testing.T) {
+func TestAccCloudflareIPList_UpdateDescription(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -92,7 +92,7 @@ func TestAccCloudflareIPListUpdateDescription(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareIPListUpdate(t *testing.T) {
+func TestAccCloudflareIPList_Update(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -143,6 +143,7 @@ func TestAccCloudflareIPListUpdate(t *testing.T) {
 
 func testAccCheckCloudflareIPListExists(n string, list *cloudflare.IPList) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("not found: %s", n)
@@ -153,7 +154,7 @@ func testAccCheckCloudflareIPListExists(n string, list *cloudflare.IPList) resou
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundIPList, err := client.GetIPList(context.Background(), rs.Primary.ID)
+		foundIPList, err := client.GetIPList(context.Background(), accountID, rs.Primary.ID)
 		if err != nil {
 			return err
 		}
