@@ -46,7 +46,7 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 	return nil
 }
 
-func TestAccCloudflareAccessIdentityProviderOneTimePin(t *testing.T) {
+func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the OTP Access
 	// endpoint does not yet support the API tokens for updates and it results in
 	// state error messages.
@@ -95,7 +95,7 @@ func TestAccCloudflareAccessIdentityProviderOneTimePin(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessIdentityProviderOAuth(t *testing.T) {
+func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
@@ -121,7 +121,7 @@ func TestAccCloudflareAccessIdentityProviderOAuth(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessIdentityProviderOAuthWithUpdate(t *testing.T) {
+func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
@@ -157,7 +157,7 @@ func TestAccCloudflareAccessIdentityProviderOAuthWithUpdate(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessIdentityProviderSAML(t *testing.T) {
+func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()

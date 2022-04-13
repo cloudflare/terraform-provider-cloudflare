@@ -14,7 +14,7 @@ func resourceCloudflareApiTokenSchema() map[string]*schema.Schema {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"permission_groups": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
@@ -51,12 +51,12 @@ func resourceCloudflareApiTokenSchema() map[string]*schema.Schema {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"in": {
-									Type:     schema.TypeList,
+									Type:     schema.TypeSet,
 									Elem:     &schema.Schema{Type: schema.TypeString},
 									Optional: true,
 								},
 								"not_in": {
-									Type:     schema.TypeList,
+									Type:     schema.TypeSet,
 									Elem:     &schema.Schema{Type: schema.TypeString},
 									Optional: true,
 								},

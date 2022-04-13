@@ -27,7 +27,7 @@ func resourceCloudflareMagicFirewallRuleset() *schema.Resource {
 
 func resourceCloudflareMagicFirewallRulesetCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	client.AccountID = d.Get("account_id").(string)
+	accountID := d.Get("account_id").(string)
 
 	rules, err := buildMagicFirewallRulesetRulesFromResource(d.Get("rules"))
 	if err != nil {
@@ -35,6 +35,7 @@ func resourceCloudflareMagicFirewallRulesetCreate(d *schema.ResourceData, meta i
 	}
 
 	ruleset, err := client.CreateMagicFirewallRuleset(context.Background(),
+		accountID,
 		d.Get("name").(string),
 		d.Get("description").(string),
 		rules)
@@ -49,7 +50,6 @@ func resourceCloudflareMagicFirewallRulesetCreate(d *schema.ResourceData, meta i
 }
 
 func resourceCloudflareMagicFirewallRulesetImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -59,7 +59,6 @@ func resourceCloudflareMagicFirewallRulesetImport(d *schema.ResourceData, meta i
 	accountID, rulesetID := attributes[0], attributes[1]
 	d.SetId(rulesetID)
 	d.Set("account_id", accountID)
-	client.AccountID = accountID
 
 	resourceCloudflareMagicFirewallRulesetRead(d, meta)
 
@@ -68,9 +67,9 @@ func resourceCloudflareMagicFirewallRulesetImport(d *schema.ResourceData, meta i
 
 func resourceCloudflareMagicFirewallRulesetRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	client.AccountID = d.Get("account_id").(string)
+	accountID := d.Get("account_id").(string)
 
-	ruleset, err := client.GetMagicFirewallRuleset(context.Background(), d.Id())
+	ruleset, err := client.GetMagicFirewallRuleset(context.Background(), accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "could not find ruleset") {
 			log.Printf("[INFO] Magic Firewall Ruleset %s no longer exists", d.Id())
@@ -89,14 +88,14 @@ func resourceCloudflareMagicFirewallRulesetRead(d *schema.ResourceData, meta int
 
 func resourceCloudflareMagicFirewallRulesetUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	client.AccountID = d.Get("account_id").(string)
+	accountID := d.Get("account_id").(string)
 
 	rules, err := buildMagicFirewallRulesetRulesFromResource(d.Get("rules"))
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
 	}
 
-	_, err = client.UpdateMagicFirewallRuleset(context.Background(), d.Id(), d.Get("description").(string), rules)
+	_, err = client.UpdateMagicFirewallRuleset(context.Background(), accountID, d.Id(), d.Get("description").(string), rules)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error updating Magic Firewall ruleset with ID %q", d.Id()))
 	}
@@ -106,9 +105,9 @@ func resourceCloudflareMagicFirewallRulesetUpdate(d *schema.ResourceData, meta i
 
 func resourceCloudflareMagicFirewallRulesetDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
-	client.AccountID = d.Get("account_id").(string)
+	accountID := d.Get("account_id").(string)
 
-	err := client.DeleteMagicFirewallRuleset(context.Background(), d.Id())
+	err := client.DeleteMagicFirewallRuleset(context.Background(), accountID, d.Id())
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error deleting Magic Firewall ruleset with ID %q", d.Id()))
 	}

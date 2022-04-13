@@ -201,6 +201,7 @@ func TestAccCloudflareMagicFirewallRulesetUpdateWithHigherPriority(t *testing.T)
 
 func testAccCheckCloudflareMagicFirewallRulesetExists(n string, ruleset *cloudflare.MagicFirewallRuleset) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("not found: %s", n)
@@ -211,7 +212,7 @@ func testAccCheckCloudflareMagicFirewallRulesetExists(n string, ruleset *cloudfl
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundRuleset, err := client.GetMagicFirewallRuleset(context.Background(), rs.Primary.ID)
+		foundRuleset, err := client.GetMagicFirewallRuleset(context.Background(), accountID, rs.Primary.ID)
 		if err != nil {
 			return err
 		}

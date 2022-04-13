@@ -4,6 +4,10 @@ import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 func resourceCloudflareWorkerCronTriggerSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"account_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
 		"script_name": {
 			Type:     schema.TypeString,
 			Required: true,

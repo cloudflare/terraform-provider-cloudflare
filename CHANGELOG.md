@@ -1,4 +1,26 @@
-## 3.12.0 (Unreleased)
+## 3.13.0 (Unreleased)
+
+NOTES:
+
+* resource/cloudflare_byo_ip_prefix: now requires an explicit `account_id` parameter instead of implicitly relying on `client.AccountID` ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_ip_list: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_magic_firewall_ruleset: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_static_route: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_worker_cron_trigger: now requires an explicit `account_id` parameter instead of implicitly relying on `client.AccountID` ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+
+## 3.12.2 (April 13th, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: Setting description to `Optional` to better reflect API requirements ([#1556](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1556))
+
+## 3.12.1 (April 9th, 2022)
+
+BUG FIXES:
+
+* resource/cloudflare_zone: don't get stuck in endless loop for partner zone rate plans ([#1547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1547))
+
+## 3.12.0 (April 6th, 2022)
 
 NOTES:
 
@@ -14,6 +36,8 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_api_token: ignore ordering changes in `permission_groups` ([#1545](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1545))
+* resource/cloudflare_notification_policy: Fix unexpected crashes when using cloudflare_notification_policy with a filters attribute ([#1542](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1542))
 * resource/cloudflare_zone_dnssec: don't try to enable DNSSEC when state is "pending" ([#1530](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1530))
 
 ## 3.11.0 (March 23rd, 2022)

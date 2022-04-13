@@ -26,10 +26,11 @@ func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 // Worker Cron Triggers as the remote API endpoint is shared uses HTTP PUT.
 func resourceCloudflareWorkerCronTriggerUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
 
 	scriptName := d.Get("script_name").(string)
 
-	_, err := client.UpdateWorkerCronTriggers(context.Background(), scriptName, transformSchemaToWorkerCronTriggerStruct(d))
+	_, err := client.UpdateWorkerCronTriggers(context.Background(), accountID, scriptName, transformSchemaToWorkerCronTriggerStruct(d))
 	if err != nil {
 		return fmt.Errorf("failed to update Worker Cron Trigger: %s", err)
 	}
@@ -42,8 +43,9 @@ func resourceCloudflareWorkerCronTriggerUpdate(d *schema.ResourceData, meta inte
 func resourceCloudflareWorkerCronTriggerRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	scriptName := d.Get("script_name").(string)
+	accountID := d.Get("account_id").(string)
 
-	s, err := client.ListWorkerCronTriggers(context.Background(), scriptName)
+	s, err := client.ListWorkerCronTriggers(context.Background(), accountID, scriptName)
 	if err != nil {
 		// If the script is removed, we also need to remove the triggers.
 		if strings.Contains(err.Error(), "workers.api.error.script_not_found") {
@@ -64,8 +66,9 @@ func resourceCloudflareWorkerCronTriggerRead(d *schema.ResourceData, meta interf
 func resourceCloudflareWorkerCronTriggerDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 	scriptName := d.Get("script_name").(string)
+	accountID := d.Get("account_id").(string)
 
-	client.UpdateWorkerCronTriggers(context.Background(), scriptName, []cloudflare.WorkerCronTrigger{})
+	client.UpdateWorkerCronTriggers(context.Background(), accountID, scriptName, []cloudflare.WorkerCronTrigger{})
 
 	d.SetId("")
 

@@ -10,7 +10,6 @@ import (
 )
 
 func TestAccCloudflareAccessIdentityProviderDataSource_PreventZoneIdAndAccountIdConflicts(t *testing.T) {
-	t.Parallel()
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -35,7 +34,6 @@ data "cloudflare_access_identity_provider" "%[1]s" {
 }
 
 func TestAccCloudflareAccessIdentityProviderDataSource_PreventNoInputSpecify(t *testing.T) {
-	t.Parallel()
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -58,7 +56,6 @@ data "cloudflare_access_identity_provider" "%[1]s" {
 }
 
 func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
-	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 
@@ -71,7 +68,7 @@ func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareAccessIdentityProviderDataSource_NotFound(accountID, rnd),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta("no Access Identity Provider matching name")),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("no Access Identity Providers found")),
 			},
 		},
 	})
@@ -96,8 +93,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	`, name, accountID)
 }
 
-func TestAccCloudflareAccessIdentityProviderDataSourceGitHub(t *testing.T) {
-	t.Parallel()
+func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 

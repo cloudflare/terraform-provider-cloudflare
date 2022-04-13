@@ -22,7 +22,7 @@ func TestAccCloudflareAccountRoles(t *testing.T) {
 				Config: testAccCloudflareAccountRolesConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCloudflareAccountRolesDataSourceId(name),
-					resource.TestCheckResourceAttr(name, "roles.#", "23"),
+					resource.TestCheckResourceAttr(name, "roles.#", "24"),
 				),
 			},
 		},

@@ -202,7 +202,7 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
 The following arguments are supported:
 
 * `account_id` - (Optional) The ID of the account where the ruleset is being created. Conflicts with `"zone_id"`.
-* `description` - (Required) Brief summary of the ruleset and its intended use.
+* `description` - (Optional) Brief summary of the ruleset and its intended use.
 * `kind` - (Required) Type of Ruleset to create. Valid values are `"custom"`, `"managed"`, `"root"`, `"schema"` or `"zone"`.
 * `name` - (Required) Name of the ruleset.
 * `phase` - (Required) Point in the request/response lifecycle where the ruleset will be created. Valid values are `"ddos_l4"`, `"ddos_l7"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_response_headers_transform"`, `"http_request_main"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_response_firewall_managed"`, `"magic_transit"`, or `"http_ratelimit"`.

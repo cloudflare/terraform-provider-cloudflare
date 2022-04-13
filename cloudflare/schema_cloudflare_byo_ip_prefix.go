@@ -7,6 +7,10 @@ import (
 
 func resourceCloudflareBYOIPPrefixSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"account_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
 		"prefix_id": {
 			Type:     schema.TypeString,
 			Required: true,
