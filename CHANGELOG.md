@@ -1,5 +1,13 @@
 ## 3.13.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_byo_ip_prefix: now requires an explicit `account_id` parameter instead of implicitly relying on `client.AccountID` ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_ip_list: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_magic_firewall_ruleset: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_static_route: no longer sets `client.AccountID` internally for resources ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+* resource/cloudflare_worker_cron_trigger: now requires an explicit `account_id` parameter instead of implicitly relying on `client.AccountID` ([#1563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1563))
+
 ## 3.12.2 (April 13th, 2022)
 
 ENHANCEMENTS:
