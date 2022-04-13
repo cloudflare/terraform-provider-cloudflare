@@ -222,6 +222,7 @@ The following arguments are supported:
 * `ratelimit` - (Optional) List of parameters that configure HTTP rate limiting behaviour (refer to the [nested schema](#nestedblock--ratelimiting-parameters)).
 * `response` - (Optional) List of parameters that configure the response given to end users (refer to the [nested schema](#nestedblock--response-parameters)).
 * `exposed_credential_check` - (Optional) List of parameters that configure exposed credential checks (refer to the [nested schema](#nestedblock--exposed-credential-check-parameters)).
+* `logging` - (Optional) List parameters to configure how the rule generates logs (refer to the [nested schema](#nestedblock--logging)).
 * `ref` - (Read only) Rule reference.
 * `version`- (Read only) Version of the ruleset to deploy.
 
@@ -241,18 +242,17 @@ The following arguments are supported:
 * `username_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "username" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
 * `password_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "password" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
 
+<a id="#nestedblock--logging"></a>
+**Nested schema for `logging`**
+
+* `enabled` - (Optional) Override the default logging behavior when a rule is matched.
+
 <a id="nestedblock--response-parameters"></a>
 **Nested schema for `response`**
 
 * `status_code` - (Optional) HTTP status code to send in the response.
 * `content_type` - (Optional) HTTP content type to send in the response.
 * `content` - (Optional) Body content to include in the response.
-
-<a id="#nestedblock--exposed-credential-check-parameters"></a>
-**Nested schema for `exposed_credential_check`**
-
-* `username_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "username" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
-* `password_expression` - (Optional) Firewall Rules expression language based on Wireshark display filters for where to check for the "password" value. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language).
 
 <a id="nestedblock--action-parameters"></a>
 **Nested schema for `action_parameters`**
