@@ -43,7 +43,7 @@ func resourceCloudflareRateLimitSchema() map[string]*schema.Schema {
 					"timeout": {
 						Type:         schema.TypeInt,
 						Optional:     true,
-						ValidateFunc: validation.IntBetween(1, 86400),
+						ValidateFunc: validation.IntBetween(0, 86400),
 					},
 
 					"response": {
