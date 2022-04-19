@@ -10,6 +10,7 @@ NOTES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_custom_pages: add support for managed_challenge action ([#1478](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1478))
 * resource/cloudflare_ruleset: add support for rule `logging` ([#1538](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1538))
 
 ## 3.12.2 (April 13th, 2022)
