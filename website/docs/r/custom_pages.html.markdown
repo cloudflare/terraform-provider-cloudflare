@@ -33,7 +33,7 @@ The following arguments are supported:
 * `type` - (Required) The type of custom page you wish to update. Must
   be one of `basic_challenge`, `waf_challenge`, `waf_block`,
   `ratelimit_block`, `country_challenge`, `ip_block`, `under_attack`,
-  `500_errors`, `1000_errors`, `always_online`.
+  `500_errors`, `1000_errors`, `always_online`, `managed_challenge`.
 * `url` - (Required) URL of where the custom page source is located.
 * `state` - (Required) Managed state of the custom page. Must be one of
   `default`, `customized`. If the value is `default` it will be removed

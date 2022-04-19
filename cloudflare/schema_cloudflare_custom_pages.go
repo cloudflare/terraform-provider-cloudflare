@@ -31,6 +31,7 @@ func resourceCloudflareCustomPagesSchema() map[string]*schema.Schema {
 				"500_errors",
 				"1000_errors",
 				"always_online",
+				"managed_challenge",
 			}, true),
 		},
 		"url": {
