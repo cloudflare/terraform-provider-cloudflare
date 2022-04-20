@@ -23,6 +23,9 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 		Read:   resourceCloudflareZoneSettingsOverrideRead,
 		Update: resourceCloudflareZoneSettingsOverrideUpdate,
 		Delete: resourceCloudflareZoneSettingsOverrideDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 

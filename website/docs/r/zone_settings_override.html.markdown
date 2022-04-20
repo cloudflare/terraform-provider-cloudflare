@@ -155,3 +155,15 @@ The following attributes are exported:
 * `readonly_settings` - Which of the current `settings` are not able to be set by the user. Which settings these are is determined by plan level and user permissions.
 * `zone_status`. A full zone implies that DNS is hosted with Cloudflare. A partial zone is typically a partner-hosted zone or a CNAME setup.
 * `zone_type`. Status of the zone. Valid values: active, pending, initializing, moved, deleted, deactivated.
+
+## Import
+
+Zone settings override resource can be imported using a zone ID, e.g.
+
+```
+$ terraform import cloudflare_zone_settings_override.example d41d8cd98f00b204e9800998ecf8427e
+```
+
+where:
+
+* `d41d8cd98f00b204e9800998ecf8427e` - zone ID, as returned from [API](https://api.cloudflare.com/#zone-list-zones)
