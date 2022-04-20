@@ -49,6 +49,7 @@ resource "cloudflare_certificate_pack" "advanced_example_for_lets_encrypt" {
   validity_days         = 90
   certificate_authority = "lets_encrypt"
   cloudflare_branding   = false
+  wait_for_active_status = true
 }
 ```
 
@@ -73,6 +74,8 @@ The following arguments are supported:
 * `cloudflare_branding` - (Optional based on `type`) Whether or not to include
   Cloudflare branding. This will add `sni.cloudflaressl.com` as the Common Name
   if set to `true`.
+* `wait_for_active_status` - (Optional) Whether or not to wait for a certificate
+  pack to reach status `active` during creation. Defaults to `false`.
 
 ## Import
 

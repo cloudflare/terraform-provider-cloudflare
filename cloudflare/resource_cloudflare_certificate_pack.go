@@ -3,13 +3,14 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 	"log"
 	"reflect"
 	"strings"
-
-	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/pkg/errors"
+	"time"
 )
 
 func resourceCloudflareCertificatePack() *schema.Resource {
@@ -60,6 +61,32 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 			return errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err))
 		}
 		certificatePackID = certPackResponse.ID
+	}
+
+	if d.Get("wait_for_active_status").(bool) {
+		return resource.Retry(d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+			certificatePack, err := client.CertificatePack(context.Background(), zoneID, certificatePackID)
+			if err != nil {
+				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch certificate pack"))
+			}
+			if len(certificatePack.Certificates) == 0 {
+				return resource.RetryableError(fmt.Errorf("certificate list in response is empty"))
+			}
+			for _, certificate := range certificatePack.Certificates {
+				if certificate.Status != "active" {
+					return resource.RetryableError(fmt.Errorf("expected all certificates in certificate pack to be active state but certificate %s was in state %s", certificate.ID, certificate.Status))
+				}
+			}
+
+			// if we get here, the new cert pack is active
+			d.SetId(certificatePackID)
+			err = resourceCloudflareCertificatePackRead(d, meta)
+			if err != nil {
+				return resource.NonRetryableError(err)
+			} else {
+				return nil
+			}
+		})
 	}
 
 	d.SetId(certificatePackID)
