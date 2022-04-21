@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -49,6 +50,28 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 		"custom_page_html": {
 			Type:     schema.TypeString,
 			Optional: true,
+		},
+
+		"default_template_language": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "en-US",
+			ValidateFunc: validation.StringInSlice([]string{
+				"de-DE",
+				"es-ES",
+				"en-US",
+				"fr-FR",
+				"id-ID",
+				"it-IT",
+				"ja-JP",
+				"ko-KR",
+				"nl-NL",
+				"pl-PL",
+				"pt-BR",
+				"tr-TR",
+				"zh-CN",
+				"zh-TW",
+			}, false),
 		},
 
 		"queue_all": {
