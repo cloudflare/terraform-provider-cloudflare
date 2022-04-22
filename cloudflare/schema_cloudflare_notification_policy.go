@@ -125,6 +125,13 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:     true,
 					RequiredWith: []string{"filters.0.enabled"},
 				},
+				"slo": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+				},
 			},
 		},
 	}
