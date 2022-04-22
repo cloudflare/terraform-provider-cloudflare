@@ -112,17 +112,16 @@ func resourceCloudflareTeamsRouteDelete(d *schema.ResourceData, meta interface{}
 }
 
 func resourceCloudflareTeamsRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 3)
+	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
-		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/tunnelID/network"`, d.Id())
+		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/network"`, d.Id())
 	}
 
-	accountID, tunnelID, network := attributes[0], attributes[1], attributes[2]
+	accountID, network := attributes[0], attributes[1]
 
 	d.SetId(network)
 	d.Set("account_id", accountID)
-	d.Set("tunnel_id", tunnelID)
 	d.Set("network", network)
 
 	err := resourceCloudflareTeamsRouteRead(d, meta)

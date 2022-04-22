@@ -14,11 +14,12 @@ routes are used to direct IP traffic through Cloudflare Tunnels.
 ## Example Usage
 
 ```hcl
-resource "cloudflare_teams_route" "example"
+resource "cloudflare_teams_route" "example" {
   account_id = "c4a7362d577a6c3019a474fd6f485821"
-  tunnel_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
-  network = "192.0.2.24/32"
-  comment = "New tunnel route for documentation"
+  tunnel_id  = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
+  network    = "192.0.2.24/32"
+  comment    = "New tunnel route for documentation"
+}
 ```
 
 ## Argument Reference
@@ -32,8 +33,8 @@ The following arguments are supported:
 
 ## Import
 
-An existing tunnel route can be imported using the account ID, tunnel ID, and network CIDR.
+An existing tunnel route can be imported using the account ID and network CIDR.
 
 ```
-$ terraform import cloudflare_teams_route c4a7362d577a6c3019a474fd6f485821/f70ff985-a4ef-4643-bbbc-4a0ed4fc8415/192.0.2.24/32
+$ terraform import cloudflare_teams_route c4a7362d577a6c3019a474fd6f485821/192.0.2.24/32
 ```
