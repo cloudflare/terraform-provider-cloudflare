@@ -89,6 +89,7 @@ The following arguments are supported:
 * `real_origin_monitoring` - (Optional) Cloudflare is unable to reach your origin (refer to the [nested schema](#nestedblock--alert-type-real-origin-monitoring)).
 * `universal_ssl_event_type` - (Optional) Universal certificate notices (refer to the [nested schema](#nestedblock--alert-type-universal-ssl-event-type)).
 * `bgp_hijack_notification` - (Optional) Alerts for BGP hijack (refer to the [nested schema](#nestedblock--alert-type-bgp-hijack-notification)).
+* `http_alert_origin_error` - (Optional) HTTP origin error rate alert  (refer to the [nested schema](#nestedblock--alert-type-http-alert-origin-error)).
 
 <a id="nestedblock--alert-type-billing-usage-alert"></a>
 **Nested schema for `billing_usage_alert`**
@@ -116,6 +117,13 @@ The following arguments are supported:
 
 <a id="#nestedblock--alert-type-bgp-hijack-notification"></a>
 **Nested schema for `bgp_hijack_notification`**
+
+<a id="nestedblock--alert-type-http-alert-origin-error"></a>
+**Nested schema for `http_alert_origin_error`**
+
+* `zones` - (Optional) A list of zone identifiers.
+* `slo` - (Optional) A numerical limit. Example: `"99.9"`
+
 
 ## Import
 
