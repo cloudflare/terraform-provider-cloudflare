@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -30,7 +31,14 @@ func resourceCloudflareTeamsRouteRead(d *schema.ResourceData, meta interface{}) 
 		Network:   d.Get("network").(string),
 	})
 	if err != nil {
-		// TODO: implement logic for missing route
+		// Until the API returns a valid v4 compatible envelope, we need to
+		// check if the error message is related to problems unmarshalling the
+		// response _or_ an expected not found error.
+		var notFoundError *cloudflare.NotFoundError
+		if strings.Contains(err.Error(), "error unmarshalling the JSON response error body") || errors.As(err, &notFoundError) {
+			d.SetId("")
+			return nil
+		}
 
 		return fmt.Errorf("error reading Tunnel Route for Network %q: %w", d.Id(), err)
 	}
