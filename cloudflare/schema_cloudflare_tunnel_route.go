@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceCloudflareTeamsRouteSchema() map[string]*schema.Schema {
+func resourceCloudflareTunnelRouteSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
 			Type:     schema.TypeString,

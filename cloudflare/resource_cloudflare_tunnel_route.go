@@ -10,20 +10,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceCloudflareTeamsRoute() *schema.Resource {
+func resourceCloudflareTunnelRoute() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTeamsRouteSchema(),
-		Create: resourceCloudflareTeamsRouteCreate,
-		Read:   resourceCloudflareTeamsRouteRead,
-		Update: resourceCloudflareTeamsRouteUpdate,
-		Delete: resourceCloudflareTeamsRouteDelete,
+		Schema: resourceCloudflareTunnelRouteSchema(),
+		Create: resourceCloudflareTunnelRouteCreate,
+		Read:   resourceCloudflareTunnelRouteRead,
+		Update: resourceCloudflareTunnelRouteUpdate,
+		Delete: resourceCloudflareTunnelRouteDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTeamsRouteImport,
+			State: resourceCloudflareTunnelRouteImport,
 		},
 	}
 }
 
-func resourceCloudflareTeamsRouteRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	tunnelRoute, err := client.GetTunnelRouteForIP(context.Background(), cloudflare.TunnelRoutesForIPParams{
@@ -53,7 +53,7 @@ func resourceCloudflareTeamsRouteRead(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceCloudflareTeamsRouteCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	resource := cloudflare.TunnelRoutesCreateParams{
@@ -73,10 +73,10 @@ func resourceCloudflareTeamsRouteCreate(d *schema.ResourceData, meta interface{}
 
 	d.SetId(newTunnelRoute.Network)
 
-	return resourceCloudflareTeamsRouteRead(d, meta)
+	return resourceCloudflareTunnelRouteRead(d, meta)
 }
 
-func resourceCloudflareTeamsRouteUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	resource := cloudflare.TunnelRoutesUpdateParams{
@@ -94,10 +94,10 @@ func resourceCloudflareTeamsRouteUpdate(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("error updating Tunnel Route for Network %q: %w", d.Get("network").(string), err)
 	}
 
-	return resourceCloudflareTeamsRouteRead(d, meta)
+	return resourceCloudflareTunnelRouteRead(d, meta)
 }
 
-func resourceCloudflareTeamsRouteDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
 
 	err := client.DeleteTunnelRoute(context.Background(), cloudflare.TunnelRoutesDeleteParams{
@@ -111,7 +111,7 @@ func resourceCloudflareTeamsRouteDelete(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareTeamsRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTunnelRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 3)
 
 	if len(attributes) != 2 {
@@ -125,7 +125,7 @@ func resourceCloudflareTeamsRouteImport(d *schema.ResourceData, meta interface{}
 	d.Set("tunnel_id", tunnelID)
 	d.Set("network", network)
 
-	err := resourceCloudflareTeamsRouteRead(d, meta)
+	err := resourceCloudflareTunnelRouteRead(d, meta)
 	if err != nil {
 		return nil, err
 	}
