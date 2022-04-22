@@ -2,7 +2,7 @@
 
 FEATURES:
 
-* **New Resource:** `cloudflare_teams_route` ([#1572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1572))
+* **New Resource:** `cloudflare_tunnel_route` ([#1572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1572))
 
 ENHANCEMENTS:
 
