@@ -48,8 +48,8 @@ The following arguments are supported:
 
 ## Import
 
-An existing tunnel route can be imported using the account ID, tunnel ID, and network CIDR.
+An existing tunnel route can be imported using the account ID and network CIDR.
 
 ```
-$ terraform import cloudflare_tunnel_route c4a7362d577a6c3019a474fd6f485821/f70ff985-a4ef-4643-bbbc-4a0ed4fc8415/192.0.2.24/32
+$ terraform import cloudflare_tunnel_route c4a7362d577a6c3019a474fd6f485821/192.0.2.24/32
 ```
