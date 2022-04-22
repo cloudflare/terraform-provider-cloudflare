@@ -1,5 +1,13 @@
 ## 3.14.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_teams_route` ([#1572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1572))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add `slo` to notification policy filters ([#1573](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1573))
+
 ## 3.13.0 (April 20th, 2022)
 
 NOTES:
