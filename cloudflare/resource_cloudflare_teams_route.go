@@ -11,25 +11,7 @@ import (
 
 func resourceCloudflareTeamsRoute() *schema.Resource {
 	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"tunnel_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"network": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"comment": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-		},
+		Schema: resourceCloudflareTeamsRouteSchema(),
 		Create: resourceCloudflareTeamsRouteCreate,
 		Read:   resourceCloudflareTeamsRouteRead,
 		Update: resourceCloudflareTeamsRouteUpdate,
