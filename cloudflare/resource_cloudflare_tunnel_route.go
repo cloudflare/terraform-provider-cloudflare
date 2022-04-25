@@ -2,8 +2,8 @@ package cloudflare
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -25,27 +25,30 @@ func resourceCloudflareTunnelRoute() *schema.Resource {
 
 func resourceCloudflareTunnelRouteRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
+	network := d.Get("network").(string)
 
-	tunnelRoute, err := client.GetTunnelRouteForIP(context.Background(), cloudflare.TunnelRoutesForIPParams{
-		AccountID: d.Get("account_id").(string),
-		Network:   d.Get("network").(string),
+	tunnelRoutes, err := client.ListTunnelRoutes(context.Background(), cloudflare.TunnelRoutesListParams{
+		AccountID:       accountID,
+		IsDeleted:       cloudflare.BoolPtr(false),
+		NetworkSubset:   network,
+		NetworkSuperset: network,
 	})
-	if err != nil {
-		// FIXME(2022-04-21): Until the API returns a valid v4 compatible envelope, we need to
-		// check if the error message is related to problems unmarshalling the response _or_
-		// an expected not found error.
-		var notFoundError *cloudflare.NotFoundError
-		if strings.Contains(err.Error(), "error unmarshalling the JSON response error body") || errors.As(err, &notFoundError) {
-			d.SetId("")
-			return nil
-		}
 
-		return fmt.Errorf("error reading Tunnel Route for Network %q: %w", d.Id(), err)
+	if err != nil {
+		return fmt.Errorf("failed to fetch Tunnel Route: %w", err)
 	}
+
+	if len(tunnelRoutes) < 1 {
+		log.Printf("[INFO] Tunnel Route for network %s in account %s not found", network, accountID)
+		d.SetId("")
+		return nil
+	}
+
+	tunnelRoute := tunnelRoutes[0]
 
 	d.Set("tunnel_id", tunnelRoute.TunnelID)
 	d.Set("network", tunnelRoute.Network)
-
 	if len(tunnelRoute.Comment) > 0 {
 		d.Set("comment", tunnelRoute.Comment)
 	}
@@ -83,6 +86,7 @@ func resourceCloudflareTunnelRouteUpdate(d *schema.ResourceData, meta interface{
 		AccountID: d.Get("account_id").(string),
 		TunnelID:  d.Get("tunnel_id").(string),
 		Network:   d.Get("network").(string),
+		Comment:   "",
 	}
 
 	if comment, ok := d.Get("comment").(string); ok {
