@@ -3,14 +3,15 @@ package cloudflare
 import (
 	"context"
 	"fmt"
-	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/pkg/errors"
 	"log"
 	"reflect"
 	"strings"
 	"time"
+
+	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 )
 
 func resourceCloudflareCertificatePack() *schema.Resource {
