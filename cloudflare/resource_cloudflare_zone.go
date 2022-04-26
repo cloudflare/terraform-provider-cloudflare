@@ -37,7 +37,7 @@ var ratePlans = map[string]subscriptionData{
 		Description: "Free Website",
 	},
 	planIDPro: {
-		Name:        "CF_PRO",
+		Name:        "CF_PRO_20_20",
 		ID:          planIDPro,
 		Description: "Pro Website",
 	},

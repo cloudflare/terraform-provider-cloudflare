@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zone: update plan identifier for professional rate plans
+```
