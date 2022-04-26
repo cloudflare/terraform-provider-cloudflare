@@ -65,7 +65,7 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 	}
 
 	if d.Get("wait_for_active_status").(bool) {
-		return resource.Retry(d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+		err := resource.Retry(d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
 			certificatePack, err := client.CertificatePack(context.Background(), zoneID, certificatePackID)
 			if err != nil {
 				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch certificate pack"))
@@ -78,16 +78,12 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 					return resource.RetryableError(fmt.Errorf("expected all certificates in certificate pack to be active state but certificate %s was in state %s", certificate.ID, certificate.Status))
 				}
 			}
-
-			// if we get here, the new cert pack is active
-			d.SetId(certificatePackID)
-			err = resourceCloudflareCertificatePackRead(d, meta)
-			if err != nil {
-				return resource.NonRetryableError(err)
-			} else {
-				return nil
-			}
+			return nil
 		})
+
+		if err != nil {
+			return err
+		}
 	}
 
 	d.SetId(certificatePackID)
