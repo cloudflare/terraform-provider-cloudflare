@@ -33,6 +33,7 @@ func resourceCloudflareDevicePostureRuleCreate(d *schema.ResourceData, meta inte
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 		Schedule:    d.Get("schedule").(string),
+		Expiration:  d.Get("expiration").(string),
 	}
 
 	err := setDevicePostureRuleMatch(&newDevicePostureRule, d)
@@ -71,6 +72,7 @@ func resourceCloudflareDevicePostureRuleRead(d *schema.ResourceData, meta interf
 	d.Set("description", devicePostureRule.Description)
 	d.Set("type", devicePostureRule.Type)
 	d.Set("schedule", devicePostureRule.Schedule)
+	d.Set("expiration", devicePostureRule.Expiration)
 	d.Set("match", convertMatchToSchema(devicePostureRule.Match))
 	d.Set("input", convertInputToSchema(devicePostureRule.Input))
 
@@ -87,6 +89,7 @@ func resourceCloudflareDevicePostureRuleUpdate(d *schema.ResourceData, meta inte
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 		Schedule:    d.Get("schedule").(string),
+		Expiration:  d.Get("expiration").(string),
 	}
 
 	err := setDevicePostureRuleMatch(&updatedDevicePostureRule, d)
