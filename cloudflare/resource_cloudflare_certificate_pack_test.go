@@ -43,7 +43,7 @@ func testSweepCloudflareCertificatePack(r string) error {
 	return nil
 }
 
-func TestAccCertificatePackAdvancedDigicert(t *testing.T) {
+func TestAccCertificatePack_AdvancedDigicert(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -86,7 +86,7 @@ resource "cloudflare_certificate_pack" "%[3]s" {
 }`, zoneID, domain, rnd, certType)
 }
 
-func TestAccCertificatePackAdvancedLetsEncrypt(t *testing.T) {
+func TestAccCertificatePack_AdvancedLetsEncrypt(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -129,7 +129,7 @@ resource "cloudflare_certificate_pack" "%[3]s" {
 }`, zoneID, domain, rnd, certType)
 }
 
-func TestAccCertificatePackDedicatedCustom(t *testing.T) {
+func TestAccCertificatePack_DedicatedCustom(t *testing.T) {
 	t.Skip("Pending investigation into ACM entitlements")
 
 	rnd := generateRandomResourceName()
@@ -165,7 +165,7 @@ resource "cloudflare_certificate_pack" "%[3]s" {
 }`, zoneID, domain, rnd, certType)
 }
 
-func TestAccCertificatePackWaitForActive(t *testing.T) {
+func TestAccCertificatePack_WaitForActive(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -201,6 +201,8 @@ resource "cloudflare_certificate_pack" "%[3]s" {
     "%[3]s.%[2]s",
     "%[2]s"
   ]
+  validation_method = "txt"
+  validity_days = 365
   certificate_authority = "digicert"
   cloudflare_branding = false
   wait_for_active_status = true
