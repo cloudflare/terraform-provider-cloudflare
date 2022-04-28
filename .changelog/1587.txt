@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_teams_list: add IP list type
+```
