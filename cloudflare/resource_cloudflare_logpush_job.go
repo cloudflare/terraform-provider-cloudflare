@@ -42,7 +42,7 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 
 	destConf := d.Get("destination_conf").(string)
 	ownershipChallenge := d.Get("ownership_challenge").(string)
-	var re = regexp.MustCompile(`^((datadog|splunk)://|s3://.+endpoint=|https://)`)
+	var re = regexp.MustCompile(`^((datadog|splunk|https)://|s3://.+endpoint=)`)
 
 	if ownershipChallenge == "" && !re.MatchString(destConf) {
 		return cloudflare.LogpushJob{}, identifier, fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
