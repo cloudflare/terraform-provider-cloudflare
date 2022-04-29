@@ -90,9 +90,7 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 	}
 
 	d.SetId(accessGroup.ID)
-	resourceCloudflareAccessGroupRead(d, meta)
-
-	return nil
+	return resourceCloudflareAccessGroupRead(d, meta)
 }
 
 func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -248,14 +246,25 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 		} else if accessGroupType == "github" {
 			for _, v := range values.([]interface{}) {
 				githubCfg := v.(map[string]interface{})
-				for _, team := range githubCfg["teams"].([]interface{}) {
+				if len(githubCfg["teams"].([]interface{})) > 0 {
+					for _, team := range githubCfg["teams"].([]interface{}) {
+						group = append(group, cloudflare.AccessGroupGitHub{GitHubOrganization: struct {
+							Name               string `json:"name"`
+							Team               string `json:"team,omitempty"`
+							IdentityProviderID string `json:"identity_provider_id"`
+						}{
+							Name:               githubCfg["name"].(string),
+							Team:               team.(string),
+							IdentityProviderID: githubCfg["identity_provider_id"].(string),
+						}})
+					}
+				} else {
 					group = append(group, cloudflare.AccessGroupGitHub{GitHubOrganization: struct {
 						Name               string `json:"name"`
 						Team               string `json:"team,omitempty"`
 						IdentityProviderID string `json:"identity_provider_id"`
 					}{
 						Name:               githubCfg["name"].(string),
-						Team:               team.(string),
 						IdentityProviderID: githubCfg["identity_provider_id"].(string),
 					}})
 				}
@@ -419,7 +428,9 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 				githubCfg := groupValue.(map[string]interface{})
 				githubID = githubCfg["identity_provider_id"].(string)
 				githubName = githubCfg["name"].(string)
-				githubTeams = append(githubTeams, githubCfg["team"].(string))
+				if v, ok := githubCfg["team"]; ok {
+					githubTeams = append(githubTeams, v.(string))
+				}
 			case "azureAD":
 				azureCfg := groupValue.(map[string]interface{})
 				azureID = azureCfg["identity_provider_id"].(string)
@@ -510,7 +521,7 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 		})
 	}
 
-	if len(githubTeams) > 0 && githubID != "" && githubName != "" {
+	if githubID != "" && githubName != "" {
 		data = append(data, map[string]interface{}{
 			"github": []interface{}{
 				map[string]interface{}{
