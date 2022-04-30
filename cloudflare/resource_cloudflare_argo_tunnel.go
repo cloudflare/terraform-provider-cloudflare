@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -49,7 +50,11 @@ func resourceCloudflareArgoTunnelRead(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("failed to fetch Argo Tunnel: %w", err)
 	}
 
+	token := fmt.Sprintf("{\"a\":\"%s\",\"t\":\"%s\",\"s\":\"%s\"}", accID, tunnel.ID, tunnel.Secret)
+
 	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
+	d.Set("tunnel_token", base64.RawStdEncoding.EncodeToString([]byte(token)))
+
 
 	return nil
 }

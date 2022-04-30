@@ -33,6 +33,7 @@ The following arguments are supported:
 The following additional attributes are exported:
 
 * `cname` - Usable CNAME for accessing the Argo Tunnel.
+* `tunnel_token` - Token used by a connector to authenticate and run the tunnel.
 
 ## Import
 
