@@ -15,10 +15,10 @@ import (
 func resourceCloudflareCustomHostnameFallbackOrigin() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareCustomHostnameFallbackOriginSchema(),
-		Create: resourceCloudflareCustomHostnameFallbackOriginCreate,
-		Read:   resourceCloudflareCustomHostnameFallbackOriginRead,
-		Update: resourceCloudflareCustomHostnameFallbackOriginUpdate,
-		Delete: resourceCloudflareCustomHostnameFallbackOriginDelete,
+		CreateContext: resourceCloudflareCustomHostnameFallbackOriginCreate,
+		ReadContext: resourceCloudflareCustomHostnameFallbackOriginRead,
+		UpdateContext: resourceCloudflareCustomHostnameFallbackOriginUpdate,
+		DeleteContext: resourceCloudflareCustomHostnameFallbackOriginDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareCustomHostnameFallbackOriginImport,
 		},

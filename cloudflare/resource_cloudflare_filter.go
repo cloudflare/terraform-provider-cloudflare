@@ -13,10 +13,10 @@ import (
 func resourceCloudflareFilter() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareFilterSchema(),
-		Create: resourceCloudflareFilterCreate,
-		Read:   resourceCloudflareFilterRead,
-		Update: resourceCloudflareFilterUpdate,
-		Delete: resourceCloudflareFilterDelete,
+		CreateContext: resourceCloudflareFilterCreate,
+		ReadContext: resourceCloudflareFilterRead,
+		UpdateContext: resourceCloudflareFilterUpdate,
+		DeleteContext: resourceCloudflareFilterDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareFilterImport,
 		},

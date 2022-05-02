@@ -13,10 +13,10 @@ import (
 func resourceCloudflareTeamsProxyEndpoint() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareTeamsProxyEndpointSchema(),
-		Create: resourceCloudflareTeamsProxyEndpointCreate,
-		Read:   resourceCloudflareTeamsProxyEndpointRead,
-		Update: resourceCloudflareTeamsProxyEndpointUpdate,
-		Delete: resourceCloudflareTeamsProxyEndpointDelete,
+		CreateContext: resourceCloudflareTeamsProxyEndpointCreate,
+		ReadContext: resourceCloudflareTeamsProxyEndpointRead,
+		UpdateContext: resourceCloudflareTeamsProxyEndpointUpdate,
+		DeleteContext: resourceCloudflareTeamsProxyEndpointDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareTeamsProxyEndpointImport,
 		},

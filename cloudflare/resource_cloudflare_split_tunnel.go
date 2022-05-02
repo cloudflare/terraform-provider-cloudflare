@@ -13,10 +13,10 @@ import (
 func resourceCloudflareSplitTunnel() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareSplitTunnelSchema(),
-		Read:   resourceCloudflareSplitTunnelRead,
-		Create: resourceCloudflareSplitTunnelUpdate, // Intentionally identical to Update as the resource is always present
-		Update: resourceCloudflareSplitTunnelUpdate,
-		Delete: resourceCloudflareSplitTunnelDelete,
+		ReadContext: resourceCloudflareSplitTunnelRead,
+		CreateContext: resourceCloudflareSplitTunnelUpdate, // Intentionally identical to Update as the resource is always present
+		UpdateContext: resourceCloudflareSplitTunnelUpdate,
+		DeleteContext: resourceCloudflareSplitTunnelDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareSplitTunnelImport,
 		},

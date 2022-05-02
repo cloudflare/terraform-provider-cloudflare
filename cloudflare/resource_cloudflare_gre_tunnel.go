@@ -14,10 +14,10 @@ import (
 func resourceCloudflareGRETunnel() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareGRETunnelSchema(),
-		Create: resourceCloudflareGRETunnelCreate,
-		Read:   resourceCloudflareGRETunnelRead,
-		Update: resourceCloudflareGRETunnelUpdate,
-		Delete: resourceCloudflareGRETunnelDelete,
+		CreateContext: resourceCloudflareGRETunnelCreate,
+		ReadContext: resourceCloudflareGRETunnelRead,
+		UpdateContext: resourceCloudflareGRETunnelUpdate,
+		DeleteContext: resourceCloudflareGRETunnelDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareGRETunnelImport,
 		},

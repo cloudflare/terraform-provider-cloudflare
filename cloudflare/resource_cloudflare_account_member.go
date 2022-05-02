@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAccountMember() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccountMemberSchema(),
-		Create: resourceCloudflareAccountMemberCreate,
-		Read:   resourceCloudflareAccountMemberRead,
-		Update: resourceCloudflareAccountMemberUpdate,
-		Delete: resourceCloudflareAccountMemberDelete,
+		CreateContext: resourceCloudflareAccountMemberCreate,
+		ReadContext: resourceCloudflareAccountMemberRead,
+		UpdateContext: resourceCloudflareAccountMemberUpdate,
+		DeleteContext: resourceCloudflareAccountMemberDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccountMemberImport,
 		},

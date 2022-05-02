@@ -15,10 +15,10 @@ const ws1 = "workspace_one"
 func resourceCloudflareDevicePostureIntegration() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareDevicePostureIntegrationSchema(),
-		Create: resourceCloudflareDevicePostureIntegrationCreate,
-		Read:   resourceCloudflareDevicePostureIntegrationRead,
-		Update: resourceCloudflareDevicePostureIntegrationUpdate,
-		Delete: resourceCloudflareDevicePostureIntegrationDelete,
+		CreateContext: resourceCloudflareDevicePostureIntegrationCreate,
+		ReadContext: resourceCloudflareDevicePostureIntegrationRead,
+		UpdateContext: resourceCloudflareDevicePostureIntegrationUpdate,
+		DeleteContext: resourceCloudflareDevicePostureIntegrationDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareDevicePostureIntegrationImport,
 		},

@@ -15,10 +15,10 @@ import (
 func resourceCloudflareTeamsRule() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareTeamsRuleSchema(),
-		Read:   resourceCloudflareTeamsRuleRead,
-		Update: resourceCloudflareTeamsRuleUpdate,
-		Create: resourceCloudflareTeamsRuleCreate,
-		Delete: resourceCloudflareTeamsRuleDelete,
+		ReadContext: resourceCloudflareTeamsRuleRead,
+		UpdateContext: resourceCloudflareTeamsRuleUpdate,
+		CreateContext: resourceCloudflareTeamsRuleCreate,
+		DeleteContext: resourceCloudflareTeamsRuleDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareTeamsRuleImport,
 		},

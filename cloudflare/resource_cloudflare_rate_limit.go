@@ -14,10 +14,10 @@ import (
 func resourceCloudflareRateLimit() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareRateLimitSchema(),
-		Create: resourceCloudflareRateLimitCreate,
-		Read:   resourceCloudflareRateLimitRead,
-		Update: resourceCloudflareRateLimitUpdate,
-		Delete: resourceCloudflareRateLimitDelete,
+		CreateContext: resourceCloudflareRateLimitCreate,
+		ReadContext: resourceCloudflareRateLimitRead,
+		UpdateContext: resourceCloudflareRateLimitUpdate,
+		DeleteContext: resourceCloudflareRateLimitDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareRateLimitImport,
 		},

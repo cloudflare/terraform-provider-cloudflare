@@ -17,9 +17,9 @@ import (
 func resourceCloudflareCertificatePack() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareCertificatePackSchema(),
-		Create: resourceCloudflareCertificatePackCreate,
-		Read:   resourceCloudflareCertificatePackRead,
-		Delete: resourceCloudflareCertificatePackDelete,
+		CreateContext: resourceCloudflareCertificatePackCreate,
+		ReadContext: resourceCloudflareCertificatePackRead,
+		DeleteContext: resourceCloudflareCertificatePackDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareCertificatePackImport,
 		},

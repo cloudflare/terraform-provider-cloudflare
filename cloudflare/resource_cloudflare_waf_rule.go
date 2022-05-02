@@ -13,10 +13,10 @@ import (
 func resourceCloudflareWAFRule() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareWAFRuleSchema(),
-		Create: resourceCloudflareWAFRuleCreate,
-		Read:   resourceCloudflareWAFRuleRead,
-		Update: resourceCloudflareWAFRuleUpdate,
-		Delete: resourceCloudflareWAFRuleDelete,
+		CreateContext: resourceCloudflareWAFRuleCreate,
+		ReadContext: resourceCloudflareWAFRuleRead,
+		UpdateContext: resourceCloudflareWAFRuleUpdate,
+		DeleteContext: resourceCloudflareWAFRuleDelete,
 
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWAFRuleImport,

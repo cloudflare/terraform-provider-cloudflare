@@ -14,10 +14,10 @@ import (
 func resourceCloudflareDevicePostureRule() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareDevicePostureRuleSchema(),
-		Create: resourceCloudflareDevicePostureRuleCreate,
-		Read:   resourceCloudflareDevicePostureRuleRead,
-		Update: resourceCloudflareDevicePostureRuleUpdate,
-		Delete: resourceCloudflareDevicePostureRuleDelete,
+		CreateContext: resourceCloudflareDevicePostureRuleCreate,
+		ReadContext: resourceCloudflareDevicePostureRuleRead,
+		UpdateContext: resourceCloudflareDevicePostureRuleUpdate,
+		DeleteContext: resourceCloudflareDevicePostureRuleDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareDevicePostureRuleImport,
 		},

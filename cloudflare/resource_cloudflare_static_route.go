@@ -14,10 +14,10 @@ import (
 func resourceCloudflareStaticRoute() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareStaticRouteSchema(),
-		Create: resourceCloudflareStaticRouteCreate,
-		Read:   resourceCloudflareStaticRouteRead,
-		Update: resourceCloudflareStaticRouteUpdate,
-		Delete: resourceCloudflareStaticRouteDelete,
+		CreateContext: resourceCloudflareStaticRouteCreate,
+		ReadContext: resourceCloudflareStaticRouteRead,
+		UpdateContext: resourceCloudflareStaticRouteUpdate,
+		DeleteContext: resourceCloudflareStaticRouteDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareStaticRouteImport,
 		},

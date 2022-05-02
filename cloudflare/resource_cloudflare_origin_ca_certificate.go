@@ -17,10 +17,10 @@ import (
 func resourceCloudflareOriginCACertificate() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareOriginCACertificateSchema(),
-		Create: resourceCloudflareOriginCACertificateCreate,
-		Update: resourceCloudflareOriginCACertificateCreate,
-		Read:   resourceCloudflareOriginCACertificateRead,
-		Delete: resourceCloudflareOriginCACertificateDelete,
+		CreateContext: resourceCloudflareOriginCACertificateCreate,
+		UpdateContext: resourceCloudflareOriginCACertificateCreate,
+		ReadContext: resourceCloudflareOriginCACertificateRead,
+		DeleteContext: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},

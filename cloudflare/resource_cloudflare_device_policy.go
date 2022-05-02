@@ -12,10 +12,10 @@ import (
 func resourceCloudflareDevicePolicyCertificates() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareDevicePolicyCertificatesSchema(),
-		Create: resourceCloudflareDevicePolicyCertificateUpdate,
-		Read:   resourceCloudflareDevicePolicyCertificateRead,
-		Update: resourceCloudflareDevicePolicyCertificateUpdate,
-		Delete: resourceCloudflareDevicePolicyCertificateDelete,
+		CreateContext: resourceCloudflareDevicePolicyCertificateUpdate,
+		ReadContext: resourceCloudflareDevicePolicyCertificateRead,
+		UpdateContext: resourceCloudflareDevicePolicyCertificateUpdate,
+		DeleteContext: resourceCloudflareDevicePolicyCertificateDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareDevicePolicyCertificateImport,
 		},

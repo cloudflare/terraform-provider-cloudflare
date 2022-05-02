@@ -13,10 +13,10 @@ import (
 func resourceCloudflareNotificationPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareNotificationPolicySchema(),
-		Create: resourceCloudflareNotificationPolicyCreate,
-		Read:   resourceCloudflareNotificationPolicyRead,
-		Update: resourceCloudflareNotificationPolicyUpdate,
-		Delete: resourceCloudflareNotificationPolicyDelete,
+		CreateContext: resourceCloudflareNotificationPolicyCreate,
+		ReadContext: resourceCloudflareNotificationPolicyRead,
+		UpdateContext: resourceCloudflareNotificationPolicyUpdate,
+		DeleteContext: resourceCloudflareNotificationPolicyDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceNotificationPolicyImport,
 		},

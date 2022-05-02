@@ -14,10 +14,10 @@ import (
 func resourceCloudflareTeamsLocation() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareTeamsLocationSchema(),
-		Create: resourceCloudflareTeamsLocationCreate,
-		Read:   resourceCloudflareTeamsLocationRead,
-		Update: resourceCloudflareTeamsLocationUpdate,
-		Delete: resourceCloudflareTeamsLocationDelete,
+		CreateContext: resourceCloudflareTeamsLocationCreate,
+		ReadContext: resourceCloudflareTeamsLocationRead,
+		UpdateContext: resourceCloudflareTeamsLocationUpdate,
+		DeleteContext: resourceCloudflareTeamsLocationDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareTeamsLocationImport,
 		},

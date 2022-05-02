@@ -15,10 +15,10 @@ import (
 func resourceCloudflareLogpushJob() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareLogpushJobSchema(),
-		Create: resourceCloudflareLogpushJobCreate,
-		Read:   resourceCloudflareLogpushJobRead,
-		Update: resourceCloudflareLogpushJobUpdate,
-		Delete: resourceCloudflareLogpushJobDelete,
+		CreateContext: resourceCloudflareLogpushJobCreate,
+		ReadContext: resourceCloudflareLogpushJobRead,
+		UpdateContext: resourceCloudflareLogpushJobUpdate,
+		DeleteContext: resourceCloudflareLogpushJobDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareLogpushJobImport,
 		},

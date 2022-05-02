@@ -15,10 +15,10 @@ import (
 func resourceCloudflareCustomHostname() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareCustomHostnameSchema(),
-		Create: resourceCloudflareCustomHostnameCreate,
-		Read:   resourceCloudflareCustomHostnameRead,
-		Update: resourceCloudflareCustomHostnameUpdate,
-		Delete: resourceCloudflareCustomHostnameDelete,
+		CreateContext: resourceCloudflareCustomHostnameCreate,
+		ReadContext: resourceCloudflareCustomHostnameRead,
+		UpdateContext: resourceCloudflareCustomHostnameUpdate,
+		DeleteContext: resourceCloudflareCustomHostnameDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareCustomHostnameImport,
 		},

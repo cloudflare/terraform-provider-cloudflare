@@ -14,10 +14,10 @@ import (
 func resourceCloudflareIPList() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareIPListSchema(),
-		Create: resourceCloudflareIPListCreate,
-		Read:   resourceCloudflareIPListRead,
-		Update: resourceCloudflareIPListUpdate,
-		Delete: resourceCloudflareIPListDelete,
+		CreateContext: resourceCloudflareIPListCreate,
+		ReadContext: resourceCloudflareIPListRead,
+		UpdateContext: resourceCloudflareIPListUpdate,
+		DeleteContext: resourceCloudflareIPListDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareIPListImport,
 		},

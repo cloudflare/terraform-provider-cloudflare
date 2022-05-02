@@ -13,10 +13,10 @@ import (
 func resourceCloudflareWAFPackage() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareWAFPackageSchema(),
-		Create: resourceCloudflareWAFPackageCreate,
-		Read:   resourceCloudflareWAFPackageRead,
-		Update: resourceCloudflareWAFPackageUpdate,
-		Delete: resourceCloudflareWAFPackageDelete,
+		CreateContext: resourceCloudflareWAFPackageCreate,
+		ReadContext: resourceCloudflareWAFPackageRead,
+		UpdateContext: resourceCloudflareWAFPackageUpdate,
+		DeleteContext: resourceCloudflareWAFPackageDelete,
 
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWAFPackageImport,

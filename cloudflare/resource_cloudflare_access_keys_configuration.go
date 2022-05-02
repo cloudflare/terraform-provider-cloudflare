@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessKeysConfigurationSchema(),
-		Read:   resourceCloudflareAccessKeysConfigurationRead,
-		Create: resourceCloudflareAccessKeysConfigurationCreate,
-		Update: resourceCloudflareAccessKeysConfigurationUpdate,
-		Delete: resourceCloudflareKeysConfigurationDelete,
+		ReadContext: resourceCloudflareAccessKeysConfigurationRead,
+		CreateContext: resourceCloudflareAccessKeysConfigurationCreate,
+		UpdateContext: resourceCloudflareAccessKeysConfigurationUpdate,
+		DeleteContext: resourceCloudflareKeysConfigurationDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareKeysConfigurationImport,
 		},

@@ -13,10 +13,10 @@ import (
 func resourceCloudflareTeamsList() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareTeamsListSchema(),
-		Create: resourceCloudflareTeamsListCreate,
-		Read:   resourceCloudflareTeamsListRead,
-		Update: resourceCloudflareTeamsListUpdate,
-		Delete: resourceCloudflareTeamsListDelete,
+		CreateContext: resourceCloudflareTeamsListCreate,
+		ReadContext: resourceCloudflareTeamsListRead,
+		UpdateContext: resourceCloudflareTeamsListUpdate,
+		DeleteContext: resourceCloudflareTeamsListDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareTeamsListImport,
 		},

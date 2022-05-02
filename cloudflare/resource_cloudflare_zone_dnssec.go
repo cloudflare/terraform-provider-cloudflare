@@ -21,10 +21,10 @@ const (
 func resourceCloudflareZoneDNSSEC() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareZoneDNSSECSchema(),
-		Create: resourceCloudflareZoneDNSSECCreate,
-		Read:   resourceCloudflareZoneDNSSECRead,
-		Update: resourceCloudflareZoneDNSSECUpdate,
-		Delete: resourceCloudflareZoneDNSSECDelete,
+		CreateContext: resourceCloudflareZoneDNSSECCreate,
+		ReadContext: resourceCloudflareZoneDNSSECRead,
+		UpdateContext: resourceCloudflareZoneDNSSECUpdate,
+		DeleteContext: resourceCloudflareZoneDNSSECDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},

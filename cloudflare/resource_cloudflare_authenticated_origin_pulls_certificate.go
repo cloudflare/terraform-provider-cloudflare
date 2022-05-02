@@ -15,9 +15,9 @@ import (
 func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 	return &schema.Resource{
 		// You cannot edit AOP certificates, rather, only upload new ones.
-		Create: resourceCloudflareAuthenticatedOriginPullsCertificateCreate,
-		Read:   resourceCloudflareAuthenticatedOriginPullsCertificateRead,
-		Delete: resourceCloudflareAuthenticatedOriginPullsCertificateDelete,
+		CreateContext: resourceCloudflareAuthenticatedOriginPullsCertificateCreate,
+		ReadContext: resourceCloudflareAuthenticatedOriginPullsCertificateRead,
+		DeleteContext: resourceCloudflareAuthenticatedOriginPullsCertificateDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAuthenticatedOriginPullsCertificateImport,
 		},

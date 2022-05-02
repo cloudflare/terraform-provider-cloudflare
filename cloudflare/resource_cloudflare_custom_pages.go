@@ -14,10 +14,10 @@ import (
 func resourceCloudflareCustomPages() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareCustomPagesSchema(),
-		Create: resourceCloudflareCustomPagesUpdate,
-		Read:   resourceCloudflareCustomPagesRead,
-		Update: resourceCloudflareCustomPagesUpdate,
-		Delete: resourceCloudflareCustomPagesDelete,
+		CreateContext: resourceCloudflareCustomPagesUpdate,
+		ReadContext: resourceCloudflareCustomPagesRead,
+		UpdateContext: resourceCloudflareCustomPagesUpdate,
+		DeleteContext: resourceCloudflareCustomPagesDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareCustomPagesImport,
 		},

@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAccessBookmark() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessBookmarkSchema(),
-		Create: resourceCloudflareAccessBookmarkCreate,
-		Read:   resourceCloudflareAccessBookmarkRead,
-		Update: resourceCloudflareAccessBookmarkUpdate,
-		Delete: resourceCloudflareAccessBookmarkDelete,
+		CreateContext: resourceCloudflareAccessBookmarkCreate,
+		ReadContext: resourceCloudflareAccessBookmarkRead,
+		UpdateContext: resourceCloudflareAccessBookmarkUpdate,
+		DeleteContext: resourceCloudflareAccessBookmarkDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessBookmarkImport,
 		},

@@ -13,10 +13,10 @@ import (
 func resourceCloudflareZoneCacheVariants() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareZoneCacheVariantsSchema(),
-		Create: resourceCloudflareZoneCacheVariantsUpdate,
-		Read:   resourceCloudflareZoneCacheVariantsRead,
-		Update: resourceCloudflareZoneCacheVariantsUpdate,
-		Delete: resourceCloudflareZoneCacheVariantsDelete,
+		CreateContext: resourceCloudflareZoneCacheVariantsUpdate,
+		ReadContext: resourceCloudflareZoneCacheVariantsRead,
+		UpdateContext: resourceCloudflareZoneCacheVariantsUpdate,
+		DeleteContext: resourceCloudflareZoneCacheVariantsDelete,
 	}
 }
 

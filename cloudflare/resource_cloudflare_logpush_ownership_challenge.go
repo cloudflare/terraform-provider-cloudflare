@@ -12,10 +12,10 @@ import (
 func resourceCloudflareLogpushOwnershipChallenge() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareLogpushOwnershipChallengeSchema(),
-		Create: resourceCloudflareLogpushOwnershipChallengeCreate,
-		Update: resourceCloudflareLogpushOwnershipChallengeCreate,
-		Read:   resourceCloudflareLogpushOwnershipChallengeNoop,
-		Delete: resourceCloudflareLogpushOwnershipChallengeNoop,
+		CreateContext: resourceCloudflareLogpushOwnershipChallengeCreate,
+		UpdateContext: resourceCloudflareLogpushOwnershipChallengeCreate,
+		ReadContext: resourceCloudflareLogpushOwnershipChallengeNoop,
+		DeleteContext: resourceCloudflareLogpushOwnershipChallengeNoop,
 	}
 }
 

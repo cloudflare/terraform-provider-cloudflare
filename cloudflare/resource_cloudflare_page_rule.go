@@ -15,10 +15,10 @@ import (
 func resourceCloudflarePageRule() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflarePageRuleSchema(),
-		Create: resourceCloudflarePageRuleCreate,
-		Read:   resourceCloudflarePageRuleRead,
-		Update: resourceCloudflarePageRuleUpdate,
-		Delete: resourceCloudflarePageRuleDelete,
+		CreateContext: resourceCloudflarePageRuleCreate,
+		ReadContext: resourceCloudflarePageRuleRead,
+		UpdateContext: resourceCloudflarePageRuleUpdate,
+		DeleteContext: resourceCloudflarePageRuleDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflarePageRuleImport,
 		},

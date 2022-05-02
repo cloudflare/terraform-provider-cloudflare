@@ -11,10 +11,10 @@ import (
 func resourceCloudflareFallbackDomain() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareFallbackDomainSchema(),
-		Read:   resourceCloudflareFallbackDomainRead,
-		Create: resourceCloudflareFallbackDomainUpdate, // Intentionally identical to Update as the resource is always present
-		Update: resourceCloudflareFallbackDomainUpdate,
-		Delete: resourceCloudflareFallbackDomainDelete,
+		ReadContext: resourceCloudflareFallbackDomainRead,
+		CreateContext: resourceCloudflareFallbackDomainUpdate, // Intentionally identical to Update as the resource is always present
+		UpdateContext: resourceCloudflareFallbackDomainUpdate,
+		DeleteContext: resourceCloudflareFallbackDomainDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareFallbackDomainImport,
 		},

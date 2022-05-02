@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAuthenticatedOriginPulls() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAuthenticatedOriginPullsSchema(),
-		Create: resourceCloudflareAuthenticatedOriginPullsCreate,
-		Read:   resourceCloudflareAuthenticatedOriginPullsRead,
-		Update: resourceCloudflareAuthenticatedOriginPullsCreate,
-		Delete: resourceCloudflareAuthenticatedOriginPullsDelete,
+		CreateContext: resourceCloudflareAuthenticatedOriginPullsCreate,
+		ReadContext: resourceCloudflareAuthenticatedOriginPullsRead,
+		UpdateContext: resourceCloudflareAuthenticatedOriginPullsCreate,
+		DeleteContext: resourceCloudflareAuthenticatedOriginPullsDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAuthenticatedOriginPullsImport,
 		},

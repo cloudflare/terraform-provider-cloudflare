@@ -17,10 +17,10 @@ import (
 
 func resourceCloudflareCustomSsl() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareCustomSslCreate,
-		Read:   resourceCloudflareCustomSslRead,
-		Update: resourceCloudflareCustomSslUpdate,
-		Delete: resourceCloudflareCustomSslDelete,
+		CreateContext: resourceCloudflareCustomSslCreate,
+		ReadContext: resourceCloudflareCustomSslRead,
+		UpdateContext: resourceCloudflareCustomSslUpdate,
+		DeleteContext: resourceCloudflareCustomSslDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareCustomSslImport,
 		},

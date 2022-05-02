@@ -13,10 +13,10 @@ import (
 func resourceCloudflareTunnelRoute() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareTunnelRouteSchema(),
-		Create: resourceCloudflareTunnelRouteCreate,
-		Read:   resourceCloudflareTunnelRouteRead,
-		Update: resourceCloudflareTunnelRouteUpdate,
-		Delete: resourceCloudflareTunnelRouteDelete,
+		CreateContext: resourceCloudflareTunnelRouteCreate,
+		ReadContext: resourceCloudflareTunnelRouteRead,
+		UpdateContext: resourceCloudflareTunnelRouteUpdate,
+		DeleteContext: resourceCloudflareTunnelRouteDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareTunnelRouteImport,
 		},

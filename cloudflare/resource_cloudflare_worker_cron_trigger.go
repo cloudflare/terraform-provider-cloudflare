@@ -12,10 +12,10 @@ import (
 func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareWorkerCronTriggerSchema(),
-		Create: resourceCloudflareWorkerCronTriggerUpdate,
-		Read:   resourceCloudflareWorkerCronTriggerRead,
-		Update: resourceCloudflareWorkerCronTriggerUpdate,
-		Delete: resourceCloudflareWorkerCronTriggerDelete,
+		CreateContext: resourceCloudflareWorkerCronTriggerUpdate,
+		ReadContext: resourceCloudflareWorkerCronTriggerRead,
+		UpdateContext: resourceCloudflareWorkerCronTriggerUpdate,
+		DeleteContext: resourceCloudflareWorkerCronTriggerDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWorkerCronTriggerImport,
 		},

@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAccessGroup() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessGroupSchema(),
-		Create: resourceCloudflareAccessGroupCreate,
-		Read:   resourceCloudflareAccessGroupRead,
-		Update: resourceCloudflareAccessGroupUpdate,
-		Delete: resourceCloudflareAccessGroupDelete,
+		CreateContext: resourceCloudflareAccessGroupCreate,
+		ReadContext: resourceCloudflareAccessGroupRead,
+		UpdateContext: resourceCloudflareAccessGroupUpdate,
+		DeleteContext: resourceCloudflareAccessGroupDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessGroupImport,
 		},

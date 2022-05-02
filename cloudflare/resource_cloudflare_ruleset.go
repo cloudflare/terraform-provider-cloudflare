@@ -23,10 +23,10 @@ const (
 func resourceCloudflareRuleset() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareRulesetSchema(),
-		Create: resourceCloudflareRulesetCreate,
-		Read:   resourceCloudflareRulesetRead,
-		Update: resourceCloudflareRulesetUpdate,
-		Delete: resourceCloudflareRulesetDelete,
+		CreateContext: resourceCloudflareRulesetCreate,
+		ReadContext: resourceCloudflareRulesetRead,
+		UpdateContext: resourceCloudflareRulesetUpdate,
+		DeleteContext: resourceCloudflareRulesetDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareRulesetImport,
 		},

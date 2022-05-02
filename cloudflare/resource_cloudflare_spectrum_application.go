@@ -15,10 +15,10 @@ import (
 func resourceCloudflareSpectrumApplication() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareSpectrumApplicationSchema(),
-		Create: resourceCloudflareSpectrumApplicationCreate,
-		Read:   resourceCloudflareSpectrumApplicationRead,
-		Update: resourceCloudflareSpectrumApplicationUpdate,
-		Delete: resourceCloudflareSpectrumApplicationDelete,
+		CreateContext: resourceCloudflareSpectrumApplicationCreate,
+		ReadContext: resourceCloudflareSpectrumApplicationRead,
+		UpdateContext: resourceCloudflareSpectrumApplicationUpdate,
+		DeleteContext: resourceCloudflareSpectrumApplicationDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareSpectrumApplicationImport,
 		},

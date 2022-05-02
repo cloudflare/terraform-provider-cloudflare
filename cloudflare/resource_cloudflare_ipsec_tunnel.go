@@ -14,10 +14,10 @@ import (
 func resourceCloudflareIPsecTunnel() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareIPsecTunnelSchema(),
-		Create: resourceCloudflareIPsecTunnelCreate,
-		Read:   resourceCloudflareIPsecTunnelRead,
-		Update: resourceCloudflareIPsecTunnelUpdate,
-		Delete: resourceCloudflareIPsecTunnelDelete,
+		CreateContext: resourceCloudflareIPsecTunnelCreate,
+		ReadContext: resourceCloudflareIPsecTunnelRead,
+		UpdateContext: resourceCloudflareIPsecTunnelUpdate,
+		DeleteContext: resourceCloudflareIPsecTunnelDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareIPsecTunnelImport,
 		},

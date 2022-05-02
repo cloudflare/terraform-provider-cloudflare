@@ -16,10 +16,10 @@ func resourceCloudflareApiToken() *schema.Resource {
 
 	return &schema.Resource{
 		Schema: resourceCloudflareApiTokenSchema(),
-		Create: resourceCloudflareApiTokenCreate,
-		Read:   resourceCloudflareApiTokenRead,
-		Update: resourceCloudflareApiTokenUpdate,
-		Delete: resourceCloudflareApiTokenDelete,
+		CreateContext: resourceCloudflareApiTokenCreate,
+		ReadContext: resourceCloudflareApiTokenRead,
+		UpdateContext: resourceCloudflareApiTokenUpdate,
+		DeleteContext: resourceCloudflareApiTokenDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},

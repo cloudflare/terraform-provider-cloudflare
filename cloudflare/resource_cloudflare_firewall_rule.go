@@ -13,10 +13,10 @@ import (
 func resourceCloudflareFirewallRule() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareFirewallRuleSchema(),
-		Create: resourceCloudflareFirewallRuleCreate,
-		Read:   resourceCloudflareFirewallRuleRead,
-		Update: resourceCloudflareFirewallRuleUpdate,
-		Delete: resourceCloudflareFirewallRuleDelete,
+		CreateContext: resourceCloudflareFirewallRuleCreate,
+		ReadContext: resourceCloudflareFirewallRuleRead,
+		UpdateContext: resourceCloudflareFirewallRuleUpdate,
+		DeleteContext: resourceCloudflareFirewallRuleDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareFirewallRuleImport,
 		},

@@ -17,10 +17,10 @@ import (
 
 func resourceCloudflareLoadBalancer() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareLoadBalancerCreate,
-		Read:   resourceCloudflareLoadBalancerRead,
-		Update: resourceCloudflareLoadBalancerUpdate,
-		Delete: resourceCloudflareLoadBalancerDelete,
+		CreateContext: resourceCloudflareLoadBalancerCreate,
+		ReadContext: resourceCloudflareLoadBalancerRead,
+		UpdateContext: resourceCloudflareLoadBalancerUpdate,
+		DeleteContext: resourceCloudflareLoadBalancerDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareLoadBalancerImport,
 		},

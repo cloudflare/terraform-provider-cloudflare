@@ -76,10 +76,10 @@ var ratePlans = map[string]subscriptionData{
 func resourceCloudflareZone() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareZoneSchema(),
-		Create: resourceCloudflareZoneCreate,
-		Read:   resourceCloudflareZoneRead,
-		Update: resourceCloudflareZoneUpdate,
-		Delete: resourceCloudflareZoneDelete,
+		CreateContext: resourceCloudflareZoneCreate,
+		ReadContext: resourceCloudflareZoneRead,
+		UpdateContext: resourceCloudflareZoneUpdate,
+		DeleteContext: resourceCloudflareZoneDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},

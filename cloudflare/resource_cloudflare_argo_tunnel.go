@@ -15,9 +15,9 @@ const argoTunnelCNAME = "cfargotunnel.com"
 func resourceCloudflareArgoTunnel() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareArgoTunnelSchema(),
-		Create: resourceCloudflareArgoTunnelCreate,
-		Read:   resourceCloudflareArgoTunnelRead,
-		Delete: resourceCloudflareArgoTunnelDelete,
+		CreateContext: resourceCloudflareArgoTunnelCreate,
+		ReadContext: resourceCloudflareArgoTunnelRead,
+		DeleteContext: resourceCloudflareArgoTunnelDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareArgoTunnelImport,
 		},

@@ -15,10 +15,10 @@ const CONCEALED_STRING = "**********************************"
 func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessIdentityProviderSchema(),
-		Create: resourceCloudflareAccessIdentityProviderCreate,
-		Read:   resourceCloudflareAccessIdentityProviderRead,
-		Update: resourceCloudflareAccessIdentityProviderUpdate,
-		Delete: resourceCloudflareAccessIdentityProviderDelete,
+		CreateContext: resourceCloudflareAccessIdentityProviderCreate,
+		ReadContext: resourceCloudflareAccessIdentityProviderRead,
+		UpdateContext: resourceCloudflareAccessIdentityProviderUpdate,
+		DeleteContext: resourceCloudflareAccessIdentityProviderDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessIdentityProviderImport,
 		},

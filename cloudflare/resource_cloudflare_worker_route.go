@@ -14,10 +14,10 @@ import (
 func resourceCloudflareWorkerRoute() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareWorkerRouteSchema(),
-		Create: resourceCloudflareWorkerRouteCreate,
-		Read:   resourceCloudflareWorkerRouteRead,
-		Update: resourceCloudflareWorkerRouteUpdate,
-		Delete: resourceCloudflareWorkerRouteDelete,
+		CreateContext: resourceCloudflareWorkerRouteCreate,
+		ReadContext: resourceCloudflareWorkerRouteRead,
+		UpdateContext: resourceCloudflareWorkerRouteUpdate,
+		DeleteContext: resourceCloudflareWorkerRouteDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWorkerRouteImport,
 		},

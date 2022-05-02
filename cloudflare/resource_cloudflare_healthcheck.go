@@ -16,10 +16,10 @@ import (
 
 func resourceCloudflareHealthcheck() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareHealthcheckCreate,
-		Read:   resourceCloudflareHealthcheckRead,
-		Update: resourceCloudflareHealthcheckUpdate,
-		Delete: resourceCloudflareHealthcheckDelete,
+		CreateContext: resourceCloudflareHealthcheckCreate,
+		ReadContext: resourceCloudflareHealthcheckRead,
+		UpdateContext: resourceCloudflareHealthcheckUpdate,
+		DeleteContext: resourceCloudflareHealthcheckDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareHealthcheckImport,
 		},

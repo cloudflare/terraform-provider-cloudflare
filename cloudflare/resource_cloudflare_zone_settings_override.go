@@ -19,10 +19,10 @@ import (
 func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareZoneSettingsOverrideSchema(),
-		Create: resourceCloudflareZoneSettingsOverrideCreate,
-		Read:   resourceCloudflareZoneSettingsOverrideRead,
-		Update: resourceCloudflareZoneSettingsOverrideUpdate,
-		Delete: resourceCloudflareZoneSettingsOverrideDelete,
+		CreateContext: resourceCloudflareZoneSettingsOverrideCreate,
+		ReadContext: resourceCloudflareZoneSettingsOverrideRead,
+		UpdateContext: resourceCloudflareZoneSettingsOverrideUpdate,
+		DeleteContext: resourceCloudflareZoneSettingsOverrideDelete,
 	}
 }
 

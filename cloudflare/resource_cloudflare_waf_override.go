@@ -13,10 +13,10 @@ import (
 func resourceCloudflareWAFOverride() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareWAFOverrideSchema(),
-		Create: resourceCloudflareWAFOverrideCreate,
-		Read:   resourceCloudflareWAFOverrideRead,
-		Update: resourceCloudflareWAFOverrideUpdate,
-		Delete: resourceCloudflareWAFOverrideDelete,
+		CreateContext: resourceCloudflareWAFOverrideCreate,
+		ReadContext: resourceCloudflareWAFOverrideRead,
+		UpdateContext: resourceCloudflareWAFOverrideUpdate,
+		DeleteContext: resourceCloudflareWAFOverrideDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWAFOverrideImport,
 		},

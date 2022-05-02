@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAccessPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessPolicySchema(),
-		Create: resourceCloudflareAccessPolicyCreate,
-		Read:   resourceCloudflareAccessPolicyRead,
-		Update: resourceCloudflareAccessPolicyUpdate,
-		Delete: resourceCloudflareAccessPolicyDelete,
+		CreateContext: resourceCloudflareAccessPolicyCreate,
+		ReadContext: resourceCloudflareAccessPolicyRead,
+		UpdateContext: resourceCloudflareAccessPolicyUpdate,
+		DeleteContext: resourceCloudflareAccessPolicyDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessPolicyImport,
 		},

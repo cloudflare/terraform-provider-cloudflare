@@ -14,10 +14,10 @@ import (
 func resourceCloudflareAccessMutualTLSCertificate() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessMutualTLSCertificateSchema(),
-		Create: resourceCloudflareAccessMutualTLSCertificateCreate,
-		Read:   resourceCloudflareAccessMutualTLSCertificateRead,
-		Update: resourceCloudflareAccessMutualTLSCertificateUpdate,
-		Delete: resourceCloudflareAccessMutualTLSCertificateDelete,
+		CreateContext: resourceCloudflareAccessMutualTLSCertificateCreate,
+		ReadContext: resourceCloudflareAccessMutualTLSCertificateRead,
+		UpdateContext: resourceCloudflareAccessMutualTLSCertificateUpdate,
+		DeleteContext: resourceCloudflareAccessMutualTLSCertificateDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessMutualTLSCertificateImport,
 		},

@@ -13,10 +13,10 @@ import (
 
 func resourceCloudflareWaitingRoom() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareWaitingRoomCreate,
-		Read:   resourceCloudflareWaitingRoomRead,
-		Update: resourceCloudflareWaitingRoomUpdate,
-		Delete: resourceCloudflareWaitingRoomDelete,
+		CreateContext: resourceCloudflareWaitingRoomCreate,
+		ReadContext: resourceCloudflareWaitingRoomRead,
+		UpdateContext: resourceCloudflareWaitingRoomUpdate,
+		DeleteContext: resourceCloudflareWaitingRoomDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWaitingRoomImport,
 		},

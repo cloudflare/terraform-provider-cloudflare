@@ -14,10 +14,10 @@ import (
 
 func resourceCloudflareRecord() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareRecordCreate,
-		Read:   resourceCloudflareRecordRead,
-		Update: resourceCloudflareRecordUpdate,
-		Delete: resourceCloudflareRecordDelete,
+		CreateContext: resourceCloudflareRecordCreate,
+		ReadContext: resourceCloudflareRecordRead,
+		UpdateContext: resourceCloudflareRecordUpdate,
+		DeleteContext: resourceCloudflareRecordDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareRecordImport,
 		},

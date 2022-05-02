@@ -13,10 +13,10 @@ import (
 func resourceCloudflareArgo() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareArgoSchema(),
-		Create: resourceCloudflareArgoUpdate,
-		Read:   resourceCloudflareArgoRead,
-		Update: resourceCloudflareArgoUpdate,
-		Delete: resourceCloudflareArgoDelete,
+		CreateContext: resourceCloudflareArgoUpdate,
+		ReadContext: resourceCloudflareArgoRead,
+		UpdateContext: resourceCloudflareArgoUpdate,
+		DeleteContext: resourceCloudflareArgoDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareArgoImport,
 		},

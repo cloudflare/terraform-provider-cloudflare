@@ -12,10 +12,10 @@ import (
 func resourceCloudflareLogpullRetention() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareLogpullRetentionSchema(),
-		Create: resourceCloudflareLogpullRetentionSet,
-		Read:   resourceCloudflareLogpullRetentionRead,
-		Update: resourceCloudflareLogpullRetentionSet,
-		Delete: resourceCloudflareLogpullRetentionDelete,
+		CreateContext: resourceCloudflareLogpullRetentionSet,
+		ReadContext: resourceCloudflareLogpullRetentionRead,
+		UpdateContext: resourceCloudflareLogpullRetentionSet,
+		DeleteContext: resourceCloudflareLogpullRetentionDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareLogpullRetentionImport,
 		},

@@ -16,10 +16,10 @@ import (
 func resourceCloudflareWorkerScript() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareWorkerScriptSchema(),
-		Create: resourceCloudflareWorkerScriptCreate,
-		Read:   resourceCloudflareWorkerScriptRead,
-		Update: resourceCloudflareWorkerScriptUpdate,
-		Delete: resourceCloudflareWorkerScriptDelete,
+		CreateContext: resourceCloudflareWorkerScriptCreate,
+		ReadContext: resourceCloudflareWorkerScriptRead,
+		UpdateContext: resourceCloudflareWorkerScriptUpdate,
+		DeleteContext: resourceCloudflareWorkerScriptDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWorkerScriptImport,
 		},

@@ -14,10 +14,10 @@ import (
 func resourceCloudflareNotificationPolicyWebhooks() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareNotificationPolicyWebhooksSchema(),
-		Create: resourceCloudflareNotificationPolicyWebhooksCreate,
-		Read:   resourceCloudflareNotificationPolicyWebhooksRead,
-		Update: resourceCloudflareNotificationPolicyWebhooksUpdate,
-		Delete: resourceCloudflareNotificationPolicyWebhooksDelete,
+		CreateContext: resourceCloudflareNotificationPolicyWebhooksCreate,
+		ReadContext: resourceCloudflareNotificationPolicyWebhooksRead,
+		UpdateContext: resourceCloudflareNotificationPolicyWebhooksUpdate,
+		DeleteContext: resourceCloudflareNotificationPolicyWebhooksDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareNotificationPolicyWebhooksImport,
 		},

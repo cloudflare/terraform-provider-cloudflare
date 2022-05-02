@@ -12,10 +12,10 @@ import (
 func resourceCloudflareBYOIPPrefix() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareBYOIPPrefixSchema(),
-		Create: resourceCloudflareBYOIPPrefixCreate,
-		Read:   resourceCloudflareBYOIPPrefixRead,
-		Update: resourceCloudflareBYOIPPrefixUpdate,
-		Delete: resourceCloudflareBYOIPPrefixDelete,
+		CreateContext: resourceCloudflareBYOIPPrefixCreate,
+		ReadContext: resourceCloudflareBYOIPPrefixRead,
+		UpdateContext: resourceCloudflareBYOIPPrefixUpdate,
+		DeleteContext: resourceCloudflareBYOIPPrefixDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareBYOIPPrefixImport,
 		},

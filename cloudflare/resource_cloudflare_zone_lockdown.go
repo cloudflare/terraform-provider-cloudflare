@@ -13,10 +13,10 @@ import (
 func resourceCloudflareZoneLockdown() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareZoneLockdownSchema(),
-		Create: resourceCloudflareZoneLockdownCreate,
-		Read:   resourceCloudflareZoneLockdownRead,
-		Update: resourceCloudflareZoneLockdownUpdate,
-		Delete: resourceCloudflareZoneLockdownDelete,
+		CreateContext: resourceCloudflareZoneLockdownCreate,
+		ReadContext: resourceCloudflareZoneLockdownRead,
+		UpdateContext: resourceCloudflareZoneLockdownUpdate,
+		DeleteContext: resourceCloudflareZoneLockdownDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareZoneLockdownImport,
 		},

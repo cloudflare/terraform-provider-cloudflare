@@ -14,10 +14,10 @@ import (
 func resourceCloudflareAccessServiceToken() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessServiceTokenSchema(),
-		Create: resourceCloudflareAccessServiceTokenCreate,
-		Read:   resourceCloudflareAccessServiceTokenRead,
-		Update: resourceCloudflareAccessServiceTokenUpdate,
-		Delete: resourceCloudflareAccessServiceTokenDelete,
+		CreateContext: resourceCloudflareAccessServiceTokenCreate,
+		ReadContext: resourceCloudflareAccessServiceTokenRead,
+		UpdateContext: resourceCloudflareAccessServiceTokenUpdate,
+		DeleteContext: resourceCloudflareAccessServiceTokenDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessServiceTokenImport,
 		},

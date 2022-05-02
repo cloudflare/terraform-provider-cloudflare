@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAccessApplication() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessApplicationSchema(),
-		Create: resourceCloudflareAccessApplicationCreate,
-		Read:   resourceCloudflareAccessApplicationRead,
-		Update: resourceCloudflareAccessApplicationUpdate,
-		Delete: resourceCloudflareAccessApplicationDelete,
+		CreateContext: resourceCloudflareAccessApplicationCreate,
+		ReadContext: resourceCloudflareAccessApplicationRead,
+		UpdateContext: resourceCloudflareAccessApplicationUpdate,
+		DeleteContext: resourceCloudflareAccessApplicationDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessApplicationImport,
 		},

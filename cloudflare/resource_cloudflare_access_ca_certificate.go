@@ -13,10 +13,10 @@ import (
 func resourceCloudflareAccessCACertificate() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareAccessCACertificateSchema(),
-		Create: resourceCloudflareAccessCACertificateCreate,
-		Read:   resourceCloudflareAccessCACertificateRead,
-		Update: resourceCloudflareAccessCACertificateUpdate,
-		Delete: resourceCloudflareAccessCACertificateDelete,
+		CreateContext: resourceCloudflareAccessCACertificateCreate,
+		ReadContext: resourceCloudflareAccessCACertificateRead,
+		UpdateContext: resourceCloudflareAccessCACertificateUpdate,
+		DeleteContext: resourceCloudflareAccessCACertificateDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareAccessCACertificateImport,
 		},

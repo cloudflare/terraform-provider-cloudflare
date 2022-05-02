@@ -13,9 +13,9 @@ import (
 func resourceCloudflareTeamsAccount() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareTeamsAccountSchema(),
-		Read:   resourceCloudflareTeamsAccountRead,
-		Update: resourceCloudflareTeamsAccountUpdate,
-		Create: resourceCloudflareTeamsAccountUpdate,
+		ReadContext: resourceCloudflareTeamsAccountRead,
+		UpdateContext: resourceCloudflareTeamsAccountUpdate,
+		CreateContext: resourceCloudflareTeamsAccountUpdate,
 		// This resource is a top-level account configuration and cant be "deleted"
 		Delete: func(_ *schema.ResourceData, _ interface{}) error { return nil },
 		Importer: &schema.ResourceImporter{

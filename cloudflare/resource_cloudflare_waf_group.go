@@ -13,10 +13,10 @@ import (
 func resourceCloudflareWAFGroup() *schema.Resource {
 	return &schema.Resource{
 		Schema: resourceCloudflareWAFGroupSchema(),
-		Create: resourceCloudflareWAFGroupCreate,
-		Read:   resourceCloudflareWAFGroupRead,
-		Update: resourceCloudflareWAFGroupUpdate,
-		Delete: resourceCloudflareWAFGroupDelete,
+		CreateContext: resourceCloudflareWAFGroupCreate,
+		ReadContext: resourceCloudflareWAFGroupRead,
+		UpdateContext: resourceCloudflareWAFGroupUpdate,
+		DeleteContext: resourceCloudflareWAFGroupDelete,
 
 		Importer: &schema.ResourceImporter{
 			State: resourceCloudflareWAFGroupImport,
