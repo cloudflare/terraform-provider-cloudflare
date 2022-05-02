@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
@@ -14,13 +15,13 @@ import (
 
 func resourceCloudflareMagicFirewallRuleset() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareMagicFirewallRulesetSchema(),
+		Schema:        resourceCloudflareMagicFirewallRulesetSchema(),
 		CreateContext: resourceCloudflareMagicFirewallRulesetCreate,
-		ReadContext: resourceCloudflareMagicFirewallRulesetRead,
+		ReadContext:   resourceCloudflareMagicFirewallRulesetRead,
 		UpdateContext: resourceCloudflareMagicFirewallRulesetUpdate,
 		DeleteContext: resourceCloudflareMagicFirewallRulesetDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareMagicFirewallRulesetImport,
+			StateContext: resourceCloudflareMagicFirewallRulesetImport,
 		},
 	}
 }
@@ -31,7 +32,7 @@ func resourceCloudflareMagicFirewallRulesetCreate(ctx context.Context, d *schema
 
 	rules, err := buildMagicFirewallRulesetRulesFromResource(d.Get("rules"))
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error building ruleset from resource")))
 	}
 
 	ruleset, err := client.CreateMagicFirewallRuleset(context.Background(),
@@ -41,15 +42,15 @@ func resourceCloudflareMagicFirewallRulesetCreate(ctx context.Context, d *schema
 		rules)
 
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error creating firewall ruleset %s", d.Get("name").(string)))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating firewall ruleset %s", d.Get("name").(string))))
 	}
 
 	d.SetId(ruleset.ID)
 
-	return resourceCloudflareMagicFirewallRulesetRead(d, meta)
+	return resourceCloudflareMagicFirewallRulesetRead(ctx, d, meta)
 }
 
-func resourceCloudflareMagicFirewallRulesetImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareMagicFirewallRulesetImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -60,7 +61,7 @@ func resourceCloudflareMagicFirewallRulesetImport(d *schema.ResourceData, meta i
 	d.SetId(rulesetID)
 	d.Set("account_id", accountID)
 
-	resourceCloudflareMagicFirewallRulesetRead(d, meta)
+	resourceCloudflareMagicFirewallRulesetRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -76,7 +77,7 @@ func resourceCloudflareMagicFirewallRulesetRead(ctx context.Context, d *schema.R
 			d.SetId("")
 			return nil
 		}
-		return err.Wrap(err, fmt.Sprintf("error reading Magic Firewall Ruleset ID %q", d.Id()))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error reading Magic Firewall Ruleset ID %q", d.Id())))
 	}
 
 	d.Set("name", ruleset.Name)
@@ -92,15 +93,15 @@ func resourceCloudflareMagicFirewallRulesetUpdate(ctx context.Context, d *schema
 
 	rules, err := buildMagicFirewallRulesetRulesFromResource(d.Get("rules"))
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error building ruleset from resource"))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error building ruleset from resource")))
 	}
 
 	_, err = client.UpdateMagicFirewallRuleset(context.Background(), accountID, d.Id(), d.Get("description").(string), rules)
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error updating Magic Firewall ruleset with ID %q", d.Id()))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating Magic Firewall ruleset with ID %q", d.Id())))
 	}
 
-	return resourceCloudflareMagicFirewallRulesetRead(d, meta)
+	return resourceCloudflareMagicFirewallRulesetRead(ctx, d, meta)
 }
 
 func resourceCloudflareMagicFirewallRulesetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -109,7 +110,7 @@ func resourceCloudflareMagicFirewallRulesetDelete(ctx context.Context, d *schema
 
 	err := client.DeleteMagicFirewallRuleset(context.Background(), accountID, d.Id())
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error deleting Magic Firewall ruleset with ID %q", d.Id()))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error deleting Magic Firewall ruleset with ID %q", d.Id())))
 	}
 
 	return nil

@@ -7,18 +7,19 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareNotificationPolicy() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareNotificationPolicySchema(),
+		Schema:        resourceCloudflareNotificationPolicySchema(),
 		CreateContext: resourceCloudflareNotificationPolicyCreate,
-		ReadContext: resourceCloudflareNotificationPolicyRead,
+		ReadContext:   resourceCloudflareNotificationPolicyRead,
 		UpdateContext: resourceCloudflareNotificationPolicyUpdate,
 		DeleteContext: resourceCloudflareNotificationPolicyDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceNotificationPolicyImport,
+			StateContext: resourceNotificationPolicyImport,
 		},
 	}
 }
@@ -36,7 +37,7 @@ func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.R
 	}
 	d.SetId(policy.Result.ID)
 
-	return resourceCloudflareNotificationPolicyRead(d, meta)
+	return resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 }
 
 func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -93,7 +94,7 @@ func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.R
 		return diag.FromErr(fmt.Errorf("error updating notification policy %s: %s", policyID, err))
 	}
 
-	return resourceCloudflareNotificationPolicyRead(d, meta)
+	return resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 }
 
 func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -109,7 +110,7 @@ func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.R
 	return nil
 }
 
-func resourceNotificationPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceNotificationPolicyImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -120,7 +121,7 @@ func resourceNotificationPolicyImport(d *schema.ResourceData, meta interface{}) 
 	d.SetId(policyID)
 	d.Set("account_id", accountID)
 
-	resourceCloudflareNotificationPolicyRead(d, meta)
+	resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 

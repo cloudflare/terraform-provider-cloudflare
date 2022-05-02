@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -14,13 +15,13 @@ const CONCEALED_STRING = "**********************************"
 
 func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessIdentityProviderSchema(),
+		Schema:        resourceCloudflareAccessIdentityProviderSchema(),
 		CreateContext: resourceCloudflareAccessIdentityProviderCreate,
-		ReadContext: resourceCloudflareAccessIdentityProviderRead,
+		ReadContext:   resourceCloudflareAccessIdentityProviderRead,
 		UpdateContext: resourceCloudflareAccessIdentityProviderUpdate,
 		DeleteContext: resourceCloudflareAccessIdentityProviderDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessIdentityProviderImport,
+			StateContext: resourceCloudflareAccessIdentityProviderImport,
 		},
 	}
 }
@@ -90,7 +91,7 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 
 	d.SetId(accessIdentityProvider.ID)
 
-	return resourceCloudflareAccessIdentityProviderRead(d, meta)
+	return resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -129,7 +130,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 		return diag.FromErr(fmt.Errorf("failed to find Access Identity Provider ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessIdentityProviderRead(d, meta)
+	return resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -156,7 +157,7 @@ func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *sche
 	return nil
 }
 
-func resourceCloudflareAccessIdentityProviderImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessIdentityProviderImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -170,7 +171,7 @@ func resourceCloudflareAccessIdentityProviderImport(d *schema.ResourceData, meta
 	d.Set("account_id", accountID)
 	d.SetId(accessIdentityProviderID)
 
-	resourceCloudflareAccessIdentityProviderRead(d, meta)
+	resourceCloudflareAccessIdentityProviderRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

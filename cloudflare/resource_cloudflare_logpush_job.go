@@ -9,18 +9,19 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareLogpushJob() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLogpushJobSchema(),
+		Schema:        resourceCloudflareLogpushJobSchema(),
 		CreateContext: resourceCloudflareLogpushJobCreate,
-		ReadContext: resourceCloudflareLogpushJobRead,
+		ReadContext:   resourceCloudflareLogpushJobRead,
 		UpdateContext: resourceCloudflareLogpushJobUpdate,
 		DeleteContext: resourceCloudflareLogpushJobDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareLogpushJobImport,
+			StateContext: resourceCloudflareLogpushJobImport,
 		},
 	}
 }
@@ -128,7 +129,7 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 
 	log.Printf("[INFO] Created Cloudflare Logpush Job for %s: %s", identifier, d.Id())
 
-	return resourceCloudflareLogpushJobRead(d, meta)
+	return resourceCloudflareLogpushJobRead(ctx, d, meta)
 }
 
 func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -151,7 +152,7 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error updating logpush job id %q for %s: %w", job.ID, identifier, err))
 	}
 
-	return resourceCloudflareLogpushJobRead(d, meta)
+	return resourceCloudflareLogpushJobRead(ctx, d, meta)
 }
 
 func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -183,7 +184,7 @@ func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareLogpushJobImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.Split(d.Id(), "/")
 
@@ -210,7 +211,7 @@ func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}
 	}
 	d.SetId(logpushJobID)
 
-	err := resourceCloudflareLogpushJobRead(d, meta)
+	resourceCloudflareLogpushJobRead(ctx, d, meta)
 
-	return []*schema.ResourceData{d}, err
+	return []*schema.ResourceData{d}, nil
 }

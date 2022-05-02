@@ -7,12 +7,13 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareWAFRules() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareWAFRulesRead,
+		ReadContext: dataSourceCloudflareWAFRulesRead,
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {

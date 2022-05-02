@@ -6,23 +6,24 @@ import (
 	"log"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareLogpullRetention() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLogpullRetentionSchema(),
+		Schema:        resourceCloudflareLogpullRetentionSchema(),
 		CreateContext: resourceCloudflareLogpullRetentionSet,
-		ReadContext: resourceCloudflareLogpullRetentionRead,
+		ReadContext:   resourceCloudflareLogpullRetentionRead,
 		UpdateContext: resourceCloudflareLogpullRetentionSet,
 		DeleteContext: resourceCloudflareLogpullRetentionDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareLogpullRetentionImport,
+			StateContext: resourceCloudflareLogpullRetentionImport,
 		},
 	}
 }
 
-func resourceCloudflareLogpullRetentionSet(d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareLogpullRetentionSet(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	status := d.Get("enabled").(bool)
@@ -34,7 +35,7 @@ func resourceCloudflareLogpullRetentionSet(d *schema.ResourceData, meta interfac
 
 	d.SetId(stringChecksum("logpull-retention/" + zoneID))
 
-	return resourceCloudflareLogpullRetentionRead(d, meta)
+	return resourceCloudflareLogpullRetentionRead(context.TODO(), d, meta)
 }
 
 func resourceCloudflareLogpullRetentionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -65,7 +66,7 @@ func resourceCloudflareLogpullRetentionDelete(ctx context.Context, d *schema.Res
 	return nil
 }
 
-func resourceCloudflareLogpullRetentionImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareLogpullRetentionImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	zoneID := d.Id()
 
 	log.Printf("[DEBUG] Importing Cloudflare Logpull Retention option for zone ID: %s", zoneID)
@@ -73,7 +74,7 @@ func resourceCloudflareLogpullRetentionImport(d *schema.ResourceData, meta inter
 	d.Set("zone_id", zoneID)
 	d.SetId(stringChecksum("logpull-retention/" + zoneID))
 
-	resourceCloudflareLogpullRetentionRead(d, meta)
+	resourceCloudflareLogpullRetentionRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

@@ -10,19 +10,20 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareLoadBalancerPool() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLoadBalancerPoolSchema(),
+		Schema:        resourceCloudflareLoadBalancerPoolSchema(),
 		CreateContext: resourceCloudflareLoadBalancerPoolCreate,
 		UpdateContext: resourceCloudflareLoadBalancerPoolUpdate,
-		ReadContext: resourceCloudflareLoadBalancerPoolRead,
+		ReadContext:   resourceCloudflareLoadBalancerPoolRead,
 		DeleteContext: resourceCloudflareLoadBalancerPoolDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -74,7 +75,7 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 
 	r, err := client.CreateLoadBalancerPool(context.Background(), loadBalancerPool)
 	if err != nil {
-		return err.Wrap(err, "error creating load balancer pool")
+		return diag.FromErr(errors.Wrap(err, "error creating load balancer pool"))
 	}
 
 	if r.ID == "" {
@@ -85,7 +86,7 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 
 	log.Printf("[INFO] New Cloudflare Load Balancer Pool created with  ID: %s", d.Id())
 
-	return resourceCloudflareLoadBalancerPoolRead(d, meta)
+	return resourceCloudflareLoadBalancerPoolRead(ctx, d, meta)
 }
 
 func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -136,10 +137,10 @@ func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.Res
 
 	_, err := client.ModifyLoadBalancerPool(context.Background(), loadBalancerPool)
 	if err != nil {
-		return err.Wrap(err, "error updating load balancer pool")
+		return diag.FromErr(errors.Wrap(err, "error updating load balancer pool"))
 	}
 
-	return resourceCloudflareLoadBalancerPoolRead(d, meta)
+	return resourceCloudflareLoadBalancerPoolRead(ctx, d, meta)
 }
 
 func expandLoadBalancerPoolHeader(cfgSet interface{}) map[string][]string {
@@ -222,8 +223,8 @@ func resourceCloudflareLoadBalancerPoolRead(ctx context.Context, d *schema.Resou
 			d.SetId("")
 			return nil
 		} else {
-			return err.Wrap(err,
-				fmt.Sprintf("Error reading load balancer pool from API for resource %s ", d.Id()))
+			return diag.FromErr(errors.Wrap(err,
+				fmt.Sprintf("Error reading load balancer pool from API for resource %s ", d.Id())))
 		}
 	}
 	log.Printf("[DEBUG] Read Cloudflare Load Balancer Pool from API as struct: %+v", loadBalancerPool)
@@ -309,7 +310,7 @@ func resourceCloudflareLoadBalancerPoolDelete(ctx context.Context, d *schema.Res
 
 	err := client.DeleteLoadBalancerPool(context.Background(), d.Id())
 	if err != nil {
-		return err.Wrap(err, "error deleting Cloudflare Load Balancer Pool")
+		return diag.FromErr(errors.Wrap(err, "error deleting Cloudflare Load Balancer Pool"))
 	}
 
 	return nil

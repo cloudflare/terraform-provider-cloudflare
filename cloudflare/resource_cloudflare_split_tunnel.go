@@ -6,19 +6,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareSplitTunnel() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareSplitTunnelSchema(),
-		ReadContext: resourceCloudflareSplitTunnelRead,
+		Schema:        resourceCloudflareSplitTunnelSchema(),
+		ReadContext:   resourceCloudflareSplitTunnelRead,
 		CreateContext: resourceCloudflareSplitTunnelUpdate, // Intentionally identical to Update as the resource is always present
 		UpdateContext: resourceCloudflareSplitTunnelUpdate,
 		DeleteContext: resourceCloudflareSplitTunnelDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareSplitTunnelImport,
+			StateContext: resourceCloudflareSplitTunnelImport,
 		},
 	}
 }
@@ -61,7 +62,7 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 
 	d.SetId(accountID)
 
-	return resourceCloudflareSplitTunnelRead(d, meta)
+	return resourceCloudflareSplitTunnelRead(ctx, d, meta)
 }
 
 func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -75,7 +76,7 @@ func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourceCloudflareSplitTunnelImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareSplitTunnelImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -88,7 +89,7 @@ func resourceCloudflareSplitTunnelImport(d *schema.ResourceData, meta interface{
 	d.Set("account_id", accountID)
 	d.SetId(accountID)
 
-	resourceCloudflareSplitTunnelRead(d, meta)
+	resourceCloudflareSplitTunnelRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

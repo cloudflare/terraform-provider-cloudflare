@@ -6,20 +6,21 @@ import (
 	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareLogpushOwnershipChallenge() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLogpushOwnershipChallengeSchema(),
+		Schema:        resourceCloudflareLogpushOwnershipChallengeSchema(),
 		CreateContext: resourceCloudflareLogpushOwnershipChallengeCreate,
 		UpdateContext: resourceCloudflareLogpushOwnershipChallengeCreate,
-		ReadContext: resourceCloudflareLogpushOwnershipChallengeNoop,
+		ReadContext:   resourceCloudflareLogpushOwnershipChallengeNoop,
 		DeleteContext: resourceCloudflareLogpushOwnershipChallengeNoop,
 	}
 }
 
-func resourceCloudflareLogpushOwnershipChallengeNoop(d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareLogpushOwnershipChallengeNoop(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
 

@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessApplication() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessApplicationSchema(),
+		Schema:        resourceCloudflareAccessApplicationSchema(),
 		CreateContext: resourceCloudflareAccessApplicationCreate,
-		ReadContext: resourceCloudflareAccessApplicationRead,
+		ReadContext:   resourceCloudflareAccessApplicationRead,
 		UpdateContext: resourceCloudflareAccessApplicationUpdate,
 		DeleteContext: resourceCloudflareAccessApplicationDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessApplicationImport,
+			StateContext: resourceCloudflareAccessApplicationImport,
 		},
 	}
 }
@@ -81,7 +82,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	d.SetId(accessApplication.ID)
 
-	return resourceCloudflareAccessApplicationRead(d, meta)
+	return resourceCloudflareAccessApplicationRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -190,7 +191,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		return diag.FromErr(fmt.Errorf("failed to find Access Application ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessApplicationRead(d, meta)
+	return resourceCloudflareAccessApplicationRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -213,12 +214,12 @@ func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.Re
 		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
-	resourceCloudflareAccessApplicationRead(d, meta)
+	resourceCloudflareAccessApplicationRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareAccessApplicationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -232,7 +233,7 @@ func resourceCloudflareAccessApplicationImport(d *schema.ResourceData, meta inte
 	d.Set("account_id", accountID)
 	d.SetId(accessApplicationID)
 
-	resourceCloudflareAccessApplicationRead(d, meta)
+	resourceCloudflareAccessApplicationRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

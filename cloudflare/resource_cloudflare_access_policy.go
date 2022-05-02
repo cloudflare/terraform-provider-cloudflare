@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessPolicy() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessPolicySchema(),
+		Schema:        resourceCloudflareAccessPolicySchema(),
 		CreateContext: resourceCloudflareAccessPolicyCreate,
-		ReadContext: resourceCloudflareAccessPolicyRead,
+		ReadContext:   resourceCloudflareAccessPolicyRead,
 		UpdateContext: resourceCloudflareAccessPolicyUpdate,
 		DeleteContext: resourceCloudflareAccessPolicyDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessPolicyImport,
+			StateContext: resourceCloudflareAccessPolicyImport,
 		},
 	}
 }
@@ -181,7 +182,7 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("failed to find Access Policy ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessPolicyRead(d, meta)
+	return resourceCloudflareAccessPolicyRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -204,12 +205,12 @@ func resourceCloudflareAccessPolicyDelete(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err))
 	}
 
-	resourceCloudflareAccessPolicyRead(d, meta)
+	resourceCloudflareAccessPolicyRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessPolicyImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 4)
 
 	if len(attributes) != 4 {
@@ -230,7 +231,7 @@ func resourceCloudflareAccessPolicyImport(d *schema.ResourceData, meta interface
 	d.Set("application_id", accessAppID)
 	d.SetId(accessPolicyID)
 
-	resourceCloudflareAccessPolicyRead(d, meta)
+	resourceCloudflareAccessPolicyRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

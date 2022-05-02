@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWAFRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWAFRuleSchema(),
+		Schema:        resourceCloudflareWAFRuleSchema(),
 		CreateContext: resourceCloudflareWAFRuleCreate,
-		ReadContext: resourceCloudflareWAFRuleRead,
+		ReadContext:   resourceCloudflareWAFRuleRead,
 		UpdateContext: resourceCloudflareWAFRuleUpdate,
 		DeleteContext: resourceCloudflareWAFRuleDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWAFRuleImport,
+			StateContext: resourceCloudflareWAFRuleImport,
 		},
 	}
 }
@@ -84,14 +85,14 @@ func resourceCloudflareWAFRuleCreate(ctx context.Context, d *schema.ResourceData
 		d.Set("package_id", pkg.ID)
 
 		if rule.Mode != mode {
-			err = resourceCloudflareWAFRuleUpdate(d, meta)
+			err := resourceCloudflareWAFRuleUpdate(ctx, d, meta)
 			if err != nil {
 				d.SetId("")
-				return diag.FromErr(err)
+				return err
 			}
 		}
 
-		return resourceCloudflareWAFRuleRead(d, meta)
+		return resourceCloudflareWAFRuleRead(ctx, d, meta)
 	}
 
 	return diag.FromErr(fmt.Errorf("unable to find WAF Rule %s", ruleID))
@@ -140,10 +141,10 @@ func resourceCloudflareWAFRuleUpdate(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 
-	return resourceCloudflareWAFRuleRead(d, meta)
+	return resourceCloudflareWAFRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWAFRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup
@@ -180,7 +181,7 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 		return nil, fmt.Errorf("Unable to find WAF Rule %s", WAFID)
 	}
 
-	resourceCloudflareWAFRuleRead(d, meta)
+	resourceCloudflareWAFRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

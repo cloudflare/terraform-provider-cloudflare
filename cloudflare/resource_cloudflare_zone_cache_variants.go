@@ -7,14 +7,15 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareZoneCacheVariants() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareZoneCacheVariantsSchema(),
+		Schema:        resourceCloudflareZoneCacheVariantsSchema(),
 		CreateContext: resourceCloudflareZoneCacheVariantsUpdate,
-		ReadContext: resourceCloudflareZoneCacheVariantsRead,
+		ReadContext:   resourceCloudflareZoneCacheVariantsRead,
 		UpdateContext: resourceCloudflareZoneCacheVariantsUpdate,
 		DeleteContext: resourceCloudflareZoneCacheVariantsDelete,
 	}
@@ -101,7 +102,7 @@ func resourceCloudflareZoneCacheVariantsUpdate(ctx context.Context, d *schema.Re
 		return diag.FromErr(fmt.Errorf("error setting cache variants for zone %q: %w", d.Id(), err))
 	}
 
-	return resourceCloudflareZoneCacheVariantsRead(d, meta)
+	return resourceCloudflareZoneCacheVariantsRead(ctx, d, meta)
 }
 
 func resourceCloudflareZoneCacheVariantsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

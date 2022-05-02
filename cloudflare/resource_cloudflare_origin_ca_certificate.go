@@ -11,18 +11,19 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareOriginCACertificate() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareOriginCACertificateSchema(),
+		Schema:        resourceCloudflareOriginCACertificateSchema(),
 		CreateContext: resourceCloudflareOriginCACertificateCreate,
 		UpdateContext: resourceCloudflareOriginCACertificateCreate,
-		ReadContext: resourceCloudflareOriginCACertificateRead,
+		ReadContext:   resourceCloudflareOriginCACertificateRead,
 		DeleteContext: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -58,7 +59,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 
 	d.SetId(cert.ID)
 
-	return resourceCloudflareOriginCACertificateRead(d, meta)
+	return resourceCloudflareOriginCACertificateRead(ctx, d, meta)
 }
 
 func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

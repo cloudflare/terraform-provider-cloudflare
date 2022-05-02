@@ -16,7 +16,7 @@ func TestAccCloudflareIPRanges(t *testing.T) {
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccCloudflareIPRangesConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCloudflareIPRanges("data.cloudflare_ip_ranges.some"),

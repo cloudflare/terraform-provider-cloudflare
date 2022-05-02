@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -20,13 +21,13 @@ const (
 
 func resourceCloudflareZoneDNSSEC() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareZoneDNSSECSchema(),
+		Schema:        resourceCloudflareZoneDNSSECSchema(),
 		CreateContext: resourceCloudflareZoneDNSSECCreate,
-		ReadContext: resourceCloudflareZoneDNSSECRead,
+		ReadContext:   resourceCloudflareZoneDNSSECRead,
 		UpdateContext: resourceCloudflareZoneDNSSECUpdate,
 		DeleteContext: resourceCloudflareZoneDNSSECDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -53,7 +54,7 @@ func resourceCloudflareZoneDNSSECCreate(ctx context.Context, d *schema.ResourceD
 
 	d.SetId(zoneID)
 
-	return resourceCloudflareZoneDNSSECRead(d, meta)
+	return resourceCloudflareZoneDNSSECRead(ctx, d, meta)
 }
 
 func resourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -94,7 +95,7 @@ func resourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceDat
 
 // Just returning remote state since changing the zone ID would force a new resource
 func resourceCloudflareZoneDNSSECUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return resourceCloudflareZoneRead(d, meta)
+	return resourceCloudflareZoneRead(ctx, d, meta)
 }
 
 func resourceCloudflareZoneDNSSECDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

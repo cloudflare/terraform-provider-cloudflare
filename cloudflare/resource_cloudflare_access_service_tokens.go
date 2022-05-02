@@ -7,19 +7,20 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessServiceToken() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessServiceTokenSchema(),
+		Schema:        resourceCloudflareAccessServiceTokenSchema(),
 		CreateContext: resourceCloudflareAccessServiceTokenCreate,
-		ReadContext: resourceCloudflareAccessServiceTokenRead,
+		ReadContext:   resourceCloudflareAccessServiceTokenRead,
 		UpdateContext: resourceCloudflareAccessServiceTokenUpdate,
 		DeleteContext: resourceCloudflareAccessServiceTokenDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessServiceTokenImport,
+			StateContext: resourceCloudflareAccessServiceTokenImport,
 		},
 
 		CustomizeDiff: customdiff.ComputedIf("expires_at", resourceCloudflareAccessServiceTokenExpireDiff),
@@ -102,7 +103,7 @@ func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.R
 	d.Set("client_secret", serviceToken.ClientSecret)
 	d.Set("expires_at", serviceToken.ExpiresAt.Format(time.RFC3339))
 
-	resourceCloudflareAccessServiceTokenRead(d, meta)
+	resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 
 	return nil
 }
@@ -128,7 +129,7 @@ func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.R
 
 	d.Set("name", serviceToken.Name)
 
-	return resourceCloudflareAccessServiceTokenRead(d, meta)
+	return resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessServiceTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -153,7 +154,7 @@ func resourceCloudflareAccessServiceTokenDelete(ctx context.Context, d *schema.R
 	return nil
 }
 
-func resourceCloudflareAccessServiceTokenImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessServiceTokenImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -163,7 +164,7 @@ func resourceCloudflareAccessServiceTokenImport(d *schema.ResourceData, meta int
 	d.Set("account_id", attributes[0])
 	d.SetId(attributes[1])
 
-	resourceCloudflareAccessServiceTokenRead(d, meta)
+	resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

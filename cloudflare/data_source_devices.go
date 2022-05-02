@@ -5,13 +5,14 @@ import (
 	"fmt"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareDevices() *schema.Resource {
 	return &schema.Resource{
-		Schema: resoureceCloudflareDevicesSchema(),
-		Read:   dataResourceCloudflareDevicesRead,
+		Schema:      resoureceCloudflareDevicesSchema(),
+		ReadContext: dataResourceCloudflareDevicesRead,
 	}
 }
 

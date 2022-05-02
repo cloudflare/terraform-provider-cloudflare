@@ -20,7 +20,7 @@ func resourceCloudflareRateLimit() *schema.Resource {
 		UpdateContext: resourceCloudflareRateLimitUpdate,
 		DeleteContext: resourceCloudflareRateLimitDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareRateLimitImport,
+			StateContext: resourceCloudflareRateLimitImport,
 		},
 	}
 }
@@ -32,7 +32,7 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 
 	rateLimitAction, err := expandRateLimitAction(d)
 	if err != nil {
-		return err.Wrap(err, "error expanding rate limit action")
+		return diag.FromErr(errors.Wrap(err, "error expanding rate limit action"))
 	}
 
 	newRateLimit := cloudflare.RateLimit{
@@ -71,7 +71,7 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 
 	r, err := client.CreateRateLimit(context.Background(), zoneID, newRateLimit)
 	if err != nil {
-		return err.Wrap(err, "error creating rate limit for zone")
+		return diag.FromErr(errors.Wrap(err, "error creating rate limit for zone"))
 	}
 
 	if r.ID == "" {
@@ -82,7 +82,7 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 
 	log.Printf("[INFO] Cloudflare Rate Limit ID: %s", d.Id())
 
-	return resourceCloudflareRateLimitRead(d, meta)
+	return resourceCloudflareRateLimitRead(ctx, d, meta)
 }
 
 func resourceCloudflareRateLimitUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -93,7 +93,7 @@ func resourceCloudflareRateLimitUpdate(ctx context.Context, d *schema.ResourceDa
 
 	rateLimitAction, err := expandRateLimitAction(d)
 	if err != nil {
-		return err.Wrap(err, "error expanding rate limit action")
+		return diag.FromErr(errors.Wrap(err, "error expanding rate limit action"))
 	}
 
 	updatedRateLimit := cloudflare.RateLimit{
@@ -130,9 +130,9 @@ func resourceCloudflareRateLimitUpdate(ctx context.Context, d *schema.ResourceDa
 
 	_, err = client.UpdateRateLimit(context.Background(), zoneID, rateLimitId, updatedRateLimit)
 	if err != nil {
-		return err.Wrap(err, "error creating rate limit for zone")
+		return diag.FromErr(errors.Wrap(err, "error creating rate limit for zone"))
 	}
-	return resourceCloudflareRateLimitRead(d, meta)
+	return resourceCloudflareRateLimitRead(ctx, d, meta)
 }
 
 func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.RateLimitTrafficMatcher, err error) {
@@ -269,8 +269,8 @@ func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData
 			d.SetId("")
 			return nil
 		} else {
-			return err.Wrap(err,
-				fmt.Sprintf("Error reading rate limit resource from API for resource %s in zone %s", zoneID, rateLimitId))
+			return diag.FromErr(errors.Wrap(err,
+				fmt.Sprintf("Error reading rate limit resource from API for resource %s in zone %s", zoneID, rateLimitId)))
 		}
 	}
 	log.Printf("[DEBUG] Read Cloudflare Rate Limit from API as struct: %+v", rateLimit)
@@ -396,7 +396,7 @@ func resourceCloudflareRateLimitDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func resourceCloudflareRateLimitImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareRateLimitImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -411,7 +411,7 @@ func resourceCloudflareRateLimitImport(d *schema.ResourceData, meta interface{})
 	d.Set("zone_id", zoneID)
 	d.SetId(rateLimitId)
 
-	resourceCloudflareRateLimitRead(d, meta)
+	resourceCloudflareRateLimitRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

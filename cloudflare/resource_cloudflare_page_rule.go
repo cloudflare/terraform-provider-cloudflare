@@ -9,18 +9,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflarePageRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflarePageRuleSchema(),
+		Schema:        resourceCloudflarePageRuleSchema(),
 		CreateContext: resourceCloudflarePageRuleCreate,
-		ReadContext: resourceCloudflarePageRuleRead,
+		ReadContext:   resourceCloudflarePageRuleRead,
 		UpdateContext: resourceCloudflarePageRuleUpdate,
 		DeleteContext: resourceCloudflarePageRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflarePageRuleImport,
+			StateContext: resourceCloudflarePageRuleImport,
 		},
 	}
 }
@@ -91,7 +92,7 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 
 	d.SetId(r.ID)
 
-	return resourceCloudflarePageRuleRead(d, meta)
+	return resourceCloudflarePageRuleRead(ctx, d, meta)
 }
 
 func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{} {
@@ -151,7 +152,7 @@ func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceDat
 
 	if target, ok := d.GetOk("target"); ok {
 		updatePageRule.Targets = []cloudflare.PageRuleTarget{
-			cloudflare.PageRuleTarget{
+			{
 				Target: "url",
 				Constraint: struct {
 					Operator string `json:"operator"`
@@ -197,7 +198,7 @@ func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("failed to update Cloudflare Page Rule: %s", err))
 	}
 
-	return resourceCloudflarePageRuleRead(d, meta)
+	return resourceCloudflarePageRuleRead(ctx, d, meta)
 }
 
 func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -496,7 +497,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	return
 }
 
-func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflarePageRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -510,7 +511,7 @@ func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) 
 		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/pageRuleID\"", d.Id())
 	}
 
-	resourceCloudflarePageRuleRead(d, meta)
+	resourceCloudflarePageRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

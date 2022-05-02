@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareFirewallRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareFirewallRuleSchema(),
+		Schema:        resourceCloudflareFirewallRuleSchema(),
 		CreateContext: resourceCloudflareFirewallRuleCreate,
-		ReadContext: resourceCloudflareFirewallRuleRead,
+		ReadContext:   resourceCloudflareFirewallRuleRead,
 		UpdateContext: resourceCloudflareFirewallRuleUpdate,
 		DeleteContext: resourceCloudflareFirewallRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareFirewallRuleImport,
+			StateContext: resourceCloudflareFirewallRuleImport,
 		},
 	}
 }
@@ -75,7 +76,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[INFO] Cloudflare Firewall Rule ID: %s", d.Id())
 
-	return resourceCloudflareFirewallRuleRead(d, meta)
+	return resourceCloudflareFirewallRuleRead(ctx, d, meta)
 }
 
 func resourceCloudflareFirewallRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -154,7 +155,7 @@ func resourceCloudflareFirewallRuleUpdate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
-	return resourceCloudflareFirewallRuleRead(d, meta)
+	return resourceCloudflareFirewallRuleRead(ctx, d, meta)
 }
 
 func resourceCloudflareFirewallRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -172,7 +173,7 @@ func resourceCloudflareFirewallRuleDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceCloudflareFirewallRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareFirewallRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
@@ -187,7 +188,7 @@ func resourceCloudflareFirewallRuleImport(d *schema.ResourceData, meta interface
 	d.Set("zone_id", zoneID)
 	d.SetId(ruleID)
 
-	resourceCloudflareFirewallRuleRead(d, meta)
+	resourceCloudflareFirewallRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

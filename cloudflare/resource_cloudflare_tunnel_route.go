@@ -2,23 +2,25 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareTunnelRoute() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTunnelRouteSchema(),
+		Schema:        resourceCloudflareTunnelRouteSchema(),
 		CreateContext: resourceCloudflareTunnelRouteCreate,
-		ReadContext: resourceCloudflareTunnelRouteRead,
+		ReadContext:   resourceCloudflareTunnelRouteRead,
 		UpdateContext: resourceCloudflareTunnelRouteUpdate,
 		DeleteContext: resourceCloudflareTunnelRouteDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTunnelRouteImport,
+			StateContext: resourceCloudflareTunnelRouteImport,
 		},
 	}
 }
@@ -76,7 +78,7 @@ func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.Resource
 
 	d.SetId(newTunnelRoute.Network)
 
-	return resourceCloudflareTunnelRouteRead(d, meta)
+	return resourceCloudflareTunnelRouteRead(ctx, d, meta)
 }
 
 func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -98,7 +100,7 @@ func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("error updating Tunnel Route for Network %q: %w", d.Get("network").(string), err))
 	}
 
-	return resourceCloudflareTunnelRouteRead(d, meta)
+	return resourceCloudflareTunnelRouteRead(ctx, d, meta)
 }
 
 func resourceCloudflareTunnelRouteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -115,7 +117,7 @@ func resourceCloudflareTunnelRouteDelete(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourceCloudflareTunnelRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTunnelRouteImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -128,9 +130,9 @@ func resourceCloudflareTunnelRouteImport(d *schema.ResourceData, meta interface{
 	d.Set("account_id", accountID)
 	d.Set("network", network)
 
-	err := resourceCloudflareTunnelRouteRead(d, meta)
+	err := resourceCloudflareTunnelRouteRead(ctx, d, meta)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("failed to read Tunnel Route state")
 	}
 
 	return []*schema.ResourceData{d}, nil

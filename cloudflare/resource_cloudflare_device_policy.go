@@ -6,18 +6,19 @@ import (
 	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareDevicePolicyCertificates() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareDevicePolicyCertificatesSchema(),
+		Schema:        resourceCloudflareDevicePolicyCertificatesSchema(),
 		CreateContext: resourceCloudflareDevicePolicyCertificateUpdate,
-		ReadContext: resourceCloudflareDevicePolicyCertificateRead,
+		ReadContext:   resourceCloudflareDevicePolicyCertificateRead,
 		UpdateContext: resourceCloudflareDevicePolicyCertificateUpdate,
 		DeleteContext: resourceCloudflareDevicePolicyCertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareDevicePolicyCertificateImport,
+			StateContext: resourceCloudflareDevicePolicyCertificateImport,
 		},
 	}
 }
@@ -52,15 +53,17 @@ func resourceCloudflareDevicePolicyCertificateRead(ctx context.Context, d *schem
 	return nil
 }
 
-func resourceCloudflareDevicePolicyCertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareDevicePolicyCertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	zoneID := d.Id()
 
 	log.Printf("[DEBUG] Importing Cloudflare device policy certificate setting: zoneID=%s", zoneID)
 
 	d.SetId(zoneID)
 	d.Set("zone_id", zoneID)
-	err := resourceCloudflareDevicePolicyCertificateRead(d, meta)
-	return []*schema.ResourceData{d}, err
+
+	resourceCloudflareDevicePolicyCertificateRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func resourceCloudflareDevicePolicyCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

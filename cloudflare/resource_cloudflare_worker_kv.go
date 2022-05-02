@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareWorkerKV() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWorkerKVSchema(),
+		Schema:        resourceCloudflareWorkerKVSchema(),
 		CreateContext: resourceCloudflareWorkersKVUpdate,
-		ReadContext: resourceCloudflareWorkersKVRead,
+		ReadContext:   resourceCloudflareWorkersKVRead,
 		UpdateContext: resourceCloudflareWorkersKVUpdate,
 		DeleteContext: resourceCloudflareWorkersKVDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWorkersKVImport,
+			StateContext: resourceCloudflareWorkersKVImport,
 		},
 	}
 }
@@ -30,7 +31,7 @@ func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData
 
 	value, err := client.ReadWorkersKV(context.Background(), namespaceID, key)
 	if err != nil {
-		return err.Wrap(err, "error reading workers kv")
+		return diag.FromErr(errors.Wrap(err, "error reading workers kv"))
 	}
 
 	if value == nil {
@@ -50,14 +51,14 @@ func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceDa
 
 	_, err := client.WriteWorkersKV(context.Background(), namespaceID, key, []byte(value))
 	if err != nil {
-		return err.Wrap(err, "error creating workers kv")
+		return diag.FromErr(errors.Wrap(err, "error creating workers kv"))
 	}
 
 	d.SetId(fmt.Sprintf("%s/%s", namespaceID, key))
 
 	log.Printf("[INFO] Cloudflare Workers KV Namespace ID: %s", d.Id())
 
-	return resourceCloudflareWorkersKVRead(d, meta)
+	return resourceCloudflareWorkersKVRead(ctx, d, meta)
 }
 
 func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -68,19 +69,19 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 
 	_, err := client.DeleteWorkersKV(context.Background(), namespaceID, key)
 	if err != nil {
-		return err.Wrap(err, "error deleting workers kv")
+		return diag.FromErr(errors.Wrap(err, "error deleting workers kv"))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkersKVImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWorkersKVImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	namespaceID, key := parseId(d.Id())
 
 	d.Set("namespace_id", namespaceID)
 	d.Set("key", key)
 
-	resourceCloudflareWorkersKVRead(d, meta)
+	resourceCloudflareWorkersKVRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

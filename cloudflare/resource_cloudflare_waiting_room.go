@@ -8,17 +8,18 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWaitingRoom() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCloudflareWaitingRoomCreate,
-		ReadContext: resourceCloudflareWaitingRoomRead,
+		ReadContext:   resourceCloudflareWaitingRoomRead,
 		UpdateContext: resourceCloudflareWaitingRoomUpdate,
 		DeleteContext: resourceCloudflareWaitingRoomDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWaitingRoomImport,
+			StateContext: resourceCloudflareWaitingRoomImport,
 		},
 
 		Schema: resourceCloudflareWaitingRoomSchema(),
@@ -61,7 +62,7 @@ func resourceCloudflareWaitingRoomCreate(ctx context.Context, d *schema.Resource
 
 	d.SetId(waitingRoom.ID)
 
-	return resourceCloudflareWaitingRoomRead(d, meta)
+	return resourceCloudflareWaitingRoomRead(ctx, d, meta)
 }
 
 func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -109,7 +110,7 @@ func resourceCloudflareWaitingRoomUpdate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("error updating waiting room %q: %s", name, err))
 	}
 
-	return resourceCloudflareWaitingRoomRead(d, meta)
+	return resourceCloudflareWaitingRoomRead(ctx, d, meta)
 }
 
 func resourceCloudflareWaitingRoomDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -127,7 +128,7 @@ func resourceCloudflareWaitingRoomDelete(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWaitingRoomImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -147,6 +148,6 @@ func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{
 	d.SetId(waitingRoom.ID)
 	d.Set("zone_id", zoneID)
 
-	resourceCloudflareWaitingRoomRead(d, meta)
+	resourceCloudflareWaitingRoomRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -14,13 +15,13 @@ const ws1 = "workspace_one"
 
 func resourceCloudflareDevicePostureIntegration() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareDevicePostureIntegrationSchema(),
+		Schema:        resourceCloudflareDevicePostureIntegrationSchema(),
 		CreateContext: resourceCloudflareDevicePostureIntegrationCreate,
-		ReadContext: resourceCloudflareDevicePostureIntegrationRead,
+		ReadContext:   resourceCloudflareDevicePostureIntegrationRead,
 		UpdateContext: resourceCloudflareDevicePostureIntegrationUpdate,
 		DeleteContext: resourceCloudflareDevicePostureIntegrationDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareDevicePostureIntegrationImport,
+			StateContext: resourceCloudflareDevicePostureIntegrationImport,
 		},
 	}
 }
@@ -51,16 +52,16 @@ func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *sc
 
 	d.SetId(newDevicePostureIntegration.IntegrationID)
 
-	return devicePostureIntegrationReadHelper(d, meta, savedSecret)
+	return diag.FromErr(devicePostureIntegrationReadHelper(ctx, d, meta, savedSecret))
 }
 
 func resourceCloudflareDevicePostureIntegrationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// Client secret is always read from the local state.
 	secret, _ := d.Get("config.0.client_secret").(string)
-	return devicePostureIntegrationReadHelper(d, meta, secret)
+	return diag.FromErr(devicePostureIntegrationReadHelper(ctx, d, meta, secret))
 }
 
-func devicePostureIntegrationReadHelper(d *schema.ResourceData, meta interface{}, secret string) error {
+func devicePostureIntegrationReadHelper(ctx context.Context, d *schema.ResourceData, meta interface{}, secret string) error {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -71,7 +72,7 @@ func devicePostureIntegrationReadHelper(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding device posture integration %q: %s", d.Id(), err))
+		return fmt.Errorf("error finding device posture integration %q: %s", d.Id(), err)
 	}
 
 	devicePostureIntegration.Config.ClientSecret = secret
@@ -110,7 +111,7 @@ func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *sc
 		return diag.FromErr(fmt.Errorf("failed to find device posture integration_id in update response; resource was empty"))
 	}
 
-	return resourceCloudflareDevicePostureIntegrationRead(d, meta)
+	return resourceCloudflareDevicePostureIntegrationRead(ctx, d, meta)
 }
 
 func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -125,12 +126,12 @@ func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *sc
 		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err))
 	}
 
-	resourceCloudflareDevicePostureIntegrationRead(d, meta)
+	resourceCloudflareDevicePostureIntegrationRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareDevicePostureIntegrationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareDevicePostureIntegrationImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -144,7 +145,7 @@ func resourceCloudflareDevicePostureIntegrationImport(d *schema.ResourceData, me
 	d.Set("account_id", accountID)
 	d.SetId(devicePostureIntegrationID)
 
-	resourceCloudflareDevicePostureIntegrationRead(d, meta)
+	resourceCloudflareDevicePostureIntegrationRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -155,20 +156,20 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 		switch integration.Type {
 		case ws1:
 			if config.ClientID, ok = d.Get("config.0.client_id").(string); !ok {
-				return diag.FromErr(fmt.Errorf("client_id is a string"))
+				return fmt.Errorf("client_id is a string")
 			}
 			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
-				return diag.FromErr(fmt.Errorf("client_secret is a string"))
+				return fmt.Errorf("client_secret is a string")
 			}
 			if config.AuthUrl, ok = d.Get("config.0.auth_url").(string); !ok {
-				return diag.FromErr(fmt.Errorf("auth_url is a string"))
+				return fmt.Errorf("auth_url is a string")
 			}
 			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
-				return diag.FromErr(fmt.Errorf("api_url is a string"))
+				return fmt.Errorf("api_url is a string")
 			}
 			integration.Config = config
 		default:
-			return diag.FromErr(fmt.Errorf("unsupported integration type:%s", integration.Type))
+			return fmt.Errorf("unsupported integration type:%s", integration.Type)
 		}
 	}
 	return nil

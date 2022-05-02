@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessGroup() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessGroupSchema(),
+		Schema:        resourceCloudflareAccessGroupSchema(),
 		CreateContext: resourceCloudflareAccessGroupCreate,
-		ReadContext: resourceCloudflareAccessGroupRead,
+		ReadContext:   resourceCloudflareAccessGroupRead,
 		UpdateContext: resourceCloudflareAccessGroupUpdate,
 		DeleteContext: resourceCloudflareAccessGroupDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessGroupImport,
+			StateContext: resourceCloudflareAccessGroupImport,
 		},
 	}
 }
@@ -90,7 +91,7 @@ func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.Resource
 	}
 
 	d.SetId(accessGroup.ID)
-	return resourceCloudflareAccessGroupRead(d, meta)
+	return resourceCloudflareAccessGroupRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -123,7 +124,7 @@ func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("failed to find Access Group ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessGroupRead(d, meta)
+	return resourceCloudflareAccessGroupRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -145,12 +146,12 @@ func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("error deleting Access Group for ID %q: %s", d.Id(), err))
 	}
 
-	resourceCloudflareAccessGroupRead(d, meta)
+	resourceCloudflareAccessGroupRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareAccessGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessGroupImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -164,7 +165,7 @@ func resourceCloudflareAccessGroupImport(d *schema.ResourceData, meta interface{
 	d.Set("account_id", accountID)
 	d.SetId(accessGroupID)
 
-	resourceCloudflareAccessGroupRead(d, meta)
+	resourceCloudflareAccessGroupRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

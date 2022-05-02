@@ -6,18 +6,19 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWorkerCronTriggerSchema(),
+		Schema:        resourceCloudflareWorkerCronTriggerSchema(),
 		CreateContext: resourceCloudflareWorkerCronTriggerUpdate,
-		ReadContext: resourceCloudflareWorkerCronTriggerRead,
+		ReadContext:   resourceCloudflareWorkerCronTriggerRead,
 		UpdateContext: resourceCloudflareWorkerCronTriggerUpdate,
 		DeleteContext: resourceCloudflareWorkerCronTriggerDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWorkerCronTriggerImport,
+			StateContext: resourceCloudflareWorkerCronTriggerImport,
 		},
 	}
 }
@@ -75,10 +76,10 @@ func resourceCloudflareWorkerCronTriggerDelete(ctx context.Context, d *schema.Re
 	return nil
 }
 
-func resourceCloudflareWorkerCronTriggerImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWorkerCronTriggerImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.SetId(stringChecksum(d.Id()))
 
-	resourceCloudflareWorkerCronTriggerRead(d, meta)
+	resourceCloudflareWorkerCronTriggerRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

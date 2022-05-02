@@ -7,18 +7,19 @@ import (
 	"log"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessKeysConfigurationSchema(),
-		ReadContext: resourceCloudflareAccessKeysConfigurationRead,
+		Schema:        resourceCloudflareAccessKeysConfigurationSchema(),
+		ReadContext:   resourceCloudflareAccessKeysConfigurationRead,
 		CreateContext: resourceCloudflareAccessKeysConfigurationCreate,
 		UpdateContext: resourceCloudflareAccessKeysConfigurationUpdate,
 		DeleteContext: resourceCloudflareKeysConfigurationDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareKeysConfigurationImport,
+			StateContext: resourceCloudflareKeysConfigurationImport,
 		},
 	}
 }
@@ -51,10 +52,10 @@ func resourceCloudflareAccessKeysConfigurationCreate(ctx context.Context, d *sch
 	// key_rotation_interval_days was explicitly passed, in which case we need to update its value.
 
 	if keyRotationIntervalDays := d.Get("key_rotation_interval_days").(int); keyRotationIntervalDays == 0 {
-		return resourceCloudflareAccessKeysConfigurationRead(d, meta)
+		return resourceCloudflareAccessKeysConfigurationRead(ctx, d, meta)
 	}
 
-	return resourceCloudflareAccessKeysConfigurationUpdate(d, meta)
+	return resourceCloudflareAccessKeysConfigurationUpdate(ctx, d, meta)
 }
 
 func resourceCloudflareAccessKeysConfigurationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -70,21 +71,21 @@ func resourceCloudflareAccessKeysConfigurationUpdate(ctx context.Context, d *sch
 		return diag.FromErr(fmt.Errorf("error updating Access Keys Configuration for account %s: %s", accountID, err))
 	}
 
-	return resourceCloudflareAccessKeysConfigurationRead(d, meta)
+	return resourceCloudflareAccessKeysConfigurationRead(ctx, d, meta)
 }
 
-func resourceCloudflareKeysConfigurationDelete(ctx context.Context, _ *schema.ResourceData, _ interface{}) error {
+func resourceCloudflareKeysConfigurationDelete(ctx context.Context, _ *schema.ResourceData, _ interface{}) diag.Diagnostics {
 	// keys configuration share the same lifetime as an organization, and can not be
 	// explicitly deleted by the user. so this is a no-op.
 	return nil
 }
 
-func resourceCloudflareKeysConfigurationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareKeysConfigurationImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	accountID := d.Id()
 
 	d.SetId(accountID)
 	d.Set("account_id", accountID)
 
-	err := resourceCloudflareAccessKeysConfigurationRead(d, meta)
-	return []*schema.ResourceData{d}, err
+	resourceCloudflareAccessKeysConfigurationRead(context.TODO(), d, meta)
+	return []*schema.ResourceData{d}, nil
 }

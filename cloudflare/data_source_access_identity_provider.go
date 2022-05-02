@@ -5,13 +5,14 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
-		Schema: dataSourceCloudflareAccessIdentityProviderSchema(),
-		Read:   dataSourceCloudflareAccessIdentityProviderRead,
+		Schema:      dataSourceCloudflareAccessIdentityProviderSchema(),
+		ReadContext: dataSourceCloudflareAccessIdentityProviderRead,
 	}
 }
 

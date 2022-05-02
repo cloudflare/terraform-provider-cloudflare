@@ -8,19 +8,20 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareSpectrumApplication() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareSpectrumApplicationSchema(),
+		Schema:        resourceCloudflareSpectrumApplicationSchema(),
 		CreateContext: resourceCloudflareSpectrumApplicationCreate,
-		ReadContext: resourceCloudflareSpectrumApplicationRead,
+		ReadContext:   resourceCloudflareSpectrumApplicationRead,
 		UpdateContext: resourceCloudflareSpectrumApplicationUpdate,
 		DeleteContext: resourceCloudflareSpectrumApplicationDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareSpectrumApplicationImport,
+			StateContext: resourceCloudflareSpectrumApplicationImport,
 		},
 	}
 }
@@ -35,7 +36,7 @@ func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.
 
 	r, err := client.CreateSpectrumApplication(context.Background(), zoneID, newSpectrumApp)
 	if err != nil {
-		return err.Wrap(err, "error creating spectrum application for zone")
+		return diag.FromErr(errors.Wrap(err, "error creating spectrum application for zone"))
 	}
 
 	if r.ID == "" {
@@ -46,7 +47,7 @@ func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.
 
 	log.Printf("[INFO] Cloudflare Spectrum Application ID: %s", d.Id())
 
-	return resourceCloudflareSpectrumApplicationRead(d, meta)
+	return resourceCloudflareSpectrumApplicationRead(ctx, d, meta)
 }
 
 func resourceCloudflareSpectrumApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -59,10 +60,10 @@ func resourceCloudflareSpectrumApplicationUpdate(ctx context.Context, d *schema.
 
 	_, err := client.UpdateSpectrumApplication(context.Background(), zoneID, application.ID, application)
 	if err != nil {
-		return err.Wrap(err, "error creating spectrum application for zone")
+		return diag.FromErr(errors.Wrap(err, "error creating spectrum application for zone"))
 	}
 
-	return resourceCloudflareSpectrumApplicationRead(d, meta)
+	return resourceCloudflareSpectrumApplicationRead(ctx, d, meta)
 }
 
 func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -77,8 +78,8 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 			d.SetId("")
 			return nil
 		}
-		return err.Wrap(err,
-			fmt.Sprintf("Error reading spectrum application resource from API for resource %s in zone %s", applicationID, zoneID))
+		return diag.FromErr(errors.Wrap(err,
+			fmt.Sprintf("Error reading spectrum application resource from API for resource %s in zone %s", applicationID, zoneID)))
 	}
 
 	d.Set("protocol", application.Protocol)
@@ -142,7 +143,7 @@ func resourceCloudflareSpectrumApplicationDelete(ctx context.Context, d *schema.
 	return nil
 }
 
-func resourceCloudflareSpectrumApplicationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareSpectrumApplicationImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -157,7 +158,7 @@ func resourceCloudflareSpectrumApplicationImport(d *schema.ResourceData, meta in
 	d.Set("zone_id", zoneID)
 	d.SetId(applicationID)
 
-	resourceCloudflareSpectrumApplicationRead(d, meta)
+	resourceCloudflareSpectrumApplicationRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

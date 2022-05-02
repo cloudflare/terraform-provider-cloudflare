@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -18,11 +19,11 @@ import (
 func resourceCloudflareCustomSsl() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCloudflareCustomSslCreate,
-		ReadContext: resourceCloudflareCustomSslRead,
+		ReadContext:   resourceCloudflareCustomSslRead,
 		UpdateContext: resourceCloudflareCustomSslUpdate,
 		DeleteContext: resourceCloudflareCustomSslDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareCustomSslImport,
+			StateContext: resourceCloudflareCustomSslImport,
 		},
 
 		SchemaVersion: 1,
@@ -57,7 +58,7 @@ func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("failed to find custom ssl in Create response: id was empty"))
 	}
 
-	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 		cert, err := client.SSLDetails(context.Background(), zoneID, res.ID)
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom ssl cert: %s", err))
@@ -69,9 +70,15 @@ func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceDa
 
 		d.SetId(res.ID)
 
-		resourceCloudflareCustomSslRead(d, meta)
+		resourceCloudflareCustomSslRead(ctx, d, meta)
 		return nil
 	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
 func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -119,7 +126,7 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("failed to update and reprioritize custom ssl cert: %s, %s", uErr, reErr))
 	}
 
-	return resourceCloudflareCustomSslRead(d, meta)
+	return resourceCloudflareCustomSslRead(ctx, d, meta)
 }
 
 func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -170,7 +177,7 @@ func resourceCloudflareCustomSslDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func resourceCloudflareCustomSslImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareCustomSslImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	if len(idAttr) != 2 {
@@ -184,7 +191,7 @@ func resourceCloudflareCustomSslImport(d *schema.ResourceData, meta interface{})
 	d.Set("zone_id", zoneID)
 	d.SetId(certID)
 
-	resourceCloudflareCustomSslRead(d, meta)
+	resourceCloudflareCustomSslRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

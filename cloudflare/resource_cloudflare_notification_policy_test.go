@@ -2,10 +2,11 @@ package cloudflare
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"sort"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -162,12 +163,12 @@ func testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(name, poli
 
 func TestFlattenExpandFilters(t *testing.T) {
 	filters := map[string][]string{
-		"services": []string{"waf", "firewallrules"},
-		"zones":    []string{"abc123"},
+		"services": {"waf", "firewallrules"},
+		"zones":    {"abc123"},
 	}
 	flattenedFilters := flattenNotificationPolicyFilter(filters)
 	expandedFilters := expandNotificationPolicyFilter(flattenedFilters)
-	for k, _ := range filters {
+	for k := range filters {
 		sort.Strings(filters[k])
 		sort.Strings(expandedFilters[k])
 		assert.EqualValuesf(t, filters[k], expandedFilters[k], "values should equal without order")

@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareWorkerRoute() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWorkerRouteSchema(),
+		Schema:        resourceCloudflareWorkerRouteSchema(),
 		CreateContext: resourceCloudflareWorkerRouteCreate,
-		ReadContext: resourceCloudflareWorkerRouteRead,
+		ReadContext:   resourceCloudflareWorkerRouteRead,
 		UpdateContext: resourceCloudflareWorkerRouteUpdate,
 		DeleteContext: resourceCloudflareWorkerRouteDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWorkerRouteImport,
+			StateContext: resourceCloudflareWorkerRouteImport,
 		},
 	}
 }
@@ -42,7 +43,7 @@ func resourceCloudflareWorkerRouteCreate(ctx context.Context, d *schema.Resource
 
 	r, err := client.CreateWorkerRoute(context.Background(), zoneID, route)
 	if err != nil {
-		return err.Wrap(err, "error creating worker route")
+		return diag.FromErr(errors.Wrap(err, "error creating worker route"))
 	}
 
 	if r.ID == "" {
@@ -66,7 +67,7 @@ func resourceCloudflareWorkerRouteRead(ctx context.Context, d *schema.ResourceDa
 	resp, err := client.ListWorkerRoutes(context.Background(), zoneID)
 
 	if err != nil {
-		return err.Wrap(err, "error reading worker routes")
+		return diag.FromErr(errors.Wrap(err, "error reading worker routes"))
 	}
 
 	var route cloudflare.WorkerRoute
@@ -99,7 +100,7 @@ func resourceCloudflareWorkerRouteUpdate(ctx context.Context, d *schema.Resource
 
 	_, err := client.UpdateWorkerRoute(context.Background(), zoneID, route.ID, route)
 	if err != nil {
-		return err.Wrap(err, "error updating worker route")
+		return diag.FromErr(errors.Wrap(err, "error updating worker route"))
 	}
 
 	return nil
@@ -114,13 +115,13 @@ func resourceCloudflareWorkerRouteDelete(ctx context.Context, d *schema.Resource
 
 	_, err := client.DeleteWorkerRoute(context.Background(), zoneID, route.ID)
 	if err != nil {
-		return err.Wrap(err, "error deleting worker route")
+		return diag.FromErr(errors.Wrap(err, "error deleting worker route"))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWorkerRouteImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -135,7 +136,7 @@ func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{
 	d.Set("zone_id", zoneID)
 	d.SetId(routeID)
 
-	resourceCloudflareWorkerRouteRead(d, meta)
+	resourceCloudflareWorkerRouteRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

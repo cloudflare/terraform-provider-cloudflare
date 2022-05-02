@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessBookmark() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessBookmarkSchema(),
+		Schema:        resourceCloudflareAccessBookmarkSchema(),
 		CreateContext: resourceCloudflareAccessBookmarkCreate,
-		ReadContext: resourceCloudflareAccessBookmarkRead,
+		ReadContext:   resourceCloudflareAccessBookmarkRead,
 		UpdateContext: resourceCloudflareAccessBookmarkUpdate,
 		DeleteContext: resourceCloudflareAccessBookmarkDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessBookmarkImport,
+			StateContext: resourceCloudflareAccessBookmarkImport,
 		},
 	}
 }
@@ -52,7 +53,7 @@ func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.Resou
 
 	d.SetId(accessBookmark.ID)
 
-	return resourceCloudflareAccessBookmarkRead(d, meta)
+	return resourceCloudflareAccessBookmarkRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -119,7 +120,7 @@ func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.Resou
 		return diag.FromErr(fmt.Errorf("failed to find Access Bookmark ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessBookmarkRead(d, meta)
+	return resourceCloudflareAccessBookmarkRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessBookmarkDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -142,12 +143,12 @@ func resourceCloudflareAccessBookmarkDelete(ctx context.Context, d *schema.Resou
 		return diag.FromErr(fmt.Errorf("error deleting Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
-	resourceCloudflareAccessBookmarkRead(d, meta)
+	resourceCloudflareAccessBookmarkRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareAccessBookmarkImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessBookmarkImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -161,7 +162,7 @@ func resourceCloudflareAccessBookmarkImport(d *schema.ResourceData, meta interfa
 	d.Set("account_id", accountID)
 	d.SetId(accessBookmarkID)
 
-	resourceCloudflareAccessBookmarkRead(d, meta)
+	resourceCloudflareAccessBookmarkRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

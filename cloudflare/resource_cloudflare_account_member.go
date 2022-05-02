@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccountMember() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccountMemberSchema(),
+		Schema:        resourceCloudflareAccountMemberSchema(),
 		CreateContext: resourceCloudflareAccountMemberCreate,
-		ReadContext: resourceCloudflareAccountMemberRead,
+		ReadContext:   resourceCloudflareAccountMemberRead,
 		UpdateContext: resourceCloudflareAccountMemberUpdate,
 		DeleteContext: resourceCloudflareAccountMemberDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccountMemberImport,
+			StateContext: resourceCloudflareAccountMemberImport,
 		},
 	}
 }
@@ -85,7 +86,7 @@ func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.Resour
 
 	d.SetId(r.ID)
 
-	return resourceCloudflareAccountMemberRead(d, meta)
+	return resourceCloudflareAccountMemberRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -104,10 +105,10 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 		return diag.FromErr(fmt.Errorf("failed to update Cloudflare account member: %s", err))
 	}
 
-	return resourceCloudflareAccountMemberRead(d, meta)
+	return resourceCloudflareAccountMemberRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccountMemberImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccountMemberImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup the account member

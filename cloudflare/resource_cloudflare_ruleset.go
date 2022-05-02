@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -22,13 +23,13 @@ const (
 
 func resourceCloudflareRuleset() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareRulesetSchema(),
+		Schema:        resourceCloudflareRulesetSchema(),
 		CreateContext: resourceCloudflareRulesetCreate,
-		ReadContext: resourceCloudflareRulesetRead,
+		ReadContext:   resourceCloudflareRulesetRead,
 		UpdateContext: resourceCloudflareRulesetUpdate,
 		DeleteContext: resourceCloudflareRulesetDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareRulesetImport,
+			StateContext: resourceCloudflareRulesetImport,
 		},
 		SchemaVersion: 1,
 		StateUpgraders: []schema.StateUpgrader{
@@ -128,10 +129,10 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 
 	d.SetId(ruleset.ID)
 
-	return resourceCloudflareRulesetRead(d, meta)
+	return resourceCloudflareRulesetRead(ctx, d, meta)
 }
 
-func resourceCloudflareRulesetImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareRulesetImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	return nil, errors.New("Import is not yet supported for Rulesets")
 }
 
@@ -189,7 +190,7 @@ func resourceCloudflareRulesetUpdate(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(fmt.Errorf("error updating ruleset with ID %q: %w", d.Id(), err))
 	}
 
-	return resourceCloudflareRulesetRead(d, meta)
+	return resourceCloudflareRulesetRead(ctx, d, meta)
 }
 
 func resourceCloudflareRulesetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

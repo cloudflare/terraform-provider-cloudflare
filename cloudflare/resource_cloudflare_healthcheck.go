@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -17,11 +18,11 @@ import (
 func resourceCloudflareHealthcheck() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCloudflareHealthcheckCreate,
-		ReadContext: resourceCloudflareHealthcheckRead,
+		ReadContext:   resourceCloudflareHealthcheckRead,
 		UpdateContext: resourceCloudflareHealthcheckUpdate,
 		DeleteContext: resourceCloudflareHealthcheckDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareHealthcheckImport,
+			StateContext: resourceCloudflareHealthcheckImport,
 		},
 
 		Schema: resourceCloudflareHealthcheckSchema(),
@@ -42,7 +43,7 @@ func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceDa
 			d.SetId("")
 			return nil
 		}
-		return err.Wrap(err, fmt.Sprintf("error reading healthcheck information for %q", d.Id()))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error reading healthcheck information for %q", d.Id())))
 	}
 
 	switch healthcheck.Type {
@@ -88,10 +89,10 @@ func resourceCloudflareHealthcheckCreate(ctx context.Context, d *schema.Resource
 
 	healthcheck, err := healthcheckSetStruct(d)
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating healthcheck struct")))
 	}
 
-	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 		hc, err := client.CreateHealthcheck(context.Background(), zoneID, healthcheck)
 		if err != nil {
 			if strings.Contains(err.Error(), "no such host") {
@@ -103,9 +104,15 @@ func resourceCloudflareHealthcheckCreate(ctx context.Context, d *schema.Resource
 
 		d.SetId(hc.ID)
 
-		resourceCloudflareHealthcheckRead(d, meta)
+		resourceCloudflareHealthcheckRead(ctx, d, meta)
 		return nil
 	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
 func resourceCloudflareHealthcheckUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -114,15 +121,15 @@ func resourceCloudflareHealthcheckUpdate(ctx context.Context, d *schema.Resource
 
 	healthcheck, err := healthcheckSetStruct(d)
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating healthcheck struct")))
 	}
 
 	_, err = client.UpdateHealthcheck(context.Background(), zoneID, d.Id(), healthcheck)
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error creating healthcheck"))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating healthcheck")))
 	}
 
-	return resourceCloudflareHealthcheckRead(d, meta)
+	return resourceCloudflareHealthcheckRead(ctx, d, meta)
 }
 
 func resourceCloudflareHealthcheckDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -131,13 +138,13 @@ func resourceCloudflareHealthcheckDelete(ctx context.Context, d *schema.Resource
 
 	err := client.DeleteHealthcheck(context.Background(), zoneID, d.Id())
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error deleting standalone healthcheck"))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error deleting standalone healthcheck")))
 	}
 
 	return nil
 }
 
-func resourceCloudflareHealthcheckImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareHealthcheckImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -149,7 +156,7 @@ func resourceCloudflareHealthcheckImport(d *schema.ResourceData, meta interface{
 	d.Set("zone_id", zoneID)
 	d.SetId(HealthcheckID)
 
-	resourceCloudflareHealthcheckRead(d, meta)
+	resourceCloudflareHealthcheckRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

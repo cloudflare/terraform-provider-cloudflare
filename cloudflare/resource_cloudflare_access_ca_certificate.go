@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessCACertificate() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessCACertificateSchema(),
+		Schema:        resourceCloudflareAccessCACertificateSchema(),
 		CreateContext: resourceCloudflareAccessCACertificateCreate,
-		ReadContext: resourceCloudflareAccessCACertificateRead,
+		ReadContext:   resourceCloudflareAccessCACertificateRead,
 		UpdateContext: resourceCloudflareAccessCACertificateUpdate,
 		DeleteContext: resourceCloudflareAccessCACertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessCACertificateImport,
+			StateContext: resourceCloudflareAccessCACertificateImport,
 		},
 	}
 }
@@ -43,7 +44,7 @@ func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.
 
 	d.SetId(accessCACert.ID)
 
-	return resourceCloudflareAccessCACertificateRead(d, meta)
+	return resourceCloudflareAccessCACertificateRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -106,7 +107,7 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 	return nil
 }
 
-func resourceCloudflareAccessCACertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 3)
 
 	if len(attributes) != 3 {
@@ -125,7 +126,7 @@ func resourceCloudflareAccessCACertificateImport(d *schema.ResourceData, meta in
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessCACertificateID)
 
-	resourceCloudflareAccessCACertificateRead(d, meta)
+	resourceCloudflareAccessCACertificateRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

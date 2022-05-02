@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWAFPackage() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWAFPackageSchema(),
+		Schema:        resourceCloudflareWAFPackageSchema(),
 		CreateContext: resourceCloudflareWAFPackageCreate,
-		ReadContext: resourceCloudflareWAFPackageRead,
+		ReadContext:   resourceCloudflareWAFPackageRead,
 		UpdateContext: resourceCloudflareWAFPackageUpdate,
 		DeleteContext: resourceCloudflareWAFPackageDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWAFPackageImport,
+			StateContext: resourceCloudflareWAFPackageImport,
 		},
 	}
 }
@@ -74,10 +75,10 @@ func resourceCloudflareWAFPackageCreate(ctx context.Context, d *schema.ResourceD
 	d.SetId(packageID)
 
 	if pkg.Sensitivity != sensitivity || pkg.ActionMode != actionMode {
-		err = resourceCloudflareWAFPackageUpdate(d, meta)
+		err := resourceCloudflareWAFPackageUpdate(ctx, d, meta)
 		if err != nil {
 			d.SetId("")
-			return diag.FromErr(err)
+			return err
 		}
 	}
 
@@ -136,7 +137,7 @@ func resourceCloudflareWAFPackageUpdate(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceCloudflareWAFPackageImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWAFPackageImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup

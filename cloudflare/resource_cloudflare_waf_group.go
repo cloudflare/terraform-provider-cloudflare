@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWAFGroup() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWAFGroupSchema(),
+		Schema:        resourceCloudflareWAFGroupSchema(),
 		CreateContext: resourceCloudflareWAFGroupCreate,
-		ReadContext: resourceCloudflareWAFGroupRead,
+		ReadContext:   resourceCloudflareWAFGroupRead,
 		UpdateContext: resourceCloudflareWAFGroupUpdate,
 		DeleteContext: resourceCloudflareWAFGroupDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWAFGroupImport,
+			StateContext: resourceCloudflareWAFGroupImport,
 		},
 	}
 }
@@ -82,14 +83,14 @@ func resourceCloudflareWAFGroupCreate(ctx context.Context, d *schema.ResourceDat
 		d.Set("package_id", pkg.ID)
 
 		if group.Mode != mode {
-			err = resourceCloudflareWAFGroupUpdate(d, meta)
+			err := resourceCloudflareWAFGroupUpdate(ctx, d, meta)
 			if err != nil {
 				d.SetId("")
-				return diag.FromErr(err)
+				return err
 			}
 		}
 
-		return resourceCloudflareWAFGroupRead(d, meta)
+		return resourceCloudflareWAFGroupRead(ctx, d, meta)
 	}
 
 	return diag.FromErr(fmt.Errorf("unable to find WAF Group %s", groupID))
@@ -135,10 +136,10 @@ func resourceCloudflareWAFGroupUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	return resourceCloudflareWAFGroupRead(d, meta)
+	return resourceCloudflareWAFGroupRead(ctx, d, meta)
 }
 
-func resourceCloudflareWAFGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWAFGroupImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup

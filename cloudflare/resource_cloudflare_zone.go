@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/idna"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -75,13 +76,13 @@ var ratePlans = map[string]subscriptionData{
 
 func resourceCloudflareZone() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareZoneSchema(),
+		Schema:        resourceCloudflareZoneSchema(),
 		CreateContext: resourceCloudflareZoneCreate,
-		ReadContext: resourceCloudflareZoneRead,
+		ReadContext:   resourceCloudflareZoneRead,
 		UpdateContext: resourceCloudflareZoneUpdate,
 		DeleteContext: resourceCloudflareZoneDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -129,7 +130,7 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 		}
 	}
 
-	return resourceCloudflareZoneRead(d, meta)
+	return resourceCloudflareZoneRead(ctx, d, meta)
 }
 
 func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -218,7 +219,7 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 		}
 	}
 
-	return resourceCloudflareZoneRead(d, meta)
+	return resourceCloudflareZoneRead(ctx, d, meta)
 }
 
 func resourceCloudflareZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -255,12 +256,12 @@ func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool, 
 		// HTTP call to set it.
 		if ratePlans[planID].ID != planIDFree {
 			if err := client.ZoneSetPlan(context.Background(), zoneID, ratePlans[planID].Name); err != nil {
-				return diag.FromErr(fmt.Errorf("error setting plan %s for zone %q: %s", planID, zoneID, err))
+				return fmt.Errorf("error setting plan %s for zone %q: %s", planID, zoneID, err)
 			}
 		}
 	} else {
 		if err := client.ZoneUpdatePlan(context.Background(), zoneID, ratePlans[planID].Name); err != nil {
-			return diag.FromErr(fmt.Errorf("error updating plan %s for zone %q: %s", planID, zoneID, err))
+			return fmt.Errorf("error updating plan %s for zone %q: %s", planID, zoneID, err)
 		}
 	}
 

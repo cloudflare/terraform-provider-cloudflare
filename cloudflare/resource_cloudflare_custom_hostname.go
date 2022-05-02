@@ -8,19 +8,20 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareCustomHostname() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareCustomHostnameSchema(),
+		Schema:        resourceCloudflareCustomHostnameSchema(),
 		CreateContext: resourceCloudflareCustomHostnameCreate,
-		ReadContext: resourceCloudflareCustomHostnameRead,
+		ReadContext:   resourceCloudflareCustomHostnameRead,
 		UpdateContext: resourceCloudflareCustomHostnameUpdate,
 		DeleteContext: resourceCloudflareCustomHostnameDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareCustomHostnameImport,
+			StateContext: resourceCloudflareCustomHostnameImport,
 		},
 	}
 }
@@ -32,7 +33,7 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 
 	customHostname, err := client.CustomHostname(context.Background(), zoneID, hostnameID)
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error reading custom hostname %q", hostnameID))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error reading custom hostname %q", hostnameID)))
 	}
 
 	d.Set("hostname", customHostname.Hostname)
@@ -114,7 +115,7 @@ func resourceCloudflareCustomHostnameDelete(ctx context.Context, d *schema.Resou
 
 	err := client.DeleteCustomHostname(context.Background(), zoneID, hostnameID)
 	if err != nil {
-		return err.Wrap(err, "failed to delete custom hostname certificate")
+		return diag.FromErr(errors.Wrap(err, "failed to delete custom hostname certificate"))
 	}
 
 	return nil
@@ -128,12 +129,12 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 
 	newCertificate, err := client.CreateCustomHostname(context.Background(), zoneID, certificate)
 	if err != nil {
-		return err.Wrap(err, "failed to create custom hostname certificate")
+		return diag.FromErr(errors.Wrap(err, "failed to create custom hostname certificate"))
 	}
 
 	d.SetId(newCertificate.Result.ID)
 
-	return resourceCloudflareCustomHostnameRead(d, meta)
+	return resourceCloudflareCustomHostnameRead(ctx, d, meta)
 }
 
 func resourceCloudflareCustomHostnameUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -144,13 +145,13 @@ func resourceCloudflareCustomHostnameUpdate(ctx context.Context, d *schema.Resou
 
 	_, err := client.UpdateCustomHostname(context.Background(), zoneID, hostnameID, certificate)
 	if err != nil {
-		return err.Wrap(err, "failed to update custom hostname certificate")
+		return diag.FromErr(errors.Wrap(err, "failed to update custom hostname certificate"))
 	}
 
-	return resourceCloudflareCustomHostnameRead(d, meta)
+	return resourceCloudflareCustomHostnameRead(ctx, d, meta)
 }
 
-func resourceCloudflareCustomHostnameImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareCustomHostnameImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
 	if len(idAttr) != 2 {

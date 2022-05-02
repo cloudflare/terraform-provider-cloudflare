@@ -8,18 +8,19 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/google/uuid"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareNotificationPolicyWebhooks() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareNotificationPolicyWebhooksSchema(),
+		Schema:        resourceCloudflareNotificationPolicyWebhooksSchema(),
 		CreateContext: resourceCloudflareNotificationPolicyWebhooksCreate,
-		ReadContext: resourceCloudflareNotificationPolicyWebhooksRead,
+		ReadContext:   resourceCloudflareNotificationPolicyWebhooksRead,
 		UpdateContext: resourceCloudflareNotificationPolicyWebhooksUpdate,
 		DeleteContext: resourceCloudflareNotificationPolicyWebhooksDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareNotificationPolicyWebhooksImport,
+			StateContext: resourceCloudflareNotificationPolicyWebhooksImport,
 		},
 	}
 }
@@ -42,7 +43,7 @@ func resourceCloudflareNotificationPolicyWebhooksCreate(ctx context.Context, d *
 
 	d.SetId(formattedWebhookID.String())
 
-	return resourceCloudflareNotificationPolicyWebhooksRead(d, meta)
+	return resourceCloudflareNotificationPolicyWebhooksRead(ctx, d, meta)
 }
 
 func resourceCloudflareNotificationPolicyWebhooksRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -85,7 +86,7 @@ func resourceCloudflareNotificationPolicyWebhooksUpdate(ctx context.Context, d *
 		return diag.FromErr(fmt.Errorf("error updating notification webhooks destination %s: %s", webhooksID, err))
 	}
 
-	return resourceCloudflareNotificationPolicyWebhooksRead(d, meta)
+	return resourceCloudflareNotificationPolicyWebhooksRead(ctx, d, meta)
 }
 
 func resourceCloudflareNotificationPolicyWebhooksDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -101,7 +102,7 @@ func resourceCloudflareNotificationPolicyWebhooksDelete(ctx context.Context, d *
 	return nil
 }
 
-func resourceCloudflareNotificationPolicyWebhooksImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareNotificationPolicyWebhooksImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -112,7 +113,7 @@ func resourceCloudflareNotificationPolicyWebhooksImport(d *schema.ResourceData, 
 	d.SetId(webhooksID)
 	d.Set("account_id", accountID)
 
-	resourceCloudflareNotificationPolicyWebhooksRead(d, meta)
+	resourceCloudflareNotificationPolicyWebhooksRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 

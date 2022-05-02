@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWAFOverride() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWAFOverrideSchema(),
+		Schema:        resourceCloudflareWAFOverrideSchema(),
 		CreateContext: resourceCloudflareWAFOverrideCreate,
-		ReadContext: resourceCloudflareWAFOverrideRead,
+		ReadContext:   resourceCloudflareWAFOverrideRead,
 		UpdateContext: resourceCloudflareWAFOverrideUpdate,
 		DeleteContext: resourceCloudflareWAFOverrideDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWAFOverrideImport,
+			StateContext: resourceCloudflareWAFOverrideImport,
 		},
 	}
 }
@@ -72,7 +73,7 @@ func resourceCloudflareWAFOverrideCreate(ctx context.Context, d *schema.Resource
 
 	d.SetId(override.ID)
 
-	return resourceCloudflareWAFOverrideRead(d, meta)
+	return resourceCloudflareWAFOverrideRead(ctx, d, meta)
 }
 
 func resourceCloudflareWAFOverrideUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -86,7 +87,7 @@ func resourceCloudflareWAFOverrideUpdate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("failed to update WAF override: %s", err))
 	}
 
-	return resourceCloudflareWAFOverrideRead(d, meta)
+	return resourceCloudflareWAFOverrideRead(ctx, d, meta)
 }
 
 func resourceCloudflareWAFOverrideDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -99,10 +100,10 @@ func resourceCloudflareWAFOverrideDelete(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("failed to delete WAF override ID %s: %s", overrideID, err))
 	}
 
-	return resourceCloudflareWAFOverrideRead(d, meta)
+	return resourceCloudflareWAFOverrideRead(ctx, d, meta)
 }
 
-func resourceCloudflareWAFOverrideImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWAFOverrideImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
 	if len(idAttr) != 2 {
@@ -117,7 +118,7 @@ func resourceCloudflareWAFOverrideImport(d *schema.ResourceData, meta interface{
 	d.Set("override_id", WAFOverrideID)
 	d.SetId(WAFOverrideID)
 
-	resourceCloudflareWAFOverrideRead(d, meta)
+	resourceCloudflareWAFOverrideRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

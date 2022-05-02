@@ -9,19 +9,20 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareApiToken() *schema.Resource {
 
 	return &schema.Resource{
-		Schema: resourceCloudflareApiTokenSchema(),
+		Schema:        resourceCloudflareApiTokenSchema(),
 		CreateContext: resourceCloudflareApiTokenCreate,
-		ReadContext: resourceCloudflareApiTokenRead,
+		ReadContext:   resourceCloudflareApiTokenRead,
 		UpdateContext: resourceCloudflareApiTokenUpdate,
 		DeleteContext: resourceCloudflareApiTokenDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -76,7 +77,7 @@ func resourceCloudflareApiTokenCreate(ctx context.Context, d *schema.ResourceDat
 	d.Set("status", t.Status)
 	d.Set("value", t.Value)
 
-	return resourceCloudflareApiTokenRead(d, meta)
+	return resourceCloudflareApiTokenRead(ctx, d, meta)
 }
 
 func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APITokenPolicies {
@@ -193,7 +194,7 @@ func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("error updating Cloudflare API Token %q: %s", name, err))
 	}
 
-	return resourceCloudflareApiTokenRead(d, meta)
+	return resourceCloudflareApiTokenRead(ctx, d, meta)
 }
 
 func resourceCloudflareApiTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

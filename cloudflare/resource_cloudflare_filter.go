@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareFilter() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareFilterSchema(),
+		Schema:        resourceCloudflareFilterSchema(),
 		CreateContext: resourceCloudflareFilterCreate,
-		ReadContext: resourceCloudflareFilterRead,
+		ReadContext:   resourceCloudflareFilterRead,
 		UpdateContext: resourceCloudflareFilterUpdate,
 		DeleteContext: resourceCloudflareFilterDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareFilterImport,
+			StateContext: resourceCloudflareFilterImport,
 		},
 	}
 }
@@ -63,7 +64,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	log.Printf("[INFO] Cloudflare Filter ID: %s", d.Id())
 
-	return resourceCloudflareFilterRead(d, meta)
+	return resourceCloudflareFilterRead(ctx, d, meta)
 }
 
 func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -130,7 +131,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
-	return resourceCloudflareFilterRead(d, meta)
+	return resourceCloudflareFilterRead(ctx, d, meta)
 }
 
 func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -148,7 +149,7 @@ func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourceCloudflareFilterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareFilterImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
@@ -163,7 +164,7 @@ func resourceCloudflareFilterImport(d *schema.ResourceData, meta interface{}) ([
 	d.Set("zone_id", zoneID)
 	d.SetId(filterID)
 
-	resourceCloudflareFilterRead(d, meta)
+	resourceCloudflareFilterRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

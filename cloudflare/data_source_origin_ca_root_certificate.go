@@ -1,17 +1,19 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceCloudflareOriginCARootCertificate() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareOriginCARootCertificateRead,
+		ReadContext: dataSourceCloudflareOriginCARootCertificateRead,
 
 		Schema: map[string]*schema.Schema{
 			"algorithm": {

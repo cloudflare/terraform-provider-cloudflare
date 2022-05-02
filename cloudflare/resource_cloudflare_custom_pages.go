@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareCustomPages() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareCustomPagesSchema(),
+		Schema:        resourceCloudflareCustomPagesSchema(),
 		CreateContext: resourceCloudflareCustomPagesUpdate,
-		ReadContext: resourceCloudflareCustomPagesRead,
+		ReadContext:   resourceCloudflareCustomPagesRead,
 		UpdateContext: resourceCloudflareCustomPagesUpdate,
 		DeleteContext: resourceCloudflareCustomPagesDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareCustomPagesImport,
+			StateContext: resourceCloudflareCustomPagesImport,
 		},
 	}
 }
@@ -49,7 +50,7 @@ func resourceCloudflareCustomPagesRead(ctx context.Context, d *schema.ResourceDa
 
 	page, err := client.CustomPage(context.Background(), &pageOptions, pageType)
 	if err != nil {
-		return diag.FromErr(err)ors.New(err.Error())
+		return diag.FromErr(err)
 	}
 
 	// If the `page.State` comes back as "default", it's safe to assume we
@@ -90,10 +91,10 @@ func resourceCloudflareCustomPagesUpdate(ctx context.Context, d *schema.Resource
 	}
 	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType)))
 	}
 
-	return resourceCloudflareCustomPagesRead(d, meta)
+	return resourceCloudflareCustomPagesRead(ctx, d, meta)
 }
 
 func resourceCloudflareCustomPagesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -115,13 +116,13 @@ func resourceCloudflareCustomPagesDelete(ctx context.Context, d *schema.Resource
 	}
 	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType)))
 	}
 
-	return resourceCloudflareCustomPagesRead(d, meta)
+	return resourceCloudflareCustomPagesRead(ctx, d, meta)
 }
 
-func resourceCloudflareCustomPagesImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareCustomPagesImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 3)
 	if len(attributes) != 3 {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"requestType/ID/pageType\"", d.Id())
@@ -139,7 +140,7 @@ func resourceCloudflareCustomPagesImport(d *schema.ResourceData, meta interface{
 	checksum := stringChecksum(fmt.Sprintf("%s/%s", identifier, pageType))
 	d.SetId(checksum)
 
-	resourceCloudflareCustomPagesRead(d, meta)
+	resourceCloudflareCustomPagesRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

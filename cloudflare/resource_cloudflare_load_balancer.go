@@ -10,6 +10,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
@@ -18,11 +19,11 @@ import (
 func resourceCloudflareLoadBalancer() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCloudflareLoadBalancerCreate,
-		ReadContext: resourceCloudflareLoadBalancerRead,
+		ReadContext:   resourceCloudflareLoadBalancerRead,
 		UpdateContext: resourceCloudflareLoadBalancerUpdate,
 		DeleteContext: resourceCloudflareLoadBalancerDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareLoadBalancerImport,
+			StateContext: resourceCloudflareLoadBalancerImport,
 		},
 
 		SchemaVersion: 1,
@@ -276,7 +277,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 
 	r, err := client.CreateLoadBalancer(context.Background(), zoneID, newLoadBalancer)
 	if err != nil {
-		return err.Wrap(err, "error creating load balancer for zone")
+		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
 	}
 
 	if r.ID == "" {
@@ -287,7 +288,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[INFO] Cloudflare Load Balancer ID: %s", d.Id())
 
-	return resourceCloudflareLoadBalancerRead(d, meta)
+	return resourceCloudflareLoadBalancerRead(ctx, d, meta)
 }
 
 func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -352,10 +353,10 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 
 	_, err := client.ModifyLoadBalancer(context.Background(), zoneID, loadBalancer)
 	if err != nil {
-		return err.Wrap(err, "error creating load balancer for zone")
+		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
 	}
 
-	return resourceCloudflareLoadBalancerRead(d, meta)
+	return resourceCloudflareLoadBalancerRead(ctx, d, meta)
 }
 
 func expandGeoPools(pool interface{}, geoType string) (map[string][]string, error) {
@@ -386,8 +387,8 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 			d.SetId("")
 			return nil
 		}
-		return err.Wrap(err,
-			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", loadBalancerID, zoneID))
+		return diag.FromErr(errors.Wrap(err,
+			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", loadBalancerID, zoneID)))
 	}
 
 	d.Set("name", loadBalancer.Name)
@@ -472,7 +473,7 @@ func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareLoadBalancerImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -487,7 +488,7 @@ func resourceCloudflareLoadBalancerImport(d *schema.ResourceData, meta interface
 	d.Set("zone_id", zoneID)
 	d.SetId(loadBalancerID)
 
-	resourceCloudflareLoadBalancerRead(d, meta)
+	resourceCloudflareLoadBalancerRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

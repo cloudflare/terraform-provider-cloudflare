@@ -1,12 +1,14 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -17,7 +19,7 @@ const (
 
 func dataSourceCloudflareIPRanges() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareIPRangesRead,
+		ReadContext: dataSourceCloudflareIPRangesRead,
 
 		Schema: map[string]*schema.Schema{
 			"cidr_blocks": {

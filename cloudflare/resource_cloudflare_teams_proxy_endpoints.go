@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareTeamsProxyEndpoint() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTeamsProxyEndpointSchema(),
+		Schema:        resourceCloudflareTeamsProxyEndpointSchema(),
 		CreateContext: resourceCloudflareTeamsProxyEndpointCreate,
-		ReadContext: resourceCloudflareTeamsProxyEndpointRead,
+		ReadContext:   resourceCloudflareTeamsProxyEndpointRead,
 		UpdateContext: resourceCloudflareTeamsProxyEndpointUpdate,
 		DeleteContext: resourceCloudflareTeamsProxyEndpointDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTeamsProxyEndpointImport,
+			StateContext: resourceCloudflareTeamsProxyEndpointImport,
 		},
 	}
 }
@@ -69,7 +70,7 @@ func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.R
 	}
 
 	d.SetId(proxyEndpoint.ID)
-	return resourceCloudflareTeamsProxyEndpointRead(d, meta)
+	return resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)
 
 }
 
@@ -93,7 +94,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.R
 	if teamsProxyEndpoint.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Teams Proxy Endpoint ID in update response; resource was empty"))
 	}
-	return resourceCloudflareTeamsProxyEndpointRead(d, meta)
+	return resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)
 }
 
 func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -108,10 +109,10 @@ func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.R
 		return diag.FromErr(fmt.Errorf("error deleting Teams Proxy Endpoint for account %q: %s", accountID, err))
 	}
 
-	return resourceCloudflareTeamsProxyEndpointRead(d, meta)
+	return resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)
 }
 
-func resourceCloudflareTeamsProxyEndpointImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTeamsProxyEndpointImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -125,8 +126,8 @@ func resourceCloudflareTeamsProxyEndpointImport(d *schema.ResourceData, meta int
 	d.Set("account_id", accountID)
 	d.SetId(teamsProxyEndpointID)
 
-	err := resourceCloudflareTeamsProxyEndpointRead(d, meta)
+	resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)
 
-	return []*schema.ResourceData{d}, err
+	return []*schema.ResourceData{d}, nil
 
 }

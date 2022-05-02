@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -16,10 +17,10 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 	return &schema.Resource{
 		// You cannot edit AOP certificates, rather, only upload new ones.
 		CreateContext: resourceCloudflareAuthenticatedOriginPullsCertificateCreate,
-		ReadContext: resourceCloudflareAuthenticatedOriginPullsCertificateRead,
+		ReadContext:   resourceCloudflareAuthenticatedOriginPullsCertificateRead,
 		DeleteContext: resourceCloudflareAuthenticatedOriginPullsCertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAuthenticatedOriginPullsCertificateImport,
+			StateContext: resourceCloudflareAuthenticatedOriginPullsCertificateImport,
 		},
 
 		Schema: resourceCloudflareAuthenticatedOriginPullsCertificateSchema(),
@@ -45,7 +46,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		d.SetId(record.ID)
 
-		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		perZoneRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), zoneID, record.ID)
 			if err != nil {
 				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %s", err))
@@ -55,9 +56,16 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 				return resource.RetryableError(fmt.Errorf("expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)
 			return nil
 		})
+
+		if perZoneRetryErr != nil {
+			return diag.FromErr(perZoneRetryErr)
+		}
+
+		return nil
+
 	case aopType == "per-hostname":
 		perHostnameAOPCert := cloudflare.PerHostnameAuthenticatedOriginPullsCertificateParams{
 			Certificate: d.Get("certificate").(string),
@@ -69,7 +77,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		d.SetId(record.ID)
 
-		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		perHostnameRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, record.ID)
 			if err != nil {
 				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %s", err))
@@ -79,9 +87,15 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 				return resource.RetryableError(fmt.Errorf("expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)
 			return nil
 		})
+
+		if perHostnameRetryErr != nil {
+			return diag.FromErr(perHostnameRetryErr)
+		}
+
+		return nil
 	}
 	return nil
 }
@@ -147,7 +161,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(ctx context.Con
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAuthenticatedOriginPullsCertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 3)
 
@@ -159,6 +173,6 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateImport(d *schema.Resou
 	d.Set("type", aopType)
 	d.SetId(certID)
 
-	resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+	resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }

@@ -8,18 +8,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessRuleSchema(),
+		Schema:        resourceCloudflareAccessRuleSchema(),
 		CreateContext: resourceCloudflareAccessRuleCreate,
-		ReadContext: resourceCloudflareAccessRuleRead,
+		ReadContext:   resourceCloudflareAccessRuleRead,
 		UpdateContext: resourceCloudflareAccessRuleUpdate,
 		DeleteContext: resourceCloudflareAccessRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessRuleImport,
+			StateContext: resourceCloudflareAccessRuleImport,
 		},
 
 		SchemaVersion: 1,
@@ -75,7 +76,7 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 
 	d.SetId(r.Result.ID)
 
-	return resourceCloudflareAccessRuleRead(d, meta)
+	return resourceCloudflareAccessRuleRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -160,7 +161,7 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("failed to update Access Rule: %s", err))
 	}
 
-	return resourceCloudflareAccessRuleRead(d, meta)
+	return resourceCloudflareAccessRuleRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -188,7 +189,7 @@ func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceCloudflareAccessRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 	attributes := strings.Split(d.Id(), "/")
 
@@ -213,7 +214,7 @@ func resourceCloudflareAccessRuleImport(d *schema.ResourceData, meta interface{}
 		d.Set("zone_id", accessRuleTypeIdentifier)
 	}
 
-	resourceCloudflareAccessRuleRead(d, meta)
+	resourceCloudflareAccessRuleRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

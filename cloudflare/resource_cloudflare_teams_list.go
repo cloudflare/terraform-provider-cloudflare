@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareTeamsList() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTeamsListSchema(),
+		Schema:        resourceCloudflareTeamsListSchema(),
 		CreateContext: resourceCloudflareTeamsListCreate,
-		ReadContext: resourceCloudflareTeamsListRead,
+		ReadContext:   resourceCloudflareTeamsListRead,
 		UpdateContext: resourceCloudflareTeamsListUpdate,
 		DeleteContext: resourceCloudflareTeamsListDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTeamsListImport,
+			StateContext: resourceCloudflareTeamsListImport,
 		},
 	}
 }
@@ -48,7 +49,7 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 
 	d.SetId(list.ID)
 
-	return resourceCloudflareTeamsListRead(d, meta)
+	return resourceCloudflareTeamsListRead(ctx, d, meta)
 }
 
 func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -114,7 +115,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		teamsList.Items = l.Items
 	}
 
-	return resourceCloudflareTeamsListRead(d, meta)
+	return resourceCloudflareTeamsListRead(ctx, d, meta)
 }
 
 func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -129,12 +130,12 @@ func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("error deleting Teams List for account %q: %s", accountID, err))
 	}
 
-	resourceCloudflareTeamsListRead(d, meta)
+	resourceCloudflareTeamsListRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareTeamsListImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTeamsListImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -148,7 +149,7 @@ func resourceCloudflareTeamsListImport(d *schema.ResourceData, meta interface{})
 	d.Set("account_id", accountID)
 	d.SetId(teamsListID)
 
-	resourceCloudflareTeamsListRead(d, meta)
+	resourceCloudflareTeamsListRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

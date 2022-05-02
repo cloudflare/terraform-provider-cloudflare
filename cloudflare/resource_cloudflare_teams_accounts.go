@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareTeamsAccount() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTeamsAccountSchema(),
-		ReadContext: resourceCloudflareTeamsAccountRead,
+		Schema:        resourceCloudflareTeamsAccountSchema(),
+		ReadContext:   resourceCloudflareTeamsAccountRead,
 		UpdateContext: resourceCloudflareTeamsAccountUpdate,
 		CreateContext: resourceCloudflareTeamsAccountUpdate,
 		// This resource is a top-level account configuration and cant be "deleted"
 		Delete: func(_ *schema.ResourceData, _ interface{}) error { return nil },
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTeamsAccountImport,
+			StateContext: resourceCloudflareTeamsAccountImport,
 		},
 	}
 }
@@ -148,15 +149,16 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	}
 
 	d.SetId(accountID)
-	return resourceCloudflareTeamsAccountRead(d, meta)
+	return resourceCloudflareTeamsAccountRead(ctx, d, meta)
 }
 
-func resourceCloudflareTeamsAccountImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTeamsAccountImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.SetId(d.Id())
 	d.Set("account_id", d.Id())
 
-	err := resourceCloudflareTeamsAccountRead(d, meta)
-	return []*schema.ResourceData{d}, err
+	resourceCloudflareTeamsAccountRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func flattenBlockPageConfig(blockPage *cloudflare.TeamsBlockPage) []interface{} {

@@ -9,18 +9,19 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareTeamsRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTeamsRuleSchema(),
-		ReadContext: resourceCloudflareTeamsRuleRead,
+		Schema:        resourceCloudflareTeamsRuleSchema(),
+		ReadContext:   resourceCloudflareTeamsRuleRead,
 		UpdateContext: resourceCloudflareTeamsRuleUpdate,
 		CreateContext: resourceCloudflareTeamsRuleCreate,
 		DeleteContext: resourceCloudflareTeamsRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTeamsRuleImport,
+			StateContext: resourceCloudflareTeamsRuleImport,
 		},
 	}
 }
@@ -110,7 +111,7 @@ func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	d.SetId(rule.ID)
-	return resourceCloudflareTeamsRuleRead(d, meta)
+	return resourceCloudflareTeamsRuleRead(ctx, d, meta)
 }
 
 func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -149,7 +150,7 @@ func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceDa
 	if updatedTeamsRule.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Teams Rule ID in update response; resource was empty"))
 	}
-	return resourceCloudflareTeamsRuleRead(d, meta)
+	return resourceCloudflareTeamsRuleRead(ctx, d, meta)
 }
 
 func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -164,10 +165,10 @@ func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("error deleting Teams Rule for account %q: %s", accountID, err))
 	}
 
-	return resourceCloudflareTeamsRuleRead(d, meta)
+	return resourceCloudflareTeamsRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareTeamsRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -181,9 +182,9 @@ func resourceCloudflareTeamsRuleImport(d *schema.ResourceData, meta interface{})
 	d.Set("account_id", accountID)
 	d.SetId(teamsRuleID)
 
-	err := resourceCloudflareTeamsRuleRead(d, meta)
+	resourceCloudflareTeamsRuleRead(ctx, d, meta)
 
-	return []*schema.ResourceData{d}, err
+	return []*schema.ResourceData{d}, nil
 }
 
 func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interface{} {

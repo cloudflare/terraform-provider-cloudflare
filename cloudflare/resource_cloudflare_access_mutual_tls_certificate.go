@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessMutualTLSCertificate() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessMutualTLSCertificateSchema(),
+		Schema:        resourceCloudflareAccessMutualTLSCertificateSchema(),
 		CreateContext: resourceCloudflareAccessMutualTLSCertificateCreate,
-		ReadContext: resourceCloudflareAccessMutualTLSCertificateRead,
+		ReadContext:   resourceCloudflareAccessMutualTLSCertificateRead,
 		UpdateContext: resourceCloudflareAccessMutualTLSCertificateUpdate,
 		DeleteContext: resourceCloudflareAccessMutualTLSCertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessMutualTLSCertificateImport,
+			StateContext: resourceCloudflareAccessMutualTLSCertificateImport,
 		},
 	}
 }
@@ -52,7 +53,7 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *
 
 	d.SetId(accessMutualTLSCert.ID)
 
-	return resourceCloudflareAccessMutualTLSCertificateRead(d, meta)
+	return resourceCloudflareAccessMutualTLSCertificateRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -111,7 +112,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *
 		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
-	return resourceCloudflareAccessMutualTLSCertificateRead(d, meta)
+	return resourceCloudflareAccessMutualTLSCertificateRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -145,7 +146,7 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
-	return resource.Retry(d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+	retryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
 		if identifier.Type == AccountType {
 			err = client.DeleteAccessMutualTLSCertificate(context.Background(), identifier.Value, certID)
 		} else {
@@ -165,9 +166,15 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 		return nil
 	})
 
+	if retryErr != nil {
+		return diag.FromErr(retryErr)
+	}
+
+	return nil
+
 }
 
-func resourceCloudflareAccessMutualTLSCertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessMutualTLSCertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 3)
 
 	if len(attributes) != 3 {
@@ -186,7 +193,7 @@ func resourceCloudflareAccessMutualTLSCertificateImport(d *schema.ResourceData, 
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessMutualTLSCertificateID)
 
-	resourceCloudflareAccessMutualTLSCertificateRead(d, meta)
+	resourceCloudflareAccessMutualTLSCertificateRead(context.TODO(), d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

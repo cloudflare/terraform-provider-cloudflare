@@ -7,18 +7,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareZoneLockdown() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareZoneLockdownSchema(),
+		Schema:        resourceCloudflareZoneLockdownSchema(),
 		CreateContext: resourceCloudflareZoneLockdownCreate,
-		ReadContext: resourceCloudflareZoneLockdownRead,
+		ReadContext:   resourceCloudflareZoneLockdownRead,
 		UpdateContext: resourceCloudflareZoneLockdownUpdate,
 		DeleteContext: resourceCloudflareZoneLockdownDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareZoneLockdownImport,
+			StateContext: resourceCloudflareZoneLockdownImport,
 		},
 	}
 }
@@ -69,7 +70,7 @@ func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[INFO] Cloudflare Zone Lockdown ID: %s", d.Id())
 
-	return resourceCloudflareZoneLockdownRead(d, meta)
+	return resourceCloudflareZoneLockdownRead(ctx, d, meta)
 }
 
 func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -157,7 +158,7 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[INFO] Cloudflare Zone Lockdown ID: %s", d.Id())
 
-	return resourceCloudflareZoneLockdownRead(d, meta)
+	return resourceCloudflareZoneLockdownRead(ctx, d, meta)
 }
 
 func resourceCloudflareZoneLockdownDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -187,7 +188,7 @@ func expandZoneLockdownConfig(configs *schema.Set) []cloudflare.ZoneLockdownConf
 	return configArray
 }
 
-func resourceCloudflareZoneLockdownImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareZoneLockdownImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -204,7 +205,7 @@ func resourceCloudflareZoneLockdownImport(d *schema.ResourceData, meta interface
 	log.Printf("[DEBUG] zoneID: %s", zoneID)
 	log.Printf("[DEBUG] Resource ID : %s", zoneLockdownID)
 
-	resourceCloudflareZoneLockdownRead(d, meta)
+	resourceCloudflareZoneLockdownRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

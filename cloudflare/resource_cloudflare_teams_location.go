@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareTeamsLocation() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTeamsLocationSchema(),
+		Schema:        resourceCloudflareTeamsLocationSchema(),
 		CreateContext: resourceCloudflareTeamsLocationCreate,
-		ReadContext: resourceCloudflareTeamsLocationRead,
+		ReadContext:   resourceCloudflareTeamsLocationRead,
 		UpdateContext: resourceCloudflareTeamsLocationUpdate,
 		DeleteContext: resourceCloudflareTeamsLocationDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTeamsLocationImport,
+			StateContext: resourceCloudflareTeamsLocationImport,
 		},
 	}
 }
@@ -71,7 +72,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 	accountID := d.Get("account_id").(string)
 	networks, err := inflateTeamsLocationNetworks(d.Get("networks"))
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error creating Teams Location for account %q: %s, %v", accountID, err, networks))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating Teams Location for account %q: %s, %v", accountID, err, networks)))
 	}
 
 	newTeamLocation := cloudflare.TeamsLocation{
@@ -88,7 +89,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 	}
 
 	d.SetId(location.ID)
-	return resourceCloudflareTeamsLocationRead(d, meta)
+	return resourceCloudflareTeamsLocationRead(ctx, d, meta)
 
 }
 func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -96,7 +97,7 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 	accountID := d.Get("account_id").(string)
 	networks, err := inflateTeamsLocationNetworks(d.Get("networks"))
 	if err != nil {
-		return err.Wrap(err, fmt.Sprintf("error updating Teams Location for account %q: %s, %v", accountID, err, networks))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating Teams Location for account %q: %s, %v", accountID, err, networks)))
 	}
 	updatedTeamsLocation := cloudflare.TeamsLocation{
 		ID:            d.Id(),
@@ -113,7 +114,7 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 	if teamsLocation.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Teams Location ID in update response; resource was empty"))
 	}
-	return resourceCloudflareTeamsLocationRead(d, meta)
+	return resourceCloudflareTeamsLocationRead(ctx, d, meta)
 }
 
 func resourceCloudflareTeamsLocationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -128,10 +129,10 @@ func resourceCloudflareTeamsLocationDelete(ctx context.Context, d *schema.Resour
 		return diag.FromErr(fmt.Errorf("error deleting Teams Location for account %q: %s", accountID, err))
 	}
 
-	return resourceCloudflareTeamsLocationRead(d, meta)
+	return resourceCloudflareTeamsLocationRead(ctx, d, meta)
 }
 
-func resourceCloudflareTeamsLocationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTeamsLocationImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -145,9 +146,9 @@ func resourceCloudflareTeamsLocationImport(d *schema.ResourceData, meta interfac
 	d.Set("account_id", accountID)
 	d.SetId(teamsLocationID)
 
-	err := resourceCloudflareTeamsLocationRead(d, meta)
+	resourceCloudflareTeamsLocationRead(ctx, d, meta)
 
-	return []*schema.ResourceData{d}, err
+	return []*schema.ResourceData{d}, nil
 
 }
 

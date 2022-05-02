@@ -9,19 +9,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareWorkerScript() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWorkerScriptSchema(),
+		Schema:        resourceCloudflareWorkerScriptSchema(),
 		CreateContext: resourceCloudflareWorkerScriptCreate,
-		ReadContext: resourceCloudflareWorkerScriptRead,
+		ReadContext:   resourceCloudflareWorkerScriptRead,
 		UpdateContext: resourceCloudflareWorkerScriptUpdate,
 		DeleteContext: resourceCloudflareWorkerScriptDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWorkerScriptImport,
+			StateContext: resourceCloudflareWorkerScriptImport,
 		},
 	}
 }
@@ -126,7 +127,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
 	if err != nil {
-		return err.Wrap(err, "error creating worker script")
+		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
 	}
 
 	d.SetId(scriptData.ID)
@@ -151,8 +152,8 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 			return nil
 		}
 
-		return err.Wrap(err,
-			fmt.Sprintf("Error reading worker script from API for resource %+v", &scriptData.Params))
+		return diag.FromErr(errors.Wrap(err,
+			fmt.Sprintf("Error reading worker script from API for resource %+v", &scriptData.Params)))
 	}
 
 	existingBindings := make(ScriptBindings)
@@ -194,7 +195,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		case cloudflare.WorkerWebAssemblyBinding:
 			module, err := ioutil.ReadAll(v.Module)
 			if err != nil {
-				return err.Wrap(err, fmt.Sprintf("cannot read contents of wasm bindings (%s)", name))
+				return diag.FromErr(errors.Wrap(err, fmt.Sprintf("cannot read contents of wasm bindings (%s)", name)))
 			}
 			webAssemblyBindings.Add(map[string]interface{}{
 				"name":   name,
@@ -252,7 +253,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
 	if err != nil {
-		return err.Wrap(err, "error updating worker script")
+		return diag.FromErr(errors.Wrap(err, "error updating worker script"))
 	}
 
 	return nil
@@ -276,17 +277,17 @@ func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.Resourc
 			return nil
 		}
 
-		return err.Wrap(err, "error deleting worker script")
+		return diag.FromErr(errors.Wrap(err, "error deleting worker script"))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerScriptImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWorkerScriptImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	scriptID := d.Id()
 	_ = d.Set("name", scriptID)
 
-	_ = resourceCloudflareWorkerScriptRead(d, meta)
+	_ = resourceCloudflareWorkerScriptRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

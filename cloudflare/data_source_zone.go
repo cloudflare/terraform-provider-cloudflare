@@ -6,12 +6,13 @@ import (
 	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareZone() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareZoneRead,
+		ReadContext: dataSourceCloudflareZoneRead,
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
