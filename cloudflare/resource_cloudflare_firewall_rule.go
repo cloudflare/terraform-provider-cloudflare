@@ -23,7 +23,7 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 	}
 }
 
-func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -78,7 +78,7 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 	return resourceCloudflareFirewallRuleRead(d, meta)
 }
 
-func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -109,7 +109,7 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -157,7 +157,7 @@ func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface
 	return resourceCloudflareFirewallRuleRead(d, meta)
 }
 
-func resourceCloudflareFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 

@@ -24,7 +24,7 @@ func resourceCloudflareTeamsAccount() *schema.Resource {
 	}
 }
 
-func resourceCloudflareTeamsAccountRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -95,7 +95,7 @@ func resourceCloudflareTeamsAccountRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	blockPageConfig := inflateBlockPageConfig(d.Get("block_page"))

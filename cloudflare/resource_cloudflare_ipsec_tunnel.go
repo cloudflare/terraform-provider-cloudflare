@@ -24,7 +24,7 @@ func resourceCloudflareIPsecTunnel() *schema.Resource {
 	}
 }
 
-func resourceCloudflareIPsecTunnelCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
@@ -59,7 +59,7 @@ func resourceCloudflareIPsecTunnelImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourceCloudflareIPsecTunnelRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
@@ -85,19 +85,19 @@ func resourceCloudflareIPsecTunnelRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareIPsecTunnelUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
 	_, err := client.UpdateMagicTransitIPsecTunnel(context.Background(), accountID, d.Id(), IPsecTunnelFromResource(d))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating IPsec tunnel %q", d.Id()))
+		return err.Wrap(err, fmt.Sprintf("error updating IPsec tunnel %q", d.Id()))
 	}
 
 	return resourceCloudflareIPsecTunnelRead(d, meta)
 }
 
-func resourceCloudflareIPsecTunnelDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 

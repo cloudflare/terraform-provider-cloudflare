@@ -62,7 +62,7 @@ func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)

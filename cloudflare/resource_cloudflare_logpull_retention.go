@@ -22,7 +22,7 @@ func resourceCloudflareLogpullRetention() *schema.Resource {
 	}
 }
 
-func resourceCloudflareLogpullRetentionSet(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpullRetentionSet(d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	status := d.Get("enabled").(bool)
@@ -37,7 +37,7 @@ func resourceCloudflareLogpullRetentionSet(d *schema.ResourceData, meta interfac
 	return resourceCloudflareLogpullRetentionRead(d, meta)
 }
 
-func resourceCloudflareLogpullRetentionRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpullRetentionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -51,7 +51,7 @@ func resourceCloudflareLogpullRetentionRead(d *schema.ResourceData, meta interfa
 	return nil
 }
 
-func resourceCloudflareLogpullRetentionDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpullRetentionDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 

@@ -25,7 +25,7 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 	}
 }
 
-func resourceCloudflareSpectrumApplicationCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	newSpectrumApp := applicationFromResource(d)
@@ -35,7 +35,7 @@ func resourceCloudflareSpectrumApplicationCreate(d *schema.ResourceData, meta in
 
 	r, err := client.CreateSpectrumApplication(context.Background(), zoneID, newSpectrumApp)
 	if err != nil {
-		return errors.Wrap(err, "error creating spectrum application for zone")
+		return err.Wrap(err, "error creating spectrum application for zone")
 	}
 
 	if r.ID == "" {
@@ -49,7 +49,7 @@ func resourceCloudflareSpectrumApplicationCreate(d *schema.ResourceData, meta in
 	return resourceCloudflareSpectrumApplicationRead(d, meta)
 }
 
-func resourceCloudflareSpectrumApplicationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSpectrumApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -59,13 +59,13 @@ func resourceCloudflareSpectrumApplicationUpdate(d *schema.ResourceData, meta in
 
 	_, err := client.UpdateSpectrumApplication(context.Background(), zoneID, application.ID, application)
 	if err != nil {
-		return errors.Wrap(err, "error creating spectrum application for zone")
+		return err.Wrap(err, "error creating spectrum application for zone")
 	}
 
 	return resourceCloudflareSpectrumApplicationRead(d, meta)
 }
 
-func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	applicationID := d.Id()
@@ -77,7 +77,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 			d.SetId("")
 			return nil
 		}
-		return errors.Wrap(err,
+		return err.Wrap(err,
 			fmt.Sprintf("Error reading spectrum application resource from API for resource %s in zone %s", applicationID, zoneID))
 	}
 
@@ -127,7 +127,7 @@ func resourceCloudflareSpectrumApplicationRead(d *schema.ResourceData, meta inte
 	return nil
 }
 
-func resourceCloudflareSpectrumApplicationDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSpectrumApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	applicationID := d.Id()

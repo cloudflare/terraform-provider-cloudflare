@@ -24,7 +24,7 @@ func resourceCloudflareArgoTunnel() *schema.Resource {
 	}
 }
 
-func resourceCloudflareArgoTunnelCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareArgoTunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 	name := d.Get("name").(string)
@@ -32,7 +32,7 @@ func resourceCloudflareArgoTunnelCreate(d *schema.ResourceData, meta interface{}
 
 	tunnel, err := client.CreateArgoTunnel(context.Background(), accID, name, secret)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to create Argo Tunnel"))
+		return err.Wrap(err, fmt.Sprintf("failed to create Argo Tunnel"))
 	}
 
 	d.SetId(tunnel.ID)
@@ -40,7 +40,7 @@ func resourceCloudflareArgoTunnelCreate(d *schema.ResourceData, meta interface{}
 	return resourceCloudflareArgoTunnelRead(d, meta)
 }
 
-func resourceCloudflareArgoTunnelRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 
@@ -54,18 +54,18 @@ func resourceCloudflareArgoTunnelRead(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceCloudflareArgoTunnelDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareArgoTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 
 	cleanupErr := client.CleanupArgoTunnelConnections(context.Background(), accID, d.Id())
 	if cleanupErr != nil {
-		return errors.Wrap(cleanupErr, fmt.Sprintf("failed to clean up Argo Tunnel connections"))
+		return err.Wrap(cleanupErr, fmt.Sprintf("failed to clean up Argo Tunnel connections"))
 	}
 
 	deleteErr := client.DeleteArgoTunnel(context.Background(), accID, d.Id())
 	if deleteErr != nil {
-		return errors.Wrap(deleteErr, fmt.Sprintf("failed to delete Argo Tunnel"))
+		return err.Wrap(deleteErr, fmt.Sprintf("failed to delete Argo Tunnel"))
 	}
 
 	d.SetId("")

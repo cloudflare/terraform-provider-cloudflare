@@ -31,7 +31,7 @@ func resourceCloudflareHealthcheck() *schema.Resource {
 	}
 }
 
-func resourceCloudflareHealthcheckRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -42,7 +42,7 @@ func resourceCloudflareHealthcheckRead(d *schema.ResourceData, meta interface{})
 			d.SetId("")
 			return nil
 		}
-		return errors.Wrap(err, fmt.Sprintf("error reading healthcheck information for %q", d.Id()))
+		return err.Wrap(err, fmt.Sprintf("error reading healthcheck information for %q", d.Id()))
 	}
 
 	switch healthcheck.Type {
@@ -82,13 +82,13 @@ func resourceCloudflareHealthcheckRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareHealthcheckCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	healthcheck, err := healthcheckSetStruct(d)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
+		return err.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
 	}
 
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
@@ -108,30 +108,30 @@ func resourceCloudflareHealthcheckCreate(d *schema.ResourceData, meta interface{
 	})
 }
 
-func resourceCloudflareHealthcheckUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	healthcheck, err := healthcheckSetStruct(d)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
+		return err.Wrap(err, fmt.Sprintf("error creating healthcheck struct"))
 	}
 
 	_, err = client.UpdateHealthcheck(context.Background(), zoneID, d.Id(), healthcheck)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating healthcheck"))
+		return err.Wrap(err, fmt.Sprintf("error creating healthcheck"))
 	}
 
 	return resourceCloudflareHealthcheckRead(d, meta)
 }
 
-func resourceCloudflareHealthcheckDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareHealthcheckDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	err := client.DeleteHealthcheck(context.Background(), zoneID, d.Id())
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error deleting standalone healthcheck"))
+		return err.Wrap(err, fmt.Sprintf("error deleting standalone healthcheck"))
 	}
 
 	return nil

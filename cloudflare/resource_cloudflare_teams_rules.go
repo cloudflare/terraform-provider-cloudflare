@@ -25,7 +25,7 @@ func resourceCloudflareTeamsRule() *schema.Resource {
 	}
 }
 
-func resourceCloudflareTeamsRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -74,7 +74,7 @@ func resourceCloudflareTeamsRuleRead(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
-func resourceCloudflareTeamsRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
@@ -113,7 +113,7 @@ func resourceCloudflareTeamsRuleCreate(d *schema.ResourceData, meta interface{})
 	return resourceCloudflareTeamsRuleRead(d, meta)
 }
 
-func resourceCloudflareTeamsRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	settings := inflateTeamsRuleSettings(d.Get("rule_settings"))
@@ -152,7 +152,7 @@ func resourceCloudflareTeamsRuleUpdate(d *schema.ResourceData, meta interface{})
 	return resourceCloudflareTeamsRuleRead(d, meta)
 }
 
-func resourceCloudflareTeamsRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	id := d.Id()
 	accountID := d.Get("account_id").(string)

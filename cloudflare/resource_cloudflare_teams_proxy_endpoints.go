@@ -23,7 +23,7 @@ func resourceCloudflareTeamsProxyEndpoint() *schema.Resource {
 	}
 }
 
-func resourceCloudflareTeamsProxyEndpointRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -52,7 +52,7 @@ func resourceCloudflareTeamsProxyEndpointRead(d *schema.ResourceData, meta inter
 	return nil
 }
 
-func resourceCloudflareTeamsProxyEndpointCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
@@ -73,7 +73,7 @@ func resourceCloudflareTeamsProxyEndpointCreate(d *schema.ResourceData, meta int
 
 }
 
-func resourceCloudflareTeamsProxyEndpointUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	updatedProxyEndpoint := cloudflare.TeamsProxyEndpoint{
@@ -96,7 +96,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(d *schema.ResourceData, meta int
 	return resourceCloudflareTeamsProxyEndpointRead(d, meta)
 }
 
-func resourceCloudflareTeamsProxyEndpointDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	id := d.Id()
 	accountID := d.Get("account_id").(string)

@@ -26,7 +26,7 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 	}
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
@@ -96,7 +96,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 
 	r, err := client.CreateLoadBalancerMonitor(context.Background(), loadBalancerMonitor)
 	if err != nil {
-		return errors.Wrap(err, "error creating load balancer monitor")
+		return err.Wrap(err, "error creating load balancer monitor")
 	}
 
 	if r.ID == "" {
@@ -110,7 +110,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 	return resourceCloudflareLoadBalancerPoolMonitorRead(d, meta)
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
@@ -184,7 +184,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 
 	_, err := client.ModifyLoadBalancerMonitor(context.Background(), loadBalancerMonitor)
 	if err != nil {
-		return errors.Wrap(err, "error modifying load balancer monitor")
+		return err.Wrap(err, "error modifying load balancer monitor")
 	}
 
 	log.Printf("[INFO] Cloudflare Load Balancer Monitor %q was modified", d.Id())
@@ -202,7 +202,7 @@ func expandLoadBalancerMonitorHeader(cfgSet interface{}) map[string][]string {
 	return header
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor, err := client.LoadBalancerMonitorDetails(context.Background(), d.Id())
@@ -212,7 +212,7 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta 
 			d.SetId("")
 			return nil
 		} else {
-			return errors.Wrap(err,
+			return err.Wrap(err,
 				fmt.Sprintf("Error reading load balancer monitor from API for resource %s ", d.Id()))
 		}
 	}
@@ -256,7 +256,7 @@ func flattenLoadBalancerMonitorHeader(header map[string][]string) *schema.Set {
 	return schema.NewSet(HashByMapKey("header"), flattened)
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting Cloudflare Load Balancer Monitor: %s ", d.Id())
@@ -267,7 +267,7 @@ func resourceCloudflareLoadBalancerPoolMonitorDelete(d *schema.ResourceData, met
 			log.Printf("[INFO] Load balancer monitor %s no longer exists", d.Id())
 			return nil
 		} else {
-			return errors.Wrap(err, "error deleting cloudflare load balancer monitor")
+			return err.Wrap(err, "error deleting cloudflare load balancer monitor")
 		}
 	}
 

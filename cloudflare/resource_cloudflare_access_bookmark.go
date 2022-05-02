@@ -23,7 +23,7 @@ func resourceCloudflareAccessBookmark() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessBookmarkCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	newAccessBookmark := cloudflare.AccessBookmark{
@@ -37,7 +37,7 @@ func resourceCloudflareAccessBookmarkCreate(d *schema.ResourceData, meta interfa
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessBookmark cloudflare.AccessBookmark
@@ -55,12 +55,12 @@ func resourceCloudflareAccessBookmarkCreate(d *schema.ResourceData, meta interfa
 	return resourceCloudflareAccessBookmarkRead(d, meta)
 }
 
-func resourceCloudflareAccessBookmarkRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessBookmark cloudflare.AccessBookmark
@@ -87,7 +87,7 @@ func resourceCloudflareAccessBookmarkRead(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceCloudflareAccessBookmarkUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	updatedAccessBookmark := cloudflare.AccessBookmark{
@@ -102,7 +102,7 @@ func resourceCloudflareAccessBookmarkUpdate(d *schema.ResourceData, meta interfa
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessBookmark cloudflare.AccessBookmark
@@ -122,7 +122,7 @@ func resourceCloudflareAccessBookmarkUpdate(d *schema.ResourceData, meta interfa
 	return resourceCloudflareAccessBookmarkRead(d, meta)
 }
 
-func resourceCloudflareAccessBookmarkDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	bookmarkID := d.Id()
 
@@ -130,7 +130,7 @@ func resourceCloudflareAccessBookmarkDelete(d *schema.ResourceData, meta interfa
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {

@@ -94,12 +94,12 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 	}
 }
 
-func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// make sure that the worker does not already exist
@@ -126,7 +126,7 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 
 	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
 	if err != nil {
-		return errors.Wrap(err, "error creating worker script")
+		return err.Wrap(err, "error creating worker script")
 	}
 
 	d.SetId(scriptData.ID)
@@ -134,12 +134,12 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	r, err := client.DownloadWorker(context.Background(), &scriptData.Params)
@@ -151,7 +151,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 			return nil
 		}
 
-		return errors.Wrap(err,
+		return err.Wrap(err,
 			fmt.Sprintf("Error reading worker script from API for resource %+v", &scriptData.Params))
 	}
 
@@ -161,7 +161,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 
 	bindings, err := getWorkerScriptBindings(d.Get("name").(string), client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	kvNamespaceBindings := &schema.Set{F: schema.HashResource(kvNamespaceBindingResource)}
@@ -194,7 +194,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		case cloudflare.WorkerWebAssemblyBinding:
 			module, err := ioutil.ReadAll(v.Module)
 			if err != nil {
-				return errors.Wrap(err, fmt.Sprintf("cannot read contents of wasm bindings (%s)", name))
+				return err.Wrap(err, fmt.Sprintf("cannot read contents of wasm bindings (%s)", name))
 			}
 			webAssemblyBindings.Add(map[string]interface{}{
 				"name":   name,
@@ -226,12 +226,12 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	scriptBody := d.Get("content").(string)
@@ -252,18 +252,18 @@ func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface
 
 	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
 	if err != nil {
-		return errors.Wrap(err, "error updating worker script")
+		return err.Wrap(err, "error updating worker script")
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("[INFO] Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params)
@@ -276,7 +276,7 @@ func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface
 			return nil
 		}
 
-		return errors.Wrap(err, "error deleting worker script")
+		return err.Wrap(err, "error deleting worker script")
 	}
 
 	return nil

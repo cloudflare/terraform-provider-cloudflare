@@ -25,7 +25,7 @@ func resourceCloudflareDevicePostureIntegration() *schema.Resource {
 	}
 }
 
-func resourceCloudflareDevicePostureIntegrationCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -54,7 +54,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(d *schema.ResourceData, me
 	return devicePostureIntegrationReadHelper(d, meta, savedSecret)
 }
 
-func resourceCloudflareDevicePostureIntegrationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureIntegrationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// Client secret is always read from the local state.
 	secret, _ := d.Get("config.0.client_secret").(string)
 	return devicePostureIntegrationReadHelper(d, meta, secret)
@@ -83,7 +83,7 @@ func devicePostureIntegrationReadHelper(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareDevicePostureIntegrationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -113,7 +113,7 @@ func resourceCloudflareDevicePostureIntegrationUpdate(d *schema.ResourceData, me
 	return resourceCloudflareDevicePostureIntegrationRead(d, meta)
 }
 
-func resourceCloudflareDevicePostureIntegrationDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 	accountID := d.Get("account_id").(string)

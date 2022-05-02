@@ -22,7 +22,7 @@ func dataSourceCloudflareApiTokenPermissionGroups() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareApiTokenPermissionGroupsRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] Reading API Token Permission Groups")
 	client := meta.(*cloudflare.API)
 

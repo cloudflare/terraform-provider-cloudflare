@@ -25,7 +25,7 @@ func resourceCloudflareCustomHostnameFallbackOrigin() *schema.Resource {
 	}
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -40,7 +40,7 @@ func resourceCloudflareCustomHostnameFallbackOriginRead(d *schema.ResourceData, 
 	return nil
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -52,7 +52,7 @@ func resourceCloudflareCustomHostnameFallbackOriginDelete(d *schema.ResourceData
 	return nil
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	origin := d.Get("origin").(string)
@@ -94,7 +94,7 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	origin := d.Get("origin").(string)

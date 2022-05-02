@@ -15,7 +15,7 @@ func dataSourceCloudflareDevices() *schema.Resource {
 	}
 }
 
-func dataResourceCloudflareDevicesRead(d *schema.ResourceData, meta interface{}) error {
+func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	d.SetId(accountID)

@@ -15,12 +15,12 @@ func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	identifier, err := initIdentifier(d)
 	name := d.Get("name").(string)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var providers []cloudflare.AccessIdentityProvider

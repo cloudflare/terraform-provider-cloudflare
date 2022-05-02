@@ -23,12 +23,12 @@ func resourceCloudflareAccessCACertificate() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessCACertificateCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessCACert cloudflare.AccessCACertificate
@@ -46,12 +46,12 @@ func resourceCloudflareAccessCACertificateCreate(d *schema.ResourceData, meta in
 	return resourceCloudflareAccessCACertificateRead(d, meta)
 }
 
-func resourceCloudflareAccessCACertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	applicationID := d.Get("application_id").(string)
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessCACert cloudflare.AccessCACertificate
@@ -76,11 +76,11 @@ func resourceCloudflareAccessCACertificateRead(d *schema.ResourceData, meta inte
 	return nil
 }
 
-func resourceCloudflareAccessCACertificateUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
 
-func resourceCloudflareAccessCACertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	applicationID := d.Get("application_id").(string)
 
@@ -88,7 +88,7 @@ func resourceCloudflareAccessCACertificateDelete(d *schema.ResourceData, meta in
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
@@ -98,7 +98,7 @@ func resourceCloudflareAccessCACertificateDelete(d *schema.ResourceData, meta in
 	}
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")

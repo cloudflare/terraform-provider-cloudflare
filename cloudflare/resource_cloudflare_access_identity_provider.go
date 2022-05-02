@@ -25,12 +25,12 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
@@ -60,7 +60,7 @@ func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta i
 	return nil
 }
 
-func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	IDPConfig, _ := convertSchemaToStruct(d)
@@ -75,7 +75,7 @@ func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
@@ -93,7 +93,7 @@ func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta
 	return resourceCloudflareAccessIdentityProviderRead(d, meta)
 }
 
-func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	IDPConfig, conversionErr := convertSchemaToStruct(d)
@@ -112,7 +112,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
@@ -132,14 +132,14 @@ func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta
 	return resourceCloudflareAccessIdentityProviderRead(d, meta)
 }
 
-func resourceCloudflareAccessIdentityProviderDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Identity Provider using ID: %s", d.Id())
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {

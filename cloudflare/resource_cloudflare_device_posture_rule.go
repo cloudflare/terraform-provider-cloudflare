@@ -24,7 +24,7 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 	}
 }
 
-func resourceCloudflareDevicePostureRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -53,7 +53,7 @@ func resourceCloudflareDevicePostureRuleCreate(d *schema.ResourceData, meta inte
 	return resourceCloudflareDevicePostureRuleRead(d, meta)
 }
 
-func resourceCloudflareDevicePostureRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -77,7 +77,7 @@ func resourceCloudflareDevicePostureRuleRead(d *schema.ResourceData, meta interf
 	return nil
 }
 
-func resourceCloudflareDevicePostureRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -109,7 +109,7 @@ func resourceCloudflareDevicePostureRuleUpdate(d *schema.ResourceData, meta inte
 	return resourceCloudflareDevicePostureRuleRead(d, meta)
 }
 
-func resourceCloudflareDevicePostureRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 	accountID := d.Get("account_id").(string)
@@ -197,13 +197,13 @@ func setDevicePostureRuleMatch(rule *cloudflare.DevicePostureRule, d *schema.Res
 		for _, v := range match {
 			jsonString, err := json.Marshal(v.(map[string]interface{}))
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			}
 
 			var dprMatch cloudflare.DevicePostureRuleMatch
 			err = json.Unmarshal(jsonString, &dprMatch)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			}
 
 			rule.Match = append(rule.Match, dprMatch)

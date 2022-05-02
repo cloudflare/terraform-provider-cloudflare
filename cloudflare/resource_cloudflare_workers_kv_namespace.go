@@ -23,7 +23,7 @@ func resourceCloudflareWorkersKVNamespace() *schema.Resource {
 	}
 }
 
-func resourceCloudflareWorkersKVNamespaceCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkersKVNamespaceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	req := &cloudflare.WorkersKVNamespaceRequest{
@@ -34,7 +34,7 @@ func resourceCloudflareWorkersKVNamespaceCreate(d *schema.ResourceData, meta int
 
 	r, err := client.CreateWorkersKVNamespace(context.Background(), req)
 	if err != nil {
-		return errors.Wrap(err, "error creating workers kv namespace")
+		return err.Wrap(err, "error creating workers kv namespace")
 	}
 
 	if r.Result.ID == "" {
@@ -48,13 +48,13 @@ func resourceCloudflareWorkersKVNamespaceCreate(d *schema.ResourceData, meta int
 	return nil
 }
 
-func resourceCloudflareWorkersKVNamespaceRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkersKVNamespaceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	namespaceID := d.Id()
 
 	resp, err := client.ListWorkersKVNamespaces(context.Background())
 	if err != nil {
-		return errors.Wrap(err, "error reading workers kv namespaces")
+		return err.Wrap(err, "error reading workers kv namespaces")
 	}
 
 	var namespace cloudflare.WorkersKVNamespace
@@ -73,7 +73,7 @@ func resourceCloudflareWorkersKVNamespaceRead(d *schema.ResourceData, meta inter
 	return nil
 }
 
-func resourceCloudflareWorkersKVNamespaceUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	namespace := &cloudflare.WorkersKVNamespaceRequest{
@@ -84,20 +84,20 @@ func resourceCloudflareWorkersKVNamespaceUpdate(d *schema.ResourceData, meta int
 
 	_, err := client.UpdateWorkersKVNamespace(context.Background(), d.Id(), namespace)
 	if err != nil {
-		return errors.Wrap(err, "error updating workers kv namespace")
+		return err.Wrap(err, "error updating workers kv namespace")
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkersKVNamespaceDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkersKVNamespaceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting Cloudflare Workers KV Namespace with id: %+v", d.Id())
 
 	_, err := client.DeleteWorkersKVNamespace(context.Background(), d.Id())
 	if err != nil {
-		return errors.Wrap(err, "error deleting workers kv namespace")
+		return err.Wrap(err, "error deleting workers kv namespace")
 	}
 
 	return nil

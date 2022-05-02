@@ -29,7 +29,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -86,7 +86,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
@@ -127,7 +127,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()

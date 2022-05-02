@@ -24,7 +24,7 @@ func resourceCloudflareWAFPackage() *schema.Resource {
 	}
 }
 
-func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFPackageRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
@@ -38,7 +38,7 @@ func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) 
 			return nil
 		}
 
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.Set("sensitivity", pkg.Sensitivity)
@@ -48,7 +48,7 @@ func resourceCloudflareWAFPackageRead(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceCloudflareWAFPackageCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFPackageCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
@@ -77,14 +77,14 @@ func resourceCloudflareWAFPackageCreate(d *schema.ResourceData, meta interface{}
 		err = resourceCloudflareWAFPackageUpdate(d, meta)
 		if err != nil {
 			d.SetId("")
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return nil
 }
 
-func resourceCloudflareWAFPackageDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFPackageDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
@@ -92,7 +92,7 @@ func resourceCloudflareWAFPackageDelete(d *schema.ResourceData, meta interface{}
 
 	pkg, err := client.WAFPackage(context.Background(), zoneID, packageID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Can't delete WAF Package so instead reset it to default
@@ -108,14 +108,14 @@ func resourceCloudflareWAFPackageDelete(d *schema.ResourceData, meta interface{}
 
 		_, err = client.UpdateWAFPackage(context.Background(), zoneID, packageID, options)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return nil
 }
 
-func resourceCloudflareWAFPackageUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFPackageUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
@@ -130,7 +130,7 @@ func resourceCloudflareWAFPackageUpdate(d *schema.ResourceData, meta interface{}
 
 	_, err := client.UpdateWAFPackage(context.Background(), zoneID, packageID, options)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	return nil

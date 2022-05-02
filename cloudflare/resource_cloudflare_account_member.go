@@ -23,7 +23,7 @@ func resourceCloudflareAccountMember() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	member, err := client.AccountMember(context.Background(), client.AccountID, d.Id())
@@ -34,7 +34,7 @@ func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{
 			d.SetId("")
 			return nil
 		}
-		return err
+		return diag.FromErr(err)
 	}
 
 	var memberIDs []string
@@ -49,7 +49,7 @@ func resourceCloudflareAccountMemberRead(d *schema.ResourceData, meta interface{
 	return nil
 }
 
-func resourceCloudflareAccountMemberDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting Cloudflare account member ID: %s", d.Id())
@@ -62,7 +62,7 @@ func resourceCloudflareAccountMemberDelete(d *schema.ResourceData, meta interfac
 	return nil
 }
 
-func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	memberEmailAddress := d.Get("email_address").(string)
 	requestedMemberRoles := d.Get("role_ids").(*schema.Set).List()
 
@@ -88,7 +88,7 @@ func resourceCloudflareAccountMemberCreate(d *schema.ResourceData, meta interfac
 	return resourceCloudflareAccountMemberRead(d, meta)
 }
 
-func resourceCloudflareAccountMemberUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountRoles := []cloudflare.AccountRole{}
 	memberRoles := d.Get("role_ids").(*schema.Set).List()

@@ -27,7 +27,7 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 	}
 }
 
-func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	hostnames := []string{}
@@ -61,7 +61,7 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 	return resourceCloudflareOriginCACertificateRead(d, meta)
 }
 
-func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
 	cert, err := client.OriginCertificate(context.Background(), certID)
@@ -107,7 +107,7 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 	return nil
 }
 
-func resourceCloudflareOriginCACertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareOriginCACertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
 

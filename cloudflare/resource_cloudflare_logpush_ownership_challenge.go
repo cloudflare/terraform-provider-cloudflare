@@ -19,17 +19,17 @@ func resourceCloudflareLogpushOwnershipChallenge() *schema.Resource {
 	}
 }
 
-func resourceCloudflareLogpushOwnershipChallengeNoop(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushOwnershipChallengeNoop(d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
 
-func resourceCloudflareLogpushOwnershipChallengeCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushOwnershipChallengeCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	destinationConf := d.Get("destination_conf").(string)
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var challenge *cloudflare.LogpushGetOwnershipChallenge

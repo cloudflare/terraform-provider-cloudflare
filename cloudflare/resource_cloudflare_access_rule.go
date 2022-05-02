@@ -34,7 +34,7 @@ func resourceCloudflareAccessRule() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -78,7 +78,7 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 	return resourceCloudflareAccessRuleRead(d, meta)
 }
 
-func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -125,7 +125,7 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -163,7 +163,7 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 	return resourceCloudflareAccessRuleRead(d, meta)
 }
 
-func resourceCloudflareAccessRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 

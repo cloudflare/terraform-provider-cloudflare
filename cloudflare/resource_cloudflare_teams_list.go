@@ -23,7 +23,7 @@ func resourceCloudflareTeamsList() *schema.Resource {
 	}
 }
 
-func resourceCloudflareTeamsListCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	newTeamsList := cloudflare.TeamsList{
@@ -51,7 +51,7 @@ func resourceCloudflareTeamsListCreate(d *schema.ResourceData, meta interface{})
 	return resourceCloudflareTeamsListRead(d, meta)
 }
 
-func resourceCloudflareTeamsListRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -78,7 +78,7 @@ func resourceCloudflareTeamsListRead(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
-func resourceCloudflareTeamsListUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	updatedTeamsList := cloudflare.TeamsList{
@@ -117,7 +117,7 @@ func resourceCloudflareTeamsListUpdate(d *schema.ResourceData, meta interface{})
 	return resourceCloudflareTeamsListRead(d, meta)
 }
 
-func resourceCloudflareTeamsListDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 	accountID := d.Get("account_id").(string)

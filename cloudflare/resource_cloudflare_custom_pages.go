@@ -24,7 +24,7 @@ func resourceCloudflareCustomPages() *schema.Resource {
 	}
 }
 
-func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomPagesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	accountID := d.Get("account_id").(string)
@@ -49,7 +49,7 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 
 	page, err := client.CustomPage(context.Background(), &pageOptions, pageType)
 	if err != nil {
-		return errors.New(err.Error())
+		return diag.FromErr(err)ors.New(err.Error())
 	}
 
 	// If the `page.State` comes back as "default", it's safe to assume we
@@ -71,7 +71,7 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomPagesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -90,13 +90,13 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 	}
 	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
+		return err.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}
 
 	return resourceCloudflareCustomPagesRead(d, meta)
 }
 
-func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomPagesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -115,7 +115,7 @@ func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{
 	}
 	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
+		return err.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
 	}
 
 	return resourceCloudflareCustomPagesRead(d, meta)

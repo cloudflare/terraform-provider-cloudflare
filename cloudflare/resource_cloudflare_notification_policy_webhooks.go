@@ -24,7 +24,7 @@ func resourceCloudflareNotificationPolicyWebhooks() *schema.Resource {
 	}
 }
 
-func resourceCloudflareNotificationPolicyWebhooksCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyWebhooksCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -45,7 +45,7 @@ func resourceCloudflareNotificationPolicyWebhooksCreate(d *schema.ResourceData, 
 	return resourceCloudflareNotificationPolicyWebhooksRead(d, meta)
 }
 
-func resourceCloudflareNotificationPolicyWebhooksRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyWebhooksRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	webhooksDestinationID := d.Id()
 	accountID := d.Get("account_id").(string)
@@ -72,7 +72,7 @@ func resourceCloudflareNotificationPolicyWebhooksRead(d *schema.ResourceData, me
 	return nil
 }
 
-func resourceCloudflareNotificationPolicyWebhooksUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyWebhooksUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	webhooksID := d.Id()
 	accountID := d.Get("account_id").(string)
@@ -88,7 +88,7 @@ func resourceCloudflareNotificationPolicyWebhooksUpdate(d *schema.ResourceData, 
 	return resourceCloudflareNotificationPolicyWebhooksRead(d, meta)
 }
 
-func resourceCloudflareNotificationPolicyWebhooksDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyWebhooksDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	webhooksID := d.Id()
 	accountID := d.Get("account_id").(string)

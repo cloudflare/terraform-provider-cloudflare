@@ -24,7 +24,7 @@ func resourceCloudflareWAFRule() *schema.Resource {
 	}
 }
 
-func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
@@ -39,7 +39,7 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 			return nil
 		}
 
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed
@@ -50,7 +50,7 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	ruleID := d.Get("rule_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -63,7 +63,7 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 		var err error
 		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	} else {
 		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
@@ -87,7 +87,7 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 			err = resourceCloudflareWAFRuleUpdate(d, meta)
 			if err != nil {
 				d.SetId("")
-				return err
+				return diag.FromErr(err)
 			}
 		}
 
@@ -97,7 +97,7 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 	return fmt.Errorf("unable to find WAF Rule %s", ruleID)
 }
 
-func resourceCloudflareWAFRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
@@ -106,7 +106,7 @@ func resourceCloudflareWAFRuleDelete(d *schema.ResourceData, meta interface{}) e
 
 	rule, err := client.WAFRule(context.Background(), zoneID, packageID, ruleID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Find the default mode to be used
@@ -119,14 +119,14 @@ func resourceCloudflareWAFRuleDelete(d *schema.ResourceData, meta interface{}) e
 	if rule.Mode != defaultMode {
 		_, err = client.UpdateWAFRule(context.Background(), zoneID, packageID, ruleID, defaultMode)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return nil
 }
 
-func resourceCloudflareWAFRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
@@ -137,7 +137,7 @@ func resourceCloudflareWAFRuleUpdate(d *schema.ResourceData, meta interface{}) e
 	// We can only update the mode of a WAF Rule
 	_, err := client.UpdateWAFRule(context.Background(), zoneID, packageID, ruleID, mode)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	return resourceCloudflareWAFRuleRead(d, meta)

@@ -21,7 +21,7 @@ func resourceCloudflareFallbackDomain() *schema.Resource {
 	}
 }
 
-func resourceCloudflareFallbackDomainRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -37,7 +37,7 @@ func resourceCloudflareFallbackDomainRead(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceCloudflareFallbackDomainUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -57,13 +57,13 @@ func resourceCloudflareFallbackDomainUpdate(d *schema.ResourceData, meta interfa
 	return resourceCloudflareFallbackDomainRead(d, meta)
 }
 
-func resourceCloudflareFallbackDomainDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFallbackDomainDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	err := client.RestoreFallbackDomainDefaults(context.Background(), accountID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")

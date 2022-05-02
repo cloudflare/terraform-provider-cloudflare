@@ -50,13 +50,13 @@ func schemaAccessPolicyApprovalGroupToAPI(data map[string]interface{}) cloudflar
 	return approvalGroup
 }
 
-func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessPolicy cloudflare.AccessPolicy
@@ -115,7 +115,7 @@ func resourceCloudflareAccessPolicyRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 	newAccessPolicy := cloudflare.AccessPolicy{
@@ -130,7 +130,7 @@ func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessPolicy cloudflare.AccessPolicy
@@ -148,7 +148,7 @@ func resourceCloudflareAccessPolicyCreate(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 	updatedAccessPolicy := cloudflare.AccessPolicy{
@@ -164,7 +164,7 @@ func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessPolicy cloudflare.AccessPolicy
@@ -184,7 +184,7 @@ func resourceCloudflareAccessPolicyUpdate(d *schema.ResourceData, meta interface
 	return resourceCloudflareAccessPolicyRead(d, meta)
 }
 
-func resourceCloudflareAccessPolicyDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 
@@ -192,7 +192,7 @@ func resourceCloudflareAccessPolicyDelete(d *schema.ResourceData, meta interface
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {

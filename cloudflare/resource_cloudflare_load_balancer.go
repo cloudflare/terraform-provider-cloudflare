@@ -211,7 +211,7 @@ var localPoolElems = map[string]*schema.Resource{
 	"region": regionPoolElem,
 }
 
-func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)
@@ -239,7 +239,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	if regionPools, ok := d.GetOk("region_pools"); ok {
 		expandedRegionPools, err := expandGeoPools(regionPools, "region")
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		newLoadBalancer.RegionPools = expandedRegionPools
 	}
@@ -247,7 +247,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	if popPools, ok := d.GetOk("pop_pools"); ok {
 		expandedPopPools, err := expandGeoPools(popPools, "pop")
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		newLoadBalancer.PopPools = expandedPopPools
 	}
@@ -259,7 +259,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
 		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		newLoadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
@@ -267,7 +267,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	if rules, ok := d.GetOk("rules"); ok {
 		v, err := expandRules(rules)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		newLoadBalancer.Rules = v
 	}
@@ -276,7 +276,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 
 	r, err := client.CreateLoadBalancer(context.Background(), zoneID, newLoadBalancer)
 	if err != nil {
-		return errors.Wrap(err, "error creating load balancer for zone")
+		return err.Wrap(err, "error creating load balancer for zone")
 	}
 
 	if r.ID == "" {
@@ -290,7 +290,7 @@ func resourceCloudflareLoadBalancerCreate(d *schema.ResourceData, meta interface
 	return resourceCloudflareLoadBalancerRead(d, meta)
 }
 
-func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
@@ -315,7 +315,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	if regionPools, ok := d.GetOk("region_pools"); ok {
 		expandedRegionPools, err := expandGeoPools(regionPools, "region")
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		loadBalancer.RegionPools = expandedRegionPools
 	}
@@ -323,7 +323,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	if popPools, ok := d.GetOk("pop_pools"); ok {
 		expandedPopPools, err := expandGeoPools(popPools, "pop")
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		loadBalancer.PopPools = expandedPopPools
 	}
@@ -335,7 +335,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
 		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		loadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
@@ -343,7 +343,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 	if rules, ok := d.GetOk("rules"); ok {
 		v, err := expandRules(rules)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		loadBalancer.Rules = v
 	}
@@ -352,7 +352,7 @@ func resourceCloudflareLoadBalancerUpdate(d *schema.ResourceData, meta interface
 
 	_, err := client.ModifyLoadBalancer(context.Background(), zoneID, loadBalancer)
 	if err != nil {
-		return errors.Wrap(err, "error creating load balancer for zone")
+		return err.Wrap(err, "error creating load balancer for zone")
 	}
 
 	return resourceCloudflareLoadBalancerRead(d, meta)
@@ -374,7 +374,7 @@ func expandGeoPools(pool interface{}, geoType string) (map[string][]string, erro
 	return expanded, nil
 }
 
-func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	loadBalancerID := d.Id()
@@ -386,7 +386,7 @@ func resourceCloudflareLoadBalancerRead(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return errors.Wrap(err,
+		return err.Wrap(err,
 			fmt.Sprintf("Error reading load balancer resource from API for resource %s in zone %s", loadBalancerID, zoneID))
 	}
 
@@ -457,7 +457,7 @@ func flattenSessionAffinityAttrs(attrs *cloudflare.SessionAffinityAttributes) ma
 	}
 }
 
-func resourceCloudflareLoadBalancerDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	loadBalancerID := d.Id()

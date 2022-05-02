@@ -23,7 +23,7 @@ func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessKeysConfigurationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessKeysConfigurationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -46,7 +46,7 @@ func resourceCloudflareAccessKeysConfigurationRead(d *schema.ResourceData, meta 
 	return nil
 }
 
-func resourceCloudflareAccessKeysConfigurationCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessKeysConfigurationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// keys configuration share the same lifetime as an organization, so creating is a no-op, unless
 	// key_rotation_interval_days was explicitly passed, in which case we need to update its value.
 
@@ -57,7 +57,7 @@ func resourceCloudflareAccessKeysConfigurationCreate(d *schema.ResourceData, met
 	return resourceCloudflareAccessKeysConfigurationUpdate(d, meta)
 }
 
-func resourceCloudflareAccessKeysConfigurationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessKeysConfigurationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -73,7 +73,7 @@ func resourceCloudflareAccessKeysConfigurationUpdate(d *schema.ResourceData, met
 	return resourceCloudflareAccessKeysConfigurationRead(d, meta)
 }
 
-func resourceCloudflareKeysConfigurationDelete(_ *schema.ResourceData, _ interface{}) error {
+func resourceCloudflareKeysConfigurationDelete(ctx context.Context, _ *schema.ResourceData, _ interface{}) error {
 	// keys configuration share the same lifetime as an organization, and can not be
 	// explicitly deleted by the user. so this is a no-op.
 	return nil

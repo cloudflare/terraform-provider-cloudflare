@@ -23,7 +23,7 @@ func resourceCloudflareTunnelRoute() *schema.Resource {
 	}
 }
 
-func resourceCloudflareTunnelRouteRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	network := d.Get("network").(string)
@@ -56,7 +56,7 @@ func resourceCloudflareTunnelRouteRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareTunnelRouteCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	resource := cloudflare.TunnelRoutesCreateParams{
@@ -79,7 +79,7 @@ func resourceCloudflareTunnelRouteCreate(d *schema.ResourceData, meta interface{
 	return resourceCloudflareTunnelRouteRead(d, meta)
 }
 
-func resourceCloudflareTunnelRouteUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	resource := cloudflare.TunnelRoutesUpdateParams{
@@ -101,7 +101,7 @@ func resourceCloudflareTunnelRouteUpdate(d *schema.ResourceData, meta interface{
 	return resourceCloudflareTunnelRouteRead(d, meta)
 }
 
-func resourceCloudflareTunnelRouteDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTunnelRouteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	err := client.DeleteTunnelRoute(context.Background(), cloudflare.TunnelRoutesDeleteParams{

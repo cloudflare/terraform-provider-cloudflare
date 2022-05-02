@@ -61,7 +61,7 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 	return job, identifier, nil
 }
 
-func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	jobID, err := strconv.Atoi(d.Id())
 	if err != nil {
@@ -71,7 +71,7 @@ func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) 
 	var job cloudflare.LogpushJob
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	if identifier.Type == AccountType {
 		job, err = client.GetAccountLogpushJob(context.Background(), identifier.Value, jobID)
@@ -101,7 +101,7 @@ func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	job, identifier, err := getJobFromResource(d)
@@ -131,7 +131,7 @@ func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}
 	return resourceCloudflareLogpushJobRead(d, meta)
 }
 
-func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	job, identifier, err := getJobFromResource(d)
@@ -154,7 +154,7 @@ func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}
 	return resourceCloudflareLogpushJobRead(d, meta)
 }
 
-func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	job, identifier, err := getJobFromResource(d)

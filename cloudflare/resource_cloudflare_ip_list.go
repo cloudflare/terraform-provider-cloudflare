@@ -24,13 +24,13 @@ func resourceCloudflareIPList() *schema.Resource {
 	}
 }
 
-func resourceCloudflareIPListCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPListCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	list, err := client.CreateIPList(context.Background(), accountID, d.Get("name").(string), d.Get("description").(string), d.Get("kind").(string))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating IP List %s", d.Get("name").(string)))
+		return err.Wrap(err, fmt.Sprintf("error creating IP List %s", d.Get("name").(string)))
 	}
 
 	d.SetId(list.ID)
@@ -39,7 +39,7 @@ func resourceCloudflareIPListCreate(d *schema.ResourceData, meta interface{}) er
 		IPListItems := buildIPListItemsCreateRequest(items.(*schema.Set).List())
 		_, err = client.CreateIPListItems(context.Background(), accountID, d.Id(), IPListItems)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("error creating IP List Items"))
+			return err.Wrap(err, fmt.Sprintf("error creating IP List Items"))
 		}
 	}
 
@@ -62,7 +62,7 @@ func resourceCloudflareIPListImport(d *schema.ResourceData, meta interface{}) ([
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPListRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -73,7 +73,7 @@ func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) erro
 			d.SetId("")
 			return nil
 		}
-		return errors.Wrap(err, fmt.Sprintf("error reading IP List with ID %q", d.Id()))
+		return err.Wrap(err, fmt.Sprintf("error reading IP List with ID %q", d.Id()))
 	}
 
 	d.Set("name", list.Name)
@@ -82,7 +82,7 @@ func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) erro
 
 	items, err := client.ListIPListItems(context.Background(), accountID, d.Id())
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error reading IP List Items"))
+		return err.Wrap(err, fmt.Sprintf("error reading IP List Items"))
 	}
 
 	var itemData []map[string]interface{}
@@ -101,33 +101,33 @@ func resourceCloudflareIPListRead(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceCloudflareIPListUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPListUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	_, err := client.UpdateIPList(context.Background(), accountID, d.Id(), d.Get("description").(string))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating IP List description"))
+		return err.Wrap(err, fmt.Sprintf("error updating IP List description"))
 	}
 
 	if items, ok := d.GetOk("item"); ok {
 		IPListItems := buildIPListItemsCreateRequest(items.(*schema.Set).List())
 		_, err = client.ReplaceIPListItems(context.Background(), accountID, d.Id(), IPListItems)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("error creating IP List Items"))
+			return err.Wrap(err, fmt.Sprintf("error creating IP List Items"))
 		}
 	}
 
 	return resourceCloudflareIPListRead(d, meta)
 }
 
-func resourceCloudflareIPListDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPListDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	_, err := client.DeleteIPList(context.Background(), accountID, d.Id())
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error deleting IP List with ID %q", d.Id()))
+		return err.Wrap(err, fmt.Sprintf("error deleting IP List with ID %q", d.Id()))
 	}
 
 	return nil

@@ -85,14 +85,14 @@ func dataSourceCloudflareWAFGroups() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareWAFGroupsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	// Prepare the filters to be applied to the search
 	filter, err := expandFilterWAFGroups(d.Get("filter"))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// If no package ID is given, we will consider all for the zone
@@ -103,7 +103,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 		log.Printf("[DEBUG] Reading WAF Packages")
 		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	} else {
 		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
@@ -115,7 +115,7 @@ func dataSourceCloudflareWAFGroupsRead(d *schema.ResourceData, meta interface{})
 	for _, pkg := range pkgList {
 		groupList, err := client.ListWAFGroups(context.Background(), zoneID, pkg.ID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		for _, group := range groupList {

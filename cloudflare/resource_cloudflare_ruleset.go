@@ -41,7 +41,7 @@ func resourceCloudflareRuleset() *schema.Resource {
 	}
 }
 
-func resourceCloudflareRulesetCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -135,7 +135,7 @@ func resourceCloudflareRulesetImport(d *schema.ResourceData, meta interface{}) (
 	return nil, errors.New("Import is not yet supported for Rulesets")
 }
 
-func resourceCloudflareRulesetRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRulesetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -168,7 +168,7 @@ func resourceCloudflareRulesetRead(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func resourceCloudflareRulesetUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRulesetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -192,7 +192,7 @@ func resourceCloudflareRulesetUpdate(d *schema.ResourceData, meta interface{}) e
 	return resourceCloudflareRulesetRead(d, meta)
 }
 
-func resourceCloudflareRulesetDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRulesetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)

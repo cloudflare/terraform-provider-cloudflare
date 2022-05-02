@@ -24,14 +24,14 @@ func resourceCloudflareStaticRoute() *schema.Resource {
 	}
 }
 
-func resourceCloudflareStaticRouteCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareStaticRouteCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	newStaticRoute, err := client.CreateMagicTransitStaticRoute(context.Background(), accountID, staticRouteFromResource(d))
 
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating static route for prefix %s", d.Get("prefix").(string)))
+		return err.Wrap(err, fmt.Sprintf("error creating static route for prefix %s", d.Get("prefix").(string)))
 	}
 
 	d.SetId(newStaticRoute[0].ID)
@@ -55,7 +55,7 @@ func resourceCloudflareStaticRouteImport(d *schema.ResourceData, meta interface{
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourceCloudflareStaticRouteRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareStaticRouteRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -66,7 +66,7 @@ func resourceCloudflareStaticRouteRead(d *schema.ResourceData, meta interface{})
 			d.SetId("")
 			return nil
 		}
-		return errors.Wrap(err, fmt.Sprintf("error reading Static Route ID %q", d.Id()))
+		return err.Wrap(err, fmt.Sprintf("error reading Static Route ID %q", d.Id()))
 	}
 
 	d.Set("prefix", staticRoute.Prefix)
@@ -89,19 +89,19 @@ func resourceCloudflareStaticRouteRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareStaticRouteUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareStaticRouteUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	_, err := client.UpdateMagicTransitStaticRoute(context.Background(), accountID, d.Id(), staticRouteFromResource(d))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating static route with ID %q", d.Id()))
+		return err.Wrap(err, fmt.Sprintf("error updating static route with ID %q", d.Id()))
 	}
 
 	return resourceCloudflareStaticRouteRead(d, meta)
 }
 
-func resourceCloudflareStaticRouteDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareStaticRouteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 

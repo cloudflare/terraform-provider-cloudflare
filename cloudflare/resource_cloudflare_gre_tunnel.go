@@ -24,7 +24,7 @@ func resourceCloudflareGRETunnel() *schema.Resource {
 	}
 }
 
-func resourceCloudflareGRETunnelCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareGRETunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
@@ -59,7 +59,7 @@ func resourceCloudflareGRETunnelImport(d *schema.ResourceData, meta interface{})
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourceCloudflareGRETunnelRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareGRETunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
@@ -90,19 +90,19 @@ func resourceCloudflareGRETunnelRead(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
-func resourceCloudflareGRETunnelUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareGRETunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
 	_, err := client.UpdateMagicTransitGRETunnel(context.Background(), accountID, d.Id(), GRETunnelFromResource(d))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating GRE tunnel %q", d.Id()))
+		return err.Wrap(err, fmt.Sprintf("error updating GRE tunnel %q", d.Id()))
 	}
 
 	return resourceCloudflareGRETunnelRead(d, meta)
 }
 
-func resourceCloudflareGRETunnelDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareGRETunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 

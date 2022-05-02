@@ -23,7 +23,7 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
@@ -57,7 +57,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	if _, ok := d.GetOk("cors_headers"); ok {
 		CORSConfig, err := convertCORSSchemaToStruct(d)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		newAccessApplication.CorsHeaders = CORSConfig
 	}
@@ -66,7 +66,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessApplication cloudflare.AccessApplication
@@ -84,12 +84,12 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	return resourceCloudflareAccessApplicationRead(d, meta)
 }
 
-func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessApplication cloudflare.AccessApplication
@@ -133,7 +133,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 	return nil
 }
 
-func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
@@ -164,7 +164,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 	if _, ok := d.GetOk("cors_headers"); ok {
 		CORSConfig, err := convertCORSSchemaToStruct(d)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		updatedAccessApplication.CorsHeaders = CORSConfig
 	}
@@ -173,7 +173,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessApplication cloudflare.AccessApplication
@@ -193,7 +193,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 	return resourceCloudflareAccessApplicationRead(d, meta)
 }
 
-func resourceCloudflareAccessApplicationDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 
@@ -201,7 +201,7 @@ func resourceCloudflareAccessApplicationDelete(d *schema.ResourceData, meta inte
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {

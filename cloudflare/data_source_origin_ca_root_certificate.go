@@ -28,7 +28,7 @@ func dataSourceCloudflareOriginCARootCertificate() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareOriginCARootCertificateRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareOriginCARootCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	algorithm := strings.ToLower(fmt.Sprintf("%s", d.Get("algorithm")))
 	certBytes, err := cloudflare.OriginCARootCertificate(algorithm)
 	if err != nil {

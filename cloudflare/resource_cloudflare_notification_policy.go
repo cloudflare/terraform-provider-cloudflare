@@ -23,7 +23,7 @@ func resourceCloudflareNotificationPolicy() *schema.Resource {
 	}
 }
 
-func resourceCloudflareNotificationPolicyCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -39,7 +39,7 @@ func resourceCloudflareNotificationPolicyCreate(d *schema.ResourceData, meta int
 	return resourceCloudflareNotificationPolicyRead(d, meta)
 }
 
-func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)
@@ -79,7 +79,7 @@ func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta inter
 	return nil
 }
 
-func resourceCloudflareNotificationPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)
@@ -96,7 +96,7 @@ func resourceCloudflareNotificationPolicyUpdate(d *schema.ResourceData, meta int
 	return resourceCloudflareNotificationPolicyRead(d, meta)
 }
 
-func resourceCloudflareNotificationPolicyDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)

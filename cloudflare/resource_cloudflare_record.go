@@ -38,7 +38,7 @@ func resourceCloudflareRecord() *schema.Resource {
 	}
 }
 
-func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	newRecord := cloudflare.DNSRecord{
@@ -67,7 +67,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		for id, value := range dataMap.(map[string]interface{}) {
 			newData, err := transformToCloudflareDNSData(newRecord.Type, id, value)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			} else if newData == nil {
 				continue
 			}
@@ -171,7 +171,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	})
 }
 
-func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -183,7 +183,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 			d.SetId("")
 			return nil
 		}
-		return err
+		return diag.FromErr(err)
 	}
 
 	data, dataOk := d.GetOk("data")
@@ -197,7 +197,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 			for id, value := range dataMap.(map[string]interface{}) {
 				newData, err := transformToCloudflareDNSData(record.Type, id, value)
 				if err != nil {
-					return err
+					return diag.FromErr(err)
 				} else if newData == nil {
 					continue
 				}
@@ -231,7 +231,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -253,7 +253,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		for id, value := range dataMap.(map[string]interface{}) {
 			newData, err := transformToCloudflareDNSData(updateRecord.Type, id, value)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			} else if newData == nil {
 				continue
 			}
@@ -298,7 +298,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 	})
 }
 
-func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 

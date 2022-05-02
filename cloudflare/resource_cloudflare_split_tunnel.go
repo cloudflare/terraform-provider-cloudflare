@@ -23,7 +23,7 @@ func resourceCloudflareSplitTunnel() *schema.Resource {
 	}
 }
 
-func resourceCloudflareSplitTunnelRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSplitTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
@@ -40,7 +40,7 @@ func resourceCloudflareSplitTunnelRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
@@ -64,7 +64,7 @@ func resourceCloudflareSplitTunnelUpdate(d *schema.ResourceData, meta interface{
 	return resourceCloudflareSplitTunnelRead(d, meta)
 }
 
-func resourceCloudflareSplitTunnelDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)

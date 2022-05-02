@@ -39,7 +39,7 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 	}
 }
 
-func resourceCloudflareCustomSslCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
@@ -74,7 +74,7 @@ func resourceCloudflareCustomSslCreate(d *schema.ResourceData, meta interface{})
 	})
 }
 
-func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
@@ -122,7 +122,7 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	return resourceCloudflareCustomSslRead(d, meta)
 }
 
-func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
@@ -156,7 +156,7 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
-func resourceCloudflareCustomSslDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()

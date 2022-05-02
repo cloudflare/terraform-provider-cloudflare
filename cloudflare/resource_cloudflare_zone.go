@@ -86,7 +86,7 @@ func resourceCloudflareZone() *schema.Resource {
 	}
 }
 
-func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneName := d.Get("zone").(string)
@@ -118,7 +118,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 
 	if plan, ok := d.GetOk("plan"); ok {
 		if err := setRatePlan(client, zone.ID, plan.(string), true, d); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
@@ -132,7 +132,7 @@ func resourceCloudflareZoneCreate(d *schema.ResourceData, meta interface{}) erro
 	return resourceCloudflareZoneRead(d, meta)
 }
 
-func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Id()
 
@@ -173,7 +173,7 @@ func resourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error 
 	return nil
 }
 
-func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Id()
 	zone, _ := client.ZoneDetails(context.Background(), zoneID)
@@ -214,14 +214,14 @@ func resourceCloudflareZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		planID := newPlan.(string)
 
 		if err := setRatePlan(client, zoneID, planID, wasFreePlan, d); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return resourceCloudflareZoneRead(d, meta)
 }
 
-func resourceCloudflareZoneDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Id()
 

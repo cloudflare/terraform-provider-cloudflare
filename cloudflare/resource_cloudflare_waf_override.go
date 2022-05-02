@@ -23,7 +23,7 @@ func resourceCloudflareWAFOverride() *schema.Resource {
 	}
 }
 
-func resourceCloudflareWAFOverrideRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFOverrideRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -60,7 +60,7 @@ func resourceCloudflareWAFOverrideRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareWAFOverrideCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	newOverride, _ := buildWAFOverride(d)
@@ -75,7 +75,7 @@ func resourceCloudflareWAFOverrideCreate(d *schema.ResourceData, meta interface{
 	return resourceCloudflareWAFOverrideRead(d, meta)
 }
 
-func resourceCloudflareWAFOverrideUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFOverrideUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	overrideID := d.Get("override_id").(string)
@@ -89,7 +89,7 @@ func resourceCloudflareWAFOverrideUpdate(d *schema.ResourceData, meta interface{
 	return resourceCloudflareWAFOverrideRead(d, meta)
 }
 
-func resourceCloudflareWAFOverrideDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFOverrideDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	overrideID := d.Get("override_id").(string)
 	zoneID := d.Get("zone_id").(string)

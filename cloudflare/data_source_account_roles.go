@@ -43,7 +43,7 @@ func dataSourceCloudflareAccountRoles() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareAccountRolesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareAccountRolesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 

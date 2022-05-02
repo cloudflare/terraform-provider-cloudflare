@@ -24,7 +24,7 @@ func resourceCloudflareAccessMutualTLSCertificate() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessMutualTLSCertificateCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	newAccessMutualTLSCertificate := cloudflare.AccessMutualTLSCertificate{
@@ -37,7 +37,7 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(d *schema.ResourceData, 
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessMutualTLSCert cloudflare.AccessMutualTLSCertificate
@@ -55,12 +55,12 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(d *schema.ResourceData, 
 	return resourceCloudflareAccessMutualTLSCertificateRead(d, meta)
 }
 
-func resourceCloudflareAccessMutualTLSCertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessMutualTLSCert cloudflare.AccessMutualTLSCertificate
@@ -86,7 +86,7 @@ func resourceCloudflareAccessMutualTLSCertificateRead(d *schema.ResourceData, me
 	return nil
 }
 
-func resourceCloudflareAccessMutualTLSCertificateUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	updatedAccessMutualTLSCert := cloudflare.AccessMutualTLSCertificate{
@@ -99,7 +99,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(d *schema.ResourceData, 
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
@@ -114,7 +114,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(d *schema.ResourceData, 
 	return resourceCloudflareAccessMutualTLSCertificateRead(d, meta)
 }
 
-func resourceCloudflareAccessMutualTLSCertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
@@ -123,7 +123,7 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(d *schema.ResourceData, 
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// To actually delete the certificate, it cannot have any hostnames associated

@@ -59,7 +59,7 @@ func buildAPIToken(d *schema.ResourceData) cloudflare.APIToken {
 	return token
 }
 
-func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	name := d.Get("name").(string)
@@ -118,7 +118,7 @@ func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APIToken
 	return cfPolicies
 }
 
-func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 
@@ -178,7 +178,7 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	name := d.Get("name").(string)
@@ -196,7 +196,7 @@ func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) 
 	return resourceCloudflareApiTokenRead(d, meta)
 }
 
-func resourceCloudflareApiTokenDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 

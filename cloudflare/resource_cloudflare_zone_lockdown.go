@@ -23,7 +23,7 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 	}
 }
 
-func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -72,7 +72,7 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 	return resourceCloudflareZoneLockdownRead(d, meta)
 }
 
-func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -115,7 +115,7 @@ func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -160,7 +160,7 @@ func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface
 	return resourceCloudflareZoneLockdownRead(d, meta)
 }
 
-func resourceCloudflareZoneLockdownDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 

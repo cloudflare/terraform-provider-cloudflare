@@ -24,7 +24,7 @@ func resourceCloudflareTeamsLocation() *schema.Resource {
 	}
 }
 
-func resourceCloudflareTeamsLocationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -65,13 +65,13 @@ func resourceCloudflareTeamsLocationRead(d *schema.ResourceData, meta interface{
 
 	return nil
 }
-func resourceCloudflareTeamsLocationCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
 	networks, err := inflateTeamsLocationNetworks(d.Get("networks"))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error creating Teams Location for account %q: %s, %v", accountID, err, networks))
+		return err.Wrap(err, fmt.Sprintf("error creating Teams Location for account %q: %s, %v", accountID, err, networks))
 	}
 
 	newTeamLocation := cloudflare.TeamsLocation{
@@ -91,12 +91,12 @@ func resourceCloudflareTeamsLocationCreate(d *schema.ResourceData, meta interfac
 	return resourceCloudflareTeamsLocationRead(d, meta)
 
 }
-func resourceCloudflareTeamsLocationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	networks, err := inflateTeamsLocationNetworks(d.Get("networks"))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating Teams Location for account %q: %s, %v", accountID, err, networks))
+		return err.Wrap(err, fmt.Sprintf("error updating Teams Location for account %q: %s, %v", accountID, err, networks))
 	}
 	updatedTeamsLocation := cloudflare.TeamsLocation{
 		ID:            d.Id(),
@@ -116,7 +116,7 @@ func resourceCloudflareTeamsLocationUpdate(d *schema.ResourceData, meta interfac
 	return resourceCloudflareTeamsLocationRead(d, meta)
 }
 
-func resourceCloudflareTeamsLocationDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsLocationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	id := d.Id()
 	accountID := d.Get("account_id").(string)

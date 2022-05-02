@@ -31,7 +31,7 @@ func resourceCloudflareZoneDNSSEC() *schema.Resource {
 	}
 }
 
-func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneDNSSECCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)
@@ -56,7 +56,7 @@ func resourceCloudflareZoneDNSSECCreate(d *schema.ResourceData, meta interface{}
 	return resourceCloudflareZoneDNSSECRead(d, meta)
 }
 
-func resourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)
@@ -93,11 +93,11 @@ func resourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) 
 }
 
 // Just returning remote state since changing the zone ID would force a new resource
-func resourceCloudflareZoneDNSSECUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneDNSSECUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return resourceCloudflareZoneRead(d, meta)
 }
 
-func resourceCloudflareZoneDNSSECDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneDNSSECDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)

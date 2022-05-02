@@ -49,7 +49,7 @@ func dataSourceCloudflareIPRanges() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareIPRangesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareIPRangesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	ranges, err := cloudflare.IPs()
 	if err != nil {
 		return fmt.Errorf("failed to fetch Cloudflare IP ranges: %s", err)

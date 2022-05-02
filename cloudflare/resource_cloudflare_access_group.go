@@ -23,12 +23,12 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessGroup cloudflare.AccessGroup
@@ -64,7 +64,7 @@ func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	newAccessGroup := cloudflare.AccessGroup{
 		Name: d.Get("name").(string),
@@ -76,7 +76,7 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessGroup cloudflare.AccessGroup
@@ -93,7 +93,7 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 	return resourceCloudflareAccessGroupRead(d, meta)
 }
 
-func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	updatedAccessGroup := cloudflare.AccessGroup{
 		Name: d.Get("name").(string),
@@ -106,7 +106,7 @@ func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessGroup cloudflare.AccessGroup
@@ -126,14 +126,14 @@ func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{
 	return resourceCloudflareAccessGroupRead(d, meta)
 }
 
-func resourceCloudflareAccessGroupDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Group using ID: %s", d.Id())
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {

@@ -61,7 +61,7 @@ func dataSourceCloudflareZone() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] Reading Zones")
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)

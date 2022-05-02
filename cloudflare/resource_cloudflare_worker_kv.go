@@ -24,13 +24,13 @@ func resourceCloudflareWorkerKV() *schema.Resource {
 	}
 }
 
-func resourceCloudflareWorkersKVRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	namespaceID, key := parseId(d.Id())
 
 	value, err := client.ReadWorkersKV(context.Background(), namespaceID, key)
 	if err != nil {
-		return errors.Wrap(err, "error reading workers kv")
+		return err.Wrap(err, "error reading workers kv")
 	}
 
 	if value == nil {
@@ -42,7 +42,7 @@ func resourceCloudflareWorkersKVRead(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
-func resourceCloudflareWorkersKVUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	namespaceID := d.Get("namespace_id").(string)
 	key := d.Get("key").(string)
@@ -50,7 +50,7 @@ func resourceCloudflareWorkersKVUpdate(d *schema.ResourceData, meta interface{})
 
 	_, err := client.WriteWorkersKV(context.Background(), namespaceID, key, []byte(value))
 	if err != nil {
-		return errors.Wrap(err, "error creating workers kv")
+		return err.Wrap(err, "error creating workers kv")
 	}
 
 	d.SetId(fmt.Sprintf("%s/%s", namespaceID, key))
@@ -60,7 +60,7 @@ func resourceCloudflareWorkersKVUpdate(d *schema.ResourceData, meta interface{})
 	return resourceCloudflareWorkersKVRead(d, meta)
 }
 
-func resourceCloudflareWorkersKVDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	namespaceID, key := parseId(d.Id())
 
@@ -68,7 +68,7 @@ func resourceCloudflareWorkersKVDelete(d *schema.ResourceData, meta interface{})
 
 	_, err := client.DeleteWorkersKV(context.Background(), namespaceID, key)
 	if err != nil {
-		return errors.Wrap(err, "error deleting workers kv")
+		return err.Wrap(err, "error deleting workers kv")
 	}
 
 	return nil

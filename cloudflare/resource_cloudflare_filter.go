@@ -23,7 +23,7 @@ func resourceCloudflareFilter() *schema.Resource {
 	}
 }
 
-func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -66,7 +66,7 @@ func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) er
 	return resourceCloudflareFilterRead(d, meta)
 }
 
-func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -95,7 +95,7 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceCloudflareFilterUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -133,7 +133,7 @@ func resourceCloudflareFilterUpdate(d *schema.ResourceData, meta interface{}) er
 	return resourceCloudflareFilterRead(d, meta)
 }
 
-func resourceCloudflareFilterDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 

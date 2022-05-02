@@ -20,7 +20,7 @@ func resourceCloudflareZoneCacheVariants() *schema.Resource {
 	}
 }
 
-func resourceCloudflareZoneCacheVariantsRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCacheVariantsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Reading Zone Cache Variants in zone %q", d.Id())
@@ -86,7 +86,7 @@ func resourceCloudflareZoneCacheVariantsRead(d *schema.ResourceData, meta interf
 	return nil
 }
 
-func resourceCloudflareZoneCacheVariantsUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCacheVariantsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)
@@ -104,7 +104,7 @@ func resourceCloudflareZoneCacheVariantsUpdate(d *schema.ResourceData, meta inte
 	return resourceCloudflareZoneCacheVariantsRead(d, meta)
 }
 
-func resourceCloudflareZoneCacheVariantsDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCacheVariantsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting Zone Cache Variants for zone ID: %q", d.Id())

@@ -66,7 +66,7 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 	}, nil
 }
 
-func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomEventCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -88,7 +88,7 @@ func resourceCloudflareWaitingRoomEventCreate(d *schema.ResourceData, meta inter
 	return resourceCloudflareWaitingRoomEventRead(d, meta)
 }
 
-func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -142,7 +142,7 @@ func resourceCloudflareWaitingRoomEventRead(d *schema.ResourceData, meta interfa
 	return nil
 }
 
-func resourceCloudflareWaitingRoomEventUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomEventUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -161,7 +161,7 @@ func resourceCloudflareWaitingRoomEventUpdate(d *schema.ResourceData, meta inter
 	return resourceCloudflareWaitingRoomEventRead(d, meta)
 }
 
-func resourceCloudflareWaitingRoomEventDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomEventDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomEventID := d.Id()
 	waitingRoomID := d.Get("waiting_room_id").(string)

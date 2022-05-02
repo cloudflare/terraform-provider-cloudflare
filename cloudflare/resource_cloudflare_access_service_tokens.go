@@ -46,12 +46,12 @@ func resourceCloudflareAccessServiceTokenExpireDiff(ctx context.Context, d *sche
 	return false
 }
 
-func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// The Cloudflare API doesn't support fetching a single service token
@@ -77,13 +77,13 @@ func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta inter
 	return nil
 }
 
-func resourceCloudflareAccessServiceTokenCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenName := d.Get("name").(string)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var serviceToken cloudflare.AccessServiceTokenCreateResponse
@@ -107,13 +107,13 @@ func resourceCloudflareAccessServiceTokenCreate(d *schema.ResourceData, meta int
 	return nil
 }
 
-func resourceCloudflareAccessServiceTokenUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenName := d.Get("name").(string)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var serviceToken cloudflare.AccessServiceTokenUpdateResponse
@@ -131,12 +131,12 @@ func resourceCloudflareAccessServiceTokenUpdate(d *schema.ResourceData, meta int
 	return resourceCloudflareAccessServiceTokenRead(d, meta)
 }
 
-func resourceCloudflareAccessServiceTokenDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {

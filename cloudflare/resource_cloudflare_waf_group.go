@@ -24,7 +24,7 @@ func resourceCloudflareWAFGroup() *schema.Resource {
 	}
 }
 
-func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
@@ -39,7 +39,7 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 			return nil
 		}
 
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed
@@ -49,7 +49,7 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	groupID := d.Get("group_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -62,7 +62,7 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 		var err error
 		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	} else {
 		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
@@ -85,7 +85,7 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 			err = resourceCloudflareWAFGroupUpdate(d, meta)
 			if err != nil {
 				d.SetId("")
-				return err
+				return diag.FromErr(err)
 			}
 		}
 
@@ -95,7 +95,7 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 	return fmt.Errorf("unable to find WAF Group %s", groupID)
 }
 
-func resourceCloudflareWAFGroupDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
@@ -104,7 +104,7 @@ func resourceCloudflareWAFGroupDelete(d *schema.ResourceData, meta interface{}) 
 
 	group, err := client.WAFGroup(context.Background(), zoneID, packageID, groupID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Can't delete WAF Group so instead reset it to default
@@ -114,14 +114,14 @@ func resourceCloudflareWAFGroupDelete(d *schema.ResourceData, meta interface{}) 
 	if group.Mode != defaultMode {
 		_, err = client.UpdateWAFGroup(context.Background(), zoneID, packageID, groupID, defaultMode)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return nil
 }
 
-func resourceCloudflareWAFGroupUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
@@ -132,7 +132,7 @@ func resourceCloudflareWAFGroupUpdate(d *schema.ResourceData, meta interface{}) 
 	// We can only update the mode of a WAF Group
 	_, err := client.UpdateWAFGroup(context.Background(), zoneID, packageID, groupID, mode)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	return resourceCloudflareWAFGroupRead(d, meta)

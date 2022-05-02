@@ -33,7 +33,7 @@ func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
 	return false
 }
 
-func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -59,7 +59,7 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 
 			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			} else if newPageRuleAction.Value == nil || newPageRuleAction.Value == "" {
 				continue
 			}
@@ -102,7 +102,7 @@ func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{}
 	return vsm
 }
 
-func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -143,7 +143,7 @@ func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -172,7 +172,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 			for id, value := range action.(map[string]interface{}) {
 				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 				if err != nil {
-					return err
+					return diag.FromErr(err)
 				} else if newPageRuleAction.Value == nil {
 					continue
 				}
@@ -200,7 +200,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 	return resourceCloudflarePageRuleRead(d, meta)
 }
 
-func resourceCloudflarePageRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 

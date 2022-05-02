@@ -22,7 +22,7 @@ func resourceCloudflareDevicePolicyCertificates() *schema.Resource {
 	}
 }
 
-func resourceCloudflareDevicePolicyCertificateUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePolicyCertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	enabled := d.Get("enabled").(bool)
@@ -38,7 +38,7 @@ func resourceCloudflareDevicePolicyCertificateUpdate(d *schema.ResourceData, met
 	return nil
 }
 
-func resourceCloudflareDevicePolicyCertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePolicyCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -63,6 +63,6 @@ func resourceCloudflareDevicePolicyCertificateImport(d *schema.ResourceData, met
 	return []*schema.ResourceData{d}, err
 }
 
-func resourceCloudflareDevicePolicyCertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePolicyCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
