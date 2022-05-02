@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -11,6 +12,42 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_tunnel_route", &resource.Sweeper{
+		Name: "cloudflare_tunnel_route",
+		F:    testSweepCloudflareTunnelRoute,
+	})
+}
+
+func testSweepCloudflareTunnelRoute(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	tunnelRoutes, err := client.ListTunnelRoutes(context.Background(), cloudflare.TunnelRoutesListParams{AccountID: accountID})
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare Tunnel Routes: %s", err)
+	}
+
+	if len(tunnelRoutes) == 0 {
+		log.Print("[DEBUG] No Cloudflare Tunnel Routes to sweep")
+		return nil
+	}
+
+	for _, tunnel := range tunnelRoutes {
+		log.Printf("[INFO] Deleting Cloudflare Tunnel Route network: %s", tunnel.Network)
+		client.DeleteTunnelRoute(context.Background(), cloudflare.TunnelRoutesDeleteParams{AccountID: accountID, Network: tunnel.Network})
+	}
+
+	return nil
+}
 
 func TestAccCloudflareTunnelRouteExists(t *testing.T) {
 	rnd := generateRandomResourceName()
