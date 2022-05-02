@@ -32,7 +32,7 @@ func resourceCloudflareWorkerCronTriggerUpdate(ctx context.Context, d *schema.Re
 
 	_, err := client.UpdateWorkerCronTriggers(context.Background(), accountID, scriptName, transformSchemaToWorkerCronTriggerStruct(d))
 	if err != nil {
-		return fmt.Errorf("failed to update Worker Cron Trigger: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to update Worker Cron Trigger: %s", err))
 	}
 
 	d.SetId(stringChecksum(scriptName))
@@ -53,11 +53,11 @@ func resourceCloudflareWorkerCronTriggerRead(ctx context.Context, d *schema.Reso
 			return nil
 		}
 
-		return fmt.Errorf("failed to read Worker Cron Trigger: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to read Worker Cron Trigger: %s", err))
 	}
 
 	if err := d.Set("schedules", transformWorkerCronTriggerStructToSet(s)); err != nil {
-		return fmt.Errorf("failed to set schedules attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set schedules attribute: %s", err))
 	}
 
 	return nil

@@ -109,7 +109,7 @@ func resourceCloudflareStaticRouteDelete(ctx context.Context, d *schema.Resource
 
 	_, err := client.DeleteMagicTransitStaticRoute(context.Background(), accountID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting Static Route: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Static Route: %s", err))
 	}
 
 	return nil

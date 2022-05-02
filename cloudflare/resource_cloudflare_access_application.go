@@ -76,7 +76,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		accessApplication, err = client.CreateZoneLevelAccessApplication(context.Background(), identifier.Value, newAccessApplication)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Application for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessApplication.ID)
@@ -105,7 +105,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Application %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access Application %q: %s", d.Id(), err))
 	}
 
 	d.Set("name", accessApplication.Name)
@@ -127,7 +127,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
-		return fmt.Errorf("error setting Access Application CORS header configuration: %s", corsConfigErr)
+		return diag.FromErr(fmt.Errorf("error setting Access Application CORS header configuration: %s", corsConfigErr))
 	}
 
 	return nil
@@ -183,11 +183,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		accessApplication, err = client.UpdateZoneLevelAccessApplication(context.Background(), identifier.Value, updatedAccessApplication)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Application for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	if accessApplication.ID == "" {
-		return fmt.Errorf("failed to find Access Application ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Access Application ID in update response; resource was empty"))
 	}
 
 	return resourceCloudflareAccessApplicationRead(d, meta)
@@ -210,7 +210,7 @@ func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.Re
 		err = client.DeleteZoneLevelAccessApplication(context.Background(), identifier.Value, appID)
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting Access Application for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	resourceCloudflareAccessApplicationRead(d, meta)

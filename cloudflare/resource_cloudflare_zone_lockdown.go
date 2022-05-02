@@ -58,11 +58,11 @@ func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.Resourc
 	r, err = client.CreateZoneLockdown(context.Background(), zoneID, newZoneLockdown)
 
 	if err != nil {
-		return fmt.Errorf("error creating zone lockdown for zone ID %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error creating zone lockdown for zone ID %q: %s", zoneID, err))
 	}
 
 	if r.Result.ID == "" {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r.Result.ID)
@@ -87,7 +87,7 @@ func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceD
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding zone lockdown %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding zone lockdown %q: %s", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Zone Lockdown read configuration: %#v", zoneLockdownResponse)
@@ -146,11 +146,11 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 	r, err := client.UpdateZoneLockdown(context.Background(), zoneID, d.Id(), newZoneLockdown)
 
 	if err != nil {
-		return fmt.Errorf("error updating zone lockdown for zone %q: %s", d.Get("zone").(string), err)
+		return diag.FromErr(fmt.Errorf("error updating zone lockdown for zone %q: %s", d.Get("zone").(string), err))
 	}
 
 	if r.Result.ID == "" {
-		return fmt.Errorf("failed to find id in Update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
 	d.SetId(r.Result.ID)
@@ -169,7 +169,7 @@ func resourceCloudflareZoneLockdownDelete(ctx context.Context, d *schema.Resourc
 	_, err := client.DeleteZoneLockdown(context.Background(), zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Zone Lockdown: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone Lockdown: %s", err))
 	}
 
 	return nil

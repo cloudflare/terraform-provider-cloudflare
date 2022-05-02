@@ -38,7 +38,7 @@ func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.
 		accessCACert, err = client.CreateZoneLevelAccessCACertificate(context.Background(), identifier.Value, d.Get("application_id").(string))
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access CA Certificate for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessCACert.ID)
@@ -67,7 +67,7 @@ func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.Re
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access CA Certificate %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access CA Certificate %q: %s", d.Id(), err))
 	}
 
 	d.Set("aud", accessCACert.Aud)

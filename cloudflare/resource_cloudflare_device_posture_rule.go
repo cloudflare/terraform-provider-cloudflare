@@ -37,7 +37,7 @@ func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.Re
 
 	err := setDevicePostureRuleMatch(&newDevicePostureRule, d)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err))
 	}
 
 	setDevicePostureRuleInput(&newDevicePostureRule, d)
@@ -45,7 +45,7 @@ func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.Re
 
 	rule, err := client.CreateDevicePostureRule(context.Background(), accountID, newDevicePostureRule)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule for account %q: %s", accountID, err))
 	}
 
 	d.SetId(rule.ID)
@@ -64,7 +64,7 @@ func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.Reso
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Device Posture Rule %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Device Posture Rule %q: %s", d.Id(), err))
 	}
 
 	d.Set("name", devicePostureRule.Name)
@@ -91,7 +91,7 @@ func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.Re
 
 	err := setDevicePostureRuleMatch(&updatedDevicePostureRule, d)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err))
 	}
 
 	setDevicePostureRuleInput(&updatedDevicePostureRule, d)
@@ -99,11 +99,11 @@ func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.Re
 
 	devicePostureRule, err := client.UpdateDevicePostureRule(context.Background(), accountID, updatedDevicePostureRule)
 	if err != nil {
-		return fmt.Errorf("error updating Device Posture Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error updating Device Posture Rule for account %q: %s", accountID, err))
 	}
 
 	if devicePostureRule.ID == "" {
-		return fmt.Errorf("failed to find Device Posture Rule ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Device Posture Rule ID in update response; resource was empty"))
 	}
 
 	return resourceCloudflareDevicePostureRuleRead(d, meta)
@@ -118,7 +118,7 @@ func resourceCloudflareDevicePostureRuleDelete(ctx context.Context, d *schema.Re
 
 	err := client.DeleteDevicePostureRule(context.Background(), accountID, appID)
 	if err != nil {
-		return fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err))
 	}
 
 	resourceCloudflareDevicePostureRuleRead(d, meta)

@@ -23,7 +23,7 @@ func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceDa
 	devices, err := client.ListTeamsDevices(context.Background(), accountID)
 
 	if err != nil {
-		return fmt.Errorf("error finding devices in account %q: %w", accountID, err)
+		return diag.FromErr(fmt.Errorf("error finding devices in account %q: %w", accountID, err))
 	}
 
 	deviceDetails := make([]interface{}, 0)
@@ -48,7 +48,7 @@ func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if err = d.Set("devices", deviceDetails); err != nil {
-		return fmt.Errorf("error setting device details: %w", err)
+		return diag.FromErr(fmt.Errorf("error setting device details: %w", err))
 	}
 
 	return nil

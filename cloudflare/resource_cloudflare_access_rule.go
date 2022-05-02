@@ -66,11 +66,11 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to create access rule: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create access rule: %s", err))
 	}
 
 	if r.Result.ID == "" {
-		return fmt.Errorf("Failed to find access rule in Create response; ID was empty")
+		return diag.FromErr(fmt.Errorf("Failed to find access rule in Create response; ID was empty"))
 	}
 
 	d.SetId(r.Result.ID)
@@ -104,7 +104,7 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding access rule %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding access rule %q: %s", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
@@ -157,7 +157,7 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to update Access Rule: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to update Access Rule: %s", err))
 	}
 
 	return resourceCloudflareAccessRuleRead(d, meta)
@@ -182,7 +182,7 @@ func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Access Rule: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Access Rule: %s", err))
 	}
 
 	return nil

@@ -40,7 +40,7 @@ func resourceCloudflareLogpushOwnershipChallengeCreate(ctx context.Context, d *s
 	}
 
 	if err != nil {
-		return fmt.Errorf("error requesting ownership challenge for %s: %w", identifier, err)
+		return diag.FromErr(fmt.Errorf("error requesting ownership challenge for %s: %w", identifier, err))
 	}
 
 	// The ownership challenge doesn't have a unique identifier so we generate it

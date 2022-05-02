@@ -47,7 +47,7 @@ func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.Resou
 		accessBookmark, err = client.CreateZoneLevelAccessBookmark(context.Background(), identifier.Value, newAccessBookmark)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error creating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessBookmark.ID)
@@ -76,7 +76,7 @@ func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.Resourc
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Bookmark %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access Bookmark %q: %s", d.Id(), err))
 	}
 
 	d.Set("name", accessBookmark.Name)
@@ -112,11 +112,11 @@ func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.Resou
 		accessBookmark, err = client.UpdateZoneLevelAccessBookmark(context.Background(), identifier.Value, updatedAccessBookmark)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error updating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	if accessBookmark.ID == "" {
-		return fmt.Errorf("failed to find Access Bookmark ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Access Bookmark ID in update response; resource was empty"))
 	}
 
 	return resourceCloudflareAccessBookmarkRead(d, meta)
@@ -139,7 +139,7 @@ func resourceCloudflareAccessBookmarkDelete(ctx context.Context, d *schema.Resou
 		err = client.DeleteZoneLevelAccessBookmark(context.Background(), identifier.Value, bookmarkID)
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error deleting Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	resourceCloudflareAccessBookmarkRead(d, meta)

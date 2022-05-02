@@ -40,7 +40,7 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *sc
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(context.Background(), zoneID, conf)
 		if err != nil {
-			return fmt.Errorf("error creating Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error creating Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err))
 		}
 		checksum = stringChecksum(fmt.Sprintf("PerHostnameAOP/%s/%s/%s", zoneID, hostname, aopCert))
 
@@ -48,7 +48,7 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *sc
 		// Per Zone AOP
 		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(context.Background(), zoneID, isEnabled.(bool))
 		if err != nil {
-			return fmt.Errorf("error creating Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error creating Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err))
 		}
 		checksum = stringChecksum(fmt.Sprintf("PerZoneAOP/%s/%s", zoneID, aopCert))
 
@@ -56,7 +56,7 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *sc
 		// Global AOP
 		_, err := client.SetAuthenticatedOriginPullsStatus(context.Background(), zoneID, isEnabled.(bool))
 		if err != nil {
-			return fmt.Errorf("error creating Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error creating Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err))
 		}
 		checksum = stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
 	}
@@ -115,19 +115,19 @@ func resourceCloudflareAuthenticatedOriginPullsDelete(ctx context.Context, d *sc
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(context.Background(), zoneID, conf)
 		if err != nil {
-			return fmt.Errorf("error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err))
 		}
 	} else if aopCert != "" {
 		// Per Zone AOP
 		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(context.Background(), zoneID, false)
 		if err != nil {
-			return fmt.Errorf("error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err))
 		}
 	} else {
 		// Global AOP
 		_, err := client.SetAuthenticatedOriginPullsStatus(context.Background(), zoneID, false)
 		if err != nil {
-			return fmt.Errorf("error disabling Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error disabling Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err))
 		}
 	}
 	return nil

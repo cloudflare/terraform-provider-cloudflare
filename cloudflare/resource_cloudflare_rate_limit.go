@@ -75,7 +75,7 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("cailed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("cailed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)
@@ -390,7 +390,7 @@ func resourceCloudflareRateLimitDelete(ctx context.Context, d *schema.ResourceDa
 
 	err := client.DeleteRateLimit(context.Background(), zoneID, rateLimitId)
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Rate Limit for zone: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Rate Limit for zone: %s", err))
 	}
 
 	return nil

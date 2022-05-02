@@ -45,16 +45,16 @@ func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceDa
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 	zcso, err := expandToZoneCustomSSLOptions(d)
 	if err != nil {
-		return fmt.Errorf("failed to create custom ssl cert: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create custom ssl cert: %s", err))
 	}
 
 	res, err := client.CreateSSL(context.Background(), zoneID, zcso)
 	if err != nil {
-		return fmt.Errorf("failed to create custom ssl cert: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create custom ssl cert: %s", err))
 	}
 
 	if res.ID == "" {
-		return fmt.Errorf("failed to find custom ssl in Create response: id was empty")
+		return diag.FromErr(fmt.Errorf("failed to find custom ssl in Create response: id was empty"))
 	}
 
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
@@ -87,7 +87,7 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 	if d.HasChange("custom_ssl_options") {
 		zcso, err := expandToZoneCustomSSLOptions(d)
 		if err != nil {
-			return fmt.Errorf("failed to update custom ssl cert: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to update custom ssl cert: %s", err))
 		}
 
 		res, uErr := client.UpdateSSL(context.Background(), zoneID, certID, zcso)
@@ -116,7 +116,7 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if updateErr && reprioritizeErr {
-		return fmt.Errorf("failed to update and reprioritize custom ssl cert: %s, %s", uErr, reErr)
+		return diag.FromErr(fmt.Errorf("failed to update and reprioritize custom ssl cert: %s, %s", uErr, reErr))
 	}
 
 	return resourceCloudflareCustomSslRead(d, meta)
@@ -146,7 +146,7 @@ func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData
 	d.Set("issuer", record.Issuer)
 	d.Set("signature", record.Signature)
 	if err := d.Set("custom_ssl_options", []interface{}{customSslOpts}); err != nil {
-		return fmt.Errorf("[WARN] Error reading custom ssl opts %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("[WARN] Error reading custom ssl opts %q: %s", d.Id(), err))
 	}
 	d.Set("status", record.Status)
 	d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))

@@ -31,7 +31,7 @@ func resourceCloudflareCustomPagesRead(ctx context.Context, d *schema.ResourceDa
 	pageType := d.Get("type").(string)
 
 	if accountID == "" && zoneID == "" {
-		return fmt.Errorf("either `account_id` or `zone_id` must be set")
+		return diag.FromErr(fmt.Errorf("either `account_id` or `zone_id` must be set"))
 	}
 
 	var (

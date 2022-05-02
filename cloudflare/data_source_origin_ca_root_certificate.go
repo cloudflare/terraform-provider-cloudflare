@@ -32,7 +32,7 @@ func dataSourceCloudflareOriginCARootCertificateRead(ctx context.Context, d *sch
 	algorithm := strings.ToLower(fmt.Sprintf("%s", d.Get("algorithm")))
 	certBytes, err := cloudflare.OriginCARootCertificate(algorithm)
 	if err != nil {
-		return fmt.Errorf("failed to fetch Cloudflare Origin CA root %s certificate: %s", algorithm, err)
+		return diag.FromErr(fmt.Errorf("failed to fetch Cloudflare Origin CA root %s certificate: %s", algorithm, err))
 	}
 
 	cert := string(certBytes[:])
@@ -40,7 +40,7 @@ func dataSourceCloudflareOriginCARootCertificateRead(ctx context.Context, d *sch
 	d.SetId(stringChecksum(cert))
 
 	if err := d.Set("cert_pem", cert); err != nil {
-		return fmt.Errorf("error setting cert_pem: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting cert_pem: %s", err))
 	}
 
 	return nil

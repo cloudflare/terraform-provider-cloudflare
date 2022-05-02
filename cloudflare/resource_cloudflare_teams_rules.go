@@ -36,40 +36,40 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Teams Rule %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Rule %q: %s", d.Id(), err))
 	}
 	if err := d.Set("name", rule.Name); err != nil {
-		return fmt.Errorf("error parsing rule name")
+		return diag.FromErr(fmt.Errorf("error parsing rule name"))
 	}
 	if err := d.Set("description", rule.Description); err != nil {
-		return fmt.Errorf("error parsing rule description")
+		return diag.FromErr(fmt.Errorf("error parsing rule description"))
 	}
 	if err := d.Set("precedence", int64(rule.Precedence)); err != nil {
-		return fmt.Errorf("error parsing rule precedence")
+		return diag.FromErr(fmt.Errorf("error parsing rule precedence"))
 	}
 	if err := d.Set("enabled", rule.Enabled); err != nil {
-		return fmt.Errorf("error parsing rule enablement")
+		return diag.FromErr(fmt.Errorf("error parsing rule enablement"))
 	}
 	if err := d.Set("action", rule.Action); err != nil {
-		return fmt.Errorf("error parsing rule action")
+		return diag.FromErr(fmt.Errorf("error parsing rule action"))
 	}
 	if err := d.Set("filters", rule.Filters); err != nil {
-		return fmt.Errorf("error parsing rule filters")
+		return diag.FromErr(fmt.Errorf("error parsing rule filters"))
 	}
 	if err := d.Set("traffic", rule.Traffic); err != nil {
-		return fmt.Errorf("error parsing rule traffic")
+		return diag.FromErr(fmt.Errorf("error parsing rule traffic"))
 	}
 	if err := d.Set("identity", rule.Identity); err != nil {
-		return fmt.Errorf("error parsing rule identity")
+		return diag.FromErr(fmt.Errorf("error parsing rule identity"))
 	}
 	if err := d.Set("device_posture", rule.DevicePosture); err != nil {
-		return fmt.Errorf("error parsing rule device_posture")
+		return diag.FromErr(fmt.Errorf("error parsing rule device_posture"))
 	}
 	if err := d.Set("version", int64(rule.Version)); err != nil {
-		return fmt.Errorf("error parsing rule version")
+		return diag.FromErr(fmt.Errorf("error parsing rule version"))
 	}
 	if err := d.Set("rule_settings", flattenTeamsRuleSettings(&rule.RuleSettings)); err != nil {
-		return fmt.Errorf("error parsing rule settings")
+		return diag.FromErr(fmt.Errorf("error parsing rule settings"))
 	}
 	return nil
 }
@@ -106,7 +106,7 @@ func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceDa
 
 	rule, err := client.TeamsCreateRule(context.Background(), accountID, newTeamsRule)
 	if err != nil {
-		return fmt.Errorf("error creating Teams rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error creating Teams rule for account %q: %s", accountID, err))
 	}
 
 	d.SetId(rule.ID)
@@ -144,10 +144,10 @@ func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceDa
 
 	updatedTeamsRule, err := client.TeamsUpdateRule(context.Background(), accountID, teamsRule.ID, teamsRule)
 	if err != nil {
-		return fmt.Errorf("error updating Teams rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error updating Teams rule for account %q: %s", accountID, err))
 	}
 	if updatedTeamsRule.ID == "" {
-		return fmt.Errorf("failed to find Teams Rule ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Teams Rule ID in update response; resource was empty"))
 	}
 	return resourceCloudflareTeamsRuleRead(d, meta)
 }
@@ -161,7 +161,7 @@ func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceDa
 
 	err := client.TeamsDeleteRule(context.Background(), accountID, id)
 	if err != nil {
-		return fmt.Errorf("error deleting Teams Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error deleting Teams Rule for account %q: %s", accountID, err))
 	}
 
 	return resourceCloudflareTeamsRuleRead(d, meta)

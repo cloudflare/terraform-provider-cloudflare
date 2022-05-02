@@ -60,7 +60,7 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 		if accountID == "" {
 			deleteRulesetURL = zoneLevelRulesetDeleteURL
 		}
-		return fmt.Errorf(duplicateRulesetError, rulesetPhase, deleteRulesetURL)
+		return diag.FromErr(fmt.Errorf(duplicateRulesetError, rulesetPhase, deleteRulesetURL))
 	}
 
 	rulesetName := d.Get("name").(string)
@@ -75,7 +75,7 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 
 	rules, err := buildRulesetRulesFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error building ruleset rules from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error building ruleset rules from resource: %w", err))
 	}
 
 	if len(rules) > 0 {
@@ -92,7 +92,7 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 		}
 
 		if deleteRulesetErr != nil {
-			return fmt.Errorf("failed to delete ruleset: %w", deleteRulesetErr)
+			return diag.FromErr(fmt.Errorf("failed to delete ruleset: %w", deleteRulesetErr))
 		}
 	}
 
@@ -104,7 +104,7 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 	}
 
 	if rulesetCreateErr != nil {
-		return fmt.Errorf("error creating ruleset %s: %w", rulesetName, rulesetCreateErr)
+		return diag.FromErr(fmt.Errorf("error creating ruleset %s: %w", rulesetName, rulesetCreateErr))
 	}
 
 	rulesetEntryPoint := cloudflare.Ruleset{
@@ -122,7 +122,7 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 		}
 
 		if err != nil {
-			return fmt.Errorf("error updating ruleset phase entrypoint %s: %w", rulesetName, err)
+			return diag.FromErr(fmt.Errorf("error updating ruleset phase entrypoint %s: %w", rulesetName, err))
 		}
 	}
 
@@ -155,7 +155,7 @@ func resourceCloudflareRulesetRead(ctx context.Context, d *schema.ResourceData, 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading ruleset ID %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error reading ruleset ID %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", ruleset.Name)
@@ -175,7 +175,7 @@ func resourceCloudflareRulesetUpdate(ctx context.Context, d *schema.ResourceData
 
 	rules, err := buildRulesetRulesFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error building ruleset from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error building ruleset from resource: %w", err))
 	}
 
 	description := d.Get("description").(string)
@@ -186,7 +186,7 @@ func resourceCloudflareRulesetUpdate(ctx context.Context, d *schema.ResourceData
 	}
 
 	if err != nil {
-		return fmt.Errorf("error updating ruleset with ID %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error updating ruleset with ID %q: %w", d.Id(), err))
 	}
 
 	return resourceCloudflareRulesetRead(d, meta)
@@ -205,7 +205,7 @@ func resourceCloudflareRulesetDelete(ctx context.Context, d *schema.ResourceData
 	}
 
 	if err != nil {
-		return fmt.Errorf("error deleting ruleset with ID %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error deleting ruleset with ID %q: %w", d.Id(), err))
 	}
 
 	return nil

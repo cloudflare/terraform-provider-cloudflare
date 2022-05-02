@@ -31,7 +31,7 @@ func resourceCloudflareCustomHostnameFallbackOriginRead(ctx context.Context, d *
 
 	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
 	if err != nil {
-		return fmt.Errorf("error reading custom hostname fallback origin %q: %w", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error reading custom hostname fallback origin %q: %w", zoneID, err))
 	}
 
 	d.Set("origin", customHostnameFallbackOrigin.Origin)
@@ -46,7 +46,7 @@ func resourceCloudflareCustomHostnameFallbackOriginDelete(ctx context.Context, d
 
 	err := client.DeleteCustomHostnameFallbackOrigin(context.Background(), zoneID)
 	if err != nil {
-		return fmt.Errorf("failed to delete custom hostname fallback origin: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to delete custom hostname fallback origin: %w", err))
 	}
 
 	return nil

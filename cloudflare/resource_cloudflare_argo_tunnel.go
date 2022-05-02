@@ -46,7 +46,7 @@ func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceDat
 
 	tunnel, err := client.ArgoTunnel(context.Background(), accID, d.Id())
 	if err != nil {
-		return fmt.Errorf("failed to fetch Argo Tunnel: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to fetch Argo Tunnel: %w", err))
 	}
 
 	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))

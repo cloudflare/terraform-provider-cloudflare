@@ -27,11 +27,11 @@ func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.Resourc
 
 	domain, err := client.ListFallbackDomains(context.Background(), accountID)
 	if err != nil {
-		return fmt.Errorf("error finding Fallback Domains: %w", err)
+		return diag.FromErr(fmt.Errorf("error finding Fallback Domains: %w", err))
 	}
 
 	if err := d.Set("domains", flattenFallbackDomains(domain)); err != nil {
-		return fmt.Errorf("error setting domains attribute: %w", err)
+		return diag.FromErr(fmt.Errorf("error setting domains attribute: %w", err))
 	}
 
 	return nil
@@ -45,11 +45,11 @@ func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.Resou
 
 	newFallbackDomains, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
 	if err != nil {
-		return fmt.Errorf("error updating Fallback Domains: %w", err)
+		return diag.FromErr(fmt.Errorf("error updating Fallback Domains: %w", err))
 	}
 
 	if err := d.Set("domains", flattenFallbackDomains(newFallbackDomains)); err != nil {
-		return fmt.Errorf("error setting domain attribute: %w", err)
+		return diag.FromErr(fmt.Errorf("error setting domain attribute: %w", err))
 	}
 
 	d.SetId(accountID)

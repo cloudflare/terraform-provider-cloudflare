@@ -65,7 +65,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	client := meta.(*cloudflare.API)
 	jobID, err := strconv.Atoi(d.Id())
 	if err != nil {
-		return fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %w", d.Id(), err))
 	}
 
 	var job cloudflare.LogpushJob
@@ -84,7 +84,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading logpush job %q for %s: %w", jobID, identifier, err)
+		return diag.FromErr(fmt.Errorf("error reading logpush job %q for %s: %w", jobID, identifier, err))
 	}
 
 	if job.ID == 0 {
@@ -106,7 +106,7 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 
 	job, identifier, err := getJobFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error parsing logpush job from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Logpush job for %s from struct: %+v", identifier, job)
@@ -118,10 +118,10 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 		j, err = client.CreateZoneLogpushJob(context.Background(), identifier.Value, job)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating logpush job for %s: %w", identifier, err)
+		return diag.FromErr(fmt.Errorf("error creating logpush job for %s: %w", identifier, err))
 	}
 	if j.ID == 0 {
-		return fmt.Errorf("failed to find ID in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find ID in Create response; resource was empty"))
 	}
 
 	d.SetId(strconv.Itoa(j.ID))
@@ -136,7 +136,7 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 
 	job, identifier, err := getJobFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error parsing logpush job from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Logpush job for %s from struct: %+v", identifier, job)
@@ -148,7 +148,7 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err != nil {
-		return fmt.Errorf("error updating logpush job id %q for %s: %w", job.ID, identifier, err)
+		return diag.FromErr(fmt.Errorf("error updating logpush job id %q for %s: %w", job.ID, identifier, err))
 	}
 
 	return resourceCloudflareLogpushJobRead(d, meta)
@@ -159,7 +159,7 @@ func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceD
 
 	job, identifier, err := getJobFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error parsing logpush job from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	log.Printf("[DEBUG] Deleting Cloudflare Logpush job for %s with id: %+v", identifier, job.ID)
@@ -175,7 +175,7 @@ func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceD
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error deleting logpush job id %v for %s: %w", job.ID, identifier, err)
+		return diag.FromErr(fmt.Errorf("error deleting logpush job id %v for %s: %w", job.ID, identifier, err))
 	}
 
 	d.SetId("")

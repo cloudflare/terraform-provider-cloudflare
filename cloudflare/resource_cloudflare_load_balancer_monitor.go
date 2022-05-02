@@ -62,7 +62,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 		if expectedCodes, ok := d.GetOk("expected_codes"); ok {
 			loadBalancerMonitor.ExpectedCodes = expectedCodes.(string)
 		} else {
-			return fmt.Errorf("expected_codes must be set")
+			return diag.FromErr(fmt.Errorf("expected_codes must be set"))
 		}
 
 		if followRedirects, ok := d.GetOk("follow_redirects"); ok {
@@ -100,7 +100,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)
@@ -150,7 +150,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 		if expectedCodes, ok := d.GetOk("expected_codes"); ok {
 			loadBalancerMonitor.ExpectedCodes = expectedCodes.(string)
 		} else {
-			return fmt.Errorf("expected_codes must be set")
+			return diag.FromErr(fmt.Errorf("expected_codes must be set"))
 		}
 
 		if header, ok := d.GetOk("header"); ok {

@@ -33,54 +33,54 @@ func resourceCloudflareZoneCacheVariantsRead(ctx context.Context, d *schema.Reso
 			d.SetId("")
 			return nil
 		} else {
-			return fmt.Errorf("Error reading cache variants for zone %q: %w", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("Error reading cache variants for zone %q: %w", d.Id(), err))
 		}
 	}
 
 	value := zoneCacheVariants.Value
 
 	if err := d.Set("avif", value.Avif); err != nil {
-		return fmt.Errorf("failed to set avif: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set avif: %w", err))
 	}
 
 	if err := d.Set("bmp", value.Bmp); err != nil {
-		return fmt.Errorf("failed to set bmp: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set bmp: %w", err))
 	}
 
 	if err := d.Set("gif", value.Gif); err != nil {
-		return fmt.Errorf("failed to set gif: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set gif: %w", err))
 	}
 
 	if err := d.Set("jpeg", value.Jpeg); err != nil {
-		return fmt.Errorf("failed to set jpeg: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jpeg: %w", err))
 	}
 
 	if err := d.Set("jpg", value.Jpg); err != nil {
-		return fmt.Errorf("failed to set jpg: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jpg: %w", err))
 	}
 
 	if err := d.Set("jp2", value.Jp2); err != nil {
-		return fmt.Errorf("failed to set jp2: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jp2: %w", err))
 	}
 
 	if err := d.Set("jpg2", value.Jpg2); err != nil {
-		return fmt.Errorf("failed to set jpg2: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jpg2: %w", err))
 	}
 
 	if err := d.Set("png", value.Png); err != nil {
-		return fmt.Errorf("failed to set png: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set png: %w", err))
 	}
 
 	if err := d.Set("tif", value.Tif); err != nil {
-		return fmt.Errorf("failed to set tif: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set tif: %w", err))
 	}
 
 	if err := d.Set("tiff", value.Tiff); err != nil {
-		return fmt.Errorf("failed to set tiff: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set tiff: %w", err))
 	}
 
 	if err := d.Set("webp", value.Webp); err != nil {
-		return fmt.Errorf("failed to set webp: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set webp: %w", err))
 	}
 
 	return nil
@@ -98,7 +98,7 @@ func resourceCloudflareZoneCacheVariantsUpdate(ctx context.Context, d *schema.Re
 	_, err := client.UpdateZoneCacheVariants(context.Background(), d.Id(), variantsValue)
 
 	if err != nil {
-		return fmt.Errorf("error setting cache variants for zone %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error setting cache variants for zone %q: %w", d.Id(), err))
 	}
 
 	return resourceCloudflareZoneCacheVariantsRead(d, meta)
@@ -112,7 +112,7 @@ func resourceCloudflareZoneCacheVariantsDelete(ctx context.Context, d *schema.Re
 	err := client.DeleteZoneCacheVariants(context.Background(), d.Id())
 
 	if err != nil {
-		return fmt.Errorf("error deleting cache variants for zone %v: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error deleting cache variants for zone %v: %w", d.Id(), err))
 	}
 
 	return nil

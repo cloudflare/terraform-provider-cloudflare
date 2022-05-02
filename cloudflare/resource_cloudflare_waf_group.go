@@ -92,7 +92,7 @@ func resourceCloudflareWAFGroupCreate(ctx context.Context, d *schema.ResourceDat
 		return resourceCloudflareWAFGroupRead(d, meta)
 	}
 
-	return fmt.Errorf("unable to find WAF Group %s", groupID)
+	return diag.FromErr(fmt.Errorf("unable to find WAF Group %s", groupID))
 }
 
 func resourceCloudflareWAFGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

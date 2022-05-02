@@ -37,7 +37,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *sc
 
 	err := setDevicePostureIntegrationConfig(&newDevicePostureIntegration, d)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture integration with provided config: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture integration with provided config: %s", err))
 	}
 	log.Printf("[DEBUG] Creating Cloudflare Device Posture Integration from struct: %+v\n", newDevicePostureIntegration)
 
@@ -46,7 +46,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *sc
 
 	newDevicePostureIntegration, err = client.CreateDevicePostureIntegration(context.Background(), accountID, newDevicePostureIntegration)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule for account %q: %s %+v", accountID, err, newDevicePostureIntegration)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule for account %q: %s %+v", accountID, err, newDevicePostureIntegration))
 	}
 
 	d.SetId(newDevicePostureIntegration.IntegrationID)
@@ -71,7 +71,7 @@ func devicePostureIntegrationReadHelper(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding device posture integration %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding device posture integration %q: %s", d.Id(), err))
 	}
 
 	devicePostureIntegration.Config.ClientSecret = secret
@@ -96,18 +96,18 @@ func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *sc
 
 	err := setDevicePostureIntegrationConfig(&updatedDevicePostureIntegration, d)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err))
 	}
 
 	log.Printf("[DEBUG] Updating Cloudflare device posture integration from struct: %+v", updatedDevicePostureIntegration)
 
 	devicePostureIntegration, err := client.UpdateDevicePostureIntegration(context.Background(), accountID, updatedDevicePostureIntegration)
 	if err != nil {
-		return fmt.Errorf("error updating device posture integration for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error updating device posture integration for account %q: %s", accountID, err))
 	}
 
 	if devicePostureIntegration.IntegrationID == "" {
-		return fmt.Errorf("failed to find device posture integration_id in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find device posture integration_id in update response; resource was empty"))
 	}
 
 	return resourceCloudflareDevicePostureIntegrationRead(d, meta)
@@ -122,7 +122,7 @@ func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *sc
 
 	err := client.DeleteDevicePostureIntegration(context.Background(), accountID, appID)
 	if err != nil {
-		return fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err))
 	}
 
 	resourceCloudflareDevicePostureIntegrationRead(d, meta)
@@ -155,20 +155,20 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 		switch integration.Type {
 		case ws1:
 			if config.ClientID, ok = d.Get("config.0.client_id").(string); !ok {
-				return fmt.Errorf("client_id is a string")
+				return diag.FromErr(fmt.Errorf("client_id is a string"))
 			}
 			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
-				return fmt.Errorf("client_secret is a string")
+				return diag.FromErr(fmt.Errorf("client_secret is a string"))
 			}
 			if config.AuthUrl, ok = d.Get("config.0.auth_url").(string); !ok {
-				return fmt.Errorf("auth_url is a string")
+				return diag.FromErr(fmt.Errorf("auth_url is a string"))
 			}
 			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
-				return fmt.Errorf("api_url is a string")
+				return diag.FromErr(fmt.Errorf("api_url is a string"))
 			}
 			integration.Config = config
 		default:
-			return fmt.Errorf("unsupported integration type:%s", integration.Type)
+			return diag.FromErr(fmt.Errorf("unsupported integration type:%s", integration.Type))
 		}
 	}
 	return nil

@@ -33,11 +33,11 @@ func resourceCloudflareNotificationPolicyWebhooksCreate(ctx context.Context, d *
 	webhooksDestination, err := client.CreateNotificationWebhooks(context.Background(), accountID, &notificationWebhooks)
 
 	if err != nil {
-		return fmt.Errorf("error connecting webhooks destination %s: %s", notificationWebhooks.Name, err)
+		return diag.FromErr(fmt.Errorf("error connecting webhooks destination %s: %s", notificationWebhooks.Name, err))
 	}
 	formattedWebhookID, err := uuid.Parse(webhooksDestination.Result.ID)
 	if err != nil {
-		return fmt.Errorf("error setting notification webhooks: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting notification webhooks: %s", err))
 	}
 
 	d.SetId(formattedWebhookID.String())
@@ -54,7 +54,7 @@ func resourceCloudflareNotificationPolicyWebhooksRead(ctx context.Context, d *sc
 
 	name := d.Get("name").(string)
 	if err != nil {
-		return fmt.Errorf("error retrieving notification webhooks %s: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error retrieving notification webhooks %s: %s", name, err))
 	}
 
 	d.Set("name", notificationWebhooks.Result.Name)
@@ -82,7 +82,7 @@ func resourceCloudflareNotificationPolicyWebhooksUpdate(ctx context.Context, d *
 	_, err := client.UpdateNotificationWebhooks(context.Background(), accountID, webhooksID, &notificationWebhooks)
 
 	if err != nil {
-		return fmt.Errorf("error updating notification webhooks destination %s: %s", webhooksID, err)
+		return diag.FromErr(fmt.Errorf("error updating notification webhooks destination %s: %s", webhooksID, err))
 	}
 
 	return resourceCloudflareNotificationPolicyWebhooksRead(d, meta)
@@ -96,7 +96,7 @@ func resourceCloudflareNotificationPolicyWebhooksDelete(ctx context.Context, d *
 	_, err := client.DeleteNotificationWebhooks(context.Background(), accountID, webhooksID)
 
 	if err != nil {
-		return fmt.Errorf("error deleting notification webhooks destination %s: %s", webhooksID, err)
+		return diag.FromErr(fmt.Errorf("error deleting notification webhooks destination %s: %s", webhooksID, err))
 	}
 	return nil
 }

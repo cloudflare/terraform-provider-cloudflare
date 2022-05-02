@@ -33,7 +33,7 @@ func resourceCloudflareIPsecTunnelCreate(ctx context.Context, d *schema.Resource
 	})
 
 	if err != nil {
-		return fmt.Errorf("error creating IPSec tunnel %s: %w", d.Get("name").(string), err)
+		return diag.FromErr(fmt.Errorf("error creating IPSec tunnel %s: %w", d.Get("name").(string), err))
 	}
 
 	d.SetId(newTunnel[0].ID)
@@ -70,7 +70,7 @@ func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceDa
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading IPsec tunnel ID %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error reading IPsec tunnel ID %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", tunnel.Name)
@@ -105,7 +105,7 @@ func resourceCloudflareIPsecTunnelDelete(ctx context.Context, d *schema.Resource
 
 	_, err := client.DeleteMagicTransitIPsecTunnel(context.Background(), accountID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting IPsec tunnel: %w", err)
+		return diag.FromErr(fmt.Errorf("error deleting IPsec tunnel: %w", err))
 	}
 
 	return nil

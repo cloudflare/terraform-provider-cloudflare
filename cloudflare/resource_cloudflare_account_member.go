@@ -56,7 +56,7 @@ func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.Resour
 
 	err := client.DeleteAccountMember(context.Background(), client.AccountID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare account member: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare account member: %s", err))
 	}
 
 	return nil
@@ -76,11 +76,11 @@ func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.Resour
 	r, err := client.CreateAccountMember(context.Background(), client.AccountID, memberEmailAddress, accountMemberRoleIDs)
 
 	if err != nil {
-		return fmt.Errorf("error creating Cloudflare account member: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating Cloudflare account member: %s", err))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find ID in create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find ID in create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)
@@ -101,7 +101,7 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 	updatedAccountMember := cloudflare.AccountMember{Roles: accountRoles}
 	_, err := client.UpdateAccountMember(context.Background(), client.AccountID, d.Id(), updatedAccountMember)
 	if err != nil {
-		return fmt.Errorf("failed to update Cloudflare account member: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to update Cloudflare account member: %s", err))
 	}
 
 	return resourceCloudflareAccountMemberRead(d, meta)

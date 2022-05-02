@@ -47,7 +47,7 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *
 		accessMutualTLSCert, err = client.CreateZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, newAccessMutualTLSCertificate)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error creating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessMutualTLSCert.ID)
@@ -76,7 +76,7 @@ func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *sc
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Mutual TLS Certificate %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access Mutual TLS Certificate %q: %s", d.Id(), err))
 	}
 
 	d.Set("name", accessMutualTLSCert.Name)
@@ -108,7 +108,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *
 		_, err = client.UpdateZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id(), updatedAccessMutualTLSCert)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	return resourceCloudflareAccessMutualTLSCertificateRead(d, meta)
@@ -142,7 +142,7 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 	}
 
 	if err != nil {
-		return fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
 	}
 
 	return resource.Retry(d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {

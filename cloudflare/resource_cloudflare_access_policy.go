@@ -71,7 +71,7 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Policy %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access Policy %q: %s", d.Id(), err))
 	}
 
 	d.Set("name", accessPolicy.Name)
@@ -79,15 +79,15 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 	d.Set("precedence", accessPolicy.Precedence)
 
 	if err := d.Set("require", TransformAccessGroupForSchema(accessPolicy.Require)); err != nil {
-		return fmt.Errorf("failed to set require attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set require attribute: %s", err))
 	}
 
 	if err := d.Set("exclude", TransformAccessGroupForSchema(accessPolicy.Exclude)); err != nil {
-		return fmt.Errorf("failed to set exclude attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set exclude attribute: %s", err))
 	}
 
 	if err := d.Set("include", TransformAccessGroupForSchema(accessPolicy.Include)); err != nil {
-		return fmt.Errorf("failed to set include attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set include attribute: %s", err))
 	}
 
 	if accessPolicy.PurposeJustificationRequired != nil {
@@ -108,7 +108,7 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 			approvalGroups = append(approvalGroups, apiAccessPolicyApprovalGroupToSchema(apiApprovalGroup))
 		}
 		if err := d.Set("approval_group", approvalGroups); err != nil {
-			return fmt.Errorf("failed to set approval_group attribute: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to set approval_group attribute: %s", err))
 		}
 	}
 
@@ -140,7 +140,7 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 		accessPolicy, err = client.CreateZoneLevelAccessPolicy(context.Background(), identifier.Value, appID, newAccessPolicy)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Policy for ID %q: %s", accessPolicy.ID, err)
+		return diag.FromErr(fmt.Errorf("error creating Access Policy for ID %q: %s", accessPolicy.ID, err))
 	}
 
 	d.SetId(accessPolicy.ID)
@@ -174,11 +174,11 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 		accessPolicy, err = client.UpdateZoneLevelAccessPolicy(context.Background(), identifier.Value, appID, updatedAccessPolicy)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Policy for ID %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error updating Access Policy for ID %q: %s", d.Id(), err))
 	}
 
 	if accessPolicy.ID == "" {
-		return fmt.Errorf("failed to find Access Policy ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Access Policy ID in update response; resource was empty"))
 	}
 
 	return resourceCloudflareAccessPolicyRead(d, meta)
@@ -201,7 +201,7 @@ func resourceCloudflareAccessPolicyDelete(ctx context.Context, d *schema.Resourc
 		err = client.DeleteZoneLevelAccessPolicy(context.Background(), identifier.Value, appID, d.Id())
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error deleting Access Policy for ID %q: %s", d.Id(), err))
 	}
 
 	resourceCloudflareAccessPolicyRead(d, meta)

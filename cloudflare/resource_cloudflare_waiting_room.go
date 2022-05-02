@@ -56,7 +56,7 @@ func resourceCloudflareWaitingRoomCreate(ctx context.Context, d *schema.Resource
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error creating waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error creating waiting room %q: %s", name, err))
 	}
 
 	d.SetId(waitingRoom.ID)
@@ -77,7 +77,7 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 			return nil
 		}
 		name := d.Get("name").(string)
-		return fmt.Errorf("error getting waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error getting waiting room %q: %s", name, err))
 	}
 	d.SetId(waitingRoom.ID)
 	d.Set("name", waitingRoom.Name)
@@ -106,7 +106,7 @@ func resourceCloudflareWaitingRoomUpdate(ctx context.Context, d *schema.Resource
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error updating waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error updating waiting room %q: %s", name, err))
 	}
 
 	return resourceCloudflareWaitingRoomRead(d, meta)
@@ -121,7 +121,7 @@ func resourceCloudflareWaitingRoomDelete(ctx context.Context, d *schema.Resource
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error deleting waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error deleting waiting room %q: %s", name, err))
 	}
 
 	return nil

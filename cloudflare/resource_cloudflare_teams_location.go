@@ -35,32 +35,32 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Teams Location %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Location %q: %s", d.Id(), err))
 	}
 
 	if err := d.Set("name", location.Name); err != nil {
-		return fmt.Errorf("error parsing Location name")
+		return diag.FromErr(fmt.Errorf("error parsing Location name"))
 	}
 	if err := d.Set("networks", flattenTeamsLocationNetworks(location.Networks)); err != nil {
-		return fmt.Errorf("error parsing Location networks")
+		return diag.FromErr(fmt.Errorf("error parsing Location networks"))
 	}
 	if err := d.Set("policy_ids", location.PolicyIDs); err != nil {
-		return fmt.Errorf("error parsing Location policy IDs")
+		return diag.FromErr(fmt.Errorf("error parsing Location policy IDs"))
 	}
 	if err := d.Set("ip", location.Ip); err != nil {
-		return fmt.Errorf("error parsing Location IP")
+		return diag.FromErr(fmt.Errorf("error parsing Location IP"))
 	}
 	if err := d.Set("doh_subdomain", location.Subdomain); err != nil {
-		return fmt.Errorf("error parsing Location DOH subdomain")
+		return diag.FromErr(fmt.Errorf("error parsing Location DOH subdomain"))
 	}
 	if err := d.Set("anonymized_logs_enabled", location.AnonymizedLogsEnabled); err != nil {
-		return fmt.Errorf("error parsing Location anonimized log enablement")
+		return diag.FromErr(fmt.Errorf("error parsing Location anonimized log enablement"))
 	}
 	if err := d.Set("ipv4_destination", location.IPv4Destination); err != nil {
-		return fmt.Errorf("error parsing Location IPv4 destination")
+		return diag.FromErr(fmt.Errorf("error parsing Location IPv4 destination"))
 	}
 	if err := d.Set("client_default", location.ClientDefault); err != nil {
-		return fmt.Errorf("error parsing Location client default")
+		return diag.FromErr(fmt.Errorf("error parsing Location client default"))
 	}
 
 	return nil
@@ -84,7 +84,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 
 	location, err := client.CreateTeamsLocation(context.Background(), accountID, newTeamLocation)
 	if err != nil {
-		return fmt.Errorf("error creating Teams Location for account %q: %s, %v", accountID, err, networks)
+		return diag.FromErr(fmt.Errorf("error creating Teams Location for account %q: %s, %v", accountID, err, networks))
 	}
 
 	d.SetId(location.ID)
@@ -108,10 +108,10 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 
 	teamsLocation, err := client.UpdateTeamsLocation(context.Background(), accountID, updatedTeamsLocation)
 	if err != nil {
-		return fmt.Errorf("error updating Teams Location for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error updating Teams Location for account %q: %s", accountID, err))
 	}
 	if teamsLocation.ID == "" {
-		return fmt.Errorf("failed to find Teams Location ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Teams Location ID in update response; resource was empty"))
 	}
 	return resourceCloudflareTeamsLocationRead(d, meta)
 }
@@ -125,7 +125,7 @@ func resourceCloudflareTeamsLocationDelete(ctx context.Context, d *schema.Resour
 
 	err := client.DeleteTeamsLocation(context.Background(), accountID, id)
 	if err != nil {
-		return fmt.Errorf("error deleting Teams Location for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error deleting Teams Location for account %q: %s", accountID, err))
 	}
 
 	return resourceCloudflareTeamsLocationRead(d, meta)

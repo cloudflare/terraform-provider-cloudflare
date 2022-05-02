@@ -69,7 +69,7 @@ func resourceCloudflareApiTokenCreate(ctx context.Context, d *schema.ResourceDat
 	t := buildAPIToken(d)
 	t, err := client.CreateAPIToken(context.Background(), t)
 	if err != nil {
-		return fmt.Errorf("error creating Cloudflare API Token %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error creating Cloudflare API Token %q: %s", name, err))
 	}
 
 	d.SetId(t.ID)
@@ -132,7 +132,7 @@ func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData,
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Cloudflare API Token %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Cloudflare API Token %q: %s", d.Id(), err))
 	}
 
 	policies := []map[string]interface{}{}
@@ -190,7 +190,7 @@ func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceDat
 
 	t, err := client.UpdateAPIToken(context.Background(), tokenID, t)
 	if err != nil {
-		return fmt.Errorf("error updating Cloudflare API Token %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error updating Cloudflare API Token %q: %s", name, err))
 	}
 
 	return resourceCloudflareApiTokenRead(d, meta)
@@ -204,7 +204,7 @@ func resourceCloudflareApiTokenDelete(ctx context.Context, d *schema.ResourceDat
 
 	err := client.DeleteAPIToken(context.Background(), tokenID)
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare API Token: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare API Token: %s", err))
 	}
 
 	return nil

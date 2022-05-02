@@ -30,11 +30,11 @@ func resourceCloudflareSplitTunnelRead(ctx context.Context, d *schema.ResourceDa
 
 	splitTunnel, err := client.ListSplitTunnels(context.Background(), accountID, mode)
 	if err != nil {
-		return fmt.Errorf("error finding %q Split Tunnels: %s", mode, err)
+		return diag.FromErr(fmt.Errorf("error finding %q Split Tunnels: %s", mode, err))
 	}
 
 	if err := d.Set("tunnels", flattenSplitTunnels(splitTunnel)); err != nil {
-		return fmt.Errorf("error setting %q tunnels attribute: %s", mode, err)
+		return diag.FromErr(fmt.Errorf("error setting %q tunnels attribute: %s", mode, err))
 	}
 
 	return nil
@@ -47,16 +47,16 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 
 	tunnelList, err := expandSplitTunnels(d.Get("tunnels").([]interface{}))
 	if err != nil {
-		return fmt.Errorf("error updating %q Split Tunnels: %s", mode, err)
+		return diag.FromErr(fmt.Errorf("error updating %q Split Tunnels: %s", mode, err))
 	}
 
 	newSplitTunnels, err := client.UpdateSplitTunnel(context.Background(), accountID, mode, tunnelList)
 	if err != nil {
-		return fmt.Errorf("error updating %q Split Tunnels: %s", mode, err)
+		return diag.FromErr(fmt.Errorf("error updating %q Split Tunnels: %s", mode, err))
 	}
 
 	if err := d.Set("tunnels", flattenSplitTunnels(newSplitTunnels)); err != nil {
-		return fmt.Errorf("error setting %q tunnels attribute: %s", mode, err)
+		return diag.FromErr(fmt.Errorf("error setting %q tunnels attribute: %s", mode, err))
 	}
 
 	d.SetId(accountID)

@@ -105,12 +105,12 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 	// make sure that the worker does not already exist
 	r, _ := client.DownloadWorker(context.Background(), &scriptData.Params)
 	if r.WorkerScript.Script != "" {
-		return fmt.Errorf("script already exists")
+		return diag.FromErr(fmt.Errorf("script already exists"))
 	}
 
 	scriptBody := d.Get("content").(string)
 	if scriptBody == "" {
-		return fmt.Errorf("script content cannot be empty")
+		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
 	log.Printf("[INFO] Creating Cloudflare Worker Script from struct: %+v", &scriptData.Params)
@@ -204,23 +204,23 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err := d.Set("content", r.Script); err != nil {
-		return fmt.Errorf("cannot set content: %v", err)
+		return diag.FromErr(fmt.Errorf("cannot set content: %v", err))
 	}
 
 	if err := d.Set("kv_namespace_binding", kvNamespaceBindings); err != nil {
-		return fmt.Errorf("cannot set kv namespace bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set kv namespace bindings (%s): %v", d.Id(), err))
 	}
 
 	if err := d.Set("plain_text_binding", plainTextBindings); err != nil {
-		return fmt.Errorf("cannot set plain text bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set plain text bindings (%s): %v", d.Id(), err))
 	}
 
 	if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
-		return fmt.Errorf("cannot set secret text bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set secret text bindings (%s): %v", d.Id(), err))
 	}
 
 	if err := d.Set("webassembly_binding", webAssemblyBindings); err != nil {
-		return fmt.Errorf("cannot set webassembly bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set webassembly bindings (%s): %v", d.Id(), err))
 	}
 
 	return nil
@@ -236,7 +236,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	scriptBody := d.Get("content").(string)
 	if scriptBody == "" {
-		return fmt.Errorf("script content cannot be empty")
+		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Worker Script from struct: %+v", &scriptData.Params)

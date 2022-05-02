@@ -46,7 +46,7 @@ func resourceCloudflareWorkerRouteCreate(ctx context.Context, d *schema.Resource
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)

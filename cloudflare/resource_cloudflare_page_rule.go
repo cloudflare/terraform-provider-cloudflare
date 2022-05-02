@@ -68,7 +68,7 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 	}
 	pageRulesActionMap := pageRuleActionsToMap(newPageRuleActions)
 	if _, ok := pageRulesActionMap["forwarding_url"]; ok && len(pageRulesActionMap) > 1 {
-		return fmt.Errorf("\"forwarding_url\" cannot be set with any other actions")
+		return diag.FromErr(fmt.Errorf("\"forwarding_url\" cannot be set with any other actions"))
 	}
 
 	newPageRule := cloudflare.PageRule{
@@ -82,11 +82,11 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 
 	r, err := client.CreatePageRule(context.Background(), zoneID, newPageRule)
 	if err != nil {
-		return fmt.Errorf("failed to create page rule: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create page rule: %s", err))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("Failed to find page rule in Create response; ID was empty")
+		return diag.FromErr(fmt.Errorf("Failed to find page rule in Create response; ID was empty"))
 	}
 
 	d.SetId(r.ID)
@@ -114,7 +114,7 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 			d.SetId("")
 			return nil
 		} else {
-			return fmt.Errorf("error finding page rule %q: %s", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("error finding page rule %q: %s", d.Id(), err))
 		}
 	}
 	log.Printf("[DEBUG] Cloudflare Page Rule read configuration: %#v", pageRule)
@@ -130,7 +130,7 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 	for _, pageRuleAction := range pageRule.Actions {
 		key, value, err := transformFromCloudflarePageRuleAction(&pageRuleAction)
 		if err != nil {
-			return fmt.Errorf("failed to parse page rule action: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to parse page rule action: %s", err))
 		}
 		actions[key] = value
 	}
@@ -194,7 +194,7 @@ func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceDat
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
 	if err := client.UpdatePageRule(context.Background(), zoneID, d.Id(), updatePageRule); err != nil {
-		return fmt.Errorf("failed to update Cloudflare Page Rule: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to update Cloudflare Page Rule: %s", err))
 	}
 
 	return resourceCloudflarePageRuleRead(d, meta)
@@ -207,7 +207,7 @@ func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceDat
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zoneID, d.Id())
 
 	if err := client.DeletePageRule(context.Background(), zoneID, d.Id()); err != nil {
-		return fmt.Errorf("error deleting Cloudflare Page Rule: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Page Rule: %s", err))
 	}
 
 	return nil

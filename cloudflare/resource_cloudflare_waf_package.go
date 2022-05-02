@@ -58,7 +58,7 @@ func resourceCloudflareWAFPackageCreate(ctx context.Context, d *schema.ResourceD
 
 	pkg, err := client.WAFPackage(context.Background(), zoneID, packageID)
 	if err != nil {
-		return fmt.Errorf("unable to find WAF Package %s", packageID)
+		return diag.FromErr(fmt.Errorf("unable to find WAF Package %s", packageID))
 	}
 
 	d.Set("zone_id", zoneID)

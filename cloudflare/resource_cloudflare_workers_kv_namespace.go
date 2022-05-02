@@ -38,7 +38,7 @@ func resourceCloudflareWorkersKVNamespaceCreate(ctx context.Context, d *schema.R
 	}
 
 	if r.Result.ID == "" {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r.Result.ID)

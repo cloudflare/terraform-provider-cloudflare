@@ -33,7 +33,7 @@ func resourceCloudflareGRETunnelCreate(ctx context.Context, d *schema.ResourceDa
 	})
 
 	if err != nil {
-		return fmt.Errorf("error creating GRE tunnel %s: %w", d.Get("name").(string), err)
+		return diag.FromErr(fmt.Errorf("error creating GRE tunnel %s: %w", d.Get("name").(string), err))
 	}
 
 	d.SetId(newTunnel[0].ID)
@@ -70,7 +70,7 @@ func resourceCloudflareGRETunnelRead(ctx context.Context, d *schema.ResourceData
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading GRE tunnel ID %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error reading GRE tunnel ID %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", tunnel.Name)
@@ -110,7 +110,7 @@ func resourceCloudflareGRETunnelDelete(ctx context.Context, d *schema.ResourceDa
 
 	_, err := client.DeleteMagicTransitGRETunnel(context.Background(), accountID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting GRE tunnel: %w", err)
+		return diag.FromErr(fmt.Errorf("error deleting GRE tunnel: %w", err))
 	}
 
 	return nil

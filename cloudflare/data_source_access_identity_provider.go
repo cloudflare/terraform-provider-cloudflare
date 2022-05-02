@@ -31,11 +31,11 @@ func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *sche
 	}
 
 	if err != nil {
-		return fmt.Errorf("error listing Access Identity Providers: %s", err)
+		return diag.FromErr(fmt.Errorf("error listing Access Identity Providers: %s", err))
 	}
 
 	if len(providers) == 0 {
-		return fmt.Errorf("no Access Identity Providers found")
+		return diag.FromErr(fmt.Errorf("no Access Identity Providers found"))
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
@@ -47,7 +47,7 @@ func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *sche
 	}
 
 	if accessIdentityProvider.ID == "" {
-		return fmt.Errorf("no Access Identity Provider matching name %q", name)
+		return diag.FromErr(fmt.Errorf("no Access Identity Provider matching name %q", name))
 	}
 
 	d.SetId(accessIdentityProvider.ID)

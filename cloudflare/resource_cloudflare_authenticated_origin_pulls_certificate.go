@@ -41,7 +41,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perZoneAOPCert)
 		if err != nil {
-			return fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err))
 		}
 		d.SetId(record.ID)
 
@@ -65,7 +65,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perHostnameAOPCert)
 		if err != nil {
-			return fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err))
 		}
 		d.SetId(record.ID)
 
@@ -100,7 +100,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err))
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -115,7 +115,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err))
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -136,12 +136,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(ctx context.Con
 	case aopType == "per-zone":
 		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err))
 		}
 	case aopType == "per-hostname":
 		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err))
 		}
 	}
 	return nil

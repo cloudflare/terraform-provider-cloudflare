@@ -36,7 +36,7 @@ func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceDa
 	})
 
 	if err != nil {
-		return fmt.Errorf("failed to fetch Tunnel Route: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to fetch Tunnel Route: %w", err))
 	}
 
 	if len(tunnelRoutes) < 1 {
@@ -71,7 +71,7 @@ func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.Resource
 
 	newTunnelRoute, err := client.CreateTunnelRoute(context.Background(), resource)
 	if err != nil {
-		return fmt.Errorf("error creating Tunnel Route for Network %q: %w", d.Get("network").(string), err)
+		return diag.FromErr(fmt.Errorf("error creating Tunnel Route for Network %q: %w", d.Get("network").(string), err))
 	}
 
 	d.SetId(newTunnelRoute.Network)
@@ -95,7 +95,7 @@ func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.Resource
 
 	_, err := client.UpdateTunnelRoute(context.Background(), resource)
 	if err != nil {
-		return fmt.Errorf("error updating Tunnel Route for Network %q: %w", d.Get("network").(string), err)
+		return diag.FromErr(fmt.Errorf("error updating Tunnel Route for Network %q: %w", d.Get("network").(string), err))
 	}
 
 	return resourceCloudflareTunnelRouteRead(d, meta)
@@ -109,7 +109,7 @@ func resourceCloudflareTunnelRouteDelete(ctx context.Context, d *schema.Resource
 		Network:   d.Get("network").(string),
 	})
 	if err != nil {
-		return fmt.Errorf("error deleting Tunnel Route for Network %q: %w", d.Get("network").(string), err)
+		return diag.FromErr(fmt.Errorf("error deleting Tunnel Route for Network %q: %w", d.Get("network").(string), err))
 	}
 
 	return nil

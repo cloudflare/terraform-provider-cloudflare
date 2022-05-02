@@ -53,7 +53,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 	cert, err := client.CreateOriginCertificate(context.Background(), certInput)
 
 	if err != nil {
-		return fmt.Errorf("error creating origin certificate: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating origin certificate: %s", err))
 	}
 
 	d.SetId(cert.ID)
@@ -74,7 +74,7 @@ func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.Re
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding OriginCACertificate %q: %s", certID, err)
+		return diag.FromErr(fmt.Errorf("error finding OriginCACertificate %q: %s", certID, err))
 	}
 
 	if cert.RevokedAt != (time.Time{}) {
@@ -95,12 +95,12 @@ func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.Re
 
 	certBlock, _ := pem.Decode([]byte(cert.Certificate))
 	if certBlock == nil {
-		return fmt.Errorf("error decoding OriginCACertificate %q: %s", certID, err)
+		return diag.FromErr(fmt.Errorf("error decoding OriginCACertificate %q: %s", certID, err))
 	}
 
 	x509Cert, err := x509.ParseCertificate(certBlock.Bytes)
 	if err != nil {
-		return fmt.Errorf("error parsing OriginCACertificate %q: %s", certID, err)
+		return diag.FromErr(fmt.Errorf("error parsing OriginCACertificate %q: %s", certID, err))
 	}
 	d.Set("requested_validity", calculateRequestedValidityFromCertificate(x509Cert))
 
@@ -116,7 +116,7 @@ func resourceCloudflareOriginCACertificateDelete(ctx context.Context, d *schema.
 	_, err := client.RevokeOriginCertificate(context.Background(), certID)
 
 	if err != nil {
-		return fmt.Errorf("error revoking Cloudflare OriginCACertificate: %s", err)
+		return diag.FromErr(fmt.Errorf("error revoking Cloudflare OriginCACertificate: %s", err))
 	}
 
 	d.SetId("")

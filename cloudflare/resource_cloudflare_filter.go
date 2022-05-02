@@ -52,11 +52,11 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 	r, err := client.CreateFilters(context.Background(), zoneID, []cloudflare.Filter{newFilter})
 
 	if err != nil {
-		return fmt.Errorf("error creating Filter for zone %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error creating Filter for zone %q: %s", zoneID, err))
 	}
 
 	if len(r) == 0 {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r[0].ID)
@@ -82,7 +82,7 @@ func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, m
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Filter %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Filter %q: %s", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Filter read configuration: %#v", filter)
@@ -123,11 +123,11 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 	r, err := client.UpdateFilter(context.Background(), zoneID, newFilter)
 
 	if err != nil {
-		return fmt.Errorf("error updating Filter for zone %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error updating Filter for zone %q: %s", zoneID, err))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in Update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
 	return resourceCloudflareFilterRead(d, meta)
@@ -142,7 +142,7 @@ func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData,
 	err := client.DeleteFilter(context.Background(), zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Filter: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Filter: %s", err))
 	}
 
 	return nil

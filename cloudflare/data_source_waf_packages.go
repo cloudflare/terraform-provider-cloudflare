@@ -133,7 +133,7 @@ func dataSourceCloudflareWAFPackagesRead(ctx context.Context, d *schema.Resource
 
 	err = d.Set("packages", packageDetails)
 	if err != nil {
-		return fmt.Errorf("error setting WAF packages: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting WAF packages: %s", err))
 	}
 
 	d.SetId(stringListChecksum(packageIds))

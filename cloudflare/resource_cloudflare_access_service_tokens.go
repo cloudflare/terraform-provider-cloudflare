@@ -64,7 +64,7 @@ func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.Res
 		serviceTokens, _, err = client.ZoneLevelAccessServiceTokens(context.Background(), identifier.Value)
 	}
 	if err != nil {
-		return fmt.Errorf("error fetching access service tokens: %s", err)
+		return diag.FromErr(fmt.Errorf("error fetching access service tokens: %s", err))
 	}
 	for _, token := range serviceTokens {
 		if token.ID == d.Id() {
@@ -93,7 +93,7 @@ func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.R
 		serviceToken, err = client.CreateZoneLevelAccessServiceToken(context.Background(), identifier.Value, tokenName)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating access service token: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating access service token: %s", err))
 	}
 
 	d.SetId(serviceToken.ID)
@@ -123,7 +123,7 @@ func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.R
 		serviceToken, err = client.UpdateZoneLevelAccessServiceToken(context.Background(), identifier.Value, d.Id(), tokenName)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating access service token: %s", err)
+		return diag.FromErr(fmt.Errorf("error updating access service token: %s", err))
 	}
 
 	d.Set("name", serviceToken.Name)
@@ -145,7 +145,7 @@ func resourceCloudflareAccessServiceTokenDelete(ctx context.Context, d *schema.R
 		_, err = client.DeleteZoneLevelAccessServiceToken(context.Background(), identifier.Value, d.Id())
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting access service token: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting access service token: %s", err))
 	}
 
 	d.SetId("")

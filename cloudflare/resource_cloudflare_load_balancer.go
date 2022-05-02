@@ -280,7 +280,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)
@@ -404,17 +404,17 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 
 	if _, sessionAffinityAttrsOk := d.GetOk("session_affinity_attributes"); sessionAffinityAttrsOk {
 		if err := d.Set("session_affinity_attributes", flattenSessionAffinityAttrs(loadBalancer.SessionAffinityAttributes)); err != nil {
-			return fmt.Errorf("failed to set session_affinity_attributes: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to set session_affinity_attributes: %s", err))
 		}
 	}
 
 	if len(loadBalancer.Rules) > 0 {
 		fr, err := flattenRules(d, loadBalancer.Rules)
 		if err != nil {
-			return fmt.Errorf("failed to flatten rules: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to flatten rules: %s", err))
 		}
 		if err := d.Set("rules", fr); err != nil {
-			return fmt.Errorf("failed to set rules: %s\n %v", err, fr)
+			return diag.FromErr(fmt.Errorf("failed to set rules: %s\n %v", err, fr))
 		}
 	}
 
@@ -466,7 +466,7 @@ func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.Resourc
 
 	err := client.DeleteLoadBalancer(context.Background(), zoneID, loadBalancerID)
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Load Balancer: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Load Balancer: %s", err))
 	}
 
 	return nil

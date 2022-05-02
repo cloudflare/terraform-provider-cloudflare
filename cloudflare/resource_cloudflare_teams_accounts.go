@@ -35,61 +35,61 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Teams Account config %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Account config %q: %w", d.Id(), err))
 	}
 
 	if configuration.Settings.BlockPage != nil {
 		if err := d.Set("block_page", flattenBlockPageConfig(configuration.Settings.BlockPage)); err != nil {
-			return fmt.Errorf("error parsing account block page config: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account block page config: %w", err))
 		}
 	}
 
 	if configuration.Settings.Antivirus != nil {
 		if err := d.Set("antivirus", flattenAntivirusConfig(configuration.Settings.Antivirus)); err != nil {
-			return fmt.Errorf("error parsing account antivirus config: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account antivirus config: %w", err))
 		}
 	}
 
 	if configuration.Settings.TLSDecrypt != nil {
 		if err := d.Set("tls_decrypt_enabled", configuration.Settings.TLSDecrypt.Enabled); err != nil {
-			return fmt.Errorf("error parsing account tls decrypt enablement: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account tls decrypt enablement: %w", err))
 		}
 	}
 
 	if err := d.Set("activity_log_enabled", configuration.Settings.ActivityLog.Enabled); err != nil {
-		return fmt.Errorf("error parsing account activity log enablement: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing account activity log enablement: %w", err))
 	}
 
 	if configuration.Settings.FIPS != nil {
 		if err := d.Set("fips", flattenFIPSConfig(configuration.Settings.FIPS)); err != nil {
-			return fmt.Errorf("error parsing account FIPS config: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account FIPS config: %w", err))
 		}
 	}
 
 	if configuration.Settings.BrowserIsolation != nil {
 		if err := d.Set("url_browser_isolation_enabled", configuration.Settings.BrowserIsolation.UrlBrowserIsolationEnabled); err != nil {
-			return fmt.Errorf("error parsing account url browser isolation enablement: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account url browser isolation enablement: %w", err))
 		}
 	}
 
 	logSettings, err := client.TeamsAccountLoggingConfiguration(context.Background(), accountID)
 	if err != nil {
-		return fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err))
 	}
 
 	if logSettings.LoggingSettingsByRuleType != nil {
 		if err := d.Set("logging", flattenTeamsLoggingSettings(&logSettings)); err != nil {
-			return fmt.Errorf("error parsing teams account log settings: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing teams account log settings: %w", err))
 		}
 	}
 
 	deviceSettings, err := client.TeamsAccountDeviceConfiguration(context.Background(), accountID)
 	if err != nil {
-		return fmt.Errorf("error finding Teams Account device settings %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Account device settings %q: %w", d.Id(), err))
 	}
 
 	if err := d.Set("proxy", flattenTeamsDeviceSettings(&deviceSettings)); err != nil {
-		return fmt.Errorf("error parsing teams account device settings: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing teams account device settings: %w", err))
 	}
 
 	return nil
@@ -132,18 +132,18 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	log.Printf("[DEBUG] Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount)
 
 	if _, err := client.TeamsAccountUpdateConfiguration(context.Background(), accountID, updatedTeamsAccount); err != nil {
-		return fmt.Errorf("error updating Teams Account configuration for account %q: %w", accountID, err)
+		return diag.FromErr(fmt.Errorf("error updating Teams Account configuration for account %q: %w", accountID, err))
 	}
 
 	if loggingConfig != nil {
 		if _, err := client.TeamsAccountUpdateLoggingConfiguration(context.Background(), accountID, *loggingConfig); err != nil {
-			return fmt.Errorf("error updating Teams Account logging settings for account %q: %w", accountID, err)
+			return diag.FromErr(fmt.Errorf("error updating Teams Account logging settings for account %q: %w", accountID, err))
 		}
 	}
 
 	if deviceConfig != nil {
 		if _, err := client.TeamsAccountDeviceUpdateConfiguration(context.Background(), accountID, *deviceConfig); err != nil {
-			return fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err)
+			return diag.FromErr(fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err))
 		}
 	}
 

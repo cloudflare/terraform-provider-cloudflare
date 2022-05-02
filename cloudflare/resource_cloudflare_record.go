@@ -78,9 +78,9 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if valueOk == dataOk {
-		return fmt.Errorf(
+		return diag.FromErr(fmt.Errorf(
 			"either 'value' (present: %t) or 'data' (present: %t) must be provided",
-			valueOk, dataOk)
+			valueOk, dataOk))
 	}
 
 	if priority, ok := d.GetOkExists("priority"); ok {
@@ -90,7 +90,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 	if ttl, ok := d.GetOk("ttl"); ok {
 		if ttl.(int) != 1 && proxiedOk && *newRecord.Proxied {
-			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", newRecord.Name)
+			return diag.FromErr(fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", newRecord.Name))
 		}
 
 		newRecord.TTL = ttl.(int)
@@ -98,7 +98,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 	// Validate value based on type
 	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return fmt.Errorf("error validating record name %q: %s", newRecord.Name, err)
+		return diag.FromErr(fmt.Errorf("error validating record name %q: %s", newRecord.Name, err))
 	}
 
 	var proxiedVal *bool
@@ -110,7 +110,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 	// Validate type
 	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
-		return fmt.Errorf("error validating record type %q: %s", newRecord.Type, err)
+		return diag.FromErr(fmt.Errorf("error validating record type %q: %s", newRecord.Type, err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
@@ -275,7 +275,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if ttl, ok := d.GetOk("ttl"); ok {
 		if ttl.(int) != 1 && proxiedOk && *updateRecord.Proxied {
-			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", updateRecord.Name)
+			return diag.FromErr(fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", updateRecord.Name))
 		}
 
 		updateRecord.TTL = ttl.(int)
@@ -306,7 +306,7 @@ func resourceCloudflareRecordDelete(ctx context.Context, d *schema.ResourceData,
 
 	err := client.DeleteDNSRecord(context.Background(), zoneID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Record: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Record: %s", err))
 	}
 
 	return nil

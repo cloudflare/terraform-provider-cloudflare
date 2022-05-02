@@ -34,19 +34,19 @@ func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.Res
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Teams Proxy Endpoint %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Proxy Endpoint %q: %s", d.Id(), err))
 	}
 
 	if err := d.Set("name", endpoint.Name); err != nil {
-		return fmt.Errorf("error parsing Proxy Endpoint name")
+		return diag.FromErr(fmt.Errorf("error parsing Proxy Endpoint name"))
 	}
 
 	if err := d.Set("ips", endpoint.IPs); err != nil {
-		return fmt.Errorf("error parsing Proxy Endpoint IPs")
+		return diag.FromErr(fmt.Errorf("error parsing Proxy Endpoint IPs"))
 	}
 
 	if err := d.Set("subdomain", endpoint.Subdomain); err != nil {
-		return fmt.Errorf("error parsing Proxy Endpoint subdomain")
+		return diag.FromErr(fmt.Errorf("error parsing Proxy Endpoint subdomain"))
 	}
 
 	return nil
@@ -65,7 +65,7 @@ func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.R
 
 	proxyEndpoint, err := client.CreateTeamsProxyEndpoint(context.Background(), accountID, newProxyEndpoint)
 	if err != nil {
-		return fmt.Errorf("error creating Teams Proxy Endpoint for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error creating Teams Proxy Endpoint for account %q: %s", accountID, err))
 	}
 
 	d.SetId(proxyEndpoint.ID)
@@ -87,11 +87,11 @@ func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.R
 	teamsProxyEndpoint, err := client.UpdateTeamsProxyEndpoint(context.Background(), accountID, updatedProxyEndpoint)
 
 	if err != nil {
-		return fmt.Errorf("error updating Teams Proxy Endpoint for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error updating Teams Proxy Endpoint for account %q: %s", accountID, err))
 	}
 
 	if teamsProxyEndpoint.ID == "" {
-		return fmt.Errorf("failed to find Teams Proxy Endpoint ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Teams Proxy Endpoint ID in update response; resource was empty"))
 	}
 	return resourceCloudflareTeamsProxyEndpointRead(d, meta)
 }
@@ -105,7 +105,7 @@ func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.R
 
 	err := client.DeleteTeamsProxyEndpoint(context.Background(), accountID, id)
 	if err != nil {
-		return fmt.Errorf("error deleting Teams Proxy Endpoint for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error deleting Teams Proxy Endpoint for account %q: %s", accountID, err))
 	}
 
 	return resourceCloudflareTeamsProxyEndpointRead(d, meta)

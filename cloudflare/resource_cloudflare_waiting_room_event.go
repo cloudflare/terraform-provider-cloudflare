@@ -74,13 +74,13 @@ func resourceCloudflareWaitingRoomEventCreate(ctx context.Context, d *schema.Res
 	newWaitingRoomEvent, err := expandWaitingRoomEvent(d)
 
 	if err != nil {
-		return fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err)
+		return diag.FromErr(fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err))
 	}
 
 	waitingRoomEvent, err := client.CreateWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, newWaitingRoomEvent)
 
 	if err != nil {
-		return fmt.Errorf("error creating waiting room event %q: %w", waitingRoomEventName, err)
+		return diag.FromErr(fmt.Errorf("error creating waiting room event %q: %w", waitingRoomEventName, err))
 	}
 
 	d.SetId(waitingRoomEvent.ID)
@@ -100,7 +100,7 @@ func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.Resou
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error getting waiting room event %q: %w", d.Get("name").(string), err)
+		return diag.FromErr(fmt.Errorf("error getting waiting room event %q: %w", d.Get("name").(string), err))
 	}
 
 	d.Set("name", waitingRoomEvent.Name)
@@ -149,13 +149,13 @@ func resourceCloudflareWaitingRoomEventUpdate(ctx context.Context, d *schema.Res
 	waitingRoomEventName := d.Get("name").(string)
 	waitingRoomEvent, err := expandWaitingRoomEvent(d)
 	if err != nil {
-		return fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err)
+		return diag.FromErr(fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err))
 	}
 
 	_, err = client.ChangeWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEvent)
 
 	if err != nil {
-		return fmt.Errorf("error updating waiting room event %q: %w", waitingRoomEventName, err)
+		return diag.FromErr(fmt.Errorf("error updating waiting room event %q: %w", waitingRoomEventName, err))
 	}
 
 	return resourceCloudflareWaitingRoomEventRead(d, meta)
@@ -170,7 +170,7 @@ func resourceCloudflareWaitingRoomEventDelete(ctx context.Context, d *schema.Res
 	err := client.DeleteWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEventID)
 
 	if err != nil {
-		return fmt.Errorf("error deleting waiting room event %q: %w", d.Get("name").(string), err)
+		return diag.FromErr(fmt.Errorf("error deleting waiting room event %q: %w", d.Get("name").(string), err))
 	}
 
 	return nil

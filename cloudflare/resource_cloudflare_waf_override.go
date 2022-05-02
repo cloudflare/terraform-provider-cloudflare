@@ -34,7 +34,7 @@ func resourceCloudflareWAFOverrideRead(ctx context.Context, d *schema.ResourceDa
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("failed to find WAF override %s: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("failed to find WAF override %s: %s", d.Id(), err))
 	}
 
 	d.Set("zone_id", zoneID)
@@ -67,7 +67,7 @@ func resourceCloudflareWAFOverrideCreate(ctx context.Context, d *schema.Resource
 
 	override, err := client.CreateWAFOverride(context.Background(), zoneID, newOverride)
 	if err != nil {
-		return fmt.Errorf("failed to create WAF override: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create WAF override: %s", err))
 	}
 
 	d.SetId(override.ID)
@@ -83,7 +83,7 @@ func resourceCloudflareWAFOverrideUpdate(ctx context.Context, d *schema.Resource
 
 	_, err := client.UpdateWAFOverride(context.Background(), zoneID, overrideID, updatedOverride)
 	if err != nil {
-		return fmt.Errorf("failed to update WAF override: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to update WAF override: %s", err))
 	}
 
 	return resourceCloudflareWAFOverrideRead(d, meta)
@@ -96,7 +96,7 @@ func resourceCloudflareWAFOverrideDelete(ctx context.Context, d *schema.Resource
 
 	err := client.DeleteWAFOverride(context.Background(), zoneID, overrideID)
 	if err != nil {
-		return fmt.Errorf("failed to delete WAF override ID %s: %s", overrideID, err)
+		return diag.FromErr(fmt.Errorf("failed to delete WAF override ID %s: %s", overrideID, err))
 	}
 
 	return resourceCloudflareWAFOverrideRead(d, meta)

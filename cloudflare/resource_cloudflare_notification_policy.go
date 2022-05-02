@@ -32,7 +32,7 @@ func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.R
 	policy, err := client.CreateNotificationPolicy(context.Background(), accountID, notificationPolicy)
 
 	if err != nil {
-		return fmt.Errorf("error creating policy %s: %s", notificationPolicy.Name, err)
+		return diag.FromErr(fmt.Errorf("error creating policy %s: %s", notificationPolicy.Name, err))
 	}
 	d.SetId(policy.Result.ID)
 
@@ -48,7 +48,7 @@ func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.Res
 
 	name := d.Get("name").(string)
 	if err != nil {
-		return fmt.Errorf("error retrieving notification policy %s: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error retrieving notification policy %s: %s", name, err))
 	}
 
 	d.Set("name", policy.Result.Name)
@@ -60,20 +60,20 @@ func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.Res
 
 	if policy.Result.Filters != nil && len(policy.Result.Filters) > 0 {
 		if err := d.Set("filters", flattenNotificationPolicyFilter(policy.Result.Filters)); err != nil {
-			return fmt.Errorf("failed to set filters: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to set filters: %s", err))
 		}
 	}
 
 	if err := d.Set("email_integration", setNotificationMechanisms(policy.Result.Mechanisms["email"])); err != nil {
-		return fmt.Errorf("failed to set email integration: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set email integration: %s", err))
 	}
 
 	if err := d.Set("pagerduty_integration", setNotificationMechanisms(policy.Result.Mechanisms["pagerduty"])); err != nil {
-		return fmt.Errorf("failed to set pagerduty integration: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set pagerduty integration: %s", err))
 	}
 
 	if err := d.Set("webhooks_integration", setNotificationMechanisms(policy.Result.Mechanisms["webhooks"])); err != nil {
-		return fmt.Errorf("failed to set webhooks integration: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set webhooks integration: %s", err))
 	}
 
 	return nil
@@ -90,7 +90,7 @@ func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.R
 	_, err := client.UpdateNotificationPolicy(context.Background(), accountID, &notificationPolicy)
 
 	if err != nil {
-		return fmt.Errorf("error updating notification policy %s: %s", policyID, err)
+		return diag.FromErr(fmt.Errorf("error updating notification policy %s: %s", policyID, err))
 	}
 
 	return resourceCloudflareNotificationPolicyRead(d, meta)
@@ -104,7 +104,7 @@ func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.R
 	_, err := client.DeleteNotificationPolicy(context.Background(), accountID, policyID)
 
 	if err != nil {
-		return fmt.Errorf("error deleting notification policy %s: %s", policyID, err)
+		return diag.FromErr(fmt.Errorf("error deleting notification policy %s: %s", policyID, err))
 	}
 	return nil
 }
