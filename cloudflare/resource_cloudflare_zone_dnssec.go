@@ -41,15 +41,14 @@ func resourceCloudflareZoneDNSSECCreate(ctx context.Context, d *schema.ResourceD
 
 	currentDNSSEC, err := client.ZoneDNSSECSetting(ctx, zoneID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err))
+		return diag.FromErr(fmt.Errorf("error finding Zone DNSSEC %q: %w", zoneID, err))
 	}
 	if currentDNSSEC.Status != DNSSECStatusActive && currentDNSSEC.Status != DNSSECStatusPending {
 		_, err := client.UpdateZoneDNSSEC(ctx, zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusActive})
 
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error creating zone DNSSEC %q: %s", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error creating zone DNSSEC %q: %w", zoneID, err))
 		}
-
 	}
 
 	d.SetId(zoneID)
@@ -70,7 +69,7 @@ func resourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceDat
 
 	dnssec, err := client.ZoneDNSSECSetting(ctx, zoneID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err))
+		return diag.FromErr(fmt.Errorf("error finding Zone DNSSEC %q: %w", zoneID, err))
 	}
 
 	if dnssec.Status == DNSSECStatusDisabled {
@@ -113,7 +112,7 @@ func resourceCloudflareZoneDNSSECDelete(ctx context.Context, d *schema.ResourceD
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone DNSSEC: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone DNSSEC: %w", err))
 	}
 
 	return nil

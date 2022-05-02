@@ -94,7 +94,7 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 		"name":  customHostname.OwnershipVerification.Name,
 	}
 	if err := d.Set("ownership_verification", ownershipVerificationCfg); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set ownership_verification: %v", err))
+		return diag.FromErr(fmt.Errorf("failed to set ownership_verification: %w", err))
 	}
 
 	ownershipVerificationHTTPCfg := map[string]interface{}{
@@ -102,7 +102,7 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 		"http_url":  customHostname.OwnershipVerificationHTTP.HTTPUrl,
 	}
 	if err := d.Set("ownership_verification_http", ownershipVerificationHTTPCfg); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set ownership_verification_http: %v", err))
+		return diag.FromErr(fmt.Errorf("failed to set ownership_verification_http: %w", err))
 	}
 
 	return nil

@@ -507,7 +507,6 @@ func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestChec
 
 func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		if record.Content != "192.168.0.10" {
 			return fmt.Errorf("bad content: %s", record.Content)
 		}
@@ -518,7 +517,6 @@ func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resour
 
 func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		if record.Content != "192.168.0.11" {
 			return fmt.Errorf("bad content: %s", record.Content)
 		}
@@ -529,7 +527,6 @@ func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord)
 
 func testAccCheckCloudflareRecordDates(n string, record *cloudflare.DNSRecord, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, _ := s.RootModule().Resources[n]
 
 		for timeStampAttr, serverVal := range map[string]time.Time{"created_on": record.CreatedOn, "modified_on": record.ModifiedOn} {

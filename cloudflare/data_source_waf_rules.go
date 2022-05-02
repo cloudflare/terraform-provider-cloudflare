@@ -175,7 +175,7 @@ func dataSourceCloudflareWAFRulesRead(ctx context.Context, d *schema.ResourceDat
 
 	err = d.Set("rules", ruleDetails)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error setting WAF rules: %s", err))
+		return diag.FromErr(fmt.Errorf("error setting WAF rules: %w", err))
 	}
 
 	d.SetId(stringListChecksum(ruleIds))

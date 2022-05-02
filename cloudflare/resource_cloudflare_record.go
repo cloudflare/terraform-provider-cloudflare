@@ -100,7 +100,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 	// Validate value based on type
 	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return diag.FromErr(fmt.Errorf("error validating record name %q: %s", newRecord.Name, err))
+		return diag.FromErr(fmt.Errorf("error validating record name %q: %w", newRecord.Name, err))
 	}
 
 	var proxiedVal *bool
@@ -112,7 +112,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 	// Validate type
 	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
-		return diag.FromErr(fmt.Errorf("error validating record type %q: %s", newRecord.Type, err))
+		return diag.FromErr(fmt.Errorf("error validating record type %q: %w", newRecord.Type, err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
@@ -156,7 +156,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
 			}
 
-			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %s", err))
+			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
 		}
 
 		// In the event that the API returns an empty DNS Record, we verify that the
@@ -298,7 +298,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
 			}
 
-			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %s", err))
+			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
 		}
 
 		resourceCloudflareRecordRead(ctx, d, meta)
@@ -320,7 +320,7 @@ func resourceCloudflareRecordDelete(ctx context.Context, d *schema.ResourceData,
 
 	err := client.DeleteDNSRecord(ctx, zoneID, d.Id())
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Record: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Record: %w", err))
 	}
 
 	return nil
@@ -356,7 +356,7 @@ func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData,
 
 	record, err := client.DNSRecord(ctx, zoneID, recordID)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to find record with ID %q: %q", d.Id(), err)
+		return nil, fmt.Errorf("Unable to find record with ID %q: %w", d.Id(), err)
 	}
 
 	log.Printf("[INFO] Found record: %s", record.Name)

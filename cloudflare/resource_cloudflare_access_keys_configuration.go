@@ -38,7 +38,7 @@ func resourceCloudflareAccessKeysConfigurationRead(ctx context.Context, d *schem
 				return nil
 			}
 		}
-		return diag.FromErr(fmt.Errorf("error finding Access Keys Configuration %s: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error finding Access Keys Configuration %s: %w", accountID, err))
 	}
 
 	d.SetId(accountID)
@@ -68,7 +68,7 @@ func resourceCloudflareAccessKeysConfigurationUpdate(ctx context.Context, d *sch
 
 	_, err := client.UpdateAccessKeysConfig(ctx, accountID, keysConfigUpdateReq)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Keys Configuration for account %s: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Keys Configuration for account %s: %w", accountID, err))
 	}
 
 	return resourceCloudflareAccessKeysConfigurationRead(ctx, d, meta)
@@ -86,6 +86,6 @@ func resourceCloudflareKeysConfigurationImport(ctx context.Context, d *schema.Re
 	d.SetId(accountID)
 	d.Set("account_id", accountID)
 
-	resourceCloudflareAccessKeysConfigurationRead(context.TODO(), d, meta)
+	resourceCloudflareAccessKeysConfigurationRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }

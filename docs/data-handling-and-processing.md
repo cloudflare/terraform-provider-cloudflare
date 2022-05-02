@@ -11,7 +11,7 @@ func resourceExampleRead(ctx context.Context, d *schema.ResourceData, meta inter
 
 
     if err := d.Set("my_attr", attr); err != nil {
-      return fmt.Errorf("failed to set my_attr: %s", err)
+      return fmt.Errorf("failed to set my_attr: %w", err)
     }
 
     return nil

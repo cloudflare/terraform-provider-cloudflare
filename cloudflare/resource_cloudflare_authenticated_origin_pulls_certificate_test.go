@@ -160,12 +160,12 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terrafo
 		if rs.Primary.Attributes["type"] == "per-zone" {
 			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 			if err == nil {
-				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %w", zoneID, err)
 			}
 		} else if rs.Primary.Attributes["type"] == "per-hostname" {
 			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 			if err == nil {
-				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %w", zoneID, err)
 			}
 		}
 	}

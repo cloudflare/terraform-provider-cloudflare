@@ -798,7 +798,6 @@ func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
 
 func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		// check the api only has attributes we set non-empty values for
 		// this covers on/off attribute types and setting enum-type strings
 
@@ -830,7 +829,6 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 
 func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		actionMap := pageRuleActionsToMap(pageRule.Actions)
 
 		if _, ok := actionMap["disable_apps"]; ok {

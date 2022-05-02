@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -77,7 +78,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		accessApplication, err = client.CreateZoneLevelAccessApplication(ctx, identifier.Value, newAccessApplication)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %s", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessApplication.ID)
@@ -106,7 +107,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Access Application %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Access Application %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", accessApplication.Name)
@@ -128,7 +129,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
-		return diag.FromErr(fmt.Errorf("error setting Access Application CORS header configuration: %s", corsConfigErr))
+		return diag.FromErr(fmt.Errorf("error setting Access Application CORS header configuration: %w", corsConfigErr))
 	}
 
 	return nil
@@ -184,7 +185,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		accessApplication, err = client.UpdateZoneLevelAccessApplication(ctx, identifier.Value, updatedAccessApplication)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %s", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	if accessApplication.ID == "" {
@@ -211,10 +212,13 @@ func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.Re
 		err = client.DeleteZoneLevelAccessApplication(ctx, identifier.Value, appID)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %s", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
-	resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	if readErr != nil {
+		return readErr
+	}
 
 	return nil
 }
@@ -233,7 +237,10 @@ func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.Re
 	d.Set("account_id", accountID)
 	d.SetId(accessApplicationID)
 
-	resourceCloudflareAccessApplicationRead(context.TODO(), d, meta)
+	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	if readErr != nil {
+		return nil, errors.New("failed to read Access Application state")
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

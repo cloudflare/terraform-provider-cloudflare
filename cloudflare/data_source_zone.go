@@ -75,7 +75,7 @@ func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, m
 		zonesResp, err := client.ListZonesContext(ctx, zoneFilter)
 
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error listing zones: %s", err))
+			return diag.FromErr(fmt.Errorf("error listing zones: %w", err))
 		}
 
 		if zonesResp.Total > 1 {
@@ -91,7 +91,7 @@ func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, m
 		var err error
 		zone, err = client.ZoneDetails(ctx, zoneID)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error getting zone details: %s", err))
+			return diag.FromErr(fmt.Errorf("error getting zone details: %w", err))
 		}
 	}
 
@@ -104,11 +104,11 @@ func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, m
 	d.Set("plan", zone.Plan.Name)
 
 	if err := d.Set("name_servers", zone.NameServers); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set name_servers attribute: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to set name_servers attribute: %w", err))
 	}
 
 	if err := d.Set("vanity_name_servers", zone.VanityNS); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set vanity_name_servers attribute: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to set vanity_name_servers attribute: %w", err))
 	}
 
 	return nil

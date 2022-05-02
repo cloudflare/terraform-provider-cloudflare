@@ -143,7 +143,7 @@ func dataSourceCloudflareWAFGroupsRead(ctx context.Context, d *schema.ResourceDa
 
 	err = d.Set("groups", groupDetails)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error setting WAF groups: %s", err))
+		return diag.FromErr(fmt.Errorf("error setting WAF groups: %w", err))
 	}
 
 	d.SetId(stringListChecksum(groupIds))

@@ -34,11 +34,11 @@ func resourceCloudflareNotificationPolicyWebhooksCreate(ctx context.Context, d *
 	webhooksDestination, err := client.CreateNotificationWebhooks(ctx, accountID, &notificationWebhooks)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error connecting webhooks destination %s: %s", notificationWebhooks.Name, err))
+		return diag.FromErr(fmt.Errorf("error connecting webhooks destination %s: %w", notificationWebhooks.Name, err))
 	}
 	formattedWebhookID, err := uuid.Parse(webhooksDestination.Result.ID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error setting notification webhooks: %s", err))
+		return diag.FromErr(fmt.Errorf("error setting notification webhooks: %w", err))
 	}
 
 	d.SetId(formattedWebhookID.String())
@@ -55,7 +55,7 @@ func resourceCloudflareNotificationPolicyWebhooksRead(ctx context.Context, d *sc
 
 	name := d.Get("name").(string)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error retrieving notification webhooks %s: %s", name, err))
+		return diag.FromErr(fmt.Errorf("error retrieving notification webhooks %s: %w", name, err))
 	}
 
 	d.Set("name", notificationWebhooks.Result.Name)
@@ -83,7 +83,7 @@ func resourceCloudflareNotificationPolicyWebhooksUpdate(ctx context.Context, d *
 	_, err := client.UpdateNotificationWebhooks(ctx, accountID, webhooksID, &notificationWebhooks)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating notification webhooks destination %s: %s", webhooksID, err))
+		return diag.FromErr(fmt.Errorf("error updating notification webhooks destination %s: %w", webhooksID, err))
 	}
 
 	return resourceCloudflareNotificationPolicyWebhooksRead(ctx, d, meta)
@@ -97,7 +97,7 @@ func resourceCloudflareNotificationPolicyWebhooksDelete(ctx context.Context, d *
 	_, err := client.DeleteNotificationWebhooks(ctx, accountID, webhooksID)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting notification webhooks destination %s: %s", webhooksID, err))
+		return diag.FromErr(fmt.Errorf("error deleting notification webhooks destination %s: %w", webhooksID, err))
 	}
 	return nil
 }
@@ -116,7 +116,6 @@ func resourceCloudflareNotificationPolicyWebhooksImport(ctx context.Context, d *
 	resourceCloudflareNotificationPolicyWebhooksRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-
 }
 
 func buildNotificationPolicyWebhooks(d *schema.ResourceData) cloudflare.NotificationUpsertWebhooks {

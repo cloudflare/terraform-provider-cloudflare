@@ -52,7 +52,7 @@ type ScriptBindings map[string]cloudflare.WorkerBinding
 func getWorkerScriptBindings(ctx context.Context, scriptName string, client *cloudflare.API) (ScriptBindings, error) {
 	resp, err := client.ListWorkerBindings(ctx, &cloudflare.WorkerRequestParams{ScriptName: scriptName})
 	if err != nil {
-		return nil, fmt.Errorf("cannot list script bindings: %v", err)
+		return nil, fmt.Errorf("cannot list script bindings: %w", err)
 	}
 
 	bindings := make(ScriptBindings, len(resp.BindingList))
@@ -205,23 +205,23 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err := d.Set("content", r.Script); err != nil {
-		return diag.FromErr(fmt.Errorf("cannot set content: %v", err))
+		return diag.FromErr(fmt.Errorf("cannot set content: %w", err))
 	}
 
 	if err := d.Set("kv_namespace_binding", kvNamespaceBindings); err != nil {
-		return diag.FromErr(fmt.Errorf("cannot set kv namespace bindings (%s): %v", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("cannot set kv namespace bindings (%s): %w", d.Id(), err))
 	}
 
 	if err := d.Set("plain_text_binding", plainTextBindings); err != nil {
-		return diag.FromErr(fmt.Errorf("cannot set plain text bindings (%s): %v", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("cannot set plain text bindings (%s): %w", d.Id(), err))
 	}
 
 	if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
-		return diag.FromErr(fmt.Errorf("cannot set secret text bindings (%s): %v", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("cannot set secret text bindings (%s): %w", d.Id(), err))
 	}
 
 	if err := d.Set("webassembly_binding", webAssemblyBindings); err != nil {
-		return diag.FromErr(fmt.Errorf("cannot set webassembly bindings (%s): %v", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("cannot set webassembly bindings (%s): %w", d.Id(), err))
 	}
 
 	return nil

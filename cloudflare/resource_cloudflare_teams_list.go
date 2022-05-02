@@ -44,7 +44,7 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 
 	list, err := client.CreateTeamsList(ctx, accountID, newTeamsList)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
 	}
 
 	d.SetId(list.ID)
@@ -63,7 +63,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", list.Name)
@@ -72,7 +72,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 
 	listItems, _, err := client.TeamsListItems(ctx, accountID, d.Id())
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
 	}
 	d.Set("items", convertListItemsToSchema(listItems))
 
@@ -95,7 +95,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 
 	teamsList, err := client.UpdateTeamsList(ctx, accountID, updatedTeamsList)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
 	}
 	if teamsList.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Teams List ID in update response; resource was empty"))
@@ -109,7 +109,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		setListItemDiff(&patchTeamsList, oldItems, newItems)
 		l, err := client.PatchTeamsList(ctx, accountID, patchTeamsList)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %s", accountID, err))
+			return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
 		}
 
 		teamsList.Items = l.Items
@@ -127,7 +127,7 @@ func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceDa
 
 	err := client.DeleteTeamsList(ctx, accountID, appID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Teams List for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error deleting Teams List for account %q: %w", accountID, err))
 	}
 
 	resourceCloudflareTeamsListRead(ctx, d, meta)

@@ -42,14 +42,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(ctx, zoneID, perZoneAOPCert)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %w", zoneID, err))
 		}
 		d.SetId(record.ID)
 
 		perZoneRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %s", err))
+				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %w", err))
 			}
 
 			if resp.Status != "active" {
@@ -73,14 +73,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, perHostnameAOPCert)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %w", zoneID, err))
 		}
 		d.SetId(record.ID)
 
 		perHostnameRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %s", err))
+				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %w", err))
 			}
 
 			if resp.Status != "active" {
@@ -114,7 +114,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 				d.SetId("")
 				return nil
 			}
-			return diag.FromErr(fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err))
+			return diag.FromErr(fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %w", d.Id(), err))
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -129,7 +129,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 				d.SetId("")
 				return nil
 			}
-			return diag.FromErr(fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err))
+			return diag.FromErr(fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %w", d.Id(), err))
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -150,12 +150,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(ctx context.Con
 	case aopType == "per-zone":
 		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %w", zoneID, err))
 		}
 	case aopType == "per-hostname":
 		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %w", zoneID, err))
 		}
 	}
 	return nil

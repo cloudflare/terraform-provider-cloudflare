@@ -374,7 +374,6 @@ func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZoneID string) resou
 
 func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.LoadBalancer, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, _ := s.RootModule().Resources[n]
 
 		for timeStampAttr, serverVal := range map[string]time.Time{"created_on": *loadBalancer.CreatedOn, "modified_on": *loadBalancer.ModifiedOn} {

@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -39,7 +40,7 @@ func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.
 		accessCACert, err = client.CreateZoneLevelAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessCACert.ID)
@@ -68,7 +69,7 @@ func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.Re
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Access CA Certificate %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Access CA Certificate %q: %w", d.Id(), err))
 	}
 
 	d.Set("aud", accessCACert.Aud)
@@ -126,7 +127,10 @@ func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessCACertificateID)
 
-	resourceCloudflareAccessCACertificateRead(context.TODO(), d, meta)
+	readErr := resourceCloudflareAccessCACertificateRead(ctx, d, meta)
+	if readErr != nil {
+		return nil, errors.New("failed to read Access CA Certificate state")
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

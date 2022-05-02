@@ -98,7 +98,6 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d
 	}
 
 	return nil
-
 }
 
 func resourceCloudflareCustomHostnameFallbackOriginUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

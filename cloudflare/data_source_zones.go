@@ -94,7 +94,7 @@ func dataSourceCloudflareZonesRead(ctx context.Context, d *schema.ResourceData, 
 
 	zones, err := client.ListZonesContext(ctx, zoneFilter)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error listing Zone: %s", err))
+		return diag.FromErr(fmt.Errorf("error listing Zone: %w", err))
 	}
 
 	zoneIds := make([]string, 0)
@@ -119,7 +119,7 @@ func dataSourceCloudflareZonesRead(ctx context.Context, d *schema.ResourceData, 
 
 	err = d.Set("zones", zoneDetails)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error setting zones: %s", err))
+		return diag.FromErr(fmt.Errorf("error setting zones: %w", err))
 	}
 
 	d.SetId(stringListChecksum(zoneIds))

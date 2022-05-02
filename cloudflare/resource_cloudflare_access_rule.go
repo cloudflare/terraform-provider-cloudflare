@@ -67,7 +67,7 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to create access rule: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to create access rule: %w", err))
 	}
 
 	if r.Result.ID == "" {
@@ -105,7 +105,7 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding access rule %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding access rule %q: %w", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
@@ -158,7 +158,7 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to update Access Rule: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to update Access Rule: %w", err))
 	}
 
 	return resourceCloudflareAccessRuleRead(ctx, d, meta)
@@ -183,7 +183,7 @@ func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Access Rule: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Access Rule: %w", err))
 	}
 
 	return nil
@@ -214,7 +214,7 @@ func resourceCloudflareAccessRuleImport(ctx context.Context, d *schema.ResourceD
 		d.Set("zone_id", accessRuleTypeIdentifier)
 	}
 
-	resourceCloudflareAccessRuleRead(context.TODO(), d, meta)
+	resourceCloudflareAccessRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -256,7 +256,7 @@ func validateAccessRuleConfiguration(v interface{}, k string) (warnings []string
 func validateAccessRuleConfigurationIPRange(v string) (warnings []string, errors []error) {
 	ip, ipNet, err := net.ParseCIDR(v)
 	if err != nil {
-		errors = append(errors, fmt.Errorf("failed to parse value as CIDR: %v", err))
+		errors = append(errors, fmt.Errorf("failed to parse value as CIDR: %w", err))
 		return warnings, errors
 	}
 

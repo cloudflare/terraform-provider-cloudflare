@@ -163,7 +163,7 @@ func resourceCloudflareRulesetRead(ctx context.Context, d *schema.ResourceData, 
 	d.Set("description", ruleset.Description)
 
 	if err := d.Set("rules", buildStateFromRulesetRules(ruleset.Rules)); err != nil {
-		log.Fatalf("failed to set rules: %s", err)
+		return diag.FromErr(err)
 	}
 
 	return nil

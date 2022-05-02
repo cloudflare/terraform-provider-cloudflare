@@ -137,7 +137,7 @@ func resourceCloudflareSpectrumApplicationDelete(ctx context.Context, d *schema.
 
 	err := client.DeleteSpectrumApplication(ctx, zoneID, applicationID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Spectrum Application: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Spectrum Application: %w", err))
 	}
 
 	return nil

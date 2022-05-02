@@ -9,7 +9,6 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/pkg/errors"
 )
 
 func resourceCloudflareTeamsLocation() *schema.Resource {
@@ -36,7 +35,7 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Teams Location %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Teams Location %q: %w", d.Id(), err))
 	}
 
 	if err := d.Set("name", location.Name); err != nil {
@@ -72,7 +71,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 	accountID := d.Get("account_id").(string)
 	networks, err := inflateTeamsLocationNetworks(d.Get("networks"))
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating Teams Location for account %q: %s, %v", accountID, err, networks)))
+		return diag.FromErr(fmt.Errorf("error creating Teams Location for account %q: %w, %v", accountID, err, networks))
 	}
 
 	newTeamLocation := cloudflare.TeamsLocation{
@@ -85,19 +84,18 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 
 	location, err := client.CreateTeamsLocation(ctx, accountID, newTeamLocation)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Teams Location for account %q: %s, %v", accountID, err, networks))
+		return diag.FromErr(fmt.Errorf("error creating Teams Location for account %q: %w, %v", accountID, err, networks))
 	}
 
 	d.SetId(location.ID)
 	return resourceCloudflareTeamsLocationRead(ctx, d, meta)
-
 }
 func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	networks, err := inflateTeamsLocationNetworks(d.Get("networks"))
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating Teams Location for account %q: %s, %v", accountID, err, networks)))
+		return diag.FromErr(fmt.Errorf("error updating Teams Location for account %q: %w, %v", accountID, err, networks))
 	}
 	updatedTeamsLocation := cloudflare.TeamsLocation{
 		ID:            d.Id(),
@@ -109,7 +107,7 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 
 	teamsLocation, err := client.UpdateTeamsLocation(ctx, accountID, updatedTeamsLocation)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Teams Location for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error updating Teams Location for account %q: %w", accountID, err))
 	}
 	if teamsLocation.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Teams Location ID in update response; resource was empty"))
@@ -126,7 +124,7 @@ func resourceCloudflareTeamsLocationDelete(ctx context.Context, d *schema.Resour
 
 	err := client.DeleteTeamsLocation(ctx, accountID, id)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Teams Location for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error deleting Teams Location for account %q: %w", accountID, err))
 	}
 
 	return resourceCloudflareTeamsLocationRead(ctx, d, meta)
@@ -149,7 +147,6 @@ func resourceCloudflareTeamsLocationImport(ctx context.Context, d *schema.Resour
 	resourceCloudflareTeamsLocationRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-
 }
 
 func inflateTeamsLocationNetworks(networks interface{}) ([]cloudflare.TeamsLocationNetwork, error) {

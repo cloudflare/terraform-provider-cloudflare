@@ -57,7 +57,7 @@ func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.Resour
 
 	err := client.DeleteAccountMember(ctx, client.AccountID, d.Id())
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare account member: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare account member: %w", err))
 	}
 
 	return nil
@@ -77,7 +77,7 @@ func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.Resour
 	r, err := client.CreateAccountMember(ctx, client.AccountID, memberEmailAddress, accountMemberRoleIDs)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Cloudflare account member: %s", err))
+		return diag.FromErr(fmt.Errorf("error creating Cloudflare account member: %w", err))
 	}
 
 	if r.ID == "" {
@@ -102,7 +102,7 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 	updatedAccountMember := cloudflare.AccountMember{Roles: accountRoles}
 	_, err := client.UpdateAccountMember(ctx, client.AccountID, d.Id(), updatedAccountMember)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to update Cloudflare account member: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to update Cloudflare account member: %w", err))
 	}
 
 	return resourceCloudflareAccountMemberRead(ctx, d, meta)
@@ -124,7 +124,7 @@ func resourceCloudflareAccountMemberImport(ctx context.Context, d *schema.Resour
 
 	member, err := client.AccountMember(ctx, accountID, accountMemberID)
 	if err != nil {
-		return nil, fmt.Errorf("unable to find account member with ID %q: %q", accountMemberID, err)
+		return nil, fmt.Errorf("unable to find account member with ID %q: %w", accountMemberID, err)
 	}
 
 	log.Printf("[INFO] Found account member: %s", member.User.Email)

@@ -32,7 +32,7 @@ func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *sche
 	}
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error listing Access Identity Providers: %s", err))
+		return diag.FromErr(fmt.Errorf("error listing Access Identity Providers: %w", err))
 	}
 
 	if len(providers) == 0 {

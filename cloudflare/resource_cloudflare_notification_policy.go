@@ -33,7 +33,7 @@ func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.R
 	policy, err := client.CreateNotificationPolicy(ctx, accountID, notificationPolicy)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating policy %s: %s", notificationPolicy.Name, err))
+		return diag.FromErr(fmt.Errorf("error creating policy %s: %w", notificationPolicy.Name, err))
 	}
 	d.SetId(policy.Result.ID)
 
@@ -49,7 +49,7 @@ func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.Res
 
 	name := d.Get("name").(string)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error retrieving notification policy %s: %s", name, err))
+		return diag.FromErr(fmt.Errorf("error retrieving notification policy %s: %w", name, err))
 	}
 
 	d.Set("name", policy.Result.Name)
@@ -61,20 +61,20 @@ func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.Res
 
 	if policy.Result.Filters != nil && len(policy.Result.Filters) > 0 {
 		if err := d.Set("filters", flattenNotificationPolicyFilter(policy.Result.Filters)); err != nil {
-			return diag.FromErr(fmt.Errorf("failed to set filters: %s", err))
+			return diag.FromErr(fmt.Errorf("failed to set filters: %w", err))
 		}
 	}
 
 	if err := d.Set("email_integration", setNotificationMechanisms(policy.Result.Mechanisms["email"])); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set email integration: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to set email integration: %w", err))
 	}
 
 	if err := d.Set("pagerduty_integration", setNotificationMechanisms(policy.Result.Mechanisms["pagerduty"])); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set pagerduty integration: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to set pagerduty integration: %w", err))
 	}
 
 	if err := d.Set("webhooks_integration", setNotificationMechanisms(policy.Result.Mechanisms["webhooks"])); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set webhooks integration: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to set webhooks integration: %w", err))
 	}
 
 	return nil
@@ -91,7 +91,7 @@ func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.R
 	_, err := client.UpdateNotificationPolicy(ctx, accountID, &notificationPolicy)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating notification policy %s: %s", policyID, err))
+		return diag.FromErr(fmt.Errorf("error updating notification policy %s: %w", policyID, err))
 	}
 
 	return resourceCloudflareNotificationPolicyRead(ctx, d, meta)
@@ -105,7 +105,7 @@ func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.R
 	_, err := client.DeleteNotificationPolicy(ctx, accountID, policyID)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting notification policy %s: %s", policyID, err))
+		return diag.FromErr(fmt.Errorf("error deleting notification policy %s: %w", policyID, err))
 	}
 	return nil
 }
@@ -124,7 +124,6 @@ func resourceNotificationPolicyImport(ctx context.Context, d *schema.ResourceDat
 	resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-
 }
 
 func buildNotificationPolicy(d *schema.ResourceData) cloudflare.NotificationPolicy {

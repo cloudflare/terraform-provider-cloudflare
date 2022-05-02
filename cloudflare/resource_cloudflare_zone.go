@@ -102,7 +102,7 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 	zone, err := client.CreateZone(ctx, zoneName, jumpstart, account, zoneType)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating zone %q: %s", zoneName, err))
+		return diag.FromErr(fmt.Errorf("error creating zone %q: %w", zoneName, err))
 	}
 
 	d.SetId(zone.ID)
@@ -112,7 +112,7 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 			_, err := client.ZoneSetPaused(ctx, zone.ID, paused.(bool))
 
 			if err != nil {
-				return diag.FromErr(fmt.Errorf("error updating zone_id %q: %s", zone.ID, err))
+				return diag.FromErr(fmt.Errorf("error updating zone_id %q: %w", zone.ID, err))
 			}
 		}
 	}
@@ -126,7 +126,7 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 	if ztype, ok := d.GetOk("type"); ok {
 		_, err := client.ZoneSetType(ctx, zone.ID, ztype.(string))
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error setting type on zone ID %q: %s", zone.ID, err))
+			return diag.FromErr(fmt.Errorf("error setting type on zone ID %q: %w", zone.ID, err))
 		}
 	}
 
@@ -148,7 +148,7 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Zone %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Zone %q: %w", d.Id(), err))
 	}
 
 	// In the cases where the zone isn't completely setup yet, we need to
@@ -187,7 +187,7 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 		_, err := client.ZoneSetPaused(ctx, zoneID, paused.(bool))
 
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error setting paused for zone ID %q: %s", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error setting paused for zone ID %q: %w", zoneID, err))
 		}
 	}
 
@@ -195,7 +195,7 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 		_, err := client.ZoneSetType(ctx, zoneID, ztype.(string))
 
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error setting type for on zone ID %q: %s", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error setting type for on zone ID %q: %w", zoneID, err))
 		}
 	}
 
@@ -231,7 +231,7 @@ func resourceCloudflareZoneDelete(ctx context.Context, d *schema.ResourceData, m
 	_, err := client.DeleteZone(ctx, zoneID)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone: %w", err))
 	}
 
 	return nil
@@ -256,12 +256,12 @@ func setRatePlan(ctx context.Context, client *cloudflare.API, zoneID, planID str
 		// HTTP call to set it.
 		if ratePlans[planID].ID != planIDFree {
 			if err := client.ZoneSetPlan(ctx, zoneID, ratePlans[planID].Name); err != nil {
-				return fmt.Errorf("error setting plan %s for zone %q: %s", planID, zoneID, err)
+				return fmt.Errorf("error setting plan %s for zone %q: %w", planID, zoneID, err)
 			}
 		}
 	} else {
 		if err := client.ZoneUpdatePlan(ctx, zoneID, ratePlans[planID].Name); err != nil {
-			return fmt.Errorf("error updating plan %s for zone %q: %s", planID, zoneID, err)
+			return fmt.Errorf("error updating plan %s for zone %q: %w", planID, zoneID, err)
 		}
 	}
 

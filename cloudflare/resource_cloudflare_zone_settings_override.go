@@ -261,7 +261,6 @@ func resourceCloudflareZoneSettingsOverrideUpdate(ctx context.Context, d *schema
 	client := meta.(*cloudflare.API)
 
 	if cfg, ok := d.GetOkExists("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
-
 		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
 		zoneSettings, err := expandOverriddenZoneSettings(d, "settings", readOnlySettings)
 		if err != nil {
@@ -297,11 +296,9 @@ func expandOverriddenZoneSettings(d *schema.ResourceData, settingsKey string, re
 	keyFormat := fmt.Sprintf("%s.0.%%s", settingsKey)
 
 	for k := range resourceCloudflareZoneSettingsSchema {
-
 		// we only update if the user set the value non-empty before, and its different from the read value
 		// note that if user removes an attribute, we don't do anything
 		if settingValue, ok := d.GetOkExists(fmt.Sprintf(keyFormat, k)); ok && d.HasChange(fmt.Sprintf(keyFormat, k)) {
-
 			zoneSettingValue, err := expandZoneSetting(d, keyFormat, k, settingValue, readOnlySettings)
 			if err != nil {
 				return zoneSettings, err
@@ -319,15 +316,12 @@ func expandOverriddenZoneSettings(d *schema.ResourceData, settingsKey string, re
 				}
 				zoneSettings = append(zoneSettings, newZoneSetting)
 			}
-
 		}
-
 	}
 	return zoneSettings, nil
 }
 
 func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settingValue interface{}, readOnlySettings []string) (interface{}, error) {
-
 	if contains(readOnlySettings, k) {
 		return nil, fmt.Errorf("invalid zone setting %q (value: %v) found - cannot be set as it is read only", k, settingValue)
 	}
@@ -350,7 +344,6 @@ func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settin
 			if len(listValue) > 0 && listValue != nil {
 				zoneSettingValue = listValue[0].(map[string]interface{})
 			}
-
 		}
 	case "security_header":
 		{
@@ -373,7 +366,6 @@ func resourceCloudflareZoneSettingsOverrideDelete(ctx context.Context, d *schema
 	client := meta.(*cloudflare.API)
 
 	if cfg, ok := d.GetOkExists("settings"); ok && cfg != nil && len(cfg.([]interface{})) > 0 {
-
 		readOnlySettings := expandInterfaceToStringList(d.Get("readonly_settings"))
 
 		zoneSettings, err := expandRevertibleZoneSettings(d, readOnlySettings)
@@ -409,7 +401,6 @@ func expandRevertibleZoneSettings(d *schema.ResourceData, readOnlySettings []str
 	keyFormat := fmt.Sprintf("%s.0.%%s", "initial_settings")
 
 	for k := range resourceCloudflareZoneSettingsSchema {
-
 		initialKey := fmt.Sprintf("initial_settings.0.%s", k)
 		initialVal := d.Get(initialKey)
 		currentKey := fmt.Sprintf("settings.0.%s", k)
@@ -420,7 +411,6 @@ func expandRevertibleZoneSettings(d *schema.ResourceData, readOnlySettings []str
 
 		// if the value was never set we don't need to revert it
 		if currentVal, ok := d.GetOk(currentKey); ok && !schemaValueEquals(initialVal, currentVal) {
-
 			zoneSettingValue, err := expandZoneSetting(d, keyFormat, k, initialVal, readOnlySettings)
 			if err != nil {
 				return zoneSettings, err
@@ -433,7 +423,6 @@ func expandRevertibleZoneSettings(d *schema.ResourceData, readOnlySettings []str
 				}
 				zoneSettings = append(zoneSettings, newZoneSetting)
 			}
-
 		}
 	}
 	return zoneSettings, nil

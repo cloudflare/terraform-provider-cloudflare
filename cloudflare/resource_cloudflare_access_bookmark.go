@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -48,7 +49,7 @@ func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.Resou
 		accessBookmark, err = client.CreateZoneLevelAccessBookmark(ctx, identifier.Value, newAccessBookmark)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error creating Access Bookmark for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessBookmark.ID)
@@ -77,7 +78,7 @@ func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.Resourc
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Access Bookmark %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Access Bookmark %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", accessBookmark.Name)
@@ -113,7 +114,7 @@ func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.Resou
 		accessBookmark, err = client.UpdateZoneLevelAccessBookmark(ctx, identifier.Value, updatedAccessBookmark)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Bookmark for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	if accessBookmark.ID == "" {
@@ -140,10 +141,13 @@ func resourceCloudflareAccessBookmarkDelete(ctx context.Context, d *schema.Resou
 		err = client.DeleteZoneLevelAccessBookmark(ctx, identifier.Value, bookmarkID)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error deleting Access Bookmark for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
-	resourceCloudflareAccessBookmarkRead(ctx, d, meta)
+	readErr := resourceCloudflareAccessBookmarkRead(ctx, d, meta)
+	if readErr != nil {
+		return readErr
+	}
 
 	return nil
 }
@@ -162,7 +166,10 @@ func resourceCloudflareAccessBookmarkImport(ctx context.Context, d *schema.Resou
 	d.Set("account_id", accountID)
 	d.SetId(accessBookmarkID)
 
-	resourceCloudflareAccessBookmarkRead(context.TODO(), d, meta)
+	readErr := resourceCloudflareAccessBookmarkRead(ctx, d, meta)
+	if readErr != nil {
+		return nil, errors.New("failed to read Access Bookmark state")
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

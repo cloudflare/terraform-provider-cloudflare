@@ -117,7 +117,7 @@ func resourceCloudflareWorkersKVNamespaceImport(ctx context.Context, d *schema.R
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("error finding workers kv namespace %q: %s", d.Id(), err)
+		return nil, fmt.Errorf("error finding workers kv namespace %q: %w", d.Id(), err)
 	}
 
 	d.Set("title", title)

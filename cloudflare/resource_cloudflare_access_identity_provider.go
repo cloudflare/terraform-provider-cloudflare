@@ -46,7 +46,7 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("unable to find Access Identity Provider %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("unable to find Access Identity Provider %q: %w", d.Id(), err))
 	}
 
 	d.SetId(accessIdentityProvider.ID)
@@ -55,7 +55,7 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 
 	config := convertStructToSchema(d, accessIdentityProvider.Config)
 	if configErr := d.Set("config", config); configErr != nil {
-		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider configuration: %s", configErr))
+		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider configuration: %w", configErr))
 	}
 
 	return nil
@@ -86,7 +86,7 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 		accessIdentityProvider, err = client.CreateZoneLevelAccessIdentityProvider(ctx, identifier.Value, identityProvider)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Identity Provider for ID %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error creating Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
 
 	d.SetId(accessIdentityProvider.ID)
@@ -99,7 +99,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 
 	IDPConfig, conversionErr := convertSchemaToStruct(d)
 	if conversionErr != nil {
-		return diag.FromErr(fmt.Errorf("failed to convert schema into struct: %s", conversionErr))
+		return diag.FromErr(fmt.Errorf("failed to convert schema into struct: %w", conversionErr))
 	}
 
 	log.Printf("[DEBUG] updatedConfig: %+v", IDPConfig)
@@ -123,7 +123,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 		accessIdentityProvider, err = client.UpdateZoneLevelAccessIdentityProvider(ctx, identifier.Value, d.Id(), updatedAccessIdentityProvider)
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Identity Provider for ID %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error updating Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
 
 	if accessIdentityProvider.ID == "" {
@@ -149,7 +149,7 @@ func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *sche
 		_, err = client.DeleteZoneLevelAccessIdentityProvider(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Access Identity Provider for ID %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error deleting Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
 
 	d.SetId("")
@@ -171,7 +171,7 @@ func resourceCloudflareAccessIdentityProviderImport(ctx context.Context, d *sche
 	d.Set("account_id", accountID)
 	d.SetId(accessIdentityProviderID)
 
-	resourceCloudflareAccessIdentityProviderRead(context.TODO(), d, meta)
+	resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

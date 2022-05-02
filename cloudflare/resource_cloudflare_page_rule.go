@@ -57,7 +57,6 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-
 			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 			if err != nil {
 				return diag.FromErr(err)
@@ -83,7 +82,7 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 
 	r, err := client.CreatePageRule(ctx, zoneID, newPageRule)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to create page rule: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to create page rule: %w", err))
 	}
 
 	if r.ID == "" {
@@ -115,7 +114,7 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 			d.SetId("")
 			return nil
 		} else {
-			return diag.FromErr(fmt.Errorf("error finding page rule %q: %s", d.Id(), err))
+			return diag.FromErr(fmt.Errorf("error finding page rule %q: %w", d.Id(), err))
 		}
 	}
 	log.Printf("[DEBUG] Cloudflare Page Rule read configuration: %#v", pageRule)
@@ -131,7 +130,7 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 	for _, pageRuleAction := range pageRule.Actions {
 		key, value, err := transformFromCloudflarePageRuleAction(&pageRuleAction)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed to parse page rule action: %s", err))
+			return diag.FromErr(fmt.Errorf("failed to parse page rule action: %w", err))
 		}
 		actions[key] = value
 	}
@@ -195,7 +194,7 @@ func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceDat
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
 	if err := client.UpdatePageRule(ctx, zoneID, d.Id(), updatePageRule); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to update Cloudflare Page Rule: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to update Cloudflare Page Rule: %w", err))
 	}
 
 	return resourceCloudflarePageRuleRead(ctx, d, meta)
@@ -208,7 +207,7 @@ func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceDat
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zoneID, d.Id())
 
 	if err := client.DeletePageRule(ctx, zoneID, d.Id()); err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Page Rule: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Page Rule: %w", err))
 	}
 
 	return nil
@@ -347,7 +346,6 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 }
 
 func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
-
 	pageRuleAction.ID = id
 
 	if strValue, ok := value.(string); ok {

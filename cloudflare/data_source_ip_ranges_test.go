@@ -47,15 +47,13 @@ func testAccCloudflareIPRanges(n string) resource.TestCheckFunc {
 		var cidrBlocks sort.StringSlice = make([]string, cidrBlockSize)
 
 		for i := range make([]string, cidrBlockSize) {
-
 			block := a[fmt.Sprintf("cidr_blocks.%d", i)]
 
 			if _, _, err := net.ParseCIDR(block); err != nil {
-				return fmt.Errorf("malformed CIDR block %s: %s", block, err)
+				return fmt.Errorf("malformed CIDR block %s: %w", block, err)
 			}
 
 			cidrBlocks[i] = block
-
 		}
 
 		if !sort.IsSorted(cidrBlocks) {

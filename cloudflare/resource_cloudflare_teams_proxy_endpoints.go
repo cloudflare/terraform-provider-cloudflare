@@ -35,7 +35,7 @@ func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.Res
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Teams Proxy Endpoint %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Teams Proxy Endpoint %q: %w", d.Id(), err))
 	}
 
 	if err := d.Set("name", endpoint.Name); err != nil {
@@ -66,12 +66,11 @@ func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.R
 
 	proxyEndpoint, err := client.CreateTeamsProxyEndpoint(ctx, accountID, newProxyEndpoint)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Teams Proxy Endpoint for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error creating Teams Proxy Endpoint for account %q: %w", accountID, err))
 	}
 
 	d.SetId(proxyEndpoint.ID)
 	return resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)
-
 }
 
 func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -88,7 +87,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.R
 	teamsProxyEndpoint, err := client.UpdateTeamsProxyEndpoint(ctx, accountID, updatedProxyEndpoint)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Teams Proxy Endpoint for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error updating Teams Proxy Endpoint for account %q: %w", accountID, err))
 	}
 
 	if teamsProxyEndpoint.ID == "" {
@@ -106,7 +105,7 @@ func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.R
 
 	err := client.DeleteTeamsProxyEndpoint(ctx, accountID, id)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Teams Proxy Endpoint for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error deleting Teams Proxy Endpoint for account %q: %w", accountID, err))
 	}
 
 	return resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)
@@ -129,5 +128,4 @@ func resourceCloudflareTeamsProxyEndpointImport(ctx context.Context, d *schema.R
 	resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-
 }

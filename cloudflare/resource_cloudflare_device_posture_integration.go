@@ -38,7 +38,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *sc
 
 	err := setDevicePostureIntegrationConfig(&newDevicePostureIntegration, d)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Device Posture integration with provided config: %s", err))
+		return diag.FromErr(fmt.Errorf("error creating Device Posture integration with provided config: %w", err))
 	}
 	log.Printf("[DEBUG] Creating Cloudflare Device Posture Integration from struct: %+v\n", newDevicePostureIntegration)
 
@@ -47,7 +47,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *sc
 
 	newDevicePostureIntegration, err = client.CreateDevicePostureIntegration(ctx, accountID, newDevicePostureIntegration)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule for account %q: %s %+v", accountID, err, newDevicePostureIntegration))
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule for account %q: %w %+v", accountID, err, newDevicePostureIntegration))
 	}
 
 	d.SetId(newDevicePostureIntegration.IntegrationID)
@@ -72,7 +72,7 @@ func devicePostureIntegrationReadHelper(ctx context.Context, d *schema.ResourceD
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding device posture integration %q: %s", d.Id(), err)
+		return fmt.Errorf("error finding device posture integration %q: %w", d.Id(), err)
 	}
 
 	devicePostureIntegration.Config.ClientSecret = secret
@@ -97,14 +97,14 @@ func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *sc
 
 	err := setDevicePostureIntegrationConfig(&updatedDevicePostureIntegration, d)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err))
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %w", err))
 	}
 
 	log.Printf("[DEBUG] Updating Cloudflare device posture integration from struct: %+v", updatedDevicePostureIntegration)
 
 	devicePostureIntegration, err := client.UpdateDevicePostureIntegration(ctx, accountID, updatedDevicePostureIntegration)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating device posture integration for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error updating device posture integration for account %q: %w", accountID, err))
 	}
 
 	if devicePostureIntegration.IntegrationID == "" {
@@ -123,7 +123,7 @@ func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *sc
 
 	err := client.DeleteDevicePostureIntegration(ctx, accountID, appID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %w", accountID, err))
 	}
 
 	resourceCloudflareDevicePostureIntegrationRead(ctx, d, meta)

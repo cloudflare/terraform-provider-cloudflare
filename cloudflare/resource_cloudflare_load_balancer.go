@@ -405,17 +405,17 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 
 	if _, sessionAffinityAttrsOk := d.GetOk("session_affinity_attributes"); sessionAffinityAttrsOk {
 		if err := d.Set("session_affinity_attributes", flattenSessionAffinityAttrs(loadBalancer.SessionAffinityAttributes)); err != nil {
-			return diag.FromErr(fmt.Errorf("failed to set session_affinity_attributes: %s", err))
+			return diag.FromErr(fmt.Errorf("failed to set session_affinity_attributes: %w", err))
 		}
 	}
 
 	if len(loadBalancer.Rules) > 0 {
 		fr, err := flattenRules(d, loadBalancer.Rules)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed to flatten rules: %s", err))
+			return diag.FromErr(fmt.Errorf("failed to flatten rules: %w", err))
 		}
 		if err := d.Set("rules", fr); err != nil {
-			return diag.FromErr(fmt.Errorf("failed to set rules: %s\n %v", err, fr))
+			return diag.FromErr(fmt.Errorf("failed to set rules: %w\n %v", err, fr))
 		}
 	}
 
@@ -467,7 +467,7 @@ func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.Resourc
 
 	err := client.DeleteLoadBalancer(ctx, zoneID, loadBalancerID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Load Balancer: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Load Balancer: %w", err))
 	}
 
 	return nil

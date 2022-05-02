@@ -37,7 +37,7 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error finding Teams Rule %q: %s", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error finding Teams Rule %q: %w", d.Id(), err))
 	}
 	if err := d.Set("name", rule.Name); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing rule name"))
@@ -107,7 +107,7 @@ func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceDa
 
 	rule, err := client.TeamsCreateRule(ctx, accountID, newTeamsRule)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Teams rule for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error creating Teams rule for account %q: %w", accountID, err))
 	}
 
 	d.SetId(rule.ID)
@@ -145,7 +145,7 @@ func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceDa
 
 	updatedTeamsRule, err := client.TeamsUpdateRule(ctx, accountID, teamsRule.ID, teamsRule)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Teams rule for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error updating Teams rule for account %q: %w", accountID, err))
 	}
 	if updatedTeamsRule.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Teams Rule ID in update response; resource was empty"))
@@ -162,7 +162,7 @@ func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceDa
 
 	err := client.TeamsDeleteRule(ctx, accountID, id)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Teams Rule for account %q: %s", accountID, err))
+		return diag.FromErr(fmt.Errorf("error deleting Teams Rule for account %q: %w", accountID, err))
 	}
 
 	return resourceCloudflareTeamsRuleRead(ctx, d, meta)

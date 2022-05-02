@@ -390,7 +390,7 @@ func resourceCloudflareRateLimitDelete(ctx context.Context, d *schema.ResourceDa
 
 	err := client.DeleteRateLimit(ctx, zoneID, rateLimitId)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Rate Limit for zone: %s", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Rate Limit for zone: %w", err))
 	}
 
 	return nil
