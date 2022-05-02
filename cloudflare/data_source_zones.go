@@ -92,7 +92,7 @@ func dataSourceCloudflareZonesRead(ctx context.Context, d *schema.ResourceData, 
 		filter.status,
 	)
 
-	zones, err := client.ListZonesContext(context.Background(), zoneFilter)
+	zones, err := client.ListZonesContext(ctx, zoneFilter)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing Zone: %s", err))
 	}

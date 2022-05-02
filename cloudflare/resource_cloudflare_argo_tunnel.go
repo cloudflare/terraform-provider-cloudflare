@@ -31,7 +31,7 @@ func resourceCloudflareArgoTunnelCreate(ctx context.Context, d *schema.ResourceD
 	name := d.Get("name").(string)
 	secret := d.Get("secret").(string)
 
-	tunnel, err := client.CreateArgoTunnel(context.Background(), accID, name, secret)
+	tunnel, err := client.CreateArgoTunnel(ctx, accID, name, secret)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Argo Tunnel")))
 	}
@@ -45,7 +45,7 @@ func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceDat
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 
-	tunnel, err := client.ArgoTunnel(context.Background(), accID, d.Id())
+	tunnel, err := client.ArgoTunnel(ctx, accID, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to fetch Argo Tunnel: %w", err))
 	}
@@ -59,12 +59,12 @@ func resourceCloudflareArgoTunnelDelete(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 
-	cleanupErr := client.CleanupArgoTunnelConnections(context.Background(), accID, d.Id())
+	cleanupErr := client.CleanupArgoTunnelConnections(ctx, accID, d.Id())
 	if cleanupErr != nil {
 		return diag.FromErr(errors.Wrap(cleanupErr, fmt.Sprintf("failed to clean up Argo Tunnel connections")))
 	}
 
-	deleteErr := client.DeleteArgoTunnel(context.Background(), accID, d.Id())
+	deleteErr := client.DeleteArgoTunnel(ctx, accID, d.Id())
 	if deleteErr != nil {
 		return diag.FromErr(errors.Wrap(deleteErr, fmt.Sprintf("failed to delete Argo Tunnel")))
 	}
@@ -84,7 +84,7 @@ func resourceCloudflareArgoTunnelImport(ctx context.Context, d *schema.ResourceD
 
 	accID, tunnelID := attributes[0], attributes[1]
 
-	tunnel, err := client.ArgoTunnel(context.Background(), accID, tunnelID)
+	tunnel, err := client.ArgoTunnel(ctx, accID, tunnelID)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch Argo Tunnel %s", tunnelID))
 	}

@@ -30,7 +30,7 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	rule, err := client.TeamsRule(context.Background(), accountID, d.Id())
+	rule, err := client.TeamsRule(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
 			log.Printf("[INFO] Teams Rule config %s doesnt exists", d.Id())
@@ -105,7 +105,7 @@ func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceDa
 
 	log.Printf("[DEBUG] Creating Cloudflare Teams Rule from struct: %+v", newTeamsRule)
 
-	rule, err := client.TeamsCreateRule(context.Background(), accountID, newTeamsRule)
+	rule, err := client.TeamsCreateRule(ctx, accountID, newTeamsRule)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Teams rule for account %q: %s", accountID, err))
 	}
@@ -143,7 +143,7 @@ func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 	log.Printf("[DEBUG] Updating Cloudflare Teams rule from struct: %+v", teamsRule)
 
-	updatedTeamsRule, err := client.TeamsUpdateRule(context.Background(), accountID, teamsRule.ID, teamsRule)
+	updatedTeamsRule, err := client.TeamsUpdateRule(ctx, accountID, teamsRule.ID, teamsRule)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Teams rule for account %q: %s", accountID, err))
 	}
@@ -160,7 +160,7 @@ func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceDa
 
 	log.Printf("[DEBUG] Deleting Cloudflare Teams Rule using ID: %s", id)
 
-	err := client.TeamsDeleteRule(context.Background(), accountID, id)
+	err := client.TeamsDeleteRule(ctx, accountID, id)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Teams Rule for account %q: %s", accountID, err))
 	}

@@ -40,14 +40,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 			Certificate: d.Get("certificate").(string),
 			PrivateKey:  d.Get("private_key").(string),
 		}
-		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perZoneAOPCert)
+		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(ctx, zoneID, perZoneAOPCert)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err))
 		}
 		d.SetId(record.ID)
 
 		perZoneRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), zoneID, record.ID)
+			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, record.ID)
 			if err != nil {
 				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %s", err))
 			}
@@ -71,14 +71,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 			Certificate: d.Get("certificate").(string),
 			PrivateKey:  d.Get("private_key").(string),
 		}
-		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perHostnameAOPCert)
+		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, perHostnameAOPCert)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err))
 		}
 		d.SetId(record.ID)
 
 		perHostnameRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, record.ID)
+			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, record.ID)
 			if err != nil {
 				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %s", err))
 			}
@@ -107,7 +107,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
-		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), zoneID, certID)
+		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
 				log.Printf("[INFO] Per-Zone Authenticated Origin Pull certificate %s no longer exists", d.Id())
@@ -122,7 +122,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 		d.Set("status", record.Status)
 		d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
 	case aopType == "per-hostname":
-		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
+		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
 				log.Printf("[INFO] Per-Hostname Authenticated Origin Pull certificate %s no longer exists", d.Id())
@@ -148,12 +148,12 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(ctx context.Con
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
-		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
+		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err))
 		}
 	case aopType == "per-hostname":
-		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
+		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err))
 		}

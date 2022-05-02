@@ -102,7 +102,7 @@ func dataSourceCloudflareWAFGroupsRead(ctx context.Context, d *schema.ResourceDa
 	if packageID == "" {
 		var err error
 		log.Printf("[DEBUG] Reading WAF Packages")
-		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
+		pkgList, err = client.ListWAFPackages(ctx, zoneID)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -114,7 +114,7 @@ func dataSourceCloudflareWAFGroupsRead(ctx context.Context, d *schema.ResourceDa
 	groupIds := make([]string, 0)
 	groupDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {
-		groupList, err := client.ListWAFGroups(context.Background(), zoneID, pkg.ID)
+		groupList, err := client.ListWAFGroups(ctx, zoneID, pkg.ID)
 		if err != nil {
 			return diag.FromErr(err)
 		}

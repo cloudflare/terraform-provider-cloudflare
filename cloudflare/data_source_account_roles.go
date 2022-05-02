@@ -49,7 +49,7 @@ func dataSourceCloudflareAccountRolesRead(ctx context.Context, d *schema.Resourc
 	accountID := d.Get("account_id").(string)
 
 	log.Printf("[DEBUG] Reading Account Roles")
-	roles, err := client.AccountRoles(context.Background(), accountID)
+	roles, err := client.AccountRoles(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing Account Roles: %s", err))
 	}

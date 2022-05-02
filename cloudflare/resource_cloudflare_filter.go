@@ -50,7 +50,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	log.Printf("[DEBUG] Creating Cloudflare Filter from struct: %+v", newFilter)
 
-	r, err := client.CreateFilters(context.Background(), zoneID, []cloudflare.Filter{newFilter})
+	r, err := client.CreateFilters(ctx, zoneID, []cloudflare.Filter{newFilter})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Filter for zone %q: %s", zoneID, err))
@@ -72,7 +72,7 @@ func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, m
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[DEBUG] Getting a Filter record for zone %q, id %s", zoneID, d.Id())
-	filter, err := client.Filter(context.Background(), zoneID, d.Id())
+	filter, err := client.Filter(ctx, zoneID, d.Id())
 
 	log.Printf("[DEBUG] filter: %#v", filter)
 	log.Printf("[DEBUG] filter error: %#v", err)
@@ -121,7 +121,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 
 	log.Printf("[DEBUG] Updating Cloudflare Filter from struct: %+v", newFilter)
 
-	r, err := client.UpdateFilter(context.Background(), zoneID, newFilter)
+	r, err := client.UpdateFilter(ctx, zoneID, newFilter)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Filter for zone %q: %s", zoneID, err))
@@ -140,7 +140,7 @@ func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData,
 
 	log.Printf("[INFO] Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID)
 
-	err := client.DeleteFilter(context.Background(), zoneID, d.Id())
+	err := client.DeleteFilter(ctx, zoneID, d.Id())
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Filter: %s", err))

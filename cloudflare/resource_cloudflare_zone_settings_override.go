@@ -43,18 +43,18 @@ func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema
 	log.Printf("[INFO] Creating zone settings resource for zone ID: %s", d.Id())
 
 	// do extra initial read to get initial_settings before updating
-	zoneSettings, err := client.ZoneSettings(context.Background(), d.Id())
+	zoneSettings, err := client.ZoneSettings(ctx, d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("Error reading initial settings for zone %q", d.Id())))
 	}
 
-	if err = updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings, d.Id(), client); err != nil {
+	if err = updateZoneSettingsResponseWithSingleZoneSettings(ctx, zoneSettings, d.Id(), client); err != nil {
 		return diag.FromErr(err)
 	}
 
 	if _, ok := d.GetOk("settings.0.universal_ssl"); ok {
 		// pulling USSL status and wrapping it into a cloudflare.ZoneSetting that we can set initial_settings
-		if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(ctx, zoneSettings, d.Id(), client); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -77,9 +77,9 @@ func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema
 	return resourceCloudflareZoneSettingsOverrideUpdate(ctx, d, meta)
 }
 
-func updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
+func updateZoneSettingsResponseWithSingleZoneSettings(ctx context.Context, zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
 	for _, settingName := range fetchAsSingleSetting {
-		singleSetting, err := client.ZoneSingleSetting(context.Background(), zoneId, settingName)
+		singleSetting, err := client.ZoneSingleSetting(ctx, zoneId, settingName)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Error reading setting '%q' for zone %q", settingName, zoneId))
 		}
@@ -88,8 +88,8 @@ func updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings *cloudflare.Z
 	return nil
 }
 
-func updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
-	ussl, err := client.UniversalSSLSettingDetails(context.Background(), zoneId)
+func updateZoneSettingsResponseWithUniversalSSLSettings(ctx context.Context, zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
+	ussl, err := client.UniversalSSLSettingDetails(ctx, zoneId)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error reading initial Universal SSL settings for zone %q", zoneId))
 	}
@@ -108,7 +108,7 @@ func updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings *cloudflare
 func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	zone, err := client.ZoneDetails(context.Background(), d.Id())
+	zone, err := client.ZoneDetails(ctx, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Zone %q not found", d.Id())
@@ -123,17 +123,17 @@ func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.R
 
 	// not all settings are visible to all users, so this might be a subset
 	// assume (for now) that user can see/do everything
-	zoneSettings, err := client.ZoneSettings(context.Background(), d.Id())
+	zoneSettings, err := client.ZoneSettings(ctx, d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("Error reading settings for zone %q", d.Id())))
 	}
 
-	if err = updateZoneSettingsResponseWithSingleZoneSettings(zoneSettings, d.Id(), client); err != nil {
+	if err = updateZoneSettingsResponseWithSingleZoneSettings(ctx, zoneSettings, d.Id(), client); err != nil {
 		return diag.FromErr(err)
 	}
 
 	if _, ok := d.GetOk("settings.0.universal_ssl"); ok {
-		if err = updateZoneSettingsResponseWithUniversalSSLSettings(zoneSettings, d.Id(), client); err != nil {
+		if err = updateZoneSettingsResponseWithUniversalSSLSettings(ctx, zoneSettings, d.Id(), client); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -217,11 +217,11 @@ func flattenReadOnlyZoneSettings(settings []cloudflare.ZoneSetting) []string {
 	return ids
 }
 
-func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
+func updateSingleZoneSettings(ctx context.Context, zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
 	var indexesToCut []int
 	for i, setting := range zoneSettings {
 		if contains(fetchAsSingleSetting, setting.ID) {
-			_, err := client.UpdateZoneSingleSetting(context.Background(), zoneID, setting.ID, setting)
+			_, err := client.UpdateZoneSingleSetting(ctx, zoneID, setting.ID, setting)
 			if err != nil {
 				return zoneSettings, err
 			}
@@ -235,13 +235,13 @@ func updateSingleZoneSettings(zoneSettings []cloudflare.ZoneSetting, client *clo
 	return zoneSettings, nil
 }
 
-func updateUniversalSSLSetting(zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
+func updateUniversalSSLSetting(ctx context.Context, zoneSettings []cloudflare.ZoneSetting, client *cloudflare.API, zoneID string) ([]cloudflare.ZoneSetting, error) {
 	indexToCut := -1
 	for i, setting := range zoneSettings {
 		// Skipping USSL Update if value is empty, especially when we are reverting to the initial state and we did not had the information
 		if setting.ID == "universal_ssl" {
 			if setting.Value.(string) != "" {
-				_, err := client.EditUniversalSSLSetting(context.Background(), zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
+				_, err := client.EditUniversalSSLSetting(ctx, zoneID, cloudflare.UniversalSSLSetting{Enabled: boolFromString(setting.Value.(string))})
 				if err != nil {
 					return zoneSettings, err
 				}
@@ -270,16 +270,16 @@ func resourceCloudflareZoneSettingsOverrideUpdate(ctx context.Context, d *schema
 
 		log.Printf("[DEBUG] Cloudflare Zone Settings update configuration: %#v", zoneSettings)
 
-		if zoneSettings, err = updateSingleZoneSettings(zoneSettings, client, d.Id()); err != nil {
+		if zoneSettings, err = updateSingleZoneSettings(ctx, zoneSettings, client, d.Id()); err != nil {
 			return diag.FromErr(err)
 		}
 
-		if zoneSettings, err = updateUniversalSSLSetting(zoneSettings, client, d.Id()); err != nil {
+		if zoneSettings, err = updateUniversalSSLSetting(ctx, zoneSettings, client, d.Id()); err != nil {
 			return diag.FromErr(err)
 		}
 
 		if len(zoneSettings) > 0 {
-			_, err = client.UpdateZoneSettings(context.Background(), d.Id(), zoneSettings)
+			_, err = client.UpdateZoneSettings(ctx, d.Id(), zoneSettings)
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -383,16 +383,16 @@ func resourceCloudflareZoneSettingsOverrideDelete(ctx context.Context, d *schema
 
 		log.Printf("[DEBUG] Reverting Cloudflare Zone Settings to initial settings with update configuration: %#v", zoneSettings)
 
-		if zoneSettings, err = updateSingleZoneSettings(zoneSettings, client, d.Id()); err != nil {
+		if zoneSettings, err = updateSingleZoneSettings(ctx, zoneSettings, client, d.Id()); err != nil {
 			return diag.FromErr(err)
 		}
 
-		if zoneSettings, err = updateUniversalSSLSetting(zoneSettings, client, d.Id()); err != nil {
+		if zoneSettings, err = updateUniversalSSLSetting(ctx, zoneSettings, client, d.Id()); err != nil {
 			return diag.FromErr(err)
 		}
 
 		if len(zoneSettings) > 0 {
-			_, err = client.UpdateZoneSettings(context.Background(), d.Id(), zoneSettings)
+			_, err = client.UpdateZoneSettings(ctx, d.Id(), zoneSettings)
 			if err != nil {
 				return diag.FromErr(err)
 			}

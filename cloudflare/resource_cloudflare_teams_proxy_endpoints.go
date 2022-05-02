@@ -28,7 +28,7 @@ func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.Res
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	endpoint, err := client.TeamsProxyEndpoint(context.Background(), accountID, d.Id())
+	endpoint, err := client.TeamsProxyEndpoint(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
 			log.Printf("[INFO] Teams Proxy Endpoint %s no longer exists", d.Id())
@@ -64,7 +64,7 @@ func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.R
 
 	log.Printf("[DEBUG] Creating Cloudflare Teams Proxy Endpoint from struct: %+v", newProxyEndpoint)
 
-	proxyEndpoint, err := client.CreateTeamsProxyEndpoint(context.Background(), accountID, newProxyEndpoint)
+	proxyEndpoint, err := client.CreateTeamsProxyEndpoint(ctx, accountID, newProxyEndpoint)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Teams Proxy Endpoint for account %q: %s", accountID, err))
 	}
@@ -85,7 +85,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.R
 
 	log.Printf("[DEBUG] Updating Cloudflare Teams Proxy Endpoint from struct: %+v", updatedProxyEndpoint)
 
-	teamsProxyEndpoint, err := client.UpdateTeamsProxyEndpoint(context.Background(), accountID, updatedProxyEndpoint)
+	teamsProxyEndpoint, err := client.UpdateTeamsProxyEndpoint(ctx, accountID, updatedProxyEndpoint)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Teams Proxy Endpoint for account %q: %s", accountID, err))
@@ -104,7 +104,7 @@ func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.R
 
 	log.Printf("[DEBUG] Deleting Cloudflare Teams Proxy Endpoint using ID: %s", id)
 
-	err := client.DeleteTeamsProxyEndpoint(context.Background(), accountID, id)
+	err := client.DeleteTeamsProxyEndpoint(ctx, accountID, id)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Teams Proxy Endpoint for account %q: %s", accountID, err))
 	}

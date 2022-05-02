@@ -35,7 +35,7 @@ func resourceCloudflareMagicFirewallRulesetCreate(ctx context.Context, d *schema
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error building ruleset from resource")))
 	}
 
-	ruleset, err := client.CreateMagicFirewallRuleset(context.Background(),
+	ruleset, err := client.CreateMagicFirewallRuleset(ctx,
 		accountID,
 		d.Get("name").(string),
 		d.Get("description").(string),
@@ -70,7 +70,7 @@ func resourceCloudflareMagicFirewallRulesetRead(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	ruleset, err := client.GetMagicFirewallRuleset(context.Background(), accountID, d.Id())
+	ruleset, err := client.GetMagicFirewallRuleset(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "could not find ruleset") {
 			log.Printf("[INFO] Magic Firewall Ruleset %s no longer exists", d.Id())
@@ -96,7 +96,7 @@ func resourceCloudflareMagicFirewallRulesetUpdate(ctx context.Context, d *schema
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error building ruleset from resource")))
 	}
 
-	_, err = client.UpdateMagicFirewallRuleset(context.Background(), accountID, d.Id(), d.Get("description").(string), rules)
+	_, err = client.UpdateMagicFirewallRuleset(ctx, accountID, d.Id(), d.Get("description").(string), rules)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating Magic Firewall ruleset with ID %q", d.Id())))
 	}
@@ -108,7 +108,7 @@ func resourceCloudflareMagicFirewallRulesetDelete(ctx context.Context, d *schema
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	err := client.DeleteMagicFirewallRuleset(context.Background(), accountID, d.Id())
+	err := client.DeleteMagicFirewallRuleset(ctx, accountID, d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error deleting Magic Firewall ruleset with ID %q", d.Id())))
 	}

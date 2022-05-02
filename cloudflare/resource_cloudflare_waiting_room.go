@@ -53,7 +53,7 @@ func resourceCloudflareWaitingRoomCreate(ctx context.Context, d *schema.Resource
 
 	newWaitingRoom := buildWaitingRoom(d)
 
-	waitingRoom, err := client.CreateWaitingRoom(context.Background(), zoneID, newWaitingRoom)
+	waitingRoom, err := client.CreateWaitingRoom(ctx, zoneID, newWaitingRoom)
 
 	if err != nil {
 		name := d.Get("name").(string)
@@ -70,7 +70,7 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 	waitingRoomID := d.Id()
 	zoneID := d.Get("zone_id").(string)
 
-	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
+	waitingRoom, err := client.WaitingRoom(ctx, zoneID, waitingRoomID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[WARN] Removing waiting room from state because it's not found in API")
@@ -103,7 +103,7 @@ func resourceCloudflareWaitingRoomUpdate(ctx context.Context, d *schema.Resource
 
 	waitingRoom := buildWaitingRoom(d)
 
-	_, err := client.ChangeWaitingRoom(context.Background(), zoneID, waitingRoomID, waitingRoom)
+	_, err := client.ChangeWaitingRoom(ctx, zoneID, waitingRoomID, waitingRoom)
 
 	if err != nil {
 		name := d.Get("name").(string)
@@ -118,7 +118,7 @@ func resourceCloudflareWaitingRoomDelete(ctx context.Context, d *schema.Resource
 	waitingRoomID := d.Id()
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteWaitingRoom(context.Background(), zoneID, waitingRoomID)
+	err := client.DeleteWaitingRoom(ctx, zoneID, waitingRoomID)
 
 	if err != nil {
 		name := d.Get("name").(string)
@@ -140,7 +140,7 @@ func resourceCloudflareWaitingRoomImport(ctx context.Context, d *schema.Resource
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/waitingRoomID\" for import", d.Id())
 	}
 
-	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
+	waitingRoom, err := client.WaitingRoom(ctx, zoneID, waitingRoomID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Waiting room %s", waitingRoomID)
 	}

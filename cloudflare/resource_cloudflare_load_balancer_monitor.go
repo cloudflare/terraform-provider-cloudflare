@@ -95,7 +95,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
-	r, err := client.CreateLoadBalancerMonitor(context.Background(), loadBalancerMonitor)
+	r, err := client.CreateLoadBalancerMonitor(ctx, loadBalancerMonitor)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer monitor"))
 	}
@@ -183,7 +183,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
-	_, err := client.ModifyLoadBalancerMonitor(context.Background(), loadBalancerMonitor)
+	_, err := client.ModifyLoadBalancerMonitor(ctx, loadBalancerMonitor)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error modifying load balancer monitor"))
 	}
@@ -206,7 +206,7 @@ func expandLoadBalancerMonitorHeader(cfgSet interface{}) map[string][]string {
 func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	loadBalancerMonitor, err := client.LoadBalancerMonitorDetails(context.Background(), d.Id())
+	loadBalancerMonitor, err := client.LoadBalancerMonitorDetails(ctx, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer monitor %s no longer exists", d.Id())
@@ -262,7 +262,7 @@ func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *sch
 
 	log.Printf("[INFO] Deleting Cloudflare Load Balancer Monitor: %s ", d.Id())
 
-	err := client.DeleteLoadBalancerMonitor(context.Background(), d.Id())
+	err := client.DeleteLoadBalancerMonitor(ctx, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer monitor %s no longer exists", d.Id())

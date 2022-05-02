@@ -26,7 +26,7 @@ func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	domain, err := client.ListFallbackDomains(context.Background(), accountID)
+	domain, err := client.ListFallbackDomains(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Fallback Domains: %w", err))
 	}
@@ -44,7 +44,7 @@ func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.Resou
 
 	domainList := expandFallbackDomains(d.Get("domains").([]interface{}))
 
-	newFallbackDomains, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
+	newFallbackDomains, err := client.UpdateFallbackDomain(ctx, accountID, domainList)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Fallback Domains: %w", err))
 	}
@@ -62,7 +62,7 @@ func resourceCloudflareFallbackDomainDelete(ctx context.Context, d *schema.Resou
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	err := client.RestoreFallbackDomainDefaults(context.Background(), accountID)
+	err := client.RestoreFallbackDomainDefaults(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(err)
 	}

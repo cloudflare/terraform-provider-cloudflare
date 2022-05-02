@@ -37,7 +37,7 @@ func resourceCloudflareArgoRead(ctx context.Context, d *schema.ResourceData, met
 	d.Set("zone_id", zoneID)
 
 	if tieredCaching != "" {
-		tieredCaching, err := client.ArgoTieredCaching(context.Background(), zoneID)
+		tieredCaching, err := client.ArgoTieredCaching(ctx, zoneID)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, "failed to get tiered caching setting"))
 		}
@@ -46,7 +46,7 @@ func resourceCloudflareArgoRead(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	if smartRouting != "" {
-		smartRouting, err := client.ArgoSmartRouting(context.Background(), zoneID)
+		smartRouting, err := client.ArgoSmartRouting(ctx, zoneID)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, "failed to get smart routing setting"))
 		}
@@ -64,7 +64,7 @@ func resourceCloudflareArgoUpdate(ctx context.Context, d *schema.ResourceData, m
 	smartRouting := d.Get("smart_routing").(string)
 
 	if smartRouting != "" {
-		argoSmartRouting, err := client.UpdateArgoSmartRouting(context.Background(), zoneID, smartRouting)
+		argoSmartRouting, err := client.UpdateArgoSmartRouting(ctx, zoneID, smartRouting)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, "failed to update smart routing setting"))
 		}
@@ -72,7 +72,7 @@ func resourceCloudflareArgoUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	if tieredCaching != "" {
-		argoTieredCaching, err := client.UpdateArgoTieredCaching(context.Background(), zoneID, tieredCaching)
+		argoTieredCaching, err := client.UpdateArgoTieredCaching(ctx, zoneID, tieredCaching)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, "failed to update tiered caching setting"))
 		}
@@ -88,12 +88,12 @@ func resourceCloudflareArgoDelete(ctx context.Context, d *schema.ResourceData, m
 
 	log.Printf("[DEBUG] Resetting Argo values to 'off'")
 
-	_, smartRoutingErr := client.UpdateArgoSmartRouting(context.Background(), zoneID, "off")
+	_, smartRoutingErr := client.UpdateArgoSmartRouting(ctx, zoneID, "off")
 	if smartRoutingErr != nil {
 		return diag.FromErr(errors.Wrap(smartRoutingErr, "failed to update smart routing setting"))
 	}
 
-	_, tieredCachingErr := client.UpdateArgoTieredCaching(context.Background(), zoneID, "off")
+	_, tieredCachingErr := client.UpdateArgoTieredCaching(ctx, zoneID, "off")
 	if tieredCachingErr != nil {
 		return diag.FromErr(errors.Wrap(tieredCachingErr, "failed to update tiered caching setting"))
 	}

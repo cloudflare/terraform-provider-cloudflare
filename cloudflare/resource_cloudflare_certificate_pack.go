@@ -48,7 +48,7 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 			CertificateAuthority: ca,
 			CloudflareBranding:   cloudflareBranding,
 		}
-		certPackResponse, err := client.CreateAdvancedCertificatePack(context.Background(), zoneID, cert)
+		certPackResponse, err := client.CreateAdvancedCertificatePack(ctx, zoneID, cert)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err)))
 		}
@@ -58,7 +58,7 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 			Type:  certificatePackType,
 			Hosts: expandInterfaceToStringList(certificateHostSet.List()),
 		}
-		certPackResponse, err := client.CreateCertificatePack(context.Background(), zoneID, cert)
+		certPackResponse, err := client.CreateCertificatePack(ctx, zoneID, cert)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err)))
 		}
@@ -66,8 +66,8 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 	}
 
 	if d.Get("wait_for_active_status").(bool) {
-		err := resource.Retry(d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
-			certificatePack, err := client.CertificatePack(context.Background(), zoneID, certificatePackID)
+		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+			certificatePack, err := client.CertificatePack(ctx, zoneID, certificatePackID)
 			if err != nil {
 				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch certificate pack"))
 			}
@@ -96,7 +96,7 @@ func resourceCloudflareCertificatePackRead(ctx context.Context, d *schema.Resour
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	certificatePack, err := client.CertificatePack(context.Background(), zoneID, d.Id())
+	certificatePack, err := client.CertificatePack(ctx, zoneID, d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to fetch certificate pack"))
 	}
@@ -135,7 +135,7 @@ func resourceCloudflareCertificatePackDelete(ctx context.Context, d *schema.Reso
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteCertificatePack(context.Background(), zoneID, d.Id())
+	err := client.DeleteCertificatePack(ctx, zoneID, d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to delete certificate pack"))
 	}

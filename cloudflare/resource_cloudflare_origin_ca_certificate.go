@@ -51,7 +51,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 	}
 
 	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: %#v", certInput)
-	cert, err := client.CreateOriginCertificate(context.Background(), certInput)
+	cert, err := client.CreateOriginCertificate(ctx, certInput)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating origin certificate: %s", err))
@@ -65,7 +65,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
-	cert, err := client.OriginCertificate(context.Background(), certID)
+	cert, err := client.OriginCertificate(ctx, certID)
 
 	log.Printf("[DEBUG] OriginCACertificate: %#v", cert)
 
@@ -114,7 +114,7 @@ func resourceCloudflareOriginCACertificateDelete(ctx context.Context, d *schema.
 
 	log.Printf("[INFO] Revoking Cloudflare OriginCACertificate: id %s", certID)
 
-	_, err := client.RevokeOriginCertificate(context.Background(), certID)
+	_, err := client.RevokeOriginCertificate(ctx, certID)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error revoking Cloudflare OriginCACertificate: %s", err))

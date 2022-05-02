@@ -49,7 +49,7 @@ func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("failed to create custom ssl cert: %s", err))
 	}
 
-	res, err := client.CreateSSL(context.Background(), zoneID, zcso)
+	res, err := client.CreateSSL(ctx, zoneID, zcso)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to create custom ssl cert: %s", err))
 	}
@@ -59,7 +59,7 @@ func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		cert, err := client.SSLDetails(context.Background(), zoneID, res.ID)
+		cert, err := client.SSLDetails(ctx, zoneID, res.ID)
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom ssl cert: %s", err))
 		}
@@ -97,7 +97,7 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 			return diag.FromErr(fmt.Errorf("failed to update custom ssl cert: %s", err))
 		}
 
-		res, uErr := client.UpdateSSL(context.Background(), zoneID, certID, zcso)
+		res, uErr := client.UpdateSSL(ctx, zoneID, certID, zcso)
 		if uErr != nil {
 			log.Printf("[DEBUG] Failed to update custom ssl cert: %s", uErr)
 			updateErr = true
@@ -113,7 +113,7 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 			log.Printf("Failed to update custom ssl cert: %s", err)
 		}
 
-		resList, reErr := client.ReprioritizeSSL(context.Background(), zoneID, zcsp)
+		resList, reErr := client.ReprioritizeSSL(ctx, zoneID, zcsp)
 		if err != nil {
 			log.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
 			reprioritizeErr = true
@@ -135,7 +135,7 @@ func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData
 	certID := d.Id()
 
 	// update all possible schema attributes with fields from api response
-	record, err := client.SSLDetails(context.Background(), zoneID, certID)
+	record, err := client.SSLDetails(ctx, zoneID, certID)
 	if err != nil {
 		log.Printf("[WARN] Removing record from state because it's not found in API")
 		d.SetId("")
@@ -170,7 +170,7 @@ func resourceCloudflareCustomSslDelete(ctx context.Context, d *schema.ResourceDa
 
 	log.Printf("[DEBUG] Deleting SSL cert %s for zone %s", certID, zoneID)
 
-	err := client.DeleteSSL(context.Background(), zoneID, certID)
+	err := client.DeleteSSL(ctx, zoneID, certID)
 	if err != nil {
 		errors.Wrap(err, "failed to delete custom ssl cert setting")
 	}

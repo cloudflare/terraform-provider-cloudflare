@@ -21,7 +21,7 @@ func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceDa
 	accountID := d.Get("account_id").(string)
 	d.SetId(accountID)
 
-	devices, err := client.ListTeamsDevices(context.Background(), accountID)
+	devices, err := client.ListTeamsDevices(ctx, accountID)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding devices in account %q: %w", accountID, err))

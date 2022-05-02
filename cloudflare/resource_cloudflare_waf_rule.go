@@ -32,7 +32,7 @@ func resourceCloudflareWAFRuleRead(ctx context.Context, d *schema.ResourceData, 
 	zoneID := d.Get("zone_id").(string)
 	packageID := d.Get("package_id").(string)
 
-	rule, err := client.WAFRule(context.Background(), zoneID, packageID, ruleID)
+	rule, err := client.WAFRule(ctx, zoneID, packageID, ruleID)
 	if err != nil {
 		var requestError *cloudflare.RequestError
 		if errors.As(err, &requestError) && (sliceContainsInt(requestError.ErrorCodes(), 1002) || sliceContainsInt(requestError.ErrorCodes(), 1004)) {
@@ -62,7 +62,7 @@ func resourceCloudflareWAFRuleCreate(ctx context.Context, d *schema.ResourceData
 	var pkgList []cloudflare.WAFPackage
 	if packageID == "" {
 		var err error
-		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
+		pkgList, err = client.ListWAFPackages(ctx, zoneID)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -74,7 +74,7 @@ func resourceCloudflareWAFRuleCreate(ctx context.Context, d *schema.ResourceData
 		var err error
 		var rule cloudflare.WAFRule
 
-		rule, err = client.WAFRule(context.Background(), zoneID, pkg.ID, ruleID)
+		rule, err = client.WAFRule(ctx, zoneID, pkg.ID, ruleID)
 		if err != nil {
 			continue
 		}
@@ -105,7 +105,7 @@ func resourceCloudflareWAFRuleDelete(ctx context.Context, d *schema.ResourceData
 	zoneID := d.Get("zone_id").(string)
 	packageID := d.Get("package_id").(string)
 
-	rule, err := client.WAFRule(context.Background(), zoneID, packageID, ruleID)
+	rule, err := client.WAFRule(ctx, zoneID, packageID, ruleID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -118,7 +118,7 @@ func resourceCloudflareWAFRuleDelete(ctx context.Context, d *schema.ResourceData
 
 	// Can't delete WAF Rule so instead reset it to default
 	if rule.Mode != defaultMode {
-		_, err = client.UpdateWAFRule(context.Background(), zoneID, packageID, ruleID, defaultMode)
+		_, err = client.UpdateWAFRule(ctx, zoneID, packageID, ruleID, defaultMode)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -136,7 +136,7 @@ func resourceCloudflareWAFRuleUpdate(ctx context.Context, d *schema.ResourceData
 	packageID := d.Get("package_id").(string)
 
 	// We can only update the mode of a WAF Rule
-	_, err := client.UpdateWAFRule(context.Background(), zoneID, packageID, ruleID, mode)
+	_, err := client.UpdateWAFRule(ctx, zoneID, packageID, ruleID, mode)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -158,13 +158,13 @@ func resourceCloudflareWAFRuleImport(ctx context.Context, d *schema.ResourceData
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/WAFID\" for import", d.Id())
 	}
 
-	packs, err := client.ListWAFPackages(context.Background(), zoneID)
+	packs, err := client.ListWAFPackages(ctx, zoneID)
 	if err != nil {
 		return nil, fmt.Errorf("error listing WAF packages: %s", err)
 	}
 
 	for _, p := range packs {
-		rule, err := client.WAFRule(context.Background(), zoneID, p.ID, WAFID)
+		rule, err := client.WAFRule(ctx, zoneID, p.ID, WAFID)
 		if err == nil {
 			d.Set("rule_id", rule.ID)
 			d.Set("zone_id", zoneID)

@@ -34,9 +34,9 @@ func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceDa
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.AccessGroup(context.Background(), identifier.Value, d.Id())
+		accessGroup, err = client.AccessGroup(ctx, identifier.Value, d.Id())
 	} else {
-		accessGroup, err = client.ZoneLevelAccessGroup(context.Background(), identifier.Value, d.Id())
+		accessGroup, err = client.ZoneLevelAccessGroup(ctx, identifier.Value, d.Id())
 	}
 
 	if err != nil {
@@ -82,9 +82,9 @@ func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.Resource
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.CreateAccessGroup(context.Background(), identifier.Value, newAccessGroup)
+		accessGroup, err = client.CreateAccessGroup(ctx, identifier.Value, newAccessGroup)
 	} else {
-		accessGroup, err = client.CreateZoneLevelAccessGroup(context.Background(), identifier.Value, newAccessGroup)
+		accessGroup, err = client.CreateZoneLevelAccessGroup(ctx, identifier.Value, newAccessGroup)
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Access Group for ID %q: %s", accessGroup.ID, err))
@@ -112,9 +112,9 @@ func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.Resource
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.UpdateAccessGroup(context.Background(), identifier.Value, updatedAccessGroup)
+		accessGroup, err = client.UpdateAccessGroup(ctx, identifier.Value, updatedAccessGroup)
 	} else {
-		accessGroup, err = client.UpdateZoneLevelAccessGroup(context.Background(), identifier.Value, updatedAccessGroup)
+		accessGroup, err = client.UpdateZoneLevelAccessGroup(ctx, identifier.Value, updatedAccessGroup)
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Group for ID %q: %s", d.Id(), err))
@@ -138,9 +138,9 @@ func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.Resource
 	}
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessGroup(context.Background(), identifier.Value, d.Id())
+		err = client.DeleteAccessGroup(ctx, identifier.Value, d.Id())
 	} else {
-		err = client.DeleteZoneLevelAccessGroup(context.Background(), identifier.Value, d.Id())
+		err = client.DeleteZoneLevelAccessGroup(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Access Group for ID %q: %s", d.Id(), err))

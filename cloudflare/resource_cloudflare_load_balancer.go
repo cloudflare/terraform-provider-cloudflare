@@ -275,7 +275,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
 
-	r, err := client.CreateLoadBalancer(context.Background(), zoneID, newLoadBalancer)
+	r, err := client.CreateLoadBalancer(ctx, zoneID, newLoadBalancer)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
 	}
@@ -351,7 +351,7 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
 
-	_, err := client.ModifyLoadBalancer(context.Background(), zoneID, loadBalancer)
+	_, err := client.ModifyLoadBalancer(ctx, zoneID, loadBalancer)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
 	}
@@ -380,7 +380,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	zoneID := d.Get("zone_id").(string)
 	loadBalancerID := d.Id()
 
-	loadBalancer, err := client.LoadBalancerDetails(context.Background(), zoneID, loadBalancerID)
+	loadBalancer, err := client.LoadBalancerDetails(ctx, zoneID, loadBalancerID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer %s in zone %s not found", loadBalancerID, zoneID)
@@ -465,7 +465,7 @@ func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[INFO] Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID)
 
-	err := client.DeleteLoadBalancer(context.Background(), zoneID, loadBalancerID)
+	err := client.DeleteLoadBalancer(ctx, zoneID, loadBalancerID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Load Balancer: %s", err))
 	}

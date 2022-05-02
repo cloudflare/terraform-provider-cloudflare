@@ -30,7 +30,7 @@ func resourceCloudflareCustomHostnameFallbackOriginRead(ctx context.Context, d *
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
+	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(ctx, zoneID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading custom hostname fallback origin %q: %w", zoneID, err))
 	}
@@ -45,7 +45,7 @@ func resourceCloudflareCustomHostnameFallbackOriginDelete(ctx context.Context, d
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteCustomHostnameFallbackOrigin(context.Background(), zoneID)
+	err := client.DeleteCustomHostnameFallbackOrigin(ctx, zoneID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to delete custom hostname fallback origin: %w", err))
 	}
@@ -63,7 +63,7 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d
 	}
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
-		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
+		_, err := client.UpdateCustomHostnameFallbackOrigin(ctx, zoneID, fallbackOrigin)
 		if err != nil {
 			var requestError *cloudflare.RequestError
 			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {
@@ -73,7 +73,7 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d
 			}
 		}
 
-		fallbackHostname, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
+		fallbackHostname, err := client.CustomHostnameFallbackOrigin(ctx, zoneID)
 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %w", err))
@@ -111,7 +111,7 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(ctx context.Context, d
 	}
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
-		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
+		_, err := client.UpdateCustomHostnameFallbackOrigin(ctx, zoneID, fallbackOrigin)
 		if err != nil {
 			var requestError *cloudflare.RequestError
 			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {

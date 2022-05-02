@@ -26,7 +26,7 @@ func resourceCloudflareZoneCacheVariantsRead(ctx context.Context, d *schema.Reso
 
 	log.Printf("[INFO] Reading Zone Cache Variants in zone %q", d.Id())
 
-	zoneCacheVariants, err := client.ZoneCacheVariants(context.Background(), d.Id())
+	zoneCacheVariants, err := client.ZoneCacheVariants(ctx, d.Id())
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
@@ -96,7 +96,7 @@ func resourceCloudflareZoneCacheVariantsUpdate(ctx context.Context, d *schema.Re
 	variantsValue := cacheVariantsValuesFromResource(d)
 	log.Printf("[INFO] Setting Zone Cache Variants to struct: %+v for zone ID: %q", variantsValue, d.Id())
 
-	_, err := client.UpdateZoneCacheVariants(context.Background(), d.Id(), variantsValue)
+	_, err := client.UpdateZoneCacheVariants(ctx, d.Id(), variantsValue)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error setting cache variants for zone %q: %w", d.Id(), err))
@@ -110,7 +110,7 @@ func resourceCloudflareZoneCacheVariantsDelete(ctx context.Context, d *schema.Re
 
 	log.Printf("[INFO] Deleting Zone Cache Variants for zone ID: %q", d.Id())
 
-	err := client.DeleteZoneCacheVariants(context.Background(), d.Id())
+	err := client.DeleteZoneCacheVariants(ctx, d.Id())
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting cache variants for zone %v: %w", d.Id(), err))

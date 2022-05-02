@@ -30,7 +30,7 @@ func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.R
 
 	notificationPolicy := buildNotificationPolicy(d)
 
-	policy, err := client.CreateNotificationPolicy(context.Background(), accountID, notificationPolicy)
+	policy, err := client.CreateNotificationPolicy(ctx, accountID, notificationPolicy)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating policy %s: %s", notificationPolicy.Name, err))
@@ -45,7 +45,7 @@ func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.Res
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	policy, err := client.GetNotificationPolicy(context.Background(), accountID, policyID)
+	policy, err := client.GetNotificationPolicy(ctx, accountID, policyID)
 
 	name := d.Get("name").(string)
 	if err != nil {
@@ -88,7 +88,7 @@ func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.R
 	notificationPolicy := buildNotificationPolicy(d)
 	notificationPolicy.ID = policyID
 
-	_, err := client.UpdateNotificationPolicy(context.Background(), accountID, &notificationPolicy)
+	_, err := client.UpdateNotificationPolicy(ctx, accountID, &notificationPolicy)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating notification policy %s: %s", policyID, err))
@@ -102,7 +102,7 @@ func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.R
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.DeleteNotificationPolicy(context.Background(), accountID, policyID)
+	_, err := client.DeleteNotificationPolicy(ctx, accountID, policyID)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting notification policy %s: %s", policyID, err))

@@ -99,7 +99,7 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 
 	log.Printf("[INFO] Creating Cloudflare Zone: name %s", zoneName)
 
-	zone, err := client.CreateZone(context.Background(), zoneName, jumpstart, account, zoneType)
+	zone, err := client.CreateZone(ctx, zoneName, jumpstart, account, zoneType)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating zone %q: %s", zoneName, err))
@@ -109,7 +109,7 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 
 	if paused, ok := d.GetOk("paused"); ok {
 		if paused.(bool) == true {
-			_, err := client.ZoneSetPaused(context.Background(), zone.ID, paused.(bool))
+			_, err := client.ZoneSetPaused(ctx, zone.ID, paused.(bool))
 
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("error updating zone_id %q: %s", zone.ID, err))
@@ -118,13 +118,13 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	if plan, ok := d.GetOk("plan"); ok {
-		if err := setRatePlan(client, zone.ID, plan.(string), true, d); err != nil {
+		if err := setRatePlan(ctx, client, zone.ID, plan.(string), true, d); err != nil {
 			return diag.FromErr(err)
 		}
 	}
 
 	if ztype, ok := d.GetOk("type"); ok {
-		_, err := client.ZoneSetType(context.Background(), zone.ID, ztype.(string))
+		_, err := client.ZoneSetType(ctx, zone.ID, ztype.(string))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error setting type on zone ID %q: %s", zone.ID, err))
 		}
@@ -137,7 +137,7 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 	client := meta.(*cloudflare.API)
 	zoneID := d.Id()
 
-	zone, err := client.ZoneDetails(context.Background(), zoneID)
+	zone, err := client.ZoneDetails(ctx, zoneID)
 
 	log.Printf("[DEBUG] ZoneDetails: %#v", zone)
 	log.Printf("[DEBUG] ZoneDetails error: %#v", err)
@@ -177,14 +177,14 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Id()
-	zone, _ := client.ZoneDetails(context.Background(), zoneID)
+	zone, _ := client.ZoneDetails(ctx, zoneID)
 
 	log.Printf("[INFO] Updating Cloudflare Zone: id %s", zoneID)
 
 	if paused, ok := d.GetOkExists("paused"); ok && d.HasChange("paused") {
 		log.Printf("[DEBUG] _ paused")
 
-		_, err := client.ZoneSetPaused(context.Background(), zoneID, paused.(bool))
+		_, err := client.ZoneSetPaused(ctx, zoneID, paused.(bool))
 
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error setting paused for zone ID %q: %s", zoneID, err))
@@ -192,7 +192,7 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	if ztype, ok := d.GetOkExists("type"); ok && d.HasChange("type") {
-		_, err := client.ZoneSetType(context.Background(), zoneID, ztype.(string))
+		_, err := client.ZoneSetType(ctx, zoneID, ztype.(string))
 
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error setting type for on zone ID %q: %s", zoneID, err))
@@ -214,7 +214,7 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 		wasFreePlan := existingPlan.(string) == "free"
 		planID := newPlan.(string)
 
-		if err := setRatePlan(client, zoneID, planID, wasFreePlan, d); err != nil {
+		if err := setRatePlan(ctx, client, zoneID, planID, wasFreePlan, d); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -228,7 +228,7 @@ func resourceCloudflareZoneDelete(ctx context.Context, d *schema.ResourceData, m
 
 	log.Printf("[INFO] Deleting Cloudflare Zone: id %s", zoneID)
 
-	_, err := client.DeleteZone(context.Background(), zoneID)
+	_, err := client.DeleteZone(ctx, zoneID)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone: %s", err))
@@ -250,23 +250,23 @@ func flattenMeta(d *schema.ResourceData, meta cloudflare.ZoneMeta) map[string]in
 
 // setRatePlan handles the internals of creating or updating a zone
 // subscription rate plan.
-func setRatePlan(client *cloudflare.API, zoneID, planID string, isNewPlan bool, d *schema.ResourceData) error {
+func setRatePlan(ctx context.Context, client *cloudflare.API, zoneID, planID string, isNewPlan bool, d *schema.ResourceData) error {
 	if isNewPlan {
 		// A free rate plan is the default so no need to explicitly make another
 		// HTTP call to set it.
 		if ratePlans[planID].ID != planIDFree {
-			if err := client.ZoneSetPlan(context.Background(), zoneID, ratePlans[planID].Name); err != nil {
+			if err := client.ZoneSetPlan(ctx, zoneID, ratePlans[planID].Name); err != nil {
 				return fmt.Errorf("error setting plan %s for zone %q: %s", planID, zoneID, err)
 			}
 		}
 	} else {
-		if err := client.ZoneUpdatePlan(context.Background(), zoneID, ratePlans[planID].Name); err != nil {
+		if err := client.ZoneUpdatePlan(ctx, zoneID, ratePlans[planID].Name); err != nil {
 			return fmt.Errorf("error updating plan %s for zone %q: %s", planID, zoneID, err)
 		}
 	}
 
-	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		zone, _ := client.ZoneDetails(context.Background(), zoneID)
+	return resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		zone, _ := client.ZoneDetails(ctx, zoneID)
 
 		// This is a little confusing but due to the multiple views of
 		// subscriptions, partner plans actually end up "appearing" like regular

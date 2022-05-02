@@ -44,7 +44,7 @@ func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.Re
 	setDevicePostureRuleInput(&newDevicePostureRule, d)
 	log.Printf("[DEBUG] Creating Cloudflare Device Posture Rule from struct: %+v", newDevicePostureRule)
 
-	rule, err := client.CreateDevicePostureRule(context.Background(), accountID, newDevicePostureRule)
+	rule, err := client.CreateDevicePostureRule(ctx, accountID, newDevicePostureRule)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule for account %q: %s", accountID, err))
 	}
@@ -58,7 +58,7 @@ func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.Reso
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	devicePostureRule, err := client.DevicePostureRule(context.Background(), accountID, d.Id())
+	devicePostureRule, err := client.DevicePostureRule(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Device Posture Rule %s no longer exists", d.Id())
@@ -98,7 +98,7 @@ func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.Re
 	setDevicePostureRuleInput(&updatedDevicePostureRule, d)
 	log.Printf("[DEBUG] Updating Cloudflare Device Posture Rule from struct: %+v", updatedDevicePostureRule)
 
-	devicePostureRule, err := client.UpdateDevicePostureRule(context.Background(), accountID, updatedDevicePostureRule)
+	devicePostureRule, err := client.UpdateDevicePostureRule(ctx, accountID, updatedDevicePostureRule)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Device Posture Rule for account %q: %s", accountID, err))
 	}
@@ -117,7 +117,7 @@ func resourceCloudflareDevicePostureRuleDelete(ctx context.Context, d *schema.Re
 
 	log.Printf("[DEBUG] Deleting Cloudflare Device Posture Rule using ID: %s", appID)
 
-	err := client.DeleteDevicePostureRule(context.Background(), accountID, appID)
+	err := client.DeleteDevicePostureRule(ctx, accountID, appID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err))
 	}

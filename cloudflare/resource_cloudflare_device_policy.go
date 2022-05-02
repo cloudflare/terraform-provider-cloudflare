@@ -30,7 +30,7 @@ func resourceCloudflareDevicePolicyCertificateUpdate(ctx context.Context, d *sch
 
 	log.Printf("[DEBUG] Updating Cloudflare device policy certificate: zoneID=%s enabled=%t", zoneID, enabled)
 
-	_, err := client.UpdateDeviceClientCertificatesZone(context.Background(), zoneID, enabled)
+	_, err := client.UpdateDeviceClientCertificatesZone(ctx, zoneID, enabled)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Cloudflare device policy certificate %q: %w", zoneID, err))
 	}
@@ -43,7 +43,7 @@ func resourceCloudflareDevicePolicyCertificateRead(ctx context.Context, d *schem
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	enabled, err := client.GetDeviceClientCertificatesZone(context.Background(), zoneID)
+	enabled, err := client.GetDeviceClientCertificatesZone(ctx, zoneID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading device policy certificate setting %q: %w", zoneID, err))
 	}

@@ -68,7 +68,7 @@ func resourceCloudflareApiTokenCreate(ctx context.Context, d *schema.ResourceDat
 	log.Printf("[INFO] Creating Cloudflare API Token: name %s", name)
 
 	t := buildAPIToken(d)
-	t, err := client.CreateAPIToken(context.Background(), t)
+	t, err := client.CreateAPIToken(ctx, t)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare API Token %q: %s", name, err))
 	}
@@ -123,7 +123,7 @@ func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 
-	t, err := client.GetAPIToken(context.Background(), tokenID)
+	t, err := client.GetAPIToken(ctx, tokenID)
 
 	log.Printf("[DEBUG] Cloudflare API Token: %+v", t)
 
@@ -189,7 +189,7 @@ func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceDat
 
 	log.Printf("[INFO] Updating Cloudflare API Token: name %s", name)
 
-	t, err := client.UpdateAPIToken(context.Background(), tokenID, t)
+	t, err := client.UpdateAPIToken(ctx, tokenID, t)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Cloudflare API Token %q: %s", name, err))
 	}
@@ -203,7 +203,7 @@ func resourceCloudflareApiTokenDelete(ctx context.Context, d *schema.ResourceDat
 
 	log.Printf("[INFO] Deleting Cloudflare API Token: id %s", tokenID)
 
-	err := client.DeleteAPIToken(context.Background(), tokenID)
+	err := client.DeleteAPIToken(ctx, tokenID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare API Token: %s", err))
 	}

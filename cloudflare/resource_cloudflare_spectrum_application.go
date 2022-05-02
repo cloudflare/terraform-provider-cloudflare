@@ -34,7 +34,7 @@ func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.
 
 	log.Printf("[INFO] Creating Cloudflare Spectrum Application from struct: %+v", newSpectrumApp)
 
-	r, err := client.CreateSpectrumApplication(context.Background(), zoneID, newSpectrumApp)
+	r, err := client.CreateSpectrumApplication(ctx, zoneID, newSpectrumApp)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating spectrum application for zone"))
 	}
@@ -58,7 +58,7 @@ func resourceCloudflareSpectrumApplicationUpdate(ctx context.Context, d *schema.
 
 	log.Printf("[INFO] Updating Cloudflare Spectrum Application from struct: %+v", application)
 
-	_, err := client.UpdateSpectrumApplication(context.Background(), zoneID, application.ID, application)
+	_, err := client.UpdateSpectrumApplication(ctx, zoneID, application.ID, application)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating spectrum application for zone"))
 	}
@@ -71,7 +71,7 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 	zoneID := d.Get("zone_id").(string)
 	applicationID := d.Id()
 
-	application, err := client.SpectrumApplication(context.Background(), zoneID, applicationID)
+	application, err := client.SpectrumApplication(ctx, zoneID, applicationID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Spectrum application %s in zone %s not found", applicationID, zoneID)
@@ -135,7 +135,7 @@ func resourceCloudflareSpectrumApplicationDelete(ctx context.Context, d *schema.
 
 	log.Printf("[INFO] Deleting Cloudflare Spectrum Application: %s in zone: %s", applicationID, zoneID)
 
-	err := client.DeleteSpectrumApplication(context.Background(), zoneID, applicationID)
+	err := client.DeleteSpectrumApplication(ctx, zoneID, applicationID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Spectrum Application: %s", err))
 	}

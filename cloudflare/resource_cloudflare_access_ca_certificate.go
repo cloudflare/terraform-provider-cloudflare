@@ -34,9 +34,9 @@ func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.
 
 	var accessCACert cloudflare.AccessCACertificate
 	if identifier.Type == AccountType {
-		accessCACert, err = client.CreateAccessCACertificate(context.Background(), identifier.Value, d.Get("application_id").(string))
+		accessCACert, err = client.CreateAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
 	} else {
-		accessCACert, err = client.CreateZoneLevelAccessCACertificate(context.Background(), identifier.Value, d.Get("application_id").(string))
+		accessCACert, err = client.CreateZoneLevelAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
@@ -57,9 +57,9 @@ func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.Re
 
 	var accessCACert cloudflare.AccessCACertificate
 	if identifier.Type == AccountType {
-		accessCACert, err = client.AccessCACertificate(context.Background(), identifier.Value, applicationID)
+		accessCACert, err = client.AccessCACertificate(ctx, identifier.Value, applicationID)
 	} else {
-		accessCACert, err = client.ZoneLevelAccessCACertificate(context.Background(), identifier.Value, applicationID)
+		accessCACert, err = client.ZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
 	}
 
 	if err != nil {
@@ -93,9 +93,9 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 	}
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessCACertificate(context.Background(), identifier.Value, applicationID)
+		err = client.DeleteAccessCACertificate(ctx, identifier.Value, applicationID)
 	} else {
-		err = client.DeleteZoneLevelAccessCACertificate(context.Background(), identifier.Value, applicationID)
+		err = client.DeleteZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
 	}
 
 	if err != nil {

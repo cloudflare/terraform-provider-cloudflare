@@ -31,7 +31,7 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 	zoneID := d.Get("zone_id").(string)
 	hostnameID := d.Id()
 
-	customHostname, err := client.CustomHostname(context.Background(), zoneID, hostnameID)
+	customHostname, err := client.CustomHostname(ctx, zoneID, hostnameID)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error reading custom hostname %q", hostnameID)))
 	}
@@ -113,7 +113,7 @@ func resourceCloudflareCustomHostnameDelete(ctx context.Context, d *schema.Resou
 	zoneID := d.Get("zone_id").(string)
 	hostnameID := d.Id()
 
-	err := client.DeleteCustomHostname(context.Background(), zoneID, hostnameID)
+	err := client.DeleteCustomHostname(ctx, zoneID, hostnameID)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to delete custom hostname certificate"))
 	}
@@ -127,7 +127,7 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 
 	certificate := buildCustomHostname(d)
 
-	newCertificate, err := client.CreateCustomHostname(context.Background(), zoneID, certificate)
+	newCertificate, err := client.CreateCustomHostname(ctx, zoneID, certificate)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to create custom hostname certificate"))
 	}
@@ -143,7 +143,7 @@ func resourceCloudflareCustomHostnameUpdate(ctx context.Context, d *schema.Resou
 	hostnameID := d.Id()
 	certificate := buildCustomHostname(d)
 
-	_, err := client.UpdateCustomHostname(context.Background(), zoneID, hostnameID, certificate)
+	_, err := client.UpdateCustomHostname(ctx, zoneID, hostnameID, certificate)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to update custom hostname certificate"))
 	}

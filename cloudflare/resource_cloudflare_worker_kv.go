@@ -29,7 +29,7 @@ func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	namespaceID, key := parseId(d.Id())
 
-	value, err := client.ReadWorkersKV(context.Background(), namespaceID, key)
+	value, err := client.ReadWorkersKV(ctx, namespaceID, key)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error reading workers kv"))
 	}
@@ -49,7 +49,7 @@ func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceDa
 	key := d.Get("key").(string)
 	value := d.Get("value").(string)
 
-	_, err := client.WriteWorkersKV(context.Background(), namespaceID, key, []byte(value))
+	_, err := client.WriteWorkersKV(ctx, namespaceID, key, []byte(value))
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating workers kv"))
 	}
@@ -67,7 +67,7 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 
 	log.Printf("[INFO] Deleting Cloudflare Workers KV with id: %+v", d.Id())
 
-	_, err := client.DeleteWorkersKV(context.Background(), namespaceID, key)
+	_, err := client.DeleteWorkersKV(ctx, namespaceID, key)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error deleting workers kv"))
 	}

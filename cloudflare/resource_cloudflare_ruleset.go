@@ -51,9 +51,9 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 	var ruleset cloudflare.Ruleset
 	var sempahoreErr error
 	if accountID != "" {
-		ruleset, sempahoreErr = client.GetAccountRulesetPhase(context.Background(), accountID, rulesetPhase)
+		ruleset, sempahoreErr = client.GetAccountRulesetPhase(ctx, accountID, rulesetPhase)
 	} else {
-		ruleset, sempahoreErr = client.GetZoneRulesetPhase(context.Background(), zoneID, rulesetPhase)
+		ruleset, sempahoreErr = client.GetZoneRulesetPhase(ctx, zoneID, rulesetPhase)
 	}
 
 	if len(ruleset.Rules) > 0 {
@@ -87,9 +87,9 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 		log.Print("[DEBUG] default ruleset created by the UI with empty rules found, recreating from scratch")
 		var deleteRulesetErr error
 		if accountID != "" {
-			deleteRulesetErr = client.DeleteAccountRuleset(context.Background(), accountID, ruleset.ID)
+			deleteRulesetErr = client.DeleteAccountRuleset(ctx, accountID, ruleset.ID)
 		} else {
-			deleteRulesetErr = client.DeleteZoneRuleset(context.Background(), zoneID, ruleset.ID)
+			deleteRulesetErr = client.DeleteZoneRuleset(ctx, zoneID, ruleset.ID)
 		}
 
 		if deleteRulesetErr != nil {
@@ -99,9 +99,9 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 
 	var rulesetCreateErr error
 	if accountID != "" {
-		ruleset, rulesetCreateErr = client.CreateAccountRuleset(context.Background(), accountID, rs)
+		ruleset, rulesetCreateErr = client.CreateAccountRuleset(ctx, accountID, rs)
 	} else {
-		ruleset, rulesetCreateErr = client.CreateZoneRuleset(context.Background(), zoneID, rs)
+		ruleset, rulesetCreateErr = client.CreateZoneRuleset(ctx, zoneID, rs)
 	}
 
 	if rulesetCreateErr != nil {
@@ -117,9 +117,9 @@ func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData
 	// endpoint.
 	if rulesetKind != string(cloudflare.RulesetKindCustom) {
 		if accountID != "" {
-			_, err = client.UpdateAccountRulesetPhase(context.Background(), accountID, rulesetPhase, rulesetEntryPoint)
+			_, err = client.UpdateAccountRulesetPhase(ctx, accountID, rulesetPhase, rulesetEntryPoint)
 		} else {
-			_, err = client.UpdateZoneRulesetPhase(context.Background(), zoneID, rulesetPhase, rulesetEntryPoint)
+			_, err = client.UpdateZoneRulesetPhase(ctx, zoneID, rulesetPhase, rulesetEntryPoint)
 		}
 
 		if err != nil {
@@ -145,9 +145,9 @@ func resourceCloudflareRulesetRead(ctx context.Context, d *schema.ResourceData, 
 	var err error
 
 	if accountID != "" {
-		ruleset, err = client.GetAccountRuleset(context.Background(), accountID, d.Id())
+		ruleset, err = client.GetAccountRuleset(ctx, accountID, d.Id())
 	} else {
-		ruleset, err = client.GetZoneRuleset(context.Background(), zoneID, d.Id())
+		ruleset, err = client.GetZoneRuleset(ctx, zoneID, d.Id())
 	}
 
 	if err != nil {
@@ -181,9 +181,9 @@ func resourceCloudflareRulesetUpdate(ctx context.Context, d *schema.ResourceData
 
 	description := d.Get("description").(string)
 	if accountID != "" {
-		_, err = client.UpdateAccountRuleset(context.Background(), accountID, d.Id(), description, rules)
+		_, err = client.UpdateAccountRuleset(ctx, accountID, d.Id(), description, rules)
 	} else {
-		_, err = client.UpdateZoneRuleset(context.Background(), zoneID, d.Id(), description, rules)
+		_, err = client.UpdateZoneRuleset(ctx, zoneID, d.Id(), description, rules)
 	}
 
 	if err != nil {
@@ -200,9 +200,9 @@ func resourceCloudflareRulesetDelete(ctx context.Context, d *schema.ResourceData
 	var err error
 
 	if accountID != "" {
-		err = client.DeleteAccountRuleset(context.Background(), accountID, d.Id())
+		err = client.DeleteAccountRuleset(ctx, accountID, d.Id())
 	} else {
-		err = client.DeleteZoneRuleset(context.Background(), zoneID, d.Id())
+		err = client.DeleteZoneRuleset(ctx, zoneID, d.Id())
 	}
 
 	if err != nil {

@@ -33,7 +33,7 @@ func resourceCloudflareWorkersKVNamespaceCreate(ctx context.Context, d *schema.R
 
 	log.Printf("[Info] Creating Cloudflare Workers KV Namespace from struct: %+v", req)
 
-	r, err := client.CreateWorkersKVNamespace(context.Background(), req)
+	r, err := client.CreateWorkersKVNamespace(ctx, req)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating workers kv namespace"))
 	}
@@ -83,7 +83,7 @@ func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.R
 
 	log.Printf("[INFO] Updating Cloudflare Workers KV Namespace from struct %+v", namespace)
 
-	_, err := client.UpdateWorkersKVNamespace(context.Background(), d.Id(), namespace)
+	_, err := client.UpdateWorkersKVNamespace(ctx, d.Id(), namespace)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating workers kv namespace"))
 	}
@@ -96,7 +96,7 @@ func resourceCloudflareWorkersKVNamespaceDelete(ctx context.Context, d *schema.R
 
 	log.Printf("[INFO] Deleting Cloudflare Workers KV Namespace with id: %+v", d.Id())
 
-	_, err := client.DeleteWorkersKVNamespace(context.Background(), d.Id())
+	_, err := client.DeleteWorkersKVNamespace(ctx, d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error deleting workers kv namespace"))
 	}

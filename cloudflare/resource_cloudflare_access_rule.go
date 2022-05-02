@@ -58,12 +58,12 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			r, err = client.CreateAccountAccessRule(context.Background(), client.AccountID, newRule)
+			r, err = client.CreateAccountAccessRule(ctx, client.AccountID, newRule)
 		} else {
-			r, err = client.CreateUserAccessRule(context.Background(), newRule)
+			r, err = client.CreateUserAccessRule(ctx, newRule)
 		}
 	} else {
-		r, err = client.CreateZoneAccessRule(context.Background(), zoneID, newRule)
+		r, err = client.CreateZoneAccessRule(ctx, zoneID, newRule)
 	}
 
 	if err != nil {
@@ -88,12 +88,12 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			accessRuleResponse, err = client.AccountAccessRule(context.Background(), client.AccountID, d.Id())
+			accessRuleResponse, err = client.AccountAccessRule(ctx, client.AccountID, d.Id())
 		} else {
-			accessRuleResponse, err = client.UserAccessRule(context.Background(), d.Id())
+			accessRuleResponse, err = client.UserAccessRule(ctx, d.Id())
 		}
 	} else {
-		accessRuleResponse, err = client.ZoneAccessRule(context.Background(), zoneID, d.Id())
+		accessRuleResponse, err = client.ZoneAccessRule(ctx, zoneID, d.Id())
 	}
 
 	log.Printf("[DEBUG] accessRuleResponse: %#v", accessRuleResponse)
@@ -149,12 +149,12 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			_, err = client.UpdateAccountAccessRule(context.Background(), client.AccountID, d.Id(), updatedRule)
+			_, err = client.UpdateAccountAccessRule(ctx, client.AccountID, d.Id(), updatedRule)
 		} else {
-			_, err = client.UpdateUserAccessRule(context.Background(), d.Id(), updatedRule)
+			_, err = client.UpdateUserAccessRule(ctx, d.Id(), updatedRule)
 		}
 	} else {
-		_, err = client.UpdateZoneAccessRule(context.Background(), zoneID, d.Id(), updatedRule)
+		_, err = client.UpdateZoneAccessRule(ctx, zoneID, d.Id(), updatedRule)
 	}
 
 	if err != nil {
@@ -174,12 +174,12 @@ func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceD
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			_, err = client.DeleteAccountAccessRule(context.Background(), client.AccountID, d.Id())
+			_, err = client.DeleteAccountAccessRule(ctx, client.AccountID, d.Id())
 		} else {
-			_, err = client.DeleteUserAccessRule(context.Background(), d.Id())
+			_, err = client.DeleteUserAccessRule(ctx, d.Id())
 		}
 	} else {
-		_, err = client.DeleteZoneAccessRule(context.Background(), zoneID, d.Id())
+		_, err = client.DeleteZoneAccessRule(ctx, zoneID, d.Id())
 	}
 
 	if err != nil {

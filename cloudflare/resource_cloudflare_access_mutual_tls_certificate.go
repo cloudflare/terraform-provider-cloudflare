@@ -43,9 +43,9 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *
 
 	var accessMutualTLSCert cloudflare.AccessMutualTLSCertificate
 	if identifier.Type == AccountType {
-		accessMutualTLSCert, err = client.CreateAccessMutualTLSCertificate(context.Background(), identifier.Value, newAccessMutualTLSCertificate)
+		accessMutualTLSCert, err = client.CreateAccessMutualTLSCertificate(ctx, identifier.Value, newAccessMutualTLSCertificate)
 	} else {
-		accessMutualTLSCert, err = client.CreateZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, newAccessMutualTLSCertificate)
+		accessMutualTLSCert, err = client.CreateZoneAccessMutualTLSCertificate(ctx, identifier.Value, newAccessMutualTLSCertificate)
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
@@ -66,9 +66,9 @@ func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *sc
 
 	var accessMutualTLSCert cloudflare.AccessMutualTLSCertificate
 	if identifier.Type == AccountType {
-		accessMutualTLSCert, err = client.AccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id())
+		accessMutualTLSCert, err = client.AccessMutualTLSCertificate(ctx, identifier.Value, d.Id())
 	} else {
-		accessMutualTLSCert, err = client.ZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id())
+		accessMutualTLSCert, err = client.ZoneAccessMutualTLSCertificate(ctx, identifier.Value, d.Id())
 	}
 
 	if err != nil {
@@ -104,9 +104,9 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *
 	}
 
 	if identifier.Type == AccountType {
-		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id(), updatedAccessMutualTLSCert)
+		_, err = client.UpdateAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), updatedAccessMutualTLSCert)
 	} else {
-		_, err = client.UpdateZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id(), updatedAccessMutualTLSCert)
+		_, err = client.UpdateZoneAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), updatedAccessMutualTLSCert)
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %s", identifier.Type, identifier.Value, err))
@@ -137,9 +137,9 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 	}
 
 	if identifier.Type == AccountType {
-		_, err = client.UpdateAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id(), deletedCertificate)
+		_, err = client.UpdateAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), deletedCertificate)
 	} else {
-		_, err = client.UpdateZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, d.Id(), deletedCertificate)
+		_, err = client.UpdateZoneAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), deletedCertificate)
 	}
 
 	if err != nil {
@@ -148,9 +148,9 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 
 	retryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
 		if identifier.Type == AccountType {
-			err = client.DeleteAccessMutualTLSCertificate(context.Background(), identifier.Value, certID)
+			err = client.DeleteAccessMutualTLSCertificate(ctx, identifier.Value, certID)
 		} else {
-			err = client.DeleteZoneAccessMutualTLSCertificate(context.Background(), identifier.Value, certID)
+			err = client.DeleteZoneAccessMutualTLSCertificate(ctx, identifier.Value, certID)
 		}
 
 		if err != nil {

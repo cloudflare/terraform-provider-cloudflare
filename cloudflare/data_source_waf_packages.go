@@ -99,7 +99,7 @@ func dataSourceCloudflareWAFPackagesRead(ctx context.Context, d *schema.Resource
 	log.Printf("[DEBUG] Reading WAF Packages")
 	packageIds := make([]string, 0)
 	packageDetails := make([]interface{}, 0)
-	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
+	pkgList, err := client.ListWAFPackages(ctx, zoneID)
 	if err != nil {
 		return diag.FromErr(err)
 	}

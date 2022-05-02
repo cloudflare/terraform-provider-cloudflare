@@ -45,7 +45,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *sc
 	// The API does not return the client_secret so it must be stored in the state func on resource create.
 	savedSecret := newDevicePostureIntegration.Config.ClientSecret
 
-	newDevicePostureIntegration, err = client.CreateDevicePostureIntegration(context.Background(), accountID, newDevicePostureIntegration)
+	newDevicePostureIntegration, err = client.CreateDevicePostureIntegration(ctx, accountID, newDevicePostureIntegration)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule for account %q: %s %+v", accountID, err, newDevicePostureIntegration))
 	}
@@ -65,7 +65,7 @@ func devicePostureIntegrationReadHelper(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	devicePostureIntegration, err := client.DevicePostureIntegration(context.Background(), accountID, d.Id())
+	devicePostureIntegration, err := client.DevicePostureIntegration(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Device posture integration %s no longer exists", d.Id())
@@ -102,7 +102,7 @@ func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *sc
 
 	log.Printf("[DEBUG] Updating Cloudflare device posture integration from struct: %+v", updatedDevicePostureIntegration)
 
-	devicePostureIntegration, err := client.UpdateDevicePostureIntegration(context.Background(), accountID, updatedDevicePostureIntegration)
+	devicePostureIntegration, err := client.UpdateDevicePostureIntegration(ctx, accountID, updatedDevicePostureIntegration)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating device posture integration for account %q: %s", accountID, err))
 	}
@@ -121,7 +121,7 @@ func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *sc
 
 	log.Printf("[DEBUG] Deleting Cloudflare device posture integration using ID: %s", appID)
 
-	err := client.DeleteDevicePostureIntegration(context.Background(), accountID, appID)
+	err := client.DeleteDevicePostureIntegration(ctx, accountID, appID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err))
 	}

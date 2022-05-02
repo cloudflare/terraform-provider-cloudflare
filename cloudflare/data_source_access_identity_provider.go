@@ -26,9 +26,9 @@ func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *sche
 
 	var providers []cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		providers, err = client.AccessIdentityProviders(context.Background(), identifier.Value)
+		providers, err = client.AccessIdentityProviders(ctx, identifier.Value)
 	} else {
-		providers, err = client.ZoneLevelAccessIdentityProviders(context.Background(), identifier.Value)
+		providers, err = client.ZoneLevelAccessIdentityProviders(ctx, identifier.Value)
 	}
 
 	if err != nil {

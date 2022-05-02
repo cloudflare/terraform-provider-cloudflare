@@ -48,7 +48,7 @@ func resourceCloudflareCustomPagesRead(ctx context.Context, d *schema.ResourceDa
 		identifier = zoneID
 	}
 
-	page, err := client.CustomPage(context.Background(), &pageOptions, pageType)
+	page, err := client.CustomPage(ctx, &pageOptions, pageType)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -89,7 +89,7 @@ func resourceCloudflareCustomPagesUpdate(ctx context.Context, d *schema.Resource
 		URL:   d.Get("url").(string),
 		State: "customized",
 	}
-	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(ctx, &pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType)))
 	}
@@ -114,7 +114,7 @@ func resourceCloudflareCustomPagesDelete(ctx context.Context, d *schema.Resource
 		URL:   nil,
 		State: "default",
 	}
-	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(ctx, &pageOptions, pageType, customPageParameters)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType)))
 	}

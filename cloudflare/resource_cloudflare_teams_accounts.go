@@ -29,7 +29,7 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	configuration, err := client.TeamsAccountConfiguration(context.Background(), accountID)
+	configuration, err := client.TeamsAccountConfiguration(ctx, accountID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
 			log.Printf("[INFO] Teams Account config %s does not exists", d.Id())
@@ -73,7 +73,7 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
-	logSettings, err := client.TeamsAccountLoggingConfiguration(context.Background(), accountID)
+	logSettings, err := client.TeamsAccountLoggingConfiguration(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err))
 	}
@@ -84,7 +84,7 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
-	deviceSettings, err := client.TeamsAccountDeviceConfiguration(context.Background(), accountID)
+	deviceSettings, err := client.TeamsAccountDeviceConfiguration(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams Account device settings %q: %w", d.Id(), err))
 	}
@@ -132,18 +132,18 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 
 	log.Printf("[DEBUG] Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount)
 
-	if _, err := client.TeamsAccountUpdateConfiguration(context.Background(), accountID, updatedTeamsAccount); err != nil {
+	if _, err := client.TeamsAccountUpdateConfiguration(ctx, accountID, updatedTeamsAccount); err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Teams Account configuration for account %q: %w", accountID, err))
 	}
 
 	if loggingConfig != nil {
-		if _, err := client.TeamsAccountUpdateLoggingConfiguration(context.Background(), accountID, *loggingConfig); err != nil {
+		if _, err := client.TeamsAccountUpdateLoggingConfiguration(ctx, accountID, *loggingConfig); err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams Account logging settings for account %q: %w", accountID, err))
 		}
 	}
 
 	if deviceConfig != nil {
-		if _, err := client.TeamsAccountDeviceUpdateConfiguration(context.Background(), accountID, *deviceConfig); err != nil {
+		if _, err := client.TeamsAccountDeviceUpdateConfiguration(ctx, accountID, *deviceConfig); err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err))
 		}
 	}

@@ -29,7 +29,7 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	location, err := client.TeamsLocation(context.Background(), accountID, d.Id())
+	location, err := client.TeamsLocation(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
 			log.Printf("[INFO] Teams Location %s no longer exists", d.Id())
@@ -83,7 +83,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 
 	log.Printf("[DEBUG] Creating Cloudflare Teams Location from struct: %+v", newTeamLocation)
 
-	location, err := client.CreateTeamsLocation(context.Background(), accountID, newTeamLocation)
+	location, err := client.CreateTeamsLocation(ctx, accountID, newTeamLocation)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Teams Location for account %q: %s, %v", accountID, err, networks))
 	}
@@ -107,7 +107,7 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 	}
 	log.Printf("[DEBUG] Updating Cloudflare Teams Location from struct: %+v", updatedTeamsLocation)
 
-	teamsLocation, err := client.UpdateTeamsLocation(context.Background(), accountID, updatedTeamsLocation)
+	teamsLocation, err := client.UpdateTeamsLocation(ctx, accountID, updatedTeamsLocation)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Teams Location for account %q: %s", accountID, err))
 	}
@@ -124,7 +124,7 @@ func resourceCloudflareTeamsLocationDelete(ctx context.Context, d *schema.Resour
 
 	log.Printf("[DEBUG] Deleting Cloudflare Teams Location using ID: %s", id)
 
-	err := client.DeleteTeamsLocation(context.Background(), accountID, id)
+	err := client.DeleteTeamsLocation(ctx, accountID, id)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Teams Location for account %q: %s", accountID, err))
 	}

@@ -115,7 +115,7 @@ func dataSourceCloudflareWAFRulesRead(ctx context.Context, d *schema.ResourceDat
 	if packageID == "" {
 		var err error
 		log.Printf("[DEBUG] Reading WAF Packages")
-		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
+		pkgList, err = client.ListWAFPackages(ctx, zoneID)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -127,7 +127,7 @@ func dataSourceCloudflareWAFRulesRead(ctx context.Context, d *schema.ResourceDat
 	ruleIds := make([]string, 0)
 	ruleDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {
-		ruleList, err := client.ListWAFRules(context.Background(), zoneID, pkg.ID)
+		ruleList, err := client.ListWAFRules(ctx, zoneID, pkg.ID)
 		if err != nil {
 			return diag.FromErr(err)
 		}

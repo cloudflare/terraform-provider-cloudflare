@@ -35,9 +35,9 @@ func resourceCloudflareLogpushOwnershipChallengeCreate(ctx context.Context, d *s
 
 	var challenge *cloudflare.LogpushGetOwnershipChallenge
 	if identifier.Type == AccountType {
-		challenge, err = client.GetAccountLogpushOwnershipChallenge(context.Background(), identifier.Value, destinationConf)
+		challenge, err = client.GetAccountLogpushOwnershipChallenge(ctx, identifier.Value, destinationConf)
 	} else {
-		challenge, err = client.GetZoneLogpushOwnershipChallenge(context.Background(), identifier.Value, destinationConf)
+		challenge, err = client.GetZoneLogpushOwnershipChallenge(ctx, identifier.Value, destinationConf)
 	}
 
 	if err != nil {

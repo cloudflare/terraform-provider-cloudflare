@@ -31,7 +31,7 @@ func resourceCloudflareNotificationPolicyWebhooksCreate(ctx context.Context, d *
 
 	notificationWebhooks := buildNotificationPolicyWebhooks(d)
 
-	webhooksDestination, err := client.CreateNotificationWebhooks(context.Background(), accountID, &notificationWebhooks)
+	webhooksDestination, err := client.CreateNotificationWebhooks(ctx, accountID, &notificationWebhooks)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error connecting webhooks destination %s: %s", notificationWebhooks.Name, err))
@@ -51,7 +51,7 @@ func resourceCloudflareNotificationPolicyWebhooksRead(ctx context.Context, d *sc
 	webhooksDestinationID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	notificationWebhooks, err := client.GetNotificationWebhooks(context.Background(), accountID, webhooksDestinationID)
+	notificationWebhooks, err := client.GetNotificationWebhooks(ctx, accountID, webhooksDestinationID)
 
 	name := d.Get("name").(string)
 	if err != nil {
@@ -80,7 +80,7 @@ func resourceCloudflareNotificationPolicyWebhooksUpdate(ctx context.Context, d *
 
 	notificationWebhooks := buildNotificationPolicyWebhooks(d)
 
-	_, err := client.UpdateNotificationWebhooks(context.Background(), accountID, webhooksID, &notificationWebhooks)
+	_, err := client.UpdateNotificationWebhooks(ctx, accountID, webhooksID, &notificationWebhooks)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating notification webhooks destination %s: %s", webhooksID, err))
@@ -94,7 +94,7 @@ func resourceCloudflareNotificationPolicyWebhooksDelete(ctx context.Context, d *
 	webhooksID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.DeleteNotificationWebhooks(context.Background(), accountID, webhooksID)
+	_, err := client.DeleteNotificationWebhooks(ctx, accountID, webhooksID)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting notification webhooks destination %s: %s", webhooksID, err))

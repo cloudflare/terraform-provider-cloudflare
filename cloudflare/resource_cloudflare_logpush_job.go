@@ -75,9 +75,9 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 	if identifier.Type == AccountType {
-		job, err = client.GetAccountLogpushJob(context.Background(), identifier.Value, jobID)
+		job, err = client.GetAccountLogpushJob(ctx, identifier.Value, jobID)
 	} else {
-		job, err = client.GetZoneLogpushJob(context.Background(), identifier.Value, jobID)
+		job, err = client.GetZoneLogpushJob(ctx, identifier.Value, jobID)
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
@@ -114,9 +114,9 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 
 	var j *cloudflare.LogpushJob
 	if identifier.Type == AccountType {
-		j, err = client.CreateAccountLogpushJob(context.Background(), identifier.Value, job)
+		j, err = client.CreateAccountLogpushJob(ctx, identifier.Value, job)
 	} else {
-		j, err = client.CreateZoneLogpushJob(context.Background(), identifier.Value, job)
+		j, err = client.CreateZoneLogpushJob(ctx, identifier.Value, job)
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating logpush job for %s: %w", identifier, err))
@@ -143,9 +143,9 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 	log.Printf("[INFO] Updating Cloudflare Logpush job for %s from struct: %+v", identifier, job)
 
 	if identifier.Type == AccountType {
-		err = client.UpdateAccountLogpushJob(context.Background(), identifier.Value, job.ID, job)
+		err = client.UpdateAccountLogpushJob(ctx, identifier.Value, job.ID, job)
 	} else {
-		err = client.UpdateZoneLogpushJob(context.Background(), identifier.Value, job.ID, job)
+		err = client.UpdateZoneLogpushJob(ctx, identifier.Value, job.ID, job)
 	}
 
 	if err != nil {
@@ -166,9 +166,9 @@ func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceD
 	log.Printf("[DEBUG] Deleting Cloudflare Logpush job for %s with id: %+v", identifier, job.ID)
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccountLogpushJob(context.Background(), identifier.Value, job.ID)
+		err = client.DeleteAccountLogpushJob(ctx, identifier.Value, job.ID)
 	} else {
-		err = client.DeleteZoneLogpushJob(context.Background(), identifier.Value, job.ID)
+		err = client.DeleteZoneLogpushJob(ctx, identifier.Value, job.ID)
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "job not found") {

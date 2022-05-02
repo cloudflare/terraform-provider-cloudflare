@@ -31,7 +31,7 @@ func resourceCloudflareWorkerCronTriggerUpdate(ctx context.Context, d *schema.Re
 
 	scriptName := d.Get("script_name").(string)
 
-	_, err := client.UpdateWorkerCronTriggers(context.Background(), accountID, scriptName, transformSchemaToWorkerCronTriggerStruct(d))
+	_, err := client.UpdateWorkerCronTriggers(ctx, accountID, scriptName, transformSchemaToWorkerCronTriggerStruct(d))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to update Worker Cron Trigger: %s", err))
 	}
@@ -46,7 +46,7 @@ func resourceCloudflareWorkerCronTriggerRead(ctx context.Context, d *schema.Reso
 	scriptName := d.Get("script_name").(string)
 	accountID := d.Get("account_id").(string)
 
-	s, err := client.ListWorkerCronTriggers(context.Background(), accountID, scriptName)
+	s, err := client.ListWorkerCronTriggers(ctx, accountID, scriptName)
 	if err != nil {
 		// If the script is removed, we also need to remove the triggers.
 		if strings.Contains(err.Error(), "workers.api.error.script_not_found") {
@@ -69,7 +69,7 @@ func resourceCloudflareWorkerCronTriggerDelete(ctx context.Context, d *schema.Re
 	scriptName := d.Get("script_name").(string)
 	accountID := d.Get("account_id").(string)
 
-	client.UpdateWorkerCronTriggers(context.Background(), accountID, scriptName, []cloudflare.WorkerCronTrigger{})
+	client.UpdateWorkerCronTriggers(ctx, accountID, scriptName, []cloudflare.WorkerCronTrigger{})
 
 	d.SetId("")
 

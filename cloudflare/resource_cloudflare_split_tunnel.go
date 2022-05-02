@@ -29,7 +29,7 @@ func resourceCloudflareSplitTunnelRead(ctx context.Context, d *schema.ResourceDa
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
 
-	splitTunnel, err := client.ListSplitTunnels(context.Background(), accountID, mode)
+	splitTunnel, err := client.ListSplitTunnels(ctx, accountID, mode)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding %q Split Tunnels: %s", mode, err))
 	}
@@ -51,7 +51,7 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("error updating %q Split Tunnels: %s", mode, err))
 	}
 
-	newSplitTunnels, err := client.UpdateSplitTunnel(context.Background(), accountID, mode, tunnelList)
+	newSplitTunnels, err := client.UpdateSplitTunnel(ctx, accountID, mode, tunnelList)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating %q Split Tunnels: %s", mode, err))
 	}
@@ -70,7 +70,7 @@ func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.Resource
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
 
-	client.UpdateSplitTunnel(context.Background(), accountID, mode, nil)
+	client.UpdateSplitTunnel(ctx, accountID, mode, nil)
 
 	d.SetId("")
 	return nil

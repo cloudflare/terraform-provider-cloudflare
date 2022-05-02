@@ -78,7 +78,7 @@ func resourceCloudflareWaitingRoomEventCreate(ctx context.Context, d *schema.Res
 		return diag.FromErr(fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err))
 	}
 
-	waitingRoomEvent, err := client.CreateWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, newWaitingRoomEvent)
+	waitingRoomEvent, err := client.CreateWaitingRoomEvent(ctx, zoneID, waitingRoomID, newWaitingRoomEvent)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating waiting room event %q: %w", waitingRoomEventName, err))
@@ -94,7 +94,7 @@ func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.Resou
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	waitingRoomEvent, err := client.WaitingRoomEvent(context.Background(), zoneID, waitingRoomID, d.Id())
+	waitingRoomEvent, err := client.WaitingRoomEvent(ctx, zoneID, waitingRoomID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[WARN] Removing waiting room event from state because it's not found in API")
@@ -153,7 +153,7 @@ func resourceCloudflareWaitingRoomEventUpdate(ctx context.Context, d *schema.Res
 		return diag.FromErr(fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err))
 	}
 
-	_, err = client.ChangeWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEvent)
+	_, err = client.ChangeWaitingRoomEvent(ctx, zoneID, waitingRoomID, waitingRoomEvent)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating waiting room event %q: %w", waitingRoomEventName, err))
@@ -168,7 +168,7 @@ func resourceCloudflareWaitingRoomEventDelete(ctx context.Context, d *schema.Res
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteWaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEventID)
+	err := client.DeleteWaitingRoomEvent(ctx, zoneID, waitingRoomID, waitingRoomEventID)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting waiting room event %q: %w", d.Get("name").(string), err))
@@ -191,7 +191,7 @@ func resourceCloudflareWaitingRoomEventImport(ctx context.Context, d *schema.Res
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/waitingRoomID/eventID\" for import", d.Id())
 	}
 
-	waitingRoomEvent, err := client.WaitingRoomEvent(context.Background(), zoneID, waitingRoomID, waitingRoomEventID)
+	waitingRoomEvent, err := client.WaitingRoomEvent(ctx, zoneID, waitingRoomID, waitingRoomEventID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Waiting room event %s", waitingRoomID)
 	}

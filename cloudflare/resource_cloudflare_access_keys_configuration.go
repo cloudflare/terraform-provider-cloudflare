@@ -28,7 +28,7 @@ func resourceCloudflareAccessKeysConfigurationRead(ctx context.Context, d *schem
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	keysConfig, err := client.AccessKeysConfig(context.Background(), accountID)
+	keysConfig, err := client.AccessKeysConfig(ctx, accountID)
 	if err != nil {
 		var requestError *cloudflare.RequestError
 		if errors.As(err, &requestError) {
@@ -66,7 +66,7 @@ func resourceCloudflareAccessKeysConfigurationUpdate(ctx context.Context, d *sch
 		KeyRotationIntervalDays: d.Get("key_rotation_interval_days").(int),
 	}
 
-	_, err := client.UpdateAccessKeysConfig(context.Background(), accountID, keysConfigUpdateReq)
+	_, err := client.UpdateAccessKeysConfig(ctx, accountID, keysConfigUpdateReq)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Keys Configuration for account %s: %s", accountID, err))
 	}

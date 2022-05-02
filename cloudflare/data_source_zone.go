@@ -72,7 +72,7 @@ func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, m
 	var zone cloudflare.Zone
 	if name != "" && zoneID == "" {
 		zoneFilter := cloudflare.WithZoneFilters(name, accountID, "")
-		zonesResp, err := client.ListZonesContext(context.Background(), zoneFilter)
+		zonesResp, err := client.ListZonesContext(ctx, zoneFilter)
 
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error listing zones: %s", err))
@@ -89,7 +89,7 @@ func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, m
 		zone = zonesResp.Result[0]
 	} else {
 		var err error
-		zone, err = client.ZoneDetails(context.Background(), zoneID)
+		zone, err = client.ZoneDetails(ctx, zoneID)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error getting zone details: %s", err))
 		}

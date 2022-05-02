@@ -28,7 +28,7 @@ func resourceCloudflareLogpullRetentionSet(ctx context.Context, d *schema.Resour
 	zoneID := d.Get("zone_id").(string)
 	status := d.Get("enabled").(bool)
 
-	_, err := client.SetLogpullRetentionFlag(context.Background(), zoneID, status)
+	_, err := client.SetLogpullRetentionFlag(ctx, zoneID, status)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error setting Logpull Retention for zone ID %q: %s", zoneID, err))
 	}
@@ -42,7 +42,7 @@ func resourceCloudflareLogpullRetentionRead(ctx context.Context, d *schema.Resou
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	logpullConf, err := client.GetLogpullRetentionFlag(context.Background(), zoneID)
+	logpullConf, err := client.GetLogpullRetentionFlag(ctx, zoneID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error getting Logpull Retention for zone ID %q: %s", zoneID, err))
 	}
@@ -56,7 +56,7 @@ func resourceCloudflareLogpullRetentionDelete(ctx context.Context, d *schema.Res
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	_, err := client.SetLogpullRetentionFlag(context.Background(), zoneID, false)
+	_, err := client.SetLogpullRetentionFlag(ctx, zoneID, false)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error setting Logpull Retention for zone ID %q: %s", zoneID, err))
 	}

@@ -81,7 +81,7 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 
 	log.Printf("[DEBUG] Cloudflare Page Rule create configuration: %#v", newPageRule)
 
-	r, err := client.CreatePageRule(context.Background(), zoneID, newPageRule)
+	r, err := client.CreatePageRule(ctx, zoneID, newPageRule)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to create page rule: %s", err))
 	}
@@ -107,7 +107,7 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	pageRule, err := client.PageRule(context.Background(), zoneID, d.Id())
+	pageRule, err := client.PageRule(ctx, zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid Page Rule identifier") || // api bug - this indicates non-existing resource
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -194,7 +194,7 @@ func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceDat
 
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
-	if err := client.UpdatePageRule(context.Background(), zoneID, d.Id(), updatePageRule); err != nil {
+	if err := client.UpdatePageRule(ctx, zoneID, d.Id(), updatePageRule); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to update Cloudflare Page Rule: %s", err))
 	}
 
@@ -207,7 +207,7 @@ func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceDat
 
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zoneID, d.Id())
 
-	if err := client.DeletePageRule(context.Background(), zoneID, d.Id()); err != nil {
+	if err := client.DeletePageRule(ctx, zoneID, d.Id()); err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Page Rule: %s", err))
 	}
 

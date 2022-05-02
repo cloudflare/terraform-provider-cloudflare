@@ -29,7 +29,7 @@ func resourceCloudflareStaticRouteCreate(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	newStaticRoute, err := client.CreateMagicTransitStaticRoute(context.Background(), accountID, staticRouteFromResource(d))
+	newStaticRoute, err := client.CreateMagicTransitStaticRoute(ctx, accountID, staticRouteFromResource(d))
 
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating static route for prefix %s", d.Get("prefix").(string))))
@@ -60,7 +60,7 @@ func resourceCloudflareStaticRouteRead(ctx context.Context, d *schema.ResourceDa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	staticRoute, err := client.GetMagicTransitStaticRoute(context.Background(), accountID, d.Id())
+	staticRoute, err := client.GetMagicTransitStaticRoute(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Route not found") {
 			log.Printf("[INFO] Static Route %s not found", d.Id())
@@ -94,7 +94,7 @@ func resourceCloudflareStaticRouteUpdate(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.UpdateMagicTransitStaticRoute(context.Background(), accountID, d.Id(), staticRouteFromResource(d))
+	_, err := client.UpdateMagicTransitStaticRoute(ctx, accountID, d.Id(), staticRouteFromResource(d))
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating static route with ID %q", d.Id())))
 	}
@@ -108,7 +108,7 @@ func resourceCloudflareStaticRouteDelete(ctx context.Context, d *schema.Resource
 
 	log.Printf("[INFO] Deleting Static Route:  %s", d.Id())
 
-	_, err := client.DeleteMagicTransitStaticRoute(context.Background(), accountID, d.Id())
+	_, err := client.DeleteMagicTransitStaticRoute(ctx, accountID, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Static Route: %s", err))
 	}
