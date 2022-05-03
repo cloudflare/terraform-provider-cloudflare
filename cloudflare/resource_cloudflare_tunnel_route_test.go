@@ -43,6 +43,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 
 	for _, tunnel := range tunnelRoutes {
 		log.Printf("[INFO] Deleting Cloudflare Tunnel Route network: %s", tunnel.Network)
+		//nolint:errcheck
 		client.DeleteTunnelRoute(context.Background(), cloudflare.TunnelRoutesDeleteParams{AccountID: accountID, Network: tunnel.Network})
 	}
 

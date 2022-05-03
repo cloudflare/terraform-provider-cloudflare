@@ -46,6 +46,7 @@ func testSweepCloudflareRecord(r string) error {
 
 	for _, record := range records {
 		log.Printf("[INFO] Deleting Cloudflare DNS record ID: %s", record.ID)
+		//nolint:errcheck
 		client.DeleteDNSRecord(context.Background(), zoneID, record.ID)
 	}
 
