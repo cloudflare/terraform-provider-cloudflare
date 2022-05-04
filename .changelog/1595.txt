@@ -1,3 +1,0 @@
-```release-note:note
-resources/workers_kv: corrected error in documentation for importing a KV namespace
-```
