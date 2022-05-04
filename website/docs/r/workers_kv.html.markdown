@@ -35,10 +35,10 @@ The following arguments are supported:
 
 ## Import
 
-Workers KV Namespace settings can be imported using it's ID.  **Note:** Because the same key can exist in multiple namespaces, the ID is a composite key of the format <namespace_id>_<key>.
+Workers KV Namespace settings can be imported using it's ID.  **Note:** Because the same key can exist in multiple namespaces, the ID is a composite key of the format <namespace_id>/<key>.
 
 ```
-$ terraform import cloudflare_workers_kv_namespace.example beaeb6716c9443eaa4deef11763ccca6_test-key
+$ terraform import cloudflare_workers_kv_namespace.example beaeb6716c9443eaa4deef11763ccca6/test-key
 ```
 
 where:
