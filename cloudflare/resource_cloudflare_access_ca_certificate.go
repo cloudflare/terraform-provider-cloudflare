@@ -2,63 +2,65 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessCACertificate() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessCACertificateSchema(),
-		Create: resourceCloudflareAccessCACertificateCreate,
-		Read:   resourceCloudflareAccessCACertificateRead,
-		Update: resourceCloudflareAccessCACertificateUpdate,
-		Delete: resourceCloudflareAccessCACertificateDelete,
+		Schema:        resourceCloudflareAccessCACertificateSchema(),
+		CreateContext: resourceCloudflareAccessCACertificateCreate,
+		ReadContext:   resourceCloudflareAccessCACertificateRead,
+		UpdateContext: resourceCloudflareAccessCACertificateUpdate,
+		DeleteContext: resourceCloudflareAccessCACertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessCACertificateImport,
+			StateContext: resourceCloudflareAccessCACertificateImport,
 		},
 	}
 }
 
-func resourceCloudflareAccessCACertificateCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessCACert cloudflare.AccessCACertificate
 	if identifier.Type == AccountType {
-		accessCACert, err = client.CreateAccessCACertificate(context.Background(), identifier.Value, d.Get("application_id").(string))
+		accessCACert, err = client.CreateAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
 	} else {
-		accessCACert, err = client.CreateZoneLevelAccessCACertificate(context.Background(), identifier.Value, d.Get("application_id").(string))
+		accessCACert, err = client.CreateZoneLevelAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access CA Certificate for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessCACert.ID)
 
-	return resourceCloudflareAccessCACertificateRead(d, meta)
+	return resourceCloudflareAccessCACertificateRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessCACertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	applicationID := d.Get("application_id").(string)
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessCACert cloudflare.AccessCACertificate
 	if identifier.Type == AccountType {
-		accessCACert, err = client.AccessCACertificate(context.Background(), identifier.Value, applicationID)
+		accessCACert, err = client.AccessCACertificate(ctx, identifier.Value, applicationID)
 	} else {
-		accessCACert, err = client.ZoneLevelAccessCACertificate(context.Background(), identifier.Value, applicationID)
+		accessCACert, err = client.ZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
 	}
 
 	if err != nil {
@@ -67,7 +69,7 @@ func resourceCloudflareAccessCACertificateRead(d *schema.ResourceData, meta inte
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access CA Certificate %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access CA Certificate %q: %w", d.Id(), err))
 	}
 
 	d.Set("aud", accessCACert.Aud)
@@ -76,11 +78,11 @@ func resourceCloudflareAccessCACertificateRead(d *schema.ResourceData, meta inte
 	return nil
 }
 
-func resourceCloudflareAccessCACertificateUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
 
-func resourceCloudflareAccessCACertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	applicationID := d.Get("application_id").(string)
 
@@ -88,17 +90,17 @@ func resourceCloudflareAccessCACertificateDelete(d *schema.ResourceData, meta in
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessCACertificate(context.Background(), identifier.Value, applicationID)
+		err = client.DeleteAccessCACertificate(ctx, identifier.Value, applicationID)
 	} else {
-		err = client.DeleteZoneLevelAccessCACertificate(context.Background(), identifier.Value, applicationID)
+		err = client.DeleteZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
 	}
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")
@@ -106,7 +108,7 @@ func resourceCloudflareAccessCACertificateDelete(d *schema.ResourceData, meta in
 	return nil
 }
 
-func resourceCloudflareAccessCACertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 3)
 
 	if len(attributes) != 3 {
@@ -125,7 +127,10 @@ func resourceCloudflareAccessCACertificateImport(d *schema.ResourceData, meta in
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessCACertificateID)
 
-	resourceCloudflareAccessCACertificateRead(d, meta)
+	readErr := resourceCloudflareAccessCACertificateRead(ctx, d, meta)
+	if readErr != nil {
+		return nil, errors.New("failed to read Access CA Certificate state")
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

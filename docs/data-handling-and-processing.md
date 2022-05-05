@@ -5,13 +5,13 @@
 You should also include error handling for `d.Set` calls that are not using simple (string, number, boolean) values to catch any schema mismatches.
 
 ```go
-func resourceExampleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceExampleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
     // ... snip
     // assuming `attr` is a map or list of types.
 
 
     if err := d.Set("my_attr", attr); err != nil {
-      return fmt.Errorf("failed to set my_attr: %s", err)
+      return fmt.Errorf("failed to set my_attr: %w", err)
     }
 
     return nil

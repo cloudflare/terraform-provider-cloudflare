@@ -65,13 +65,13 @@ func testAccGetWAFGroup(zoneID string) (string, error) {
 
 	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
 	if err != nil {
-		return "", fmt.Errorf("Error while listing WAF packages: %s", err)
+		return "", fmt.Errorf("Error while listing WAF packages: %w", err)
 	}
 
 	for _, pkg := range pkgList {
 		groupList, err := client.ListWAFGroups(context.Background(), zoneID, pkg.ID)
 		if err != nil {
-			return "", fmt.Errorf("Error while listing WAF groups for WAF package %s: %s", pkg.ID, err)
+			return "", fmt.Errorf("Error while listing WAF groups for WAF package %s: %w", pkg.ID, err)
 		}
 
 		for _, group := range groupList {

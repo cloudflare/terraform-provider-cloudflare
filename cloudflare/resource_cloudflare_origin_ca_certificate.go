@@ -11,23 +11,24 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareOriginCACertificate() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareOriginCACertificateSchema(),
-		Create: resourceCloudflareOriginCACertificateCreate,
-		Update: resourceCloudflareOriginCACertificateCreate,
-		Read:   resourceCloudflareOriginCACertificateRead,
-		Delete: resourceCloudflareOriginCACertificateDelete,
+		Schema:        resourceCloudflareOriginCACertificateSchema(),
+		CreateContext: resourceCloudflareOriginCACertificateCreate,
+		UpdateContext: resourceCloudflareOriginCACertificateCreate,
+		ReadContext:   resourceCloudflareOriginCACertificateRead,
+		DeleteContext: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	hostnames := []string{}
@@ -50,21 +51,21 @@ func resourceCloudflareOriginCACertificateCreate(d *schema.ResourceData, meta in
 	}
 
 	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: %#v", certInput)
-	cert, err := client.CreateOriginCertificate(context.Background(), certInput)
+	cert, err := client.CreateOriginCertificate(ctx, certInput)
 
 	if err != nil {
-		return fmt.Errorf("error creating origin certificate: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating origin certificate: %w", err))
 	}
 
 	d.SetId(cert.ID)
 
-	return resourceCloudflareOriginCACertificateRead(d, meta)
+	return resourceCloudflareOriginCACertificateRead(ctx, d, meta)
 }
 
-func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
-	cert, err := client.OriginCertificate(context.Background(), certID)
+	cert, err := client.OriginCertificate(ctx, certID)
 
 	log.Printf("[DEBUG] OriginCACertificate: %#v", cert)
 
@@ -74,7 +75,7 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding OriginCACertificate %q: %s", certID, err)
+		return diag.FromErr(fmt.Errorf("error finding OriginCACertificate %q: %w", certID, err))
 	}
 
 	if cert.RevokedAt != (time.Time{}) {
@@ -95,28 +96,28 @@ func resourceCloudflareOriginCACertificateRead(d *schema.ResourceData, meta inte
 
 	certBlock, _ := pem.Decode([]byte(cert.Certificate))
 	if certBlock == nil {
-		return fmt.Errorf("error decoding OriginCACertificate %q: %s", certID, err)
+		return diag.FromErr(fmt.Errorf("error decoding OriginCACertificate %q: %w", certID, err))
 	}
 
 	x509Cert, err := x509.ParseCertificate(certBlock.Bytes)
 	if err != nil {
-		return fmt.Errorf("error parsing OriginCACertificate %q: %s", certID, err)
+		return diag.FromErr(fmt.Errorf("error parsing OriginCACertificate %q: %w", certID, err))
 	}
 	d.Set("requested_validity", calculateRequestedValidityFromCertificate(x509Cert))
 
 	return nil
 }
 
-func resourceCloudflareOriginCACertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareOriginCACertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
 
 	log.Printf("[INFO] Revoking Cloudflare OriginCACertificate: id %s", certID)
 
-	_, err := client.RevokeOriginCertificate(context.Background(), certID)
+	_, err := client.RevokeOriginCertificate(ctx, certID)
 
 	if err != nil {
-		return fmt.Errorf("error revoking Cloudflare OriginCACertificate: %s", err)
+		return diag.FromErr(fmt.Errorf("error revoking Cloudflare OriginCACertificate: %w", err))
 	}
 
 	d.SetId("")
@@ -132,7 +133,7 @@ func validateCSR(v interface{}, k string) (ws []string, errors []error) {
 
 	_, err := x509.ParseCertificateRequest(block.Bytes)
 	if err != nil {
-		errors = append(errors, fmt.Errorf("%q: %s", k, err.Error()))
+		errors = append(errors, fmt.Errorf("%q: %w", k, err))
 	}
 	return
 }

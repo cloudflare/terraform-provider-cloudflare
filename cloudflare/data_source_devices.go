@@ -5,25 +5,26 @@ import (
 	"fmt"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareDevices() *schema.Resource {
 	return &schema.Resource{
-		Schema: resoureceCloudflareDevicesSchema(),
-		Read:   dataResourceCloudflareDevicesRead,
+		Schema:      resoureceCloudflareDevicesSchema(),
+		ReadContext: dataResourceCloudflareDevicesRead,
 	}
 }
 
-func dataResourceCloudflareDevicesRead(d *schema.ResourceData, meta interface{}) error {
+func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	d.SetId(accountID)
 
-	devices, err := client.ListTeamsDevices(context.Background(), accountID)
+	devices, err := client.ListTeamsDevices(ctx, accountID)
 
 	if err != nil {
-		return fmt.Errorf("error finding devices in account %q: %w", accountID, err)
+		return diag.FromErr(fmt.Errorf("error finding devices in account %q: %w", accountID, err))
 	}
 
 	deviceDetails := make([]interface{}, 0)
@@ -48,7 +49,7 @@ func dataResourceCloudflareDevicesRead(d *schema.ResourceData, meta interface{})
 	}
 
 	if err = d.Set("devices", deviceDetails); err != nil {
-		return fmt.Errorf("error setting device details: %w", err)
+		return diag.FromErr(fmt.Errorf("error setting device details: %w", err))
 	}
 
 	return nil

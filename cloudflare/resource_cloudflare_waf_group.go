@@ -7,31 +7,32 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWAFGroup() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWAFGroupSchema(),
-		Create: resourceCloudflareWAFGroupCreate,
-		Read:   resourceCloudflareWAFGroupRead,
-		Update: resourceCloudflareWAFGroupUpdate,
-		Delete: resourceCloudflareWAFGroupDelete,
+		Schema:        resourceCloudflareWAFGroupSchema(),
+		CreateContext: resourceCloudflareWAFGroupCreate,
+		ReadContext:   resourceCloudflareWAFGroupRead,
+		UpdateContext: resourceCloudflareWAFGroupUpdate,
+		DeleteContext: resourceCloudflareWAFGroupDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWAFGroupImport,
+			StateContext: resourceCloudflareWAFGroupImport,
 		},
 	}
 }
 
-func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	packageID := d.Get("package_id").(string)
 
-	group, err := client.WAFGroup(context.Background(), zoneID, packageID, groupID)
+	group, err := client.WAFGroup(ctx, zoneID, packageID, groupID)
 	if err != nil {
 		var requestError *cloudflare.RequestError
 		if errors.As(err, &requestError) && (sliceContainsInt(requestError.ErrorCodes(), 1002) || sliceContainsInt(requestError.ErrorCodes(), 1003)) {
@@ -39,7 +40,7 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 			return nil
 		}
 
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed
@@ -49,7 +50,7 @@ func resourceCloudflareWAFGroupRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	groupID := d.Get("group_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -60,9 +61,9 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 	var pkgList []cloudflare.WAFPackage
 	if packageID == "" {
 		var err error
-		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
+		pkgList, err = client.ListWAFPackages(ctx, zoneID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	} else {
 		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
@@ -72,7 +73,7 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 		var err error
 		var group cloudflare.WAFGroup
 
-		group, err = client.WAFGroup(context.Background(), zoneID, pkg.ID, groupID)
+		group, err = client.WAFGroup(ctx, zoneID, pkg.ID, groupID)
 		if err != nil {
 			continue
 		}
@@ -82,29 +83,29 @@ func resourceCloudflareWAFGroupCreate(d *schema.ResourceData, meta interface{}) 
 		d.Set("package_id", pkg.ID)
 
 		if group.Mode != mode {
-			err = resourceCloudflareWAFGroupUpdate(d, meta)
+			err := resourceCloudflareWAFGroupUpdate(ctx, d, meta)
 			if err != nil {
 				d.SetId("")
 				return err
 			}
 		}
 
-		return resourceCloudflareWAFGroupRead(d, meta)
+		return resourceCloudflareWAFGroupRead(ctx, d, meta)
 	}
 
-	return fmt.Errorf("unable to find WAF Group %s", groupID)
+	return diag.FromErr(fmt.Errorf("unable to find WAF Group %s", groupID))
 }
 
-func resourceCloudflareWAFGroupDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	packageID := d.Get("package_id").(string)
 
-	group, err := client.WAFGroup(context.Background(), zoneID, packageID, groupID)
+	group, err := client.WAFGroup(ctx, zoneID, packageID, groupID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Can't delete WAF Group so instead reset it to default
@@ -112,16 +113,16 @@ func resourceCloudflareWAFGroupDelete(d *schema.ResourceData, meta interface{}) 
 	defaultMode := schema["mode"].Default.(string)
 
 	if group.Mode != defaultMode {
-		_, err = client.UpdateWAFGroup(context.Background(), zoneID, packageID, groupID, defaultMode)
+		_, err = client.UpdateWAFGroup(ctx, zoneID, packageID, groupID, defaultMode)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return nil
 }
 
-func resourceCloudflareWAFGroupUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
@@ -130,15 +131,15 @@ func resourceCloudflareWAFGroupUpdate(d *schema.ResourceData, meta interface{}) 
 	packageID := d.Get("package_id").(string)
 
 	// We can only update the mode of a WAF Group
-	_, err := client.UpdateWAFGroup(context.Background(), zoneID, packageID, groupID, mode)
+	_, err := client.UpdateWAFGroup(ctx, zoneID, packageID, groupID, mode)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return resourceCloudflareWAFGroupRead(d, meta)
+	return resourceCloudflareWAFGroupRead(ctx, d, meta)
 }
 
-func resourceCloudflareWAFGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWAFGroupImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup
@@ -152,13 +153,13 @@ func resourceCloudflareWAFGroupImport(d *schema.ResourceData, meta interface{}) 
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/GroupID\" for import", d.Id())
 	}
 
-	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
+	pkgList, err := client.ListWAFPackages(ctx, zoneID)
 	if err != nil {
-		return nil, fmt.Errorf("error listing WAF packages: %s", err)
+		return nil, fmt.Errorf("error listing WAF packages: %w", err)
 	}
 
 	for _, pkg := range pkgList {
-		group, err := client.WAFGroup(context.Background(), zoneID, pkg.ID, groupID)
+		group, err := client.WAFGroup(ctx, zoneID, pkg.ID, groupID)
 		if err != nil {
 			continue
 		}

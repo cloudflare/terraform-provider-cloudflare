@@ -5,72 +5,73 @@ import (
 	"fmt"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareFallbackDomain() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareFallbackDomainSchema(),
-		Read:   resourceCloudflareFallbackDomainRead,
-		Create: resourceCloudflareFallbackDomainUpdate, // Intentionally identical to Update as the resource is always present
-		Update: resourceCloudflareFallbackDomainUpdate,
-		Delete: resourceCloudflareFallbackDomainDelete,
+		Schema:        resourceCloudflareFallbackDomainSchema(),
+		ReadContext:   resourceCloudflareFallbackDomainRead,
+		CreateContext: resourceCloudflareFallbackDomainUpdate, // Intentionally identical to Update as the resource is always present
+		UpdateContext: resourceCloudflareFallbackDomainUpdate,
+		DeleteContext: resourceCloudflareFallbackDomainDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareFallbackDomainImport,
+			StateContext: resourceCloudflareFallbackDomainImport,
 		},
 	}
 }
 
-func resourceCloudflareFallbackDomainRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	domain, err := client.ListFallbackDomains(context.Background(), accountID)
+	domain, err := client.ListFallbackDomains(ctx, accountID)
 	if err != nil {
-		return fmt.Errorf("error finding Fallback Domains: %w", err)
+		return diag.FromErr(fmt.Errorf("error finding Fallback Domains: %w", err))
 	}
 
 	if err := d.Set("domains", flattenFallbackDomains(domain)); err != nil {
-		return fmt.Errorf("error setting domains attribute: %w", err)
+		return diag.FromErr(fmt.Errorf("error setting domains attribute: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareFallbackDomainUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	domainList := expandFallbackDomains(d.Get("domains").([]interface{}))
 
-	newFallbackDomains, err := client.UpdateFallbackDomain(context.Background(), accountID, domainList)
+	newFallbackDomains, err := client.UpdateFallbackDomain(ctx, accountID, domainList)
 	if err != nil {
-		return fmt.Errorf("error updating Fallback Domains: %w", err)
+		return diag.FromErr(fmt.Errorf("error updating Fallback Domains: %w", err))
 	}
 
 	if err := d.Set("domains", flattenFallbackDomains(newFallbackDomains)); err != nil {
-		return fmt.Errorf("error setting domain attribute: %w", err)
+		return diag.FromErr(fmt.Errorf("error setting domain attribute: %w", err))
 	}
 
 	d.SetId(accountID)
 
-	return resourceCloudflareFallbackDomainRead(d, meta)
+	return resourceCloudflareFallbackDomainRead(ctx, d, meta)
 }
 
-func resourceCloudflareFallbackDomainDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFallbackDomainDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	err := client.RestoreFallbackDomainDefaults(context.Background(), accountID)
+	err := client.RestoreFallbackDomainDefaults(ctx, accountID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")
 	return nil
 }
 
-func resourceCloudflareFallbackDomainImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareFallbackDomainImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	accountID := d.Id()
 
 	if accountID == "" {
@@ -80,9 +81,9 @@ func resourceCloudflareFallbackDomainImport(d *schema.ResourceData, meta interfa
 	d.Set("account_id", accountID)
 	d.SetId(accountID)
 
-	readErr := resourceCloudflareFallbackDomainRead(d, meta)
+	resourceCloudflareFallbackDomainRead(ctx, d, meta)
 
-	return []*schema.ResourceData{d}, readErr
+	return []*schema.ResourceData{d}, nil
 }
 
 // flattenFallbackDomains accepts the cloudflare.FallbackDomain struct and returns the

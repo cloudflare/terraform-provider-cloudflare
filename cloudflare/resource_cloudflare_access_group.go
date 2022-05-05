@@ -7,35 +7,36 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessGroup() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessGroupSchema(),
-		Create: resourceCloudflareAccessGroupCreate,
-		Read:   resourceCloudflareAccessGroupRead,
-		Update: resourceCloudflareAccessGroupUpdate,
-		Delete: resourceCloudflareAccessGroupDelete,
+		Schema:        resourceCloudflareAccessGroupSchema(),
+		CreateContext: resourceCloudflareAccessGroupCreate,
+		ReadContext:   resourceCloudflareAccessGroupRead,
+		UpdateContext: resourceCloudflareAccessGroupUpdate,
+		DeleteContext: resourceCloudflareAccessGroupDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessGroupImport,
+			StateContext: resourceCloudflareAccessGroupImport,
 		},
 	}
 }
 
-func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.AccessGroup(context.Background(), identifier.Value, d.Id())
+		accessGroup, err = client.AccessGroup(ctx, identifier.Value, d.Id())
 	} else {
-		accessGroup, err = client.ZoneLevelAccessGroup(context.Background(), identifier.Value, d.Id())
+		accessGroup, err = client.ZoneLevelAccessGroup(ctx, identifier.Value, d.Id())
 	}
 
 	if err != nil {
@@ -44,27 +45,27 @@ func resourceCloudflareAccessGroupRead(d *schema.ResourceData, meta interface{})
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Group %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access Group %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", accessGroup.Name)
 
 	if err := d.Set("require", TransformAccessGroupForSchema(accessGroup.Require)); err != nil {
-		return fmt.Errorf("failed to set require attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set require attribute: %w", err))
 	}
 
 	if err := d.Set("exclude", TransformAccessGroupForSchema(accessGroup.Exclude)); err != nil {
-		return fmt.Errorf("failed to set exclude attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set exclude attribute: %w", err))
 	}
 
 	if err := d.Set("include", TransformAccessGroupForSchema(accessGroup.Include)); err != nil {
-		return fmt.Errorf("failed to set include attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set include attribute: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	newAccessGroup := cloudflare.AccessGroup{
 		Name: d.Get("name").(string),
@@ -76,24 +77,24 @@ func resourceCloudflareAccessGroupCreate(d *schema.ResourceData, meta interface{
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.CreateAccessGroup(context.Background(), identifier.Value, newAccessGroup)
+		accessGroup, err = client.CreateAccessGroup(ctx, identifier.Value, newAccessGroup)
 	} else {
-		accessGroup, err = client.CreateZoneLevelAccessGroup(context.Background(), identifier.Value, newAccessGroup)
+		accessGroup, err = client.CreateZoneLevelAccessGroup(ctx, identifier.Value, newAccessGroup)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Group for ID %q: %s", accessGroup.ID, err)
+		return diag.FromErr(fmt.Errorf("error creating Access Group for ID %q: %w", accessGroup.ID, err))
 	}
 
 	d.SetId(accessGroup.ID)
-	return resourceCloudflareAccessGroupRead(d, meta)
+	return resourceCloudflareAccessGroupRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	updatedAccessGroup := cloudflare.AccessGroup{
 		Name: d.Get("name").(string),
@@ -106,51 +107,51 @@ func resourceCloudflareAccessGroupUpdate(d *schema.ResourceData, meta interface{
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessGroup cloudflare.AccessGroup
 	if identifier.Type == AccountType {
-		accessGroup, err = client.UpdateAccessGroup(context.Background(), identifier.Value, updatedAccessGroup)
+		accessGroup, err = client.UpdateAccessGroup(ctx, identifier.Value, updatedAccessGroup)
 	} else {
-		accessGroup, err = client.UpdateZoneLevelAccessGroup(context.Background(), identifier.Value, updatedAccessGroup)
+		accessGroup, err = client.UpdateZoneLevelAccessGroup(ctx, identifier.Value, updatedAccessGroup)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Group for ID %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error updating Access Group for ID %q: %w", d.Id(), err))
 	}
 
 	if accessGroup.ID == "" {
-		return fmt.Errorf("failed to find Access Group ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Access Group ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessGroupRead(d, meta)
+	return resourceCloudflareAccessGroupRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessGroupDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Group using ID: %s", d.Id())
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessGroup(context.Background(), identifier.Value, d.Id())
+		err = client.DeleteAccessGroup(ctx, identifier.Value, d.Id())
 	} else {
-		err = client.DeleteZoneLevelAccessGroup(context.Background(), identifier.Value, d.Id())
+		err = client.DeleteZoneLevelAccessGroup(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting Access Group for ID %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error deleting Access Group for ID %q: %w", d.Id(), err))
 	}
 
-	resourceCloudflareAccessGroupRead(d, meta)
+	resourceCloudflareAccessGroupRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareAccessGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessGroupImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -164,7 +165,7 @@ func resourceCloudflareAccessGroupImport(d *schema.ResourceData, meta interface{
 	d.Set("account_id", accountID)
 	d.SetId(accessGroupID)
 
-	resourceCloudflareAccessGroupRead(d, meta)
+	resourceCloudflareAccessGroupRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

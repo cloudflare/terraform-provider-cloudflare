@@ -61,7 +61,6 @@ func testSweepCloudflareZones(r string) error {
 }
 
 func TestAccCloudflareZonesMatchName(t *testing.T) {
-
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)

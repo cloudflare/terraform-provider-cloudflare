@@ -9,18 +9,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflarePageRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflarePageRuleSchema(),
-		Create: resourceCloudflarePageRuleCreate,
-		Read:   resourceCloudflarePageRuleRead,
-		Update: resourceCloudflarePageRuleUpdate,
-		Delete: resourceCloudflarePageRuleDelete,
+		Schema:        resourceCloudflarePageRuleSchema(),
+		CreateContext: resourceCloudflarePageRuleCreate,
+		ReadContext:   resourceCloudflarePageRuleRead,
+		UpdateContext: resourceCloudflarePageRuleUpdate,
+		DeleteContext: resourceCloudflarePageRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflarePageRuleImport,
+			StateContext: resourceCloudflarePageRuleImport,
 		},
 	}
 }
@@ -33,7 +34,7 @@ func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
 	return false
 }
 
-func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -56,10 +57,9 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[DEBUG] Actions found in config: %#v", actions)
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-
 			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			} else if newPageRuleAction.Value == nil || newPageRuleAction.Value == "" {
 				continue
 			}
@@ -68,7 +68,7 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	pageRulesActionMap := pageRuleActionsToMap(newPageRuleActions)
 	if _, ok := pageRulesActionMap["forwarding_url"]; ok && len(pageRulesActionMap) > 1 {
-		return fmt.Errorf("\"forwarding_url\" cannot be set with any other actions")
+		return diag.FromErr(fmt.Errorf("\"forwarding_url\" cannot be set with any other actions"))
 	}
 
 	newPageRule := cloudflare.PageRule{
@@ -80,18 +80,18 @@ func resourceCloudflarePageRuleCreate(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[DEBUG] Cloudflare Page Rule create configuration: %#v", newPageRule)
 
-	r, err := client.CreatePageRule(context.Background(), zoneID, newPageRule)
+	r, err := client.CreatePageRule(ctx, zoneID, newPageRule)
 	if err != nil {
-		return fmt.Errorf("failed to create page rule: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create page rule: %w", err))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("Failed to find page rule in Create response; ID was empty")
+		return diag.FromErr(fmt.Errorf("Failed to find page rule in Create response; ID was empty"))
 	}
 
 	d.SetId(r.ID)
 
-	return resourceCloudflarePageRuleRead(d, meta)
+	return resourceCloudflarePageRuleRead(ctx, d, meta)
 }
 
 func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{} {
@@ -102,11 +102,11 @@ func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{}
 	return vsm
 }
 
-func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	pageRule, err := client.PageRule(context.Background(), zoneID, d.Id())
+	pageRule, err := client.PageRule(ctx, zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid Page Rule identifier") || // api bug - this indicates non-existing resource
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -114,7 +114,7 @@ func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 			d.SetId("")
 			return nil
 		} else {
-			return fmt.Errorf("error finding page rule %q: %s", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("error finding page rule %q: %w", d.Id(), err))
 		}
 	}
 	log.Printf("[DEBUG] Cloudflare Page Rule read configuration: %#v", pageRule)
@@ -130,7 +130,7 @@ func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	for _, pageRuleAction := range pageRule.Actions {
 		key, value, err := transformFromCloudflarePageRuleAction(&pageRuleAction)
 		if err != nil {
-			return fmt.Errorf("failed to parse page rule action: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to parse page rule action: %w", err))
 		}
 		actions[key] = value
 	}
@@ -143,7 +143,7 @@ func resourceCloudflarePageRuleRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -151,7 +151,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 	if target, ok := d.GetOk("target"); ok {
 		updatePageRule.Targets = []cloudflare.PageRuleTarget{
-			cloudflare.PageRuleTarget{
+			{
 				Target: "url",
 				Constraint: struct {
 					Operator string `json:"operator"`
@@ -172,7 +172,7 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 			for id, value := range action.(map[string]interface{}) {
 				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
 				if err != nil {
-					return err
+					return diag.FromErr(err)
 				} else if newPageRuleAction.Value == nil {
 					continue
 				}
@@ -193,21 +193,21 @@ func resourceCloudflarePageRuleUpdate(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[DEBUG] Cloudflare Page Rule update configuration: %#v", updatePageRule)
 
-	if err := client.UpdatePageRule(context.Background(), zoneID, d.Id(), updatePageRule); err != nil {
-		return fmt.Errorf("failed to update Cloudflare Page Rule: %s", err)
+	if err := client.UpdatePageRule(ctx, zoneID, d.Id(), updatePageRule); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to update Cloudflare Page Rule: %w", err))
 	}
 
-	return resourceCloudflarePageRuleRead(d, meta)
+	return resourceCloudflarePageRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflarePageRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zoneID, d.Id())
 
-	if err := client.DeletePageRule(context.Background(), zoneID, d.Id()); err != nil {
-		return fmt.Errorf("error deleting Cloudflare Page Rule: %s", err)
+	if err := client.DeletePageRule(ctx, zoneID, d.Id()); err != nil {
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Page Rule: %w", err))
 	}
 
 	return nil
@@ -346,7 +346,6 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 }
 
 func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
-
 	pageRuleAction.ID = id
 
 	if strValue, ok := value.(string); ok {
@@ -496,7 +495,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	return
 }
 
-func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflarePageRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -510,7 +509,7 @@ func resourceCloudflarePageRuleImport(d *schema.ResourceData, meta interface{}) 
 		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/pageRuleID\"", d.Id())
 	}
 
-	resourceCloudflarePageRuleRead(d, meta)
+	resourceCloudflarePageRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

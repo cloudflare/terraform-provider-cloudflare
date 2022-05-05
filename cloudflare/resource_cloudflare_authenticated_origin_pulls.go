@@ -6,24 +6,25 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareAuthenticatedOriginPulls() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAuthenticatedOriginPullsSchema(),
-		Create: resourceCloudflareAuthenticatedOriginPullsCreate,
-		Read:   resourceCloudflareAuthenticatedOriginPullsRead,
-		Update: resourceCloudflareAuthenticatedOriginPullsCreate,
-		Delete: resourceCloudflareAuthenticatedOriginPullsDelete,
+		Schema:        resourceCloudflareAuthenticatedOriginPullsSchema(),
+		CreateContext: resourceCloudflareAuthenticatedOriginPullsCreate,
+		ReadContext:   resourceCloudflareAuthenticatedOriginPullsRead,
+		UpdateContext: resourceCloudflareAuthenticatedOriginPullsCreate,
+		DeleteContext: resourceCloudflareAuthenticatedOriginPullsDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAuthenticatedOriginPullsImport,
+			StateContext: resourceCloudflareAuthenticatedOriginPullsImport,
 		},
 	}
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	hostname := d.Get("hostname").(string)
@@ -38,34 +39,34 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(d *schema.ResourceData, me
 			Hostname: hostname,
 			Enabled:  isEnabled.(bool),
 		}}
-		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(context.Background(), zoneID, conf)
+		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(ctx, zoneID, conf)
 		if err != nil {
-			return fmt.Errorf("error creating Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error creating Per-Hostname Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}
 		checksum = stringChecksum(fmt.Sprintf("PerHostnameAOP/%s/%s/%s", zoneID, hostname, aopCert))
 
 	case aopCert != "":
 		// Per Zone AOP
-		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(context.Background(), zoneID, isEnabled.(bool))
+		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(ctx, zoneID, isEnabled.(bool))
 		if err != nil {
-			return fmt.Errorf("error creating Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error creating Per-Zone Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}
 		checksum = stringChecksum(fmt.Sprintf("PerZoneAOP/%s/%s", zoneID, aopCert))
 
 	default:
 		// Global AOP
-		_, err := client.SetAuthenticatedOriginPullsStatus(context.Background(), zoneID, isEnabled.(bool))
+		_, err := client.SetAuthenticatedOriginPullsStatus(ctx, zoneID, isEnabled.(bool))
 		if err != nil {
-			return fmt.Errorf("error creating Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error creating Global Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}
 		checksum = stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
 	}
 
 	d.SetId(checksum)
-	return resourceCloudflareAuthenticatedOriginPullsRead(d, meta)
+	return resourceCloudflareAuthenticatedOriginPullsRead(ctx, d, meta)
 }
 
-func resourceCloudflareAuthenticatedOriginPullsRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	hostname := d.Get("hostname").(string)
@@ -73,23 +74,23 @@ func resourceCloudflareAuthenticatedOriginPullsRead(d *schema.ResourceData, meta
 
 	if hostname != "" && aopCert != "" {
 		// Per Hostname AOP
-		res, err := client.GetPerHostnameAuthenticatedOriginPullsConfig(context.Background(), zoneID, hostname)
+		res, err := client.GetPerHostnameAuthenticatedOriginPullsConfig(ctx, zoneID, hostname)
 		if err != nil {
-			return errors.Wrap(err, "failed to get Per-Hostname Authenticated Origin Pulls setting")
+			return diag.FromErr(errors.Wrap(err, "failed to get Per-Hostname Authenticated Origin Pulls setting"))
 		}
 		d.Set("enabled", res.Enabled)
 	} else if aopCert != "" {
 		// Per Zone AOP
-		res, err := client.GetPerZoneAuthenticatedOriginPullsStatus(context.Background(), zoneID)
+		res, err := client.GetPerZoneAuthenticatedOriginPullsStatus(ctx, zoneID)
 		if err != nil {
-			return errors.Wrap(err, "failed to get Per-Zone Authenticated Origin Pulls setting")
+			return diag.FromErr(errors.Wrap(err, "failed to get Per-Zone Authenticated Origin Pulls setting"))
 		}
 		d.Set("enabled", res.Enabled)
 	} else {
 		// Global AOP
-		res, err := client.GetAuthenticatedOriginPullsStatus(context.Background(), zoneID)
+		res, err := client.GetAuthenticatedOriginPullsStatus(ctx, zoneID)
 		if err != nil {
-			return errors.Wrap(err, "failed to get Global Authenticated Origin Pulls setting")
+			return diag.FromErr(errors.Wrap(err, "failed to get Global Authenticated Origin Pulls setting"))
 		}
 		if res.Value == "on" {
 			d.Set("enabled", true)
@@ -100,7 +101,7 @@ func resourceCloudflareAuthenticatedOriginPullsRead(d *schema.ResourceData, meta
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	hostname := d.Get("hostname").(string)
@@ -113,27 +114,27 @@ func resourceCloudflareAuthenticatedOriginPullsDelete(d *schema.ResourceData, me
 			Hostname: hostname,
 			Enabled:  false,
 		}}
-		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(context.Background(), zoneID, conf)
+		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(ctx, zoneID, conf)
 		if err != nil {
-			return fmt.Errorf("error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error disabling Per-Hostname Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}
 	} else if aopCert != "" {
 		// Per Zone AOP
-		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(context.Background(), zoneID, false)
+		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(ctx, zoneID, false)
 		if err != nil {
-			return fmt.Errorf("error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error disabling Per-Zone Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}
 	} else {
 		// Global AOP
-		_, err := client.SetAuthenticatedOriginPullsStatus(context.Background(), zoneID, false)
+		_, err := client.SetAuthenticatedOriginPullsStatus(ctx, zoneID, false)
 		if err != nil {
-			return fmt.Errorf("error disabling Global Authenticated Origin Pulls resource on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error disabling Global Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}
 	}
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAuthenticatedOriginPullsImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 3)
 
@@ -156,6 +157,6 @@ func resourceCloudflareAuthenticatedOriginPullsImport(d *schema.ResourceData, me
 		checksum = stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
 	}
 	d.SetId(checksum)
-	resourceCloudflareAuthenticatedOriginPullsRead(d, meta)
+	resourceCloudflareAuthenticatedOriginPullsRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }

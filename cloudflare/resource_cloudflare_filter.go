@@ -7,23 +7,24 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareFilter() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareFilterSchema(),
-		Create: resourceCloudflareFilterCreate,
-		Read:   resourceCloudflareFilterRead,
-		Update: resourceCloudflareFilterUpdate,
-		Delete: resourceCloudflareFilterDelete,
+		Schema:        resourceCloudflareFilterSchema(),
+		CreateContext: resourceCloudflareFilterCreate,
+		ReadContext:   resourceCloudflareFilterRead,
+		UpdateContext: resourceCloudflareFilterUpdate,
+		DeleteContext: resourceCloudflareFilterDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareFilterImport,
+			StateContext: resourceCloudflareFilterImport,
 		},
 	}
 }
 
-func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -49,29 +50,29 @@ func resourceCloudflareFilterCreate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Creating Cloudflare Filter from struct: %+v", newFilter)
 
-	r, err := client.CreateFilters(context.Background(), zoneID, []cloudflare.Filter{newFilter})
+	r, err := client.CreateFilters(ctx, zoneID, []cloudflare.Filter{newFilter})
 
 	if err != nil {
-		return fmt.Errorf("error creating Filter for zone %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error creating Filter for zone %q: %w", zoneID, err))
 	}
 
 	if len(r) == 0 {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r[0].ID)
 
 	log.Printf("[INFO] Cloudflare Filter ID: %s", d.Id())
 
-	return resourceCloudflareFilterRead(d, meta)
+	return resourceCloudflareFilterRead(ctx, d, meta)
 }
 
-func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[DEBUG] Getting a Filter record for zone %q, id %s", zoneID, d.Id())
-	filter, err := client.Filter(context.Background(), zoneID, d.Id())
+	filter, err := client.Filter(ctx, zoneID, d.Id())
 
 	log.Printf("[DEBUG] filter: %#v", filter)
 	log.Printf("[DEBUG] filter error: %#v", err)
@@ -82,7 +83,7 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Filter %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Filter %q: %w", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Filter read configuration: %#v", filter)
@@ -95,7 +96,7 @@ func resourceCloudflareFilterRead(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceCloudflareFilterUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -120,35 +121,35 @@ func resourceCloudflareFilterUpdate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Updating Cloudflare Filter from struct: %+v", newFilter)
 
-	r, err := client.UpdateFilter(context.Background(), zoneID, newFilter)
+	r, err := client.UpdateFilter(ctx, zoneID, newFilter)
 
 	if err != nil {
-		return fmt.Errorf("error updating Filter for zone %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error updating Filter for zone %q: %w", zoneID, err))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in Update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
-	return resourceCloudflareFilterRead(d, meta)
+	return resourceCloudflareFilterRead(ctx, d, meta)
 }
 
-func resourceCloudflareFilterDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID)
 
-	err := client.DeleteFilter(context.Background(), zoneID, d.Id())
+	err := client.DeleteFilter(ctx, zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Filter: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Filter: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareFilterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareFilterImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
@@ -163,7 +164,7 @@ func resourceCloudflareFilterImport(d *schema.ResourceData, meta interface{}) ([
 	d.Set("zone_id", zoneID)
 	d.SetId(filterID)
 
-	resourceCloudflareFilterRead(d, meta)
+	resourceCloudflareFilterRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

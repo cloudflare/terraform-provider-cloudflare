@@ -9,7 +9,6 @@ import (
 )
 
 func TestAccCloudflareZone_PreventZoneIdAndNameConflicts(t *testing.T) {
-
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
@@ -34,7 +33,6 @@ data "cloudflare_zone" "%[1]s" {
 }
 
 func TestAccCloudflareZone_NameLookup(t *testing.T) {
-
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zone.%s", rnd)

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -14,30 +15,30 @@ const CONCEALED_STRING = "**********************************"
 
 func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessIdentityProviderSchema(),
-		Create: resourceCloudflareAccessIdentityProviderCreate,
-		Read:   resourceCloudflareAccessIdentityProviderRead,
-		Update: resourceCloudflareAccessIdentityProviderUpdate,
-		Delete: resourceCloudflareAccessIdentityProviderDelete,
+		Schema:        resourceCloudflareAccessIdentityProviderSchema(),
+		CreateContext: resourceCloudflareAccessIdentityProviderCreate,
+		ReadContext:   resourceCloudflareAccessIdentityProviderRead,
+		UpdateContext: resourceCloudflareAccessIdentityProviderUpdate,
+		DeleteContext: resourceCloudflareAccessIdentityProviderDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessIdentityProviderImport,
+			StateContext: resourceCloudflareAccessIdentityProviderImport,
 		},
 	}
 }
 
-func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.AccessIdentityProviderDetails(context.Background(), identifier.Value, d.Id())
+		accessIdentityProvider, err = client.AccessIdentityProviderDetails(ctx, identifier.Value, d.Id())
 	} else {
-		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(context.Background(), identifier.Value, d.Id())
+		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
@@ -45,7 +46,7 @@ func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta i
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("unable to find Access Identity Provider %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("unable to find Access Identity Provider %q: %w", d.Id(), err))
 	}
 
 	d.SetId(accessIdentityProvider.ID)
@@ -54,13 +55,13 @@ func resourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta i
 
 	config := convertStructToSchema(d, accessIdentityProvider.Config)
 	if configErr := d.Set("config", config); configErr != nil {
-		return fmt.Errorf("error setting Access Identity Provider configuration: %s", configErr)
+		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider configuration: %w", configErr))
 	}
 
 	return nil
 }
 
-func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	IDPConfig, _ := convertSchemaToStruct(d)
@@ -75,30 +76,30 @@ func resourceCloudflareAccessIdentityProviderCreate(d *schema.ResourceData, meta
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.CreateAccessIdentityProvider(context.Background(), identifier.Value, identityProvider)
+		accessIdentityProvider, err = client.CreateAccessIdentityProvider(ctx, identifier.Value, identityProvider)
 	} else {
-		accessIdentityProvider, err = client.CreateZoneLevelAccessIdentityProvider(context.Background(), identifier.Value, identityProvider)
+		accessIdentityProvider, err = client.CreateZoneLevelAccessIdentityProvider(ctx, identifier.Value, identityProvider)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Identity Provider for ID %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error creating Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
 
 	d.SetId(accessIdentityProvider.ID)
 
-	return resourceCloudflareAccessIdentityProviderRead(d, meta)
+	return resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	IDPConfig, conversionErr := convertSchemaToStruct(d)
 	if conversionErr != nil {
-		return fmt.Errorf("failed to convert schema into struct: %s", conversionErr)
+		return diag.FromErr(fmt.Errorf("failed to convert schema into struct: %w", conversionErr))
 	}
 
 	log.Printf("[DEBUG] updatedConfig: %+v", IDPConfig)
@@ -112,43 +113,43 @@ func resourceCloudflareAccessIdentityProviderUpdate(d *schema.ResourceData, meta
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.UpdateAccessIdentityProvider(context.Background(), identifier.Value, d.Id(), updatedAccessIdentityProvider)
+		accessIdentityProvider, err = client.UpdateAccessIdentityProvider(ctx, identifier.Value, d.Id(), updatedAccessIdentityProvider)
 	} else {
-		accessIdentityProvider, err = client.UpdateZoneLevelAccessIdentityProvider(context.Background(), identifier.Value, d.Id(), updatedAccessIdentityProvider)
+		accessIdentityProvider, err = client.UpdateZoneLevelAccessIdentityProvider(ctx, identifier.Value, d.Id(), updatedAccessIdentityProvider)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Identity Provider for ID %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error updating Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
 
 	if accessIdentityProvider.ID == "" {
-		return fmt.Errorf("failed to find Access Identity Provider ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Access Identity Provider ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessIdentityProviderRead(d, meta)
+	return resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessIdentityProviderDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Access Identity Provider using ID: %s", d.Id())
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
-		_, err = client.DeleteAccessIdentityProvider(context.Background(), identifier.Value, d.Id())
+		_, err = client.DeleteAccessIdentityProvider(ctx, identifier.Value, d.Id())
 	} else {
-		_, err = client.DeleteZoneLevelAccessIdentityProvider(context.Background(), identifier.Value, d.Id())
+		_, err = client.DeleteZoneLevelAccessIdentityProvider(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting Access Identity Provider for ID %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error deleting Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
 
 	d.SetId("")
@@ -156,7 +157,7 @@ func resourceCloudflareAccessIdentityProviderDelete(d *schema.ResourceData, meta
 	return nil
 }
 
-func resourceCloudflareAccessIdentityProviderImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessIdentityProviderImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -170,7 +171,7 @@ func resourceCloudflareAccessIdentityProviderImport(d *schema.ResourceData, meta
 	d.Set("account_id", accountID)
 	d.SetId(accessIdentityProviderID)
 
-	resourceCloudflareAccessIdentityProviderRead(d, meta)
+	resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
