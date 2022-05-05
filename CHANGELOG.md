@@ -1,5 +1,9 @@
 ## 3.15.0 (Unreleased)
 
+NOTES:
+
+* provider: internally swapped to using `diag.Diagnostics` for CRUD return types and using `context.Context` passed in from the provider itself instead of instantiating our own in each operation ([#1592](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1592))
+
 ## 3.14.0 (May 4th, 2022)
 
 FEATURES:
