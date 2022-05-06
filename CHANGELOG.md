@@ -4,6 +4,10 @@ NOTES:
 
 * provider: internally swapped to using `diag.Diagnostics` for CRUD return types and using `context.Context` passed in from the provider itself instead of instantiating our own in each operation ([#1592](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1592))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: allow r2 logpush destinations without ownership validation ([#1597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1597))
+
 ## 3.14.0 (May 4th, 2022)
 
 FEATURES:
