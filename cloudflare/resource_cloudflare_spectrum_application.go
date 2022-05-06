@@ -114,8 +114,11 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 		if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
 			log.Printf("[WARN] Error setting Edge IPs on spectrum application %q: %s", d.Id(), err)
 		}
-		if err := d.Set("edge_ip_connectivity", application.EdgeIPs.Connectivity.String()); err != nil {
-			log.Printf("[WARN] Error setting Edge IP connectivity on spectrum application %q: %s", d.Id(), err)
+
+		if application.EdgeIPs.Connectivity != nil {
+			if err := d.Set("edge_ip_connectivity", application.EdgeIPs.Connectivity.String()); err != nil {
+				log.Printf("[WARN] Error setting Edge IP connectivity on spectrum application %q: %s", d.Id(), err)
+			}
 		}
 	}
 
