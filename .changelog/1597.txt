@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_logpush_job: allow r2 logpush destinations without ownership validation
+```
