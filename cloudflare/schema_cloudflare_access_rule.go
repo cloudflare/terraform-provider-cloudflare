@@ -26,7 +26,7 @@ func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 			Type:             schema.TypeList,
 			MaxItems:         1,
 			Required:         true,
-                        ForceNew:         true,
+			ForceNew:         true,
 			DiffSuppressFunc: configurationDiffSuppress,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
