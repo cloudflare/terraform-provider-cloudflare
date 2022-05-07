@@ -26,18 +26,20 @@ func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 			Type:             schema.TypeList,
 			MaxItems:         1,
 			Required:         true,
-			ForceNew:         true,
+                        ForceNew:         true,
 			DiffSuppressFunc: configurationDiffSuppress,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"target": {
 						Type:         schema.TypeString,
 						Required:     true,
+						ForceNew:     true,
 						ValidateFunc: validation.StringInSlice([]string{"ip", "ip6", "ip_range", "asn", "country"}, false),
 					},
 					"value": {
 						Type:     schema.TypeString,
 						Required: true,
+						ForceNew: true,
 					},
 				},
 			},
