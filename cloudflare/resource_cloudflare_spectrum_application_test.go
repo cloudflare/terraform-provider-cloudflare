@@ -263,6 +263,30 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareSpectrumApplication_EdgeIPsWithoutConnectivity(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigEdgeIPsWithoutConnectivity(zoneID, domain, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "edge_ips.#", "1"),
+					resource.TestCheckResourceAttr(name, "edge_ips.0", "198.51.100.10"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *cloudflare.SpectrumApplication) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -407,5 +431,22 @@ resource "cloudflare_spectrum_application" "%[3]s" {
   origin_direct = ["tcp://1.2.3.4:23"]
   origin_port   = 22
   edge_ip_connectivity = "ipv4"
+}`, zoneID, zoneName, ID)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigEdgeIPsWithoutConnectivity(zoneID, zoneName, ID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_spectrum_application" "%[3]s" {
+  zone_id  = "%[1]s"
+  protocol = "tcp/22"
+
+  dns {
+    type = "CNAME"
+    name = "%[3]s.%[2]s"
+  }
+
+  origin_direct = ["tcp://1.2.3.4:23"]
+  origin_port   = 22
+  edge_ips = ["198.51.100.10"]
 }`, zoneID, zoneName, ID)
 }
