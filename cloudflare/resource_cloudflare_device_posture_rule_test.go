@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareDevicePostureRuleSerialNumber(t *testing.T) {
+func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -47,7 +47,7 @@ func TestAccCloudflareDevicePostureRuleSerialNumber(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareDevicePostureRuleOsVersion(t *testing.T) {
+func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -84,7 +84,7 @@ func TestAccCloudflareDevicePostureRuleOsVersion(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareDevicePostureRuleDomainJoined(t *testing.T) {
+func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -120,7 +120,7 @@ func TestAccCloudflareDevicePostureRuleDomainJoined(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareDevicePostureRuleFirewall(t *testing.T) {
+func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -158,7 +158,7 @@ func TestAccCloudflareDevicePostureRuleFirewall(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareDevicePostureRuleDiskEncryption(t *testing.T) {
+func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -204,7 +204,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "serial_number"
 	description               = "My description"
 	schedule                  = "24h"
-	expiration				  = "24h"
+	expiration                = "24h"
 	match {
 		platform = "windows"
 	}
@@ -223,7 +223,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "os_version"
 	description               = "My description"
 	schedule                  = "24h"
-	expiration				  = "24h"
+	expiration                = "24h"
 	match {
 		platform = "mac"
 	}
@@ -243,7 +243,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "domain_joined"
 	description               = "My description"
 	schedule                  = "24h"
-	expiration				  = "24h"
+	expiration                = "24h"
 	match {
 		platform = "windows"
 	}
@@ -262,7 +262,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "disk_encryption"
 	description               = "My description"
 	schedule                  = "24h"
-	expiration				  = "24h"
+	expiration                = "24h"
 	match {
 		platform = "mac"
 	}
@@ -281,7 +281,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "firewall"
 	description               = "firewall description"
 	schedule                  = "24h"
-	expiration				  = "24h"
+	expiration                = "24h"
 	match {
 		platform = "windows"
 	}
