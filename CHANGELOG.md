@@ -1,4 +1,18 @@
-## 3.14.0 (Unreleased)
+## 3.15.0 (Unreleased)
+
+NOTES:
+
+* provider: internally swapped to using `diag.Diagnostics` for CRUD return types and using `context.Context` passed in from the provider itself instead of instantiating our own in each operation ([#1592](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1592))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: allow r2 logpush destinations without ownership validation ([#1597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1597))
+
+BUG FIXES:
+
+* resource/cloudflare_access_rule: Fix lifecycle of access_rule update ([#1601](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1601))
+
+## 3.14.0 (May 4th, 2022)
 
 FEATURES:
 
@@ -6,11 +20,15 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_certificate_pack: add support for new option (`wait_for_active_status`) to block creation until certificate pack is active ([#1567](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1567))
 * resource/cloudflare_notification_policy: Add `slo` to notification policy filters ([#1573](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1573))
+* resource/cloudflare_teams_list: Add support for IP type ([#1550](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1550))
 
 BUG FIXES:
 
 * cloudflare_tunnel_routes: Fix reads matching routers with larger CIDRs ([#1581](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1581))
+* resource/cloudflare_access_group: allow github access groups to be created without a list of teams ([#1589](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1589))
+* resource/cloudflare_logpush_job: make ownership challenge check for https not required ([#1588](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1588))
 * resource/cloudflare_tunnel_route: Fix importing resource ([#1580](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1580))
 * resource/cloudflare_zone: update plan identifier for professional rate plans ([#1583](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1583))
 

@@ -5,37 +5,38 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
-		Schema: dataSourceCloudflareAccessIdentityProviderSchema(),
-		Read:   dataSourceCloudflareAccessIdentityProviderRead,
+		Schema:      dataSourceCloudflareAccessIdentityProviderSchema(),
+		ReadContext: dataSourceCloudflareAccessIdentityProviderRead,
 	}
 }
 
-func dataSourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	identifier, err := initIdentifier(d)
 	name := d.Get("name").(string)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var providers []cloudflare.AccessIdentityProvider
 	if identifier.Type == AccountType {
-		providers, err = client.AccessIdentityProviders(context.Background(), identifier.Value)
+		providers, err = client.AccessIdentityProviders(ctx, identifier.Value)
 	} else {
-		providers, err = client.ZoneLevelAccessIdentityProviders(context.Background(), identifier.Value)
+		providers, err = client.ZoneLevelAccessIdentityProviders(ctx, identifier.Value)
 	}
 
 	if err != nil {
-		return fmt.Errorf("error listing Access Identity Providers: %s", err)
+		return diag.FromErr(fmt.Errorf("error listing Access Identity Providers: %w", err))
 	}
 
 	if len(providers) == 0 {
-		return fmt.Errorf("no Access Identity Providers found")
+		return diag.FromErr(fmt.Errorf("no Access Identity Providers found"))
 	}
 
 	var accessIdentityProvider cloudflare.AccessIdentityProvider
@@ -47,7 +48,7 @@ func dataSourceCloudflareAccessIdentityProviderRead(d *schema.ResourceData, meta
 	}
 
 	if accessIdentityProvider.ID == "" {
-		return fmt.Errorf("no Access Identity Provider matching name %q", name)
+		return diag.FromErr(fmt.Errorf("no Access Identity Provider matching name %q", name))
 	}
 
 	d.SetId(accessIdentityProvider.ID)

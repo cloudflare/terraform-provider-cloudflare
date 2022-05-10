@@ -72,7 +72,6 @@ func testAccCheckCloudflareArgoTunnelDestroy(s *terraform.State) error {
 		if tunnel.DeletedAt == nil {
 			return fmt.Errorf("argo tunnel with ID %s still exists", tunnel.ID)
 		}
-
 	}
 
 	return nil

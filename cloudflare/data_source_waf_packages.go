@@ -7,13 +7,14 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceCloudflareWAFPackages() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareWAFPackagesRead,
+		ReadContext: dataSourceCloudflareWAFPackagesRead,
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
@@ -85,22 +86,22 @@ func dataSourceCloudflareWAFPackages() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareWAFPackagesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	// Prepare the filters to be applied to the search
 	filter, err := expandFilterWAFPackages(d.Get("filter"))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("[DEBUG] Reading WAF Packages")
 	packageIds := make([]string, 0)
 	packageDetails := make([]interface{}, 0)
-	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
+	pkgList, err := client.ListWAFPackages(ctx, zoneID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	for _, pkg := range pkgList {
@@ -133,7 +134,7 @@ func dataSourceCloudflareWAFPackagesRead(d *schema.ResourceData, meta interface{
 
 	err = d.Set("packages", packageDetails)
 	if err != nil {
-		return fmt.Errorf("error setting WAF packages: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting WAF packages: %w", err))
 	}
 
 	d.SetId(stringListChecksum(packageIds))

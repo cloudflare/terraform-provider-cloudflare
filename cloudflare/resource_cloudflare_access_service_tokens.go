@@ -7,19 +7,20 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessServiceToken() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessServiceTokenSchema(),
-		Create: resourceCloudflareAccessServiceTokenCreate,
-		Read:   resourceCloudflareAccessServiceTokenRead,
-		Update: resourceCloudflareAccessServiceTokenUpdate,
-		Delete: resourceCloudflareAccessServiceTokenDelete,
+		Schema:        resourceCloudflareAccessServiceTokenSchema(),
+		CreateContext: resourceCloudflareAccessServiceTokenCreate,
+		ReadContext:   resourceCloudflareAccessServiceTokenRead,
+		UpdateContext: resourceCloudflareAccessServiceTokenUpdate,
+		DeleteContext: resourceCloudflareAccessServiceTokenDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessServiceTokenImport,
+			StateContext: resourceCloudflareAccessServiceTokenImport,
 		},
 
 		CustomizeDiff: customdiff.ComputedIf("expires_at", resourceCloudflareAccessServiceTokenExpireDiff),
@@ -46,12 +47,12 @@ func resourceCloudflareAccessServiceTokenExpireDiff(ctx context.Context, d *sche
 	return false
 }
 
-func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// The Cloudflare API doesn't support fetching a single service token
@@ -59,12 +60,12 @@ func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta inter
 	// when we have a match.
 	var serviceTokens []cloudflare.AccessServiceToken
 	if identifier.Type == AccountType {
-		serviceTokens, _, err = client.AccessServiceTokens(context.Background(), identifier.Value)
+		serviceTokens, _, err = client.AccessServiceTokens(ctx, identifier.Value)
 	} else {
-		serviceTokens, _, err = client.ZoneLevelAccessServiceTokens(context.Background(), identifier.Value)
+		serviceTokens, _, err = client.ZoneLevelAccessServiceTokens(ctx, identifier.Value)
 	}
 	if err != nil {
-		return fmt.Errorf("error fetching access service tokens: %s", err)
+		return diag.FromErr(fmt.Errorf("error fetching access service tokens: %w", err))
 	}
 	for _, token := range serviceTokens {
 		if token.ID == d.Id() {
@@ -77,23 +78,23 @@ func resourceCloudflareAccessServiceTokenRead(d *schema.ResourceData, meta inter
 	return nil
 }
 
-func resourceCloudflareAccessServiceTokenCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenName := d.Get("name").(string)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var serviceToken cloudflare.AccessServiceTokenCreateResponse
 	if identifier.Type == AccountType {
-		serviceToken, err = client.CreateAccessServiceToken(context.Background(), identifier.Value, tokenName)
+		serviceToken, err = client.CreateAccessServiceToken(ctx, identifier.Value, tokenName)
 	} else {
-		serviceToken, err = client.CreateZoneLevelAccessServiceToken(context.Background(), identifier.Value, tokenName)
+		serviceToken, err = client.CreateZoneLevelAccessServiceToken(ctx, identifier.Value, tokenName)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating access service token: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating access service token: %w", err))
 	}
 
 	d.SetId(serviceToken.ID)
@@ -102,50 +103,50 @@ func resourceCloudflareAccessServiceTokenCreate(d *schema.ResourceData, meta int
 	d.Set("client_secret", serviceToken.ClientSecret)
 	d.Set("expires_at", serviceToken.ExpiresAt.Format(time.RFC3339))
 
-	resourceCloudflareAccessServiceTokenRead(d, meta)
+	resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareAccessServiceTokenUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenName := d.Get("name").(string)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var serviceToken cloudflare.AccessServiceTokenUpdateResponse
 	if identifier.Type == AccountType {
-		serviceToken, err = client.UpdateAccessServiceToken(context.Background(), identifier.Value, d.Id(), tokenName)
+		serviceToken, err = client.UpdateAccessServiceToken(ctx, identifier.Value, d.Id(), tokenName)
 	} else {
-		serviceToken, err = client.UpdateZoneLevelAccessServiceToken(context.Background(), identifier.Value, d.Id(), tokenName)
+		serviceToken, err = client.UpdateZoneLevelAccessServiceToken(ctx, identifier.Value, d.Id(), tokenName)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating access service token: %s", err)
+		return diag.FromErr(fmt.Errorf("error updating access service token: %w", err))
 	}
 
 	d.Set("name", serviceToken.Name)
 
-	return resourceCloudflareAccessServiceTokenRead(d, meta)
+	return resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessServiceTokenDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessServiceTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
-		_, err = client.DeleteAccessServiceToken(context.Background(), identifier.Value, d.Id())
+		_, err = client.DeleteAccessServiceToken(ctx, identifier.Value, d.Id())
 	} else {
-		_, err = client.DeleteZoneLevelAccessServiceToken(context.Background(), identifier.Value, d.Id())
+		_, err = client.DeleteZoneLevelAccessServiceToken(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting access service token: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting access service token: %w", err))
 	}
 
 	d.SetId("")
@@ -153,7 +154,7 @@ func resourceCloudflareAccessServiceTokenDelete(d *schema.ResourceData, meta int
 	return nil
 }
 
-func resourceCloudflareAccessServiceTokenImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessServiceTokenImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -163,7 +164,7 @@ func resourceCloudflareAccessServiceTokenImport(d *schema.ResourceData, meta int
 	d.Set("account_id", attributes[0])
 	d.SetId(attributes[1])
 
-	resourceCloudflareAccessServiceTokenRead(d, meta)
+	resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

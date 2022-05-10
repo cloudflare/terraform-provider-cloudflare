@@ -7,41 +7,42 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareIPsecTunnel() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareIPsecTunnelSchema(),
-		Create: resourceCloudflareIPsecTunnelCreate,
-		Read:   resourceCloudflareIPsecTunnelRead,
-		Update: resourceCloudflareIPsecTunnelUpdate,
-		Delete: resourceCloudflareIPsecTunnelDelete,
+		Schema:        resourceCloudflareIPsecTunnelSchema(),
+		CreateContext: resourceCloudflareIPsecTunnelCreate,
+		ReadContext:   resourceCloudflareIPsecTunnelRead,
+		UpdateContext: resourceCloudflareIPsecTunnelUpdate,
+		DeleteContext: resourceCloudflareIPsecTunnelDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareIPsecTunnelImport,
+			StateContext: resourceCloudflareIPsecTunnelImport,
 		},
 	}
 }
 
-func resourceCloudflareIPsecTunnelCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
-	newTunnel, err := client.CreateMagicTransitIPsecTunnels(context.Background(), accountID, []cloudflare.MagicTransitIPsecTunnel{
+	newTunnel, err := client.CreateMagicTransitIPsecTunnels(ctx, accountID, []cloudflare.MagicTransitIPsecTunnel{
 		IPsecTunnelFromResource(d),
 	})
 
 	if err != nil {
-		return fmt.Errorf("error creating IPSec tunnel %s: %w", d.Get("name").(string), err)
+		return diag.FromErr(fmt.Errorf("error creating IPSec tunnel %s: %w", d.Get("name").(string), err))
 	}
 
 	d.SetId(newTunnel[0].ID)
 
-	return resourceCloudflareIPsecTunnelRead(d, meta)
+	return resourceCloudflareIPsecTunnelRead(ctx, d, meta)
 }
 
-func resourceCloudflareIPsecTunnelImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareIPsecTunnelImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -52,25 +53,26 @@ func resourceCloudflareIPsecTunnelImport(d *schema.ResourceData, meta interface{
 	d.SetId(tunnelID)
 	d.Set("account_id", accountID)
 
-	readErr := resourceCloudflareIPsecTunnelRead(d, meta)
-	if readErr != nil {
-		return nil, readErr
+	readDiags := resourceCloudflareIPsecTunnelRead(ctx, d, meta)
+	if readDiags != nil {
+		return nil, errors.New("failed to read IPSec Tunnel state")
 	}
+
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourceCloudflareIPsecTunnelRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
-	tunnel, err := client.GetMagicTransitIPsecTunnel(context.Background(), accountID, d.Id())
+	tunnel, err := client.GetMagicTransitIPsecTunnel(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "IPsec tunnel not found") {
 			log.Printf("[INFO] IPsec tunnel %s not found", d.Id())
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading IPsec tunnel ID %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error reading IPsec tunnel ID %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", tunnel.Name)
@@ -85,27 +87,27 @@ func resourceCloudflareIPsecTunnelRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareIPsecTunnelUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
-	_, err := client.UpdateMagicTransitIPsecTunnel(context.Background(), accountID, d.Id(), IPsecTunnelFromResource(d))
+	_, err := client.UpdateMagicTransitIPsecTunnel(ctx, accountID, d.Id(), IPsecTunnelFromResource(d))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error updating IPsec tunnel %q", d.Id()))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating IPsec tunnel %q", d.Id())))
 	}
 
-	return resourceCloudflareIPsecTunnelRead(d, meta)
+	return resourceCloudflareIPsecTunnelRead(ctx, d, meta)
 }
 
-func resourceCloudflareIPsecTunnelDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareIPsecTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting IPsec tunnel:  %s", d.Id())
 
-	_, err := client.DeleteMagicTransitIPsecTunnel(context.Background(), accountID, d.Id())
+	_, err := client.DeleteMagicTransitIPsecTunnel(ctx, accountID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting IPsec tunnel: %w", err)
+		return diag.FromErr(fmt.Errorf("error deleting IPsec tunnel: %w", err))
 	}
 
 	return nil

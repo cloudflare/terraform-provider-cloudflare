@@ -9,24 +9,25 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLoadBalancerMonitorSchema(),
-		Create: resourceCloudflareLoadBalancerPoolMonitorCreate,
-		Read:   resourceCloudflareLoadBalancerPoolMonitorRead,
-		Update: resourceCloudflareLoadBalancerPoolMonitorUpdate,
-		Delete: resourceCloudflareLoadBalancerPoolMonitorDelete,
+		Schema:        resourceCloudflareLoadBalancerMonitorSchema(),
+		CreateContext: resourceCloudflareLoadBalancerPoolMonitorCreate,
+		ReadContext:   resourceCloudflareLoadBalancerPoolMonitorRead,
+		UpdateContext: resourceCloudflareLoadBalancerPoolMonitorUpdate,
+		DeleteContext: resourceCloudflareLoadBalancerPoolMonitorDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
@@ -62,7 +63,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 		if expectedCodes, ok := d.GetOk("expected_codes"); ok {
 			loadBalancerMonitor.ExpectedCodes = expectedCodes.(string)
 		} else {
-			return fmt.Errorf("expected_codes must be set")
+			return diag.FromErr(fmt.Errorf("expected_codes must be set"))
 		}
 
 		if followRedirects, ok := d.GetOk("follow_redirects"); ok {
@@ -94,23 +95,23 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(d *schema.ResourceData, met
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
-	r, err := client.CreateLoadBalancerMonitor(context.Background(), loadBalancerMonitor)
+	r, err := client.CreateLoadBalancerMonitor(ctx, loadBalancerMonitor)
 	if err != nil {
-		return errors.Wrap(err, "error creating load balancer monitor")
+		return diag.FromErr(errors.Wrap(err, "error creating load balancer monitor"))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)
 
 	log.Printf("[INFO] New Cloudflare Load Balancer Monitor created with  ID: %s", d.Id())
 
-	return resourceCloudflareLoadBalancerPoolMonitorRead(d, meta)
+	return resourceCloudflareLoadBalancerPoolMonitorRead(ctx, d, meta)
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
@@ -150,7 +151,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 		if expectedCodes, ok := d.GetOk("expected_codes"); ok {
 			loadBalancerMonitor.ExpectedCodes = expectedCodes.(string)
 		} else {
-			return fmt.Errorf("expected_codes must be set")
+			return diag.FromErr(fmt.Errorf("expected_codes must be set"))
 		}
 
 		if header, ok := d.GetOk("header"); ok {
@@ -182,14 +183,14 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(d *schema.ResourceData, met
 
 	log.Printf("[DEBUG] Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor)
 
-	_, err := client.ModifyLoadBalancerMonitor(context.Background(), loadBalancerMonitor)
+	_, err := client.ModifyLoadBalancerMonitor(ctx, loadBalancerMonitor)
 	if err != nil {
-		return errors.Wrap(err, "error modifying load balancer monitor")
+		return diag.FromErr(errors.Wrap(err, "error modifying load balancer monitor"))
 	}
 
 	log.Printf("[INFO] Cloudflare Load Balancer Monitor %q was modified", d.Id())
 
-	return resourceCloudflareLoadBalancerPoolMonitorRead(d, meta)
+	return resourceCloudflareLoadBalancerPoolMonitorRead(ctx, d, meta)
 }
 
 func expandLoadBalancerMonitorHeader(cfgSet interface{}) map[string][]string {
@@ -202,18 +203,18 @@ func expandLoadBalancerMonitorHeader(cfgSet interface{}) map[string][]string {
 	return header
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	loadBalancerMonitor, err := client.LoadBalancerMonitorDetails(context.Background(), d.Id())
+	loadBalancerMonitor, err := client.LoadBalancerMonitorDetails(ctx, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer monitor %s no longer exists", d.Id())
 			d.SetId("")
 			return nil
 		} else {
-			return errors.Wrap(err,
-				fmt.Sprintf("Error reading load balancer monitor from API for resource %s ", d.Id()))
+			return diag.FromErr(errors.Wrap(err,
+				fmt.Sprintf("Error reading load balancer monitor from API for resource %s ", d.Id())))
 		}
 	}
 	log.Printf("[DEBUG] Read Cloudflare Load Balancer Monitor from API as struct: %+v", loadBalancerMonitor)
@@ -256,18 +257,18 @@ func flattenLoadBalancerMonitorHeader(header map[string][]string) *schema.Set {
 	return schema.NewSet(HashByMapKey("header"), flattened)
 }
 
-func resourceCloudflareLoadBalancerPoolMonitorDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting Cloudflare Load Balancer Monitor: %s ", d.Id())
 
-	err := client.DeleteLoadBalancerMonitor(context.Background(), d.Id())
+	err := client.DeleteLoadBalancerMonitor(ctx, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer monitor %s no longer exists", d.Id())
 			return nil
 		} else {
-			return errors.Wrap(err, "error deleting cloudflare load balancer monitor")
+			return diag.FromErr(errors.Wrap(err, "error deleting cloudflare load balancer monitor"))
 		}
 	}
 

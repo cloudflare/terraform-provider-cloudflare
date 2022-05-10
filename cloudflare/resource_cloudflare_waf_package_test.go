@@ -65,7 +65,7 @@ func testAccGetWAFPackage(zoneID string) (string, error) {
 
 	pkgList, err := client.ListWAFPackages(context.Background(), zoneID)
 	if err != nil {
-		return "", fmt.Errorf("Error while listing WAF packages: %s", err)
+		return "", fmt.Errorf("Error while listing WAF packages: %w", err)
 	}
 
 	for _, pkg := range pkgList {

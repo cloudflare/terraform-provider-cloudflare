@@ -28,7 +28,7 @@ The following arguments are supported:
 
 * `account_id` - (Required) The account to which the teams list should be added.
 * `name` - (Required) Name of the teams list.
-* `type` - (Required) The teams list type. Valid values are `SERIAL`, `URL`, `DOMAIN`, and `EMAIL`.
+* `type` - (Required) The teams list type. Valid values are `IP`, `SERIAL`, `URL`, `DOMAIN`, and `EMAIL`.
 * `items` - (Required) The items of the teams list.
 * `description` - (Optional) The description of the teams list.
 

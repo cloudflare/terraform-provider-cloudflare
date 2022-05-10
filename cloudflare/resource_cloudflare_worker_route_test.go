@@ -211,7 +211,6 @@ func testAccCheckCloudflareWorkerRouteDestroy(s *terraform.State) error {
 		if route.ID != "" {
 			return fmt.Errorf("worker route with id %s still exists", route.ID)
 		}
-
 	}
 
 	return nil

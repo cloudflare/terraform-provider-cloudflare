@@ -1,12 +1,14 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -17,7 +19,7 @@ const (
 
 func dataSourceCloudflareIPRanges() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareIPRangesRead,
+		ReadContext: dataSourceCloudflareIPRangesRead,
 
 		Schema: map[string]*schema.Schema{
 			"cidr_blocks": {
@@ -49,10 +51,10 @@ func dataSourceCloudflareIPRanges() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareIPRangesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareIPRangesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	ranges, err := cloudflare.IPs()
 	if err != nil {
-		return fmt.Errorf("failed to fetch Cloudflare IP ranges: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to fetch Cloudflare IP ranges: %w", err))
 	}
 
 	IPv4s := ranges.IPv4CIDRs
@@ -72,23 +74,23 @@ func dataSourceCloudflareIPRangesRead(d *schema.ResourceData, meta interface{}) 
 	d.SetId(strconv.Itoa(hashCodeString(strings.Join(all, "|"))))
 
 	if err := d.Set("cidr_blocks", all); err != nil {
-		return fmt.Errorf("error setting all cidr blocks: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting all cidr blocks: %w", err))
 	}
 
 	if err := d.Set("ipv4_cidr_blocks", IPv4s); err != nil {
-		return fmt.Errorf("error setting ipv4 cidr blocks: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting ipv4 cidr blocks: %w", err))
 	}
 
 	if err := d.Set("ipv6_cidr_blocks", IPv6s); err != nil {
-		return fmt.Errorf("error setting ipv6 cidr blocks: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting ipv6 cidr blocks: %w", err))
 	}
 
 	if err := d.Set("china_ipv4_cidr_blocks", chinaIPv4s); err != nil {
-		return fmt.Errorf("error setting china ipv4 cidr blocks: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting china ipv4 cidr blocks: %w", err))
 	}
 
 	if err := d.Set("china_ipv6_cidr_blocks", chinaIPv6s); err != nil {
-		return fmt.Errorf("error setting china ipv6 cidr blocks: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting china ipv6 cidr blocks: %w", err))
 	}
 
 	return nil

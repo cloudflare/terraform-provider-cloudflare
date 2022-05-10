@@ -10,24 +10,25 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareLoadBalancerPool() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLoadBalancerPoolSchema(),
-		Create: resourceCloudflareLoadBalancerPoolCreate,
-		Update: resourceCloudflareLoadBalancerPoolUpdate,
-		Read:   resourceCloudflareLoadBalancerPoolRead,
-		Delete: resourceCloudflareLoadBalancerPoolDelete,
+		Schema:        resourceCloudflareLoadBalancerPoolSchema(),
+		CreateContext: resourceCloudflareLoadBalancerPoolCreate,
+		UpdateContext: resourceCloudflareLoadBalancerPoolUpdate,
+		ReadContext:   resourceCloudflareLoadBalancerPoolRead,
+		DeleteContext: resourceCloudflareLoadBalancerPoolDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerPool := cloudflare.LoadBalancerPool{
@@ -72,23 +73,23 @@ func resourceCloudflareLoadBalancerPoolCreate(d *schema.ResourceData, meta inter
 
 	log.Printf("[DEBUG] Creating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool)
 
-	r, err := client.CreateLoadBalancerPool(context.Background(), loadBalancerPool)
+	r, err := client.CreateLoadBalancerPool(ctx, loadBalancerPool)
 	if err != nil {
-		return errors.Wrap(err, "error creating load balancer pool")
+		return diag.FromErr(errors.Wrap(err, "error creating load balancer pool"))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("cailed to find id in create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("cailed to find id in create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)
 
 	log.Printf("[INFO] New Cloudflare Load Balancer Pool created with  ID: %s", d.Id())
 
-	return resourceCloudflareLoadBalancerPoolRead(d, meta)
+	return resourceCloudflareLoadBalancerPoolRead(ctx, d, meta)
 }
 
-func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	loadBalancerPool := cloudflare.LoadBalancerPool{
@@ -134,12 +135,12 @@ func resourceCloudflareLoadBalancerPoolUpdate(d *schema.ResourceData, meta inter
 
 	log.Printf("[DEBUG] Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool)
 
-	_, err := client.ModifyLoadBalancerPool(context.Background(), loadBalancerPool)
+	_, err := client.ModifyLoadBalancerPool(ctx, loadBalancerPool)
 	if err != nil {
-		return errors.Wrap(err, "error updating load balancer pool")
+		return diag.FromErr(errors.Wrap(err, "error updating load balancer pool"))
 	}
 
-	return resourceCloudflareLoadBalancerPoolRead(d, meta)
+	return resourceCloudflareLoadBalancerPoolRead(ctx, d, meta)
 }
 
 func expandLoadBalancerPoolHeader(cfgSet interface{}) map[string][]string {
@@ -212,18 +213,18 @@ func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.Load
 	return
 }
 
-func resourceCloudflareLoadBalancerPoolRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	loadBalancerPool, err := client.LoadBalancerPoolDetails(context.Background(), d.Id())
+	loadBalancerPool, err := client.LoadBalancerPoolDetails(ctx, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Load balancer pool %s no longer exists", d.Id())
 			d.SetId("")
 			return nil
 		} else {
-			return errors.Wrap(err,
-				fmt.Sprintf("Error reading load balancer pool from API for resource %s ", d.Id()))
+			return diag.FromErr(errors.Wrap(err,
+				fmt.Sprintf("Error reading load balancer pool from API for resource %s ", d.Id())))
 		}
 	}
 	log.Printf("[DEBUG] Read Cloudflare Load Balancer Pool from API as struct: %+v", loadBalancerPool)
@@ -302,14 +303,14 @@ func flattenLoadBalancerOrigins(d *schema.ResourceData, origins []cloudflare.Loa
 	return schema.NewSet(schema.HashResource(originsElem), flattened)
 }
 
-func resourceCloudflareLoadBalancerPoolDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLoadBalancerPoolDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting Cloudflare Load Balancer Pool: %s ", d.Id())
 
-	err := client.DeleteLoadBalancerPool(context.Background(), d.Id())
+	err := client.DeleteLoadBalancerPool(ctx, d.Id())
 	if err != nil {
-		return errors.Wrap(err, "error deleting Cloudflare Load Balancer Pool")
+		return diag.FromErr(errors.Wrap(err, "error deleting Cloudflare Load Balancer Pool"))
 	}
 
 	return nil

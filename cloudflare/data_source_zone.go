@@ -6,12 +6,13 @@ import (
 	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareZone() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareZoneRead,
+		ReadContext: dataSourceCloudflareZoneRead,
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
@@ -61,7 +62,7 @@ func dataSourceCloudflareZone() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] Reading Zones")
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
@@ -71,26 +72,26 @@ func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) erro
 	var zone cloudflare.Zone
 	if name != "" && zoneID == "" {
 		zoneFilter := cloudflare.WithZoneFilters(name, accountID, "")
-		zonesResp, err := client.ListZonesContext(context.Background(), zoneFilter)
+		zonesResp, err := client.ListZonesContext(ctx, zoneFilter)
 
 		if err != nil {
-			return fmt.Errorf("error listing zones: %s", err)
+			return diag.FromErr(fmt.Errorf("error listing zones: %w", err))
 		}
 
 		if zonesResp.Total > 1 {
-			return fmt.Errorf("more than one zone was returned; consider adding the `account_id` to the existing resource or use the `cloudflare_zones` data source with filtering to target the zone more specifically")
+			return diag.FromErr(fmt.Errorf("more than one zone was returned; consider adding the `account_id` to the existing resource or use the `cloudflare_zones` data source with filtering to target the zone more specifically"))
 		}
 
 		if zonesResp.Total == 0 {
-			return fmt.Errorf("no zone found")
+			return diag.FromErr(fmt.Errorf("no zone found"))
 		}
 
 		zone = zonesResp.Result[0]
 	} else {
 		var err error
-		zone, err = client.ZoneDetails(context.Background(), zoneID)
+		zone, err = client.ZoneDetails(ctx, zoneID)
 		if err != nil {
-			return fmt.Errorf("error getting zone details: %s", err)
+			return diag.FromErr(fmt.Errorf("error getting zone details: %w", err))
 		}
 	}
 
@@ -103,11 +104,11 @@ func dataSourceCloudflareZoneRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("plan", zone.Plan.Name)
 
 	if err := d.Set("name_servers", zone.NameServers); err != nil {
-		return fmt.Errorf("failed to set name_servers attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set name_servers attribute: %w", err))
 	}
 
 	if err := d.Set("vanity_name_servers", zone.VanityNS); err != nil {
-		return fmt.Errorf("failed to set vanity_name_servers attribute: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set vanity_name_servers attribute: %w", err))
 	}
 
 	return nil

@@ -15,8 +15,8 @@ import (
 	_ "github.com/bflad/tfproviderlint/cmd/tfproviderlintx"
 	_ "github.com/client9/misspell/cmd/misspell"
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
+	_ "github.com/google/go-github/github"
 	_ "github.com/hashicorp/go-changelog/cmd/changelog-build"
 	_ "github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs"
-	_ "github.com/google/go-github/github"
 	_ "golang.org/x/oauth2"
 )

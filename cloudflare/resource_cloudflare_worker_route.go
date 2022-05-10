@@ -7,19 +7,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareWorkerRoute() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWorkerRouteSchema(),
-		Create: resourceCloudflareWorkerRouteCreate,
-		Read:   resourceCloudflareWorkerRouteRead,
-		Update: resourceCloudflareWorkerRouteUpdate,
-		Delete: resourceCloudflareWorkerRouteDelete,
+		Schema:        resourceCloudflareWorkerRouteSchema(),
+		CreateContext: resourceCloudflareWorkerRouteCreate,
+		ReadContext:   resourceCloudflareWorkerRouteRead,
+		UpdateContext: resourceCloudflareWorkerRouteUpdate,
+		DeleteContext: resourceCloudflareWorkerRouteDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWorkerRouteImport,
+			StateContext: resourceCloudflareWorkerRouteImport,
 		},
 	}
 }
@@ -33,20 +34,20 @@ func getRouteFromResource(d *schema.ResourceData) cloudflare.WorkerRoute {
 	return route
 }
 
-func resourceCloudflareWorkerRouteCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerRouteCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	route := getRouteFromResource(d)
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Creating Cloudflare Worker Route from struct: %+v", route)
 
-	r, err := client.CreateWorkerRoute(context.Background(), zoneID, route)
+	r, err := client.CreateWorkerRoute(ctx, zoneID, route)
 	if err != nil {
-		return errors.Wrap(err, "error creating worker route")
+		return diag.FromErr(errors.Wrap(err, "error creating worker route"))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)
@@ -56,17 +57,17 @@ func resourceCloudflareWorkerRouteCreate(d *schema.ResourceData, meta interface{
 	return nil
 }
 
-func resourceCloudflareWorkerRouteRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerRouteRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	routeID := d.Id()
 
 	// There isn't a dedicated endpoint for retrieving a specific route, so we
 	// list all routes and find the target route by comparing IDs
-	resp, err := client.ListWorkerRoutes(context.Background(), zoneID)
+	resp, err := client.ListWorkerRoutes(ctx, zoneID)
 
 	if err != nil {
-		return errors.Wrap(err, "error reading worker routes")
+		return diag.FromErr(errors.Wrap(err, "error reading worker routes"))
 	}
 
 	var route cloudflare.WorkerRoute
@@ -90,37 +91,37 @@ func resourceCloudflareWorkerRouteRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareWorkerRouteUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerRouteUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	route := getRouteFromResource(d)
 
 	log.Printf("[INFO] Updating Cloudflare Worker Route from struct: %+v", route)
 
-	_, err := client.UpdateWorkerRoute(context.Background(), zoneID, route.ID, route)
+	_, err := client.UpdateWorkerRoute(ctx, zoneID, route.ID, route)
 	if err != nil {
-		return errors.Wrap(err, "error updating worker route")
+		return diag.FromErr(errors.Wrap(err, "error updating worker route"))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerRouteDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerRouteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	route := getRouteFromResource(d)
 
 	log.Printf("[INFO] Deleting Cloudflare Worker Route from zone %+v with id: %+v", zoneID, route.ID)
 
-	_, err := client.DeleteWorkerRoute(context.Background(), zoneID, route.ID)
+	_, err := client.DeleteWorkerRoute(ctx, zoneID, route.ID)
 	if err != nil {
-		return errors.Wrap(err, "error deleting worker route")
+		return diag.FromErr(errors.Wrap(err, "error deleting worker route"))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWorkerRouteImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -135,7 +136,7 @@ func resourceCloudflareWorkerRouteImport(d *schema.ResourceData, meta interface{
 	d.Set("zone_id", zoneID)
 	d.SetId(routeID)
 
-	resourceCloudflareWorkerRouteRead(d, meta)
+	resourceCloudflareWorkerRouteRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

@@ -8,23 +8,24 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareDevicePostureRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareDevicePostureRuleSchema(),
-		Create: resourceCloudflareDevicePostureRuleCreate,
-		Read:   resourceCloudflareDevicePostureRuleRead,
-		Update: resourceCloudflareDevicePostureRuleUpdate,
-		Delete: resourceCloudflareDevicePostureRuleDelete,
+		Schema:        resourceCloudflareDevicePostureRuleSchema(),
+		CreateContext: resourceCloudflareDevicePostureRuleCreate,
+		ReadContext:   resourceCloudflareDevicePostureRuleRead,
+		UpdateContext: resourceCloudflareDevicePostureRuleUpdate,
+		DeleteContext: resourceCloudflareDevicePostureRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareDevicePostureRuleImport,
+			StateContext: resourceCloudflareDevicePostureRuleImport,
 		},
 	}
 }
 
-func resourceCloudflareDevicePostureRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -38,34 +39,34 @@ func resourceCloudflareDevicePostureRuleCreate(d *schema.ResourceData, meta inte
 
 	err := setDevicePostureRuleMatch(&newDevicePostureRule, d)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %w", err))
 	}
 
 	setDevicePostureRuleInput(&newDevicePostureRule, d)
 	log.Printf("[DEBUG] Creating Cloudflare Device Posture Rule from struct: %+v", newDevicePostureRule)
 
-	rule, err := client.CreateDevicePostureRule(context.Background(), accountID, newDevicePostureRule)
+	rule, err := client.CreateDevicePostureRule(ctx, accountID, newDevicePostureRule)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule for account %q: %w", accountID, err))
 	}
 
 	d.SetId(rule.ID)
 
-	return resourceCloudflareDevicePostureRuleRead(d, meta)
+	return resourceCloudflareDevicePostureRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareDevicePostureRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	devicePostureRule, err := client.DevicePostureRule(context.Background(), accountID, d.Id())
+	devicePostureRule, err := client.DevicePostureRule(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[INFO] Device Posture Rule %s no longer exists", d.Id())
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Device Posture Rule %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Device Posture Rule %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", devicePostureRule.Name)
@@ -79,7 +80,7 @@ func resourceCloudflareDevicePostureRuleRead(d *schema.ResourceData, meta interf
 	return nil
 }
 
-func resourceCloudflareDevicePostureRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
@@ -94,42 +95,42 @@ func resourceCloudflareDevicePostureRuleUpdate(d *schema.ResourceData, meta inte
 
 	err := setDevicePostureRuleMatch(&updatedDevicePostureRule, d)
 	if err != nil {
-		return fmt.Errorf("error creating Device Posture Rule with provided match input: %s", err)
+		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %w", err))
 	}
 
 	setDevicePostureRuleInput(&updatedDevicePostureRule, d)
 	log.Printf("[DEBUG] Updating Cloudflare Device Posture Rule from struct: %+v", updatedDevicePostureRule)
 
-	devicePostureRule, err := client.UpdateDevicePostureRule(context.Background(), accountID, updatedDevicePostureRule)
+	devicePostureRule, err := client.UpdateDevicePostureRule(ctx, accountID, updatedDevicePostureRule)
 	if err != nil {
-		return fmt.Errorf("error updating Device Posture Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error updating Device Posture Rule for account %q: %w", accountID, err))
 	}
 
 	if devicePostureRule.ID == "" {
-		return fmt.Errorf("failed to find Device Posture Rule ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Device Posture Rule ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareDevicePostureRuleRead(d, meta)
+	return resourceCloudflareDevicePostureRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareDevicePostureRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareDevicePostureRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 	accountID := d.Get("account_id").(string)
 
 	log.Printf("[DEBUG] Deleting Cloudflare Device Posture Rule using ID: %s", appID)
 
-	err := client.DeleteDevicePostureRule(context.Background(), accountID, appID)
+	err := client.DeleteDevicePostureRule(ctx, accountID, appID)
 	if err != nil {
-		return fmt.Errorf("error deleting Device Posture Rule for account %q: %s", accountID, err)
+		return diag.FromErr(fmt.Errorf("error deleting Device Posture Rule for account %q: %w", accountID, err))
 	}
 
-	resourceCloudflareDevicePostureRuleRead(d, meta)
+	resourceCloudflareDevicePostureRuleRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareDevicePostureRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareDevicePostureRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -143,7 +144,7 @@ func resourceCloudflareDevicePostureRuleImport(d *schema.ResourceData, meta inte
 	d.Set("account_id", accountID)
 	d.SetId(devicePostureRuleID)
 
-	resourceCloudflareDevicePostureRuleRead(d, meta)
+	resourceCloudflareDevicePostureRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

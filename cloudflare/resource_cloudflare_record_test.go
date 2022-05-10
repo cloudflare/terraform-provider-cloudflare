@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"testing"
@@ -11,7 +12,46 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/pkg/errors"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_record", &resource.Sweeper{
+		Name: "cloudflare_record",
+		F:    testSweepCloudflareRecord,
+	})
+}
+
+func testSweepCloudflareRecord(r string) error {
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+	}
+
+	// Clean up the account level rulesets
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return errors.New("CLOUDFLARE_ZONE_ID must be set")
+	}
+
+	records, err := client.DNSRecords(context.Background(), zoneID, cloudflare.DNSRecord{})
+	if err != nil {
+		log.Printf("[ERROR] Failed to fetch Cloudflare DNS records: %s", err)
+	}
+
+	if len(records) == 0 {
+		log.Print("[DEBUG] No Cloudflare DNS records to sweep")
+		return nil
+	}
+
+	for _, record := range records {
+		log.Printf("[INFO] Deleting Cloudflare DNS record ID: %s", record.ID)
+		//nolint:errcheck
+		client.DeleteDNSRecord(context.Background(), zoneID, record.ID)
+	}
+
+	return nil
+}
 
 func TestAccCloudflareRecord_Basic(t *testing.T) {
 	t.Parallel()
@@ -507,7 +547,6 @@ func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestChec
 
 func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		if record.Content != "192.168.0.10" {
 			return fmt.Errorf("bad content: %s", record.Content)
 		}
@@ -518,7 +557,6 @@ func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resour
 
 func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		if record.Content != "192.168.0.11" {
 			return fmt.Errorf("bad content: %s", record.Content)
 		}
@@ -529,7 +567,6 @@ func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord)
 
 func testAccCheckCloudflareRecordDates(n string, record *cloudflare.DNSRecord, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, _ := s.RootModule().Resources[n]
 
 		for timeStampAttr, serverVal := range map[string]time.Time{"created_on": record.CreatedOn, "modified_on": record.ModifiedOn} {

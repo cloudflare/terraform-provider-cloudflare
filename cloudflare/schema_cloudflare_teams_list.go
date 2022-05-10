@@ -18,7 +18,7 @@ func resourceCloudflareTeamsListSchema() map[string]*schema.Schema {
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"SERIAL", "URL", "DOMAIN", "EMAIL"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"IP", "SERIAL", "URL", "DOMAIN", "EMAIL"}, false),
 		},
 		"description": {
 			Type:     schema.TypeString,

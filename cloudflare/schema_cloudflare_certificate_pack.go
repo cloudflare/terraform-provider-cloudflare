@@ -63,5 +63,11 @@ func resourceCloudflareCertificatePackSchema() map[string]*schema.Schema {
 			Optional: true,
 			ForceNew: true,
 		},
+		"wait_for_active_status": {
+			Type:     schema.TypeBool,
+			ForceNew: true,
+			Optional: true,
+			Default:  false,
+		},
 	}
 }

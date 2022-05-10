@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -17,12 +18,12 @@ import (
 
 func resourceCloudflareCustomSsl() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareCustomSslCreate,
-		Read:   resourceCloudflareCustomSslRead,
-		Update: resourceCloudflareCustomSslUpdate,
-		Delete: resourceCloudflareCustomSslDelete,
+		CreateContext: resourceCloudflareCustomSslCreate,
+		ReadContext:   resourceCloudflareCustomSslRead,
+		UpdateContext: resourceCloudflareCustomSslUpdate,
+		DeleteContext: resourceCloudflareCustomSslDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareCustomSslImport,
+			StateContext: resourceCloudflareCustomSslImport,
 		},
 
 		SchemaVersion: 1,
@@ -39,28 +40,28 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 	}
 }
 
-func resourceCloudflareCustomSslCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	log.Printf("[DEBUG] zone ID: %s", zoneID)
 	zcso, err := expandToZoneCustomSSLOptions(d)
 	if err != nil {
-		return fmt.Errorf("failed to create custom ssl cert: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create custom ssl cert: %w", err))
 	}
 
-	res, err := client.CreateSSL(context.Background(), zoneID, zcso)
+	res, err := client.CreateSSL(ctx, zoneID, zcso)
 	if err != nil {
-		return fmt.Errorf("failed to create custom ssl cert: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create custom ssl cert: %w", err))
 	}
 
 	if res.ID == "" {
-		return fmt.Errorf("failed to find custom ssl in Create response: id was empty")
+		return diag.FromErr(fmt.Errorf("failed to find custom ssl in Create response: id was empty"))
 	}
 
-	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		cert, err := client.SSLDetails(context.Background(), zoneID, res.ID)
+	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		cert, err := client.SSLDetails(ctx, zoneID, res.ID)
 		if err != nil {
-			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom ssl cert: %s", err))
+			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom ssl cert: %w", err))
 		}
 
 		if cert.Status != "active" {
@@ -69,12 +70,18 @@ func resourceCloudflareCustomSslCreate(d *schema.ResourceData, meta interface{})
 
 		d.SetId(res.ID)
 
-		resourceCloudflareCustomSslRead(d, meta)
+		resourceCloudflareCustomSslRead(ctx, d, meta)
 		return nil
 	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
-func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
@@ -87,17 +94,16 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	if d.HasChange("custom_ssl_options") {
 		zcso, err := expandToZoneCustomSSLOptions(d)
 		if err != nil {
-			return fmt.Errorf("failed to update custom ssl cert: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to update custom ssl cert: %w", err))
 		}
 
-		res, uErr := client.UpdateSSL(context.Background(), zoneID, certID, zcso)
+		res, uErr := client.UpdateSSL(ctx, zoneID, certID, zcso)
 		if uErr != nil {
 			log.Printf("[DEBUG] Failed to update custom ssl cert: %s", uErr)
 			updateErr = true
 		} else {
 			log.Printf("[DEBUG] Custom SSL set to: %s", res.ID)
 		}
-
 	}
 
 	if d.HasChange("custom_ssl_priority") {
@@ -106,7 +112,7 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 			log.Printf("Failed to update custom ssl cert: %s", err)
 		}
 
-		resList, reErr := client.ReprioritizeSSL(context.Background(), zoneID, zcsp)
+		resList, reErr := client.ReprioritizeSSL(ctx, zoneID, zcsp)
 		if err != nil {
 			log.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
 			reprioritizeErr = true
@@ -116,19 +122,19 @@ func resourceCloudflareCustomSslUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	if updateErr && reprioritizeErr {
-		return fmt.Errorf("failed to update and reprioritize custom ssl cert: %s, %s", uErr, reErr)
+		return diag.Errorf("failed to update and reprioritize custom ssl cert: %s, %s", uErr, reErr)
 	}
 
-	return resourceCloudflareCustomSslRead(d, meta)
+	return resourceCloudflareCustomSslRead(ctx, d, meta)
 }
 
-func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
 
 	// update all possible schema attributes with fields from api response
-	record, err := client.SSLDetails(context.Background(), zoneID, certID)
+	record, err := client.SSLDetails(ctx, zoneID, certID)
 	if err != nil {
 		log.Printf("[WARN] Removing record from state because it's not found in API")
 		d.SetId("")
@@ -146,7 +152,7 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("issuer", record.Issuer)
 	d.Set("signature", record.Signature)
 	if err := d.Set("custom_ssl_options", []interface{}{customSslOpts}); err != nil {
-		return fmt.Errorf("[WARN] Error reading custom ssl opts %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("[WARN] Error reading custom ssl opts %q: %w", d.Id(), err))
 	}
 	d.Set("status", record.Status)
 	d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
@@ -156,21 +162,21 @@ func resourceCloudflareCustomSslRead(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
-func resourceCloudflareCustomSslDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomSslDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
 
 	log.Printf("[DEBUG] Deleting SSL cert %s for zone %s", certID, zoneID)
 
-	err := client.DeleteSSL(context.Background(), zoneID, certID)
+	err := client.DeleteSSL(ctx, zoneID, certID)
 	if err != nil {
 		errors.Wrap(err, "failed to delete custom ssl cert setting")
 	}
 	return nil
 }
 
-func resourceCloudflareCustomSslImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareCustomSslImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	if len(idAttr) != 2 {
@@ -184,7 +190,7 @@ func resourceCloudflareCustomSslImport(d *schema.ResourceData, meta interface{})
 	d.Set("zone_id", zoneID)
 	d.SetId(certID)
 
-	resourceCloudflareCustomSslRead(d, meta)
+	resourceCloudflareCustomSslRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -212,7 +218,7 @@ func expandToZoneCustomSSLPriority(d *schema.ResourceData) ([]cloudflare.ZoneCus
 			zcsp := cloudflare.ZoneCustomSSLPriority{}
 			zcspJSON, err := json.Marshal(newData)
 			if err != nil {
-				return mtSlice, fmt.Errorf("Failed to create custom ssl priorities: %s", err)
+				return mtSlice, fmt.Errorf("Failed to create custom ssl priorities: %w", err)
 			}
 			// map -> json -> struct
 			json.Unmarshal(zcspJSON, &zcsp)
@@ -247,7 +253,7 @@ func expandToZoneCustomSSLOptions(d *schema.ResourceData) (cloudflare.ZoneCustom
 	zcso := cloudflare.ZoneCustomSSLOptions{}
 	zcsoJSON, err := json.Marshal(newData)
 	if err != nil {
-		return zcso, fmt.Errorf("Failed to create custom ssl options: %s", err)
+		return zcso, fmt.Errorf("Failed to create custom ssl options: %w", err)
 	}
 
 	log.Printf("[DEBUG] Custom SSL JSON: %s", string(zcsoJSON))

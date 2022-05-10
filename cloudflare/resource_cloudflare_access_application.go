@@ -2,28 +2,30 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessApplication() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessApplicationSchema(),
-		Create: resourceCloudflareAccessApplicationCreate,
-		Read:   resourceCloudflareAccessApplicationRead,
-		Update: resourceCloudflareAccessApplicationUpdate,
-		Delete: resourceCloudflareAccessApplicationDelete,
+		Schema:        resourceCloudflareAccessApplicationSchema(),
+		CreateContext: resourceCloudflareAccessApplicationCreate,
+		ReadContext:   resourceCloudflareAccessApplicationRead,
+		UpdateContext: resourceCloudflareAccessApplicationUpdate,
+		DeleteContext: resourceCloudflareAccessApplicationDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessApplicationImport,
+			StateContext: resourceCloudflareAccessApplicationImport,
 		},
 	}
 }
 
-func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
@@ -57,7 +59,7 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 	if _, ok := d.GetOk("cors_headers"); ok {
 		CORSConfig, err := convertCORSSchemaToStruct(d)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		newAccessApplication.CorsHeaders = CORSConfig
 	}
@@ -66,37 +68,37 @@ func resourceCloudflareAccessApplicationCreate(d *schema.ResourceData, meta inte
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessApplication cloudflare.AccessApplication
 	if identifier.Type == AccountType {
-		accessApplication, err = client.CreateAccessApplication(context.Background(), identifier.Value, newAccessApplication)
+		accessApplication, err = client.CreateAccessApplication(ctx, identifier.Value, newAccessApplication)
 	} else {
-		accessApplication, err = client.CreateZoneLevelAccessApplication(context.Background(), identifier.Value, newAccessApplication)
+		accessApplication, err = client.CreateZoneLevelAccessApplication(ctx, identifier.Value, newAccessApplication)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Application for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessApplication.ID)
 
-	return resourceCloudflareAccessApplicationRead(d, meta)
+	return resourceCloudflareAccessApplicationRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessApplication cloudflare.AccessApplication
 	if identifier.Type == AccountType {
-		accessApplication, err = client.AccessApplication(context.Background(), identifier.Value, d.Id())
+		accessApplication, err = client.AccessApplication(ctx, identifier.Value, d.Id())
 	} else {
-		accessApplication, err = client.ZoneLevelAccessApplication(context.Background(), identifier.Value, d.Id())
+		accessApplication, err = client.ZoneLevelAccessApplication(ctx, identifier.Value, d.Id())
 	}
 
 	if err != nil {
@@ -105,7 +107,7 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Application %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access Application %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", accessApplication.Name)
@@ -127,13 +129,13 @@ func resourceCloudflareAccessApplicationRead(d *schema.ResourceData, meta interf
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
-		return fmt.Errorf("error setting Access Application CORS header configuration: %s", corsConfigErr)
+		return diag.FromErr(fmt.Errorf("error setting Access Application CORS header configuration: %w", corsConfigErr))
 	}
 
 	return nil
 }
 
-func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
@@ -164,7 +166,7 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 	if _, ok := d.GetOk("cors_headers"); ok {
 		CORSConfig, err := convertCORSSchemaToStruct(d)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		updatedAccessApplication.CorsHeaders = CORSConfig
 	}
@@ -173,27 +175,27 @@ func resourceCloudflareAccessApplicationUpdate(d *schema.ResourceData, meta inte
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessApplication cloudflare.AccessApplication
 	if identifier.Type == AccountType {
-		accessApplication, err = client.UpdateAccessApplication(context.Background(), identifier.Value, updatedAccessApplication)
+		accessApplication, err = client.UpdateAccessApplication(ctx, identifier.Value, updatedAccessApplication)
 	} else {
-		accessApplication, err = client.UpdateZoneLevelAccessApplication(context.Background(), identifier.Value, updatedAccessApplication)
+		accessApplication, err = client.UpdateZoneLevelAccessApplication(ctx, identifier.Value, updatedAccessApplication)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Application for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	if accessApplication.ID == "" {
-		return fmt.Errorf("failed to find Access Application ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Access Application ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessApplicationRead(d, meta)
+	return resourceCloudflareAccessApplicationRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessApplicationDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 
@@ -201,24 +203,27 @@ func resourceCloudflareAccessApplicationDelete(d *schema.ResourceData, meta inte
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessApplication(context.Background(), identifier.Value, appID)
+		err = client.DeleteAccessApplication(ctx, identifier.Value, appID)
 	} else {
-		err = client.DeleteZoneLevelAccessApplication(context.Background(), identifier.Value, appID)
+		err = client.DeleteZoneLevelAccessApplication(ctx, identifier.Value, appID)
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting Access Application for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
-	resourceCloudflareAccessApplicationRead(d, meta)
+	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	if readErr != nil {
+		return readErr
+	}
 
 	return nil
 }
 
-func resourceCloudflareAccessApplicationImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -232,7 +237,10 @@ func resourceCloudflareAccessApplicationImport(d *schema.ResourceData, meta inte
 	d.Set("account_id", accountID)
 	d.SetId(accessApplicationID)
 
-	resourceCloudflareAccessApplicationRead(d, meta)
+	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	if readErr != nil {
+		return nil, errors.New("failed to read Access Application state")
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

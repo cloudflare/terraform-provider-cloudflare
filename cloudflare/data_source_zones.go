@@ -7,13 +7,14 @@ import (
 	"regexp"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceCloudflareZones() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareZonesRead,
+		ReadContext: dataSourceCloudflareZonesRead,
 
 		Schema: map[string]*schema.Schema{
 			"filter": {
@@ -72,12 +73,12 @@ func dataSourceCloudflareZones() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareZonesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] Reading Zones")
 	client := meta.(*cloudflare.API)
 	filter, err := expandFilter(d.Get("filter"))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	zoneLookupValue := filter.name
@@ -91,9 +92,9 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 		filter.status,
 	)
 
-	zones, err := client.ListZonesContext(context.Background(), zoneFilter)
+	zones, err := client.ListZonesContext(ctx, zoneFilter)
 	if err != nil {
-		return fmt.Errorf("error listing Zone: %s", err)
+		return diag.FromErr(fmt.Errorf("error listing Zone: %w", err))
 	}
 
 	zoneIds := make([]string, 0)
@@ -118,7 +119,7 @@ func dataSourceCloudflareZonesRead(d *schema.ResourceData, meta interface{}) err
 
 	err = d.Set("zones", zoneDetails)
 	if err != nil {
-		return fmt.Errorf("error setting zones: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting zones: %w", err))
 	}
 
 	d.SetId(stringListChecksum(zoneIds))

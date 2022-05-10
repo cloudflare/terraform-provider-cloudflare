@@ -7,23 +7,24 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareFirewallRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareFirewallRuleSchema(),
-		Create: resourceCloudflareFirewallRuleCreate,
-		Read:   resourceCloudflareFirewallRuleRead,
-		Update: resourceCloudflareFirewallRuleUpdate,
-		Delete: resourceCloudflareFirewallRuleDelete,
+		Schema:        resourceCloudflareFirewallRuleSchema(),
+		CreateContext: resourceCloudflareFirewallRuleCreate,
+		ReadContext:   resourceCloudflareFirewallRuleRead,
+		UpdateContext: resourceCloudflareFirewallRuleUpdate,
+		DeleteContext: resourceCloudflareFirewallRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareFirewallRuleImport,
+			StateContext: resourceCloudflareFirewallRuleImport,
 		},
 	}
 }
 
-func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -61,28 +62,28 @@ func resourceCloudflareFirewallRuleCreate(d *schema.ResourceData, meta interface
 
 	var r []cloudflare.FirewallRule
 
-	r, err = client.CreateFirewallRules(context.Background(), zoneID, []cloudflare.FirewallRule{newFirewallRule})
+	r, err = client.CreateFirewallRules(ctx, zoneID, []cloudflare.FirewallRule{newFirewallRule})
 
 	if err != nil {
-		return fmt.Errorf("error creating Firewall Rule for zone %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error creating Firewall Rule for zone %q: %w", zoneID, err))
 	}
 
 	if len(r) == 0 {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r[0].ID)
 
 	log.Printf("[INFO] Cloudflare Firewall Rule ID: %s", d.Id())
 
-	return resourceCloudflareFirewallRuleRead(d, meta)
+	return resourceCloudflareFirewallRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	firewallRule, err := client.FirewallRule(context.Background(), zoneID, d.Id())
+	firewallRule, err := client.FirewallRule(ctx, zoneID, d.Id())
 
 	log.Printf("[DEBUG] firewallRule: %#v", firewallRule)
 	log.Printf("[DEBUG] firewallRule error: %#v", err)
@@ -93,7 +94,7 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Firewall Rule %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Firewall Rule %q: %w", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Firewall Rule read configuration: %#v", firewallRule)
@@ -109,7 +110,7 @@ func resourceCloudflareFirewallRuleRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -144,35 +145,35 @@ func resourceCloudflareFirewallRuleUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Updating Cloudflare Firewall Rule from struct: %+v", newFirewallRule)
 
-	r, err := client.UpdateFirewallRule(context.Background(), zoneID, newFirewallRule)
+	r, err := client.UpdateFirewallRule(ctx, zoneID, newFirewallRule)
 
 	if err != nil {
-		return fmt.Errorf("error updating Firewall Rule for zone %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error updating Firewall Rule for zone %q: %w", zoneID, err))
 	}
 
 	if r.ID == "" {
-		return fmt.Errorf("failed to find id in Update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
-	return resourceCloudflareFirewallRuleRead(d, meta)
+	return resourceCloudflareFirewallRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareFirewallRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Firewall Rule: id %s for zone %s", d.Id(), zoneID)
 
-	err := client.DeleteFirewallRule(context.Background(), zoneID, d.Id())
+	err := client.DeleteFirewallRule(ctx, zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Firewall Rule: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Firewall Rule: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareFirewallRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareFirewallRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
@@ -187,7 +188,7 @@ func resourceCloudflareFirewallRuleImport(d *schema.ResourceData, meta interface
 	d.Set("zone_id", zoneID)
 	d.SetId(ruleID)
 
-	resourceCloudflareFirewallRuleRead(d, meta)
+	resourceCloudflareFirewallRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

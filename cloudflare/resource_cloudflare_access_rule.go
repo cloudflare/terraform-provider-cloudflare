@@ -8,18 +8,19 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessRuleSchema(),
-		Create: resourceCloudflareAccessRuleCreate,
-		Read:   resourceCloudflareAccessRuleRead,
-		Update: resourceCloudflareAccessRuleUpdate,
-		Delete: resourceCloudflareAccessRuleDelete,
+		Schema:        resourceCloudflareAccessRuleSchema(),
+		CreateContext: resourceCloudflareAccessRuleCreate,
+		ReadContext:   resourceCloudflareAccessRuleRead,
+		UpdateContext: resourceCloudflareAccessRuleUpdate,
+		DeleteContext: resourceCloudflareAccessRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessRuleImport,
+			StateContext: resourceCloudflareAccessRuleImport,
 		},
 
 		SchemaVersion: 1,
@@ -34,7 +35,7 @@ func resourceCloudflareAccessRule() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -57,28 +58,28 @@ func resourceCloudflareAccessRuleCreate(d *schema.ResourceData, meta interface{}
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			r, err = client.CreateAccountAccessRule(context.Background(), client.AccountID, newRule)
+			r, err = client.CreateAccountAccessRule(ctx, client.AccountID, newRule)
 		} else {
-			r, err = client.CreateUserAccessRule(context.Background(), newRule)
+			r, err = client.CreateUserAccessRule(ctx, newRule)
 		}
 	} else {
-		r, err = client.CreateZoneAccessRule(context.Background(), zoneID, newRule)
+		r, err = client.CreateZoneAccessRule(ctx, zoneID, newRule)
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to create access rule: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to create access rule: %w", err))
 	}
 
 	if r.Result.ID == "" {
-		return fmt.Errorf("Failed to find access rule in Create response; ID was empty")
+		return diag.FromErr(fmt.Errorf("Failed to find access rule in Create response; ID was empty"))
 	}
 
 	d.SetId(r.Result.ID)
 
-	return resourceCloudflareAccessRuleRead(d, meta)
+	return resourceCloudflareAccessRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -87,12 +88,12 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			accessRuleResponse, err = client.AccountAccessRule(context.Background(), client.AccountID, d.Id())
+			accessRuleResponse, err = client.AccountAccessRule(ctx, client.AccountID, d.Id())
 		} else {
-			accessRuleResponse, err = client.UserAccessRule(context.Background(), d.Id())
+			accessRuleResponse, err = client.UserAccessRule(ctx, d.Id())
 		}
 	} else {
-		accessRuleResponse, err = client.ZoneAccessRule(context.Background(), zoneID, d.Id())
+		accessRuleResponse, err = client.ZoneAccessRule(ctx, zoneID, d.Id())
 	}
 
 	log.Printf("[DEBUG] accessRuleResponse: %#v", accessRuleResponse)
@@ -104,7 +105,7 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding access rule %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding access rule %q: %w", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
@@ -125,7 +126,7 @@ func resourceCloudflareAccessRuleRead(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -148,22 +149,22 @@ func resourceCloudflareAccessRuleUpdate(d *schema.ResourceData, meta interface{}
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			_, err = client.UpdateAccountAccessRule(context.Background(), client.AccountID, d.Id(), updatedRule)
+			_, err = client.UpdateAccountAccessRule(ctx, client.AccountID, d.Id(), updatedRule)
 		} else {
-			_, err = client.UpdateUserAccessRule(context.Background(), d.Id(), updatedRule)
+			_, err = client.UpdateUserAccessRule(ctx, d.Id(), updatedRule)
 		}
 	} else {
-		_, err = client.UpdateZoneAccessRule(context.Background(), zoneID, d.Id(), updatedRule)
+		_, err = client.UpdateZoneAccessRule(ctx, zoneID, d.Id(), updatedRule)
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to update Access Rule: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to update Access Rule: %w", err))
 	}
 
-	return resourceCloudflareAccessRuleRead(d, meta)
+	return resourceCloudflareAccessRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -173,22 +174,22 @@ func resourceCloudflareAccessRuleDelete(d *schema.ResourceData, meta interface{}
 
 	if zoneID == "" {
 		if client.AccountID != "" {
-			_, err = client.DeleteAccountAccessRule(context.Background(), client.AccountID, d.Id())
+			_, err = client.DeleteAccountAccessRule(ctx, client.AccountID, d.Id())
 		} else {
-			_, err = client.DeleteUserAccessRule(context.Background(), d.Id())
+			_, err = client.DeleteUserAccessRule(ctx, d.Id())
 		}
 	} else {
-		_, err = client.DeleteZoneAccessRule(context.Background(), zoneID, d.Id())
+		_, err = client.DeleteZoneAccessRule(ctx, zoneID, d.Id())
 	}
 
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Access Rule: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Access Rule: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareAccessRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 	attributes := strings.Split(d.Id(), "/")
 
@@ -213,7 +214,7 @@ func resourceCloudflareAccessRuleImport(d *schema.ResourceData, meta interface{}
 		d.Set("zone_id", accessRuleTypeIdentifier)
 	}
 
-	resourceCloudflareAccessRuleRead(d, meta)
+	resourceCloudflareAccessRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -255,7 +256,7 @@ func validateAccessRuleConfiguration(v interface{}, k string) (warnings []string
 func validateAccessRuleConfigurationIPRange(v string) (warnings []string, errors []error) {
 	ip, ipNet, err := net.ParseCIDR(v)
 	if err != nil {
-		errors = append(errors, fmt.Errorf("failed to parse value as CIDR: %v", err))
+		errors = append(errors, fmt.Errorf("failed to parse value as CIDR: %w", err))
 		return warnings, errors
 	}
 

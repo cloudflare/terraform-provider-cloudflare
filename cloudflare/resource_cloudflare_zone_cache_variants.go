@@ -7,25 +7,26 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareZoneCacheVariants() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareZoneCacheVariantsSchema(),
-		Create: resourceCloudflareZoneCacheVariantsUpdate,
-		Read:   resourceCloudflareZoneCacheVariantsRead,
-		Update: resourceCloudflareZoneCacheVariantsUpdate,
-		Delete: resourceCloudflareZoneCacheVariantsDelete,
+		Schema:        resourceCloudflareZoneCacheVariantsSchema(),
+		CreateContext: resourceCloudflareZoneCacheVariantsUpdate,
+		ReadContext:   resourceCloudflareZoneCacheVariantsRead,
+		UpdateContext: resourceCloudflareZoneCacheVariantsUpdate,
+		DeleteContext: resourceCloudflareZoneCacheVariantsDelete,
 	}
 }
 
-func resourceCloudflareZoneCacheVariantsRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCacheVariantsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Reading Zone Cache Variants in zone %q", d.Id())
 
-	zoneCacheVariants, err := client.ZoneCacheVariants(context.Background(), d.Id())
+	zoneCacheVariants, err := client.ZoneCacheVariants(ctx, d.Id())
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
@@ -33,60 +34,60 @@ func resourceCloudflareZoneCacheVariantsRead(d *schema.ResourceData, meta interf
 			d.SetId("")
 			return nil
 		} else {
-			return fmt.Errorf("Error reading cache variants for zone %q: %w", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("Error reading cache variants for zone %q: %w", d.Id(), err))
 		}
 	}
 
 	value := zoneCacheVariants.Value
 
 	if err := d.Set("avif", value.Avif); err != nil {
-		return fmt.Errorf("failed to set avif: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set avif: %w", err))
 	}
 
 	if err := d.Set("bmp", value.Bmp); err != nil {
-		return fmt.Errorf("failed to set bmp: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set bmp: %w", err))
 	}
 
 	if err := d.Set("gif", value.Gif); err != nil {
-		return fmt.Errorf("failed to set gif: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set gif: %w", err))
 	}
 
 	if err := d.Set("jpeg", value.Jpeg); err != nil {
-		return fmt.Errorf("failed to set jpeg: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jpeg: %w", err))
 	}
 
 	if err := d.Set("jpg", value.Jpg); err != nil {
-		return fmt.Errorf("failed to set jpg: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jpg: %w", err))
 	}
 
 	if err := d.Set("jp2", value.Jp2); err != nil {
-		return fmt.Errorf("failed to set jp2: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jp2: %w", err))
 	}
 
 	if err := d.Set("jpg2", value.Jpg2); err != nil {
-		return fmt.Errorf("failed to set jpg2: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set jpg2: %w", err))
 	}
 
 	if err := d.Set("png", value.Png); err != nil {
-		return fmt.Errorf("failed to set png: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set png: %w", err))
 	}
 
 	if err := d.Set("tif", value.Tif); err != nil {
-		return fmt.Errorf("failed to set tif: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set tif: %w", err))
 	}
 
 	if err := d.Set("tiff", value.Tiff); err != nil {
-		return fmt.Errorf("failed to set tiff: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set tiff: %w", err))
 	}
 
 	if err := d.Set("webp", value.Webp); err != nil {
-		return fmt.Errorf("failed to set webp: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to set webp: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareZoneCacheVariantsUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCacheVariantsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)
@@ -95,24 +96,24 @@ func resourceCloudflareZoneCacheVariantsUpdate(d *schema.ResourceData, meta inte
 	variantsValue := cacheVariantsValuesFromResource(d)
 	log.Printf("[INFO] Setting Zone Cache Variants to struct: %+v for zone ID: %q", variantsValue, d.Id())
 
-	_, err := client.UpdateZoneCacheVariants(context.Background(), d.Id(), variantsValue)
+	_, err := client.UpdateZoneCacheVariants(ctx, d.Id(), variantsValue)
 
 	if err != nil {
-		return fmt.Errorf("error setting cache variants for zone %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error setting cache variants for zone %q: %w", d.Id(), err))
 	}
 
-	return resourceCloudflareZoneCacheVariantsRead(d, meta)
+	return resourceCloudflareZoneCacheVariantsRead(ctx, d, meta)
 }
 
-func resourceCloudflareZoneCacheVariantsDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneCacheVariantsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	log.Printf("[INFO] Deleting Zone Cache Variants for zone ID: %q", d.Id())
 
-	err := client.DeleteZoneCacheVariants(context.Background(), d.Id())
+	err := client.DeleteZoneCacheVariants(ctx, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("error deleting cache variants for zone %v: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error deleting cache variants for zone %v: %w", d.Id(), err))
 	}
 
 	return nil

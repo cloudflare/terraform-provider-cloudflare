@@ -9,19 +9,20 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareWorkerScript() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWorkerScriptSchema(),
-		Create: resourceCloudflareWorkerScriptCreate,
-		Read:   resourceCloudflareWorkerScriptRead,
-		Update: resourceCloudflareWorkerScriptUpdate,
-		Delete: resourceCloudflareWorkerScriptDelete,
+		Schema:        resourceCloudflareWorkerScriptSchema(),
+		CreateContext: resourceCloudflareWorkerScriptCreate,
+		ReadContext:   resourceCloudflareWorkerScriptRead,
+		UpdateContext: resourceCloudflareWorkerScriptUpdate,
+		DeleteContext: resourceCloudflareWorkerScriptDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWorkerScriptImport,
+			StateContext: resourceCloudflareWorkerScriptImport,
 		},
 	}
 }
@@ -48,10 +49,10 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 
 type ScriptBindings map[string]cloudflare.WorkerBinding
 
-func getWorkerScriptBindings(scriptName string, client *cloudflare.API) (ScriptBindings, error) {
-	resp, err := client.ListWorkerBindings(context.Background(), &cloudflare.WorkerRequestParams{ScriptName: scriptName})
+func getWorkerScriptBindings(ctx context.Context, scriptName string, client *cloudflare.API) (ScriptBindings, error) {
+	resp, err := client.ListWorkerBindings(ctx, &cloudflare.WorkerRequestParams{ScriptName: scriptName})
 	if err != nil {
-		return nil, fmt.Errorf("cannot list script bindings: %v", err)
+		return nil, fmt.Errorf("cannot list script bindings: %w", err)
 	}
 
 	bindings := make(ScriptBindings, len(resp.BindingList))
@@ -94,23 +95,23 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 	}
 }
 
-func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// make sure that the worker does not already exist
-	r, _ := client.DownloadWorker(context.Background(), &scriptData.Params)
+	r, _ := client.DownloadWorker(ctx, &scriptData.Params)
 	if r.WorkerScript.Script != "" {
-		return fmt.Errorf("script already exists")
+		return diag.FromErr(fmt.Errorf("script already exists"))
 	}
 
 	scriptBody := d.Get("content").(string)
 	if scriptBody == "" {
-		return fmt.Errorf("script content cannot be empty")
+		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
 	log.Printf("[INFO] Creating Cloudflare Worker Script from struct: %+v", &scriptData.Params)
@@ -124,9 +125,9 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 		Bindings: bindings,
 	}
 
-	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
+	_, err = client.UploadWorkerWithBindings(ctx, &scriptData.Params, &scriptParams)
 	if err != nil {
-		return errors.Wrap(err, "error creating worker script")
+		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
 	}
 
 	d.SetId(scriptData.ID)
@@ -134,15 +135,15 @@ func resourceCloudflareWorkerScriptCreate(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	r, err := client.DownloadWorker(context.Background(), &scriptData.Params)
+	r, err := client.DownloadWorker(ctx, &scriptData.Params)
 	if err != nil {
 		// If the resource is deleted, we should set the ID to "" and not
 		// return an error according to the terraform spec
@@ -151,17 +152,17 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 			return nil
 		}
 
-		return errors.Wrap(err,
-			fmt.Sprintf("Error reading worker script from API for resource %+v", &scriptData.Params))
+		return diag.FromErr(errors.Wrap(err,
+			fmt.Sprintf("Error reading worker script from API for resource %+v", &scriptData.Params)))
 	}
 
 	existingBindings := make(ScriptBindings)
 
 	parseWorkerBindings(d, existingBindings)
 
-	bindings, err := getWorkerScriptBindings(d.Get("name").(string), client)
+	bindings, err := getWorkerScriptBindings(ctx, d.Get("name").(string), client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	kvNamespaceBindings := &schema.Set{F: schema.HashResource(kvNamespaceBindingResource)}
@@ -194,7 +195,7 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 		case cloudflare.WorkerWebAssemblyBinding:
 			module, err := ioutil.ReadAll(v.Module)
 			if err != nil {
-				return errors.Wrap(err, fmt.Sprintf("cannot read contents of wasm bindings (%s)", name))
+				return diag.FromErr(errors.Wrap(err, fmt.Sprintf("cannot read contents of wasm bindings (%s)", name)))
 			}
 			webAssemblyBindings.Add(map[string]interface{}{
 				"name":   name,
@@ -204,39 +205,39 @@ func resourceCloudflareWorkerScriptRead(d *schema.ResourceData, meta interface{}
 	}
 
 	if err := d.Set("content", r.Script); err != nil {
-		return fmt.Errorf("cannot set content: %v", err)
+		return diag.FromErr(fmt.Errorf("cannot set content: %w", err))
 	}
 
 	if err := d.Set("kv_namespace_binding", kvNamespaceBindings); err != nil {
-		return fmt.Errorf("cannot set kv namespace bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set kv namespace bindings (%s): %w", d.Id(), err))
 	}
 
 	if err := d.Set("plain_text_binding", plainTextBindings); err != nil {
-		return fmt.Errorf("cannot set plain text bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set plain text bindings (%s): %w", d.Id(), err))
 	}
 
 	if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
-		return fmt.Errorf("cannot set secret text bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set secret text bindings (%s): %w", d.Id(), err))
 	}
 
 	if err := d.Set("webassembly_binding", webAssemblyBindings); err != nil {
-		return fmt.Errorf("cannot set webassembly bindings (%s): %v", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("cannot set webassembly bindings (%s): %w", d.Id(), err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	scriptBody := d.Get("content").(string)
 	if scriptBody == "" {
-		return fmt.Errorf("script content cannot be empty")
+		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Worker Script from struct: %+v", &scriptData.Params)
@@ -250,25 +251,25 @@ func resourceCloudflareWorkerScriptUpdate(d *schema.ResourceData, meta interface
 		Bindings: bindings,
 	}
 
-	_, err = client.UploadWorkerWithBindings(context.Background(), &scriptData.Params, &scriptParams)
+	_, err = client.UploadWorkerWithBindings(ctx, &scriptData.Params, &scriptParams)
 	if err != nil {
-		return errors.Wrap(err, "error updating worker script")
+		return diag.FromErr(errors.Wrap(err, "error updating worker script"))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("[INFO] Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params)
 
-	_, err = client.DeleteWorker(context.Background(), &scriptData.Params)
+	_, err = client.DeleteWorker(ctx, &scriptData.Params)
 	if err != nil {
 		// If the resource is already deleted, we should return without an error
 		// according to the terraform spec
@@ -276,17 +277,17 @@ func resourceCloudflareWorkerScriptDelete(d *schema.ResourceData, meta interface
 			return nil
 		}
 
-		return errors.Wrap(err, "error deleting worker script")
+		return diag.FromErr(errors.Wrap(err, "error deleting worker script"))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWorkerScriptImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWorkerScriptImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	scriptID := d.Id()
 	_ = d.Set("name", scriptID)
 
-	_ = resourceCloudflareWorkerScriptRead(d, meta)
+	_ = resourceCloudflareWorkerScriptRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
