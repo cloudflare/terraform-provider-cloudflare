@@ -72,7 +72,7 @@ The following arguments are supported:
   dashboard.
 * `same_site_cookie_attribute` - (Optional) Defines the same-site cookie setting
   for access tokens. Valid values are `none`, `lax`, and `strict`.
-* `http_only_cookie_attribute` - (Optional) Option to add the `HttpOnly` cookie flag to access tokens.
+* `http_only_cookie_attribute` - (Optional) Option to add the `HttpOnly` cookie flag to access tokens. Defaults to `true`.
 * `service_auth_401_redirect` - (Optional) Option to return a 401 status code in
   service authentication rules on failed requests.
 

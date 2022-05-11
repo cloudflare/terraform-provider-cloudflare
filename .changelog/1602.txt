@@ -1,0 +1,4 @@
+```release-note:bug
+resource/cloudflare_access_application: Fix inability to update
+http_only_cookie_attribute to false
+```
