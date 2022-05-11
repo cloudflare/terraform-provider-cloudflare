@@ -77,7 +77,7 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "protocol", "tcp/22"),
 					resource.TestCheckResourceAttr(name, "origin_direct.#", "1"),
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://1.2.3.4:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://128.66.0.1:23"),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
 			},
@@ -159,7 +159,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://1.2.3.4:23"),
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://128.66.0.1:23"),
 				),
 			},
 			{
@@ -177,46 +177,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 						}
 						return nil
 					},
-					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://1.2.3.4:23"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareSpectrumApplication_CreateAfterManualDestroy(t *testing.T) {
-	var spectrumApp cloudflare.SpectrumApplication
-	var initialID string
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
-	name := "cloudflare_spectrum_application." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudflareSpectrumApplicationDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					testAccManuallyDeleteSpectrumApplication(name, &spectrumApp, &initialID),
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					func(state *terraform.State) error {
-						if initialID == spectrumApp.ID {
-							return fmt.Errorf("spectrum application id is unchanged even after we thought we deleted it ( %s )", spectrumApp.ID)
-						}
-						return nil
-					},
+					resource.TestCheckResourceAttr(name, "origin_direct.0", "tcp://128.66.0.2:23"),
 				),
 			},
 		},
@@ -264,6 +225,8 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 }
 
 func TestAccCloudflareSpectrumApplication_EdgeIPsWithoutConnectivity(t *testing.T) {
+	t.Skip("pending getting BYO IP assigned to the acceptance testing account")
+
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -356,7 +319,7 @@ resource "cloudflare_spectrum_application" "%[3]s" {
     name = "%[3]s.%[2]s"
   }
 
-  origin_direct = ["tcp://1.2.3.4:23"]
+  origin_direct = ["tcp://128.66.0.1:23"]
   origin_port   = 22
 }
 `, zoneID, zoneName, ID)
@@ -364,7 +327,16 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
 func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneID, zoneName, ID string) string {
 	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name    = "%[3]s.origin"
+	value   = "example.com"
+	type    = "CNAME"
+	ttl     = 3600
+}
+
 resource "cloudflare_spectrum_application" "%[3]s" {
+  depends_on = ["cloudflare_record.%[3]s"]
   zone_id  = "%[1]s"
   protocol = "tcp/22"
 
@@ -382,7 +354,17 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
 func testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, zoneName, ID string) string {
 	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name    = "%[3]s.origin"
+	value   = "example.com"
+	type    = "CNAME"
+	ttl     = 3600
+}
+
 resource "cloudflare_spectrum_application" "%[3]s" {
+  depends_on = ["cloudflare_record.%[3]s"]
+
   zone_id  = "%[1]s"
   protocol = "tcp/22-23"
 
@@ -412,7 +394,7 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 		name = "%[3]s.%[2]s"
   }
 
-  origin_direct = ["tcp://1.2.3.4:23"]
+  origin_direct = ["tcp://128.66.0.2:23"]
   origin_port   = 22
 }`, zoneID, zoneName, ID)
 }
@@ -428,7 +410,7 @@ resource "cloudflare_spectrum_application" "%[3]s" {
     name = "%[3]s.%[2]s"
   }
 
-  origin_direct = ["tcp://1.2.3.4:23"]
+  origin_direct = ["tcp://128.66.0.3:23"]
   origin_port   = 22
   edge_ip_connectivity = "ipv4"
 }`, zoneID, zoneName, ID)
@@ -441,11 +423,11 @@ resource "cloudflare_spectrum_application" "%[3]s" {
   protocol = "tcp/22"
 
   dns {
-    type = "CNAME"
+    type = "ADDRESS"
     name = "%[3]s.%[2]s"
   }
 
-  origin_direct = ["tcp://1.2.3.4:23"]
+  origin_direct = ["tcp://128.66.0.4:23"]
   origin_port   = 22
   edge_ips = ["198.51.100.10"]
 }`, zoneID, zoneName, ID)
