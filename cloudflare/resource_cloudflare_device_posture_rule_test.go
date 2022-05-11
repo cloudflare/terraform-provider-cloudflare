@@ -149,6 +149,7 @@ func TestAccCloudflareDevicePostureRuleFirewall(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "firewall"),
 					resource.TestCheckResourceAttr(name, "description", "firewall description"),
 					resource.TestCheckResourceAttr(name, "schedule", "24h"),
+					resource.TestCheckResourceAttr(name, "expiration", "24h"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "windows"),
 					resource.TestCheckResourceAttr(name, "input.0.enabled", "true"),
 				),
@@ -186,6 +187,7 @@ func TestAccCloudflareDevicePostureRuleDiskEncryption(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "disk_encryption"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "schedule", "24h"),
+					resource.TestCheckResourceAttr(name, "expiration", "24h"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
 					resource.TestCheckResourceAttr(name, "input.0.require_all", "true"),
 				),
@@ -202,6 +204,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "serial_number"
 	description               = "My description"
 	schedule                  = "24h"
+	expiration				  = "24h"
 	match {
 		platform = "windows"
 	}
@@ -220,6 +223,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "os_version"
 	description               = "My description"
 	schedule                  = "24h"
+	expiration				  = "24h"
 	match {
 		platform = "mac"
 	}
@@ -239,6 +243,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "domain_joined"
 	description               = "My description"
 	schedule                  = "24h"
+	expiration				  = "24h"
 	match {
 		platform = "windows"
 	}
@@ -257,6 +262,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "disk_encryption"
 	description               = "My description"
 	schedule                  = "24h"
+	expiration				  = "24h"
 	match {
 		platform = "mac"
 	}
@@ -275,6 +281,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	type                      = "firewall"
 	description               = "firewall description"
 	schedule                  = "24h"
+	expiration				  = "24h"
 	match {
 		platform = "windows"
 	}
