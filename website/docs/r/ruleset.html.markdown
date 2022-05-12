@@ -291,9 +291,8 @@ The following arguments are supported:
 * `headers` - (Optional) List of HTTP header modifications to perform in the ruleset rule (refer to the [nested schema](#nestedblock--action-parameters-headers)).
 * `matched_data` - (Optional) List of properties to configure WAF payload logging (refer to the [nested schema](#nestedblock--action-parameters-matched-data)).
 * `version` - (Optional)
-* `host_header` - (Optional) Host Header that request origin receives
-* `origin` - (Optional) List of properties to change request origin (refer to the [nested schema]
-(#nestedblock--action-parameters-origin)).
+* `host_header` - (Optional) Host Header that request origin receives.
+* `origin` - (Optional) List of properties to change request origin (refer to the [nested schema](#nestedblock--action-parameters-origin)).
 
 <a id="nestedblock--action-parameters-matched-data"></a>
 **Nested schema for `matched_data`**
@@ -309,8 +308,8 @@ The following arguments are supported:
 <a id="nestedblock--action-parameters-origin"></a>
 **Nested schema for `origin`**
 
-* `host` - (Optional) Origin Hostname where request is sended
-* `port` - (Optional) Oirign Port where request is sended
+* `host` - (Optional) Origin Hostname where request is sent.
+* `port` - (Optional) Oirign Port where request is sent.
 
 <a id="nestedblock--action-parameters-headers"></a>
 **Nested schema for `headers`**
