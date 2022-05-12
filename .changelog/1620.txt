@@ -1,2 +1,3 @@
-release-note:enhancement
-resource/ruleset: Add `origin` and `host_header` attributes
+```release-note:enhancement
+resource/ruleset: add support for `origin` and `host_header` attributes
+```
