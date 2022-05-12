@@ -2,7 +2,6 @@ package cloudflare
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -50,10 +49,18 @@ func resourceCloudflareArgoTunnelRead(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("failed to fetch Argo Tunnel: %w", err)
 	}
 
-	token := fmt.Sprintf("{\"a\":\"%s\",\"t\":\"%s\",\"s\":\"%s\"}", accID, tunnel.ID, tunnel.Secret)
+	token, err := client.TunnelToken(context.Background(), cloudflare.TunnelTokenParams{
+		AccountID: accID,
+		ID:        tunnel.ID,
+	})
+	if err != nil {
+		fmt.Sprintf("[WARN] Unable to set the tunnel_token in state because it's not found in API")
+		d.Set("tunnel_token", "")
+		return nil
+	}
 
 	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
-	d.Set("tunnel_token", base64.RawStdEncoding.EncodeToString([]byte(token)))
+	d.Set("tunnel_token", token)
 
 
 	return nil
