@@ -195,6 +195,29 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
     enabled = true
   }
 }
+
+# Change origin for an API route
+resource "cloudflare_ruleset" "http_origin_example" {
+  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "Change to some origin"
+  description = "Change origin for a route"
+  kind        = "zone"
+  phase       = "http_request_origin"
+
+  rules {
+    action = "route"
+    action_parameters {
+      host_header = "some.host"
+      origin = {
+        host = "some.host"
+        port = 80
+      }
+    }
+    expression = "(http.request.uri.path matches \"^/api/\")"
+    description = "change origin to some.host"
+    enabled = true
+  }
+}
 ```
 
 ## Argument Reference
@@ -205,7 +228,7 @@ The following arguments are supported:
 * `description` - (Optional) Brief summary of the ruleset and its intended use.
 * `kind` - (Required) Type of Ruleset to create. Valid values are `"custom"`, `"managed"`, `"root"`, `"schema"` or `"zone"`.
 * `name` - (Required) Name of the ruleset.
-* `phase` - (Required) Point in the request/response lifecycle where the ruleset will be created. Valid values are `"ddos_l4"`, `"ddos_l7"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_response_headers_transform"`, `"http_request_main"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_response_firewall_managed"`, `"magic_transit"`, or `"http_ratelimit"`.
+* `phase` - (Required) Point in the request/response lifecycle where the ruleset will be created. Valid values are `"ddos_l4"`, `"ddos_l7"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_response_headers_transform"`, `"http_request_origin"`, `"http_request_main"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_response_firewall_managed"`, `"magic_transit"`, or `"http_ratelimit"`.
 * `rules` - (Required) List of rules to apply to the ruleset (refer to the [nested schema](#nestedblock--rules)).
 * `shareable_entitlement_name` - (Optional) Name of entitlement that is shareable between entities.
 * `zone_id` - (Optional) The ID of the zone where the ruleset is being created. Conflicts with `"account_id"`.
@@ -268,6 +291,9 @@ The following arguments are supported:
 * `headers` - (Optional) List of HTTP header modifications to perform in the ruleset rule (refer to the [nested schema](#nestedblock--action-parameters-headers)).
 * `matched_data` - (Optional) List of properties to configure WAF payload logging (refer to the [nested schema](#nestedblock--action-parameters-matched-data)).
 * `version` - (Optional)
+* `host_header` - (Optional) Host Header that request origin receives
+* `origin` - (Optional) List of properties to change request origin (refer to the [nested schema]
+(#nestedblock--action-parameters-origin)).
 
 <a id="nestedblock--action-parameters-matched-data"></a>
 **Nested schema for `matched_data`**
@@ -279,6 +305,12 @@ The following arguments are supported:
 
 * `path` - (Optional) URI path configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
 * `query` - (Optional) Query string configuration when performing a URL rewrite (refer to the [nested schema](#nestedblock--action-parameters-uri-shared)).
+
+<a id="nestedblock--action-parameters-origin"></a>
+**Nested schema for `origin`**
+
+* `host` - (Optional) Origin Hostname where request is sended
+* `port` - (Optional) Oirign Port where request is sended
 
 <a id="nestedblock--action-parameters-headers"></a>
 **Nested schema for `headers`**

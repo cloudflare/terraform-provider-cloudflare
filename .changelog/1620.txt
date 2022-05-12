@@ -1,0 +1,2 @@
+release-note:enhancement
+resource/ruleset: Add `origin` and `host_header` attributes

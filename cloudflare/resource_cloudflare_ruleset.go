@@ -238,6 +238,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				uri                    []map[string]interface{}
 				matchedData            []map[string]interface{}
 				response               []map[string]interface{}
+				origin                 []map[string]interface{}
 			)
 			actionParameterRules := make(map[string]string)
 
@@ -334,6 +335,13 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				})
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.Origin).IsNil() {
+				origin = append(origin, map[string]interface{}{
+					"host": r.ActionParameters.Origin.Host,
+					"port": r.ActionParameters.Origin.Port,
+				})
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
 				"id":           r.ActionParameters.ID,
 				"increment":    r.ActionParameters.Increment,
@@ -348,6 +356,8 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"matched_data": matchedData,
 				"response":     response,
 				"version":      r.ActionParameters.Version,
+				"host_header":  r.ActionParameters.HostHeader,
+				"origin":       origin,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -576,6 +586,14 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						}
 
 						rule.ActionParameters.Headers = headers
+
+					case "origin":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.Origin = &cloudflare.RulesetRuleActionParametersOrigin{
+								Host: pValue.([]interface{})[i].(map[string]interface{})["host"].(string),
+								Port: pValue.([]interface{})[i].(map[string]interface{})["port"].(uint16),
+							}
+						}
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for action parameters: %s", pKey)
