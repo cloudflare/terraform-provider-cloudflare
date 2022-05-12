@@ -593,7 +593,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						for i := range pValue.([]interface{}) {
 							rule.ActionParameters.Origin = &cloudflare.RulesetRuleActionParametersOrigin{
 								Host: pValue.([]interface{})[i].(map[string]interface{})["host"].(string),
-								Port: pValue.([]interface{})[i].(map[string]interface{})["port"].(uint16),
+								Port: uint16(pValue.([]interface{})[i].(map[string]interface{})["port"].(int)),
 							}
 						}
 
