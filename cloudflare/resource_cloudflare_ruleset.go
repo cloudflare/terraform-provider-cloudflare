@@ -587,6 +587,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 						rule.ActionParameters.Headers = headers
 
+					case "host_header":
+						rule.ActionParameters.HostHeader = pValue.(string)
 					case "origin":
 						for i := range pValue.([]interface{}) {
 							rule.ActionParameters.Origin = &cloudflare.RulesetRuleActionParametersOrigin{
