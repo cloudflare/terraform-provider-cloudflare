@@ -804,7 +804,7 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_origin"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "block"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", "some.host"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", "some.host"),
