@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_teams_rule: fixed detection of deleted teams rules
+```
