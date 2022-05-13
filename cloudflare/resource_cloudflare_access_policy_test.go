@@ -814,3 +814,56 @@ func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) str
     }
   `, resourceID, zone, accountID)
 }
+
+func TestAccCloudflareAccessPolicyExternalEvaluation(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_policy." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessPolicyExternalEvalautionConfig(rnd, zone, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "external_evaluation.0.evaluate_url", "https://example.com"),
+					resource.TestCheckResourceAttr(name, "external_evaluation.0.keys_url", "https://example.com/key"),
+				),
+			},
+		},
+	})
+}
+
+func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name       = "%[1]s"
+      account_id = "%[3]s"
+      domain     = "%[1]s.%[2]s"
+    }
+
+    resource "cloudflare_access_policy" "%[1]s" {
+      application_id = "${cloudflare_access_application.%[1]s.id}"
+      name           = "%[1]s"
+      account_id     = "%[3]s"
+      decision       = "allow"
+      precedence     = "1"
+
+      include {
+        external_evaluation = "example@example.com"
+		external_evaluation {
+			evaluate_url = "https://example.com"
+			keys_url = "https://example.com/keys"
+		  }
+      }
+    }
+
+  `, resourceID, zone, accountID)
+}
