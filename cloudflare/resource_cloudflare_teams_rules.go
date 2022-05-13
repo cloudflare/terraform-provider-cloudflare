@@ -32,8 +32,8 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 
 	rule, err := client.TeamsRule(ctx, accountID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 400") {
-			log.Printf("[INFO] Teams Rule config %s doesnt exists", d.Id())
+		if strings.Contains(err.Error(), "invalid rule id") {
+			log.Printf("[INFO] Teams Rule config %s does not exists", d.Id())
 			d.SetId("")
 			return nil
 		}

@@ -298,6 +298,27 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"host_header": {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								"origin": {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"host": {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											"port": {
+												Type:     schema.TypeInt,
+												Optional: true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},
