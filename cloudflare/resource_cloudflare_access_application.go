@@ -47,8 +47,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
 	}
 
-	value := d.Get("http_only_cookie_attribute").(bool)
-	newAccessApplication.HttpOnlyCookieAttribute = &value
+	newAccessApplication.HttpOnlyCookieAttribute = cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool))
 
 	if len(allowedIDPList) > 0 {
 		newAccessApplication.AllowedIdps = allowedIDPList
