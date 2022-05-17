@@ -38,12 +38,32 @@ The following arguments are supported:
 
 ### Config argument
 
-The config structure allows the following:
+The The config structure depends on the integration type.
+
+**ws1** allows the following:
 
 - `api_url` - (Required) The third-party API's URL.
 - `auth_url` - (Required) The third-party authorization API URL.
 - `client_id` - (Required) The client identifier for authenticating API calls.
 - `client_secret` - (Required) The client secret for authenticating API calls.
+
+**crowdstrike_s2s** allows the following:
+
+* `api_url` - (Required) The third-party API's URL.
+* `customer_id` - (Required)  The customer identifier for authenticating API calls.
+* `client_id` - (Required) The client identifier for authenticating API calls.
+* `client_secret` - (Required) The client secret for authenticating API calls.
+
+**uptycs** allows the following:
+
+* `client_key` - (Required) The client key for authenticating API calls.
+* `client_id` - (Required) The client identifier for authenticating API calls.
+* `client_secret` - (Required) The client secret for authenticating API calls.
+
+**intune** allows the following:
+* `customer_id` - (Required)  The customer identifier for authenticating API calls.
+* `client_id` - (Required) The client identifier for authenticating API calls.
+* `client_secret` - (Required) The client secret for authenticating API calls.
 
 ## Attributes Reference
 
