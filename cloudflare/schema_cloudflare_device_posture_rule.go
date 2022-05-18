@@ -28,6 +28,10 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"expiration": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
 		"match": {
 			Type:     schema.TypeList,
 			Optional: true,

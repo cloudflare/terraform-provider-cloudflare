@@ -6,12 +6,13 @@ import (
 	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareAccountRoles() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareAccountRolesRead,
+		ReadContext: dataSourceCloudflareAccountRolesRead,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -43,14 +44,14 @@ func dataSourceCloudflareAccountRoles() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareAccountRolesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareAccountRolesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	log.Printf("[DEBUG] Reading Account Roles")
-	roles, err := client.AccountRoles(context.Background(), accountID)
+	roles, err := client.AccountRoles(ctx, accountID)
 	if err != nil {
-		return fmt.Errorf("error listing Account Roles: %s", err)
+		return diag.FromErr(fmt.Errorf("error listing Account Roles: %w", err))
 	}
 
 	roleIds := make([]string, 0)
@@ -67,7 +68,7 @@ func dataSourceCloudflareAccountRolesRead(d *schema.ResourceData, meta interface
 
 	err = d.Set("roles", roleDetails)
 	if err != nil {
-		return fmt.Errorf("error setting roles: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting roles: %w", err))
 	}
 
 	d.SetId(stringListChecksum(roleIds))

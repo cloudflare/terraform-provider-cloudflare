@@ -7,48 +7,49 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareNotificationPolicy() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareNotificationPolicySchema(),
-		Create: resourceCloudflareNotificationPolicyCreate,
-		Read:   resourceCloudflareNotificationPolicyRead,
-		Update: resourceCloudflareNotificationPolicyUpdate,
-		Delete: resourceCloudflareNotificationPolicyDelete,
+		Schema:        resourceCloudflareNotificationPolicySchema(),
+		CreateContext: resourceCloudflareNotificationPolicyCreate,
+		ReadContext:   resourceCloudflareNotificationPolicyRead,
+		UpdateContext: resourceCloudflareNotificationPolicyUpdate,
+		DeleteContext: resourceCloudflareNotificationPolicyDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceNotificationPolicyImport,
+			StateContext: resourceNotificationPolicyImport,
 		},
 	}
 }
 
-func resourceCloudflareNotificationPolicyCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
 	notificationPolicy := buildNotificationPolicy(d)
 
-	policy, err := client.CreateNotificationPolicy(context.Background(), accountID, notificationPolicy)
+	policy, err := client.CreateNotificationPolicy(ctx, accountID, notificationPolicy)
 
 	if err != nil {
-		return fmt.Errorf("error creating policy %s: %s", notificationPolicy.Name, err)
+		return diag.FromErr(fmt.Errorf("error creating policy %s: %w", notificationPolicy.Name, err))
 	}
 	d.SetId(policy.Result.ID)
 
-	return resourceCloudflareNotificationPolicyRead(d, meta)
+	return resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 }
 
-func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	policy, err := client.GetNotificationPolicy(context.Background(), accountID, policyID)
+	policy, err := client.GetNotificationPolicy(ctx, accountID, policyID)
 
 	name := d.Get("name").(string)
 	if err != nil {
-		return fmt.Errorf("error retrieving notification policy %s: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error retrieving notification policy %s: %w", name, err))
 	}
 
 	d.Set("name", policy.Result.Name)
@@ -60,26 +61,26 @@ func resourceCloudflareNotificationPolicyRead(d *schema.ResourceData, meta inter
 
 	if policy.Result.Filters != nil && len(policy.Result.Filters) > 0 {
 		if err := d.Set("filters", flattenNotificationPolicyFilter(policy.Result.Filters)); err != nil {
-			return fmt.Errorf("failed to set filters: %s", err)
+			return diag.FromErr(fmt.Errorf("failed to set filters: %w", err))
 		}
 	}
 
 	if err := d.Set("email_integration", setNotificationMechanisms(policy.Result.Mechanisms["email"])); err != nil {
-		return fmt.Errorf("failed to set email integration: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set email integration: %w", err))
 	}
 
 	if err := d.Set("pagerduty_integration", setNotificationMechanisms(policy.Result.Mechanisms["pagerduty"])); err != nil {
-		return fmt.Errorf("failed to set pagerduty integration: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set pagerduty integration: %w", err))
 	}
 
 	if err := d.Set("webhooks_integration", setNotificationMechanisms(policy.Result.Mechanisms["webhooks"])); err != nil {
-		return fmt.Errorf("failed to set webhooks integration: %s", err)
+		return diag.FromErr(fmt.Errorf("failed to set webhooks integration: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareNotificationPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)
@@ -87,29 +88,29 @@ func resourceCloudflareNotificationPolicyUpdate(d *schema.ResourceData, meta int
 	notificationPolicy := buildNotificationPolicy(d)
 	notificationPolicy.ID = policyID
 
-	_, err := client.UpdateNotificationPolicy(context.Background(), accountID, &notificationPolicy)
+	_, err := client.UpdateNotificationPolicy(ctx, accountID, &notificationPolicy)
 
 	if err != nil {
-		return fmt.Errorf("error updating notification policy %s: %s", policyID, err)
+		return diag.FromErr(fmt.Errorf("error updating notification policy %s: %w", policyID, err))
 	}
 
-	return resourceCloudflareNotificationPolicyRead(d, meta)
+	return resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 }
 
-func resourceCloudflareNotificationPolicyDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.DeleteNotificationPolicy(context.Background(), accountID, policyID)
+	_, err := client.DeleteNotificationPolicy(ctx, accountID, policyID)
 
 	if err != nil {
-		return fmt.Errorf("error deleting notification policy %s: %s", policyID, err)
+		return diag.FromErr(fmt.Errorf("error deleting notification policy %s: %w", policyID, err))
 	}
 	return nil
 }
 
-func resourceNotificationPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceNotificationPolicyImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -120,10 +121,9 @@ func resourceNotificationPolicyImport(d *schema.ResourceData, meta interface{}) 
 	d.SetId(policyID)
 	d.Set("account_id", accountID)
 
-	resourceCloudflareNotificationPolicyRead(d, meta)
+	resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-
 }
 
 func buildNotificationPolicy(d *schema.ResourceData) cloudflare.NotificationPolicy {

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -16,17 +17,17 @@ import (
 
 func resourceCloudflareCertificatePack() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareCertificatePackSchema(),
-		Create: resourceCloudflareCertificatePackCreate,
-		Read:   resourceCloudflareCertificatePackRead,
-		Delete: resourceCloudflareCertificatePackDelete,
+		Schema:        resourceCloudflareCertificatePackSchema(),
+		CreateContext: resourceCloudflareCertificatePackCreate,
+		ReadContext:   resourceCloudflareCertificatePackRead,
+		DeleteContext: resourceCloudflareCertificatePackDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareCertificatePackImport,
+			StateContext: resourceCloudflareCertificatePackImport,
 		},
 	}
 }
 
-func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certificatePackType := d.Get("type").(string)
@@ -47,9 +48,9 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 			CertificateAuthority: ca,
 			CloudflareBranding:   cloudflareBranding,
 		}
-		certPackResponse, err := client.CreateAdvancedCertificatePack(context.Background(), zoneID, cert)
+		certPackResponse, err := client.CreateAdvancedCertificatePack(ctx, zoneID, cert)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err))
+			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err)))
 		}
 		certificatePackID = certPackResponse.ID
 	} else {
@@ -57,16 +58,16 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 			Type:  certificatePackType,
 			Hosts: expandInterfaceToStringList(certificateHostSet.List()),
 		}
-		certPackResponse, err := client.CreateCertificatePack(context.Background(), zoneID, cert)
+		certPackResponse, err := client.CreateCertificatePack(ctx, zoneID, cert)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err))
+			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err)))
 		}
 		certificatePackID = certPackResponse.ID
 	}
 
 	if d.Get("wait_for_active_status").(bool) {
-		err := resource.Retry(d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
-			certificatePack, err := client.CertificatePack(context.Background(), zoneID, certificatePackID)
+		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+			certificatePack, err := client.CertificatePack(ctx, zoneID, certificatePackID)
 			if err != nil {
 				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch certificate pack"))
 			}
@@ -82,22 +83,22 @@ func resourceCloudflareCertificatePackCreate(d *schema.ResourceData, meta interf
 		})
 
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	d.SetId(certificatePackID)
 
-	return resourceCloudflareCertificatePackRead(d, meta)
+	return resourceCloudflareCertificatePackRead(ctx, d, meta)
 }
 
-func resourceCloudflareCertificatePackRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCertificatePackRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	certificatePack, err := client.CertificatePack(context.Background(), zoneID, d.Id())
+	certificatePack, err := client.CertificatePack(ctx, zoneID, d.Id())
 	if err != nil {
-		return errors.Wrap(err, "failed to fetch certificate pack")
+		return diag.FromErr(errors.Wrap(err, "failed to fetch certificate pack"))
 	}
 
 	d.Set("type", certificatePack.Type)
@@ -130,21 +131,21 @@ func resourceCloudflareCertificatePackRead(d *schema.ResourceData, meta interfac
 	return nil
 }
 
-func resourceCloudflareCertificatePackDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCertificatePackDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteCertificatePack(context.Background(), zoneID, d.Id())
+	err := client.DeleteCertificatePack(ctx, zoneID, d.Id())
 	if err != nil {
-		return errors.Wrap(err, "failed to delete certificate pack")
+		return diag.FromErr(errors.Wrap(err, "failed to delete certificate pack"))
 	}
 
-	resourceCloudflareCertificatePackRead(d, meta)
+	resourceCloudflareCertificatePackRead(ctx, d, meta)
 
 	return nil
 }
 
-func resourceCloudflareCertificatePackImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareCertificatePackImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -158,7 +159,7 @@ func resourceCloudflareCertificatePackImport(d *schema.ResourceData, meta interf
 	d.Set("zone_id", zoneID)
 	d.SetId(certificatePackID)
 
-	resourceCloudflareCertificatePackRead(d, meta)
+	resourceCloudflareCertificatePackRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

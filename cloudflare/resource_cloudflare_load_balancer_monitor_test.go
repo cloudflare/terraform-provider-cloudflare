@@ -149,7 +149,6 @@ func TestAccCloudflareLoadBalancerMonitor_PremiumTypes(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
-
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
@@ -274,7 +273,6 @@ func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.
 
 func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, _ := s.RootModule().Resources[n]
 
 		for timeStampAttr, serverVal := range map[string]time.Time{"created_on": *loadBalancerMonitor.CreatedOn, "modified_on": *loadBalancerMonitor.ModifiedOn} {

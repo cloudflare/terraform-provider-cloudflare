@@ -2,28 +2,30 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccessBookmark() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareAccessBookmarkSchema(),
-		Create: resourceCloudflareAccessBookmarkCreate,
-		Read:   resourceCloudflareAccessBookmarkRead,
-		Update: resourceCloudflareAccessBookmarkUpdate,
-		Delete: resourceCloudflareAccessBookmarkDelete,
+		Schema:        resourceCloudflareAccessBookmarkSchema(),
+		CreateContext: resourceCloudflareAccessBookmarkCreate,
+		ReadContext:   resourceCloudflareAccessBookmarkRead,
+		UpdateContext: resourceCloudflareAccessBookmarkUpdate,
+		DeleteContext: resourceCloudflareAccessBookmarkDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAccessBookmarkImport,
+			StateContext: resourceCloudflareAccessBookmarkImport,
 		},
 	}
 }
 
-func resourceCloudflareAccessBookmarkCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	newAccessBookmark := cloudflare.AccessBookmark{
@@ -37,37 +39,37 @@ func resourceCloudflareAccessBookmarkCreate(d *schema.ResourceData, meta interfa
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessBookmark cloudflare.AccessBookmark
 	if identifier.Type == AccountType {
-		accessBookmark, err = client.CreateAccessBookmark(context.Background(), identifier.Value, newAccessBookmark)
+		accessBookmark, err = client.CreateAccessBookmark(ctx, identifier.Value, newAccessBookmark)
 	} else {
-		accessBookmark, err = client.CreateZoneLevelAccessBookmark(context.Background(), identifier.Value, newAccessBookmark)
+		accessBookmark, err = client.CreateZoneLevelAccessBookmark(ctx, identifier.Value, newAccessBookmark)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error creating Access Bookmark for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	d.SetId(accessBookmark.ID)
 
-	return resourceCloudflareAccessBookmarkRead(d, meta)
+	return resourceCloudflareAccessBookmarkRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessBookmarkRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessBookmark cloudflare.AccessBookmark
 	if identifier.Type == AccountType {
-		accessBookmark, err = client.AccessBookmark(context.Background(), identifier.Value, d.Id())
+		accessBookmark, err = client.AccessBookmark(ctx, identifier.Value, d.Id())
 	} else {
-		accessBookmark, err = client.ZoneLevelAccessBookmark(context.Background(), identifier.Value, d.Id())
+		accessBookmark, err = client.ZoneLevelAccessBookmark(ctx, identifier.Value, d.Id())
 	}
 
 	if err != nil {
@@ -76,7 +78,7 @@ func resourceCloudflareAccessBookmarkRead(d *schema.ResourceData, meta interface
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Access Bookmark %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Access Bookmark %q: %w", d.Id(), err))
 	}
 
 	d.Set("name", accessBookmark.Name)
@@ -87,7 +89,7 @@ func resourceCloudflareAccessBookmarkRead(d *schema.ResourceData, meta interface
 	return nil
 }
 
-func resourceCloudflareAccessBookmarkUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	updatedAccessBookmark := cloudflare.AccessBookmark{
@@ -102,27 +104,27 @@ func resourceCloudflareAccessBookmarkUpdate(d *schema.ResourceData, meta interfa
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var accessBookmark cloudflare.AccessBookmark
 	if identifier.Type == AccountType {
-		accessBookmark, err = client.UpdateAccessBookmark(context.Background(), identifier.Value, updatedAccessBookmark)
+		accessBookmark, err = client.UpdateAccessBookmark(ctx, identifier.Value, updatedAccessBookmark)
 	} else {
-		accessBookmark, err = client.UpdateZoneLevelAccessBookmark(context.Background(), identifier.Value, updatedAccessBookmark)
+		accessBookmark, err = client.UpdateZoneLevelAccessBookmark(ctx, identifier.Value, updatedAccessBookmark)
 	}
 	if err != nil {
-		return fmt.Errorf("error updating Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error updating Access Bookmark for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
 	if accessBookmark.ID == "" {
-		return fmt.Errorf("failed to find Access Bookmark ID in update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find Access Bookmark ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareAccessBookmarkRead(d, meta)
+	return resourceCloudflareAccessBookmarkRead(ctx, d, meta)
 }
 
-func resourceCloudflareAccessBookmarkDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAccessBookmarkDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	bookmarkID := d.Id()
 
@@ -130,24 +132,27 @@ func resourceCloudflareAccessBookmarkDelete(d *schema.ResourceData, meta interfa
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccessBookmark(context.Background(), identifier.Value, bookmarkID)
+		err = client.DeleteAccessBookmark(ctx, identifier.Value, bookmarkID)
 	} else {
-		err = client.DeleteZoneLevelAccessBookmark(context.Background(), identifier.Value, bookmarkID)
+		err = client.DeleteZoneLevelAccessBookmark(ctx, identifier.Value, bookmarkID)
 	}
 	if err != nil {
-		return fmt.Errorf("error deleting Access Bookmark for %s %q: %s", identifier.Type, identifier.Value, err)
+		return diag.FromErr(fmt.Errorf("error deleting Access Bookmark for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
-	resourceCloudflareAccessBookmarkRead(d, meta)
+	readErr := resourceCloudflareAccessBookmarkRead(ctx, d, meta)
+	if readErr != nil {
+		return readErr
+	}
 
 	return nil
 }
 
-func resourceCloudflareAccessBookmarkImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAccessBookmarkImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 2)
 
 	if len(attributes) != 2 {
@@ -161,7 +166,10 @@ func resourceCloudflareAccessBookmarkImport(d *schema.ResourceData, meta interfa
 	d.Set("account_id", accountID)
 	d.SetId(accessBookmarkID)
 
-	resourceCloudflareAccessBookmarkRead(d, meta)
+	readErr := resourceCloudflareAccessBookmarkRead(ctx, d, meta)
+	if readErr != nil {
+		return nil, errors.New("failed to read Access Bookmark state")
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

@@ -167,7 +167,6 @@ func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplic
 	if _, ok := d.GetOk("cors_headers"); ok {
 		if allowedMethods, ok := d.GetOk("cors_headers.0.allowed_methods"); ok {
 			CORSConfig.AllowedMethods = expandInterfaceToStringList(allowedMethods.(*schema.Set).List())
-
 		}
 
 		if allowedHeaders, ok := d.GetOk("cors_headers.0.allowed_headers"); ok {

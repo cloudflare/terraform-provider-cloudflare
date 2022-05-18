@@ -8,17 +8,18 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWaitingRoom() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareWaitingRoomCreate,
-		Read:   resourceCloudflareWaitingRoomRead,
-		Update: resourceCloudflareWaitingRoomUpdate,
-		Delete: resourceCloudflareWaitingRoomDelete,
+		CreateContext: resourceCloudflareWaitingRoomCreate,
+		ReadContext:   resourceCloudflareWaitingRoomRead,
+		UpdateContext: resourceCloudflareWaitingRoomUpdate,
+		DeleteContext: resourceCloudflareWaitingRoomDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWaitingRoomImport,
+			StateContext: resourceCloudflareWaitingRoomImport,
 		},
 
 		Schema: resourceCloudflareWaitingRoomSchema(),
@@ -46,30 +47,30 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 	}
 }
 
-func resourceCloudflareWaitingRoomCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	newWaitingRoom := buildWaitingRoom(d)
 
-	waitingRoom, err := client.CreateWaitingRoom(context.Background(), zoneID, newWaitingRoom)
+	waitingRoom, err := client.CreateWaitingRoom(ctx, zoneID, newWaitingRoom)
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error creating waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error creating waiting room %q: %w", name, err))
 	}
 
 	d.SetId(waitingRoom.ID)
 
-	return resourceCloudflareWaitingRoomRead(d, meta)
+	return resourceCloudflareWaitingRoomRead(ctx, d, meta)
 }
 
-func resourceCloudflareWaitingRoomRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Id()
 	zoneID := d.Get("zone_id").(string)
 
-	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
+	waitingRoom, err := client.WaitingRoom(ctx, zoneID, waitingRoomID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
 			log.Printf("[WARN] Removing waiting room from state because it's not found in API")
@@ -77,7 +78,7 @@ func resourceCloudflareWaitingRoomRead(d *schema.ResourceData, meta interface{})
 			return nil
 		}
 		name := d.Get("name").(string)
-		return fmt.Errorf("error getting waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error getting waiting room %q: %w", name, err))
 	}
 	d.SetId(waitingRoom.ID)
 	d.Set("name", waitingRoom.Name)
@@ -95,39 +96,39 @@ func resourceCloudflareWaitingRoomRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareWaitingRoomUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Id()
 	zoneID := d.Get("zone_id").(string)
 
 	waitingRoom := buildWaitingRoom(d)
 
-	_, err := client.ChangeWaitingRoom(context.Background(), zoneID, waitingRoomID, waitingRoom)
+	_, err := client.ChangeWaitingRoom(ctx, zoneID, waitingRoomID, waitingRoom)
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error updating waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error updating waiting room %q: %w", name, err))
 	}
 
-	return resourceCloudflareWaitingRoomRead(d, meta)
+	return resourceCloudflareWaitingRoomRead(ctx, d, meta)
 }
 
-func resourceCloudflareWaitingRoomDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWaitingRoomDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Id()
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteWaitingRoom(context.Background(), zoneID, waitingRoomID)
+	err := client.DeleteWaitingRoom(ctx, zoneID, waitingRoomID)
 
 	if err != nil {
 		name := d.Get("name").(string)
-		return fmt.Errorf("error deleting waiting room %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error deleting waiting room %q: %w", name, err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWaitingRoomImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -139,7 +140,7 @@ func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/waitingRoomID\" for import", d.Id())
 	}
 
-	waitingRoom, err := client.WaitingRoom(context.Background(), zoneID, waitingRoomID)
+	waitingRoom, err := client.WaitingRoom(ctx, zoneID, waitingRoomID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Waiting room %s", waitingRoomID)
 	}
@@ -147,6 +148,6 @@ func resourceCloudflareWaitingRoomImport(d *schema.ResourceData, meta interface{
 	d.SetId(waitingRoom.ID)
 	d.Set("zone_id", zoneID)
 
-	resourceCloudflareWaitingRoomRead(d, meta)
+	resourceCloudflareWaitingRoomRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }

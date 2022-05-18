@@ -9,19 +9,19 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareApiToken() *schema.Resource {
-
 	return &schema.Resource{
-		Schema: resourceCloudflareApiTokenSchema(),
-		Create: resourceCloudflareApiTokenCreate,
-		Read:   resourceCloudflareApiTokenRead,
-		Update: resourceCloudflareApiTokenUpdate,
-		Delete: resourceCloudflareApiTokenDelete,
+		Schema:        resourceCloudflareApiTokenSchema(),
+		CreateContext: resourceCloudflareApiTokenCreate,
+		ReadContext:   resourceCloudflareApiTokenRead,
+		UpdateContext: resourceCloudflareApiTokenUpdate,
+		DeleteContext: resourceCloudflareApiTokenDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
@@ -59,7 +59,7 @@ func buildAPIToken(d *schema.ResourceData) cloudflare.APIToken {
 	return token
 }
 
-func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	name := d.Get("name").(string)
@@ -67,16 +67,16 @@ func resourceCloudflareApiTokenCreate(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[INFO] Creating Cloudflare API Token: name %s", name)
 
 	t := buildAPIToken(d)
-	t, err := client.CreateAPIToken(context.Background(), t)
+	t, err := client.CreateAPIToken(ctx, t)
 	if err != nil {
-		return fmt.Errorf("error creating Cloudflare API Token %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error creating Cloudflare API Token %q: %w", name, err))
 	}
 
 	d.SetId(t.ID)
 	d.Set("status", t.Status)
 	d.Set("value", t.Value)
 
-	return resourceCloudflareApiTokenRead(d, meta)
+	return resourceCloudflareApiTokenRead(ctx, d, meta)
 }
 
 func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APITokenPolicies {
@@ -118,11 +118,11 @@ func resourceDataToApiTokenPolices(d *schema.ResourceData) []cloudflare.APIToken
 	return cfPolicies
 }
 
-func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 
-	t, err := client.GetAPIToken(context.Background(), tokenID)
+	t, err := client.GetAPIToken(ctx, tokenID)
 
 	log.Printf("[DEBUG] Cloudflare API Token: %+v", t)
 
@@ -132,7 +132,7 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Cloudflare API Token %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Cloudflare API Token %q: %w", d.Id(), err))
 	}
 
 	policies := []map[string]interface{}{}
@@ -178,7 +178,7 @@ func resourceCloudflareApiTokenRead(d *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	name := d.Get("name").(string)
@@ -188,23 +188,23 @@ func resourceCloudflareApiTokenUpdate(d *schema.ResourceData, meta interface{}) 
 
 	log.Printf("[INFO] Updating Cloudflare API Token: name %s", name)
 
-	t, err := client.UpdateAPIToken(context.Background(), tokenID, t)
+	t, err := client.UpdateAPIToken(ctx, tokenID, t)
 	if err != nil {
-		return fmt.Errorf("error updating Cloudflare API Token %q: %s", name, err)
+		return diag.FromErr(fmt.Errorf("error updating Cloudflare API Token %q: %w", name, err))
 	}
 
-	return resourceCloudflareApiTokenRead(d, meta)
+	return resourceCloudflareApiTokenRead(ctx, d, meta)
 }
 
-func resourceCloudflareApiTokenDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareApiTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 
 	log.Printf("[INFO] Deleting Cloudflare API Token: id %s", tokenID)
 
-	err := client.DeleteAPIToken(context.Background(), tokenID)
+	err := client.DeleteAPIToken(ctx, tokenID)
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare API Token: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare API Token: %w", err))
 	}
 
 	return nil

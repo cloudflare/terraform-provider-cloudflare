@@ -3,7 +3,6 @@ package cloudflare
 import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 func resourceCloudflareTeamsProxyEndpointSchema() map[string]*schema.Schema {
-
 	return map[string]*schema.Schema{
 		"account_id": {
 			Type:     schema.TypeString,

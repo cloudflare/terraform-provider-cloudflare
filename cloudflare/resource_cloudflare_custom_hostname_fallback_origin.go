@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -14,24 +15,24 @@ import (
 
 func resourceCloudflareCustomHostnameFallbackOrigin() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareCustomHostnameFallbackOriginSchema(),
-		Create: resourceCloudflareCustomHostnameFallbackOriginCreate,
-		Read:   resourceCloudflareCustomHostnameFallbackOriginRead,
-		Update: resourceCloudflareCustomHostnameFallbackOriginUpdate,
-		Delete: resourceCloudflareCustomHostnameFallbackOriginDelete,
+		Schema:        resourceCloudflareCustomHostnameFallbackOriginSchema(),
+		CreateContext: resourceCloudflareCustomHostnameFallbackOriginCreate,
+		ReadContext:   resourceCloudflareCustomHostnameFallbackOriginRead,
+		UpdateContext: resourceCloudflareCustomHostnameFallbackOriginUpdate,
+		DeleteContext: resourceCloudflareCustomHostnameFallbackOriginDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareCustomHostnameFallbackOriginImport,
+			StateContext: resourceCloudflareCustomHostnameFallbackOriginImport,
 		},
 	}
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
+	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(ctx, zoneID)
 	if err != nil {
-		return fmt.Errorf("error reading custom hostname fallback origin %q: %w", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error reading custom hostname fallback origin %q: %w", zoneID, err))
 	}
 
 	d.Set("origin", customHostnameFallbackOrigin.Origin)
@@ -40,19 +41,19 @@ func resourceCloudflareCustomHostnameFallbackOriginRead(d *schema.ResourceData, 
 	return nil
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	err := client.DeleteCustomHostnameFallbackOrigin(context.Background(), zoneID)
+	err := client.DeleteCustomHostnameFallbackOrigin(ctx, zoneID)
 	if err != nil {
-		return fmt.Errorf("failed to delete custom hostname fallback origin: %w", err)
+		return diag.FromErr(fmt.Errorf("failed to delete custom hostname fallback origin: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	origin := d.Get("origin").(string)
@@ -61,8 +62,8 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		Origin: origin,
 	}
 
-	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
-		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
+	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
+		_, err := client.UpdateCustomHostnameFallbackOrigin(ctx, zoneID, fallbackOrigin)
 		if err != nil {
 			var requestError *cloudflare.RequestError
 			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {
@@ -72,7 +73,7 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 			}
 		}
 
-		fallbackHostname, err := client.CustomHostnameFallbackOrigin(context.Background(), zoneID)
+		fallbackHostname, err := client.CustomHostnameFallbackOrigin(ctx, zoneID)
 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %w", err))
@@ -88,13 +89,18 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(d *schema.ResourceData
 		id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
 		d.SetId(id)
 
-		resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
+		resourceCloudflareCustomHostnameFallbackOriginRead(ctx, d, meta)
 		return nil
 	})
 
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomHostnameFallbackOriginUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	origin := d.Get("origin").(string)
@@ -103,8 +109,8 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 		Origin: origin,
 	}
 
-	return resource.Retry(d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
-		_, err := client.UpdateCustomHostnameFallbackOrigin(context.Background(), zoneID, fallbackOrigin)
+	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
+		_, err := client.UpdateCustomHostnameFallbackOrigin(ctx, zoneID, fallbackOrigin)
 		if err != nil {
 			var requestError *cloudflare.RequestError
 			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {
@@ -113,12 +119,18 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(d *schema.ResourceData
 			return resource.NonRetryableError(fmt.Errorf("failed to update custom hostname fallback origin: %w", err))
 		}
 
-		resourceCloudflareCustomHostnameFallbackOriginRead(d, meta)
+		resourceCloudflareCustomHostnameFallbackOriginRead(ctx, d, meta)
 		return nil
 	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
-func resourceCloudflareCustomHostnameFallbackOriginImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareCustomHostnameFallbackOriginImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 
 	if len(idAttr) != 2 {

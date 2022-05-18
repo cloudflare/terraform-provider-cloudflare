@@ -7,12 +7,13 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareWAFRules() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareWAFRulesRead,
+		ReadContext: dataSourceCloudflareWAFRulesRead,
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
@@ -98,14 +99,14 @@ func dataSourceCloudflareWAFRules() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareWAFRulesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	// Prepare the filters to be applied to the search
 	filter, err := expandFilterWAFRules(d.Get("filter"))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// If no package ID is given, we will consider all for the zone
@@ -114,9 +115,9 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 	if packageID == "" {
 		var err error
 		log.Printf("[DEBUG] Reading WAF Packages")
-		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
+		pkgList, err = client.ListWAFPackages(ctx, zoneID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	} else {
 		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
@@ -126,9 +127,9 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 	ruleIds := make([]string, 0)
 	ruleDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {
-		ruleList, err := client.ListWAFRules(context.Background(), zoneID, pkg.ID)
+		ruleList, err := client.ListWAFRules(ctx, zoneID, pkg.ID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		foundGroup := false
@@ -174,7 +175,7 @@ func dataSourceCloudflareWAFRulesRead(d *schema.ResourceData, meta interface{}) 
 
 	err = d.Set("rules", ruleDetails)
 	if err != nil {
-		return fmt.Errorf("error setting WAF rules: %s", err)
+		return diag.FromErr(fmt.Errorf("error setting WAF rules: %w", err))
 	}
 
 	d.SetId(stringListChecksum(ruleIds))

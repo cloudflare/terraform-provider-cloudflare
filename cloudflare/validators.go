@@ -70,7 +70,7 @@ func validateStringIP(v interface{}, k string) (warnings []string, errors []erro
 // handle here but there _could_ be edge cases.
 func validateURL(v interface{}, k string) (s []string, errors []error) {
 	if _, err := url.ParseRequestURI(v.(string)); err != nil {
-		errors = append(errors, fmt.Errorf("%q: %s", k, err))
+		errors = append(errors, fmt.Errorf("%q: %w", k, err))
 	}
 	return
 }

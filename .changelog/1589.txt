@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_group: allow github access groups to be created without a list of teams
+```

@@ -45,7 +45,45 @@ These data sources are intended to return zero, one, or many results, usually as
 
 These data sources are intended to return one result or an error. These should not include any specific attribute in the naming (e.g. prefer `cloudflare_zone` instead of `cloudflare_zone_id`).
 
+## Type conversions
+
+As Terraform doesn't have the concept of pointers and `cloudflare-go` does, there is a need to be able to convert between the two in order to align functionality. The type conversion methods live in [convert_types.go][convert-types].
+
+### Naming conventions
+
+- `<type>Ptr`: Accepts a value and returns a pointer.
+- `<type>`: Accepts a pointer and returns a value.
+- `<type>PtrSlice`: Accepts a slice of values and returns a slice of pointers.
+- `<type>Slice`: Accepts a slice of pointers and returns a slice of values.
+- `<type>PtrMap`: Accepts a string map of values into a string map of pointers.
+- `<type>Map`: Accepts a string map of pointers into a string map of values.
+
+Not all Golang types are covered here, only those that are commonly used.
+
+### Examples
+
+Given the following struct in `cloudflare-go`
+
+```go
+type ExampleService struct {
+    Foo *string
+    Bar *bool
+}
+```
+
+In Terraform you could do the following to convert to usable types (string, boolean).
+
+```go
+fooService := &foo.ExampleService{
+    Foo: cloudflare.StringPtr("example"), // returns a string pointer
+    Bar: clouflare.BoolPtr(false)         // returns a boolean pointer
+}
+
+// ... use `fooService`
+```
+
 [cloudflare-go]: https://github.com/cloudflare/cloudflare-go
 [api.cloudflare.com]: https://api.cloudflare.com
 [developers.cloudflare.com]: https://developers.cloudflare.com
 [cf-terraforming]: https://github.com/cloudflare/cf-terraforming
+[convert-types]: https://github.com/cloudflare/cloudflare-go/blob/master/convert_types.go

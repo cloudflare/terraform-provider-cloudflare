@@ -9,18 +9,19 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareLogpushJob() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLogpushJobSchema(),
-		Create: resourceCloudflareLogpushJobCreate,
-		Read:   resourceCloudflareLogpushJobRead,
-		Update: resourceCloudflareLogpushJobUpdate,
-		Delete: resourceCloudflareLogpushJobDelete,
+		Schema:        resourceCloudflareLogpushJobSchema(),
+		CreateContext: resourceCloudflareLogpushJobCreate,
+		ReadContext:   resourceCloudflareLogpushJobRead,
+		UpdateContext: resourceCloudflareLogpushJobUpdate,
+		DeleteContext: resourceCloudflareLogpushJobDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareLogpushJobImport,
+			StateContext: resourceCloudflareLogpushJobImport,
 		},
 	}
 }
@@ -42,7 +43,7 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 
 	destConf := d.Get("destination_conf").(string)
 	ownershipChallenge := d.Get("ownership_challenge").(string)
-	var re = regexp.MustCompile(`^((datadog|splunk|https)://|s3://.+endpoint=)`)
+	var re = regexp.MustCompile(`^((datadog|splunk|https|r2)://|s3://.+endpoint=)`)
 
 	if ownershipChallenge == "" && !re.MatchString(destConf) {
 		return cloudflare.LogpushJob{}, identifier, fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
@@ -61,22 +62,22 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 	return job, identifier, nil
 }
 
-func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	jobID, err := strconv.Atoi(d.Id())
 	if err != nil {
-		return fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %w", d.Id(), err))
 	}
 
 	var job cloudflare.LogpushJob
 	identifier, err := initIdentifier(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	if identifier.Type == AccountType {
-		job, err = client.GetAccountLogpushJob(context.Background(), identifier.Value, jobID)
+		job, err = client.GetAccountLogpushJob(ctx, identifier.Value, jobID)
 	} else {
-		job, err = client.GetZoneLogpushJob(context.Background(), identifier.Value, jobID)
+		job, err = client.GetZoneLogpushJob(ctx, identifier.Value, jobID)
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
@@ -84,7 +85,7 @@ func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error reading logpush job %q for %s: %w", jobID, identifier, err)
+		return diag.FromErr(fmt.Errorf("error reading logpush job %q for %s: %w", jobID, identifier, err))
 	}
 
 	if job.ID == 0 {
@@ -101,73 +102,73 @@ func resourceCloudflareLogpushJobRead(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceCloudflareLogpushJobCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	job, identifier, err := getJobFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error parsing logpush job from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	log.Printf("[DEBUG] Creating Cloudflare Logpush job for %s from struct: %+v", identifier, job)
 
 	var j *cloudflare.LogpushJob
 	if identifier.Type == AccountType {
-		j, err = client.CreateAccountLogpushJob(context.Background(), identifier.Value, job)
+		j, err = client.CreateAccountLogpushJob(ctx, identifier.Value, job)
 	} else {
-		j, err = client.CreateZoneLogpushJob(context.Background(), identifier.Value, job)
+		j, err = client.CreateZoneLogpushJob(ctx, identifier.Value, job)
 	}
 	if err != nil {
-		return fmt.Errorf("error creating logpush job for %s: %w", identifier, err)
+		return diag.FromErr(fmt.Errorf("error creating logpush job for %s: %w", identifier, err))
 	}
 	if j.ID == 0 {
-		return fmt.Errorf("failed to find ID in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find ID in Create response; resource was empty"))
 	}
 
 	d.SetId(strconv.Itoa(j.ID))
 
 	log.Printf("[INFO] Created Cloudflare Logpush Job for %s: %s", identifier, d.Id())
 
-	return resourceCloudflareLogpushJobRead(d, meta)
+	return resourceCloudflareLogpushJobRead(ctx, d, meta)
 }
 
-func resourceCloudflareLogpushJobUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	job, identifier, err := getJobFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error parsing logpush job from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	log.Printf("[INFO] Updating Cloudflare Logpush job for %s from struct: %+v", identifier, job)
 
 	if identifier.Type == AccountType {
-		err = client.UpdateAccountLogpushJob(context.Background(), identifier.Value, job.ID, job)
+		err = client.UpdateAccountLogpushJob(ctx, identifier.Value, job.ID, job)
 	} else {
-		err = client.UpdateZoneLogpushJob(context.Background(), identifier.Value, job.ID, job)
+		err = client.UpdateZoneLogpushJob(ctx, identifier.Value, job.ID, job)
 	}
 
 	if err != nil {
-		return fmt.Errorf("error updating logpush job id %q for %s: %w", job.ID, identifier, err)
+		return diag.FromErr(fmt.Errorf("error updating logpush job id %q for %s: %w", job.ID, identifier, err))
 	}
 
-	return resourceCloudflareLogpushJobRead(d, meta)
+	return resourceCloudflareLogpushJobRead(ctx, d, meta)
 }
 
-func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	job, identifier, err := getJobFromResource(d)
 	if err != nil {
-		return fmt.Errorf("error parsing logpush job from resource: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	log.Printf("[DEBUG] Deleting Cloudflare Logpush job for %s with id: %+v", identifier, job.ID)
 
 	if identifier.Type == AccountType {
-		err = client.DeleteAccountLogpushJob(context.Background(), identifier.Value, job.ID)
+		err = client.DeleteAccountLogpushJob(ctx, identifier.Value, job.ID)
 	} else {
-		err = client.DeleteZoneLogpushJob(context.Background(), identifier.Value, job.ID)
+		err = client.DeleteZoneLogpushJob(ctx, identifier.Value, job.ID)
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "job not found") {
@@ -175,7 +176,7 @@ func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error deleting logpush job id %v for %s: %w", job.ID, identifier, err)
+		return diag.FromErr(fmt.Errorf("error deleting logpush job id %v for %s: %w", job.ID, identifier, err))
 	}
 
 	d.SetId("")
@@ -183,7 +184,7 @@ func resourceCloudflareLogpushJobDelete(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareLogpushJobImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.Split(d.Id(), "/")
 
@@ -210,7 +211,7 @@ func resourceCloudflareLogpushJobImport(d *schema.ResourceData, meta interface{}
 	}
 	d.SetId(logpushJobID)
 
-	err := resourceCloudflareLogpushJobRead(d, meta)
+	resourceCloudflareLogpushJobRead(ctx, d, meta)
 
-	return []*schema.ResourceData{d}, err
+	return []*schema.ResourceData{d}, nil
 }
