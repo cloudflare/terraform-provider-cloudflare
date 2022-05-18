@@ -1466,24 +1466,6 @@ func TestAccCloudflareRuleset_LogCustomField(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "log_custom_field"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" log custom fields rule"),
 
-					// check that the fields are correct, and that the sorted ordering is expected
-					/*
-					   request_fields = [
-					     "content-type",
-					     "x-forwarded-for",
-					     "host"
-					   ]
-					   response_fields = [
-					     "server",
-					     "content-type",
-					     "allow"
-					   ]
-					   cookie_fields = [
-					     "__ga",
-					     "accountNumber",
-					     "__cfruid"
-					   ]
-					*/
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.request_fields.0", "content-type"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.request_fields.1", "host"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.request_fields.2", "x-forwarded-for"),
@@ -2538,7 +2520,7 @@ func testAccCheckCloudflareRulesetManagedWAFWithActionManagedChallenge(rnd, name
 func testAccCheckCloudflareRulesetLogCustomField(rnd, name, zoneID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
+    zone_id     = "%[3]s"
     name        = "%[2]s"
     description = "%[1]s ruleset description"
     kind        = "zone"
@@ -2559,7 +2541,7 @@ func testAccCheckCloudflareRulesetLogCustomField(rnd, name, zoneID string) strin
         ]
         cookie_fields = [
           "__ga",
-          "accountNumber", 
+          "accountNumber",
           "__cfruid"
         ]
       }
