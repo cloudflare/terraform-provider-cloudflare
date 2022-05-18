@@ -7,31 +7,32 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWAFRule() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareWAFRuleSchema(),
-		Create: resourceCloudflareWAFRuleCreate,
-		Read:   resourceCloudflareWAFRuleRead,
-		Update: resourceCloudflareWAFRuleUpdate,
-		Delete: resourceCloudflareWAFRuleDelete,
+		Schema:        resourceCloudflareWAFRuleSchema(),
+		CreateContext: resourceCloudflareWAFRuleCreate,
+		ReadContext:   resourceCloudflareWAFRuleRead,
+		UpdateContext: resourceCloudflareWAFRuleUpdate,
+		DeleteContext: resourceCloudflareWAFRuleDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareWAFRuleImport,
+			StateContext: resourceCloudflareWAFRuleImport,
 		},
 	}
 }
 
-func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	packageID := d.Get("package_id").(string)
 
-	rule, err := client.WAFRule(context.Background(), zoneID, packageID, ruleID)
+	rule, err := client.WAFRule(ctx, zoneID, packageID, ruleID)
 	if err != nil {
 		var requestError *cloudflare.RequestError
 		if errors.As(err, &requestError) && (sliceContainsInt(requestError.ErrorCodes(), 1002) || sliceContainsInt(requestError.ErrorCodes(), 1004)) {
@@ -39,7 +40,7 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 			return nil
 		}
 
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Only need to set mode as that is the only attribute that could have changed
@@ -50,7 +51,7 @@ func resourceCloudflareWAFRuleRead(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	ruleID := d.Get("rule_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -61,9 +62,9 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 	var pkgList []cloudflare.WAFPackage
 	if packageID == "" {
 		var err error
-		pkgList, err = client.ListWAFPackages(context.Background(), zoneID)
+		pkgList, err = client.ListWAFPackages(ctx, zoneID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	} else {
 		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
@@ -73,7 +74,7 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 		var err error
 		var rule cloudflare.WAFRule
 
-		rule, err = client.WAFRule(context.Background(), zoneID, pkg.ID, ruleID)
+		rule, err = client.WAFRule(ctx, zoneID, pkg.ID, ruleID)
 		if err != nil {
 			continue
 		}
@@ -84,29 +85,29 @@ func resourceCloudflareWAFRuleCreate(d *schema.ResourceData, meta interface{}) e
 		d.Set("package_id", pkg.ID)
 
 		if rule.Mode != mode {
-			err = resourceCloudflareWAFRuleUpdate(d, meta)
+			err := resourceCloudflareWAFRuleUpdate(ctx, d, meta)
 			if err != nil {
 				d.SetId("")
 				return err
 			}
 		}
 
-		return resourceCloudflareWAFRuleRead(d, meta)
+		return resourceCloudflareWAFRuleRead(ctx, d, meta)
 	}
 
-	return fmt.Errorf("unable to find WAF Rule %s", ruleID)
+	return diag.FromErr(fmt.Errorf("unable to find WAF Rule %s", ruleID))
 }
 
-func resourceCloudflareWAFRuleDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	packageID := d.Get("package_id").(string)
 
-	rule, err := client.WAFRule(context.Background(), zoneID, packageID, ruleID)
+	rule, err := client.WAFRule(ctx, zoneID, packageID, ruleID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Find the default mode to be used
@@ -117,16 +118,16 @@ func resourceCloudflareWAFRuleDelete(d *schema.ResourceData, meta interface{}) e
 
 	// Can't delete WAF Rule so instead reset it to default
 	if rule.Mode != defaultMode {
-		_, err = client.UpdateWAFRule(context.Background(), zoneID, packageID, ruleID, defaultMode)
+		_, err = client.UpdateWAFRule(ctx, zoneID, packageID, ruleID, defaultMode)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return nil
 }
 
-func resourceCloudflareWAFRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareWAFRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
@@ -135,15 +136,15 @@ func resourceCloudflareWAFRuleUpdate(d *schema.ResourceData, meta interface{}) e
 	packageID := d.Get("package_id").(string)
 
 	// We can only update the mode of a WAF Rule
-	_, err := client.UpdateWAFRule(context.Background(), zoneID, packageID, ruleID, mode)
+	_, err := client.UpdateWAFRule(ctx, zoneID, packageID, ruleID, mode)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return resourceCloudflareWAFRuleRead(d, meta)
+	return resourceCloudflareWAFRuleRead(ctx, d, meta)
 }
 
-func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareWAFRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup
@@ -157,13 +158,13 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/WAFID\" for import", d.Id())
 	}
 
-	packs, err := client.ListWAFPackages(context.Background(), zoneID)
+	packs, err := client.ListWAFPackages(ctx, zoneID)
 	if err != nil {
-		return nil, fmt.Errorf("error listing WAF packages: %s", err)
+		return nil, fmt.Errorf("error listing WAF packages: %w", err)
 	}
 
 	for _, p := range packs {
-		rule, err := client.WAFRule(context.Background(), zoneID, p.ID, WAFID)
+		rule, err := client.WAFRule(ctx, zoneID, p.ID, WAFID)
 		if err == nil {
 			d.Set("rule_id", rule.ID)
 			d.Set("zone_id", zoneID)
@@ -180,7 +181,7 @@ func resourceCloudflareWAFRuleImport(d *schema.ResourceData, meta interface{}) (
 		return nil, fmt.Errorf("Unable to find WAF Rule %s", WAFID)
 	}
 
-	resourceCloudflareWAFRuleRead(d, meta)
+	resourceCloudflareWAFRuleRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

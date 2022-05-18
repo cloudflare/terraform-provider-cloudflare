@@ -33,11 +33,13 @@ func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 					"target": {
 						Type:         schema.TypeString,
 						Required:     true,
+						ForceNew:     true,
 						ValidateFunc: validation.StringInSlice([]string{"ip", "ip6", "ip_range", "asn", "country"}, false),
 					},
 					"value": {
 						Type:     schema.TypeString,
 						Required: true,
+						ForceNew: true,
 					},
 				},
 			},

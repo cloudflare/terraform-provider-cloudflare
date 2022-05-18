@@ -7,95 +7,96 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareTeamsAccount() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareTeamsAccountSchema(),
-		Read:   resourceCloudflareTeamsAccountRead,
-		Update: resourceCloudflareTeamsAccountUpdate,
-		Create: resourceCloudflareTeamsAccountUpdate,
+		Schema:        resourceCloudflareTeamsAccountSchema(),
+		ReadContext:   resourceCloudflareTeamsAccountRead,
+		UpdateContext: resourceCloudflareTeamsAccountUpdate,
+		CreateContext: resourceCloudflareTeamsAccountUpdate,
 		// This resource is a top-level account configuration and cant be "deleted"
 		Delete: func(_ *schema.ResourceData, _ interface{}) error { return nil },
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareTeamsAccountImport,
+			StateContext: resourceCloudflareTeamsAccountImport,
 		},
 	}
 }
 
-func resourceCloudflareTeamsAccountRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	configuration, err := client.TeamsAccountConfiguration(context.Background(), accountID)
+	configuration, err := client.TeamsAccountConfiguration(ctx, accountID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
 			log.Printf("[INFO] Teams Account config %s does not exists", d.Id())
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding Teams Account config %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Account config %q: %w", d.Id(), err))
 	}
 
 	if configuration.Settings.BlockPage != nil {
 		if err := d.Set("block_page", flattenBlockPageConfig(configuration.Settings.BlockPage)); err != nil {
-			return fmt.Errorf("error parsing account block page config: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account block page config: %w", err))
 		}
 	}
 
 	if configuration.Settings.Antivirus != nil {
 		if err := d.Set("antivirus", flattenAntivirusConfig(configuration.Settings.Antivirus)); err != nil {
-			return fmt.Errorf("error parsing account antivirus config: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account antivirus config: %w", err))
 		}
 	}
 
 	if configuration.Settings.TLSDecrypt != nil {
 		if err := d.Set("tls_decrypt_enabled", configuration.Settings.TLSDecrypt.Enabled); err != nil {
-			return fmt.Errorf("error parsing account tls decrypt enablement: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account tls decrypt enablement: %w", err))
 		}
 	}
 
 	if err := d.Set("activity_log_enabled", configuration.Settings.ActivityLog.Enabled); err != nil {
-		return fmt.Errorf("error parsing account activity log enablement: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing account activity log enablement: %w", err))
 	}
 
 	if configuration.Settings.FIPS != nil {
 		if err := d.Set("fips", flattenFIPSConfig(configuration.Settings.FIPS)); err != nil {
-			return fmt.Errorf("error parsing account FIPS config: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account FIPS config: %w", err))
 		}
 	}
 
 	if configuration.Settings.BrowserIsolation != nil {
 		if err := d.Set("url_browser_isolation_enabled", configuration.Settings.BrowserIsolation.UrlBrowserIsolationEnabled); err != nil {
-			return fmt.Errorf("error parsing account url browser isolation enablement: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing account url browser isolation enablement: %w", err))
 		}
 	}
 
-	logSettings, err := client.TeamsAccountLoggingConfiguration(context.Background(), accountID)
+	logSettings, err := client.TeamsAccountLoggingConfiguration(ctx, accountID)
 	if err != nil {
-		return fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err))
 	}
 
 	if logSettings.LoggingSettingsByRuleType != nil {
 		if err := d.Set("logging", flattenTeamsLoggingSettings(&logSettings)); err != nil {
-			return fmt.Errorf("error parsing teams account log settings: %w", err)
+			return diag.FromErr(fmt.Errorf("error parsing teams account log settings: %w", err))
 		}
 	}
 
-	deviceSettings, err := client.TeamsAccountDeviceConfiguration(context.Background(), accountID)
+	deviceSettings, err := client.TeamsAccountDeviceConfiguration(ctx, accountID)
 	if err != nil {
-		return fmt.Errorf("error finding Teams Account device settings %q: %w", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding Teams Account device settings %q: %w", d.Id(), err))
 	}
 
 	if err := d.Set("proxy", flattenTeamsDeviceSettings(&deviceSettings)); err != nil {
-		return fmt.Errorf("error parsing teams account device settings: %w", err)
+		return diag.FromErr(fmt.Errorf("error parsing teams account device settings: %w", err))
 	}
 
 	return nil
 }
 
-func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	blockPageConfig := inflateBlockPageConfig(d.Get("block_page"))
@@ -131,32 +132,33 @@ func resourceCloudflareTeamsAccountUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount)
 
-	if _, err := client.TeamsAccountUpdateConfiguration(context.Background(), accountID, updatedTeamsAccount); err != nil {
-		return fmt.Errorf("error updating Teams Account configuration for account %q: %w", accountID, err)
+	if _, err := client.TeamsAccountUpdateConfiguration(ctx, accountID, updatedTeamsAccount); err != nil {
+		return diag.FromErr(fmt.Errorf("error updating Teams Account configuration for account %q: %w", accountID, err))
 	}
 
 	if loggingConfig != nil {
-		if _, err := client.TeamsAccountUpdateLoggingConfiguration(context.Background(), accountID, *loggingConfig); err != nil {
-			return fmt.Errorf("error updating Teams Account logging settings for account %q: %w", accountID, err)
+		if _, err := client.TeamsAccountUpdateLoggingConfiguration(ctx, accountID, *loggingConfig); err != nil {
+			return diag.FromErr(fmt.Errorf("error updating Teams Account logging settings for account %q: %w", accountID, err))
 		}
 	}
 
 	if deviceConfig != nil {
-		if _, err := client.TeamsAccountDeviceUpdateConfiguration(context.Background(), accountID, *deviceConfig); err != nil {
-			return fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err)
+		if _, err := client.TeamsAccountDeviceUpdateConfiguration(ctx, accountID, *deviceConfig); err != nil {
+			return diag.FromErr(fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err))
 		}
 	}
 
 	d.SetId(accountID)
-	return resourceCloudflareTeamsAccountRead(d, meta)
+	return resourceCloudflareTeamsAccountRead(ctx, d, meta)
 }
 
-func resourceCloudflareTeamsAccountImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTeamsAccountImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.SetId(d.Id())
 	d.Set("account_id", d.Id())
 
-	err := resourceCloudflareTeamsAccountRead(d, meta)
-	return []*schema.ResourceData{d}, err
+	resourceCloudflareTeamsAccountRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func flattenBlockPageConfig(blockPage *cloudflare.TeamsBlockPage) []interface{} {

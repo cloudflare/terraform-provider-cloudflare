@@ -6,12 +6,13 @@ import (
 	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareZoneDNSSECRead,
+		ReadContext: dataSourceCloudflareZoneDNSSECRead,
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
@@ -62,16 +63,16 @@ func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareZoneDNSSECRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[DEBUG] Reading Zone DNSSEC %s", zoneID)
 
-	dnssec, err := client.ZoneDNSSECSetting(context.Background(), zoneID)
+	dnssec, err := client.ZoneDNSSECSetting(ctx, zoneID)
 	if err != nil {
-		return fmt.Errorf("error finding Zone DNSSEC %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error finding Zone DNSSEC %q: %w", zoneID, err))
 	}
 
 	d.Set("zone_id", zoneID)

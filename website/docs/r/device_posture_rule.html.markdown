@@ -19,6 +19,7 @@ resource "cloudflare_device_posture_rule" "corporate_devices_posture_rule" {
   type        = "serial_number"
   description = "Device posture rule for corporate devices."
   schedule    = "24h"
+  expiration  = "24h"
   match {
     platform = "mac"
   }
@@ -38,6 +39,8 @@ The following arguments are supported:
   structure.
 * `name` - (Optional) Name of the device posture rule.
 * `schedule` - (Optional) Tells the client when to run the device posture check.
+  Must be in the format `"1h"` or `"30m"`. Valid units are `h` and `m`.
+* `expiration` - (Optional) Expire posture results after the specified amount of time.
   Must be in the format `"1h"` or `"30m"`. Valid units are `h` and `m`.
 * `description` - (Optional) The description of the device posture rule.
 * `match` - (Optional) The conditions that the client must match to run the rule. See below for reference structure.

@@ -2,24 +2,26 @@ package cloudflare
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareRecord() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudflareRecordCreate,
-		Read:   resourceCloudflareRecordRead,
-		Update: resourceCloudflareRecordUpdate,
-		Delete: resourceCloudflareRecordDelete,
+		CreateContext: resourceCloudflareRecordCreate,
+		ReadContext:   resourceCloudflareRecordRead,
+		UpdateContext: resourceCloudflareRecordUpdate,
+		DeleteContext: resourceCloudflareRecordDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareRecordImport,
+			StateContext: resourceCloudflareRecordImport,
 		},
 
 		SchemaVersion: 2,
@@ -38,7 +40,7 @@ func resourceCloudflareRecord() *schema.Resource {
 	}
 }
 
-func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	newRecord := cloudflare.DNSRecord{
@@ -67,7 +69,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 		for id, value := range dataMap.(map[string]interface{}) {
 			newData, err := transformToCloudflareDNSData(newRecord.Type, id, value)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			} else if newData == nil {
 				continue
 			}
@@ -78,9 +80,9 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if valueOk == dataOk {
-		return fmt.Errorf(
+		return diag.FromErr(fmt.Errorf(
 			"either 'value' (present: %t) or 'data' (present: %t) must be provided",
-			valueOk, dataOk)
+			valueOk, dataOk))
 	}
 
 	if priority, ok := d.GetOkExists("priority"); ok {
@@ -90,7 +92,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	if ttl, ok := d.GetOk("ttl"); ok {
 		if ttl.(int) != 1 && proxiedOk && *newRecord.Proxied {
-			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", newRecord.Name)
+			return diag.FromErr(fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", newRecord.Name))
 		}
 
 		newRecord.TTL = ttl.(int)
@@ -98,7 +100,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	// Validate value based on type
 	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return fmt.Errorf("error validating record name %q: %s", newRecord.Name, err)
+		return diag.FromErr(fmt.Errorf("error validating record name %q: %w", newRecord.Name, err))
 	}
 
 	var proxiedVal *bool
@@ -110,19 +112,19 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 	// Validate type
 	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
-		return fmt.Errorf("error validating record type %q: %s", newRecord.Type, err)
+		return diag.FromErr(fmt.Errorf("error validating record type %q: %w", newRecord.Type, err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
 
-	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		r, err := client.CreateDNSRecord(context.Background(), newRecord.ZoneID, newRecord)
+	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		r, err := client.CreateDNSRecord(ctx, newRecord.ZoneID, newRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				if d.Get("allow_overwrite").(bool) {
 					var r cloudflare.DNSRecord
 					log.Printf("[DEBUG] Cloudflare Record already exists however we are overwriting it")
-					zone, _ := client.ZoneDetails(context.Background(), d.Get("zone_id").(string))
+					zone, _ := client.ZoneDetails(ctx, d.Get("zone_id").(string))
 					if d.Get("name").(string) == "@" || d.Get("name").(string) == zone.Name {
 						r = cloudflare.DNSRecord{
 							Name: zone.Name,
@@ -134,7 +136,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 							Type: d.Get("type").(string),
 						}
 					}
-					rs, _ := client.DNSRecords(context.Background(), d.Get("zone_id").(string), r)
+					rs, _ := client.DNSRecords(ctx, d.Get("zone_id").(string), r)
 
 					if len(rs) != 1 {
 						return resource.RetryableError(fmt.Errorf("attempted to override existing record however didn't find an exact match"))
@@ -144,8 +146,8 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 					// for Terraform to operate on it, we need an anchor.
 					d.SetId(rs[0].ID)
 
-					if updateErr := resourceCloudflareRecordUpdate(d, meta); updateErr != nil {
-						return resource.NonRetryableError(updateErr)
+					if updateErr := resourceCloudflareRecordUpdate(ctx, d, meta); updateErr != nil {
+						return resource.NonRetryableError(errors.New("failed to update record"))
 					}
 
 					return nil
@@ -154,7 +156,7 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
 			}
 
-			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %s", err))
+			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
 		}
 
 		// In the event that the API returns an empty DNS Record, we verify that the
@@ -165,17 +167,23 @@ func resourceCloudflareRecordCreate(d *schema.ResourceData, meta interface{}) er
 
 		d.SetId(r.Result.ID)
 
-		resourceCloudflareRecordRead(d, meta)
+		resourceCloudflareRecordRead(ctx, d, meta)
 
 		return nil
 	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
-func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	record, err := client.DNSRecord(context.Background(), zoneID, d.Id())
+	record, err := client.DNSRecord(ctx, zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -183,7 +191,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 			d.SetId("")
 			return nil
 		}
-		return err
+		return diag.FromErr(err)
 	}
 
 	data, dataOk := d.GetOk("data")
@@ -197,7 +205,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 			for id, value := range dataMap.(map[string]interface{}) {
 				newData, err := transformToCloudflareDNSData(record.Type, id, value)
 				if err != nil {
-					return err
+					return diag.FromErr(err)
 				} else if newData == nil {
 					continue
 				}
@@ -231,7 +239,7 @@ func resourceCloudflareRecordRead(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -253,7 +261,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 		for id, value := range dataMap.(map[string]interface{}) {
 			newData, err := transformToCloudflareDNSData(updateRecord.Type, id, value)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			} else if newData == nil {
 				continue
 			}
@@ -275,7 +283,7 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if ttl, ok := d.GetOk("ttl"); ok {
 		if ttl.(int) != 1 && proxiedOk && *updateRecord.Proxied {
-			return fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", updateRecord.Name)
+			return diag.FromErr(fmt.Errorf("error validating record %s: ttl must be set to 1 when `proxied` is true", updateRecord.Name))
 		}
 
 		updateRecord.TTL = ttl.(int)
@@ -283,30 +291,36 @@ func resourceCloudflareRecordUpdate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Cloudflare Record update configuration: %#v", updateRecord)
 
-	return resource.Retry(d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
-		err := client.UpdateDNSRecord(context.Background(), zoneID, d.Id(), updateRecord)
+	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
+		err := client.UpdateDNSRecord(ctx, zoneID, d.Id(), updateRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
 			}
 
-			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %s", err))
+			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
 		}
 
-		resourceCloudflareRecordRead(d, meta)
+		resourceCloudflareRecordRead(ctx, d, meta)
 		return nil
 	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
-func resourceCloudflareRecordDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareRecordDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Record: %s, %s", zoneID, d.Id())
 
-	err := client.DeleteDNSRecord(context.Background(), zoneID, d.Id())
+	err := client.DeleteDNSRecord(ctx, zoneID, d.Id())
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Record: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Record: %w", err))
 	}
 
 	return nil
@@ -326,7 +340,7 @@ func expandStringMap(inVal interface{}) map[string]string {
 	return outVal
 }
 
-func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can lookup
@@ -340,9 +354,9 @@ func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([
 		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneID/recordID\" for import", d.Id())
 	}
 
-	record, err := client.DNSRecord(context.Background(), zoneID, recordID)
+	record, err := client.DNSRecord(ctx, zoneID, recordID)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to find record with ID %q: %q", d.Id(), err)
+		return nil, fmt.Errorf("Unable to find record with ID %q: %w", d.Id(), err)
 	}
 
 	log.Printf("[INFO] Found record: %s", record.Name)
@@ -352,7 +366,7 @@ func resourceCloudflareRecordImport(d *schema.ResourceData, meta interface{}) ([
 	d.Set("zone_id", zoneID)
 	d.SetId(recordID)
 
-	resourceCloudflareRecordRead(d, meta)
+	resourceCloudflareRecordRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

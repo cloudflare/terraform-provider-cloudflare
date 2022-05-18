@@ -6,44 +6,45 @@ import (
 	"log"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareLogpullRetention() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareLogpullRetentionSchema(),
-		Create: resourceCloudflareLogpullRetentionSet,
-		Read:   resourceCloudflareLogpullRetentionRead,
-		Update: resourceCloudflareLogpullRetentionSet,
-		Delete: resourceCloudflareLogpullRetentionDelete,
+		Schema:        resourceCloudflareLogpullRetentionSchema(),
+		CreateContext: resourceCloudflareLogpullRetentionSet,
+		ReadContext:   resourceCloudflareLogpullRetentionRead,
+		UpdateContext: resourceCloudflareLogpullRetentionSet,
+		DeleteContext: resourceCloudflareLogpullRetentionDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareLogpullRetentionImport,
+			StateContext: resourceCloudflareLogpullRetentionImport,
 		},
 	}
 }
 
-func resourceCloudflareLogpullRetentionSet(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpullRetentionSet(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	status := d.Get("enabled").(bool)
 
-	_, err := client.SetLogpullRetentionFlag(context.Background(), zoneID, status)
+	_, err := client.SetLogpullRetentionFlag(ctx, zoneID, status)
 	if err != nil {
-		return fmt.Errorf("error setting Logpull Retention for zone ID %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error setting Logpull Retention for zone ID %q: %w", zoneID, err))
 	}
 
 	d.SetId(stringChecksum("logpull-retention/" + zoneID))
 
-	return resourceCloudflareLogpullRetentionRead(d, meta)
+	return resourceCloudflareLogpullRetentionRead(ctx, d, meta)
 }
 
-func resourceCloudflareLogpullRetentionRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpullRetentionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	logpullConf, err := client.GetLogpullRetentionFlag(context.Background(), zoneID)
+	logpullConf, err := client.GetLogpullRetentionFlag(ctx, zoneID)
 	if err != nil {
-		return fmt.Errorf("error getting Logpull Retention for zone ID %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error getting Logpull Retention for zone ID %q: %w", zoneID, err))
 	}
 
 	d.Set("enabled", logpullConf.Flag)
@@ -51,13 +52,13 @@ func resourceCloudflareLogpullRetentionRead(d *schema.ResourceData, meta interfa
 	return nil
 }
 
-func resourceCloudflareLogpullRetentionDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareLogpullRetentionDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	_, err := client.SetLogpullRetentionFlag(context.Background(), zoneID, false)
+	_, err := client.SetLogpullRetentionFlag(ctx, zoneID, false)
 	if err != nil {
-		return fmt.Errorf("error setting Logpull Retention for zone ID %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error setting Logpull Retention for zone ID %q: %w", zoneID, err))
 	}
 
 	d.SetId("")
@@ -65,7 +66,7 @@ func resourceCloudflareLogpullRetentionDelete(d *schema.ResourceData, meta inter
 	return nil
 }
 
-func resourceCloudflareLogpullRetentionImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareLogpullRetentionImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	zoneID := d.Id()
 
 	log.Printf("[DEBUG] Importing Cloudflare Logpull Retention option for zone ID: %s", zoneID)
@@ -73,7 +74,7 @@ func resourceCloudflareLogpullRetentionImport(d *schema.ResourceData, meta inter
 	d.Set("zone_id", zoneID)
 	d.SetId(stringChecksum("logpull-retention/" + zoneID))
 
-	resourceCloudflareLogpullRetentionRead(d, meta)
+	resourceCloudflareLogpullRetentionRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

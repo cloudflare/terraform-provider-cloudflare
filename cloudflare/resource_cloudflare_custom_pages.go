@@ -7,31 +7,32 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
 
 func resourceCloudflareCustomPages() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareCustomPagesSchema(),
-		Create: resourceCloudflareCustomPagesUpdate,
-		Read:   resourceCloudflareCustomPagesRead,
-		Update: resourceCloudflareCustomPagesUpdate,
-		Delete: resourceCloudflareCustomPagesDelete,
+		Schema:        resourceCloudflareCustomPagesSchema(),
+		CreateContext: resourceCloudflareCustomPagesUpdate,
+		ReadContext:   resourceCloudflareCustomPagesRead,
+		UpdateContext: resourceCloudflareCustomPagesUpdate,
+		DeleteContext: resourceCloudflareCustomPagesDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareCustomPagesImport,
+			StateContext: resourceCloudflareCustomPagesImport,
 		},
 	}
 }
 
-func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomPagesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	accountID := d.Get("account_id").(string)
 	pageType := d.Get("type").(string)
 
 	if accountID == "" && zoneID == "" {
-		return fmt.Errorf("either `account_id` or `zone_id` must be set")
+		return diag.FromErr(fmt.Errorf("either `account_id` or `zone_id` must be set"))
 	}
 
 	var (
@@ -47,9 +48,9 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 		identifier = zoneID
 	}
 
-	page, err := client.CustomPage(context.Background(), &pageOptions, pageType)
+	page, err := client.CustomPage(ctx, &pageOptions, pageType)
 	if err != nil {
-		return errors.New(err.Error())
+		return diag.FromErr(err)
 	}
 
 	// If the `page.State` comes back as "default", it's safe to assume we
@@ -71,7 +72,7 @@ func resourceCloudflareCustomPagesRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomPagesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -88,15 +89,15 @@ func resourceCloudflareCustomPagesUpdate(d *schema.ResourceData, meta interface{
 		URL:   d.Get("url").(string),
 		State: "customized",
 	}
-	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(ctx, &pageOptions, pageType, customPageParameters)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType)))
 	}
 
-	return resourceCloudflareCustomPagesRead(d, meta)
+	return resourceCloudflareCustomPagesRead(ctx, d, meta)
 }
 
-func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareCustomPagesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	zoneID := d.Get("zone_id").(string)
@@ -113,15 +114,15 @@ func resourceCloudflareCustomPagesDelete(d *schema.ResourceData, meta interface{
 		URL:   nil,
 		State: "default",
 	}
-	_, err := client.UpdateCustomPage(context.Background(), &pageOptions, pageType, customPageParameters)
+	_, err := client.UpdateCustomPage(ctx, &pageOptions, pageType, customPageParameters)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to update '%s' custom page", pageType)))
 	}
 
-	return resourceCloudflareCustomPagesRead(d, meta)
+	return resourceCloudflareCustomPagesRead(ctx, d, meta)
 }
 
-func resourceCloudflareCustomPagesImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareCustomPagesImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	attributes := strings.SplitN(d.Id(), "/", 3)
 	if len(attributes) != 3 {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"requestType/ID/pageType\"", d.Id())
@@ -139,7 +140,7 @@ func resourceCloudflareCustomPagesImport(d *schema.ResourceData, meta interface{
 	checksum := stringChecksum(fmt.Sprintf("%s/%s", identifier, pageType))
 	d.SetId(checksum)
 
-	resourceCloudflareCustomPagesRead(d, meta)
+	resourceCloudflareCustomPagesRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

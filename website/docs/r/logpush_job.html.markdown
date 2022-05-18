@@ -84,7 +84,7 @@ The following arguments are supported:
 * `name` - (Required) The name of the logpush job to create. Must match the regular expression `^[a-zA-Z0-9\-\.]*$`.
 * `destination_conf` - (Required) Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/reference/logpush-api-configuration#destination).
 * `dataset` - (Required) Which type of dataset resource to use. Available values are
-  - [account-scoped](https://developers.cloudflare.com/logs/reference/log-fields/account): `"audit_logs"`, `"gateway_dns"`, `"gateway_http"`, `"gateway_network"`
+  - [account-scoped](https://developers.cloudflare.com/logs/reference/log-fields/account): `"audit_logs"`, `"gateway_dns"`, `"gateway_http"`, `"gateway_network"`, `"network_analytics_logs"`
   - [zone-scoped](https://developers.cloudflare.com/logs/reference/log-fields/zone): `"firewall_events"`, `"http_requests"`, `"spectrum_events"`, `"nel_reports", "dns_logs"`
 * `account_id` - (Optional) The account ID where the logpush job should be created. Either `account_id` or `zone_id` are required.
 * `zone_id` - (Optional) The zone ID where the logpush job should be created. Either `account_id` or `zone_id` are required.

@@ -7,23 +7,24 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareZoneLockdown() *schema.Resource {
 	return &schema.Resource{
-		Schema: resourceCloudflareZoneLockdownSchema(),
-		Create: resourceCloudflareZoneLockdownCreate,
-		Read:   resourceCloudflareZoneLockdownRead,
-		Update: resourceCloudflareZoneLockdownUpdate,
-		Delete: resourceCloudflareZoneLockdownDelete,
+		Schema:        resourceCloudflareZoneLockdownSchema(),
+		CreateContext: resourceCloudflareZoneLockdownCreate,
+		ReadContext:   resourceCloudflareZoneLockdownRead,
+		UpdateContext: resourceCloudflareZoneLockdownUpdate,
+		DeleteContext: resourceCloudflareZoneLockdownDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareZoneLockdownImport,
+			StateContext: resourceCloudflareZoneLockdownImport,
 		},
 	}
 }
 
-func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -55,28 +56,28 @@ func resourceCloudflareZoneLockdownCreate(d *schema.ResourceData, meta interface
 
 	var r *cloudflare.ZoneLockdownResponse
 
-	r, err = client.CreateZoneLockdown(context.Background(), zoneID, newZoneLockdown)
+	r, err = client.CreateZoneLockdown(ctx, zoneID, newZoneLockdown)
 
 	if err != nil {
-		return fmt.Errorf("error creating zone lockdown for zone ID %q: %s", zoneID, err)
+		return diag.FromErr(fmt.Errorf("error creating zone lockdown for zone ID %q: %w", zoneID, err))
 	}
 
 	if r.Result.ID == "" {
-		return fmt.Errorf("failed to find id in Create response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
 	d.SetId(r.Result.ID)
 
 	log.Printf("[INFO] Cloudflare Zone Lockdown ID: %s", d.Id())
 
-	return resourceCloudflareZoneLockdownRead(d, meta)
+	return resourceCloudflareZoneLockdownRead(ctx, d, meta)
 }
 
-func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	zoneLockdownResponse, err := client.ZoneLockdown(context.Background(), zoneID, d.Id())
+	zoneLockdownResponse, err := client.ZoneLockdown(ctx, zoneID, d.Id())
 
 	log.Printf("[DEBUG] zoneLockdownResponse: %#v", zoneLockdownResponse)
 	log.Printf("[DEBUG] zoneLockdownResponse error: %#v", err)
@@ -87,7 +88,7 @@ func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("error finding zone lockdown %q: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("error finding zone lockdown %q: %w", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Cloudflare Zone Lockdown read configuration: %#v", zoneLockdownResponse)
@@ -115,7 +116,7 @@ func resourceCloudflareZoneLockdownRead(d *schema.ResourceData, meta interface{}
 	return nil
 }
 
-func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -143,33 +144,33 @@ func resourceCloudflareZoneLockdownUpdate(d *schema.ResourceData, meta interface
 
 	log.Printf("[INFO] Updating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown)
 
-	r, err := client.UpdateZoneLockdown(context.Background(), zoneID, d.Id(), newZoneLockdown)
+	r, err := client.UpdateZoneLockdown(ctx, zoneID, d.Id(), newZoneLockdown)
 
 	if err != nil {
-		return fmt.Errorf("error updating zone lockdown for zone %q: %s", d.Get("zone").(string), err)
+		return diag.FromErr(fmt.Errorf("error updating zone lockdown for zone %q: %w", d.Get("zone").(string), err))
 	}
 
 	if r.Result.ID == "" {
-		return fmt.Errorf("failed to find id in Update response; resource was empty")
+		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
 	d.SetId(r.Result.ID)
 
 	log.Printf("[INFO] Cloudflare Zone Lockdown ID: %s", d.Id())
 
-	return resourceCloudflareZoneLockdownRead(d, meta)
+	return resourceCloudflareZoneLockdownRead(ctx, d, meta)
 }
 
-func resourceCloudflareZoneLockdownDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareZoneLockdownDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Zone Lockdown: id %s for zone %s", d.Id(), zoneID)
 
-	_, err := client.DeleteZoneLockdown(context.Background(), zoneID, d.Id())
+	_, err := client.DeleteZoneLockdown(ctx, zoneID, d.Id())
 
 	if err != nil {
-		return fmt.Errorf("error deleting Cloudflare Zone Lockdown: %s", err)
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone Lockdown: %w", err))
 	}
 
 	return nil
@@ -187,7 +188,7 @@ func expandZoneLockdownConfig(configs *schema.Set) []cloudflare.ZoneLockdownConf
 	return configArray
 }
 
-func resourceCloudflareZoneLockdownImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareZoneLockdownImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
@@ -204,7 +205,7 @@ func resourceCloudflareZoneLockdownImport(d *schema.ResourceData, meta interface
 	log.Printf("[DEBUG] zoneID: %s", zoneID)
 	log.Printf("[DEBUG] Resource ID : %s", zoneLockdownID)
 
-	resourceCloudflareZoneLockdownRead(d, meta)
+	resourceCloudflareZoneLockdownRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

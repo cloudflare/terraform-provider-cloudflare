@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -15,11 +16,11 @@ import (
 func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 	return &schema.Resource{
 		// You cannot edit AOP certificates, rather, only upload new ones.
-		Create: resourceCloudflareAuthenticatedOriginPullsCertificateCreate,
-		Read:   resourceCloudflareAuthenticatedOriginPullsCertificateRead,
-		Delete: resourceCloudflareAuthenticatedOriginPullsCertificateDelete,
+		CreateContext: resourceCloudflareAuthenticatedOriginPullsCertificateCreate,
+		ReadContext:   resourceCloudflareAuthenticatedOriginPullsCertificateRead,
+		DeleteContext: resourceCloudflareAuthenticatedOriginPullsCertificateDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceCloudflareAuthenticatedOriginPullsCertificateImport,
+			StateContext: resourceCloudflareAuthenticatedOriginPullsCertificateImport,
 		},
 
 		Schema: resourceCloudflareAuthenticatedOriginPullsCertificateSchema(),
@@ -29,7 +30,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 	}
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -39,68 +40,81 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(d *schema.Resou
 			Certificate: d.Get("certificate").(string),
 			PrivateKey:  d.Get("private_key").(string),
 		}
-		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perZoneAOPCert)
+		record, err := client.UploadPerZoneAuthenticatedOriginPullsCertificate(ctx, zoneID, perZoneAOPCert)
 		if err != nil {
-			return fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error uploading Per-Zone AOP certificate on zone %q: %w", zoneID, err))
 		}
 		d.SetId(record.ID)
 
-		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), zoneID, record.ID)
+		perZoneRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %s", err))
+				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %w", err))
 			}
 
 			if resp.Status != "active" {
 				return resource.RetryableError(fmt.Errorf("expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)
 			return nil
 		})
+
+		if perZoneRetryErr != nil {
+			return diag.FromErr(perZoneRetryErr)
+		}
+
+		return nil
+
 	case aopType == "per-hostname":
 		perHostnameAOPCert := cloudflare.PerHostnameAuthenticatedOriginPullsCertificateParams{
 			Certificate: d.Get("certificate").(string),
 			PrivateKey:  d.Get("private_key").(string),
 		}
-		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, perHostnameAOPCert)
+		record, err := client.UploadPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, perHostnameAOPCert)
 		if err != nil {
-			return fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error uploading Per-Hostname AOP certificate on zone %q: %w", zoneID, err))
 		}
 		d.SetId(record.ID)
 
-		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, record.ID)
+		perHostnameRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %s", err))
+				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %w", err))
 			}
 
 			if resp.Status != "active" {
 				return resource.RetryableError(fmt.Errorf("expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
 			}
 
-			resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+			resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)
 			return nil
 		})
+
+		if perHostnameRetryErr != nil {
+			return diag.FromErr(perHostnameRetryErr)
+		}
+
+		return nil
 	}
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
-		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), zoneID, certID)
+		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
 				log.Printf("[INFO] Per-Zone Authenticated Origin Pull certificate %s no longer exists", d.Id())
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("error finding Per-Zone Authenticated Origin Pull certificate %q: %w", d.Id(), err))
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -108,14 +122,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 		d.Set("status", record.Status)
 		d.Set("uploaded_on", record.UploadedOn.Format(time.RFC3339Nano))
 	case aopType == "per-hostname":
-		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
+		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
 				log.Printf("[INFO] Per-Hostname Authenticated Origin Pull certificate %s no longer exists", d.Id())
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %s", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("error finding Per-Hostname Authenticated Origin Pull certificate %q: %w", d.Id(), err))
 		}
 		d.Set("issuer", record.Issuer)
 		d.Set("signature", record.Signature)
@@ -127,27 +141,27 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(d *schema.Resourc
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudflareAuthenticatedOriginPullsCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
 
 	switch aopType, ok := d.GetOk("type"); ok {
 	case aopType == "per-zone":
-		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
+		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %w", zoneID, err))
 		}
 	case aopType == "per-hostname":
-		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certID)
+		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
-			return fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %s", zoneID, err)
+			return diag.FromErr(fmt.Errorf("error deleting Per-Hostname AOP certificate on zone %q: %w", zoneID, err))
 		}
 	}
 	return nil
 }
 
-func resourceCloudflareAuthenticatedOriginPullsCertificateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareAuthenticatedOriginPullsCertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 3)
 
@@ -159,6 +173,6 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateImport(d *schema.Resou
 	d.Set("type", aopType)
 	d.SetId(certID)
 
-	resourceCloudflareAuthenticatedOriginPullsCertificateRead(d, meta)
+	resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }
