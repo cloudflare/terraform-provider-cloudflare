@@ -237,6 +237,9 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				uri                    []map[string]interface{}
 				matchedData            []map[string]interface{}
 				response               []map[string]interface{}
+				requestFields          []string
+				responseFields         []string
+				cookieFields           []string
 			)
 			actionParameterRules := make(map[string]string)
 
@@ -333,20 +336,44 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				})
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.RequestFields).IsNil() {
+				requestFields = make([]string, 0)
+				for _, v := range r.ActionParameters.RequestFields {
+					requestFields = append(requestFields, v.Name)
+				}
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.ResponseFields).IsNil() {
+				responseFields = make([]string, 0)
+				for _, v := range r.ActionParameters.ResponseFields {
+					responseFields = append(responseFields, v.Name)
+				}
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.CookieFields).IsNil() {
+				cookieFields = make([]string, 0)
+				for _, v := range r.ActionParameters.CookieFields {
+					cookieFields = append(cookieFields, v.Name)
+				}
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
-				"id":           r.ActionParameters.ID,
-				"increment":    r.ActionParameters.Increment,
-				"headers":      headers,
-				"overrides":    overrides,
-				"products":     r.ActionParameters.Products,
-				"phases":       r.ActionParameters.Phases,
-				"ruleset":      r.ActionParameters.Ruleset,
-				"rulesets":     r.ActionParameters.Rulesets,
-				"rules":        actionParameterRules,
-				"uri":          uri,
-				"matched_data": matchedData,
-				"response":     response,
-				"version":      r.ActionParameters.Version,
+				"id":              r.ActionParameters.ID,
+				"increment":       r.ActionParameters.Increment,
+				"headers":         headers,
+				"overrides":       overrides,
+				"products":        r.ActionParameters.Products,
+				"phases":          r.ActionParameters.Phases,
+				"ruleset":         r.ActionParameters.Ruleset,
+				"rulesets":        r.ActionParameters.Rulesets,
+				"rules":           actionParameterRules,
+				"uri":             uri,
+				"matched_data":    matchedData,
+				"response":        response,
+				"version":         r.ActionParameters.Version,
+				"request_fields":  requestFields,
+				"response_fields": responseFields,
+				"cookie_fields":   cookieFields,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -575,6 +602,33 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						}
 
 						rule.ActionParameters.Headers = headers
+
+					case "request_fields":
+						fields := make([]cloudflare.RulesetActionParametersLogCustomField, 0)
+						for _, v := range pValue.(*schema.Set).List() {
+							fields = append(fields, cloudflare.RulesetActionParametersLogCustomField{
+								Name: v.(string),
+							})
+						}
+						rule.ActionParameters.RequestFields = fields
+
+					case "response_fields":
+						fields := make([]cloudflare.RulesetActionParametersLogCustomField, 0)
+						for _, v := range pValue.(*schema.Set).List() {
+							fields = append(fields, cloudflare.RulesetActionParametersLogCustomField{
+								Name: v.(string),
+							})
+						}
+						rule.ActionParameters.ResponseFields = fields
+
+					case "cookie_fields":
+						fields := make([]cloudflare.RulesetActionParametersLogCustomField, 0)
+						for _, v := range pValue.(*schema.Set).List() {
+							fields = append(fields, cloudflare.RulesetActionParametersLogCustomField{
+								Name: v.(string),
+							})
+						}
+						rule.ActionParameters.CookieFields = fields
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for action parameters: %s", pKey)

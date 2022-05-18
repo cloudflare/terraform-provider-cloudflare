@@ -195,6 +195,40 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
     enabled = true
   }
 }
+
+# custom fields logging
+resource "cloudflare_ruleset" "custom_fields_logging_example" {
+  zone_id  = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "log custom fields"
+  description = "add custom fields to logging"
+  kind        = "zone"
+  phase       = "http_log_custom_fields"
+
+  rules {
+    action = "log_custom_field"
+    action_parameters {
+      request_fields = [
+        "content-type",
+        "x-forwarded-for",
+        "host"
+      ]
+      response_fields = [
+        "server",
+        "content-type",
+        "allow"
+      ]
+      cookie_fields = [
+        "__ga",
+        "accountNumber", 
+        "__cfruid"
+      ]
+    }
+
+    expression = "true"
+    description = "log custom fields rule"
+    enabled = true
+  }
+}
 ```
 
 ## Argument Reference
@@ -268,6 +302,9 @@ The following arguments are supported:
 * `headers` - (Optional) List of HTTP header modifications to perform in the ruleset rule (refer to the [nested schema](#nestedblock--action-parameters-headers)).
 * `matched_data` - (Optional) List of properties to configure WAF payload logging (refer to the [nested schema](#nestedblock--action-parameters-matched-data)).
 * `version` - (Optional)
+* `request_fields` - (Optional) List of request headers to include as part of custom fields logging, in lowercase.
+* `response_fields` - (Optional) List of response headers to include as part of custom fields logging, in lowercase.
+* `cookie_fields` - (Optional) List of cookie values to include as part of custom fields logging.
 
 <a id="nestedblock--action-parameters-matched-data"></a>
 **Nested schema for `matched_data`**

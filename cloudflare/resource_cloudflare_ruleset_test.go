@@ -1401,6 +1401,61 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithActionManagedChallenge(t *tes
 	})
 }
 
+func TestAccCloudflareRuleset_LogCustomField(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetLogCustomField(rnd, "my basic log custom field ruleset", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic log custom field ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_log_custom_fields"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "log_custom_field"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" log custom fields rule"),
+
+					// check that the fields are correct, and that the sorted ordering is expected
+					/*
+					   request_fields = [
+					     "content-type",
+					     "x-forwarded-for",
+					     "host"
+					   ]
+					   response_fields = [
+					     "server",
+					     "content-type",
+					     "allow"
+					   ]
+					   cookie_fields = [
+					     "__ga",
+					     "accountNumber",
+					     "__cfruid"
+					   ]
+					*/
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.request_fields.0", "content-type"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.request_fields.1", "host"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.request_fields.2", "x-forwarded-for"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.response_fields.0", "allow"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.response_fields.1", "content-type"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.response_fields.2", "server"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cookie_fields.0", "__cfruid"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cookie_fields.1", "__ga"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cookie_fields.2", "accountNumber"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -2410,4 +2465,40 @@ func testAccCheckCloudflareRulesetManagedWAFWithActionManagedChallenge(rnd, name
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetLogCustomField(rnd, name, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_log_custom_fields"
+
+    rules {
+      action = "log_custom_field"
+      action_parameters {
+        request_fields = [
+          "content-type",
+          "x-forwarded-for",
+          "host"
+        ]
+        response_fields = [
+          "server",
+          "content-type",
+          "allow"
+        ]
+        cookie_fields = [
+          "__ga",
+          "accountNumber", 
+          "__cfruid"
+        ]
+      }
+
+      expression = "true"
+      description = "%[1]s log custom fields rule"
+      enabled = true
+    }
+  }`, rnd, name, zoneID)
 }
