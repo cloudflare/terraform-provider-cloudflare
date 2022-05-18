@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -484,8 +485,9 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 						for overrideCounter, overrideParamValue := range pValue.([]interface{}) {
 							//nolint:staticcheck
-							if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter)); ok {
-								overrideConfiguration.Enabled = cloudflare.BoolPtr(value.(bool))
+							value := getRawValue(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter), d.GetRawConfig())
+							if !value.IsNull() && value.Type() == cty.Bool {
+								overrideConfiguration.Enabled = cloudflare.BoolPtr(value.True())
 							}
 
 							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {

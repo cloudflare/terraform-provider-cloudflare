@@ -8,8 +8,10 @@ import (
 	"log"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -203,4 +205,33 @@ func hashCodeStrings(strings []string) string {
 	}
 
 	return fmt.Sprintf("%d", hashCodeString(buf.String()))
+}
+
+// GetRawValue receives a path spec (similar to ResourceData.GetOK) and a raw Value, and iterates
+// through each key given for the underlying map or slice represented. Calls to this function attempt
+// to protect against incorrect or mismatching data, but will return a "dangerous" NilVal value if
+// path resolution was impossible.
+func getRawValue(key string, value cty.Value) cty.Value {
+	parts := strings.SplitN(key, ".", 2)
+	index, indexErr := strconv.ParseInt(parts[0], 10, 32)
+
+	if value.IsNull() {
+		return value
+	} else if indexErr == nil && value.CanIterateElements() && value.LengthInt() > int(index) {
+		value = value.AsValueSlice()[index]
+	} else if indexErr != nil && (value.Type().IsObjectType() || value.Type().IsMapType()) {
+		if v, ok := value.AsValueMap()[parts[0]]; ok {
+			value = v
+		} else {
+			return cty.NilVal
+		}
+	} else {
+		return cty.NilVal
+	}
+
+	if len(parts) == 2 && parts[1] != "" {
+		return getRawValue(parts[1], value)
+	}
+
+	return value
 }
