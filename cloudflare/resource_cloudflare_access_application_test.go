@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -17,7 +18,7 @@ var (
 	domain = os.Getenv("CLOUDFLARE_DOMAIN")
 )
 
-func TestAccCloudflareAccessApplication_Basic(t *testing.T) {
+func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
@@ -42,6 +43,11 @@ func TestAccCloudflareAccessApplication_Basic(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -497,31 +503,27 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.AccessApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
-		if err == nil {
-			return fmt.Errorf("AccessApplication still exists")
+		var notFoundError *cloudflare.NotFoundError
+		if rs.Primary.Attributes["zone_id"] != "" {
+			_, err := client.ZoneLevelAccessApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			if !errors.As(err, &notFoundError) {
+				return fmt.Errorf("AccessApplication still exists")
+			}
 		}
 
-		_, err = client.AccessApplication(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
-		if err == nil {
-			return fmt.Errorf("AccessApplication still exists")
+		if rs.Primary.Attributes["account_id"] != "" {
+			_, err := client.AccessApplication(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+			if !errors.As(err, &notFoundError) {
+				return fmt.Errorf("AccessApplication still exists")
+			}
 		}
+
 	}
 
 	return nil
 }
 
 func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_application." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -554,16 +556,6 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -584,16 +576,6 @@ func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -614,16 +596,6 @@ func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -644,16 +616,6 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 }
 
 func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -674,16 +636,6 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOr
 }
 
 func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildcardOrigins(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
