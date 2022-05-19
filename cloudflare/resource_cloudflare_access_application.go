@@ -98,7 +98,8 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	}
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			log.Printf("[INFO] Access Application %s no longer exists", d.Id())
 			d.SetId("")
 			return nil
