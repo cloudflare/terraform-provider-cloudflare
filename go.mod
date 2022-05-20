@@ -39,7 +39,10 @@ require (
 	golang.org/x/time v0.0.0-20220224211638-0e9765cccd65 // indirect
 )
 
-require github.com/stretchr/testify v1.7.1
+require (
+	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
+	github.com/stretchr/testify v1.7.1
+)
 
 require (
 	4d63.com/gochecknoglobals v0.1.0 // indirect
@@ -114,7 +117,6 @@ require (
 	github.com/gostaticanalysis/forcetypeassert v0.1.0 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
 	github.com/hashicorp/go-checkpoint v0.5.0 // indirect
-	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320 // indirect
 	github.com/hashicorp/go-version v1.4.0 // indirect
 	github.com/hashicorp/hc-install v0.3.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
