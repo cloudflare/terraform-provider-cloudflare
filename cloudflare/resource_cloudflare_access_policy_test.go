@@ -833,8 +833,8 @@ func TestAccCloudflareAccessPolicyExternalEvaluation(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "external_evaluation.0.evaluate_url", "https://example.com"),
-					resource.TestCheckResourceAttr(name, "external_evaluation.0.keys_url", "https://example.com/key"),
+					resource.TestCheckResourceAttr(name, "include.0.external_evaluation.0.evaluate_url", "https://example.com"),
+					resource.TestCheckResourceAttr(name, "include.0.external_evaluation.0.keys_url", "https://example.com/keys"),
 				),
 			},
 		},
@@ -850,14 +850,13 @@ func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = cloudflare_access_application.%[1]s.id
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
       precedence     = "1"
 
       include {
-        external_evaluation = "example@example.com"
 		external_evaluation {
 			evaluate_url = "https://example.com"
 			keys_url = "https://example.com/keys"
