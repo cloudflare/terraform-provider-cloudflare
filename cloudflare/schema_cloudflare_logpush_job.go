@@ -42,5 +42,11 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"frequency": {
+			Type:         schema.TypeString,
+			Optional:     true,
+			Default:      "high",
+			ValidateFunc: validation.StringInSlice([]string{"high", "low"}, false),
+		},
 	}
 }
