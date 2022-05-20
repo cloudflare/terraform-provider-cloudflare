@@ -57,6 +57,7 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 		LogpullOptions:     d.Get("logpull_options").(string),
 		DestinationConf:    destConf,
 		OwnershipChallenge: ownershipChallenge,
+		Frequency:          d.Get("frequency").(string),
 	}
 
 	return job, identifier, nil
@@ -98,6 +99,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	d.Set("logpull_options", job.LogpullOptions)
 	d.Set("destination_conf", job.DestinationConf)
 	d.Set("ownership_challenge", d.Get("ownership_challenge"))
+	d.Set("frequency", job.Frequency)
 
 	return nil
 }

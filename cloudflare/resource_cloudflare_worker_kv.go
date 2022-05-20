@@ -27,7 +27,10 @@ func resourceCloudflareWorkerKV() *schema.Resource {
 
 func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	namespaceID, key := parseId(d.Id())
+	namespaceID, key, err := parseId(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	value, err := client.ReadWorkersKV(ctx, namespaceID, key)
 	if err != nil {
@@ -63,11 +66,14 @@ func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	namespaceID, key := parseId(d.Id())
+	namespaceID, key, err := parseId(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	log.Printf("[INFO] Deleting Cloudflare Workers KV with id: %+v", d.Id())
 
-	_, err := client.DeleteWorkersKV(ctx, namespaceID, key)
+	_, err = client.DeleteWorkersKV(ctx, namespaceID, key)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error deleting workers kv"))
 	}
@@ -76,7 +82,10 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceCloudflareWorkersKVImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	namespaceID, key := parseId(d.Id())
+	namespaceID, key, err := parseId(d.Id())
+	if err != nil {
+		return nil, err
+	}
 
 	d.Set("namespace_id", namespaceID)
 	d.Set("key", key)
@@ -86,7 +95,10 @@ func resourceCloudflareWorkersKVImport(ctx context.Context, d *schema.ResourceDa
 	return []*schema.ResourceData{d}, nil
 }
 
-func parseId(id string) (string, string) {
+func parseId(id string) (string, string, error) {
 	parts := strings.SplitN(id, "/", 2)
-	return parts[0], parts[1]
+	if len(parts) != 2 {
+		return "", "", fmt.Errorf("error parsing workers kv id: %s", id)
+	}
+	return parts[0], parts[1], nil
 }
