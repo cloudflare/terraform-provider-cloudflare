@@ -517,7 +517,6 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 				return fmt.Errorf("AccessApplication still exists")
 			}
 		}
-
 	}
 
 	return nil
