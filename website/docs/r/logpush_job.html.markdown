@@ -19,6 +19,37 @@ have:
   `cloudflare_logpush_ownership_challenge` resource.
 - `cloudflare_logpush_job`: Create and manage the Logpush Job itself.
 
+
+## Example Usage (Cloudflare R2)
+
+When using Cloudflare R2, no ownership challenge is required.
+
+```hcl
+data "cloudflare_api_token_permission_groups" "all" {}
+
+resource "cloudflare_api_token" "logpush_r2_token" {
+  name = "logpush_r2_token"
+
+  policy {
+    permission_groups = [
+      data.cloudflare_api_token_permission_groups.all.permissions["Workers R2 Storage Write"],
+    ]
+    resources = {
+      "com.cloudflare.api.account.*" = "*"
+    }
+  }
+}
+
+resource "cloudflare_logpush_job" "http_requests" {
+  enabled          = true
+  zone_id          = var.zone_id
+  name             = "http_requests"
+  logpull_options  = "fields=ClientIP,ClientRequestHost,ClientRequestMethod,ClientRequestURI,EdgeEndTimestamp,EdgeResponseBytes,EdgeResponseStatus,EdgeStartTimestamp,RayID&timestamps=rfc3339"
+  destination_conf = "r2://cloudflare-logs/http_requests/date={DATE}?account-id=${var.account_id}&access-key-id=${cloudflare_api_token.logpush_r2_token.id}&secret-access-key=${sha256(cloudflare_api_token.logpush_r2_token.value)}"
+  dataset          = "http_requests"
+}
+```
+
 ## Example Usage (with AWS provider)
 
 Please see
@@ -74,6 +105,7 @@ resource "cloudflare_logpush_job" "example_job" {
   destination_conf = "s3://my-bucket-path?region=us-west-2"
   ownership_challenge = "0000000000000"
   dataset = "http_requests"
+  frequency = "high"
 }
 ```
 
@@ -84,7 +116,7 @@ The following arguments are supported:
 * `name` - (Required) The name of the logpush job to create. Must match the regular expression `^[a-zA-Z0-9\-\.]*$`.
 * `destination_conf` - (Required) Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/reference/logpush-api-configuration#destination).
 * `dataset` - (Required) Which type of dataset resource to use. Available values are
-  - [account-scoped](https://developers.cloudflare.com/logs/reference/log-fields/account): `"audit_logs"`, `"gateway_dns"`, `"gateway_http"`, `"gateway_network"`
+  - [account-scoped](https://developers.cloudflare.com/logs/reference/log-fields/account): `"audit_logs"`, `"gateway_dns"`, `"gateway_http"`, `"gateway_network"`, `"network_analytics_logs"`
   - [zone-scoped](https://developers.cloudflare.com/logs/reference/log-fields/zone): `"firewall_events"`, `"http_requests"`, `"spectrum_events"`, `"nel_reports", "dns_logs"`
 * `account_id` - (Optional) The account ID where the logpush job should be created. Either `account_id` or `zone_id` are required.
 * `zone_id` - (Optional) The zone ID where the logpush job should be created. Either `account_id` or `zone_id` are required.
@@ -92,6 +124,7 @@ The following arguments are supported:
 * `ownership_challenge` - (Optional) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage,
   Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
 * `enabled` - (Optional) Whether to enable the job.
+* `frequency` - (Optional) `"high"` or `"low"`. A higher frequency will result in logs being pushed on faster with smaller files. `"low"` frequency will push logs less often with larger files. 
 
 ## Import
 

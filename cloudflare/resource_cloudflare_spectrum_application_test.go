@@ -225,8 +225,6 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 }
 
 func TestAccCloudflareSpectrumApplication_EdgeIPsWithoutConnectivity(t *testing.T) {
-	t.Skip("pending getting BYO IP assigned to the acceptance testing account")
-
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -243,7 +241,7 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsWithoutConnectivity(t *testing.
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "edge_ips.#", "1"),
-					resource.TestCheckResourceAttr(name, "edge_ips.0", "198.51.100.10"),
+					resource.TestCheckResourceAttr(name, "edge_ips.0", "172.65.64.13"),
 				),
 			},
 		},
@@ -429,6 +427,6 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
   origin_direct = ["tcp://128.66.0.4:23"]
   origin_port   = 22
-  edge_ips = ["198.51.100.10"]
+  edge_ips = ["172.65.64.13"]
 }`, zoneID, zoneName, ID)
 }
