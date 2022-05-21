@@ -18,7 +18,7 @@ func TestAccCloudflareLoadBalancer_Import(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

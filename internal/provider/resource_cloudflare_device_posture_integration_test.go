@@ -36,7 +36,7 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 			testAccPreCheckWorkspaceOne(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareDevicePostureIntegrationDestroy,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureIntegrationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, authURL),

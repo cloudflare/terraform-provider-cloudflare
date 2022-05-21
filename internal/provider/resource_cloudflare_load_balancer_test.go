@@ -27,9 +27,9 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
@@ -60,9 +60,9 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, zone, rnd),
@@ -85,9 +85,9 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinityIPCookie(zoneID, zone, rnd),
@@ -118,9 +118,9 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, zone, rnd),
@@ -149,9 +149,9 @@ func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigProximityBalanced(zoneID, zone, rnd),
@@ -178,9 +178,9 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigRules(zoneID, zone, rnd),
@@ -211,9 +211,9 @@ func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, zone, rnd),
@@ -225,7 +225,7 @@ func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 
 /**
 Any change to a load balancer  results in a new resource
-Although the API client contains a modify method, this always results in 405 status
+Although the API client contains a modify method, this always results in 405 status.
 */
 func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 	t.Parallel()
@@ -237,9 +237,9 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
@@ -279,9 +279,9 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),

@@ -28,7 +28,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccessAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -45,7 +45,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccessAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -100,7 +100,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccessAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -221,7 +221,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessServiceTokenDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}, 0),
@@ -237,9 +237,9 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccessAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessServiceTokenDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, 0),

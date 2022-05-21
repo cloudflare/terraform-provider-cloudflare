@@ -60,7 +60,7 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
+		CheckDestroy:      testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
@@ -86,7 +86,7 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.
 			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
+		CheckDestroy:      testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),

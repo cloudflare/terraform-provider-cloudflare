@@ -19,7 +19,7 @@ func TestAccCloudflareWAFPackages_NoFilter(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_packages.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -42,7 +42,7 @@ func TestAccCloudflareWAFPackages_MatchName(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_packages.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -65,7 +65,7 @@ func TestAccCloudflareWAFPackages_MatchDetectionMode(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_packages.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -88,7 +88,7 @@ func TestAccCloudflareWAFPackages_MatchSensitivity(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_packages.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -110,7 +110,7 @@ func TestAccCloudflareWAFPackages_MatchActionMode(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_packages.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

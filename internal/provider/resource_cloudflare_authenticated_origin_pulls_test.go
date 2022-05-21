@@ -35,7 +35,7 @@ func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -55,7 +55,7 @@ func TestAccCloudflareAuthenticatedOriginPullsPerHostname(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

@@ -27,9 +27,9 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
+		CheckDestroy:      testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),
@@ -77,9 +77,9 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 	rndUpdate := rnd + "-updated"
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
+		CheckDestroy:      testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),

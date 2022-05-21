@@ -37,7 +37,7 @@ func TestAccCloudflareZoneCacheVariants_OneExt(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zone_cache_variants.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -70,7 +70,7 @@ func TestAccCloudflareZoneCacheVariants_AllExt(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zone_cache_variants.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

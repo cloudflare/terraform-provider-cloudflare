@@ -10,7 +10,7 @@ import (
 var allowedHTTPMethods = []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "_ALL_"}
 var allowedSchemes = []string{"HTTP", "HTTPS", "_ALL_"}
 
-// validateRecordType ensures that the cloudflare record type is valid
+// validateRecordType ensures that the cloudflare record type is valid.
 func validateRecordType(t string, proxied bool) error {
 	switch t {
 	case "A", "AAAA", "CNAME":
@@ -28,7 +28,7 @@ func validateRecordType(t string, proxied bool) error {
 }
 
 // validateRecordName ensures that based on supplied record type, the name content matches
-// Currently only validates A and AAAA types
+// Currently only validates A and AAAA types.
 func validateRecordName(t string, value string) error {
 	switch t {
 	case "A":

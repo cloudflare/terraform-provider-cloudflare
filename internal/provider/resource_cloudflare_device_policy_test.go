@@ -27,7 +27,7 @@ func TestAccCloudflareDevicePolicyCertificatesCreate(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareDevicePostureIntegrationDestroy,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureIntegrationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareDevicePolicyCertificates(rnd, zoneID, true),

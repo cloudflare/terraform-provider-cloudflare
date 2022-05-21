@@ -24,7 +24,7 @@ func TestAccCloudflareIPList_Import(t *testing.T) {
 	name := "cloudflare_ip_list." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

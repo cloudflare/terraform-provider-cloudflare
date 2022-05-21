@@ -20,7 +20,7 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 
 	initialSettings := make(map[string]interface{})
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -55,7 +55,7 @@ func TestAccCloudflareZoneSettingsOverride_RemoveAttributes(t *testing.T) {
 
 	initialSettings := make(map[string]interface{})
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

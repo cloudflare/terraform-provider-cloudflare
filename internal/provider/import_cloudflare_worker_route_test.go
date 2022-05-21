@@ -32,9 +32,9 @@ func TestAccCloudflareWorkerRoute_Import(t *testing.T) {
 	scriptRnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
+		CheckDestroy:      testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, routeRnd, scriptRnd, pattern),

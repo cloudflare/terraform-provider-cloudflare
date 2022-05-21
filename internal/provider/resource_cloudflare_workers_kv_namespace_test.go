@@ -16,9 +16,9 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_workers_kv_namespace." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCloudflareWorkersKVNamespaceDestroy,
+		CheckDestroy:      testAccCloudflareWorkersKVNamespaceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVNamespace(rnd),

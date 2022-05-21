@@ -53,7 +53,7 @@ func resourceCloudflareWorkersKVNamespaceRead(ctx context.Context, d *schema.Res
 	client := meta.(*cloudflare.API)
 	namespaceID := d.Id()
 
-	resp, err := client.ListWorkersKVNamespaces(context.Background())
+	resp, err := client.ListWorkersKVNamespaces(ctx)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error reading workers kv namespaces"))
 	}
@@ -107,7 +107,7 @@ func resourceCloudflareWorkersKVNamespaceDelete(ctx context.Context, d *schema.R
 func resourceCloudflareWorkersKVNamespaceImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
-	namespaces, err := client.ListWorkersKVNamespaces(context.Background())
+	namespaces, err := client.ListWorkersKVNamespaces(ctx)
 	var title string
 
 	for _, n := range namespaces {

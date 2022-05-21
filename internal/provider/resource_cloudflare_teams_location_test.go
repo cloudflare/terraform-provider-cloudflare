@@ -30,7 +30,7 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareTeamsLocationDestroy,
+		CheckDestroy:      testAccCheckCloudflareTeamsLocationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsLocationConfigBasic(rnd, accountID),

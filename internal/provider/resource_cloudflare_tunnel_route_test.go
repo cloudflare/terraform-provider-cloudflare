@@ -58,7 +58,7 @@ func TestAccCloudflareTunnelRouteExists(t *testing.T) {
 	var TunnelRoute cloudflare.TunnelRoute
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -109,7 +109,7 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 	var TunnelRoute cloudflare.TunnelRoute
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

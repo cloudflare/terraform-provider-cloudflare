@@ -30,7 +30,7 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareDevicePostureRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID),
@@ -66,7 +66,7 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareDevicePostureRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigOsVersion(rnd, accountID),
@@ -103,7 +103,7 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareDevicePostureRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigDomainJoined(rnd, accountID),
@@ -139,7 +139,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareDevicePostureRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigFirewall(rnd, accountID),
@@ -177,7 +177,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareDevicePostureRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryption(rnd, accountID),

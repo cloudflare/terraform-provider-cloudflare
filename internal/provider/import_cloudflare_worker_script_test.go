@@ -24,9 +24,9 @@ func TestAccCloudflareWorkerScript_Import(t *testing.T) {
 	name := "cloudflare_worker_script." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
+		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd),

@@ -18,9 +18,9 @@ func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareCustomSSLDestroy,
+		CheckDestroy:      testAccCheckCloudflareCustomSSLDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomSSLCertBasic(zoneID, rnd),
@@ -102,9 +102,9 @@ func TestAccCloudflareCustomSSLWithEmptyGeoRestrictions(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareCustomSSLDestroy,
+		CheckDestroy:      testAccCheckCloudflareCustomSSLDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomSSLWithEmptyGeoRestrictions(zoneID, rnd),

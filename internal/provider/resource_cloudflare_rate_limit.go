@@ -297,7 +297,7 @@ func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData
 			bypassUrlPatterns = append(bypassUrlPatterns, bypassItem.Value)
 		} else {
 			// maybe a new type of bypass was added to api
-			log.Printf("[WARN] Unkown bypass type found in rate limit for zone %q: %s", d.Id(), bypassItem.Name)
+			log.Printf("[WARN] Unknown bypass type found in rate limit for zone %q: %s", d.Id(), bypassItem.Name)
 		}
 	}
 	if err := d.Set("bypass_url_patterns", bypassUrlPatterns); err != nil {

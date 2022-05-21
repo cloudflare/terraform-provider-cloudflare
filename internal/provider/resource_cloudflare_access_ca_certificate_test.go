@@ -23,7 +23,7 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessCACertificateDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
@@ -50,7 +50,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessCACertificateDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),

@@ -22,7 +22,7 @@ func TestAccCloudflareGRETunnelExists(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -78,7 +78,7 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -109,7 +109,7 @@ func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

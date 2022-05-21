@@ -28,7 +28,7 @@ func TestAccCloudflareIPList_Exists(t *testing.T) {
 	var IPList cloudflare.IPList
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -61,7 +61,7 @@ func TestAccCloudflareIPList_UpdateDescription(t *testing.T) {
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -110,7 +110,7 @@ func TestAccCloudflareIPList_Update(t *testing.T) {
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

@@ -44,7 +44,7 @@ func TestAccCloudflareWorkerRoute_MultiScriptEnt(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
+		CheckDestroy:      testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, routeRnd, scriptRnd, pattern1),
@@ -119,7 +119,7 @@ func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWorkerRouteDestroy,
+		CheckDestroy:      testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptDisabledRoute(zoneID, routeRnd, pattern),

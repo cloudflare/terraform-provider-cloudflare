@@ -213,7 +213,7 @@ func resourceCloudflareRulesetDelete(ctx context.Context, d *schema.ResourceData
 }
 
 // buildStateFromRulesetRules receives the current ruleset rules and returns an
-// interface for the state file
+// interface for the state file.
 func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 	var rulesData []map[string]interface{}
 	for _, r := range rules {
@@ -405,7 +405,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 	return rulesData
 }
 
-// receives the resource config and builds a ruleset rule array
+// receives the resource config and builds a ruleset rule array.
 func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.RulesetRule, error) {
 	var rulesetRules []cloudflare.RulesetRule
 

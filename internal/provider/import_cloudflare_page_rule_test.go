@@ -19,9 +19,9 @@ func TestAccCloudflarePageRule_Import(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflarePageRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zoneID, target, rnd),

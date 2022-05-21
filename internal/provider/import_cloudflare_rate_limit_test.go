@@ -19,7 +19,7 @@ func TestAccCloudflareRateLimit_Import(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

@@ -21,7 +21,7 @@ func TestAccCloudflareMagicFirewallRulesetExists(t *testing.T) {
 	var MagicFirewallRuleset cloudflare.MagicFirewallRuleset
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -47,7 +47,7 @@ func TestAccCloudflareMagicFirewallRulesetUpdateName(t *testing.T) {
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -90,7 +90,7 @@ func TestAccCloudflareMagicFirewallRulesetUpdateDescription(t *testing.T) {
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -132,7 +132,7 @@ func TestAccCloudflareMagicFirewallRulesetSingleRule(t *testing.T) {
 	var MagicFirewallRuleset cloudflare.MagicFirewallRuleset
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -162,7 +162,7 @@ func TestAccCloudflareMagicFirewallRulesetUpdateWithHigherPriority(t *testing.T)
 	var MagicFirewallRuleset cloudflare.MagicFirewallRuleset
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

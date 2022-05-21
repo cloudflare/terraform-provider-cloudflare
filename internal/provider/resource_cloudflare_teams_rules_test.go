@@ -30,7 +30,7 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareTeamsRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareTeamsRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsRuleConfigBasic(rnd, accountID),

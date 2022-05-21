@@ -63,9 +63,9 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, "tf-acctest-basic", rnd),
@@ -95,9 +95,9 @@ func TestAccCloudflareRecord_CaseInsensitive(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, "tf-acctest-case-insensitive", rnd),
@@ -128,9 +128,9 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigApex(zoneID, rnd),
@@ -154,9 +154,9 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigLOC(zoneID, "tf-acctest-loc", rnd),
@@ -192,9 +192,9 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigSRV(zoneID, "tf-acctest-srv", rnd),
@@ -225,9 +225,9 @@ func TestAccCloudflareRecord_CAA(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigCAA(rnd, zoneID, fmt.Sprintf("tf-acctest-caa.%s", domain), 600),
@@ -260,9 +260,9 @@ func TestAccCloudflareRecord_Proxied(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigProxied(zoneID, domain, "tf-acctest-proxied", rnd),
@@ -287,9 +287,9 @@ func TestAccCloudflareRecord_Updated(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd),
@@ -319,9 +319,9 @@ func TestAccCloudflareRecord_typeForceNewRecord(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd),
@@ -349,9 +349,9 @@ func TestAccCloudflareRecord_hostnameForceNewRecord(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd),
@@ -378,9 +378,9 @@ func TestAccCloudflareRecord_CreateAfterManualDestroy(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd),
@@ -409,9 +409,9 @@ func TestAccCloudflareRecord_TtlValidation(t *testing.T) {
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareRecordConfigTtlValidation(zoneID, recordName, zoneName, rnd),
@@ -429,9 +429,9 @@ func TestAccCloudflareRecord_ExplicitProxiedFalse(t *testing.T) {
 	resourceName := "cloudflare_record." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, rnd, zoneName, "false", "300"),
@@ -466,9 +466,9 @@ func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
 	resourceName := "cloudflare_record." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, rnd, zoneName),
@@ -490,9 +490,9 @@ func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareRecordDestroy,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRecordConfigProxied(zoneID, domain, recordName, rnd),

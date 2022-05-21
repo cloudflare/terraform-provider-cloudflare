@@ -16,7 +16,7 @@ func TestAccCloudflareZoneDNSSEC_Import(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zone_dnssec.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

@@ -73,7 +73,7 @@ func stringListChecksum(s []string) string {
 	return stringChecksum(strings.Join(s, ""))
 }
 
-// Returns true if string value exists in string slice
+// Returns true if string value exists in string slice.
 func contains(slice []string, item string) bool {
 	set := make(map[string]struct{}, len(slice))
 	for _, s := range slice {
@@ -135,7 +135,7 @@ func stringFromBool(status bool) string {
 	return "off"
 }
 
-// AccessIdentifier represents the identifier provided in a resource
+// AccessIdentifier represents the identifier provided in a resource.
 type AccessIdentifier struct {
 	Type  AccessIdentifierType
 	Value string
@@ -146,14 +146,14 @@ func (i AccessIdentifier) String() string {
 	return fmt.Sprintf("%s (%s)", i.Type, i.Value)
 }
 
-// AccessIdentifierType represents the identifier type for access resources
+// AccessIdentifierType represents the identifier type for access resources.
 type AccessIdentifierType string
 
 const (
-	// AccountType is the access identifier type for an account
+	// AccountType is the access identifier type for an account.
 	AccountType AccessIdentifierType = "account"
 
-	// ZoneType is the access identifier type for a zone
+	// ZoneType is the access identifier type for a zone.
 	ZoneType AccessIdentifierType = "zone"
 )
 

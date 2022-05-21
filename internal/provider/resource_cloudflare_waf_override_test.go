@@ -31,9 +31,9 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waf_override.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFOverrideDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFOverrideDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFOverrideBasicConfig(zoneID, zoneName, rnd),
@@ -84,9 +84,9 @@ func TestAccCloudflareWAFOverrideGroupOnly(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waf_override.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFOverrideDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFOverrideDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFOverrideGroupsOnlyConfig(zoneID, zoneName, rnd),

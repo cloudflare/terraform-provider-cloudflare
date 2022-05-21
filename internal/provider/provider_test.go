@@ -9,22 +9,22 @@ import (
 )
 
 const (
-	// Provider name for single configuration testing
+	// Provider name for single configuration testing.
 	ProviderNameCloudflare = "cloudflare"
 )
 
 var (
-	// Integration test account ID
+	// Integration test account ID.
 	testAccCloudflareAccountID string = "f037e56e89293a057740de681ac9abbe"
 
-	// Integration test account zone ID
+	// Integration test account zone ID.
 	testAccCloudflareZoneID string = "0da42c8d2132a9ddaf714f9e7c920711"
-	// Integration test account zone name
+	// Integration test account zone name.
 	testAccCloudflareZoneName string = "terraform.cfapi.net"
 
-	// Integration test account alternate zone ID
+	// Integration test account alternate zone ID.
 	testAccCloudflareAltZoneID string = "b72110c08e3382597095c29ba7e661ea"
-	// Integration test account alternate zone name
+	// Integration test account alternate zone name.
 	testAccCloudflareAltZoneName string = "terraform2.cfapi.net"
 
 	providerFactories = map[string]func() (*schema.Provider, error){

@@ -15,7 +15,7 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -33,7 +33,7 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 	})
 }
 
-// test creating a config with only the required fields
+// test creating a config with only the required fields.
 func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -41,7 +41,7 @@ func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -63,9 +63,9 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/*", "ip", "198.51.100.4"),

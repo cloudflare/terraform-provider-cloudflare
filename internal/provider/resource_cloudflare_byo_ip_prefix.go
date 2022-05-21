@@ -83,7 +83,7 @@ func resourceCloudflareBYOIPPrefixUpdate(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-// Deletion of prefixes is not really supported, so we keep this as a dummy
+// Deletion of prefixes is not really supported, so we keep this as a dummy.
 func resourceCloudflareBYOIPPrefixDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }

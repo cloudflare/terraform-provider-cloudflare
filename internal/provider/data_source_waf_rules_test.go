@@ -19,7 +19,7 @@ func TestAccCloudflareWAFRules_NoFilter(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_rules.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -42,7 +42,7 @@ func TestAccCloudflareWAFRules_MatchDescription(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_rules.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -65,7 +65,7 @@ func TestAccCloudflareWAFRules_MatchMode(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_waf_rules.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

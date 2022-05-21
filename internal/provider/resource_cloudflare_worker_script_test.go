@@ -30,7 +30,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWorkerScriptDestroy,
+		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd),

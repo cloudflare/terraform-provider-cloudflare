@@ -25,9 +25,9 @@ func TestAccCloudflareWAFGroup_CreateThenUpdate(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waf_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFGroupConfig(zoneID, groupID, "on", rnd),

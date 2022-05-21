@@ -23,9 +23,9 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	name := "cloudflare_load_balancer_pool." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
@@ -51,9 +51,9 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	headerValue := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd, headerValue),
@@ -105,9 +105,9 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	name := "cloudflare_load_balancer_pool." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerPoolDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
@@ -210,7 +210,7 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 	}
 }
 
-// using IPs from 192.0.2.0/24 as per RFC5737
+// using IPs from 192.0.2.0/24 as per RFC5737.
 func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {

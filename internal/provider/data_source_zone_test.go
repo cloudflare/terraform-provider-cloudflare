@@ -12,7 +12,7 @@ func TestAccCloudflareZone_PreventZoneIdAndNameConflicts(t *testing.T) {
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -38,7 +38,7 @@ func TestAccCloudflareZone_NameLookup(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_zone.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

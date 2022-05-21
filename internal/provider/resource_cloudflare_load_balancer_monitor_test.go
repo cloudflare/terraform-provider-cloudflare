@@ -19,9 +19,9 @@ func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 	name := "cloudflare_load_balancer_monitor.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
@@ -45,9 +45,9 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(zoneName),
@@ -72,9 +72,9 @@ func TestAccCloudflareLoadBalancerMonitor_EmptyExpectedBody(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(rnd),
@@ -93,9 +93,9 @@ func TestAccCloudflareLoadBalancerMonitor_TcpFullySpecified(t *testing.T) {
 	name := "cloudflare_load_balancer_monitor.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigTcpFullySpecified(),
@@ -116,9 +116,9 @@ func TestAccCloudflareLoadBalancerMonitor_PremiumTypes(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigUDPICMP(rnd),
@@ -150,7 +150,7 @@ func TestAccCloudflareLoadBalancerMonitor_PremiumTypes(t *testing.T) {
 
 func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -168,9 +168,9 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
@@ -203,9 +203,9 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 	name := "cloudflare_load_balancer_monitor.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),

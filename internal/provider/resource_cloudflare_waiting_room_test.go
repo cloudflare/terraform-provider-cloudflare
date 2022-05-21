@@ -20,9 +20,9 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 	waitingRoomName := fmt.Sprintf("waiting_room_%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWaitingRoomDestroy,
+		CheckDestroy:      testAccCheckCloudflareWaitingRoomDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareWaitingRoom(rnd, waitingRoomName, zoneID, domain, "/foobar"),

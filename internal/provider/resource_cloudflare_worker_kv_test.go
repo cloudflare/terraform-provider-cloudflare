@@ -19,9 +19,9 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	resourceName := "cloudflare_workers_kv." + name
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCloudflareWorkersKVDestroy,
+		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKV(name, key, value),

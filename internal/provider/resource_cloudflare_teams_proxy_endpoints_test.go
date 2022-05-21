@@ -31,7 +31,7 @@ func TestAccCloudflareTeamsProxyEndpoint_Basic(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareTeamsProxyEndpointDestroy,
+		CheckDestroy:      testAccCheckCloudflareTeamsProxyEndpointDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsProxyEndpointConfigBasic(rnd, accountID),

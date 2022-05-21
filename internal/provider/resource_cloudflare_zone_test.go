@@ -13,7 +13,7 @@ func TestAccCloudflareZone_Basic(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -35,7 +35,7 @@ func TestAccCloudflareZone_BasicWithJumpStartEnabled(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,7 @@ func TestAccCloudflareZone_WithPlan(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -80,7 +80,7 @@ func TestAccCloudflareZone_PartialSetup(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -101,7 +101,7 @@ func TestAccCloudflareZone_FullSetup(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -123,7 +123,7 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -145,7 +145,7 @@ func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -167,7 +167,7 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -200,7 +200,7 @@ func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -241,7 +241,7 @@ func TestAccCloudflareZone_SetType(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

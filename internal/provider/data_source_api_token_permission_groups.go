@@ -27,7 +27,7 @@ func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *sc
 	log.Printf("[DEBUG] Reading API Token Permission Groups")
 	client := meta.(*cloudflare.API)
 
-	permissions, err := client.ListAPITokensPermissionGroups(context.Background())
+	permissions, err := client.ListAPITokensPermissionGroups(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing API Token Permission Groups: %w", err))
 	}

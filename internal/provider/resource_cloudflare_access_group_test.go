@@ -80,7 +80,7 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
@@ -99,7 +99,7 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: ZoneType, Value: zoneID}),
@@ -124,7 +124,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigExclude(rnd, accountID, email),
@@ -150,7 +150,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigRequire(rnd, accountID, email),
@@ -176,7 +176,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigFullConfig(rnd, accountID, email),
@@ -205,7 +205,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team),
@@ -233,7 +233,7 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
@@ -265,7 +265,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessGroupDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),

@@ -79,7 +79,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: AccountType, Value: accountID}, cert, domain),
@@ -124,7 +124,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}, cert, domain),

@@ -22,7 +22,7 @@ func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -76,7 +76,7 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 	var StaticRoute cloudflare.MagicTransitStaticRoute
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -108,7 +108,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

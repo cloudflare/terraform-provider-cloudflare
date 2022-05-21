@@ -17,9 +17,9 @@ func TestAccCloudflareWAFRule_Import(t *testing.T) {
 	name := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "block", name),

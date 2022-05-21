@@ -25,9 +25,9 @@ func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 	eventEndTime := eventStartTime.Add(5 * time.Minute).UTC()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWaitingRoomEventDestroy,
+		CheckDestroy:      testAccCheckCloudflareWaitingRoomEventDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareWaitingRoomEvent(rnd, waitingRoomEventName, zoneID, waitingRoomID, eventStartTime, eventEndTime, domain, waitingRoomName),

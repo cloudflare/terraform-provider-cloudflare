@@ -30,7 +30,7 @@ func TestAccCloudflareTeamsListBasic(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareTeamsListDestroy,
+		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsListConfigBasic(rnd, accountID),
@@ -65,7 +65,7 @@ func TestAccCloudflareTeamsListReordered(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareTeamsListDestroy,
+		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsListConfigBasic(rnd, accountID),

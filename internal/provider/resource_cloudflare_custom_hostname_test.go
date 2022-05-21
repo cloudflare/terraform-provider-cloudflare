@@ -60,7 +60,7 @@ func TestAccCloudflareCustomHostname_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -99,7 +99,7 @@ func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -149,7 +149,7 @@ func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -188,7 +188,7 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -239,7 +239,7 @@ func TestAccCloudflareCustomHostname_Update(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -305,7 +305,7 @@ func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -369,7 +369,7 @@ func TestAccCloudflareCustomHostname_Import(t *testing.T) {
 	resourceName := "cloudflare_custom_hostname." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

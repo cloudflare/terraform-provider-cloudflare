@@ -25,9 +25,9 @@ func TestAccCloudflareWAFPackage_CreateThenUpdate(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waf_package.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFPackageDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFPackageDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFPackageConfig(zoneID, packageID, "medium", "simulate", rnd),

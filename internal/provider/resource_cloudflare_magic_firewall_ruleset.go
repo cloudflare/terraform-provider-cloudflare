@@ -127,7 +127,7 @@ func ruleElemValidators() map[string]schema.SchemaValidateFunc {
 	return v
 }
 
-// receives the current rules and returns an interface for the state file
+// receives the current rules and returns an interface for the state file.
 func buildStateFromMagicFirewallRulesetRules(r []cloudflare.MagicFirewallRulesetRule) interface{} {
 	var ruleset []interface{}
 	var rulesetRule map[string]interface{}
@@ -159,7 +159,7 @@ func buildStateFromMagicFirewallRulesetRules(r []cloudflare.MagicFirewallRuleset
 	return ruleset
 }
 
-// receives the resource config and builds a ruleset rule array
+// receives the resource config and builds a ruleset rule array.
 func buildMagicFirewallRulesetRulesFromResource(r interface{}) ([]cloudflare.MagicFirewallRulesetRule, error) {
 	var rulesetRules []cloudflare.MagicFirewallRulesetRule
 

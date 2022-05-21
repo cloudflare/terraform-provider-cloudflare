@@ -38,7 +38,10 @@ func resourceCloudflareAccessServiceTokenExpireDiff(ctx context.Context, d *sche
 			expiration_date := time.Now().Add(time.Duration(mindays) * 24 * time.Hour)
 
 			if expiration_date.After(expected_expiration_date) {
-				d.SetNewComputed("client_secret")
+				err := d.SetNewComputed("client_secret")
+				if err != nil {
+					return false
+				}
 				return true
 			}
 		}

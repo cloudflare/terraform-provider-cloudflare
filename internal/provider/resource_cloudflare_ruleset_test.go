@@ -86,7 +86,7 @@ func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -125,7 +125,7 @@ func TestAccCloudflareRuleset_WAFManagedRuleset(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -166,7 +166,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASP(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -207,7 +207,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPBlockXSSWithAnomalyOver60(t 
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -259,7 +259,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPOnlyPL1(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -313,7 +313,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultiple(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -367,7 +367,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithSkip(t *testing
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -427,7 +427,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithTopSkipAndLastS
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -493,7 +493,7 @@ func TestAccCloudflareRuleset_SkipPhaseAndProducts(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -547,7 +547,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryAndRuleBasedOverrides
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -599,7 +599,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithIDBasedOverrides(t *testing.T
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -647,7 +647,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -699,7 +699,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithPayloadLogging(t *testing.T) 
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -742,7 +742,7 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -792,7 +792,7 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -835,7 +835,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIPath(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -874,7 +874,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIQuery(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -912,7 +912,7 @@ func TestAccCloudflareRuleset_TransformHTTPResponseHeaders(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -955,7 +955,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIPathAndQueryCombination(t *te
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -998,7 +998,7 @@ func TestAccCloudflareRuleset_TransformationRuleRequestHeaders(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1048,7 +1048,7 @@ func TestAccCloudflareRuleset_TransformationRuleResponseHeaders(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1098,7 +1098,7 @@ func TestAccCloudflareRuleset_ActionParametersMultipleSkips(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1148,7 +1148,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesAction(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1196,7 +1196,7 @@ func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1240,7 +1240,7 @@ func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1278,7 +1278,7 @@ func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1320,7 +1320,7 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1361,7 +1361,7 @@ func TestAccCloudflareRuleset_ConditionallySetActionParameterVersion(t *testing.
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -1392,7 +1392,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithActionManagedChallenge(t *tes
 	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

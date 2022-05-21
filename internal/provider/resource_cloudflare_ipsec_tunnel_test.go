@@ -22,7 +22,7 @@ func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -73,7 +73,7 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheckAccount(t) },
+		PreCheck:          func() { testAccPreCheckAccount(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

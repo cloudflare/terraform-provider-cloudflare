@@ -12,7 +12,7 @@ func TestAccCloudflareAccessRule_ASN(t *testing.T) {
 	name := "cloudflare_access_rule." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -43,7 +43,7 @@ func TestAccCloudflareAccessRule_IPRange(t *testing.T) {
 	name := "cloudflare_access_rule." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -74,7 +74,7 @@ func TestAccCloudflareAccessRule_IPv6(t *testing.T) {
 	name := "cloudflare_access_rule." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

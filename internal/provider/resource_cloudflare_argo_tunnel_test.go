@@ -31,7 +31,7 @@ func TestAccCloudflareArgoTunnelCreate(t *testing.T) {
 			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareArgoTunnelDestroy,
+		CheckDestroy:      testAccCheckCloudflareArgoTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareArgoTunnelBasic(accID, rnd),

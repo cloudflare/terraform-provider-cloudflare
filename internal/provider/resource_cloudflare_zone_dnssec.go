@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// The supported status for a Zone DNSSEC setting
+// The supported status for a Zone DNSSEC setting.
 const (
 	DNSSECStatusActive   = "active"
 	DNSSECStatusPending  = "pending"
@@ -92,7 +92,7 @@ func resourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-// Just returning remote state since changing the zone ID would force a new resource
+// Just returning remote state since changing the zone ID would force a new resource.
 func resourceCloudflareZoneDNSSECUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return resourceCloudflareZoneRead(ctx, d, meta)
 }

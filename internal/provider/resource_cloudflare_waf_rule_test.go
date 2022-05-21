@@ -21,9 +21,9 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waf_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "simulate", rnd),
@@ -59,9 +59,9 @@ func TestAccCloudflareWAFRule_CreateThenUpdate_SimpleModes(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waf_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareWAFRuleDestroy,
+		CheckDestroy:      testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "on", rnd),
