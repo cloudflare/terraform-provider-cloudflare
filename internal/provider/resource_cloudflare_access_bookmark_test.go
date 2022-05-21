@@ -30,7 +30,7 @@ func TestAccCloudflareAccessBookmark_Basic(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessBookmarkDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessBookmarkDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessBookmarkConfigBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
@@ -51,7 +51,7 @@ func TestAccCloudflareAccessBookmark_Basic(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy: testAccCheckCloudflareAccessBookmarkDestroy,
+		CheckDestroy:      testAccCheckCloudflareAccessBookmarkDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessBookmarkConfigBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
