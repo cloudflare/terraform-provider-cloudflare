@@ -68,13 +68,21 @@ func main() {
 		!strings.Contains(*issue.Body, "created provider logger") &&
 		!strings.Contains(*issue.Body, "CLI command args") &&
 		!strings.Contains(*issue.Body, "provider: plugin process exited") {
-
-		client.Issues.CreateComment(ctx, owner, repo, issueNumber, &github.IssueComment{
+		_, _, err := client.Issues.CreateComment(ctx, owner, repo, issueNumber, &github.IssueComment{
 			Body: &missingLogFileBody,
 		})
+		if err != nil {
+			log.Fatalf("failed to create comment for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+		}
 
-		client.Issues.RemoveLabelForIssue(ctx, owner, repo, issueNumber, needsTriageLabel)
-		client.Issues.AddLabelsToIssue(ctx, owner, repo, issueNumber, []string{needsInformationLabel})
+		_, err = client.Issues.RemoveLabelForIssue(ctx, owner, repo, issueNumber, needsTriageLabel)
+		if err != nil {
+			log.Fatalf("error removing label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+		}
+		_, _, err = client.Issues.AddLabelsToIssue(ctx, owner, repo, issueNumber, []string{needsInformationLabel})
+		if err != nil {
+			log.Fatalf("error adding label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+		}
 	}
 
 	os.Exit(0)

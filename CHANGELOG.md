@@ -1,5 +1,13 @@
 ## 3.16.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: add support for specifying `frequency` ([#1634](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1634))
+
+BUG FIXES:
+
+* resource/cloudflare_workers_kv: handle invalid id during terraform import ([#1635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1635))
+
 ## 3.15.0 (May 18th, 2022)
 
 NOTES:
