@@ -1,4 +1,37 @@
-## 3.14.0 (Unreleased)
+## 3.16.0 (Unreleased)
+
+NOTES:
+
+* provider: updated internal package structure of repository ([#1636](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1636))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: add support for specifying `frequency` ([#1634](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1634))
+
+BUG FIXES:
+
+* resource/cloudflare_workers_kv: handle invalid id during terraform import ([#1635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1635))
+
+## 3.15.0 (May 18th, 2022)
+
+NOTES:
+
+* provider: internally swapped to using `diag.Diagnostics` for CRUD return types and using `context.Context` passed in from the provider itself instead of instantiating our own in each operation ([#1592](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1592))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: Add `expiration` to device posture rule ([#1585](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1585))
+* resource/cloudflare_logpush_job: add support for managing `network_analytics_logs` ([#1627](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1627))
+* resource/cloudflare_logpush_job: allow r2 logpush destinations without ownership validation ([#1597](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1597))
+* resource/ruleset: add support for `origin` and `host_header` attributes ([#1620](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1620))
+
+BUG FIXES:
+
+* resource/cloudflare_access_rule: Fix lifecycle of access_rule update ([#1601](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1601))
+* resource/cloudflare_spectrum_application: prevent panic when configuration does not include `edge_ips.connectivity` ([#1599](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1599))
+* resource/cloudflare_teams_rule: fixed detection of deleted teams rules ([#1622](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1622))
+
+## 3.14.0 (May 4th, 2022)
 
 FEATURES:
 
@@ -13,6 +46,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * cloudflare_tunnel_routes: Fix reads matching routers with larger CIDRs ([#1581](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1581))
+* resource/cloudflare_access_group: allow github access groups to be created without a list of teams ([#1589](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1589))
 * resource/cloudflare_logpush_job: make ownership challenge check for https not required ([#1588](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1588))
 * resource/cloudflare_tunnel_route: Fix importing resource ([#1580](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1580))
 * resource/cloudflare_zone: update plan identifier for professional rate plans ([#1583](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1583))

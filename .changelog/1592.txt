@@ -1,0 +1,3 @@
+```release-note:note
+provider: internally swapped to using `diag.Diagnostics` for CRUD return types and using `context.Context` passed in from the provider itself instead of instantiating our own in each operation
+```
