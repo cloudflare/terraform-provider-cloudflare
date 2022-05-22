@@ -9,7 +9,7 @@ CLOUDFLARE_GO_VERSION?=master
 default: build
 
 build: vet fmtcheck
-	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
+	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/main.version=$(VERSION)"
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
@@ -50,7 +50,7 @@ terraform-provider-lint: tools
 	 -XR005=false \
 	 -XS001=false \
 	 -XS002=false \
-	 ./cloudflare/
+	 ./internal/provider/
 
 vet:
 	@echo "==> Running go vet ."
