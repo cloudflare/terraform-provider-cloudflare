@@ -1,3 +1,3 @@
 ```release-note:enhancement
-resource/cloudflare_argo_tunnel: Add computed `tunnel_token` to schema
+resource/cloudflare_argo_tunnel: add `tunnel_token` support
 ```
