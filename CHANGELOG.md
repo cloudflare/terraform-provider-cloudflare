@@ -1,5 +1,9 @@
 ## 3.16.0 (Unreleased)
 
+NOTES:
+
+* provider: updated internal package structure of repository ([#1636](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1636))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_logpush_job: add support for specifying `frequency` ([#1634](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1634))
