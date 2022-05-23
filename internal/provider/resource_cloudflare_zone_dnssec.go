@@ -3,11 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -37,7 +37,7 @@ func resourceCloudflareZoneDNSSECCreate(ctx context.Context, d *schema.ResourceD
 
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Creating Cloudflare Zone DNSSEC: name %s", zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Zone DNSSEC: name %s", zoneID))
 
 	currentDNSSEC, err := client.ZoneDNSSECSetting(ctx, zoneID)
 	if err != nil {
@@ -102,13 +102,13 @@ func resourceCloudflareZoneDNSSECDelete(ctx context.Context, d *schema.ResourceD
 
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Zone DNSSEC: id %s", zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Zone DNSSEC: id %s", zoneID))
 
 	_, err := client.UpdateZoneDNSSEC(ctx, zoneID, cloudflare.ZoneDNSSECUpdateOptions{Status: DNSSECStatusDisabled})
 
 	if err != nil {
 		if strings.Contains(err.Error(), "DNSSEC is already disabled") {
-			log.Printf("[INFO] Zone DNSSEC %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Zone DNSSEC %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}

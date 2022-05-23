@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
@@ -43,8 +43,8 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
-	zcso, err := expandToZoneCustomSSLOptions(d)
+	tflog.Debug(ctx, fmt.Sprintf("zone ID: %s", zoneID))
+	zcso, err := expandToZoneCustomSSLOptions(ctx, d)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to create custom ssl cert: %w", err))
 	}
@@ -89,35 +89,35 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 	var reErr error
 	var updateErr = false
 	var reprioritizeErr = false
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("zone ID: %s", zoneID))
 
 	if d.HasChange("custom_ssl_options") {
-		zcso, err := expandToZoneCustomSSLOptions(d)
+		zcso, err := expandToZoneCustomSSLOptions(ctx, d)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed to update custom ssl cert: %w", err))
 		}
 
 		res, uErr := client.UpdateSSL(ctx, zoneID, certID, zcso)
 		if uErr != nil {
-			log.Printf("[DEBUG] Failed to update custom ssl cert: %s", uErr)
+			tflog.Debug(ctx, fmt.Sprintf("Failed to update custom ssl cert: %s", uErr))
 			updateErr = true
 		} else {
-			log.Printf("[DEBUG] Custom SSL set to: %s", res.ID)
+			tflog.Debug(ctx, fmt.Sprintf("Custom SSL set to: %s", res.ID))
 		}
 	}
 
 	if d.HasChange("custom_ssl_priority") {
-		zcsp, err := expandToZoneCustomSSLPriority(d)
+		zcsp, err := expandToZoneCustomSSLPriority(ctx, d)
 		if err != nil {
-			log.Printf("Failed to update custom ssl cert: %s", err)
+			tflog.Debug(ctx, fmt.Sprintf("Failed to update custom ssl cert: %s", err))
 		}
 
 		resList, reErr := client.ReprioritizeSSL(ctx, zoneID, zcsp)
 		if err != nil {
-			log.Printf("Failed to update / reprioritize custom ssl cert: %s", reErr)
+			tflog.Debug(ctx, fmt.Sprintf("Failed to update / reprioritize custom ssl cert: %s", reErr))
 			reprioritizeErr = true
 		} else {
-			log.Printf("[DEBUG] Custom SSL reprioritized to: %#v", resList)
+			tflog.Debug(ctx, fmt.Sprintf("Custom SSL reprioritized to: %#v", resList))
 		}
 	}
 
@@ -136,13 +136,13 @@ func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData
 	// update all possible schema attributes with fields from api response
 	record, err := client.SSLDetails(ctx, zoneID, certID)
 	if err != nil {
-		log.Printf("[WARN] Removing record from state because it's not found in API")
+		tflog.Warn(ctx, fmt.Sprintf("Removing record from state because it's not found in API"))
 		d.SetId("")
 		return nil
 	}
-	zcso, err := expandToZoneCustomSSLOptions(d)
+	zcso, err := expandToZoneCustomSSLOptions(ctx, d)
 	if err != nil {
-		log.Printf("[WARN] Problem setting zone options not read from state %s", err)
+		tflog.Warn(ctx, fmt.Sprintf("Problem setting zone options not read from state %s", err))
 	}
 	zcso.BundleMethod = record.BundleMethod
 	customSslOpts := flattenCustomSSLOptions(zcso)
@@ -167,7 +167,7 @@ func resourceCloudflareCustomSslDelete(ctx context.Context, d *schema.ResourceDa
 	zoneID := d.Get("zone_id").(string)
 	certID := d.Id()
 
-	log.Printf("[DEBUG] Deleting SSL cert %s for zone %s", certID, zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting SSL cert %s for zone %s", certID, zoneID))
 
 	err := client.DeleteSSL(ctx, zoneID, certID)
 	if err != nil {
@@ -185,7 +185,7 @@ func resourceCloudflareCustomSslImport(ctx context.Context, d *schema.ResourceDa
 
 	zoneID, certID := idAttr[0], idAttr[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Custom SSL Cert: id %s for zone %s", certID, zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Custom SSL Cert: id %s for zone %s", certID, zoneID))
 
 	d.Set("zone_id", zoneID)
 	d.SetId(certID)
@@ -195,9 +195,9 @@ func resourceCloudflareCustomSslImport(ctx context.Context, d *schema.ResourceDa
 	return []*schema.ResourceData{d}, nil
 }
 
-func expandToZoneCustomSSLPriority(d *schema.ResourceData) ([]cloudflare.ZoneCustomSSLPriority, error) {
+func expandToZoneCustomSSLPriority(ctx context.Context, d *schema.ResourceData) ([]cloudflare.ZoneCustomSSLPriority, error) {
 	data, dataOk := d.GetOk("custom_ssl_priority")
-	log.Printf("[DEBUG] Custom SSL priority found in config: %#v", data)
+	tflog.Debug(ctx, fmt.Sprintf("Custom SSL priority found in config: %#v", data))
 	var mtSlice []cloudflare.ZoneCustomSSLPriority
 	if dataOk {
 		for _, innerData := range data.([]interface{}) {
@@ -225,13 +225,13 @@ func expandToZoneCustomSSLPriority(d *schema.ResourceData) ([]cloudflare.ZoneCus
 			mtSlice = append(mtSlice, zcsp)
 		}
 	}
-	log.Printf("[DEBUG] Custom SSL priority list creating: %#v", mtSlice)
+	tflog.Debug(ctx, fmt.Sprintf("Custom SSL priority list creating: %#v", mtSlice))
 	return mtSlice, nil
 }
 
-func expandToZoneCustomSSLOptions(d *schema.ResourceData) (cloudflare.ZoneCustomSSLOptions, error) {
+func expandToZoneCustomSSLOptions(ctx context.Context, d *schema.ResourceData) (cloudflare.ZoneCustomSSLOptions, error) {
 	data, dataOk := d.GetOk("custom_ssl_options")
-	log.Printf("[DEBUG] Custom SSL options found in config: %#v", data)
+	tflog.Debug(ctx, fmt.Sprintf("Custom SSL options found in config: %#v", data))
 
 	newData := make(map[string]interface{})
 	if dataOk {
@@ -256,11 +256,11 @@ func expandToZoneCustomSSLOptions(d *schema.ResourceData) (cloudflare.ZoneCustom
 		return zcso, fmt.Errorf("Failed to create custom ssl options: %w", err)
 	}
 
-	log.Printf("[DEBUG] Custom SSL JSON: %s", string(zcsoJSON))
+	tflog.Debug(ctx, fmt.Sprintf("Custom SSL JSON: %s", string(zcsoJSON)))
 
 	// map -> json -> struct
 	json.Unmarshal(zcsoJSON, &zcso)
-	log.Printf("[DEBUG] Custom SSL options creating: %#v", zcso)
+	tflog.Debug(ctx, fmt.Sprintf("Custom SSL options creating: %#v", zcso))
 	return zcso, nil
 }
 

@@ -9,6 +9,7 @@ import (
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,8 +18,6 @@ import (
 )
 
 func init() {
-	// Set descriptions to support markdown syntax, this will be used in document generation
-	// and the language server.
 	schema.DescriptionKind = schema.StringMarkdown
 }
 
@@ -210,6 +209,7 @@ func New(version string) func() *schema.Provider {
 }
 
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
+
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		var diags diag.Diagnostics
 
@@ -265,7 +265,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		}
 
 		if accountID, ok := d.GetOk("account_id"); ok {
-			log.Printf("[INFO] Using specified account id %s in Cloudflare provider", accountID.(string))
+			tflog.Info(ctx, fmt.Sprintf("using specified account id %s in Cloudflare provider", accountID.(string)))
 			options = append(options, cloudflare.UsingAccount(accountID.(string)))
 		} else {
 			return client, diag.FromErr(err)

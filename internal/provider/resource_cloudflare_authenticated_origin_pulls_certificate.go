@@ -3,11 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -110,7 +110,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
-				log.Printf("[INFO] Per-Zone Authenticated Origin Pull certificate %s no longer exists", d.Id())
+				tflog.Info(ctx, fmt.Sprintf("Per-Zone Authenticated Origin Pull certificate %s no longer exists", d.Id()))
 				d.SetId("")
 				return nil
 			}
@@ -125,7 +125,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
 			if strings.Contains(err.Error(), "HTTP status 404") {
-				log.Printf("[INFO] Per-Hostname Authenticated Origin Pull certificate %s no longer exists", d.Id())
+				tflog.Info(ctx, fmt.Sprintf("Per-Hostname Authenticated Origin Pull certificate %s no longer exists", d.Id()))
 				d.SetId("")
 				return nil
 			}

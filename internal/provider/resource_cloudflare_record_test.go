@@ -10,6 +10,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
@@ -23,9 +24,10 @@ func init() {
 }
 
 func testSweepCloudflareRecord(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	// Clean up the account level rulesets
@@ -36,7 +38,7 @@ func testSweepCloudflareRecord(r string) error {
 
 	records, err := client.DNSRecords(context.Background(), zoneID, cloudflare.DNSRecord{})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare DNS records: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
 	}
 
 	if len(records) == 0 {
@@ -45,7 +47,7 @@ func testSweepCloudflareRecord(r string) error {
 	}
 
 	for _, record := range records {
-		log.Printf("[INFO] Deleting Cloudflare DNS record ID: %s", record.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare DNS record ID: %s", record.ID))
 		//nolint:errcheck
 		client.DeleteDNSRecord(context.Background(), zoneID, record.ID)
 	}

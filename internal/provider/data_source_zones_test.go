@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
@@ -23,9 +24,10 @@ func init() {
 }
 
 func testSweepCloudflareZones(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -35,7 +37,7 @@ func testSweepCloudflareZones(r string) error {
 	zoneFilter := cloudflare.WithZoneFilters("", accountID, "")
 	zones, zoneErr := client.ListZonesContext(context.TODO(), zoneFilter)
 	if zoneErr != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare zones: %s", zoneErr))
 	}
 
 	if len(zones.Result) == 0 {

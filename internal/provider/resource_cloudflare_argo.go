@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -30,7 +30,7 @@ func resourceCloudflareArgoRead(ctx context.Context, d *schema.ResourceData, met
 	tieredCaching := d.Get("tiered_caching").(string)
 	smartRouting := d.Get("smart_routing").(string)
 
-	log.Printf("[DEBUG] zone ID: %s", zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("zone ID: %s", zoneID))
 
 	checksum := stringChecksum(fmt.Sprintf("%s/argo", zoneID))
 	d.SetId(checksum)
@@ -68,7 +68,7 @@ func resourceCloudflareArgoUpdate(ctx context.Context, d *schema.ResourceData, m
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, "failed to update smart routing setting"))
 		}
-		log.Printf("[DEBUG] Argo Smart Routing set to: %s", argoSmartRouting.Value)
+		tflog.Debug(ctx, fmt.Sprintf("Argo Smart Routing set to: %s", argoSmartRouting.Value))
 	}
 
 	if tieredCaching != "" {
@@ -76,7 +76,7 @@ func resourceCloudflareArgoUpdate(ctx context.Context, d *schema.ResourceData, m
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, "failed to update tiered caching setting"))
 		}
-		log.Printf("[DEBUG] Argo Tiered Caching set to: %s", argoTieredCaching.Value)
+		tflog.Debug(ctx, fmt.Sprintf("Argo Tiered Caching set to: %s", argoTieredCaching.Value))
 	}
 
 	return resourceCloudflareArgoRead(ctx, d, meta)
@@ -86,7 +86,7 @@ func resourceCloudflareArgoDelete(ctx context.Context, d *schema.ResourceData, m
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[DEBUG] Resetting Argo values to 'off'")
+	tflog.Debug(ctx, fmt.Sprintf("Resetting Argo values to 'off'"))
 
 	_, smartRoutingErr := client.UpdateArgoSmartRouting(ctx, zoneID, "off")
 	if smartRoutingErr != nil {

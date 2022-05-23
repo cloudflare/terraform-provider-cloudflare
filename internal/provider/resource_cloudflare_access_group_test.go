@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -20,16 +21,18 @@ func init() {
 }
 
 func testSweepCloudflareAccessGroups(r string) error {
+	ctx := context.Background()
+
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	// Zone level Access Groups
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneAccessGroups, _, err := client.ZoneLevelAccessGroups(context.Background(), zoneID, cloudflare.PaginationOptions{})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch zone level Access Groups: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Groups: %s", err))
 	}
 
 	if len(zoneAccessGroups) == 0 {
@@ -39,7 +42,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 
 	for _, accessGroup := range zoneAccessGroups {
 		if err := client.DeleteZoneLevelAccessGroup(context.Background(), zoneID, accessGroup.ID); err != nil {
-			log.Printf("[ERROR] Failed to delete zone level Access Group %s", accessGroup.ID)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Group %s", accessGroup.ID))
 		}
 	}
 
@@ -47,7 +50,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	accountAccessGroups, _, err := client.AccessGroups(context.Background(), accountID, cloudflare.PaginationOptions{})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch account level Access Groups: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Groups: %s", err))
 	}
 
 	if len(accountAccessGroups) == 0 {
@@ -57,7 +60,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 
 	for _, accessGroup := range accountAccessGroups {
 		if err := client.DeleteAccessGroup(context.Background(), accountID, accessGroup.ID); err != nil {
-			log.Printf("[ERROR] Failed to delete account level Access Group %s", accessGroup.ID)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Group %s", accessGroup.ID))
 		}
 	}
 

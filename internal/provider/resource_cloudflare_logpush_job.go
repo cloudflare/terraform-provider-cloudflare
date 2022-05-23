@@ -3,12 +3,12 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -82,7 +82,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
-			log.Printf("[INFO] Could not find LogpushJob for %s with id: %q", identifier, jobID)
+			tflog.Info(ctx, fmt.Sprintf("Could not find LogpushJob for %s with id: %q", identifier, jobID))
 			d.SetId("")
 			return nil
 		}
@@ -112,7 +112,7 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Logpush job for %s from struct: %+v", identifier, job)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Logpush job for %s from struct: %+v", identifier, job))
 
 	var j *cloudflare.LogpushJob
 	if identifier.Type == AccountType {
@@ -129,7 +129,7 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 
 	d.SetId(strconv.Itoa(j.ID))
 
-	log.Printf("[INFO] Created Cloudflare Logpush Job for %s: %s", identifier, d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Created Cloudflare Logpush Job for %s: %s", identifier, d.Id()))
 
 	return resourceCloudflareLogpushJobRead(ctx, d, meta)
 }
@@ -142,7 +142,7 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
-	log.Printf("[INFO] Updating Cloudflare Logpush job for %s from struct: %+v", identifier, job)
+	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Logpush job for %s from struct: %+v", identifier, job))
 
 	if identifier.Type == AccountType {
 		err = client.UpdateAccountLogpushJob(ctx, identifier.Value, job.ID, job)
@@ -165,7 +165,7 @@ func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
-	log.Printf("[DEBUG] Deleting Cloudflare Logpush job for %s with id: %+v", identifier, job.ID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Logpush job for %s with id: %+v", identifier, job.ID))
 
 	if identifier.Type == AccountType {
 		err = client.DeleteAccountLogpushJob(ctx, identifier.Value, job.ID)
@@ -174,7 +174,7 @@ func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceD
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "job not found") {
-			log.Printf("[INFO] Could not find logpush job for %s with id: %q", identifier, job.ID)
+			tflog.Info(ctx, fmt.Sprintf("Could not find logpush job for %s with id: %q", identifier, job.ID))
 			d.SetId("")
 			return nil
 		}
@@ -200,7 +200,7 @@ func resourceCloudflareLogpushJobImport(ctx context.Context, d *schema.ResourceD
 	}
 	logpushJobID := idAttr[2]
 
-	log.Printf("[DEBUG] Importing Cloudflare Logpush Job for %s with id %s", identifier, logpushJobID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Logpush Job for %s with id %s", identifier, logpushJobID))
 
 	if identifier.Type == AccountType {
 		if err := d.Set("account_id", identifier.Value); err != nil {

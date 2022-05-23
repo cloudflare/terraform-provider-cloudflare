@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -73,7 +73,7 @@ func resourceCloudflareMagicFirewallRulesetRead(ctx context.Context, d *schema.R
 	ruleset, err := client.GetMagicFirewallRuleset(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "could not find ruleset") {
-			log.Printf("[INFO] Magic Firewall Ruleset %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Magic Firewall Ruleset %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}

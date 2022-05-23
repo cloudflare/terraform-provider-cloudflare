@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -42,7 +42,7 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access Identity Provider %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Identity Provider %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -72,7 +72,7 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 		Config: IDPConfig,
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Access Identity Provider from struct: %+v", identityProvider)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Identity Provider from struct: %+v", identityProvider))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -102,14 +102,14 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 		return diag.FromErr(fmt.Errorf("failed to convert schema into struct: %w", conversionErr))
 	}
 
-	log.Printf("[DEBUG] updatedConfig: %+v", IDPConfig)
+	tflog.Debug(ctx, fmt.Sprintf("updatedConfig: %+v", IDPConfig))
 	updatedAccessIdentityProvider := cloudflare.AccessIdentityProvider{
 		Name:   d.Get("name").(string),
 		Type:   d.Get("type").(string),
 		Config: IDPConfig,
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Access Identity Provider from struct: %+v", updatedAccessIdentityProvider)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Identity Provider from struct: %+v", updatedAccessIdentityProvider))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -136,7 +136,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Access Identity Provider using ID: %s", d.Id())
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Identity Provider using ID: %s", d.Id()))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -166,7 +166,7 @@ func resourceCloudflareAccessIdentityProviderImport(ctx context.Context, d *sche
 
 	accountID, accessIdentityProviderID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Identity Provider: accountID=%s accessIdentityProviderID=%s", accountID, accessIdentityProviderID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Identity Provider: accountID=%s accessIdentityProviderID=%s", accountID, accessIdentityProviderID))
 
 	d.Set("account_id", accountID)
 	d.SetId(accessIdentityProviderID)
