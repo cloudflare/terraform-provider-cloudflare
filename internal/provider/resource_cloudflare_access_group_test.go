@@ -402,7 +402,7 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessId
 			return fmt.Errorf("No AccessGroup ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		var foundAccessGroup cloudflare.AccessGroup
 		var err error
 
@@ -430,7 +430,7 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessId
 }
 
 func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_access_group" {
@@ -467,7 +467,7 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
 		err := client.DeleteAccessGroup(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err != nil {

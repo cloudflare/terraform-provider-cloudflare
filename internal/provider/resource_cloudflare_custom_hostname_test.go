@@ -417,7 +417,7 @@ func testAccCheckCloudflareCustomHostnameExists(n string, customHostname *cloudf
 			return fmt.Errorf("No CustomHostname ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundCustomHostname, err := client.CustomHostname(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err

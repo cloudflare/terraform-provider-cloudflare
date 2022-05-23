@@ -780,7 +780,7 @@ func testAccCheckCloudflarePageRuleIDUnchanged(before, after *cloudflare.PageRul
 }
 
 func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_page_rule" {
@@ -886,7 +886,7 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 			return fmt.Errorf("No PageRule ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -909,7 +909,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
 		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {

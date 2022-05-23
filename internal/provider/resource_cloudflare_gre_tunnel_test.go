@@ -56,7 +56,7 @@ func testAccCheckCloudflareGRETunnelExists(n string, tunnel *cloudflare.MagicTra
 			return fmt.Errorf("No GRE tunnel is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundGRETunnel, err := client.GetMagicTransitGRETunnel(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
 		if err != nil {
 			return err
