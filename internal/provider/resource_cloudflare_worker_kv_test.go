@@ -37,7 +37,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 }
 
 func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_workers_kv" {
@@ -68,7 +68,7 @@ resource "cloudflare_workers_kv" "%[1]s" {
 
 func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVPair) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != "cloudflare_workers_kv" {

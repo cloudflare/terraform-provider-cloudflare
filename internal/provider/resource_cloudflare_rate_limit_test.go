@@ -248,7 +248,7 @@ func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 }
 
 func testAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_rate_limit" {
@@ -275,7 +275,7 @@ func testAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateL
 			return fmt.Errorf("No Rate Limit ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundRateLimit, err := client.RateLimit(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -320,7 +320,7 @@ func testAccCheckCloudflareRateLimitIDIsValid(n, expectedZoneID string) resource
 
 func testAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit, initialRateLimitId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialRateLimitId = rateLimit.ID
 		err := client.DeleteRateLimit(context.Background(), s.RootModule().Resources[name].Primary.Attributes["zone_id"], rateLimit.ID)
 		if err != nil {

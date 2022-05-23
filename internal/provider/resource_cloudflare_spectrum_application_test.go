@@ -185,7 +185,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 }
 
 func testAccCheckCloudflareSpectrumApplicationDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_spectrum_application" {
@@ -259,7 +259,7 @@ func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *clou
 			return fmt.Errorf("No Load Balancer ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundSpectrumApplication, err := client.SpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -296,7 +296,7 @@ func testAccCheckCloudflareSpectrumApplicationIDIsValid(n string) resource.TestC
 func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudflare.SpectrumApplication, initialID *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = spectrumApp.ID
 		err := client.DeleteSpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {

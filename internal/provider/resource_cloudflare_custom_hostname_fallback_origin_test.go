@@ -100,7 +100,7 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_custom_hostname_fallback_origin" {

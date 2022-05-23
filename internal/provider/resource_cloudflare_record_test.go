@@ -518,7 +518,7 @@ func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) 
 }
 
 func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_record" {
@@ -536,7 +536,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 
 func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		err := client.DeleteDNSRecord(context.Background(), record.ZoneID, record.ID)
 		if err != nil {
 			return err
@@ -601,7 +601,7 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 			return fmt.Errorf("No Record ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundRecord, err := client.DNSRecord(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
