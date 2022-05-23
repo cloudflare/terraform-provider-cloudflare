@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -22,22 +23,23 @@ func init() {
 }
 
 func testSweepCloudflareSpectrumApplications(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zones, zoneErr := client.ListZones(context.Background(), zone)
 
 	if zoneErr != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare zones: %s", zoneErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare zones: %s", zoneErr))
 	}
 
 	for _, zone := range zones {
 		spectrumApps, spectrumErr := client.SpectrumApplications(context.Background(), zone.ID)
 		if spectrumErr != nil {
-			log.Printf("[ERROR] Failed to fetch Cloudflare spectrum applications: %s", zoneErr)
+			tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare spectrum applications: %s", zoneErr))
 		}
 
 		if len(spectrumApps) == 0 {
@@ -46,11 +48,11 @@ func testSweepCloudflareSpectrumApplications(r string) error {
 		}
 
 		for _, application := range spectrumApps {
-			log.Printf("[INFO] Deleting Cloudflare spectrum application ID: %s", application.ID)
+			tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare spectrum application ID: %s", application.ID))
 			err := client.DeleteSpectrumApplication(context.Background(), zone.ID, application.ID)
 
 			if err != nil {
-				log.Printf("[ERROR] Failed to delete Cloudflare spectrum application (%s) in zone ID: %s", application.ID, zone.ID)
+				tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare spectrum application (%s) in zone ID: %s", application.ID, zone.ID))
 			}
 		}
 	}

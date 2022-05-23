@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -18,15 +19,16 @@ func init() {
 }
 
 func testSweepCloudflareCertificatePack(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	certificates, certErr := client.ListCertificatePacks(context.Background(), zoneID)
 	if certErr != nil {
-		log.Printf("[ERROR] Failed to fetch certificate packs: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch certificate packs: %s", clientErr))
 	}
 
 	if len(certificates) == 0 {
@@ -36,7 +38,7 @@ func testSweepCloudflareCertificatePack(r string) error {
 
 	for _, certificate := range certificates {
 		if err := client.DeleteCertificatePack(context.Background(), zoneID, certificate.ID); err != nil {
-			log.Printf("[ERROR] Failed to delete certificate pack %s", certificate.ID)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete certificate pack %s", certificate.ID))
 		}
 	}
 

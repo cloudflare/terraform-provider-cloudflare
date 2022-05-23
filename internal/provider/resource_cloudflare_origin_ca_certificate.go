@@ -5,12 +5,12 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"log"
 	"math"
 	"strings"
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -50,7 +50,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 		certInput.RequestValidity = requestValidity.(int)
 	}
 
-	log.Printf("[INFO] Creating Cloudflare OriginCACertificate: %#v", certInput)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare OriginCACertificate: %#v", certInput))
 	cert, err := client.CreateOriginCertificate(ctx, certInput)
 
 	if err != nil {
@@ -67,11 +67,11 @@ func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.Re
 	certID := d.Id()
 	cert, err := client.OriginCertificate(ctx, certID)
 
-	log.Printf("[DEBUG] OriginCACertificate: %#v", cert)
+	tflog.Debug(ctx, fmt.Sprintf("OriginCACertificate: %#v", cert))
 
 	if err != nil {
 		if strings.Contains(err.Error(), "Failed to read certificate from Database") {
-			log.Printf("[INFO] OriginCACertificate %s does not exist", certID)
+			tflog.Info(ctx, fmt.Sprintf("OriginCACertificate %s does not exist", certID))
 			d.SetId("")
 			return nil
 		}
@@ -79,7 +79,7 @@ func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.Re
 	}
 
 	if cert.RevokedAt != (time.Time{}) {
-		log.Printf("[INFO] OriginCACertificate %s has been revoked", certID)
+		tflog.Info(ctx, fmt.Sprintf("OriginCACertificate %s has been revoked", certID))
 		d.SetId("")
 		return nil
 	}
@@ -112,7 +112,7 @@ func resourceCloudflareOriginCACertificateDelete(ctx context.Context, d *schema.
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
 
-	log.Printf("[INFO] Revoking Cloudflare OriginCACertificate: id %s", certID)
+	tflog.Info(ctx, fmt.Sprintf("Revoking Cloudflare OriginCACertificate: id %s", certID))
 
 	_, err := client.RevokeOriginCertificate(ctx, certID)
 

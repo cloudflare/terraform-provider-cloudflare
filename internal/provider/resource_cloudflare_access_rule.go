@@ -3,11 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -96,24 +96,24 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 		accessRuleResponse, err = client.ZoneAccessRule(ctx, zoneID, d.Id())
 	}
 
-	log.Printf("[DEBUG] accessRuleResponse: %#v", accessRuleResponse)
-	log.Printf("[DEBUG] accessRuleResponse error: %#v", err)
+	tflog.Debug(ctx, fmt.Sprintf("accessRuleResponse: %#v", accessRuleResponse))
+	tflog.Debug(ctx, fmt.Sprintf("accessRuleResponse error: %#v", err))
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access Rule %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
 		return diag.FromErr(fmt.Errorf("error finding access rule %q: %w", d.Id(), err))
 	}
 
-	log.Printf("[DEBUG] Cloudflare Access Rule read configuration: %#v", accessRuleResponse)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Access Rule read configuration: %#v", accessRuleResponse))
 
 	d.Set("zone_id", zoneID)
 	d.Set("mode", accessRuleResponse.Result.Mode)
 	d.Set("notes", accessRuleResponse.Result.Notes)
-	log.Printf("[DEBUG] read configuration: %#v", d.Get("configuration"))
+	tflog.Debug(ctx, fmt.Sprintf("read configuration: %#v", d.Get("configuration")))
 
 	configuration := []map[string]interface{}{}
 	configuration = append(configuration, map[string]interface{}{
@@ -168,7 +168,7 @@ func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Access Rule: id %s for zone_id %s", d.Id(), zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Access Rule: id %s for zone_id %s", d.Id(), zoneID))
 
 	var err error
 

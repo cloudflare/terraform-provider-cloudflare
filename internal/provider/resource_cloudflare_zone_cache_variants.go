@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -24,13 +24,13 @@ func resourceCloudflareZoneCacheVariants() *schema.Resource {
 func resourceCloudflareZoneCacheVariantsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[INFO] Reading Zone Cache Variants in zone %q", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Reading Zone Cache Variants in zone %q", d.Id()))
 
 	zoneCacheVariants, err := client.ZoneCacheVariants(ctx, d.Id())
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Zone Cache Variants for zone %q not found", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Zone Cache Variants for zone %q not found", d.Id()))
 			d.SetId("")
 			return nil
 		} else {
@@ -94,7 +94,7 @@ func resourceCloudflareZoneCacheVariantsUpdate(ctx context.Context, d *schema.Re
 	d.SetId(zoneID)
 
 	variantsValue := cacheVariantsValuesFromResource(d)
-	log.Printf("[INFO] Setting Zone Cache Variants to struct: %+v for zone ID: %q", variantsValue, d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Setting Zone Cache Variants to struct: %+v for zone ID: %q", variantsValue, d.Id()))
 
 	_, err := client.UpdateZoneCacheVariants(ctx, d.Id(), variantsValue)
 
@@ -108,7 +108,7 @@ func resourceCloudflareZoneCacheVariantsUpdate(ctx context.Context, d *schema.Re
 func resourceCloudflareZoneCacheVariantsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[INFO] Deleting Zone Cache Variants for zone ID: %q", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Deleting Zone Cache Variants for zone ID: %q", d.Id()))
 
 	err := client.DeleteZoneCacheVariants(ctx, d.Id())
 

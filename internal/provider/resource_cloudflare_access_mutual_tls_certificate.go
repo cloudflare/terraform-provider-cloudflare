@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -34,7 +34,7 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *
 	}
 	newAccessMutualTLSCertificate.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames"))
 
-	log.Printf("[DEBUG] Creating Cloudflare Access Mutual TLS certificate from struct: %+v", newAccessMutualTLSCertificate)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Mutual TLS certificate from struct: %+v", newAccessMutualTLSCertificate))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -73,7 +73,7 @@ func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *sc
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access Mutal TLS Certificate %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Mutal TLS Certificate %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -96,7 +96,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *
 	}
 	updatedAccessMutualTLSCert.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames"))
 
-	log.Printf("[DEBUG] Updating Cloudflare Access Mutal TLS Certificate from struct: %+v", updatedAccessMutualTLSCert)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Mutal TLS Certificate from struct: %+v", updatedAccessMutualTLSCert))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -119,7 +119,7 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
 
-	log.Printf("[DEBUG] Deleting Cloudflare Access Mutual TLS Certificate using ID: %s", certID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Mutual TLS Certificate using ID: %s", certID))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -185,7 +185,7 @@ func resourceCloudflareAccessMutualTLSCertificateImport(ctx context.Context, d *
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessMutualTLSCertificateID\" or \"zone/zoneID/accessMutualTLSCertificateID\"", d.Id())
 	}
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Mutual TLS Certificate: id %s for %s %s", accessMutualTLSCertificateID, identifierType, identifierID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Mutual TLS Certificate: id %s for %s %s", accessMutualTLSCertificateID, identifierType, identifierID))
 
 	//lintignore:R001
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)

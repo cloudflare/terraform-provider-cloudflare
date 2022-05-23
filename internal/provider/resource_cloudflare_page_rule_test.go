@@ -3,13 +3,13 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"reflect"
 	"regexp"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -24,9 +24,10 @@ func init() {
 }
 
 func testSweepCloudflarePageRules(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -357,6 +358,7 @@ func TestTranformForwardingURL(t *testing.T) {
 // existing Page Rule that didn't have this value set previously.
 func TestCacheKeyFieldsNilValue(t *testing.T) {
 	pageRuleAction, err := transformToCloudflarePageRuleAction(
+		context.Background(),
 		"cache_key_fields",
 		[]interface{}{
 			map[string]interface{}{

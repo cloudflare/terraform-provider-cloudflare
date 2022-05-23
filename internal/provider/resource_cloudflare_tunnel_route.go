@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -42,7 +42,7 @@ func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if len(tunnelRoutes) < 1 {
-		log.Printf("[INFO] Tunnel Route for network %s in account %s not found", network, accountID)
+		tflog.Info(ctx, fmt.Sprintf("Tunnel Route for network %s in account %s not found", network, accountID))
 		d.SetId("")
 		return nil
 	}

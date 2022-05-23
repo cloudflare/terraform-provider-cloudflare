@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -35,7 +35,7 @@ func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.Resou
 		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Access Bookmark from struct: %+v", newAccessBookmark)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Bookmark from struct: %+v", newAccessBookmark))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -74,7 +74,7 @@ func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.Resourc
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access Bookmark %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Bookmark %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -100,7 +100,7 @@ func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.Resou
 		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Access Bookmark from struct: %+v", updatedAccessBookmark)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Bookmark from struct: %+v", updatedAccessBookmark))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -128,7 +128,7 @@ func resourceCloudflareAccessBookmarkDelete(ctx context.Context, d *schema.Resou
 	client := meta.(*cloudflare.API)
 	bookmarkID := d.Id()
 
-	log.Printf("[DEBUG] Deleting Cloudflare Access Bookmark using ID: %s", bookmarkID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Bookmark using ID: %s", bookmarkID))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -161,7 +161,7 @@ func resourceCloudflareAccessBookmarkImport(ctx context.Context, d *schema.Resou
 
 	accountID, accessBookmarkID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Bookmark: id %s for account %s", accessBookmarkID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Bookmark: id %s for account %s", accessBookmarkID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(accessBookmarkID)

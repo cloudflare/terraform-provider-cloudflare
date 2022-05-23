@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/pkg/errors"
 )
@@ -19,9 +20,10 @@ func init() {
 }
 
 func testSweepCloudflareRuleset(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	// Clean up the account level rulesets
@@ -32,7 +34,7 @@ func testSweepCloudflareRuleset(r string) error {
 
 	accountRulesets, accountRulesetsErr := client.ListAccountRulesets(context.Background(), accountID)
 	if accountRulesetsErr != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare Account Rulesets: %s", accountRulesetsErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Account Rulesets: %s", accountRulesetsErr))
 	}
 
 	if len(accountRulesets) == 0 {
@@ -41,7 +43,7 @@ func testSweepCloudflareRuleset(r string) error {
 	}
 
 	for _, ruleset := range accountRulesets {
-		log.Printf("[INFO] Deleting Cloudflare Account Ruleset ID: %s", ruleset.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Account Ruleset ID: %s", ruleset.ID))
 		client.DeleteAccountRuleset(context.Background(), accountID, ruleset.ID)
 	}
 
@@ -53,7 +55,7 @@ func testSweepCloudflareRuleset(r string) error {
 
 	zoneRulesets, zoneRulesetsErr := client.ListZoneRulesets(context.Background(), zoneID)
 	if zoneRulesetsErr != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare Zone Rulesets: %s", zoneRulesetsErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Zone Rulesets: %s", zoneRulesetsErr))
 	}
 
 	if len(zoneRulesets) == 0 {
@@ -62,7 +64,7 @@ func testSweepCloudflareRuleset(r string) error {
 	}
 
 	for _, ruleset := range zoneRulesets {
-		log.Printf("[INFO] Deleting Cloudflare Zone Ruleset ID: %s", ruleset.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Zone Ruleset ID: %s", ruleset.ID))
 		client.DeleteZoneRuleset(context.Background(), zoneID, ruleset.ID)
 	}
 

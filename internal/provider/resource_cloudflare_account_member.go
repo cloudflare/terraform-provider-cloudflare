@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -31,7 +31,7 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 	if err != nil {
 		if strings.Contains(err.Error(), "Member not found") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[WARN] Removing account member from state because it's not present in API")
+			tflog.Warn(ctx, fmt.Sprintf("Removing account member from state because it's not present in API"))
 			d.SetId("")
 			return nil
 		}
@@ -53,7 +53,7 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[INFO] Deleting Cloudflare account member ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare account member ID: %s", d.Id()))
 
 	err := client.DeleteAccountMember(ctx, client.AccountID, d.Id())
 	if err != nil {
@@ -127,7 +127,7 @@ func resourceCloudflareAccountMemberImport(ctx context.Context, d *schema.Resour
 		return nil, fmt.Errorf("unable to find account member with ID %q: %w", accountMemberID, err)
 	}
 
-	log.Printf("[INFO] Found account member: %s", member.User.Email)
+	tflog.Info(ctx, fmt.Sprintf("Found account member: %s", member.User.Email))
 
 	var memberIDs []string
 	for _, role := range member.Roles {
