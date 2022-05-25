@@ -7,7 +7,9 @@ NOTES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_group: add support for external evaluation as a new access group rule ([#1623](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1623))
 * resource/cloudflare_logpush_job: add support for specifying `frequency` ([#1634](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1634))
+* resource/cloudflare_ruleset: add support for custom fields logging ([#1630](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1630))
 
 BUG FIXES:
 
