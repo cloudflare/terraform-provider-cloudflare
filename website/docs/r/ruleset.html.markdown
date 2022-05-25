@@ -218,6 +218,40 @@ resource "cloudflare_ruleset" "http_origin_example" {
     enabled = true
   }
 }
+
+# custom fields logging
+resource "cloudflare_ruleset" "custom_fields_logging_example" {
+  zone_id  = "cb029e245cfdd66dc8d2e570d5dd3322"
+  name        = "log custom fields"
+  description = "add custom fields to logging"
+  kind        = "zone"
+  phase       = "http_log_custom_fields"
+
+  rules {
+    action = "log_custom_field"
+    action_parameters {
+      request_fields = [
+        "content-type",
+        "x-forwarded-for",
+        "host"
+      ]
+      response_fields = [
+        "server",
+        "content-type",
+        "allow"
+      ]
+      cookie_fields = [
+        "__ga",
+        "accountNumber", 
+        "__cfruid"
+      ]
+    }
+
+    expression = "true"
+    description = "log custom fields rule"
+    enabled = true
+  }
+}
 ```
 
 ## Argument Reference
@@ -293,6 +327,9 @@ The following arguments are supported:
 * `version` - (Optional)
 * `host_header` - (Optional) Host Header that request origin receives.
 * `origin` - (Optional) List of properties to change request origin (refer to the [nested schema](#nestedblock--action-parameters-origin)).
+* `request_fields` - (Optional) List of request headers to include as part of custom fields logging, in lowercase.
+* `response_fields` - (Optional) List of response headers to include as part of custom fields logging, in lowercase.
+* `cookie_fields` - (Optional) List of cookie values to include as part of custom fields logging.
 
 <a id="nestedblock--action-parameters-matched-data"></a>
 **Nested schema for `matched_data`**

@@ -319,6 +319,27 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"request_fields": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+								},
+								"response_fields": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+								},
+								"cookie_fields": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+								},
 							},
 						},
 					},
