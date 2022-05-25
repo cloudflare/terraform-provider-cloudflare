@@ -339,7 +339,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Elem: &schema.Schema{
 										Type: schema.TypeString,
 									},
-                                },
+								},
 							},
 						},
 					},

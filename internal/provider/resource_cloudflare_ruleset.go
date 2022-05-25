@@ -367,21 +367,21 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			}
 
 			actionParameters = append(actionParameters, map[string]interface{}{
-				"id":           r.ActionParameters.ID,
-				"increment":    r.ActionParameters.Increment,
-				"headers":      headers,
-				"overrides":    overrides,
-				"products":     r.ActionParameters.Products,
-				"phases":       r.ActionParameters.Phases,
-				"ruleset":      r.ActionParameters.Ruleset,
-				"rulesets":     r.ActionParameters.Rulesets,
-				"rules":        actionParameterRules,
-				"uri":          uri,
-				"matched_data": matchedData,
-				"response":     response,
-				"version":      r.ActionParameters.Version,
-				"host_header":  r.ActionParameters.HostHeader,
-				"origin":       origin,
+				"id":              r.ActionParameters.ID,
+				"increment":       r.ActionParameters.Increment,
+				"headers":         headers,
+				"overrides":       overrides,
+				"products":        r.ActionParameters.Products,
+				"phases":          r.ActionParameters.Phases,
+				"ruleset":         r.ActionParameters.Ruleset,
+				"rulesets":        r.ActionParameters.Rulesets,
+				"rules":           actionParameterRules,
+				"uri":             uri,
+				"matched_data":    matchedData,
+				"response":        response,
+				"version":         r.ActionParameters.Version,
+				"host_header":     r.ActionParameters.HostHeader,
+				"origin":          origin,
 				"request_fields":  requestFields,
 				"response_fields": responseFields,
 				"cookie_fields":   cookieFields,
@@ -616,7 +616,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 					case "host_header":
 						rule.ActionParameters.HostHeader = pValue.(string)
-						
+
 					case "origin":
 						for i := range pValue.([]interface{}) {
 							rule.ActionParameters.Origin = &cloudflare.RulesetRuleActionParametersOrigin{
