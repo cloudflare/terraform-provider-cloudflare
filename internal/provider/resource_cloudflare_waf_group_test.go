@@ -83,7 +83,7 @@ func testAccGetWAFGroup(zoneID string) (string, error) {
 }
 
 func testAccCheckCloudflareWAFGroupDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_waf_group" {

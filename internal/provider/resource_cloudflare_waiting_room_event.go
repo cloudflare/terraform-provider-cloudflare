@@ -3,11 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -97,7 +97,7 @@ func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.Resou
 	waitingRoomEvent, err := client.WaitingRoomEvent(ctx, zoneID, waitingRoomID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[WARN] Removing waiting room event from state because it's not found in API")
+			tflog.Warn(ctx, fmt.Sprintf("Removing waiting room event from state because it's not found in API"))
 			d.SetId("")
 			return nil
 		}

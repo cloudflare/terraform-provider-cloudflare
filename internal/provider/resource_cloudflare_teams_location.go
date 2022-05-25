@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -31,7 +31,7 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 	location, err := client.TeamsLocation(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
-			log.Printf("[INFO] Teams Location %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Teams Location %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -80,7 +80,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 		ClientDefault: d.Get("client_default").(bool),
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Teams Location from struct: %+v", newTeamLocation)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams Location from struct: %+v", newTeamLocation))
 
 	location, err := client.CreateTeamsLocation(ctx, accountID, newTeamLocation)
 	if err != nil {
@@ -103,7 +103,7 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 		ClientDefault: d.Get("client_default").(bool),
 		Networks:      networks,
 	}
-	log.Printf("[DEBUG] Updating Cloudflare Teams Location from struct: %+v", updatedTeamsLocation)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Location from struct: %+v", updatedTeamsLocation))
 
 	teamsLocation, err := client.UpdateTeamsLocation(ctx, accountID, updatedTeamsLocation)
 	if err != nil {
@@ -120,7 +120,7 @@ func resourceCloudflareTeamsLocationDelete(ctx context.Context, d *schema.Resour
 	id := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Teams Location using ID: %s", id)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams Location using ID: %s", id))
 
 	err := client.DeleteTeamsLocation(ctx, accountID, id)
 	if err != nil {
@@ -139,7 +139,7 @@ func resourceCloudflareTeamsLocationImport(ctx context.Context, d *schema.Resour
 
 	accountID, teamsLocationID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Teams Location: id %s for account %s", teamsLocationID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams Location: id %s for account %s", teamsLocationID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(teamsLocationID)

@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -64,7 +64,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		newAccessApplication.CorsHeaders = CORSConfig
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Access Application from struct: %+v", newAccessApplication)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -104,7 +104,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
-			log.Printf("[INFO] Access Application %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Application %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -172,7 +172,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		updatedAccessApplication.CorsHeaders = CORSConfig
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -200,7 +200,7 @@ func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.Re
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 
-	log.Printf("[DEBUG] Deleting Cloudflare Access Application using ID: %s", appID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Application using ID: %s", appID))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -233,7 +233,7 @@ func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.Re
 
 	accountID, accessApplicationID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Application: id %s for account %s", accessApplicationID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Application: id %s for account %s", accessApplicationID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(accessApplicationID)

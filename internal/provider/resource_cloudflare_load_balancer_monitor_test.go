@@ -232,7 +232,7 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_load_balancer_monitor" {
@@ -259,7 +259,7 @@ func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.
 			return fmt.Errorf("No Load Balancer Monitor ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundLoadBalancerMonitor, err := client.LoadBalancerMonitorDetails(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err
@@ -298,7 +298,7 @@ func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonito
 
 func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerMonitor.ID
 		err := client.DeleteLoadBalancerMonitor(context.Background(), loadBalancerMonitor.ID)
 		if err != nil {

@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -48,7 +48,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 		newFilter.Ref = ref.(string)
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Filter from struct: %+v", newFilter)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Filter from struct: %+v", newFilter))
 
 	r, err := client.CreateFilters(ctx, zoneID, []cloudflare.Filter{newFilter})
 
@@ -62,7 +62,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	d.SetId(r[0].ID)
 
-	log.Printf("[INFO] Cloudflare Filter ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Filter ID: %s", d.Id()))
 
 	return resourceCloudflareFilterRead(ctx, d, meta)
 }
@@ -71,22 +71,22 @@ func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, m
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[DEBUG] Getting a Filter record for zone %q, id %s", zoneID, d.Id())
+	tflog.Debug(ctx, fmt.Sprintf("Getting a Filter record for zone %q, id %s", zoneID, d.Id()))
 	filter, err := client.Filter(ctx, zoneID, d.Id())
 
-	log.Printf("[DEBUG] filter: %#v", filter)
-	log.Printf("[DEBUG] filter error: %#v", err)
+	tflog.Debug(ctx, fmt.Sprintf("filter: %#v", filter))
+	tflog.Debug(ctx, fmt.Sprintf("filter error: %#v", err))
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Filter %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Filter %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
 		return diag.FromErr(fmt.Errorf("error finding Filter %q: %w", d.Id(), err))
 	}
 
-	log.Printf("[DEBUG] Cloudflare Filter read configuration: %#v", filter)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Filter read configuration: %#v", filter))
 
 	d.Set("paused", filter.Paused)
 	d.Set("description", filter.Description)
@@ -119,7 +119,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 		newFilter.Ref = ref.(string)
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Filter from struct: %+v", newFilter)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Filter from struct: %+v", newFilter))
 
 	r, err := client.UpdateFilter(ctx, zoneID, newFilter)
 
@@ -138,7 +138,7 @@ func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID))
 
 	err := client.DeleteFilter(ctx, zoneID, d.Id())
 
@@ -159,7 +159,7 @@ func resourceCloudflareFilterImport(ctx context.Context, d *schema.ResourceData,
 
 	zoneID, filterID := idAttr[0], idAttr[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Filter: id %s for zone %s", filterID, zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Filter: id %s for zone %s", filterID, zoneID))
 
 	d.Set("zone_id", zoneID)
 	d.SetId(filterID)

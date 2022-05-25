@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -31,7 +31,7 @@ func resourceCloudflareWAFOverrideRead(ctx context.Context, d *schema.ResourceDa
 	override, err := client.WAFOverride(ctx, zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "wafuriconfig.api.not_found") {
-			log.Printf("[INFO] WAF override %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("WAF override %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -112,7 +112,7 @@ func resourceCloudflareWAFOverrideImport(ctx context.Context, d *schema.Resource
 
 	zoneID, WAFOverrideID := idAttr[0], idAttr[1]
 
-	log.Printf("[DEBUG] Importing WAF override: id %s for zone %s", WAFOverrideID, zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing WAF override: id %s for zone %s", WAFOverrideID, zoneID))
 
 	d.Set("zone_id", zoneID)
 	d.Set("override_id", WAFOverrideID)

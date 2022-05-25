@@ -3,12 +3,12 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -33,7 +33,7 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 	rule, err := client.TeamsRule(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "invalid rule id") {
-			log.Printf("[INFO] Teams Rule config %s does not exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Teams Rule config %s does not exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -103,7 +103,7 @@ func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceDa
 		newTeamsRule.RuleSettings = *settings
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Teams Rule from struct: %+v", newTeamsRule)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams Rule from struct: %+v", newTeamsRule))
 
 	rule, err := client.TeamsCreateRule(ctx, accountID, newTeamsRule)
 	if err != nil {
@@ -141,7 +141,7 @@ func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceDa
 	if settings != nil {
 		teamsRule.RuleSettings = *settings
 	}
-	log.Printf("[DEBUG] Updating Cloudflare Teams rule from struct: %+v", teamsRule)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams rule from struct: %+v", teamsRule))
 
 	updatedTeamsRule, err := client.TeamsUpdateRule(ctx, accountID, teamsRule.ID, teamsRule)
 	if err != nil {
@@ -158,7 +158,7 @@ func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceDa
 	id := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Teams Rule using ID: %s", id)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams Rule using ID: %s", id))
 
 	err := client.TeamsDeleteRule(ctx, accountID, id)
 	if err != nil {
@@ -177,7 +177,7 @@ func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceDa
 
 	accountID, teamsRuleID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Teams Rule: id %s for account %s", teamsRuleID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams Rule: id %s for account %s", teamsRuleID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(teamsRuleID)

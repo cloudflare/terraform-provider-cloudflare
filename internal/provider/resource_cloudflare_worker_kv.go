@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -59,7 +59,7 @@ func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceDa
 
 	d.SetId(fmt.Sprintf("%s/%s", namespaceID, key))
 
-	log.Printf("[INFO] Cloudflare Workers KV Namespace ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Workers KV Namespace ID: %s", d.Id()))
 
 	return resourceCloudflareWorkersKVRead(ctx, d, meta)
 }
@@ -71,7 +71,7 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	log.Printf("[INFO] Deleting Cloudflare Workers KV with id: %+v", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers KV with id: %+v", d.Id()))
 
 	_, err = client.DeleteWorkersKV(ctx, namespaceID, key)
 	if err != nil {

@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -41,7 +41,7 @@ func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceDa
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access Group %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Group %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -50,15 +50,15 @@ func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceDa
 
 	d.Set("name", accessGroup.Name)
 
-	if err := d.Set("require", TransformAccessGroupForSchema(accessGroup.Require)); err != nil {
+	if err := d.Set("require", TransformAccessGroupForSchema(ctx, accessGroup.Require)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set require attribute: %w", err))
 	}
 
-	if err := d.Set("exclude", TransformAccessGroupForSchema(accessGroup.Exclude)); err != nil {
+	if err := d.Set("exclude", TransformAccessGroupForSchema(ctx, accessGroup.Exclude)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set exclude attribute: %w", err))
 	}
 
-	if err := d.Set("include", TransformAccessGroupForSchema(accessGroup.Include)); err != nil {
+	if err := d.Set("include", TransformAccessGroupForSchema(ctx, accessGroup.Include)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set include attribute: %w", err))
 	}
 
@@ -73,7 +73,7 @@ func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.Resource
 
 	newAccessGroup = appendConditionalAccessGroupFields(newAccessGroup, d)
 
-	log.Printf("[DEBUG] Creating Cloudflare Access Group from struct: %+v", newAccessGroup)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Group from struct: %+v", newAccessGroup))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -103,7 +103,7 @@ func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.Resource
 
 	updatedAccessGroup = appendConditionalAccessGroupFields(updatedAccessGroup, d)
 
-	log.Printf("[DEBUG] Updating Cloudflare Access Group from struct: %+v", updatedAccessGroup)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Group from struct: %+v", updatedAccessGroup))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -130,7 +130,7 @@ func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.Resource
 func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Access Group using ID: %s", d.Id())
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Group using ID: %s", d.Id()))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -160,7 +160,7 @@ func resourceCloudflareAccessGroupImport(ctx context.Context, d *schema.Resource
 
 	accountID, accessGroupID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Group: accountID %q, accessGroupID %q", accountID, accessGroupID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Group: accountID %q, accessGroupID %q", accountID, accessGroupID))
 
 	d.Set("account_id", accountID)
 	d.SetId(accessGroupID)
@@ -365,7 +365,7 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 
 // TransformAccessGroupForSchema takes the incoming `accessGroup` from the API
 // response and converts it to a usable schema for the conditions.
-func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]interface{} {
+func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{}) []map[string]interface{} {
 	data := []map[string]interface{}{}
 	emails := []string{}
 	emailDomains := []string{}
@@ -466,7 +466,7 @@ func TransformAccessGroupForSchema(accessGroup []interface{}) []map[string]inter
 					devicePostureRuleIDs = append(devicePostureRuleIDs, dprID.(string))
 				}
 			default:
-				log.Printf("[DEBUG] Access Group key %q not transformed", groupKey)
+				tflog.Debug(ctx, fmt.Sprintf("Access Group key %q not transformed", groupKey))
 			}
 		}
 	}

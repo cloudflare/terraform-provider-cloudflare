@@ -105,7 +105,7 @@ func TestCalculateRequestedValidityFromCertificate(t *testing.T) {
 }
 
 func testAccCheckCloudflareOriginCACertificateDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_origin_ca_certificate" {
@@ -132,7 +132,7 @@ func testAccCheckCloudflareOriginCACertificateExists(name string, cert *cloudfla
 			return fmt.Errorf("No Origin CA Certificate ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundOriginCACertificate, err := client.OriginCertificate(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err

@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -139,7 +139,7 @@ func resourceCloudflareCustomHostnameFallbackOriginImport(ctx context.Context, d
 
 	zoneID, origin := idAttr[0], idAttr[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Custom Hostname Fallback Origin: origin %s for zone %s", origin, zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Custom Hostname Fallback Origin: origin %s for zone %s", origin, zoneID))
 
 	d.Set("zone_id", zoneID)
 	d.Set("origin", origin)

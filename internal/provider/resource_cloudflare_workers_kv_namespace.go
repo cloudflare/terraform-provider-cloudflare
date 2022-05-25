@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -31,7 +31,7 @@ func resourceCloudflareWorkersKVNamespaceCreate(ctx context.Context, d *schema.R
 		Title: d.Get("title").(string),
 	}
 
-	log.Printf("[Info] Creating Cloudflare Workers KV Namespace from struct: %+v", req)
+	tflog.Debug(ctx, fmt.Sprintf("[Info] Creating Cloudflare Workers KV Namespace from struct: %+v", req))
 
 	r, err := client.CreateWorkersKVNamespace(ctx, req)
 	if err != nil {
@@ -44,7 +44,7 @@ func resourceCloudflareWorkersKVNamespaceCreate(ctx context.Context, d *schema.R
 
 	d.SetId(r.Result.ID)
 
-	log.Printf("[INFO] Cloudflare Workers KV Namespace ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Workers KV Namespace ID: %s", d.Id()))
 
 	return nil
 }
@@ -81,7 +81,7 @@ func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.R
 		Title: d.Get("title").(string),
 	}
 
-	log.Printf("[INFO] Updating Cloudflare Workers KV Namespace from struct %+v", namespace)
+	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Workers KV Namespace from struct %+v", namespace))
 
 	_, err := client.UpdateWorkersKVNamespace(ctx, d.Id(), namespace)
 	if err != nil {
@@ -94,7 +94,7 @@ func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.R
 func resourceCloudflareWorkersKVNamespaceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[INFO] Deleting Cloudflare Workers KV Namespace with id: %+v", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers KV Namespace with id: %+v", d.Id()))
 
 	_, err := client.DeleteWorkersKVNamespace(ctx, d.Id())
 	if err != nil {

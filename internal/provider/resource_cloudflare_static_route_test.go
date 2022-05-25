@@ -54,7 +54,7 @@ func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTr
 			return fmt.Errorf("No static route is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundStaticRoute, err := client.GetMagicTransitStaticRoute(context.Background(), accountID, rs.Primary.ID)
 		if err != nil {
 			return err

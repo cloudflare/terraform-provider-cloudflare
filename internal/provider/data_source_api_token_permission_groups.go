@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -24,7 +24,7 @@ func dataSourceCloudflareApiTokenPermissionGroups() *schema.Resource {
 }
 
 func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	log.Printf("[DEBUG] Reading API Token Permission Groups")
+	tflog.Debug(ctx, fmt.Sprintf("Reading API Token Permission Groups"))
 	client := meta.(*cloudflare.API)
 
 	permissions, err := client.ListAPITokensPermissionGroups(ctx)

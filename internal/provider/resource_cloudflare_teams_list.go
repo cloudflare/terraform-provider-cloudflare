@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -38,7 +38,7 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 		newTeamsList.Items = append(newTeamsList.Items, cloudflare.TeamsListItem{Value: v.(string)})
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Teams List from struct: %+v", newTeamsList)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams List from struct: %+v", newTeamsList))
 
 	accountID := d.Get("account_id").(string)
 
@@ -59,7 +59,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	list, err := client.TeamsList(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Teams List %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Teams List %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -89,7 +89,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		Description: d.Get("description").(string),
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Teams List from struct: %+v", updatedTeamsList)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams List from struct: %+v", updatedTeamsList))
 
 	accountID := d.Get("account_id").(string)
 
@@ -123,7 +123,7 @@ func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceDa
 	appID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Teams List using ID: %s", appID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams List using ID: %s", appID))
 
 	err := client.DeleteTeamsList(ctx, accountID, appID)
 	if err != nil {
@@ -144,7 +144,7 @@ func resourceCloudflareTeamsListImport(ctx context.Context, d *schema.ResourceDa
 
 	accountID, teamsListID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Teams List: id %s for account %s", teamsListID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams List: id %s for account %s", teamsListID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(teamsListID)

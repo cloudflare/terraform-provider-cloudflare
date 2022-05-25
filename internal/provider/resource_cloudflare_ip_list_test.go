@@ -153,7 +153,7 @@ func testAccCheckCloudflareIPListExists(n string, list *cloudflare.IPList) resou
 			return fmt.Errorf("No IP List ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundIPList, err := client.GetIPList(context.Background(), accountID, rs.Primary.ID)
 		if err != nil {
 			return err

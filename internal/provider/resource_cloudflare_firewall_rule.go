@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -58,7 +58,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 		newFirewallRule.Products = expandInterfaceToStringList(products.(*schema.Set).List())
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Firewall Rule from struct: %+v", newFirewallRule)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Firewall Rule from struct: %+v", newFirewallRule))
 
 	var r []cloudflare.FirewallRule
 
@@ -74,7 +74,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 
 	d.SetId(r[0].ID)
 
-	log.Printf("[INFO] Cloudflare Firewall Rule ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Firewall Rule ID: %s", d.Id()))
 
 	return resourceCloudflareFirewallRuleRead(ctx, d, meta)
 }
@@ -85,19 +85,19 @@ func resourceCloudflareFirewallRuleRead(ctx context.Context, d *schema.ResourceD
 
 	firewallRule, err := client.FirewallRule(ctx, zoneID, d.Id())
 
-	log.Printf("[DEBUG] firewallRule: %#v", firewallRule)
-	log.Printf("[DEBUG] firewallRule error: %#v", err)
+	tflog.Debug(ctx, fmt.Sprintf("firewallRule: %#v", firewallRule))
+	tflog.Debug(ctx, fmt.Sprintf("firewallRule error: %#v", err))
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Firewall Rule %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Firewall Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
 		return diag.FromErr(fmt.Errorf("error finding Firewall Rule %q: %w", d.Id(), err))
 	}
 
-	log.Printf("[DEBUG] Cloudflare Firewall Rule read configuration: %#v", firewallRule)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Firewall Rule read configuration: %#v", firewallRule))
 
 	products := expandStringListToSet(firewallRule.Products)
 	d.Set("paused", firewallRule.Paused)
@@ -143,7 +143,7 @@ func resourceCloudflareFirewallRuleUpdate(ctx context.Context, d *schema.Resourc
 		newFirewallRule.Products = expandInterfaceToStringList(products.(*schema.Set).List())
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Firewall Rule from struct: %+v", newFirewallRule)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Firewall Rule from struct: %+v", newFirewallRule))
 
 	r, err := client.UpdateFirewallRule(ctx, zoneID, newFirewallRule)
 
@@ -162,7 +162,7 @@ func resourceCloudflareFirewallRuleDelete(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Firewall Rule: id %s for zone %s", d.Id(), zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Firewall Rule: id %s for zone %s", d.Id(), zoneID))
 
 	err := client.DeleteFirewallRule(ctx, zoneID, d.Id())
 
@@ -183,7 +183,7 @@ func resourceCloudflareFirewallRuleImport(ctx context.Context, d *schema.Resourc
 
 	zoneID, ruleID := idAttr[0], idAttr[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Firewall Rule: id %s for zone %s", ruleID, zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Firewall Rule: id %s for zone %s", ruleID, zoneID))
 
 	d.Set("zone_id", zoneID)
 	d.SetId(ruleID)

@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -68,7 +68,7 @@ func dataSourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceD
 
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[DEBUG] Reading Zone DNSSEC %s", zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Reading Zone DNSSEC %s", zoneID))
 
 	dnssec, err := client.ZoneDNSSECSetting(ctx, zoneID)
 	if err != nil {

@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -18,14 +18,15 @@ func init() {
 }
 
 func testSweepCloudflareZoneCacheVariants(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	log.Printf("[INFO] Deleting Zone Cache Variants for zone: %q", zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Zone Cache Variants for zone: %q", zoneID))
 	client.DeleteZoneCacheVariants(context.Background(), zoneID)
 
 	return nil
