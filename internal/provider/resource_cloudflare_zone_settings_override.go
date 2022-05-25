@@ -12,6 +12,7 @@ import (
 	"reflect"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -40,7 +41,7 @@ func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema
 	zoneID := d.Get("zone_id").(string)
 	d.SetId(zoneID)
 
-	log.Printf("[INFO] Creating zone settings resource for zone ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Creating zone settings resource for zone ID: %s", d.Id()))
 
 	// do extra initial read to get initial_settings before updating
 	zoneSettings, err := client.ZoneSettings(ctx, d.Id())
@@ -59,20 +60,20 @@ func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema
 		}
 	}
 
-	log.Printf("[DEBUG] Read CloudflareZone initial settings: %#v", zoneSettings)
+	tflog.Debug(ctx, fmt.Sprintf("Read CloudflareZone initial settings: %#v", zoneSettings))
 
-	if err := d.Set("initial_settings", flattenZoneSettings(d, zoneSettings.Result, true)); err != nil {
-		log.Printf("[WARN] Error setting initial_settings for zone %q: %s", d.Id(), err)
+	if err := d.Set("initial_settings", flattenZoneSettings(ctx, d, zoneSettings.Result, true)); err != nil {
+		tflog.Warn(ctx, fmt.Sprintf("Error setting initial_settings for zone %q: %s", d.Id(), err))
 	}
 
 	d.Set("initial_settings_read_at", time.Now().UTC().Format(time.RFC3339Nano))
 
 	// set readonly setting so that update can behave correctly
-	if err := d.Set("readonly_settings", flattenReadOnlyZoneSettings(zoneSettings.Result)); err != nil {
-		log.Printf("[WARN] Error setting readonly_settings for zone %q: %s", d.Id(), err)
+	if err := d.Set("readonly_settings", flattenReadOnlyZoneSettings(ctx, zoneSettings.Result)); err != nil {
+		tflog.Warn(ctx, fmt.Sprintf("Error setting readonly_settings for zone %q: %s", d.Id(), err))
 	}
 
-	log.Printf("[DEBUG] Saved CloudflareZone initial settings: %#v", d.Get("initial_settings"))
+	tflog.Debug(ctx, fmt.Sprintf("Saved CloudflareZone initial settings: %#v", d.Get("initial_settings")))
 
 	return resourceCloudflareZoneSettingsOverrideUpdate(ctx, d, meta)
 }
@@ -111,7 +112,7 @@ func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.R
 	zone, err := client.ZoneDetails(ctx, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Zone %q not found", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Zone %q not found", d.Id()))
 			d.SetId("")
 			return nil
 		} else {
@@ -138,12 +139,12 @@ func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.R
 		}
 	}
 
-	log.Printf("[DEBUG] Read CloudflareZone Settings: %#v", zoneSettings)
+	tflog.Debug(ctx, fmt.Sprintf("Read CloudflareZone Settings: %#v", zoneSettings))
 
 	d.Set("zone_status", zone.Status)
 	d.Set("zone_type", zone.Type)
 
-	newZoneSettings := flattenZoneSettings(d, zoneSettings.Result, false)
+	newZoneSettings := flattenZoneSettings(ctx, d, zoneSettings.Result, false)
 	// if polish is off (or we don't know) we need to ignore what comes back from the api for webp
 	if polish, ok := newZoneSettings[0]["polish"]; !ok || polish.(string) == "" || polish.(string) == "off" {
 		newZoneSettings[0]["webp"] = d.Get("settings.0.webp").(string)
@@ -153,14 +154,14 @@ func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.R
 		log.Printf("[WARN] Error setting settings for zone %q: %s", d.Id(), err)
 	}
 
-	if err := d.Set("readonly_settings", flattenReadOnlyZoneSettings(zoneSettings.Result)); err != nil {
+	if err := d.Set("readonly_settings", flattenReadOnlyZoneSettings(ctx, zoneSettings.Result)); err != nil {
 		log.Printf("[WARN] Error setting readonly_settings for zone %q: %s", d.Id(), err)
 	}
 
 	return nil
 }
 
-func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetting, flattenAll bool) []map[string]interface{} {
+func flattenZoneSettings(ctx context.Context, d *schema.ResourceData, settings []cloudflare.ZoneSetting, flattenAll bool) []map[string]interface{} {
 	cfg := map[string]interface{}{}
 	for _, s := range settings {
 		if s.ID == "0rtt" { // NOTE: 0rtt is an invalid attribute in HCLs grammar.  Remap to `zero_rtt`
@@ -187,11 +188,11 @@ func flattenZoneSettings(d *schema.ResourceData, settings []cloudflare.ZoneSetti
 		} else if floatValue, ok := s.Value.(float64); ok {
 			cfg[s.ID] = int(floatValue)
 		} else {
-			log.Printf("[WARN] Unexpected value type found in API zone settings - %q : %#v", s.ID, s.Value)
+			tflog.Warn(ctx, fmt.Sprintf("Unexpected value type found in API zone settings - %q : %#v", s.ID, s.Value))
 		}
 	}
 
-	log.Printf("[DEBUG] Flattened Cloudflare Zone Settings: %#v", cfg)
+	tflog.Debug(ctx, fmt.Sprintf("Flattened Cloudflare Zone Settings: %#v", cfg))
 
 	return []map[string]interface{}{cfg}
 }
@@ -205,14 +206,14 @@ func settingInSchema(val string) bool {
 	return false
 }
 
-func flattenReadOnlyZoneSettings(settings []cloudflare.ZoneSetting) []string {
+func flattenReadOnlyZoneSettings(ctx context.Context, settings []cloudflare.ZoneSetting) []string {
 	ids := make([]string, 0)
 	for _, zs := range settings {
 		if !zs.Editable {
 			ids = append(ids, zs.ID)
 		}
 	}
-	log.Printf("[DEBUG] Flattened Cloudflare Read Only Zone Settings: %#v", ids)
+	tflog.Debug(ctx, fmt.Sprintf("Flattened Cloudflare Read Only Zone Settings: %#v", ids))
 
 	return ids
 }
@@ -267,7 +268,7 @@ func resourceCloudflareZoneSettingsOverrideUpdate(ctx context.Context, d *schema
 			return diag.FromErr(err)
 		}
 
-		log.Printf("[DEBUG] Cloudflare Zone Settings update configuration: %#v", zoneSettings)
+		tflog.Debug(ctx, fmt.Sprintf("Cloudflare Zone Settings update configuration: %#v", zoneSettings))
 
 		if zoneSettings, err = updateSingleZoneSettings(ctx, zoneSettings, client, d.Id()); err != nil {
 			return diag.FromErr(err)
@@ -283,7 +284,7 @@ func resourceCloudflareZoneSettingsOverrideUpdate(ctx context.Context, d *schema
 				return diag.FromErr(err)
 			}
 		} else {
-			log.Printf("[DEBUG] Skipped update call because no settings were set")
+			tflog.Debug(ctx, fmt.Sprintf("Skipped update call because no settings were set"))
 		}
 	}
 
@@ -373,7 +374,7 @@ func resourceCloudflareZoneSettingsOverrideDelete(ctx context.Context, d *schema
 			return diag.FromErr(err)
 		}
 
-		log.Printf("[DEBUG] Reverting Cloudflare Zone Settings to initial settings with update configuration: %#v", zoneSettings)
+		tflog.Debug(ctx, fmt.Sprintf("Reverting Cloudflare Zone Settings to initial settings with update configuration: %#v", zoneSettings))
 
 		if zoneSettings, err = updateSingleZoneSettings(ctx, zoneSettings, client, d.Id()); err != nil {
 			return diag.FromErr(err)
@@ -389,7 +390,7 @@ func resourceCloudflareZoneSettingsOverrideDelete(ctx context.Context, d *schema
 				return diag.FromErr(err)
 			}
 		} else {
-			log.Printf("[DEBUG] Skipped call to revert settings because no settings were changed")
+			tflog.Debug(ctx, fmt.Sprintf("Skipped call to revert settings because no settings were changed"))
 		}
 	}
 	return nil

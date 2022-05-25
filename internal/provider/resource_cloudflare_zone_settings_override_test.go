@@ -92,7 +92,7 @@ func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 			return fmt.Errorf("No Zone ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundZone, err := client.ZoneSettings(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err
@@ -122,7 +122,7 @@ func testAccCheckCloudflareZoneSettings(n string) resource.TestCheckFunc {
 
 func testAccGetInitialZoneSettings(t *testing.T, zoneID string, settings map[string]interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 
 		foundZone, err := client.ZoneSettings(context.Background(), zoneID)
 		if err != nil {
@@ -150,7 +150,7 @@ func testAccGetInitialZoneSettings(t *testing.T, zoneID string, settings map[str
 
 func testAccCheckInitialZoneSettings(zoneID string, initialSettings map[string]interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 
 		foundZone, err := client.ZoneSettings(context.Background(), zoneID)
 		if err != nil {

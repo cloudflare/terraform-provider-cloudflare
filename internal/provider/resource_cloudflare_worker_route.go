@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -39,7 +40,7 @@ func resourceCloudflareWorkerRouteCreate(ctx context.Context, d *schema.Resource
 	route := getRouteFromResource(d)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Creating Cloudflare Worker Route from struct: %+v", route)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Worker Route from struct: %+v", route))
 
 	r, err := client.CreateWorkerRoute(ctx, zoneID, route)
 	if err != nil {
@@ -52,7 +53,7 @@ func resourceCloudflareWorkerRouteCreate(ctx context.Context, d *schema.Resource
 
 	d.SetId(r.ID)
 
-	log.Printf("[INFO] Cloudflare Worker Route ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Worker Route ID: %s", d.Id()))
 
 	return nil
 }

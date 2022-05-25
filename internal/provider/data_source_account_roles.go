@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -48,7 +48,7 @@ func dataSourceCloudflareAccountRolesRead(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	log.Printf("[DEBUG] Reading Account Roles")
+	tflog.Debug(ctx, fmt.Sprintf("Reading Account Roles"))
 	roles, err := client.AccountRoles(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing Account Roles: %w", err))

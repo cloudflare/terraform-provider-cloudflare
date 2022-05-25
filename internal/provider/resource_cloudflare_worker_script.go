@@ -5,10 +5,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -114,7 +114,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
-	log.Printf("[INFO] Creating Cloudflare Worker Script from struct: %+v", &scriptData.Params)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
 	bindings := make(ScriptBindings)
 
@@ -240,7 +240,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
-	log.Printf("[INFO] Updating Cloudflare Worker Script from struct: %+v", &scriptData.Params)
+	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
 	bindings := make(ScriptBindings)
 
@@ -267,7 +267,7 @@ func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(err)
 	}
 
-	log.Printf("[INFO] Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
 	_, err = client.DeleteWorker(ctx, &scriptData.Params)
 	if err != nil {

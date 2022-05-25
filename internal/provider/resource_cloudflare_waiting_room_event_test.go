@@ -54,7 +54,7 @@ func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 }
 
 func testAccCheckCloudflareWaitingRoomEventDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_waiting_room_event" {

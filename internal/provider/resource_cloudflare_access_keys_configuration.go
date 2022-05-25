@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -33,7 +33,7 @@ func resourceCloudflareAccessKeysConfigurationRead(ctx context.Context, d *schem
 		var requestError *cloudflare.RequestError
 		if errors.As(err, &requestError) {
 			if sliceContainsInt(requestError.ErrorCodes(), 12109) {
-				log.Printf("[INFO] Access Keys Configuration not enabled for account %s", accountID)
+				tflog.Info(ctx, fmt.Sprintf("Access Keys Configuration not enabled for account %s", accountID))
 				d.SetId("")
 				return nil
 			}

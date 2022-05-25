@@ -3,13 +3,13 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"reflect"
 	"regexp"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -24,9 +24,10 @@ func init() {
 }
 
 func testSweepCloudflarePageRules(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -357,6 +358,7 @@ func TestTranformForwardingURL(t *testing.T) {
 // existing Page Rule that didn't have this value set previously.
 func TestCacheKeyFieldsNilValue(t *testing.T) {
 	pageRuleAction, err := transformToCloudflarePageRuleAction(
+		context.Background(),
 		"cache_key_fields",
 		[]interface{}{
 			map[string]interface{}{
@@ -780,7 +782,7 @@ func testAccCheckCloudflarePageRuleIDUnchanged(before, after *cloudflare.PageRul
 }
 
 func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_page_rule" {
@@ -886,7 +888,7 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 			return fmt.Errorf("No PageRule ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -909,7 +911,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
 		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {

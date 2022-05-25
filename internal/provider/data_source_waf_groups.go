@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -101,7 +101,7 @@ func dataSourceCloudflareWAFGroupsRead(ctx context.Context, d *schema.ResourceDa
 	var pkgList []cloudflare.WAFPackage
 	if packageID == "" {
 		var err error
-		log.Printf("[DEBUG] Reading WAF Packages")
+		tflog.Debug(ctx, fmt.Sprintf("Reading WAF Packages"))
 		pkgList, err = client.ListWAFPackages(ctx, zoneID)
 		if err != nil {
 			return diag.FromErr(err)
@@ -110,7 +110,7 @@ func dataSourceCloudflareWAFGroupsRead(ctx context.Context, d *schema.ResourceDa
 		pkgList = append(pkgList, cloudflare.WAFPackage{ID: packageID})
 	}
 
-	log.Printf("[DEBUG] Reading WAF Groups")
+	tflog.Debug(ctx, fmt.Sprintf("Reading WAF Groups"))
 	groupIds := make([]string, 0)
 	groupDetails := make([]interface{}, 0)
 	for _, pkg := range pkgList {

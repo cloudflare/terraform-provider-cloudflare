@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -70,7 +70,7 @@ func resourceCloudflareIPListRead(ctx context.Context, d *schema.ResourceData, m
 	list, err := client.GetIPList(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "could not find list") {
-			log.Printf("[INFO] IP List %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("IP List %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}

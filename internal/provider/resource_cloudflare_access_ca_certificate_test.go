@@ -80,7 +80,7 @@ resource "cloudflare_access_ca_certificate" "%[1]s" {
 }
 
 func testAccCheckCloudflareAccessCACertificateDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_access_ca_certificate" {

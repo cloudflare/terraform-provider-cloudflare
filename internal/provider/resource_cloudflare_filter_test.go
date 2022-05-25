@@ -3,11 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -19,23 +19,24 @@ func init() {
 }
 
 func testSweepCloudflareFilterSweeper(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	filters, filtersErr := client.Filters(context.Background(), zoneID, cloudflare.PaginationOptions{})
 
 	if filtersErr != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare filters: %s", filtersErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare filters: %s", filtersErr))
 	}
 
 	for _, filter := range filters {
 		err := client.DeleteFilter(context.Background(), zoneID, filter.ID)
 
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete Cloudflare filter (%s) in zone ID: %s", filter.ID, zoneID)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare filter (%s) in zone ID: %s", filter.ID, zoneID))
 		}
 	}
 

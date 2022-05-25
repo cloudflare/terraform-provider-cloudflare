@@ -211,7 +211,7 @@ func testAccCheckCloudflareMagicFirewallRulesetExists(n string, ruleset *cloudfl
 			return fmt.Errorf("No Magic Firewall Ruleset is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundRuleset, err := client.GetMagicFirewallRuleset(context.Background(), accountID, rs.Primary.ID)
 		if err != nil {
 			return err

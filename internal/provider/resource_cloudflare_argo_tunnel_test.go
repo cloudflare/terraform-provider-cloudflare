@@ -62,7 +62,7 @@ func testAccCheckCloudflareArgoTunnelDestroy(s *terraform.State) error {
 
 		accountID := rs.Primary.Attributes["account_id"]
 		tunnelID := rs.Primary.ID
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		tunnel, err := client.ArgoTunnel(context.Background(), accountID, tunnelID)
 
 		if err != nil {

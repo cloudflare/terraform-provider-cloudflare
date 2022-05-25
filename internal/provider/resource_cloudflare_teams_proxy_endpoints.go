@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -31,7 +31,7 @@ func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.Res
 	endpoint, err := client.TeamsProxyEndpoint(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
-			log.Printf("[INFO] Teams Proxy Endpoint %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Teams Proxy Endpoint %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -62,7 +62,7 @@ func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.R
 		IPs:  expandInterfaceToStringList(d.Get("ips").(*schema.Set).List()),
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Teams Proxy Endpoint from struct: %+v", newProxyEndpoint)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams Proxy Endpoint from struct: %+v", newProxyEndpoint))
 
 	proxyEndpoint, err := client.CreateTeamsProxyEndpoint(ctx, accountID, newProxyEndpoint)
 	if err != nil {
@@ -82,7 +82,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.R
 		IPs:  expandInterfaceToStringList(d.Get("ips").(*schema.Set).List()),
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Teams Proxy Endpoint from struct: %+v", updatedProxyEndpoint)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Proxy Endpoint from struct: %+v", updatedProxyEndpoint))
 
 	teamsProxyEndpoint, err := client.UpdateTeamsProxyEndpoint(ctx, accountID, updatedProxyEndpoint)
 
@@ -101,7 +101,7 @@ func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.R
 	id := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Teams Proxy Endpoint using ID: %s", id)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams Proxy Endpoint using ID: %s", id))
 
 	err := client.DeleteTeamsProxyEndpoint(ctx, accountID, id)
 	if err != nil {
@@ -120,7 +120,7 @@ func resourceCloudflareTeamsProxyEndpointImport(ctx context.Context, d *schema.R
 
 	accountID, teamsProxyEndpointID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Teams Proxy Endpoint: id %s for account %s", teamsProxyEndpointID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams Proxy Endpoint: id %s for account %s", teamsProxyEndpointID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(teamsProxyEndpointID)

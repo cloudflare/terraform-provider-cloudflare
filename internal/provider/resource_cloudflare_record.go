@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -60,7 +60,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	data, dataOk := d.GetOk("data")
-	log.Printf("[DEBUG] Data found in config: %#v", data)
+	tflog.Debug(ctx, fmt.Sprintf("Data found in config: %#v", data))
 
 	newDataMap := make(map[string]interface{})
 
@@ -115,7 +115,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(fmt.Errorf("error validating record type %q: %w", newRecord.Type, err))
 	}
 
-	log.Printf("[DEBUG] Cloudflare Record create configuration: %#v", newRecord)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record create configuration: %#v", newRecord))
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 		r, err := client.CreateDNSRecord(ctx, newRecord.ZoneID, newRecord)
@@ -123,7 +123,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 			if strings.Contains(err.Error(), "already exist") {
 				if d.Get("allow_overwrite").(bool) {
 					var r cloudflare.DNSRecord
-					log.Printf("[DEBUG] Cloudflare Record already exists however we are overwriting it")
+					tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record already exists however we are overwriting it"))
 					zone, _ := client.ZoneDetails(ctx, d.Get("zone_id").(string))
 					if d.Get("name").(string) == "@" || d.Get("name").(string) == zone.Name {
 						r = cloudflare.DNSRecord{
@@ -187,7 +187,7 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[WARN] Removing record from state because it's not found in API")
+			tflog.Warn(ctx, fmt.Sprintf("Removing record from state because it's not found in API"))
 			d.SetId("")
 			return nil
 		}
@@ -195,7 +195,7 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	data, dataOk := d.GetOk("data")
-	log.Printf("[DEBUG] Data found in config: %#v", data)
+	tflog.Debug(ctx, fmt.Sprintf("Data found in config: %#v", data))
 
 	readDataMap := make(map[string]interface{})
 
@@ -226,7 +226,7 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 	d.Set("data", record.Data)
 	d.Set("modified_on", record.ModifiedOn.Format(time.RFC3339Nano))
 	if err := d.Set("metadata", expandStringMap(record.Meta)); err != nil {
-		log.Printf("[WARN] Error setting metadata: %s", err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting metadata: %s", err))
 	}
 	d.Set("proxiable", record.Proxiable)
 
@@ -252,7 +252,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	data, dataOk := d.GetOk("data")
-	log.Printf("[DEBUG] Data found in config: %#v", data)
+	tflog.Debug(ctx, fmt.Sprintf("Data found in config: %#v", data))
 
 	newDataMap := make(map[string]interface{})
 
@@ -289,7 +289,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 		updateRecord.TTL = ttl.(int)
 	}
 
-	log.Printf("[DEBUG] Cloudflare Record update configuration: %#v", updateRecord)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record update configuration: %#v", updateRecord))
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
 		err := client.UpdateDNSRecord(ctx, zoneID, d.Id(), updateRecord)
@@ -316,7 +316,7 @@ func resourceCloudflareRecordDelete(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Record: %s, %s", zoneID, d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Record: %s, %s", zoneID, d.Id()))
 
 	err := client.DeleteDNSRecord(ctx, zoneID, d.Id())
 	if err != nil {
@@ -359,7 +359,7 @@ func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData,
 		return nil, fmt.Errorf("Unable to find record with ID %q: %w", d.Id(), err)
 	}
 
-	log.Printf("[INFO] Found record: %s", record.Name)
+	tflog.Info(ctx, fmt.Sprintf("Found record: %s", record.Name))
 	name := strings.TrimSuffix(record.Name, "."+record.ZoneName)
 
 	d.Set("name", name)

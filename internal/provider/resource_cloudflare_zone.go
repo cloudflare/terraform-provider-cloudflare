@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/idna"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -97,7 +98,7 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 		ID: client.AccountID,
 	}
 
-	log.Printf("[INFO] Creating Cloudflare Zone: name %s", zoneName)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Zone: name %s", zoneName))
 
 	zone, err := client.CreateZone(ctx, zoneName, jumpstart, account, zoneType)
 
@@ -139,12 +140,12 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 
 	zone, err := client.ZoneDetails(ctx, zoneID)
 
-	log.Printf("[DEBUG] ZoneDetails: %#v", zone)
-	log.Printf("[DEBUG] ZoneDetails error: %#v", err)
+	tflog.Debug(ctx, fmt.Sprintf("ZoneDetails: %#v", zone))
+	tflog.Debug(ctx, fmt.Sprintf("ZoneDetails error: %#v", err))
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Zone %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Zone %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
