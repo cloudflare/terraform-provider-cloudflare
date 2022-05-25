@@ -40,16 +40,12 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
-		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
+		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
 		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
-	}
-
-	if value, ok := d.GetOk("http_only_cookie_attribute"); ok {
-		newAccessApplication.HttpOnlyCookieAttribute = value.(bool)
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -121,7 +117,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("custom_deny_message", accessApplication.CustomDenyMessage)
 	d.Set("custom_deny_url", accessApplication.CustomDenyURL)
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
-	d.Set("http_only_cookie_attribute", accessApplication.HttpOnlyCookieAttribute)
+	d.Set("http_only_cookie_attribute", cloudflare.Bool(accessApplication.HttpOnlyCookieAttribute))
 	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
 	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
 	d.Set("logo_url", accessApplication.LogoURL)
@@ -152,7 +148,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
-		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
+		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
