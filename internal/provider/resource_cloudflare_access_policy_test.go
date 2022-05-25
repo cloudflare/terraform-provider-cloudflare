@@ -826,7 +826,7 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		Providers: testAccProviders,
+		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyExternalEvalautionConfig(rnd, zone, accountID),
