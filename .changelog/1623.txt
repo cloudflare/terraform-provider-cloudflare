@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_group: add support for external evaluation as a new access group rule
+```

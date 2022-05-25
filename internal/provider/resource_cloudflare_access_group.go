@@ -309,6 +309,17 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					IdentityProviderID: samlCfg["identity_provider_id"].(string),
 				}})
 			}
+		} else if accessGroupType == "external_evaluation" {
+			for _, v := range values.([]interface{}) {
+				eeCfg := v.(map[string]interface{})
+				group = append(group, cloudflare.AccessGroupExternalEvaluation{ExternalEvaluation: struct {
+					EvaluateURL string `json:"evaluate_url"`
+					KeysURL     string `json:"keys_url"`
+				}{
+					EvaluateURL: eeCfg["evaluate_url"].(string),
+					KeysURL:     eeCfg["keys_url"].(string),
+				}})
+			}
 		} else {
 			for _, value := range values.([]interface{}) {
 				switch accessGroupType {
@@ -376,6 +387,8 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	azureIDs := []string{}
 	samlAttrName := ""
 	samlAttrValue := ""
+	externalEvaluationURL := ""
+	externalEvaluationKeysURL := ""
 	devicePostureRuleIDs := []string{}
 
 	for _, group := range accessGroup {
@@ -440,6 +453,10 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				samlCfg := groupValue.(map[string]interface{})
 				samlAttrName = samlCfg["attribute_name"].(string)
 				samlAttrValue = samlCfg["attribute_value"].(string)
+			case "external_evaluation":
+				eeCfg := groupValue.(map[string]interface{})
+				externalEvaluationURL = eeCfg["evaluate_url"].(string)
+				externalEvaluationKeysURL = eeCfg["keys_url"].(string)
 			case "group":
 				for _, group := range groupValue.(map[string]interface{}) {
 					groups = append(groups, group.(string))
@@ -549,6 +566,16 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				map[string]interface{}{
 					"attribute_name":  samlAttrName,
 					"attribute_value": samlAttrValue,
+				}},
+		})
+	}
+
+	if externalEvaluationURL != "" && externalEvaluationKeysURL != "" {
+		data = append(data, map[string]interface{}{
+			"external_evaluation": []interface{}{
+				map[string]interface{}{
+					"evaluate_url": externalEvaluationURL,
+					"keys_url":     externalEvaluationKeysURL,
 				}},
 		})
 	}

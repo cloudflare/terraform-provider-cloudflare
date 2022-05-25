@@ -142,6 +142,18 @@ conditions which can be applied. The conditions are:
     }
   }
   ```
+  * `external_evaluation` - (Optional) Pass a user's identity to an external URL as the `include` condition. 
+  Example:
+
+  ```hcl
+  # ... other configuration
+  include {
+    external {
+      evaluate_url = "https://example.com/login"
+      keys_url = "https://example.com/keys"
+    }
+  }
+  ```
 
 ## Import
 
