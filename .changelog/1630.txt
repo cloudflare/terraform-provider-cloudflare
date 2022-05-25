@@ -1,4 +1,3 @@
 ```release-note:enhancement
 resource/cloudflare_ruleset: add support for custom fields logging
 ```
-
