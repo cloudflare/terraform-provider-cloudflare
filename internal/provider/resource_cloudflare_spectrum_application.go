@@ -3,11 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -32,7 +32,7 @@ func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.
 	newSpectrumApp := applicationFromResource(d)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Creating Cloudflare Spectrum Application from struct: %+v", newSpectrumApp)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Spectrum Application from struct: %+v", newSpectrumApp))
 
 	r, err := client.CreateSpectrumApplication(ctx, zoneID, newSpectrumApp)
 	if err != nil {
@@ -45,7 +45,7 @@ func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.
 
 	d.SetId(r.ID)
 
-	log.Printf("[INFO] Cloudflare Spectrum Application ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Spectrum Application ID: %s", d.Id()))
 
 	return resourceCloudflareSpectrumApplicationRead(ctx, d, meta)
 }
@@ -56,7 +56,7 @@ func resourceCloudflareSpectrumApplicationUpdate(ctx context.Context, d *schema.
 
 	application := applicationFromResource(d)
 
-	log.Printf("[INFO] Updating Cloudflare Spectrum Application from struct: %+v", application)
+	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Spectrum Application from struct: %+v", application))
 
 	_, err := client.UpdateSpectrumApplication(ctx, zoneID, application.ID, application)
 	if err != nil {
@@ -74,7 +74,7 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 	application, err := client.SpectrumApplication(ctx, zoneID, applicationID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Spectrum application %s in zone %s not found", applicationID, zoneID)
+			tflog.Info(ctx, fmt.Sprintf("Spectrum application %s in zone %s not found", applicationID, zoneID))
 			d.SetId("")
 			return nil
 		}
@@ -85,18 +85,18 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 	d.Set("protocol", application.Protocol)
 
 	if err := d.Set("dns", flattenDNS(application.DNS)); err != nil {
-		log.Printf("[WARN] Error setting dns on spectrum application %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting dns on spectrum application %q: %s", d.Id(), err))
 	}
 
 	if len(application.OriginDirect) > 0 {
 		if err := d.Set("origin_direct", application.OriginDirect); err != nil {
-			log.Printf("[WARN] Error setting origin direct on spectrum application %q: %s", d.Id(), err)
+			tflog.Warn(ctx, fmt.Sprintf("Error setting origin direct on spectrum application %q: %s", d.Id(), err))
 		}
 	}
 
 	if application.OriginDNS != nil {
 		if err := d.Set("origin_dns", flattenOriginDNS(application.OriginDNS)); err != nil {
-			log.Printf("[WARN] Error setting origin dns on spectrum application %q: %s", d.Id(), err)
+			tflog.Warn(ctx, fmt.Sprintf("Error setting origin dns on spectrum application %q: %s", d.Id(), err))
 		}
 	}
 
@@ -105,19 +105,19 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 			d.Set("origin_port", int(application.OriginPort.Port))
 		} else {
 			if err := d.Set("origin_port_range", flattenOriginPortRange(application.OriginPort)); err != nil {
-				log.Printf("[WARN] Error setting origin port range on spectrum application %q: %s", d.Id(), err)
+				tflog.Warn(ctx, fmt.Sprintf("Error setting origin port range on spectrum application %q: %s", d.Id(), err))
 			}
 		}
 	}
 
 	if application.EdgeIPs != nil {
 		if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
-			log.Printf("[WARN] Error setting Edge IPs on spectrum application %q: %s", d.Id(), err)
+			tflog.Warn(ctx, fmt.Sprintf("Error setting Edge IPs on spectrum application %q: %s", d.Id(), err))
 		}
 
 		if application.EdgeIPs.Connectivity != nil {
 			if err := d.Set("edge_ip_connectivity", application.EdgeIPs.Connectivity.String()); err != nil {
-				log.Printf("[WARN] Error setting Edge IP connectivity on spectrum application %q: %s", d.Id(), err)
+				tflog.Warn(ctx, fmt.Sprintf("Error setting Edge IP connectivity on spectrum application %q: %s", d.Id(), err))
 			}
 		}
 	}
@@ -136,7 +136,7 @@ func resourceCloudflareSpectrumApplicationDelete(ctx context.Context, d *schema.
 	zoneID := d.Get("zone_id").(string)
 	applicationID := d.Id()
 
-	log.Printf("[INFO] Deleting Cloudflare Spectrum Application: %s in zone: %s", applicationID, zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Spectrum Application: %s in zone: %s", applicationID, zoneID))
 
 	err := client.DeleteSpectrumApplication(ctx, zoneID, applicationID)
 	if err != nil {

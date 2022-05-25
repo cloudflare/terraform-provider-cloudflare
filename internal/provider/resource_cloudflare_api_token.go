@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -64,7 +64,7 @@ func resourceCloudflareApiTokenCreate(ctx context.Context, d *schema.ResourceDat
 
 	name := d.Get("name").(string)
 
-	log.Printf("[INFO] Creating Cloudflare API Token: name %s", name)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare API Token: name %s", name))
 
 	t := buildAPIToken(d)
 	t, err := client.CreateAPIToken(ctx, t)
@@ -124,11 +124,11 @@ func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData,
 
 	t, err := client.GetAPIToken(ctx, tokenID)
 
-	log.Printf("[DEBUG] Cloudflare API Token: %+v", t)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare API Token: %+v", t))
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Cloudflare API Token %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Cloudflare API Token %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -186,7 +186,7 @@ func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceDat
 
 	t := buildAPIToken(d)
 
-	log.Printf("[INFO] Updating Cloudflare API Token: name %s", name)
+	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare API Token: name %s", name))
 
 	t, err := client.UpdateAPIToken(ctx, tokenID, t)
 	if err != nil {
@@ -200,7 +200,7 @@ func resourceCloudflareApiTokenDelete(ctx context.Context, d *schema.ResourceDat
 	client := meta.(*cloudflare.API)
 	tokenID := d.Id()
 
-	log.Printf("[INFO] Deleting Cloudflare API Token: id %s", tokenID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare API Token: id %s", tokenID))
 
 	err := client.DeleteAPIToken(ctx, tokenID)
 	if err != nil {

@@ -16,7 +16,7 @@ Use the navigation to the left to read about the available resources.
 
 ## Getting Started
 
-Try the [Host a Static Website with S3 and Cloudflare](https://learn.hashicorp.com/tutorials/terraform/cloudflare-static-website) tutorial on HashiCorp Learn. In this tutorial, you will set up a static website using AWS S3 as an object store and Cloudflare for DNS, SSL and CDN, then create Cloudflare page rules to always redirect HTTPS and temporarily redirect certain paths.
+Try the [getting started]([https://learn.hashicorp.com/tutorials/terraform/cloudflare-static-website](https://developers.cloudflare.com/terraform/tutorial/)) tutorial on [developers.cloudflare.com](https://developers.cloudflare.com). In the walk through, you will setup Terraform and learn to manage Cloudflare resources such as DNS records, zone settings, load balancers and much more!
 
 ## Example Usage
 

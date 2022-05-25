@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -68,7 +68,7 @@ func resourceCloudflareGRETunnelRead(ctx context.Context, d *schema.ResourceData
 	tunnel, err := client.GetMagicTransitGRETunnel(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "GRE tunnel not found") {
-			log.Printf("[INFO] GRE tunnel %s not found", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("GRE tunnel %s not found", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -108,7 +108,7 @@ func resourceCloudflareGRETunnelDelete(ctx context.Context, d *schema.ResourceDa
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
-	log.Printf("[INFO] Deleting GRE tunnel:  %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Deleting GRE tunnel:  %s", d.Id()))
 
 	_, err := client.DeleteMagicTransitGRETunnel(ctx, accountID, d.Id())
 	if err != nil {

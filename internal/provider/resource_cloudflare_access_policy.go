@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -68,7 +68,7 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access Policy %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Policy %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -79,15 +79,15 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 	d.Set("decision", accessPolicy.Decision)
 	d.Set("precedence", accessPolicy.Precedence)
 
-	if err := d.Set("require", TransformAccessGroupForSchema(accessPolicy.Require)); err != nil {
+	if err := d.Set("require", TransformAccessGroupForSchema(ctx, accessPolicy.Require)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set require attribute: %w", err))
 	}
 
-	if err := d.Set("exclude", TransformAccessGroupForSchema(accessPolicy.Exclude)); err != nil {
+	if err := d.Set("exclude", TransformAccessGroupForSchema(ctx, accessPolicy.Exclude)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set exclude attribute: %w", err))
 	}
 
-	if err := d.Set("include", TransformAccessGroupForSchema(accessPolicy.Include)); err != nil {
+	if err := d.Set("include", TransformAccessGroupForSchema(ctx, accessPolicy.Include)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set include attribute: %w", err))
 	}
 
@@ -127,7 +127,7 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 
 	newAccessPolicy = appendConditionalAccessPolicyFields(newAccessPolicy, d)
 
-	log.Printf("[DEBUG] Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -161,7 +161,7 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 
 	updatedAccessPolicy = appendConditionalAccessPolicyFields(updatedAccessPolicy, d)
 
-	log.Printf("[DEBUG] Updating Cloudflare Access Policy from struct: %+v", updatedAccessPolicy)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Policy from struct: %+v", updatedAccessPolicy))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -189,7 +189,7 @@ func resourceCloudflareAccessPolicyDelete(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Access Policy using ID: %s", d.Id())
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Policy using ID: %s", d.Id()))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -224,7 +224,7 @@ func resourceCloudflareAccessPolicyImport(ctx context.Context, d *schema.Resourc
 
 	identifierType, identifierID, accessAppID, accessPolicyID := attributes[0], attributes[1], attributes[2], attributes[3]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Policy: %s %q, appID %q, accessPolicyID %q", identifierType, identifierID, accessAppID, accessPolicyID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Policy: %s %q, appID %q, accessPolicyID %q", identifierType, identifierID, accessAppID, accessPolicyID))
 
 	//lintignore:R001
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)

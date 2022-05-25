@@ -1,10 +1,11 @@
 package provider
 
 import (
+	"context"
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 type Config struct {
@@ -19,6 +20,7 @@ type Config struct {
 func (c *Config) Client() (*cloudflare.API, error) {
 	var err error
 	var client *cloudflare.API
+	ctx := context.Background()
 
 	if c.APIToken != "" {
 		client, err = cloudflare.NewWithAPIToken(c.APIToken, c.Options...)
@@ -26,13 +28,13 @@ func (c *Config) Client() (*cloudflare.API, error) {
 		client, err = cloudflare.New(c.APIKey, c.Email, c.Options...)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("Error creating new Cloudflare client: %w", err)
+		return nil, fmt.Errorf("error creating new Cloudflare client: %w", err)
 	}
 
 	if c.APIUserServiceKey != "" {
 		client.APIUserServiceKey = c.APIUserServiceKey
 	}
 
-	log.Printf("[INFO] Cloudflare Client configured for user: %s", c.Email)
+	tflog.Info(ctx, fmt.Sprintf("cloudflare Client configured for user: %s", c.Email))
 	return client, nil
 }

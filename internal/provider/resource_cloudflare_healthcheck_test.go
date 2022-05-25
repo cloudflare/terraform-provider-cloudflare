@@ -156,7 +156,7 @@ func testAccCheckCloudflareHealthcheckExists(n string, zoneID string, load *clou
 			return fmt.Errorf("No Healthcheck ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundHealthcheck, err := client.Healthcheck(context.Background(), zoneID, rs.Primary.ID)
 		if err != nil {
 			return err

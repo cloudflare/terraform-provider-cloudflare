@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -43,7 +43,7 @@ func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.Re
 	}
 
 	setDevicePostureRuleInput(&newDevicePostureRule, d)
-	log.Printf("[DEBUG] Creating Cloudflare Device Posture Rule from struct: %+v", newDevicePostureRule)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Device Posture Rule from struct: %+v", newDevicePostureRule))
 
 	rule, err := client.CreateDevicePostureRule(ctx, accountID, newDevicePostureRule)
 	if err != nil {
@@ -62,7 +62,7 @@ func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.Reso
 	devicePostureRule, err := client.DevicePostureRule(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Device Posture Rule %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Device Posture Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -99,7 +99,7 @@ func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.Re
 	}
 
 	setDevicePostureRuleInput(&updatedDevicePostureRule, d)
-	log.Printf("[DEBUG] Updating Cloudflare Device Posture Rule from struct: %+v", updatedDevicePostureRule)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Device Posture Rule from struct: %+v", updatedDevicePostureRule))
 
 	devicePostureRule, err := client.UpdateDevicePostureRule(ctx, accountID, updatedDevicePostureRule)
 	if err != nil {
@@ -118,7 +118,7 @@ func resourceCloudflareDevicePostureRuleDelete(ctx context.Context, d *schema.Re
 	appID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare Device Posture Rule using ID: %s", appID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Device Posture Rule using ID: %s", appID))
 
 	err := client.DeleteDevicePostureRule(ctx, accountID, appID)
 	if err != nil {
@@ -139,7 +139,7 @@ func resourceCloudflareDevicePostureRuleImport(ctx context.Context, d *schema.Re
 
 	accountID, devicePostureRuleID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Device Posture Rule: id %s for account %s", devicePostureRuleID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Device Posture Rule: id %s for account %s", devicePostureRuleID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(devicePostureRuleID)

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
@@ -23,9 +24,10 @@ func init() {
 }
 
 func testSweepCloudflareRecord(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	// Clean up the account level rulesets
@@ -36,7 +38,7 @@ func testSweepCloudflareRecord(r string) error {
 
 	records, err := client.DNSRecords(context.Background(), zoneID, cloudflare.DNSRecord{})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare DNS records: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
 	}
 
 	if len(records) == 0 {
@@ -45,7 +47,7 @@ func testSweepCloudflareRecord(r string) error {
 	}
 
 	for _, record := range records {
-		log.Printf("[INFO] Deleting Cloudflare DNS record ID: %s", record.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare DNS record ID: %s", record.ID))
 		//nolint:errcheck
 		client.DeleteDNSRecord(context.Background(), zoneID, record.ID)
 	}
@@ -518,7 +520,7 @@ func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) 
 }
 
 func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_record" {
@@ -536,7 +538,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 
 func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		err := client.DeleteDNSRecord(context.Background(), record.ZoneID, record.ID)
 		if err != nil {
 			return err
@@ -601,7 +603,7 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 			return fmt.Errorf("No Record ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundRecord, err := client.DNSRecord(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err

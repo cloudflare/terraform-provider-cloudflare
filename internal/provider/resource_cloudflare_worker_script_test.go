@@ -127,7 +127,7 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 			return fmt.Errorf("No Worker Script ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		params := getRequestParamsFromResource(rs)
 		r, err := client.DownloadWorker(context.Background(), &params)
 		if err != nil {
@@ -161,7 +161,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		params := getRequestParamsFromResource(rs)
 		r, _ := client.DownloadWorker(context.Background(), &params)
 

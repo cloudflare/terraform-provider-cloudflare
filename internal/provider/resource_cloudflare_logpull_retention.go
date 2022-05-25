@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -69,7 +69,7 @@ func resourceCloudflareLogpullRetentionDelete(ctx context.Context, d *schema.Res
 func resourceCloudflareLogpullRetentionImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	zoneID := d.Id()
 
-	log.Printf("[DEBUG] Importing Cloudflare Logpull Retention option for zone ID: %s", zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Logpull Retention option for zone ID: %s", zoneID))
 
 	d.Set("zone_id", zoneID)
 	d.SetId(stringChecksum("logpull-retention/" + zoneID))

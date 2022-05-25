@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
@@ -39,7 +39,7 @@ func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceDa
 	healthcheck, err := client.Healthcheck(ctx, zoneID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "object does not exist") {
-			log.Printf("[INFO] Healthcheck %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Healthcheck %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -61,7 +61,7 @@ func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceDa
 		d.Set("notification_email_addresses", healthcheck.Notification.EmailAddresses)
 
 		if err := d.Set("header", flattenHealthcheckHeader(healthcheck.HTTPConfig.Header)); err != nil {
-			log.Printf("[WARN] Error setting header for standalone healthcheck %q: %s", d.Id(), err)
+			tflog.Warn(ctx, fmt.Sprintf("Error setting header for standalone healthcheck %q: %s", d.Id(), err))
 		}
 	}
 
