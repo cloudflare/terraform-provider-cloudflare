@@ -150,7 +150,7 @@ func getRouteFromApi(zoneID, routeId string) (cloudflare.WorkerRoute, error) {
 		return cloudflare.WorkerRoute{}, fmt.Errorf("routeId is required to get a route")
 	}
 
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 	resp, err := client.ListWorkerRoutes(context.Background(), zoneID)
 	if err != nil {
 		return cloudflare.WorkerRoute{}, err

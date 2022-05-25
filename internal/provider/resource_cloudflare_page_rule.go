@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -54,10 +55,10 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 	actions := d.Get("actions").([]interface{})
 	newPageRuleActions := make([]cloudflare.PageRuleAction, 0, len(actions))
 
-	log.Printf("[DEBUG] Actions found in config: %#v", actions)
+	tflog.Debug(ctx, fmt.Sprintf("Actions found in config: %#v", actions))
 	for _, action := range actions {
 		for id, value := range action.(map[string]interface{}) {
-			newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
+			newPageRuleAction, err := transformToCloudflarePageRuleAction(ctx, id, value, d)
 			if err != nil {
 				return diag.FromErr(err)
 			} else if newPageRuleAction.Value == nil || newPageRuleAction.Value == "" {
@@ -78,7 +79,7 @@ func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceDat
 		Status:   d.Get("status").(string),
 	}
 
-	log.Printf("[DEBUG] Cloudflare Page Rule create configuration: %#v", newPageRule)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Page Rule create configuration: %#v", newPageRule))
 
 	r, err := client.CreatePageRule(ctx, zoneID, newPageRule)
 	if err != nil {
@@ -110,14 +111,14 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		if strings.Contains(err.Error(), "Invalid Page Rule identifier") || // api bug - this indicates non-existing resource
 			strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Page Rule %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Page Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		} else {
 			return diag.FromErr(fmt.Errorf("error finding page rule %q: %w", d.Id(), err))
 		}
 	}
-	log.Printf("[DEBUG] Cloudflare Page Rule read configuration: %#v", pageRule)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Page Rule read configuration: %#v", pageRule))
 
 	// Cloudflare presently only has one target type, and its Operator is always
 	// "matches"; so we can just read the first element's Value.
@@ -170,7 +171,7 @@ func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceDat
 
 		for _, action := range actions {
 			for id, value := range action.(map[string]interface{}) {
-				newPageRuleAction, err := transformToCloudflarePageRuleAction(id, value, d)
+				newPageRuleAction, err := transformToCloudflarePageRuleAction(ctx, id, value, d)
 				if err != nil {
 					return diag.FromErr(err)
 				} else if newPageRuleAction.Value == nil {
@@ -345,7 +346,7 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 	return
 }
 
-func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
+func transformToCloudflarePageRuleAction(ctx context.Context, id string, value interface{}, d *schema.ResourceData) (pageRuleAction cloudflare.PageRuleAction, err error) {
 	pageRuleAction.ID = id
 
 	if strValue, ok := value.(string); ok {
@@ -474,7 +475,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 	} else if id == "cache_ttl_by_status" {
 		cacheTTLActionSchema := value.(*schema.Set)
 
-		log.Printf("[DEBUG] cache_ttl_by_status action to be applied: %#v", cacheTTLActionSchema)
+		tflog.Debug(ctx, fmt.Sprintf("cache_ttl_by_status action to be applied: %#v", cacheTTLActionSchema))
 
 		if cacheTTLActionSchema.Len() != 0 {
 			output := make(map[string]int)
@@ -490,7 +491,7 @@ func transformToCloudflarePageRuleAction(id string, value interface{}, d *schema
 		err = fmt.Errorf("Bad value for %s: %s", id, value)
 	}
 
-	log.Printf("[DEBUG] Page Rule Action to be applied: %#v", pageRuleAction)
+	tflog.Debug(ctx, fmt.Sprintf("Page Rule Action to be applied: %#v", pageRuleAction))
 
 	return
 }

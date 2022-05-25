@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -52,7 +52,7 @@ func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.Resourc
 		newZoneLockdown.Configurations = expandZoneLockdownConfig(configurations.(*schema.Set))
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown))
 
 	var r *cloudflare.ZoneLockdownResponse
 
@@ -68,7 +68,7 @@ func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.Resourc
 
 	d.SetId(r.Result.ID)
 
-	log.Printf("[INFO] Cloudflare Zone Lockdown ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Zone Lockdown ID: %s", d.Id()))
 
 	return resourceCloudflareZoneLockdownRead(ctx, d, meta)
 }
@@ -79,25 +79,25 @@ func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceD
 
 	zoneLockdownResponse, err := client.ZoneLockdown(ctx, zoneID, d.Id())
 
-	log.Printf("[DEBUG] zoneLockdownResponse: %#v", zoneLockdownResponse)
-	log.Printf("[DEBUG] zoneLockdownResponse error: %#v", err)
+	tflog.Debug(ctx, fmt.Sprintf("zoneLockdownResponse: %#v", zoneLockdownResponse))
+	tflog.Debug(ctx, fmt.Sprintf("zoneLockdownResponse error: %#v", err))
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Zone Lockdown %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Zone Lockdown %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
 		return diag.FromErr(fmt.Errorf("error finding zone lockdown %q: %w", d.Id(), err))
 	}
 
-	log.Printf("[DEBUG] Cloudflare Zone Lockdown read configuration: %#v", zoneLockdownResponse)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Zone Lockdown read configuration: %#v", zoneLockdownResponse))
 
 	d.Set("paused", zoneLockdownResponse.Result.Paused)
 	d.Set("priority", zoneLockdownResponse.Result.Priority)
 	d.Set("description", zoneLockdownResponse.Result.Description)
 	d.Set("urls", zoneLockdownResponse.Result.URLs)
-	log.Printf("[DEBUG] read configurations: %#v", d.Get("configurations"))
+	tflog.Debug(ctx, fmt.Sprintf("read configurations: %#v", d.Get("configurations")))
 
 	configurations := make([]map[string]interface{}, len(zoneLockdownResponse.Result.Configurations))
 
@@ -107,10 +107,10 @@ func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceD
 			"value":  entryconfigZoneLockdownConfig.Value,
 		}
 	}
-	log.Printf("[DEBUG] Cloudflare Zone Lockdown configuration: %#v", configurations)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Zone Lockdown configuration: %#v", configurations))
 
 	if err := d.Set("configurations", configurations); err != nil {
-		log.Printf("[WARN] Error setting configurations in zone lockdown %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting configurations in zone lockdown %q: %s", d.Id(), err))
 	}
 
 	return nil
@@ -142,7 +142,7 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 		newZoneLockdown.Configurations = expandZoneLockdownConfig(configurations.(*schema.Set))
 	}
 
-	log.Printf("[INFO] Updating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown)
+	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown))
 
 	r, err := client.UpdateZoneLockdown(ctx, zoneID, d.Id(), newZoneLockdown)
 
@@ -156,7 +156,7 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 
 	d.SetId(r.Result.ID)
 
-	log.Printf("[INFO] Cloudflare Zone Lockdown ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Zone Lockdown ID: %s", d.Id()))
 
 	return resourceCloudflareZoneLockdownRead(ctx, d, meta)
 }
@@ -165,7 +165,7 @@ func resourceCloudflareZoneLockdownDelete(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	log.Printf("[INFO] Deleting Cloudflare Zone Lockdown: id %s for zone %s", d.Id(), zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Zone Lockdown: id %s for zone %s", d.Id(), zoneID))
 
 	_, err := client.DeleteZoneLockdown(ctx, zoneID, d.Id())
 
@@ -202,8 +202,8 @@ func resourceCloudflareZoneLockdownImport(ctx context.Context, d *schema.Resourc
 		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/zoneLockdownId\"", d.Id())
 	}
 
-	log.Printf("[DEBUG] zoneID: %s", zoneID)
-	log.Printf("[DEBUG] Resource ID : %s", zoneLockdownID)
+	tflog.Debug(ctx, fmt.Sprintf("zoneID: %s", zoneID))
+	tflog.Debug(ctx, fmt.Sprintf("Resource ID : %s", zoneLockdownID))
 
 	resourceCloudflareZoneLockdownRead(ctx, d, meta)
 

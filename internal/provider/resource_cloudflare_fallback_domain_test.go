@@ -71,7 +71,7 @@ resource "cloudflare_fallback_domain" "%[1]s" {
 }
 
 func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_fallback_domain" {

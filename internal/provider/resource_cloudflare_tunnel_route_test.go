@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -21,9 +22,10 @@ func init() {
 }
 
 func testSweepCloudflareTunnelRoute(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -33,7 +35,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 
 	tunnelRoutes, err := client.ListTunnelRoutes(context.Background(), cloudflare.TunnelRoutesListParams{AccountID: accountID})
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare Tunnel Routes: %s", err)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Tunnel Routes: %s", err))
 	}
 
 	if len(tunnelRoutes) == 0 {
@@ -42,7 +44,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 	}
 
 	for _, tunnel := range tunnelRoutes {
-		log.Printf("[INFO] Deleting Cloudflare Tunnel Route network: %s", tunnel.Network)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Tunnel Route network: %s", tunnel.Network))
 		//nolint:errcheck
 		client.DeleteTunnelRoute(context.Background(), cloudflare.TunnelRoutesDeleteParams{AccountID: accountID, Network: tunnel.Network})
 	}
@@ -86,7 +88,7 @@ func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.Tunn
 			return errors.New("No Tunnel route is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundTunnelRoute, err := client.GetTunnelRouteForIP(context.Background(), cloudflare.TunnelRoutesForIPParams{
 			Network: rs.Primary.ID,
 		})

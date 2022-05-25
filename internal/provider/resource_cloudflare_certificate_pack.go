@@ -3,12 +3,12 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"reflect"
 	"strings"
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -154,7 +154,7 @@ func resourceCloudflareCertificatePackImport(ctx context.Context, d *schema.Reso
 
 	zoneID, certificatePackID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Certificate Pack: id %s for zone %s", certificatePackID, zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Certificate Pack: id %s for zone %s", certificatePackID, zoneID))
 
 	d.Set("zone_id", zoneID)
 	d.SetId(certificatePackID)

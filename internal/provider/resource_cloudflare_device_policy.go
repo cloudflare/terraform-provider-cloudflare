@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -28,7 +28,7 @@ func resourceCloudflareDevicePolicyCertificateUpdate(ctx context.Context, d *sch
 	zoneID := d.Get("zone_id").(string)
 	enabled := d.Get("enabled").(bool)
 
-	log.Printf("[DEBUG] Updating Cloudflare device policy certificate: zoneID=%s enabled=%t", zoneID, enabled)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare device policy certificate: zoneID=%s enabled=%t", zoneID, enabled))
 
 	_, err := client.UpdateDeviceClientCertificatesZone(ctx, zoneID, enabled)
 	if err != nil {
@@ -56,7 +56,7 @@ func resourceCloudflareDevicePolicyCertificateRead(ctx context.Context, d *schem
 func resourceCloudflareDevicePolicyCertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	zoneID := d.Id()
 
-	log.Printf("[DEBUG] Importing Cloudflare device policy certificate setting: zoneID=%s", zoneID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare device policy certificate setting: zoneID=%s", zoneID))
 
 	d.SetId(zoneID)
 	d.Set("zone_id", zoneID)

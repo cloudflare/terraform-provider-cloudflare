@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -40,16 +40,12 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
-		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
+		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
 		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
 		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
-	}
-
-	if value, ok := d.GetOk("http_only_cookie_attribute"); ok {
-		newAccessApplication.HttpOnlyCookieAttribute = value.(bool)
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -64,7 +60,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		newAccessApplication.CorsHeaders = CORSConfig
 	}
 
-	log.Printf("[DEBUG] Creating Cloudflare Access Application from struct: %+v", newAccessApplication)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -104,7 +100,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
-			log.Printf("[INFO] Access Application %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access Application %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -121,7 +117,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("custom_deny_message", accessApplication.CustomDenyMessage)
 	d.Set("custom_deny_url", accessApplication.CustomDenyURL)
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
-	d.Set("http_only_cookie_attribute", accessApplication.HttpOnlyCookieAttribute)
+	d.Set("http_only_cookie_attribute", cloudflare.Bool(accessApplication.HttpOnlyCookieAttribute))
 	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
 	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
 	d.Set("logo_url", accessApplication.LogoURL)
@@ -152,7 +148,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
-		HttpOnlyCookieAttribute: d.Get("http_only_cookie_attribute").(bool),
+		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        d.Get("skip_interstitial").(bool),
@@ -172,7 +168,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		updatedAccessApplication.CorsHeaders = CORSConfig
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -200,7 +196,7 @@ func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.Re
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
 
-	log.Printf("[DEBUG] Deleting Cloudflare Access Application using ID: %s", appID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Application using ID: %s", appID))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -233,7 +229,7 @@ func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.Re
 
 	accountID, accessApplicationID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare Access Application: id %s for account %s", accessApplicationID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Application: id %s for account %s", accessApplicationID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(accessApplicationID)

@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -30,7 +30,7 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 
 	zoneID := d.Get("zone_id").(string)
 
-	rateLimitAction, err := expandRateLimitAction(d)
+	rateLimitAction, err := expandRateLimitAction(ctx, d)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error expanding rate limit action"))
 	}
@@ -61,13 +61,13 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 
 	newRateLimit.Correlate, _ = expandRateLimitCorrelate(d)
 
-	newRateLimitAction, err := expandRateLimitAction(d)
+	newRateLimitAction, err := expandRateLimitAction(ctx, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	newRateLimit.Action = newRateLimitAction
 
-	log.Printf("[DEBUG] Creating Cloudflare Rate Limit from struct: %+v", newRateLimit)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Rate Limit from struct: %+v", newRateLimit))
 
 	r, err := client.CreateRateLimit(ctx, zoneID, newRateLimit)
 	if err != nil {
@@ -80,7 +80,7 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 
 	d.SetId(r.ID)
 
-	log.Printf("[INFO] Cloudflare Rate Limit ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Rate Limit ID: %s", d.Id()))
 
 	return resourceCloudflareRateLimitRead(ctx, d, meta)
 }
@@ -91,7 +91,7 @@ func resourceCloudflareRateLimitUpdate(ctx context.Context, d *schema.ResourceDa
 	zoneID := d.Get("zone_id").(string)
 	rateLimitId := d.Id()
 
-	rateLimitAction, err := expandRateLimitAction(d)
+	rateLimitAction, err := expandRateLimitAction(ctx, d)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error expanding rate limit action"))
 	}
@@ -102,7 +102,7 @@ func resourceCloudflareRateLimitUpdate(ctx context.Context, d *schema.ResourceDa
 		Action:    rateLimitAction,
 	}
 
-	newRateLimitAction, err := expandRateLimitAction(d)
+	newRateLimitAction, err := expandRateLimitAction(ctx, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -201,7 +201,7 @@ func expandRateLimitTrafficMatcher(d *schema.ResourceData) (matcher cloudflare.R
 	return
 }
 
-func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitAction, err error) {
+func expandRateLimitAction(ctx context.Context, d *schema.ResourceData) (action cloudflare.RateLimitAction, err error) {
 	// dont need to guard for array length because MinItems is set **and** action is required
 	tfAction := d.Get("action").([]interface{})[0].(map[string]interface{})
 
@@ -220,7 +220,7 @@ func expandRateLimitAction(d *schema.ResourceData) (action cloudflare.RateLimitA
 	action.Timeout = timeout
 
 	if _, ok := tfAction["response"]; ok && len(tfAction["response"].([]interface{})) > 0 {
-		log.Printf("[DEBUG] Cloudflare Rate Limit specified action: %+v \n", tfAction)
+		tflog.Debug(ctx, fmt.Sprintf("Cloudflare Rate Limit specified action: %+v \n", tfAction))
 		tfActionResponse := tfAction["response"].([]interface{})[0].(map[string]interface{})
 
 		action.Response = &cloudflare.RateLimitActionResponse{
@@ -265,7 +265,7 @@ func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData
 	rateLimit, err := client.RateLimit(ctx, zoneID, rateLimitId)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Resource %s in zone %s no longer exists", rateLimitId, zoneID)
+			tflog.Info(ctx, fmt.Sprintf("Resource %s in zone %s no longer exists", rateLimitId, zoneID))
 			d.SetId("")
 			return nil
 		} else {
@@ -273,15 +273,15 @@ func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData
 				fmt.Sprintf("Error reading rate limit resource from API for resource %s in zone %s", zoneID, rateLimitId)))
 		}
 	}
-	log.Printf("[DEBUG] Read Cloudflare Rate Limit from API as struct: %+v", rateLimit)
+	tflog.Debug(ctx, fmt.Sprintf("Read Cloudflare Rate Limit from API as struct: %+v", rateLimit))
 
 	d.Set("threshold", rateLimit.Threshold)
 	d.Set("period", rateLimit.Period)
 	if err := d.Set("match", flattenRateLimitTrafficMatcher(rateLimit.Match)); err != nil {
-		log.Printf("[WARN] Error setting match on rate limit %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting match on rate limit %q: %s", d.Id(), err))
 	}
 	if err := d.Set("action", flattenRateLimitAction(rateLimit.Action)); err != nil {
-		log.Printf("[WARN] Error setting action on rate limit %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting action on rate limit %q: %s", d.Id(), err))
 	}
 
 	if rateLimit.Correlate != nil {
@@ -297,11 +297,11 @@ func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData
 			bypassUrlPatterns = append(bypassUrlPatterns, bypassItem.Value)
 		} else {
 			// maybe a new type of bypass was added to api
-			log.Printf("[WARN] Unknown bypass type found in rate limit for zone %q: %s", d.Id(), bypassItem.Name)
+			tflog.Warn(ctx, fmt.Sprintf("Unknown bypass type found in rate limit for zone %q: %s", d.Id(), bypassItem.Name))
 		}
 	}
 	if err := d.Set("bypass_url_patterns", bypassUrlPatterns); err != nil {
-		log.Printf("[WARN] Error setting bypass_url_patterns on rate limit %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting bypass_url_patterns on rate limit %q: %s", d.Id(), err))
 	}
 
 	return nil
@@ -386,7 +386,7 @@ func resourceCloudflareRateLimitDelete(ctx context.Context, d *schema.ResourceDa
 	zoneID := d.Get("zone_id").(string)
 	rateLimitId := d.Id()
 
-	log.Printf("[INFO] Deleting Cloudflare Rate Limit: %s for zone: %s", rateLimitId, zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Rate Limit: %s for zone: %s", rateLimitId, zoneID))
 
 	err := client.DeleteRateLimit(ctx, zoneID, rateLimitId)
 	if err != nil {

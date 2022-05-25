@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -18,15 +19,16 @@ func init() {
 }
 
 func testSweepCloudflareAccessIdentityProviders(r string) error {
+	ctx := context.Background()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	accessIDPs, accessIDPsErr := client.AccessIdentityProviders(context.Background(), accountID)
 	if accessIDPsErr != nil {
-		log.Printf("[ERROR] Failed to fetch Access Identity Providers: %s", accessIDPsErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Access Identity Providers: %s", accessIDPsErr))
 	}
 
 	if len(accessIDPs) == 0 {
@@ -35,11 +37,11 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 	}
 
 	for _, idp := range accessIDPs {
-		log.Printf("[INFO] Deleting Access Identity Provider ID: %s", idp.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Access Identity Provider ID: %s", idp.ID))
 		_, err := client.DeleteAccessIdentityProvider(context.Background(), accountID, idp.ID)
 
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete Access Identity Provider (%s): %s", idp.ID, err)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Access Identity Provider (%s): %s", idp.ID, err))
 		}
 	}
 

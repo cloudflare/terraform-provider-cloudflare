@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -32,7 +32,7 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 	configuration, err := client.TeamsAccountConfiguration(ctx, accountID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 400") {
-			log.Printf("[INFO] Teams Account config %s does not exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Teams Account config %s does not exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -130,7 +130,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 		updatedTeamsAccount.Settings.BrowserIsolation = &cloudflare.BrowserIsolation{UrlBrowserIsolationEnabled: browserIsolation.(bool)}
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount))
 
 	if _, err := client.TeamsAccountUpdateConfiguration(ctx, accountID, updatedTeamsAccount); err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Teams Account configuration for account %q: %w", accountID, err))

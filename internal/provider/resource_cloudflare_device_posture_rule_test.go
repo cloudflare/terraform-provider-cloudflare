@@ -293,7 +293,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 }
 
 func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_device_posture_rule" {

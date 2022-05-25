@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
@@ -21,9 +22,11 @@ func init() {
 }
 
 func testSweepCloudflareCustomHostnames(r string) error {
+	ctx := context.Background()
+
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -33,7 +36,7 @@ func testSweepCloudflareCustomHostnames(r string) error {
 
 	hostnames, _, hostnamesErr := client.CustomHostnames(context.Background(), zoneID, 1, cloudflare.CustomHostname{})
 	if hostnamesErr != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare custom hostnames: %s", hostnamesErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare custom hostnames: %s", hostnamesErr))
 	}
 
 	if len(hostnames) == 0 {
@@ -42,11 +45,11 @@ func testSweepCloudflareCustomHostnames(r string) error {
 	}
 
 	for _, hostname := range hostnames {
-		log.Printf("[INFO] Deleting Cloudflare custom hostname: %s", hostname.ID)
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare custom hostname: %s", hostname.ID))
 		err := client.DeleteCustomHostname(context.Background(), zoneID, hostname.ID)
 
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete Cloudflare custom hostname (%s): %s", hostname.Hostname, err)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare custom hostname (%s): %s", hostname.Hostname, err))
 		}
 	}
 
@@ -417,7 +420,7 @@ func testAccCheckCloudflareCustomHostnameExists(n string, customHostname *cloudf
 			return fmt.Errorf("No CustomHostname ID is set")
 		}
 
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundCustomHostname, err := client.CustomHostname(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err

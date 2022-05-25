@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -20,16 +21,17 @@ func init() {
 }
 
 func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
+	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		log.Printf("[ERROR] Failed to create Cloudflare client: %s", clientErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	perZoneCertificates, certsErr := client.ListPerZoneAuthenticatedOriginPullsCertificates(context.Background(), zoneID)
 
 	if certsErr != nil {
-		log.Printf("[ERROR] Failed to fetch Cloudflare authenticated origin pull certificates: %s", certsErr)
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare authenticated origin pull certificates: %s", certsErr))
 	}
 
 	if len(perZoneCertificates) == 0 {
@@ -41,7 +43,7 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certificate.ID)
 
 		if err != nil {
-			log.Printf("[ERROR] Failed to delete Cloudflare authenticated origin pull certificate (%s) in zone ID: %s", certificate.ID, zoneID)
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare authenticated origin pull certificate (%s) in zone ID: %s", certificate.ID, zoneID))
 		}
 	}
 
@@ -109,7 +111,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n st
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -131,7 +133,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -155,7 +157,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, nam
 }
 
 func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Primary.Attributes["type"] == "per-zone" {
 			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)

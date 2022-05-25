@@ -55,11 +55,11 @@ jobs:
         key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
     - name: Pre-Sweeper
-      run: go test ./cloudflare -v -sweep="1"
+      run: go test ./internal/provider -v -sweep="1"
 
     - name: Run acceptance tests
       run: make testacc
 
     - name: Post-Sweeper
       if: ${{ always() }}
-      run: go test ./cloudflare -v -sweep="1"
+      run: go test ./internal/provider -v -sweep="1"

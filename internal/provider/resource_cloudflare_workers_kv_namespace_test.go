@@ -34,7 +34,7 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 }
 
 func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
-	client := New("dev")().Meta().(*cloudflare.API)
+	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_workers_kv_namespace" {
@@ -66,7 +66,7 @@ resource "cloudflare_workers_kv_namespace" "%[1]s" {
 
 func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *cloudflare.WorkersKVNamespace) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := New("dev")().Meta().(*cloudflare.API)
+		client := testAccProvider.Meta().(*cloudflare.API)
 		resp, err := client.ListWorkersKVNamespaces(context.Background())
 		if err != nil {
 			return err

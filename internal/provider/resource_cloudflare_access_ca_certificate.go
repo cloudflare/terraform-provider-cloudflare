@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -65,7 +65,7 @@ func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.Re
 
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Access CA Certificate %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Access CA Certificate %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -86,7 +86,7 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 	client := meta.(*cloudflare.API)
 	applicationID := d.Get("application_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare CA Certificate using ID: %s", d.Id())
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare CA Certificate using ID: %s", d.Id()))
 
 	identifier, err := initIdentifier(d)
 	if err != nil {
@@ -121,7 +121,7 @@ func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessCACertificateID\" or \"zone/zoneID/accessCACertificateID\"", d.Id())
 	}
 
-	log.Printf("[DEBUG] Importing Cloudflare Access CA Certificate: id %s for %s %s", accessCACertificateID, identifierType, identifierID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access CA Certificate: id %s for %s %s", accessCACertificateID, identifierType, identifierID))
 
 	//lintignore:R001
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)

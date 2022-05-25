@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -40,7 +40,7 @@ func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *sc
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Device Posture integration with provided config: %w", err))
 	}
-	log.Printf("[DEBUG] Creating Cloudflare Device Posture Integration from struct: %+v\n", newDevicePostureIntegration)
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Device Posture Integration from struct: %+v\n", newDevicePostureIntegration))
 
 	// The API does not return the client_secret so it must be stored in the state func on resource create.
 	savedSecret := newDevicePostureIntegration.Config.ClientSecret
@@ -68,7 +68,7 @@ func devicePostureIntegrationReadHelper(ctx context.Context, d *schema.ResourceD
 	devicePostureIntegration, err := client.DevicePostureIntegration(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Device posture integration %s no longer exists", d.Id())
+			tflog.Info(ctx, fmt.Sprintf("Device posture integration %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
 		}
@@ -100,7 +100,7 @@ func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *sc
 		return diag.FromErr(fmt.Errorf("error creating Device Posture Rule with provided match input: %w", err))
 	}
 
-	log.Printf("[DEBUG] Updating Cloudflare device posture integration from struct: %+v", updatedDevicePostureIntegration)
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare device posture integration from struct: %+v", updatedDevicePostureIntegration))
 
 	devicePostureIntegration, err := client.UpdateDevicePostureIntegration(ctx, accountID, updatedDevicePostureIntegration)
 	if err != nil {
@@ -119,7 +119,7 @@ func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *sc
 	appID := d.Id()
 	accountID := d.Get("account_id").(string)
 
-	log.Printf("[DEBUG] Deleting Cloudflare device posture integration using ID: %s", appID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare device posture integration using ID: %s", appID))
 
 	err := client.DeleteDevicePostureIntegration(ctx, accountID, appID)
 	if err != nil {
@@ -140,7 +140,7 @@ func resourceCloudflareDevicePostureIntegrationImport(ctx context.Context, d *sc
 
 	accountID, devicePostureIntegrationID := attributes[0], attributes[1]
 
-	log.Printf("[DEBUG] Importing Cloudflare device posture integration: id %s for account %s", devicePostureIntegrationID, accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare device posture integration: id %s for account %s", devicePostureIntegrationID, accountID))
 
 	d.Set("account_id", accountID)
 	d.SetId(devicePostureIntegrationID)

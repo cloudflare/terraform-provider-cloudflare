@@ -3,13 +3,13 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -273,7 +273,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 		newLoadBalancer.Rules = v
 	}
 
-	log.Printf("[INFO] Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer)
+	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer))
 
 	r, err := client.CreateLoadBalancer(ctx, zoneID, newLoadBalancer)
 	if err != nil {
@@ -286,7 +286,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 
 	d.SetId(r.ID)
 
-	log.Printf("[INFO] Cloudflare Load Balancer ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Cloudflare Load Balancer ID: %s", d.Id()))
 
 	return resourceCloudflareLoadBalancerRead(ctx, d, meta)
 }
@@ -349,7 +349,7 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 		loadBalancer.Rules = v
 	}
 
-	log.Printf("[INFO] Updating Cloudflare Load Balancer from struct: %+v", loadBalancer)
+	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer from struct: %+v", loadBalancer))
 
 	_, err := client.ModifyLoadBalancer(ctx, zoneID, loadBalancer)
 	if err != nil {
@@ -383,7 +383,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	loadBalancer, err := client.LoadBalancerDetails(ctx, zoneID, loadBalancerID)
 	if err != nil {
 		if strings.Contains(err.Error(), "HTTP status 404") {
-			log.Printf("[INFO] Load balancer %s in zone %s not found", loadBalancerID, zoneID)
+			tflog.Info(ctx, fmt.Sprintf("Load balancer %s in zone %s not found", loadBalancerID, zoneID))
 			d.SetId("")
 			return nil
 		}
@@ -420,15 +420,15 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	if err := d.Set("default_pool_ids", loadBalancer.DefaultPools); err != nil {
-		log.Printf("[WARN] Error setting default_pool_ids on load balancer %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting default_pool_ids on load balancer %q: %s", d.Id(), err))
 	}
 
 	if err := d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop")); err != nil {
-		log.Printf("[WARN] Error setting pop_pools on load balancer %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting pop_pools on load balancer %q: %s", d.Id(), err))
 	}
 
 	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region")); err != nil {
-		log.Printf("[WARN] Error setting region_pools on load balancer %q: %s", d.Id(), err)
+		tflog.Warn(ctx, fmt.Sprintf("Error setting region_pools on load balancer %q: %s", d.Id(), err))
 	}
 
 	if loadBalancer.PersistenceTTL != 0 {
@@ -463,7 +463,7 @@ func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.Resourc
 	zoneID := d.Get("zone_id").(string)
 	loadBalancerID := d.Id()
 
-	log.Printf("[INFO] Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID)
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID))
 
 	err := client.DeleteLoadBalancer(ctx, zoneID, loadBalancerID)
 	if err != nil {
