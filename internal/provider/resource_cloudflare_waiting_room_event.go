@@ -56,7 +56,7 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 		Name:                  d.Get("name").(string),
 		EventStartTime:        eventStartTime,
 		EventEndTime:          eventEndTime,
-		PrequeueStartTime:     &prequeueStartTime,
+		PrequeueStartTime:     prequeueStartTime,
 		Description:           d.Get("description").(string),
 		QueueingMethod:        d.Get("queueing_method").(string),
 		ShuffleAtEventStart:   d.Get("shuffle_at_event_start").(bool),
