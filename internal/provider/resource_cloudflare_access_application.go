@@ -60,6 +60,14 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		newAccessApplication.CorsHeaders = CORSConfig
 	}
 
+	if _, ok := d.GetOk("saas_app"); ok {
+		SaasConfig, err := convertSaasSchemaToStruct(d)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		newAccessApplication.SaasApplication = SaasConfig
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
 
 	identifier, err := initIdentifier(d)

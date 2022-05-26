@@ -674,6 +674,89 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOr
 	})
 }
 
+func testAccessApplicationSaasApp(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name             = "%[1]s-updated"
+      zone_id          = "%[3]s"
+      domain           = "%[1]s.%[2]s"
+      type             = "saas"
+
+      saas_app {
+        consumer_service_url = "https://dashtest.cloudflare.com/api/v4/saml/acs"
+        sp_entity_id = "dash.cloudflare.com"
+        name_id_format = "id"
+				custom_attributes {
+
+				}
+      }
+  }
+  `, resourceID, zone, zoneID)
+}
+
+func TestAccCloudflareAccessApplicationWithSaasApp(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_application." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	updatedName := fmt.Sprintf("%s-updated", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessApplicationSaasApp(rnd, zone, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "saas_app.consumer_service_url",  "https://dashtest.cloudflare.com/api/v4/saml/acs"),
+					resource.TestCheckResourceAttr(name, "saas_app.sp_entity_id", "dash.cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "saas_app.name_id_format", "id"),
+				),
+			},
+			{
+				Config: testAccessApplicationSaasApp(rnd, zone, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", updatedName),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplicationBookmark(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_application." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	updatedName := fmt.Sprintf("%s-updated", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessApplicationBookmark(rnd, zone, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "type",  "bookmark"),
+				),
+			},
+			{
+				Config: testAccessApplicationBookmark(rnd, zone, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", updatedName),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+				),
+			},
+		},
+	})
+}
 func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildcardOrigins(t *testing.T) {
 	rnd := generateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -692,6 +775,18 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildc
 			},
 		},
 	})
+}
+
+func testAccessApplicationBookmark(resourceID, zone, zoneID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name             = "%[1]s-updated"
+      zone_id          = "%[3]s"
+      domain           = "%[1]s.%[2]s"
+      type             = "bookmark"
+
+  }
+  `, resourceID, zone, zoneID)
 }
 
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {

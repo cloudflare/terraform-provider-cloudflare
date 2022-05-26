@@ -40,7 +40,14 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file", "biso", "app_launcher", "warp", "bookmark", "saas"}, false),
+		},
+		"saas_app" : {
+			Type:     schema.TypeMap,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Optional: true,
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
@@ -159,6 +166,37 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Default:  false,
 		},
 	}
+}
+
+func convertSaasSchemaToStruct(d *schema.ResourceData) (*cloudflare.SaasApplication, error) {
+	SaasConfig := cloudflare.SaasApplication{}
+	
+	if _, ok := d.GetOk("saas_app"); ok {
+		SaasConfig.ConsumerServiceUrl = d.Get("saas_app.consumer_service_url").(string)
+		SaasConfig.SPEntityID = d.Get("saas_app.sp_entity_id").(string)
+		SaasConfig.NameIDFormat = d.Get("saas_app.name_id_format").(string)
+
+		customAttrs := d.Get("saas_app.custom_attributes").([]interface{})
+		for _, value := range customAttrs {
+			if value != nil {
+				customAttrMap := value.(map[string]interface{})
+				SaasConfig.CustomAttributes = append(SaasConfig.CustomAttributes, schemaAccessSaasAppCustomAttrToAPI(customAttrMap))
+			}
+			}
+		}
+		return &SaasConfig, nil
+	}
+
+func schemaAccessSaasAppCustomAttrToAPI(data map[string]interface{}) cloudflare.SAMLAttributeConfig {
+	var customAttr cloudflare.SAMLAttributeConfig
+
+	customAttr.Name = data["name"].(string)
+	customAttr.NameFormat, _ = data["name_format"].(string)
+	customAttr.FriendlyName, _ = data["friendly_name"].(string)
+	customAttr.Required, _ = data["required"].(bool)
+	customAttr.Source, _ = data["source"].(cloudflare.SourceConfig)
+
+	return customAttr
 }
 
 func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplicationCorsHeaders, error) {
