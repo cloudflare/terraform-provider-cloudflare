@@ -61,6 +61,7 @@ func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceDat
 	}
 
 	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
+	d.Set("tunnel_token", token)
 
 	return nil
 }
