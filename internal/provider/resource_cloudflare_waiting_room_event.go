@@ -110,7 +110,7 @@ func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.Resou
 	d.Set("event_end_time", waitingRoomEvent.EventEndTime.Format(time.RFC3339))
 	d.Set("session_duration", waitingRoomEvent.SessionDuration)
 
-	if !waitingRoomEvent.PrequeueStartTime.IsZero() {
+	if waitingRoomEvent.PrequeueStartTime != nil {
 		d.Set("prequeue_start_time", waitingRoomEvent.PrequeueStartTime.Format(time.RFC3339))
 	}
 
