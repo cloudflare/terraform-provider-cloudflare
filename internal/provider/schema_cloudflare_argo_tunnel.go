@@ -24,5 +24,9 @@ func resourceCloudflareArgoTunnelSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Computed: true,
 		},
+		"tunnel_token": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
 	}
 }
