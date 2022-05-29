@@ -34,12 +34,31 @@ The following arguments are supported:
 * `total_active_users` - (Required) The total number of active user sessions on the route at a point in time.
 * `new_users_per_minute` - (Required) The number of new users that will be let into the route every minute.
 * `custom_page_html` - (Optional) This a templated html file that will be rendered at the edge.
+* `default_template_language` - (Optional) The language to use for the default waiting room page (refer to the [nested schema](#nestedblock--default-template-language)).
 * `queue_all` - (Optional) If queue_all is true all the traffic that is coming to a route will be sent to the waiting room. Default: false.
 * `disable_session_renewal` - (Optional) Disables automatic renewal of session cookies. Default: false.
 * `suspended` - (Optional) If suspended, the traffic doesn't go to the waiting room. Default: false.
 * `description` - (Optional) A description to let users add more details about the waiting room.
 * `session_duration` - (Optional) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. Default: 5
 * `json_response_enabled` - (Optional) If true, requests to the waiting room with the header Accept: application/json will receive a JSON response object.
+
+<a id="nestedblock--default-template-language"></a>
+**Nested schema for `default_template_language`**
+
+* `de-DE` - German
+* `en-US` - English
+* `es-ES` - Spanish
+* `fr-FR` - French
+* `id-ID` - Indonesian
+* `it-IT` - Italian
+* `ja-JP` - Japanese
+* `ko-KR` - Korean
+* `nl-NL` - Dutch
+* `pl-PL` - Polish
+* `pt-BR` - Portuguese
+* `tr-TR` - Turkish
+* `zh-CN` - Chinese (Simplified)
+* `zh-TW` - Chinese (Traditional)
 
 ## Attributes Reference
 

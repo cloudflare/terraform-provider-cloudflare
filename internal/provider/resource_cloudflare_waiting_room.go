@@ -32,18 +32,19 @@ func resourceCloudflareWaitingRoom() *schema.Resource {
 
 func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 	return cloudflare.WaitingRoom{
-		Name:                  d.Get("name").(string),
-		Description:           d.Get("description").(string),
-		Suspended:             d.Get("suspended").(bool),
-		Host:                  d.Get("host").(string),
-		Path:                  d.Get("path").(string),
-		TotalActiveUsers:      d.Get("total_active_users").(int),
-		NewUsersPerMinute:     d.Get("new_users_per_minute").(int),
-		CustomPageHTML:        d.Get("custom_page_html").(string),
-		SessionDuration:       d.Get("session_duration").(int),
-		JsonResponseEnabled:   d.Get("json_response_enabled").(bool),
-		QueueAll:              d.Get("queue_all").(bool),
-		DisableSessionRenewal: d.Get("disable_session_renewal").(bool),
+		Name:                    d.Get("name").(string),
+		Description:             d.Get("description").(string),
+		Suspended:               d.Get("suspended").(bool),
+		Host:                    d.Get("host").(string),
+		Path:                    d.Get("path").(string),
+		TotalActiveUsers:        d.Get("total_active_users").(int),
+		NewUsersPerMinute:       d.Get("new_users_per_minute").(int),
+		CustomPageHTML:          d.Get("custom_page_html").(string),
+		DefaultTemplateLanguage: d.Get("default_template_language").(string),
+		SessionDuration:         d.Get("session_duration").(int),
+		JsonResponseEnabled:     d.Get("json_response_enabled").(bool),
+		QueueAll:                d.Get("queue_all").(bool),
+		DisableSessionRenewal:   d.Get("disable_session_renewal").(bool),
 	}
 }
 
@@ -92,6 +93,7 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("session_duration", waitingRoom.SessionDuration)
 	d.Set("disable_session_renewal", waitingRoom.DisableSessionRenewal)
 	d.Set("custom_page_html", waitingRoom.CustomPageHTML)
+	d.Set("default_template_language", waitingRoom.DefaultTemplateLanguage)
 	d.Set("json_response_enabled", waitingRoom.JsonResponseEnabled)
 	return nil
 }

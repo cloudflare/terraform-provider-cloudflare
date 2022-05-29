@@ -31,6 +31,7 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", waitingRoomName),
 					resource.TestCheckResourceAttr(name, "description", "my desc"),
 					resource.TestCheckResourceAttr(name, "custom_page_html", "foobar"),
+					resource.TestCheckResourceAttr(name, "default_template_language", "en-US"),
 					resource.TestCheckResourceAttr(name, "disable_session_renewal", "true"),
 					resource.TestCheckResourceAttr(name, "suspended", "true"),
 					resource.TestCheckResourceAttr(name, "queue_all", "false"),
@@ -64,19 +65,20 @@ func testAccCheckCloudflareWaitingRoomDestroy(s *terraform.State) error {
 func testAccCloudflareWaitingRoom(resourceName, waitingRoomName, zoneID, domain, path string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_waiting_room" "%[1]s" {
-  name                    = "%[2]s"
-  zone_id                 = "%[3]s"
-  host                    = "www.%[4]s"
-  new_users_per_minute    = 400
-  total_active_users      = 405
-  path                    = "%[5]s"
-  session_duration        = 10
-  custom_page_html        = "foobar"
-  description             = "my desc"
-  disable_session_renewal = true
-  suspended               = true
-  queue_all               = false
-  json_response_enabled   = true
+  name                      = "%[2]s"
+  zone_id                   = "%[3]s"
+  host                      = "www.%[4]s"
+  new_users_per_minute      = 400
+  total_active_users        = 405
+  path                      = "%[5]s"
+  session_duration          = 10
+  custom_page_html          = "foobar"
+  default_template_language = "en-US"
+  description               = "my desc"
+  disable_session_renewal   = true
+  suspended                 = true
+  queue_all                 = false
+  json_response_enabled     = true
 }
 `, resourceName, waitingRoomName, zoneID, domain, path)
 }
