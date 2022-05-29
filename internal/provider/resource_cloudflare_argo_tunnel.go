@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -50,12 +51,13 @@ func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("failed to fetch Argo Tunnel: %w", err))
 	}
 
-	token, err := client.TunnelToken(context.Background(), cloudflare.TunnelTokenParams{
+	token, err := client.TunnelToken(ctx, cloudflare.TunnelTokenParams{
 		AccountID: accID,
 		ID:        tunnel.ID,
 	})
+
 	if err != nil {
-		fmt.Sprintf("[WARN] Unable to set the tunnel_token in state because it's not found in API")
+		tflog.Warn(ctx, "unable to set the tunnel_token in state because it's not found in API")
 		d.Set("tunnel_token", "")
 		return nil
 	}
