@@ -120,3 +120,16 @@ The following arguments are supported:
 
 ### TCP specific arguments
 * `method` - (Optional) The TCP connection method to use for the health check. Valid values: `connection_established` (Default: `connection_established`).
+
+## Import
+
+Healthchecks can be imported using a composite ID formed of zone ID and healthcheck ID, e.g.
+
+```
+$ terraform import cloudflare_healthcheck.example 9a7806061c88ada191ed06f989cc3dac/699d98642c564d2e855e9661899b7252
+```
+
+where:
+
+* `9a7806061c88ada191ed06f989cc3dac` - the zone ID
+* `699d98642c564d2e855e9661899b7252` - healthcheck ID as returned by [API](https://api.cloudflare.com/#health-checks-list-health-checks)
