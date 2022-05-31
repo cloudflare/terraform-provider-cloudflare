@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/provider"
+	"github.com/cloudflare/terraform-provider-cloudflare/v3/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
 
