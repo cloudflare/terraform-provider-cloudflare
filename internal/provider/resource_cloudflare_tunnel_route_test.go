@@ -52,7 +52,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 	return nil
 }
 
-func TestAccCloudflareTunnelRouteExists(t *testing.T) {
+func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -60,7 +60,10 @@ func TestAccCloudflareTunnelRouteExists(t *testing.T) {
 	var TunnelRoute cloudflare.TunnelRoute
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -78,6 +81,7 @@ func TestAccCloudflareTunnelRouteExists(t *testing.T) {
 }
 
 func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.TunnelRoute) resource.TestCheckFunc {
+
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -89,15 +93,17 @@ func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.Tunn
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundTunnelRoute, err := client.GetTunnelRouteForIP(context.Background(), cloudflare.TunnelRoutesForIPParams{
-			Network: rs.Primary.ID,
+		foundTunnelRoute, err := client.ListTunnelRoutes(context.Background(), cloudflare.TunnelRoutesListParams{
+			AccountID:     rs.Primary.Attributes["account_id"],
+			IsDeleted:     cloudflare.BoolPtr(false),
+			NetworkSubset: rs.Primary.ID,
 		})
 
 		if err != nil {
 			return err
 		}
 
-		*route = foundTunnelRoute
+		*route = foundTunnelRoute[0]
 
 		return nil
 	}
@@ -111,7 +117,10 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 	var TunnelRoute cloudflare.TunnelRoute
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
