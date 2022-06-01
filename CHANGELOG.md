@@ -1,4 +1,6 @@
-## 3.16.0 (Unreleased)
+## 3.17.0 (Unreleased)
+
+## 3.16.0 (June 1st, 2022)
 
 NOTES:
 
