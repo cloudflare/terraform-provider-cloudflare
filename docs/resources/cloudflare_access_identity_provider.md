@@ -72,7 +72,8 @@ The following arguments are supported:
 - `type` - (Required) The provider type to use. Must be one of: `"centrify"`,
   `"facebook"`, `"google-apps"`, `"oidc"`, `"github"`, `"google"`, `"saml"`,
   `"linkedin"`, `"azureAD"`, `"okta"`, `"onetimepin"`, `"onelogin"`, `"yandex"`.
-- `config` - (Optional) Provider configuration from the [developer documentation][access_identity_provider_guide].
+* `config` - (Optional) Provider configuration from the [developer documentation][access_identity_provider_guide].
+* `pkce_enabled` - (Optional) Enable Proof Key for Code Exchange (PKCE). Only use this if your identity provider supports PKCE for confidential clients.
 
 ## Attributes Reference
 
