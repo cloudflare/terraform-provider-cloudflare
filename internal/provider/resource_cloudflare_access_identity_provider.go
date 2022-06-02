@@ -207,7 +207,7 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 		IDPConfig.SsoTargetURL = d.Get("config.0.sso_target_url").(string)
 		IDPConfig.SupportGroups = d.Get("config.0.support_groups").(bool)
 		IDPConfig.TokenURL = d.Get("config.0.token_url").(string)
-		IDPConfig.PKCEenabled = d.Get("config.0.pkce_enabled").(bool)
+		IDPConfig.PKCEEnabled = d.Get("config.0.pkce_enabled").(bool)
 	}
 
 	return IDPConfig, nil
@@ -244,7 +244,7 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 		"sso_target_url":       options.SsoTargetURL,
 		"support_groups":       options.SupportGroups,
 		"token_url":            options.TokenURL,
-		"pkce_enabled":         options.PKCEenabled,
+		"pkce_enabled":         options.PKCEEnabled,
 	}
 
 	return []interface{}{m}
