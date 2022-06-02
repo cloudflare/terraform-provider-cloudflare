@@ -117,6 +117,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
 					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.pkce_enabled", "true"),
 				),
 			},
 		},
@@ -143,6 +144,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
 					resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.pkce_enabled", "true"),
 				),
 			},
 			{
@@ -208,6 +210,7 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
   config {
     client_id = "test"
     client_secret = "secret"
+    pkce_enabled = true
   }
 }`, accountID, name)
 }
