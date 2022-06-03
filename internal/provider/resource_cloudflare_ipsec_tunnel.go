@@ -44,8 +44,8 @@ func resourceCloudflareIPsecTunnelCreate(ctx context.Context, d *schema.Resource
 	if !pskOk || psk == "" {
 		psk, _, err = client.GenerateMagicTransitIPsecTunnelPSK(ctx, accountID, d.Id())
 		if err != nil {
-			// TODO: change this log to error
-			tflog.Info(ctx, fmt.Sprintf("error creating PSK: %s %s", accountID, d.Id()))
+			defer d.SetId("")
+			tflog.Error(ctx, fmt.Sprintf("error creating PSK: %s %s", accountID, d.Id()))
 			// Need to delete the tunnel
 			return resourceCloudflareIPsecTunnelDelete(ctx, d, meta)
 		}
