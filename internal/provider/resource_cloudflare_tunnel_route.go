@@ -29,16 +29,14 @@ func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceDa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	network := d.Get("network").(string)
+	virtualNetworkID := d.Get("virtual_network_id").(string)
 
 	resource := cloudflare.TunnelRoutesListParams{
-		AccountID:       accountID,
-		IsDeleted:       cloudflare.BoolPtr(false),
-		NetworkSubset:   network,
-		NetworkSuperset: network,
-	}
-
-	if virtualNetworkID, ok := d.Get("virtual_network_id").(string); ok {
-		resource.VirtualNetworkID = virtualNetworkID
+		AccountID:        accountID,
+		IsDeleted:        cloudflare.BoolPtr(false),
+		NetworkSubset:    network,
+		NetworkSuperset:  network,
+		VirtualNetworkID: virtualNetworkID,
 	}
 
 	tunnelRoutes, err := client.ListTunnelRoutes(ctx, resource)
@@ -61,8 +59,10 @@ func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceDa
 		d.Set("comment", tunnelRoute.Comment)
 	}
 
-	// vnet is optional. Do not set it unless it was specified explicitly
-	if _, ok := d.GetOk("virtual_network_id"); ok {
+	// Virtual network id is optional. API always returns it. Do not set it unless it was specified explicitly.
+	// Othewise if route was created by old provider it will trigger redundant state changes.
+	// Old provider did not support virtual network ids at all.
+	if virtualNetworkID != "" {
 		d.Set("virtual_network_id", tunnelRoute.VirtualNetworkID)
 	}
 
@@ -71,19 +71,17 @@ func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	virtualNetworkID := d.Get("virtual_network_id").(string)
 
 	resource := cloudflare.TunnelRoutesCreateParams{
-		AccountID: d.Get("account_id").(string),
-		TunnelID:  d.Get("tunnel_id").(string),
-		Network:   d.Get("network").(string),
+		AccountID:        d.Get("account_id").(string),
+		TunnelID:         d.Get("tunnel_id").(string),
+		Network:          d.Get("network").(string),
+		VirtualNetworkID: virtualNetworkID,
 	}
 
 	if comment, ok := d.Get("comment").(string); ok {
 		resource.Comment = comment
-	}
-
-	if virtualNetworkID, ok := d.Get("virtual_network_id").(string); ok {
-		resource.VirtualNetworkID = virtualNetworkID
 	}
 
 	newTunnelRoute, err := client.CreateTunnelRoute(ctx, resource)
@@ -91,7 +89,7 @@ func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("error creating Tunnel Route for Network %q: %w", d.Get("network").(string), err))
 	}
 
-	if virtualNetworkID, ok := d.Get("virtual_network_id").(string); ok {
+	if virtualNetworkID != "" {
 		// It's possible to create several routes with the same network but different virtual network ids.
 		d.SetId(fmt.Sprintf("%s/%s", newTunnelRoute.Network, virtualNetworkID))
 	} else {
@@ -105,18 +103,15 @@ func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 
 	resource := cloudflare.TunnelRoutesUpdateParams{
-		AccountID: d.Get("account_id").(string),
-		TunnelID:  d.Get("tunnel_id").(string),
-		Network:   d.Get("network").(string),
-		Comment:   "",
+		AccountID:        d.Get("account_id").(string),
+		TunnelID:         d.Get("tunnel_id").(string),
+		Network:          d.Get("network").(string),
+		Comment:          "",
+		VirtualNetworkID: d.Get("virtual_network_id").(string),
 	}
 
 	if comment, ok := d.Get("comment").(string); ok {
 		resource.Comment = comment
-	}
-
-	if virtualNetworkID, ok := d.Get("virtual_network_id").(string); ok {
-		resource.VirtualNetworkID = virtualNetworkID
 	}
 
 	_, err := client.UpdateTunnelRoute(ctx, resource)
@@ -129,36 +124,35 @@ func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareTunnelRouteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	network := d.Get("network").(string)
 
 	resource := cloudflare.TunnelRoutesDeleteParams{
-		AccountID: d.Get("account_id").(string),
-		Network:   d.Get("network").(string),
-	}
-
-	if virtualNetworkID, ok := d.Get("virtual_network_id").(string); ok {
-		resource.VirtualNetworkID = virtualNetworkID
+		AccountID:        d.Get("account_id").(string),
+		Network:          network,
+		VirtualNetworkID: d.Get("virtual_network_id").(string),
 	}
 
 	err := client.DeleteTunnelRoute(ctx, resource)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Tunnel Route for Network %q: %w", d.Get("network").(string), err))
+		return diag.FromErr(fmt.Errorf("error deleting Tunnel Route for Network %q: %w", network, err))
 	}
 
 	return nil
 }
 
 func resourceCloudflareTunnelRouteImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 3)
+	attributes := strings.SplitN(d.Id(), "/", 4)
 
-	if len(attributes) != 2 && len(attributes) != 3 {
+	// network is a CIDR that always contains slash inside. For example "192.168.0.0/26"
+	if len(attributes) != 3 && len(attributes) != 4 {
 		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/network" or "accountID/network/virtual_network_id"`, d.Id())
 	}
 
-	accountID, network := attributes[0], attributes[1]
+	accountID, network := attributes[0], fmt.Sprintf("%s/%s", attributes[1], attributes[2])
 
-	if len(attributes) == 3 {
+	if len(attributes) == 4 {
 		// It's possible to create several routes with the same network but different virtual network ids.
-		d.SetId(fmt.Sprintf("%s/%s", network, attributes[2]))
+		d.SetId(fmt.Sprintf("%s/%s", network, attributes[4]))
 		d.Set("virtual_network_id", accountID)
 	} else {
 		d.SetId(network)

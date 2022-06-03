@@ -24,5 +24,9 @@ func resourceCloudflareTunnelRouteSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"virtual_network_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
 	}
 }

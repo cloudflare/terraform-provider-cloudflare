@@ -17,6 +17,7 @@ resource "cloudflare_tunnel_route" "example" {
   tunnel_id = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
   network = "192.0.2.24/32"
   comment = "New tunnel route for documentation"
+  virtual_network_id = "bdc39a3c-3104-4c23-8ac0-9f455dda691a"
 }
 ```
 
@@ -32,6 +33,7 @@ resource "cloudflare_tunnel_route" "example" {
   tunnel_id  = cloudflare_argo_tunnel.tunnel.id
   network    = "192.0.2.24/32"
   comment    = "New tunnel route for documentation"
+  virtual_network_id = "bdc39a3c-3104-4c23-8ac0-9f455dda691a"
 }
 ```
 
@@ -43,11 +45,18 @@ The following arguments are supported:
 - `tunnel_id` - (Required) The ID of the tunnel that will service the tunnel route.
 - `network` - (Required) The IPv4 or IPv6 network that should use this tunnel route, in CIDR notation.
 - `comment` - (Optional) Description of the tunnel route.
+- `virtual_network_id` - (Optional) The ID of the virtual network for which this route is being added; uses the default virtual network of the account if none is provided.
 
 ## Import
 
-An existing tunnel route can be imported using the account ID and network CIDR.
+An existing tunnel route can be imported using the account ID and network CIDR
 
 ```
 $ terraform import cloudflare_tunnel_route c4a7362d577a6c3019a474fd6f485821/192.0.2.24/32
+```
+
+or using account ID, network CIDR and virtual network ID.
+
+```
+$ terraform import cloudflare_tunnel_route c4a7362d577a6c3019a474fd6f485821/192.0.2.24/32/bdc39a3c-3104-4c23-8ac0-9f455dda691a
 ```
