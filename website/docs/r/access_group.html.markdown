@@ -35,7 +35,7 @@ resource "cloudflare_access_group" "test_group" {
     email = ["test@example.com"]
   }
 
-  require = {
+  require {
     ip = [var.office_ip]
   }
 }
