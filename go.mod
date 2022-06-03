@@ -238,3 +238,6 @@ require (
 // Use custom version that supports configuration as flags and newer tfexec
 // until it lands upstream.
 replace github.com/hashicorp/terraform-plugin-docs v0.5.1 => github.com/jacobbednarz/terraform-plugin-docs v0.5.1-0.20220314024219-d04ad37d2ee8
+
+// TODO: Remove when fix is released
+replace github.com/cloudflare/cloudflare-go => github.com/mapped/cloudflare-go v0.40.1-0.20220603175700-567edc574e2c
