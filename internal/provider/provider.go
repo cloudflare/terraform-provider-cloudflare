@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
@@ -15,10 +16,31 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
+
+	"strings"
 )
 
 func init() {
 	schema.DescriptionKind = schema.StringMarkdown
+
+	schema.SchemaDescriptionBuilder = func(s *schema.Schema) string {
+		desc := s.Description
+		desc = strings.TrimSpace(desc)
+
+		if !bytes.HasSuffix([]byte(s.Description), []byte(".")) {
+			desc += "."
+		}
+
+		if s.Default != nil {
+			desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
+		}
+
+		if !bytes.HasSuffix([]byte(desc), []byte(".")) {
+			desc += "."
+		}
+
+		return strings.TrimSpace(desc)
+	}
 }
 
 func New(version string) func() *schema.Provider {
@@ -29,14 +51,14 @@ func New(version string) func() *schema.Provider {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-					Description: "A registered Cloudflare email address",
+					Description: "A registered Cloudflare email address. Alternatively, can be configured using the `CLOUDFLARE_EMAIL` environment variable.",
 				},
 
 				"api_key": {
 					Type:         schema.TypeString,
 					Optional:     true,
 					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
-					Description:  "The API key for operations.",
+					Description:  "The API key for operations. Alternatively, can be configured using the `CLOUDFLARE_API_KEY` environment variable.",
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must only contain characters 0-9 and a-f (all lowercased)"),
 				},
 
@@ -44,7 +66,7 @@ func New(version string) func() *schema.Provider {
 					Type:         schema.TypeString,
 					Optional:     true,
 					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
-					Description:  "The API Token for operations.",
+					Description:  "The API Token for operations. Alternatively, can be configured using the `CLOUDFLARE_API_TOKEN` environment variable.",
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
 				},
 
@@ -52,63 +74,63 @@ func New(version string) func() *schema.Provider {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_USER_SERVICE_KEY", nil),
-					Description: "A special Cloudflare API key good for a restricted set of endpoints",
+					Description: "A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `CLOUDFLARE_API_USER_SERVICE_KEY` environment variable.",
 				},
 
 				"rps": {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_RPS", 4),
-					Description: "RPS limit to apply when making calls to the API",
+					Description: "RPS limit to apply when making calls to the API. Alternatively, can be configured using the `CLOUDFLARE_RPS` environment variable.",
 				},
 
 				"retries": {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_RETRIES", 3),
-					Description: "Maximum number of retries to perform when an API request fails",
+					Description: "Maximum number of retries to perform when an API request fails. Alternatively, can be configured using the `CLOUDFLARE_RETRIES` environment variable.",
 				},
 
 				"min_backoff": {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_MIN_BACKOFF", 1),
-					Description: "Minimum backoff period in seconds after failed API calls",
+					Description: "Minimum backoff period in seconds after failed API calls. Alternatively, can be configured using the `CLOUDFLARE_MIN_BACKOFF` environment variable.",
 				},
 
 				"max_backoff": {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_MAX_BACKOFF", 30),
-					Description: "Maximum backoff period in seconds after failed API calls",
+					Description: "Maximum backoff period in seconds after failed API calls. Alternatively, can be configured using the `CLOUDFLARE_MAX_BACKOFF` environment variable.",
 				},
 
 				"api_client_logging": {
 					Type:        schema.TypeBool,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_CLIENT_LOGGING", false),
-					Description: "Whether to print logs from the API client (using the default log library logger)",
+					Description: "Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `CLOUDFLARE_API_CLIENT_LOGGING` environment variable.",
 				},
 
 				"account_id": {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
-					Description: "Configure API client to always use that account",
+					Description: "Configure API client to always use that account. Alternatively, can be configured using the `CLOUDFLARE_ACCOUNT_ID` environment variable.",
 				},
 
 				"api_hostname": {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_HOSTNAME", "api.cloudflare.com"),
-					Description: "Configure the hostname used by the API client",
+					Description: "Configure the hostname used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_HOSTNAME` environment variable.",
 				},
 
 				"api_base_path": {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_BASE_PATH", "/client/v4"),
-					Description: "Configure the base path used by the API client",
+					Description: "Configure the base path used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_BASE_PATH` environment variable.",
 				},
 			},
 
