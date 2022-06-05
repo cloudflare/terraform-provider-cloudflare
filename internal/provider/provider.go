@@ -35,10 +35,6 @@ func init() {
 			desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
 		}
 
-		if !bytes.HasSuffix([]byte(desc), []byte(".")) {
-			desc += "."
-		}
-
 		return strings.TrimSpace(desc)
 	}
 }
@@ -116,7 +112,8 @@ func New(version string) func() *schema.Provider {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
-					Description: "Configure API client to always use that account. Alternatively, can be configured using the `CLOUDFLARE_ACCOUNT_ID` environment variable.",
+					Description: "Configure API client to always use a specific account. Alternatively, can be configured using the `CLOUDFLARE_ACCOUNT_ID` environment variable.",
+					Deprecated:  "Use resource specific `account_id` attributes instead.",
 				},
 
 				"api_hostname": {

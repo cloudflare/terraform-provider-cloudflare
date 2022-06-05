@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -10,9 +11,10 @@ import (
 func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 
 		"name": {

@@ -12,11 +12,13 @@ func resourceCloudflareRulesetSchemaV0() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"account_id": {
+				Description:   "The account identifier to target for the resource.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"zone_id"},
 			},
 			"zone_id": {
+				Description:   "The zone identifier to target for the resource.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"account_id"},
