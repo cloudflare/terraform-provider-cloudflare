@@ -35,6 +35,14 @@ func init() {
 			desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
 		}
 
+		if s.ConflictsWith != nil && len(s.ConflictsWith) > 0 {
+			conflicts := make([]string, len(s.ConflictsWith))
+			for i, c := range s.ConflictsWith {
+				conflicts[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Conflicts with %s.", strings.Join(conflicts, ", "))
+		}
+
 		return strings.TrimSpace(desc)
 	}
 }
