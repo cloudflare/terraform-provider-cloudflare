@@ -9,9 +9,10 @@ import (
 func resourceCloudflareWaitingRoomEventSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 
 		"waiting_room_id": {

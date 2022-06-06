@@ -24,8 +24,9 @@ func dataSourceCloudflareZones() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"account_id": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "The account identifier to target for the resource.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"name": {
 							Type:     schema.TypeString,

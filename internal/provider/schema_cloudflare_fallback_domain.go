@@ -7,8 +7,9 @@ import (
 func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "The account identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"domains": {
 			Required: true,
