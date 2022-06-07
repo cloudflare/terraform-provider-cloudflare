@@ -49,9 +49,10 @@ func resourceCloudflareIPsecTunnelSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringInSlice([]string{"request", "reply"}, false),
 		},
 		"psk": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Type:      schema.TypeString,
+			Optional:  true,
+			Computed:  true,
+			Sensitive: true,
 		},
 		"hex_id": {
 			Type:     schema.TypeString,
