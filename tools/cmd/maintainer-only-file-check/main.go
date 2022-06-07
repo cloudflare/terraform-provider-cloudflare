@@ -13,7 +13,7 @@ import (
 var (
 	maintainers         = []string{"dependabot[bot]", "jacobbednarz", "patryk"}
 	goDependencyMessage = "This project handles dependency version bumps (including upstream changes from cloudflare-go) independently of the standard PR process using automation. This allows the dependency upgrades to land without causing merge conflicts in multiple branches and handled in a consistent way. The exception to this is security related dependency upgrades but they should be co-ordinated with the maintainer team privately.\n\nPlease remove the changes to the go.mod or go.sum files from this PR in order to proceed with review and merging."
-	changelogMessage    = "This pull request contains a CHANGELOG.md file which should only be modified by maintainers.\n\nIf you are looking to include a CHANGELOG entry, you should use the process documented at https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/docs/contributing/changelog-process.md instead.\n\nIn order for this pull request to be merged, you need remove the modifications to CHANGELOG.md."
+	changelogMessage    = "This pull request contains a CHANGELOG.md file which should only be modified by maintainers.\n\nIf you are looking to include a CHANGELOG entry, you should use the process documented at https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/contributing/changelog-process.md instead.\n\nIn order for this pull request to be merged, you need remove the modifications to CHANGELOG.md."
 )
 
 func main() {
