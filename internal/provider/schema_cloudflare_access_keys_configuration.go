@@ -10,9 +10,10 @@ func resourceCloudflareAccessKeysConfigurationSchema() map[string]*schema.Schema
 			Required:    true,
 		},
 		"key_rotation_interval_days": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Computed:    true,
+			Description: "Number of days to trigger a rotation of the keys.",
 		},
 	}
 }

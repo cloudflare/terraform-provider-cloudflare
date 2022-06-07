@@ -13,7 +13,7 @@ import (
 
 const (
 	changelogEntryFileFormat      = ".changelog/%d.txt"
-	changelogProcessDocumentation = "https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/docs/contributing/changelog-process.md"
+	changelogProcessDocumentation = "https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/contributing/changelog-process.md"
 )
 
 var (

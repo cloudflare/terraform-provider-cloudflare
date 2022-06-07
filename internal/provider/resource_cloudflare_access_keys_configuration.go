@@ -21,6 +21,7 @@ func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareKeysConfigurationImport,
 		},
+		Description: "Access Keys Configuration defines the rotation policy for the keys that access will use to sign data.",
 	}
 }
 
