@@ -7,21 +7,25 @@ import (
 func resourceCloudflareTunnelVirtualNetworkSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The account identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "A user-friendly name chosen when the virtual network is created.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"is_default_network": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Description: "Whether this virtual network is the default one for the account. This means IP Routes belong to this virtual network and Teams Clients in the account route through this virtual network, unless specified otherwise for each case.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 		"comment": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "Description of the tunnel virtual network.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 	}
 }
