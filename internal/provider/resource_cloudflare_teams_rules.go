@@ -26,6 +26,8 @@ func resourceCloudflareTeamsRule() *schema.Resource {
 	}
 }
 
+const rulePrecedenceFactor int64 = 1000
+
 func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
@@ -45,7 +47,7 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 	if err := d.Set("description", rule.Description); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing rule description"))
 	}
-	if err := d.Set("precedence", int64(rule.Precedence)); err != nil {
+	if err := d.Set("precedence", apiToProviderRulePrecedence(rule.Precedence, rule.Name)); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing rule precedence"))
 	}
 	if err := d.Set("enabled", rule.Enabled); err != nil {
@@ -86,10 +88,12 @@ func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceDa
 		filters = append(filters, cloudflare.TeamsFilterType(f.(string)))
 	}
 
+	ruleName := d.Get("name").(string)
+	apiPrecedence := providerToApiRulePrecedence(int64(d.Get("precedence").(int)), ruleName)
 	newTeamsRule := cloudflare.TeamsRule{
-		Name:          d.Get("name").(string),
+		Name:          ruleName,
 		Description:   d.Get("description").(string),
-		Precedence:    uint64(d.Get("precedence").(int)),
+		Precedence:    uint64(apiPrecedence),
 		Enabled:       d.Get("enabled").(bool),
 		Action:        cloudflare.TeamsGatewayAction(d.Get("action").(string)),
 		Filters:       filters,
@@ -124,11 +128,13 @@ func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		filters = append(filters, cloudflare.TeamsFilterType(f.(string)))
 	}
 
+	ruleName := d.Get("name").(string)
+	apiPrecedence := providerToApiRulePrecedence(int64(d.Get("precedence").(int)), ruleName)
 	teamsRule := cloudflare.TeamsRule{
 		ID:            d.Id(),
-		Name:          d.Get("name").(string),
+		Name:          ruleName,
 		Description:   d.Get("description").(string),
-		Precedence:    uint64(d.Get("precedence").(int)),
+		Precedence:    uint64(apiPrecedence),
 		Enabled:       d.Get("enabled").(bool),
 		Action:        cloudflare.TeamsGatewayAction(d.Get("action").(string)),
 		Filters:       filters,
@@ -354,4 +360,12 @@ func inflateTeamsL4Override(settings interface{}) *cloudflare.TeamsL4OverrideSet
 		IP:   ip,
 		Port: port,
 	}
+}
+
+func providerToApiRulePrecedence(provided int64, ruleName string) int64 {
+	return provided*rulePrecedenceFactor + int64(hashCodeString(ruleName))%rulePrecedenceFactor
+}
+
+func apiToProviderRulePrecedence(apiPrecedence uint64, ruleName string) int64 {
+	return (int64(apiPrecedence) - int64(hashCodeString(ruleName))%rulePrecedenceFactor) / rulePrecedenceFactor
 }

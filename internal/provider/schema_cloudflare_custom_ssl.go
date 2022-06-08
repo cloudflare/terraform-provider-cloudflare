@@ -8,8 +8,9 @@ import (
 func resourceCloudflareCustomSslSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"custom_ssl_priority": {
 			Type:     schema.TypeList,

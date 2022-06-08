@@ -10,8 +10,9 @@ func resourceCloudflareWAFRuleSchema() map[string]*schema.Schema {
 		},
 
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 
 		"group_id": {

@@ -3,15 +3,18 @@ package provider
 import (
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 
 		"name": {
@@ -49,6 +52,28 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 		"custom_page_html": {
 			Type:     schema.TypeString,
 			Optional: true,
+		},
+
+		"default_template_language": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "en-US",
+			ValidateFunc: validation.StringInSlice([]string{
+				"de-DE",
+				"es-ES",
+				"en-US",
+				"fr-FR",
+				"id-ID",
+				"it-IT",
+				"ja-JP",
+				"ko-KR",
+				"nl-NL",
+				"pl-PL",
+				"pt-BR",
+				"tr-TR",
+				"zh-CN",
+				"zh-TW",
+			}, false),
 		},
 
 		"queue_all": {

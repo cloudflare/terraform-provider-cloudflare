@@ -42,9 +42,10 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 		return cloudflare.WaitingRoomEvent{}, err
 	}
 
-	prequeueStartTime := time.Time{}
+	var prequeueStartTime *time.Time
 	if t, ok := d.GetOk("prequeue_start_time"); ok {
-		prequeueStartTime, err = time.Parse(time.RFC3339, t.(string))
+		prequeueStartTimeValue, err := time.Parse(time.RFC3339, t.(string))
+		prequeueStartTime = cloudflare.TimePtr(prequeueStartTimeValue)
 		if err != nil {
 			return cloudflare.WaitingRoomEvent{}, err
 		}
@@ -54,7 +55,7 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 		Name:                  d.Get("name").(string),
 		EventStartTime:        eventStartTime,
 		EventEndTime:          eventEndTime,
-		PrequeueStartTime:     &prequeueStartTime,
+		PrequeueStartTime:     prequeueStartTime,
 		Description:           d.Get("description").(string),
 		QueueingMethod:        d.Get("queueing_method").(string),
 		ShuffleAtEventStart:   d.Get("shuffle_at_event_start").(bool),
@@ -109,7 +110,7 @@ func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.Resou
 	d.Set("event_end_time", waitingRoomEvent.EventEndTime.Format(time.RFC3339))
 	d.Set("session_duration", waitingRoomEvent.SessionDuration)
 
-	if !waitingRoomEvent.PrequeueStartTime.IsZero() {
+	if waitingRoomEvent.PrequeueStartTime != nil {
 		d.Set("prequeue_start_time", waitingRoomEvent.PrequeueStartTime.Format(time.RFC3339))
 	}
 
@@ -145,6 +146,7 @@ func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.Resou
 
 func resourceCloudflareWaitingRoomEventUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	waitingRoomEventID := d.Id()
 	waitingRoomID := d.Get("waiting_room_id").(string)
 	zoneID := d.Get("zone_id").(string)
 	waitingRoomEventName := d.Get("name").(string)
@@ -152,6 +154,7 @@ func resourceCloudflareWaitingRoomEventUpdate(ctx context.Context, d *schema.Res
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error building waiting room event %q: %w", waitingRoomEventName, err))
 	}
+	waitingRoomEvent.ID = waitingRoomEventID
 
 	_, err = client.ChangeWaitingRoomEvent(ctx, zoneID, waitingRoomID, waitingRoomEvent)
 
