@@ -120,8 +120,9 @@ The following arguments are supported:
 - `logpull_options` - (Optional) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpull options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
 - `ownership_challenge` - (Optional) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage,
   Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
-- `enabled` - (Optional) Whether to enable the job.
-- `frequency` - (Optional) `"high"` or `"low"`. A higher frequency will result in logs being pushed on faster with smaller files. `"low"` frequency will push logs less often with larger files.
+* `enabled` - (Optional) Whether to enable the job.
+* `frequency` - (Optional) `"high"` or `"low"`. A higher frequency will result in logs being pushed on faster with smaller files. `"low"` frequency will push logs less often with larger files.
+* `filter` - (Optional) Use filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/logpush-api-configuration/filters/).
 
 ## Import
 
