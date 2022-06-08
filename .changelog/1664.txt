@@ -1,3 +1,3 @@
 ```release-note:enhancement
-resource/logpush_job: Add `filter` field support
+resource/cloudflare_logpush_job: Add `filter` field support
 ```
