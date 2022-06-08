@@ -33,6 +33,8 @@ and clean up the resources before attempting to configure them with
 Terraform. This is because Terraform will fail to apply if configuration
 already exists to prevent blindly overwriting changes.
 
+~> **Note:** Until [issue #1397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1397) is fixed, when configuring a ruleset with overrides, you will need to set `enabled = true` under `action_parameters` to ensure rules are not unintentially disabled.
+
 ## Example Usage
 
 ```terraform
