@@ -16,15 +16,17 @@ func dataSourceCloudflareZone() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"zone_id": {
+				Description:  "The zone identifier to target for the resource.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
 				ExactlyOneOf: []string{"zone_id", "name"},
 			},
 			"account_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Description: "The account identifier to target for the resource.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
 			},
 			"name": {
 				Type:         schema.TypeString,

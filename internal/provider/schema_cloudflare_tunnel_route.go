@@ -7,8 +7,9 @@ import (
 func resourceCloudflareTunnelRouteSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "The account identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"tunnel_id": {
 			Type:     schema.TypeString,

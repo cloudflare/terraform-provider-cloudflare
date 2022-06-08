@@ -10,9 +10,10 @@ import (
 func resourceCloudflareFirewallRuleSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 		"filter_id": {
 			Type:     schema.TypeString,
