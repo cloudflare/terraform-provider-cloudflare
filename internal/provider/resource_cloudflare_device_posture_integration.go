@@ -161,52 +161,52 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 		switch integration.Type {
 		case ws1:
 			if config.ClientID, ok = d.Get("config.0.client_id").(string); !ok {
-				return fmt.Errorf("client_id is a string")
+				return fmt.Errorf("client_id has to be of type string")
 			}
 			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
-				return fmt.Errorf("client_secret is a string")
+				return fmt.Errorf("client_secret has to be of type string")
 			}
 			if config.AuthUrl, ok = d.Get("config.0.auth_url").(string); !ok {
-				return fmt.Errorf("auth_url is a string")
+				return fmt.Errorf("auth_url has to be of type string")
 			}
 			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
-				return fmt.Errorf("api_url is a string")
+				return fmt.Errorf("api_url has to be of type string")
 			}
 			integration.Config = config
 		case crowdstrike:
 			if config.ClientID, ok = d.Get("config.0.client_id").(string); !ok {
-				return fmt.Errorf("client_id is a string")
+				return fmt.Errorf("client_id has to be of type string")
 			}
 			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
-				return fmt.Errorf("client_secret is a string")
+				return fmt.Errorf("client_secret has to be of type string")
 			}
 			if config.CustomerID, ok = d.Get("config.0.customer_id").(string); !ok {
-				return fmt.Errorf("customer_id is a string")
+				return fmt.Errorf("customer_id has to be of type string")
 			}
 			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
-				return fmt.Errorf("api_url is a string")
+				return fmt.Errorf("api_url has to be of type string")
 			}
 			integration.Config = config
 		case uptycs:
 			if config.ClientKey, ok = d.Get("config.0.client_key").(string); !ok {
-				return fmt.Errorf("client_id is a string")
+				return fmt.Errorf("client_id has to be of type string")
 			}
 			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
-				return fmt.Errorf("client_secret is a string")
+				return fmt.Errorf("client_secret has to be of type string")
 			}
 			if config.CustomerID, ok = d.Get("config.0.customer_id").(string); !ok {
-				return fmt.Errorf("customer_id is a string")
+				return fmt.Errorf("customer_id has to be of type string")
 			}
 			integration.Config = config
 		case intune:
 			if config.ClientID, ok = d.Get("config.0.client_id").(string); !ok {
-				return fmt.Errorf("client_id is a string")
+				return fmt.Errorf("client_id has to be of type string")
 			}
 			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
-				return fmt.Errorf("client_secret is a string")
+				return fmt.Errorf("client_secret has to be of type string")
 			}
 			if config.CustomerID, ok = d.Get("config.0.customer_id").(string); !ok {
-				return fmt.Errorf("customer_id is a string")
+				return fmt.Errorf("customer_id has to be of type string")
 			}
 			integration.Config = config
 		default:
