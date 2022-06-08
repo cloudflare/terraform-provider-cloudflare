@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_ipsec_tunnel: add support for `healthcheck_enabled`, `health_check_target`, `healthcheck_type`, `psk`
+```
