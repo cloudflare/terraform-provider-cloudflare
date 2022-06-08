@@ -1,5 +1,14 @@
 ## 3.17.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_integration: add support for managing `uptycs`, `intune` and `crowdstrike` third party posture providers. ([#1628](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1628))
+* resource/cloudflare_ipsec_tunnel: add support for `healthcheck_enabled`, `health_check_target`, `healthcheck_type`, `psk` ([#1685](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1685))
+
+BUG FIXES:
+
+* resource/cloudflare_teams_rule: Fixes issue with rule precedence updates by using a generated version of precendence in API calls to reduce clashing versions ([#1663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1663))
+
 ## 3.16.0 (June 1st, 2022)
 
 NOTES:
