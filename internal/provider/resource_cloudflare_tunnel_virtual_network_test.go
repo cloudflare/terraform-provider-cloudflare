@@ -81,7 +81,6 @@ func TestAccCloudflareTunnelVirtualNetwork_Exists(t *testing.T) {
 }
 
 func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwork *cloudflare.TunnelVirtualNetwork) resource.TestCheckFunc {
-
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
