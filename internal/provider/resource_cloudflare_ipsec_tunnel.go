@@ -22,6 +22,7 @@ func resourceCloudflareIPsecTunnel() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareIPsecTunnelImport,
 		},
+		Description: "Provides a resource, that manages IPsec tunnels for Magic Transit.",
 	}
 }
 
