@@ -8,10 +8,11 @@ import (
 func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-			Computed: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			ForceNew:    true,
+			Computed:    true,
 		},
 		"mode": {
 			Type:         schema.TypeString,

@@ -8,8 +8,9 @@ import (
 func resourceCloudflareArgoSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"tiered_caching": {
 			Type:         schema.TypeString,

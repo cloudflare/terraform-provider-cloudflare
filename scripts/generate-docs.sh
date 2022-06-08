@@ -14,7 +14,7 @@ if [ "$(git status --porcelain "${exclude_files[@]}")" ]; then
 fi
 
 $(go env GOPATH)/bin/tfplugindocs generate \
-  -rendered-website-dir "test-docs" \
+  -rendered-website-dir "docs" \
   -rendered-provider-name "Cloudflare"
 
 # Remove the changes to files we don't autogenerate

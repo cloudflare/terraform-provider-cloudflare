@@ -13,12 +13,14 @@ import (
 func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
+			Description:   "The account identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
 			ConflictsWith: []string{"zone_id"},
 		},
 		"zone_id": {
+			Description:   "The zone identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,

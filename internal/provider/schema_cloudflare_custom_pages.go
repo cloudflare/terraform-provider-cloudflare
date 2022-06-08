@@ -8,11 +8,13 @@ import (
 func resourceCloudflareCustomPagesSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
+			Description:   "The zone identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
 			ConflictsWith: []string{"account_id"},
 		},
 		"account_id": {
+			Description:   "The account identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
 			ConflictsWith: []string{"zone_id"},

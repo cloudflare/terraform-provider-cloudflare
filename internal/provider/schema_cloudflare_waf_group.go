@@ -14,9 +14,10 @@ func resourceCloudflareWAFGroupSchema() map[string]*schema.Schema {
 		},
 
 		"zone_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 
 		"package_id": {

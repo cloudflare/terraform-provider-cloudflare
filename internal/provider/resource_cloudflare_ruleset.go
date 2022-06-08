@@ -39,6 +39,20 @@ func resourceCloudflareRuleset() *schema.Resource {
 				Version: 0,
 			},
 		},
+		Description: `
+The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
+allows you to create and deploy rules and rulesets.
+The engine syntax, inspired by the Wireshark Display Filter language, is the
+same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
+in different products, allowing you to configure several products using the same
+basic syntax.
+
+~> **NOTE:** If you previously configured Rulesets using the dashboard,
+you first need to delete them ([zone](https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset),
+[account](https://api.cloudflare.com/#account-rulesets-delete-account-ruleset) documentation)
+and clean up the resources before attempting to configure them with
+Terraform. This is because Terraform will fail to apply if configuration
+already exists to prevent blindly overwriting changes.`,
 	}
 }
 
