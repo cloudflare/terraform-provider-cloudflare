@@ -24,7 +24,7 @@ func resourceCloudflareTunnelVirtualNetwork() *schema.Resource {
 		},
 		Description: `
 Provides a resource, that manages Cloudflare tunnel virtual networks for Zero Trust. Tunnel
-virtual networks are used for segregation of Tunnel IP Routes via Virtualized Networks to 
+virtual networks are used for segregation of Tunnel IP Routes via Virtualized Networks to
 handle overlapping private IPs in your origins.`,
 	}
 }
@@ -92,6 +92,7 @@ func resourceCloudflareTunnelVirtualNetworkUpdate(ctx context.Context, d *schema
 		AccountID:        d.Get("account_id").(string),
 		Name:             d.Get("name").(string),
 		IsDefaultNetwork: cloudflare.BoolPtr(d.Get("is_default_network").(bool)),
+		VnetID:           d.Id(),
 	}
 
 	if comment, ok := d.Get("comment").(string); ok {
