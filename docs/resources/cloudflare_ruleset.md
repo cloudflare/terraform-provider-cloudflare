@@ -286,7 +286,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
 
 - `kind` (String) Type of Ruleset to create. Available values: `"custom"`, `"managed"`, `"root"`, `"schema"`, `"zone"`.
 - `name` (String) Name of the ruleset.
-- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `"ddos_l4"`, `"ddos_l7"`, `"http_log_custom_fields"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_request_main"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_request_origin"`, `"http_response_firewall_managed"`, `"http_response_headers_transform"`, `"magic_transit"`, `"http_ratelimit"`, `"http_request_sbfm"`.
+- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `"ddos_l4"`, `"ddos_l7"`, `"http_log_custom_fields"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_request_late_transform_managed"`, `"http_request_main"`, `"http_request_origin"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_response_firewall_managed"`, `"http_response_headers_transform"`, `"magic_transit"`, `"http_ratelimit"`, `"http_request_sbfm"`.
 
 ### Optional
 
@@ -336,7 +336,7 @@ Optional:
 - `matched_data` (Block List, Max: 1) List of properties to configure WAF payload logging. (see [below for nested schema](#nestedblock--rules--action_parameters--matched_data))
 - `origin` (Block List, Max: 1) List of properties to change request origin. (see [below for nested schema](#nestedblock--rules--action_parameters--origin))
 - `overrides` (Block List, Max: 1) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
-- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `"ddos_l4"`, `"ddos_l7"`, `"http_log_custom_fields"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_request_main"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_request_origin"`, `"http_response_firewall_managed"`, `"http_response_headers_transform"`, `"magic_transit"`, `"http_ratelimit"`, `"http_request_sbfm"`.
+- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `"ddos_l4"`, `"ddos_l7"`, `"http_log_custom_fields"`, `"http_request_firewall_custom"`, `"http_request_firewall_managed"`, `"http_request_late_transform"`, `"http_request_late_transform_managed"`, `"http_request_main"`, `"http_request_origin"`, `"http_request_sanitize"`, `"http_request_transform"`, `"http_response_firewall_managed"`, `"http_response_headers_transform"`, `"magic_transit"`, `"http_ratelimit"`, `"http_request_sbfm"`.
 - `products` (Set of String) Products to target with the actions. Available values: `"bic"`, `"hot"`, `"ratelimit"`, `"securityLevel"`, `"uablock"`, `"waf"`, `"zonelockdown"`.
 - `request_fields` (Set of String) List of request headers to include as part of custom fields logging, in lowercase.
 - `response` (Block List) List of parameters that configure the response given to end users. (see [below for nested schema](#nestedblock--rules--action_parameters--response))
