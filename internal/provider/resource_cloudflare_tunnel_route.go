@@ -144,19 +144,15 @@ func resourceCloudflareTunnelRouteImport(ctx context.Context, d *schema.Resource
 	attributes := strings.SplitN(d.Id(), "/", 4)
 
 	// network is a CIDR that always contains slash inside. For example "192.168.0.0/26"
-	if len(attributes) != 3 && len(attributes) != 4 {
-		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/network" or "accountID/network/virtual_network_id"`, d.Id())
+	if len(attributes) != 4 {
+		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/network/virtual_network_id"`, d.Id())
 	}
 
 	accountID, network := attributes[0], fmt.Sprintf("%s/%s", attributes[1], attributes[2])
 
-	if len(attributes) == 4 {
-		// It's possible to create several routes with the same network but different virtual network ids.
-		d.SetId(fmt.Sprintf("%s/%s", network, attributes[4]))
-		d.Set("virtual_network_id", accountID)
-	} else {
-		d.SetId(network)
-	}
+	// It's possible to create several routes with the same network but different virtual network ids.
+	d.SetId(fmt.Sprintf("%s/%s", network, attributes[4]))
+	d.Set("virtual_network_id", accountID)
 
 	d.Set("account_id", accountID)
 	d.Set("network", network)
