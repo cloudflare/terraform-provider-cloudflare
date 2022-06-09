@@ -92,6 +92,7 @@ func resourceCloudflareTunnelVirtualNetworkUpdate(ctx context.Context, d *schema
 		AccountID:        d.Get("account_id").(string),
 		Name:             d.Get("name").(string),
 		IsDefaultNetwork: cloudflare.BoolPtr(d.Get("is_default_network").(bool)),
+		VnetID:           d.Id(),
 	}
 
 	if comment, ok := d.Get("comment").(string); ok {
