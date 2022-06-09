@@ -91,7 +91,7 @@ func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.Resource
 
 	if virtualNetworkID != "" {
 		// It's possible to create several routes with the same network but different virtual network ids.
-		d.SetId(fmt.Sprintf("%s/%s", newTunnelRoute.Network, virtualNetworkID))
+		d.SetId(stringChecksum(fmt.Sprintf("%s/%s", newTunnelRoute.Network, virtualNetworkID)))
 	} else {
 		d.SetId(newTunnelRoute.Network)
 	}
@@ -151,7 +151,7 @@ func resourceCloudflareTunnelRouteImport(ctx context.Context, d *schema.Resource
 	accountID, network := attributes[0], fmt.Sprintf("%s/%s", attributes[1], attributes[2])
 
 	// It's possible to create several routes with the same network but different virtual network ids.
-	d.SetId(fmt.Sprintf("%s/%s", network, attributes[4]))
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", network, attributes[4])))
 	d.Set("virtual_network_id", accountID)
 
 	d.Set("account_id", accountID)
