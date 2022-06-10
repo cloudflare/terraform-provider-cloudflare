@@ -730,8 +730,6 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 			for _, parameter := range resourceRule["logging"].([]interface{}) {
 				for pKey, pValue := range parameter.(map[string]interface{}) {
 					switch pKey {
-					case "enabled":
-						return nil, fmt.Errorf("`logging.enabled` has been deprecated in favour of `status`")
 					case "status":
 						rule.Logging.Enabled = statusToAPIEnabledFieldConversion(pValue.(string))
 					default:
