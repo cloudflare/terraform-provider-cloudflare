@@ -210,6 +210,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
 				"cloudflare_teams_proxy_endpoint":                   resourceCloudflareTeamsProxyEndpoint(),
 				"cloudflare_tunnel_route":                           resourceCloudflareTunnelRoute(),
+				"cloudflare_tunnel_virtual_network":                 resourceCloudflareTunnelVirtualNetwork(),
 				"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
 				"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
 				"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
