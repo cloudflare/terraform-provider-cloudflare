@@ -32,7 +32,11 @@ func init() {
 		}
 
 		if s.Default != nil {
-			desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
+			if s.Default == "" {
+				desc += " Defaults to `\"\"`."
+			} else {
+				desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
+			}
 		}
 
 		if s.ConflictsWith != nil && len(s.ConflictsWith) > 0 {
