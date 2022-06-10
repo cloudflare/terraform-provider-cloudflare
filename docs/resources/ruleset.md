@@ -38,7 +38,7 @@ have inconsistent operations and inadvertently disable rulesets.
 
 - `kind` (String) Type of Ruleset to create. Available values: `custom`, `managed`, `root`, `schema`, `zone`.
 - `name` (String) Name of the ruleset.
-- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_main`, `http_request_sanitize`, `http_request_transform`, `http_request_origin`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
 
 ### Optional
 
@@ -61,7 +61,7 @@ Required:
 
 Optional:
 
-- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`, `set_cache_settings`.
 - `action_parameters` (Block List, Max: 1) List of parameters that configure the behavior of the ruleset rule action. (see [below for nested schema](#nestedblock--rules--action_parameters))
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
@@ -80,24 +80,147 @@ Read-Only:
 
 Optional:
 
+- `browser_ttl` (Block List, Max: 1) List of browser TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--browser_ttl))
+- `bypass_cache` (Boolean) Whether to bypass the cache if expression matches.
+- `cache_key` (Block List, Max: 1) List of cache key parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key))
 - `cookie_fields` (Set of String) List of cookie values to include as part of custom fields logging.
+- `edge_ttl` (Block List, Max: 1) List of edge TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl))
 - `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
 - `host_header` (String) Host Header that request origin receives.
 - `id` (String) Identifier of the action parameter to modify.
 - `increment` (Number)
 - `matched_data` (Block List, Max: 1) List of properties to configure WAF payload logging. (see [below for nested schema](#nestedblock--rules--action_parameters--matched_data))
 - `origin` (Block List, Max: 1) List of properties to change request origin. (see [below for nested schema](#nestedblock--rules--action_parameters--origin))
+- `origin_error_page_passthru` (Boolean) Pass-through error page for origin.
 - `overrides` (Block List, Max: 1) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
-- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_main`, `http_request_sanitize`, `http_request_transform`, `http_request_origin`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
 - `products` (Set of String) Products to target with the actions. Available values: `bic`, `hot`, `ratelimit`, `securityLevel`, `uablock`, `waf`, `zonelockdown`.
 - `request_fields` (Set of String) List of request headers to include as part of custom fields logging, in lowercase.
+- `respect_strong_etags` (Boolean) Respect strong ETags.
 - `response` (Block List) List of parameters that configure the response given to end users. (see [below for nested schema](#nestedblock--rules--action_parameters--response))
 - `response_fields` (Set of String) List of response headers to include as part of custom fields logging, in lowercase.
 - `rules` (Map of String) Map of managed WAF rule ID to comma-delimited string of ruleset rule IDs. Example: `rules = { "efb7b8c949ac4650a09736fc376e9aee" = "5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760" }`.
 - `ruleset` (String) Which ruleset ID to target.
 - `rulesets` (Set of String) List of managed WAF rule IDs to target. Only valid when the `"action"` is set to skip.
+- `serve_stale` (Block List, Max: 1) List of serve stale parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--serve_stale))
 - `uri` (Block List, Max: 1) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations. (see [below for nested schema](#nestedblock--rules--action_parameters--uri))
 - `version` (String) Version of the ruleset to deploy.
+
+<a id="nestedblock--rules--action_parameters--browser_ttl"></a>
+### Nested Schema for `rules.action_parameters.browser_ttl`
+
+Required:
+
+- `mode` (String) Mode of the browser TTL.
+
+Optional:
+
+- `default` (Number) Default browser TTL.
+
+
+<a id="nestedblock--rules--action_parameters--cache_key"></a>
+### Nested Schema for `rules.action_parameters.cache_key`
+
+Optional:
+
+- `cache_by_device_type` (Boolean) Cache by device type. Conflicts with "custom_key.user.device_type".
+- `cache_deception_armor` (Boolean) Cache deception armor.
+- `custom_key` (Block List, Max: 1) Custom key parameters for the request. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--custom_key))
+- `ignore_query_strings_order` (Boolean) Ignore query strings order.
+
+<a id="nestedblock--rules--action_parameters--cache_key--custom_key"></a>
+### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order`
+
+Optional:
+
+- `cookie` (Block List, Max: 1) Cookie parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--cookie))
+- `header` (Block List, Max: 1) Header parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--header))
+- `host` (Block List, Max: 1) Host parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--host))
+- `query_string` (Block List, Max: 1) Query string parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--query_string))
+- `user` (Block List, Max: 1) User parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--user))
+
+<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--cookie"></a>
+### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.cookie`
+
+Optional:
+
+- `check_presence` (List of String) List of cookies to check for presence in the custom key.
+- `include` (List of String) List of cookies to include in the custom key.
+
+
+<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--header"></a>
+### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.header`
+
+Optional:
+
+- `check_presence` (List of String) List of headers to check for presence in the custom key.
+- `exclude_origin` (Boolean) Exclude the origin header from the custom key.
+- `include` (List of String) List of headers to include in the custom key.
+
+
+<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--host"></a>
+### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.host`
+
+Optional:
+
+- `resolved` (Boolean) Resolve hostname to IP address.
+
+
+<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--query_string"></a>
+### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.query_string`
+
+Optional:
+
+- `exclude` (List of String) List of query string parameters to exclude from the custom key. Conflicts with "include".
+- `include` (List of String) List of query string parameters to include in the custom key. Conflicts with "exclude".
+
+
+<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--user"></a>
+### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.user`
+
+Optional:
+
+- `device_type` (Boolean) Add device type to the custom key. Conflicts with "cache_key.cache_by_device_type".
+- `geo` (Boolean) Add geo data to the custom key.
+- `lang` (Boolean) Add language data to the custom key.
+
+
+
+
+<a id="nestedblock--rules--action_parameters--edge_ttl"></a>
+### Nested Schema for `rules.action_parameters.edge_ttl`
+
+Required:
+
+- `default` (Number) Default edge TTL.
+- `mode` (String) Mode of the edge TTL.
+
+Optional:
+
+- `status_code_ttl` (Block List) Edge TTL for the status codes. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl--status_code_ttl))
+
+<a id="nestedblock--rules--action_parameters--edge_ttl--status_code_ttl"></a>
+### Nested Schema for `rules.action_parameters.edge_ttl.status_code_ttl`
+
+Required:
+
+- `value` (Number) Status code edge TTL value.
+
+Optional:
+
+- `status_code` (Number) Status code for which the edge TTL is applied. Conflicts with "status_code_range".
+- `status_code_range` (Block List) Status code range for which the edge TTL is applied. Conflicts with "status_code". (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl--status_code_ttl--status_code_range))
+
+<a id="nestedblock--rules--action_parameters--edge_ttl--status_code_ttl--status_code_range"></a>
+### Nested Schema for `rules.action_parameters.edge_ttl.status_code_ttl.status_code_range`
+
+Optional:
+
+- `from` (Number) From status code.
+- `to` (Number) To status code.
+
+
+
 
 <a id="nestedblock--rules--action_parameters--headers"></a>
 ### Nested Schema for `rules.action_parameters.headers`
@@ -132,7 +255,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`, `set_cache_settings`.
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
 - `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
@@ -143,7 +266,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`, `set_cache_settings`.
 - `category` (String) Tag name to apply the ruleset rule override to.
 - `enabled` (Boolean, Deprecated) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 - `status` (String) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag. Available values: `enabled`, `disabled`. Defaults to `""`.
@@ -154,7 +277,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`, `set_cache_settings`.
 - `enabled` (Boolean, Deprecated) Defines if the current rule-level override enables or disables the rule.
 - `id` (String) Rule ID to apply the override to.
 - `score_threshold` (Number) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
@@ -171,6 +294,14 @@ Optional:
 - `content` (String) Body content to include in the response.
 - `content_type` (String) HTTP content type to send in the response.
 - `status_code` (Number) HTTP status code to send in the response.
+
+
+<a id="nestedblock--rules--action_parameters--serve_stale"></a>
+### Nested Schema for `rules.action_parameters.serve_stale`
+
+Optional:
+
+- `disable_stale_while_updating` (Boolean) Disable stale while updating.
 
 
 <a id="nestedblock--rules--action_parameters--uri"></a>

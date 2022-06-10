@@ -1551,6 +1551,66 @@ func TestAccCloudflareRuleset_ActionParametersOverridesThrashingStatus(t *testin
 	})
 }
 
+func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettings(rnd, "my basic cache settings ruleset", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.default", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.0.value", "50"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.0.status_code", "200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.value", "30"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.status_code_range.0.from", "201"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.status_code_range.0.to", "300"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.browser_ttl.0.mode", "respect_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.serve_stale.0.disable_stale_while_updating", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.respect_strong_etags", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.ignore_query_strings_order", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.cache_deception_armor", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.exclude.0", "*"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.include.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.include.0", "habc"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.include.1", "hdef"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.check_presence.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.check_presence.0", "habc_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.check_presence.1", "hdef_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.include.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.include.0", "cabc"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.include.1", "cdef"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.check_presence.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.check_presence.0", "cabc_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.check_presence.1", "cdef_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.device_type", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.geo", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin_error_page_passthru", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -2673,4 +2733,73 @@ func testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, 
       enabled = true
     }
   }`, rnd, zoneID, zoneName, status)
+}
+
+func testAccCloudflareRulesetCacheSettings(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		edge_ttl {
+			mode = "override_origin"
+			default = 60
+			status_code_ttl {
+				status_code = 200
+				value = 50
+			}
+			status_code_ttl {
+				status_code_range {
+					from = 201
+					to = 300
+				}
+				value = 30
+			}
+		}
+		browser_ttl {
+			mode = "respect_origin"
+		}
+		serve_stale {
+			disable_stale_while_updating = true
+		}
+		respect_strong_etags = true
+		cache_key {
+			ignore_query_strings_order = false
+			cache_deception_armor = true
+			custom_key {
+				query_string {
+					exclude = ["*"]
+				}
+				header {
+					include = ["habc", "hdef"]
+					check_presence = ["habc_t", "hdef_t"]
+					exclude_origin = true
+				}
+				cookie {
+					include = ["cabc", "cdef"]
+					check_presence = ["cabc_t", "cdef_t"]
+				}
+				user {
+					device_type = true
+					geo = false
+				}
+				host {
+					resolved = true
+				}
+			}
+		}
+		origin_error_page_passthru = false
+      }
+    }
+
+    expression = "true"
+    description = "%[1]s set cache settings rule"
+    enabled = true
+  }`, rnd, accountID, zoneID)
 }
