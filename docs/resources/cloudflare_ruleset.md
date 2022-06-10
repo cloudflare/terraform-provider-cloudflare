@@ -9,16 +9,9 @@ description: |-
   same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
   in different products, allowing you to configure several products using the same
   basic syntax.
-  ~> NOTE: If you previously configured Rulesets using the dashboard,
-  you first need to delete them (zone https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset,
-  account https://api.cloudflare.com/#account-rulesets-delete-account-ruleset documentation)
-  and clean up the resources before attempting to configure them with
-  Terraform. This is because Terraform will fail to apply if configuration
-  already exists to prevent blindly overwriting changes.
-  ~> NOTE: Until issue #1397 https://github.com/cloudflare/terraform-provider-cloudflare/issues/1397
-  is fixed, when configuring a ruleset with overrides, you will need to set
-  enabled = trueunder action_parametersto ensure rules are not unintentially
-   disabled.
+  ~> NOTE: enabled has been immediately deprecated in favour of
+  status. You should swap over to ensure that your configuration doesn't
+  have inconsistent operations and inadvertently disable rulesets.
 ---
 
 # cloudflare_ruleset (Resource)
@@ -30,17 +23,9 @@ same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
 in different products, allowing you to configure several products using the same
 basic syntax.
 
-~> **NOTE:** If you previously configured Rulesets using the dashboard,
-you first need to delete them ([zone](https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset),
-[account](https://api.cloudflare.com/#account-rulesets-delete-account-ruleset) documentation)
-and clean up the resources before attempting to configure them with
-Terraform. This is because Terraform will fail to apply if configuration
-already exists to prevent blindly overwriting changes.
-
-~> **NOTE:** Until [issue #1397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1397)
-is fixed, when configuring a ruleset with overrides, you will need to set
-`enabled = true`under `action_parameters`to ensure rules are not unintentially
- disabled.
+~> **NOTE:** `enabled` has been immediately deprecated in favour of
+`status`. You should swap over to ensure that your configuration doesn't
+have inconsistent operations and inadvertently disable rulesets.
 
 ## Example Usage
 
@@ -95,13 +80,13 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
         categories {
           category = "wordpress"
           action   = "block"
-          enabled  = true
+          status   = "enabled"
         }
 
         categories {
           category = "joomla"
           action   = "block"
-          enabled  = true
+          status   = "enabled"
         }
       }
     }
@@ -382,29 +367,32 @@ Optional:
 
 - `action` (String) Action to perform in the rule-level override. Available values: `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"log_custom_field"`, `"rewrite"`, `"score"`, `"skip"`, `"route"`.
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
-- `enabled` (Boolean) Defines if the current ruleset-level override enables or disables the ruleset.
+- `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
+- `status` (String) Defines if the current ruleset-level override enables or disables the ruleset. Available values: `"enabled"`, `"disabled"`, `""`. Defaults to `""`.
 
 <a id="nestedblock--rules--action_parameters--overrides--categories"></a>
-### Nested Schema for `rules.action_parameters.overrides.rules`
+### Nested Schema for `rules.action_parameters.overrides.status`
 
 Optional:
 
 - `action` (String) Action to perform in the tag-level override. Available values: `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"log_custom_field"`, `"rewrite"`, `"score"`, `"skip"`, `"route"`.
 - `category` (String) Tag name to apply the ruleset rule override to.
-- `enabled` (Boolean) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
+- `enabled` (Boolean, Deprecated) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
+- `status` (String) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag. Available values: `"enabled"`, `"disabled"`, `""`. Defaults to `""`.
 
 
 <a id="nestedblock--rules--action_parameters--overrides--rules"></a>
-### Nested Schema for `rules.action_parameters.overrides.rules`
+### Nested Schema for `rules.action_parameters.overrides.status`
 
 Optional:
 
 - `action` (String) Action to perform in the rule-level override. Available values: `"block"`, `"challenge"`, `"ddos_dynamic"`, `"execute"`, `"force_connection_close"`, `"js_challenge"`, `"managed_challenge"`, `"log"`, `"log_custom_field"`, `"rewrite"`, `"score"`, `"skip"`, `"route"`.
-- `enabled` (Boolean) Defines if the current rule-level override enables or disables the rule.
+- `enabled` (Boolean, Deprecated) Defines if the current rule-level override enables or disables the rule.
 - `id` (String) Rule ID to apply the override to.
 - `score_threshold` (Number) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
 - `sensitivity_level` (String) Sensitivity level for a ruleset rule override.
+- `status` (String) Defines if the current rule-level override enables or disables the rule. Available values: `"enabled"`, `"disabled"`, `""`. Defaults to `""`.
 
 
 
@@ -461,7 +449,8 @@ Optional:
 
 Optional:
 
-- `enabled` (Boolean) Override the default logging behavior when a rule is matched.
+- `enabled` (Boolean, Deprecated) Override the default logging behavior when a rule is matched.
+- `status` (String) Override the default logging behavior when a rule is matched. Available values: `"enabled"`, `"disabled"`, `""`. Defaults to `""`.
 
 
 <a id="nestedblock--rules--ratelimit"></a>
