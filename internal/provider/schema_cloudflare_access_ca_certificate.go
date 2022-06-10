@@ -19,16 +19,19 @@ func resourceCloudflareAccessCACertificateSchema() map[string]*schema.Schema {
 			ConflictsWith: []string{"account_id"},
 		},
 		"application_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The Access Application ID to associate with the CA certificate.",
 		},
 		"aud": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Application Audience (AUD) Tag of the CA certificate",
 		},
 		"public_key": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Cryptographic public key of the generated CA certificate",
 		},
 	}
 }
