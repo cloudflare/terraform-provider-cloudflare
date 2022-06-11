@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -18,10 +20,12 @@ func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "whitelist", "js_challenge", "managed_challenge"}, false),
+			Description:  fmt.Sprintf("The action to apply to a matched request. %s", renderAvailableDocumentationValuesStringSlice([]string{"block", "challenge", "whitelist", "js_challenge", "managed_challenge"})),
 		},
 		"notes": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "A personal note about the rule. Typically used as a reminder or explanation for the rule.",
 		},
 		"configuration": {
 			Type:             schema.TypeList,
@@ -29,6 +33,7 @@ func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 			Required:         true,
 			ForceNew:         true,
 			DiffSuppressFunc: configurationDiffSuppress,
+			Description:      "Rule configuration to apply to a matched request.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"target": {
@@ -36,11 +41,13 @@ func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 						Required:     true,
 						ForceNew:     true,
 						ValidateFunc: validation.StringInSlice([]string{"ip", "ip6", "ip_range", "asn", "country"}, false),
+						Description:  fmt.Sprintf("The request property to target. %s", renderAvailableDocumentationValuesStringSlice([]string{"ip", "ip6", "ip_range", "asn", "country"})),
 					},
 					"value": {
-						Type:     schema.TypeString,
-						Required: true,
-						ForceNew: true,
+						Type:        schema.TypeString,
+						Required:    true,
+						ForceNew:    true,
+						Description: "The value to target. Depends on target's type.",
 					},
 				},
 			},
