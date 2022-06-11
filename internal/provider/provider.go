@@ -27,7 +27,7 @@ func init() {
 		desc := s.Description
 		desc = strings.TrimSpace(desc)
 
-		if !bytes.HasSuffix([]byte(s.Description), []byte(".")) {
+		if !bytes.HasSuffix([]byte(s.Description), []byte(".")) && s.Description != "" {
 			desc += "."
 		}
 
