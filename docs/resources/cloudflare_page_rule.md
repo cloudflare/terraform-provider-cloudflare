@@ -142,7 +142,7 @@ resource "cloudflare_page_rule" "foobar" {
 - `query_string` - (Required, but allowed to be empty) Controls which URL query string parameters go into the Cache Key.
   - `exclude` - (Optional, Array) Exclude these query string parameters from Cache Key.
   - `include` - (Optional, Array) Only use values of specified query string parameters in Cache Key.
-  - `ignore` - (Optional, Boolean) `false` (default) - all query string parameters are used for Cache Key, unless explicitly excluded; `true` - all query string parameters are ignored; value is ignored if any of `exclude` or `include` is non-empty.
+  - `ignore` - (Optional, Boolean) `false` (default) - all query string parameters are used for Cache Key, unless explicitly excluded; `true` - all query string parameters are ignored; value should be `false` if any of `exclude` or `include` is non-empty.
 - `user` - (Required, but allowed to be empty) Controls which end user-related features go into the Cache Key.
   - `device_type` - (Optional, Boolean) `true` - classifies a request as “mobile”, “desktop”, or “tablet” based on the User Agent; defaults to `false`.
   - `geo` - (Optional, Boolean) `true` - includes the client’s country, derived from the IP address; defaults to `false`.
