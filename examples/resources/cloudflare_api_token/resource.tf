@@ -1,21 +1,4 @@
----
-layout: "cloudflare"
-page_title: "Cloudflare: cloudflare_api_token"
-description: Provides a resource which manages Cloudflare API tokens.
----
-
-# cloudflare_api_token
-
-Provides a resource which manages Cloudflare API tokens.
-
-Read more about permission groups and their applicable scopes in
-[the official documentation][1].
-
-## Example Usage
-
-### User Permissions
-
-```hcl
+# User permissions
 data "cloudflare_api_token_permission_groups" "all" {}
 
 # Token allowed to create new tokens.
@@ -39,11 +22,8 @@ resource "cloudflare_api_token" "api_token_create" {
     }
   }
 }
-```
 
-### Account permissions
-
-```hcl
+# Account permissions
 data "cloudflare_api_token_permission_groups" "all" {}
 
 # Token allowed to read audit logs from all accounts.
@@ -73,11 +53,8 @@ resource "cloudflare_api_token" "logs_account" {
     }
   }
 }
-```
 
-### Zone Permissions
-
-```hcl
+# Zone permissions
 data "cloudflare_api_token_permission_groups" "all" {}
 
 # Token allowed to edit DNS entries and TLS certs for specific zone.
@@ -138,44 +115,3 @@ resource "cloudflare_api_token" "dns_edit_all_account" {
     }
   }
 }
-```
-
-## Argument Reference
-
-The following arguments are supported:
-
-- `name` - (Required) Name of the APIToken.
-- `policy` - (Required) Permissions policy. Multiple policy blocks can be defined.
-  See the definition below.
-- `condition` - (Optional) Condition block. See the definition below.
-
-The **policy** block supports:
-
-- `permission_groups` - (Required) List of permissions groups
-  ids ([see official docs][1]).
-- `resources` - (Required) Map describes what operations against which resources
-  are allowed or denied.
-- `effect` - (Optional) Policy effect. Valid values are `allow` or `deny`. `allow`
-  is set as default.
-
-The **condition** block supports:
-
-- `request_ip` - (Optional) Request IP related conditions. See the definition below.
-
-The **request_ip** block supports:
-
-- `in` - (Optional) List of IPv4/IPv6 CIDR addresses where
-  the Token can be used from.
-- `not_in` - (Optional) List of IPv4/IPv6 CIDR addresses where
-  the Token cannot be used from.
-
-## Attributes Reference
-
-The following attributes are exported:
-
-- `id` - Unique identifier in the API for the API Token.
-- `value` - The value of the API Token.
-- `issued_on` - The RFC3339 timestamp of when the API Token was issued.
-- `modified_on` - The RFC3339 timestamp of when the API Token was last modified.
-
-[1]: https://developers.cloudflare.com/api/tokens/create/permissions
