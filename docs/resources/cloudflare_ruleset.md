@@ -332,7 +332,7 @@ Optional:
 - `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
 - `host_header` (String) Host Header that request origin receives.
 - `id` (String) Identifier of the action parameter to modify.
-- `increment` (Number) .
+- `increment` (Number)
 - `matched_data` (Block List, Max: 1) List of properties to configure WAF payload logging. (see [below for nested schema](#nestedblock--rules--action_parameters--matched_data))
 - `origin` (Block List, Max: 1) List of properties to change request origin. (see [below for nested schema](#nestedblock--rules--action_parameters--origin))
 - `overrides` (Block List, Max: 1) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
@@ -423,7 +423,7 @@ Optional:
 
 Optional:
 
-- `origin` (Boolean) .
+- `origin` (Boolean)
 - `path` (Block List, Max: 1) URI path configuration when performing a URL rewrite. (see [below for nested schema](#nestedblock--rules--action_parameters--uri--path))
 - `query` (Block List, Max: 1) Query string configuration when performing a URL rewrite. (see [below for nested schema](#nestedblock--rules--action_parameters--uri--query))
 

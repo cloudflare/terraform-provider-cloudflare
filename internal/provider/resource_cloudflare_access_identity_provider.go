@@ -23,6 +23,7 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessIdentityProviderImport,
 		},
+		Description: "Provides a Cloudflare Access Identity Provider resource. Identity Providers are used as an authentication or authorisation source within Access.",
 	}
 }
 
