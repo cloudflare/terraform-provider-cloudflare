@@ -132,7 +132,7 @@ func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 			Default:     false,
 		},
 		"header": {
-			Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overriden.",
+			Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem: &schema.Resource{
