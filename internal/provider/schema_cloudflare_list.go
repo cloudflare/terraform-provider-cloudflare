@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceCloudflareIPListSchema() map[string]*schema.Schema {
+func resourceCloudflareListSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
 			Description: "The account identifier to target for the resource.",
@@ -18,7 +18,7 @@ func resourceCloudflareIPListSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.StringMatch(regexp.MustCompile("^[0-9a-z_]+$"), "IP List name must only contain lowercase letters, numbers and underscores"),
+			ValidateFunc: validation.StringMatch(regexp.MustCompile("^[0-9a-z_]+$"), "List name must only contain lowercase letters, numbers and underscores"),
 		},
 		"description": {
 			Type:     schema.TypeString,
@@ -32,16 +32,26 @@ func resourceCloudflareIPListSchema() map[string]*schema.Schema {
 		"item": {
 			Type:     schema.TypeSet,
 			Optional: true,
-			Elem:     ipListItemElem,
+			Elem:     listItemElem,
 		},
 	}
 }
 
-var ipListItemElem = &schema.Resource{
+var listItemElem = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"value": {
-			Type:     schema.TypeString,
+			Type:     schema.TypeList,
+			MinItems: 1,
+			MaxItems: 1,
 			Required: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"ip": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
 		},
 		"comment": {
 			Type:     schema.TypeString,
