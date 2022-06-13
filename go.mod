@@ -236,3 +236,5 @@ require (
 	mvdan.cc/lint v0.0.0-20170908181259-adc824a0674b // indirect
 	mvdan.cc/unparam v0.0.0-20211214103731-d0ef000c54e5 // indirect
 )
+
+replace github.com/hashicorp/terraform-plugin-docs => github.com/jacobbednarz/terraform-plugin-docs v0.5.1-0.20220613063544-b84797c983e3

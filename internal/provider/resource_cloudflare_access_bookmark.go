@@ -22,6 +22,7 @@ func resourceCloudflareAccessBookmark() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessBookmarkImport,
 		},
+		Description: "Provides a Cloudflare Access Bookmark resource. Access Bookmark applications are not protected behind Access but are displayed in the App Launcher.",
 	}
 }
 

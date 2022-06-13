@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -8,8 +10,9 @@ import (
 func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"application_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The ID of the application the policy is associated with.",
 		},
 		"account_id": {
 			Description:   "The account identifier to target for the resource.",
@@ -26,41 +29,49 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			ConflictsWith: []string{"account_id"},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Friendly name of the Access Policy.",
 		},
 		"precedence": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Type:        schema.TypeInt,
+			Required:    true,
+			Description: "The unique precedence for policies on a single application.",
 		},
 		"decision": {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"allow", "deny", "non_identity", "bypass"}, false),
+			Description:  fmt.Sprintf("Defines the action Access will take if the policy matches the user. %s", renderAvailableDocumentationValuesStringSlice([]string{"allow", "deny", "non_identity", "bypass"})),
 		},
 		"require": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     AccessGroupOptionSchemaElement,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Elem:        AccessGroupOptionSchemaElement,
+			Description: "A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).",
 		},
 		"exclude": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     AccessGroupOptionSchemaElement,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Elem:        AccessGroupOptionSchemaElement,
+			Description: "A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).",
 		},
 		"include": {
-			Type:     schema.TypeList,
-			Required: true,
-			Elem:     AccessGroupOptionSchemaElement,
+			Type:        schema.TypeList,
+			Required:    true,
+			Elem:        AccessGroupOptionSchemaElement,
+			Description: "A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).",
 		},
 		"purpose_justification_required": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Whether to prompt the user for a justification for accessing the resource.",
 		},
 		"purpose_justification_prompt": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			RequiredWith: []string{"purpose_justification_required"},
+			Description:  "The prompt to display to the user for a justification for accessing the resource.",
 		},
 		"approval_required": {
 			Type:     schema.TypeBool,
@@ -86,11 +97,13 @@ var AccessPolicyApprovalGroupElement = &schema.Resource{
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "List of emails to request approval from.",
 		},
 		"approvals_needed": {
 			Type:         schema.TypeInt,
 			Required:     true,
 			ValidateFunc: validation.IntAtLeast(0),
+			Description:  "Number of approvals needed.",
 		},
 	},
 }
