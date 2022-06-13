@@ -226,7 +226,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPBlockXSSWithAnomalyOver60(t 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "efb7b8c949ac4650a09736fc376e9aee"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.category", "xss"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.action", "block"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.status", "enabled"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.1.action", "execute"),
 					resource.TestCheckResourceAttr(resourceName, "rules.1.action_parameters.#", "1"),
@@ -278,16 +278,16 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPOnlyPL1(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "4814384a9e5d4991b9815dcfc25d2f1f"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.category", "paranoia-level-2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.status", "disabled"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.1.category", "paranoia-level-3"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.1.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.1.status", "disabled"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.2.category", "paranoia-level-4"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.2.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.2.status", "disabled"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "6179ae15870a4bb7b2d480d4843b323c"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.action", "block"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.score_threshold", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.status", "enabled"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "zone"),
@@ -576,7 +576,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryAndRuleBasedOverrides
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "e3a567afc347477d9702d9047e97d760"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.status", "disabled"),
 				),
 			},
 		},
@@ -1173,7 +1173,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesAction(t *testing.T) {
 					resource.TestCheckNoResourceAttr(resourceName, "rules.0.action_parameters.0.enabled"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.action", "log"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", "enabled"),
 				),
 			},
 		},
@@ -1339,7 +1339,7 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example disabled logging"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.#", "1"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.0.status", "disabled"),
 				),
 			},
 		},
@@ -1416,11 +1416,11 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithActionManagedChallenge(t *tes
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.category", "wordpress"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.action", "managed_challenge"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.categories.0.status", "enabled"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "e3a567afc347477d9702d9047e97d760"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.status", "enabled"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.action", "managed_challenge"),
 				),
 			},
@@ -1438,6 +1438,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithActionManagedChallenge(t *tes
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "efb7b8c949ac4650a09736fc376e9aee"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.action", "managed_challenge"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", ""),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "overrides change action to managed_challenge on the Cloudflare Manage Ruleset"),
 				),
@@ -1483,6 +1484,73 @@ func TestAccCloudflareRuleset_LogCustomField(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ActionParametersOverridesThrashingStatus(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", ""),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, `status = "disabled"`),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", "disabled"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", ""),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, `status = "enabled"`),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", "enabled"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, `status = "disabled"`),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", "disabled"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, `status = "enabled"`),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", "enabled"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.status", ""),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -1513,14 +1581,14 @@ func testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, name, accountID stri
       action = "block"
       expression = "udp.dstport in { 32768..65535 }"
       description = "Block UDP Ephemeral Ports"
-      enabled = true
+      status = "enabled"
     }
 
     rules {
       action = "allow"
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
-      enabled = true
+      status = "enabled"
     }
   }`, rnd, name, accountID)
 }
@@ -1602,7 +1670,7 @@ func testAccCheckCloudflareRulesetManagedWAFOWASPBlockXSSAndAnomalyOver60(rnd, n
           categories {
             category = "xss"
             action = "block"
-            enabled = true
+            status = "enabled"
           }
         }
       }
@@ -1648,24 +1716,24 @@ func testAccCheckCloudflareRulesetManagedWAFOWASPOnlyPL1(rnd, name, zoneID, zone
         overrides {
           categories {
             category = "paranoia-level-2"
-            enabled = false
+            status = "disabled"
           }
 
           categories {
             category = "paranoia-level-3"
-            enabled = false
+            status = "disabled"
           }
 
           categories {
             category = "paranoia-level-4"
-            enabled = false
+            status = "disabled"
           }
 
           rules {
             id = "6179ae15870a4bb7b2d480d4843b323c"
             action = "block"
             score_threshold = 60
-            enabled = true
+            status = "enabled"
           }
         }
       }
@@ -1734,6 +1802,9 @@ func testAccCheckCloudflareRulesetManagedWAFDeployMultipleWithSkip(rnd, name, zo
       description = "not this zone"
       expression = "(http.host eq \"%[4]s\" and http.request.method eq \"GET\")"
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
 
     rules {
@@ -1785,6 +1856,9 @@ func testAccCheckCloudflareRulesetManagedWAFDeployMultipleWithTopSkipAndLastSkip
       description = "not this path"
       expression = "(http.host eq \"%[4]s\" and http.request.uri.path contains \"/app/\")"
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
 
     rules {
@@ -1825,6 +1899,9 @@ func testAccCheckCloudflareRulesetManagedWAFDeployMultipleWithTopSkipAndLastSkip
       description = "not this path either"
       expression = "(http.host eq \"%[4]s\" and http.request.uri.path contains \"/httpbin/\")"
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
   }`, rnd, name, zoneID, zoneName)
 }
@@ -1846,6 +1923,9 @@ func testAccCheckCloudflareRulesetSkipPhaseAndProducts(rnd, name, zoneID, zoneNa
       description = "not this zone"
       expression = "http.host eq \"%[4]s\""
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
 
     rules {
@@ -1856,6 +1936,9 @@ func testAccCheckCloudflareRulesetSkipPhaseAndProducts(rnd, name, zoneID, zoneNa
       expression = "http.request.uri.path contains \"/skip-phase/\""
       description = ""
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
 
     rules {
@@ -1866,6 +1949,9 @@ func testAccCheckCloudflareRulesetSkipPhaseAndProducts(rnd, name, zoneID, zoneNa
       expression = "http.request.uri.path contains \"/skip-products/\""
       description = ""
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
   }`, rnd, name, zoneID, zoneName)
 }
@@ -1887,19 +1973,19 @@ func testAccCheckCloudflareRulesetManagedWAFWithCategoryBasedOverrides(rnd, name
           categories {
             category = "wordpress"
             action = "block"
-            enabled = true
+            status = "enabled"
           }
 
           categories {
             category = "joomla"
             action = "block"
-            enabled = true
+            status = "enabled"
           }
 
-					rules {
-						id = "e3a567afc347477d9702d9047e97d760"
-						enabled = false
-					}
+			rules {
+				id = "e3a567afc347477d9702d9047e97d760"
+				status = "disabled"
+			}
         }
       }
 
@@ -1927,13 +2013,13 @@ func testAccCheckCloudflareRulesetManagedWAFWithIDBasedOverrides(rnd, name, zone
           rules {
             id = "5de7edfa648c4d6891dc3e7f84534ffa"
             action = "log"
-            enabled = true
+            status = "enabled"
           }
 
           rules {
             id = "e3a567afc347477d9702d9047e97d760"
             action = "log"
-            enabled = true
+            status = "enabled"
           }
         }
       }
@@ -2170,7 +2256,7 @@ func testAccCheckCloudflareRulesetActionParametersOverridesActionEnabled(rnd, na
         version = "latest"
         overrides {
           action = "log"
-          enabled = true
+          status = "enabled"
         }
       }
       expression = "true"
@@ -2197,6 +2283,9 @@ func testAccCheckCloudflareRulesetActionParametersMultipleSkips(rnd, name, zoneI
       expression = "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rulesets\")"
       description = "skip Cloudflare Manage ruleset"
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
 
     rules {
@@ -2210,6 +2299,9 @@ func testAccCheckCloudflareRulesetActionParametersMultipleSkips(rnd, name, zoneI
       expression = "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rules\")"
       description = "skip Wordpress rule and SQLi rule"
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
 
     rules {
@@ -2221,17 +2313,17 @@ func testAccCheckCloudflareRulesetActionParametersMultipleSkips(rnd, name, zoneI
           rules {
             id = "5de7edfa648c4d6891dc3e7f84534ffa"
             action = "block"
-            enabled = true
+            status = "enabled"
           }
           rules {
             id = "75a0060762034a6cb663fd51a02344cb"
             action = "log"
-            enabled = true
+            status = "enabled"
           }
           categories {
             category = "wordpress"
             action = "js_challenge"
-            enabled = true
+            status = "enabled"
           }
         }
       }
@@ -2374,7 +2466,7 @@ func testAccCheckCloudflareRulesetDisableLoggingForSkipAction(rnd, name, account
       enabled = true
       description = "example disabled logging"
       logging {
-        enabled = false
+        status = "disabled"
       }
     }
   }
@@ -2390,7 +2482,6 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteAlone
     kind        = "root"
     phase       = "http_request_firewall_managed"
 
-
     rules {
       action = "execute"
       action_parameters {
@@ -2401,7 +2492,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteAlone
             action = "block"
             score_threshold = 25
           }
-          enabled = true
+          status = "enabled"
         }
         matched_data {
            public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
@@ -2434,6 +2525,9 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenS
       expression = "(cf.zone.name eq \"%[3]s\")"
       description = "Account skip rules OWASP"
       enabled = true
+	  logging {
+		status = "enabled"
+	  }
     }
 
     rules {
@@ -2446,7 +2540,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenS
             action = "block"
             score_threshold = 25
           }
-          enabled = true
+          status = "enabled"
         }
         matched_data {
            public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
@@ -2477,12 +2571,12 @@ func testAccCheckCloudflareRulesetManagedWAFWithCategoryBasedOverridesActionMana
         	categories {
             	category = "wordpress"
             	action = "managed_challenge"
-            	enabled = true
+            	status = "enabled"
         	}
 			rules {
 				id = "e3a567afc347477d9702d9047e97d760"
 				action = "managed_challenge"
-				enabled = true
+				status = "enabled"
 			}
         }
       }
@@ -2553,4 +2647,30 @@ func testAccCheckCloudflareRulesetLogCustomField(rnd, name, zoneID string) strin
       enabled = true
     }
   }`, rnd, name, zoneID)
+}
+
+func testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, status string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id     = "%[2]s"
+    name        = "thrashing overrides for managed rules"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_firewall_managed"
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = "efb7b8c949ac4650a09736fc376e9aee"
+        version = "latest"
+        overrides {
+          action = "log"
+          %[4]s
+        }
+      }
+      expression = "true"
+      description = "Execute all rules in Cloudflare Managed Ruleset in log mode on my zone-level phase entry point ruleset"
+      enabled = true
+    }
+  }`, rnd, zoneID, zoneName, status)
 }
