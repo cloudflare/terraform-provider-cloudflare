@@ -22,6 +22,10 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessApplicationImport,
 		},
+		Description: `Provides a Cloudflare Access Application resource. Access
+Applications are used to restrict access to a whole application using an
+authorisation gateway managed by Cloudflare.
+		`,
 	}
 }
 

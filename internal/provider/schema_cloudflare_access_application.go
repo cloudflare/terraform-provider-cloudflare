@@ -27,22 +27,26 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			ConflictsWith: []string{"account_id"},
 		},
 		"aud": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Application Audience (AUD) Tag of the application.",
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Friendly name of the Access Application.",
 		},
 		"domain": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.",
 		},
 		"type": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
 			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "ssh", "vnc", "file"}, false),
+			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "ssh", "vnc", "file"})),
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
@@ -56,10 +60,12 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				}
 				return
 			},
+			Description: "How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`",
 		},
 		"cors_headers": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "CORS configuration for the Access Application. See below for reference structure.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"allowed_methods": {
@@ -68,6 +74,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
+						Description: "List of methods to expose via CORS.",
 					},
 					"allowed_origins": {
 						Type:     schema.TypeSet,
@@ -75,6 +82,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
+						Description: "List of origins permitted to make CORS requests.",
 					},
 					"allowed_headers": {
 						Type:     schema.TypeSet,
@@ -82,40 +90,48 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
+						Description: "List of HTTP headers to expose via CORS.",
 					},
 					"allow_all_methods": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Value to determine whether all methods are exposed.",
 					},
 					"allow_all_origins": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Value to determine whether all origins are permitted to make CORS requests.",
 					},
 					"allow_all_headers": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Value to determine whether all HTTP headers are exposed.",
 					},
 					"allow_credentials": {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Value to determine if credentials (cookies, authorization headers, or TLS client certificates) are included with requests.",
 					},
 					"max_age": {
 						Type:         schema.TypeInt,
 						Optional:     true,
 						ValidateFunc: validation.IntBetween(-1, 86400),
+						Description:  "The maximum time a preflight request will be cached.",
 					},
 				},
 			},
 		},
 		"auto_redirect_to_identity": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Option to skip identity provider selection if only one is configured in `allowed_idps`.",
 		},
 		"enable_binding_cookie": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional \"binding\" cookie on requests.",
 		},
 		"allowed_idps": {
 			Type:     schema.TypeList,
@@ -123,42 +139,52 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "The identity providers selected for the application.",
 		},
 		"custom_deny_message": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Option that returns a custom error message when a user is denied access to the application.",
 		},
 		"custom_deny_url": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Option that redirects to a custom URL when a user is denied access to the application.",
 		},
 		"http_only_cookie_attribute": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+			Description: "Option to add the `HttpOnly` cookie flag to access tokens.",
 		},
 		"same_site_cookie_attribute": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"none", "lax", "strict"}, false),
+			Description:  fmt.Sprintf("Defines the same-site cookie setting for access tokens. %s", renderAvailableDocumentationValuesStringSlice(([]string{"none", "lax", "strict"}))),
 		},
 		"logo_url": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Image URL for the logo shown in the app launcher dashboard.",
 		},
 		"skip_interstitial": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Option to skip the authorization interstitial when using the CLI.",
 		},
 		"app_launcher_visible": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+			Description: "Option to show/hide applications in App Launcher.",
 		},
 		"service_auth_401_redirect": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Option to return a 401 status code in service authentication rules on failed requests.",
 		},
 	}
 }

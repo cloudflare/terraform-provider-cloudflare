@@ -1,0 +1,31 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+~> It's required that an `account_id` or `zone_id` is provided and in
+most cases using either is fine. However, if you're using a scoped
+access token, you must provide the argument that matches the token's
+scope. For example, an access token that is scoped to the "example.com"
+zone needs to use the `zone_id` argument.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{ printf "{{tffile %q}}" .ExampleFile }}
+{{- end }}
+{{ .SchemaMarkdown | trimspace }}
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+{{- end }}

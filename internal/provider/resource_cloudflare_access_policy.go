@@ -21,6 +21,7 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessPolicyImport,
 		},
+		Description: "Provides a Cloudflare Access Policy resource. Access Policies are used in conjunction with Access Applications to restrict access to a particular resource.",
 	}
 }
 

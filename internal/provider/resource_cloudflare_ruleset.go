@@ -46,10 +46,6 @@ The engine syntax, inspired by the Wireshark Display Filter language, is the
 same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
 in different products, allowing you to configure several products using the same
 basic syntax.
-
-~> **NOTE:** ` + "`enabled`" + ` has been immediately deprecated in favour of
-` + "`status`" + `. You should swap over to ensure that your configuration doesn't
-have inconsistent operations and inadvertently disable rulesets.
 `,
 	}
 }
