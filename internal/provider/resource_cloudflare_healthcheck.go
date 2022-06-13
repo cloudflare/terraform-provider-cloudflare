@@ -29,6 +29,7 @@ func resourceCloudflareHealthcheck() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Second),
 		},
+		Description: "Standalone Health Checks provide a way to monitor origin servers without needing a Cloudflare Load Balancer.",
 	}
 }
 
