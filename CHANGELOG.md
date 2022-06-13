@@ -1,5 +1,9 @@
 ## 3.17.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: deprecates `enabled` in overridden configurations immediately in favour of `status` ([#1689](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1689))
+
 FEATURES:
 
 * **New Resource:** `cloudflare_tunnel_virtual_network` ([#1672](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1672))
