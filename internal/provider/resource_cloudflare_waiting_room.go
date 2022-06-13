@@ -27,6 +27,7 @@ func resourceCloudflareWaitingRoom() *schema.Resource {
 			Create: schema.DefaultTimeout(30 * time.Second),
 			Update: schema.DefaultTimeout(30 * time.Second),
 		},
+		Description: "Provides a Cloudflare Waiting Room resource.",
 	}
 }
 

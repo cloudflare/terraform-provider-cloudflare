@@ -24,6 +24,7 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.ComputedIf("expires_at", resourceCloudflareAccessServiceTokenExpireDiff),
+		Description:   "Access Service Tokens are used for service-to-service communication when an application is behind Cloudflare Access.",
 	}
 }
 

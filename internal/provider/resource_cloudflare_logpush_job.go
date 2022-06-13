@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -23,6 +24,16 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareLogpushJobImport,
 		},
+		Description: `
+		Provides a resource which manages Cloudflare Logpush jobs. For Logpush jobs pushing to Amazon S3, Google Cloud Storage,
+Microsoft Azure or Sumo Logic, this resource cannot be automatically created. In order to have this automated, you must
+have:
+
+- ` + "`cloudflare_logpush_ownership_challenge`" + `: Configured to generate the challenge
+  to confirm ownership of the destination.
+- Either manual inspection or another Terraform Provider to get the contents of
+  the ` + "`ownership_challenge_filename`" + ` value from the` + "`cloudflare_logpush_ownership_challenge`" + ` resource.
+- ` + "`cloudflare_logpush_job`" + `: Create and manage the Logpush Job itself.`,
 	}
 }
 
@@ -60,6 +71,19 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 		Frequency:          d.Get("frequency").(string),
 	}
 
+	filter := d.Get("filter")
+	if filter != nil {
+		var jobFilter cloudflare.LogpushJobFilters
+		if err := json.Unmarshal([]byte(filter.(string)), &jobFilter); err != nil {
+			return cloudflare.LogpushJob{}, identifier, err
+		}
+		err := jobFilter.Where.Validate()
+		if err != nil {
+			return job, identifier, err
+		}
+		job.Filter = jobFilter
+	}
+
 	return job, identifier, nil
 }
 
@@ -92,6 +116,15 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	if job.ID == 0 {
 		d.SetId("")
 		return nil
+	}
+
+	if job.Filter.Where.Validate() == nil {
+		filterstr, err := json.Marshal(job.Filter)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		d.Set("filter", string(filterstr))
 	}
 
 	d.Set("name", job.Name)

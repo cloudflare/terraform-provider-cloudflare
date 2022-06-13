@@ -1,9 +1,14 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
+
+var healthcheckRegions = []string{"WNAM", "ENAM", "WEU", "EEU", "NSAM", "SSAM", "OC", "ME", "NAF", "SAF", "IN", "SEAS", "NEAS", "ALL_REGIONS"}
+var healthcheckType = []string{"TCP", "HTTP", "HTTPS"}
+var healthcheckMethod = []string{"connection_established", "GET", "HEAD"}
 
 func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
@@ -14,111 +19,133 @@ func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "A short name to identify the health check. Only alphanumeric characters, hyphens, and underscores are allowed.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"description": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "A human-readable description of the health check.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 		"suspended": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Description: "If suspended, no health checks are sent to the origin.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
 		},
 		"address": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "The hostname or IP address of the origin server to run health checks on.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"consecutive_fails": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  1,
+			Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     1,
 		},
 		"consecutive_successes": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  1,
+			Description: "The number of consecutive successes required from a health check before changing the health to healthy.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     1,
 		},
 		"retries": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  2,
+			Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     2,
 		},
 		"timeout": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  5,
+			Description: "The timeout (in seconds) before marking the health check as failed.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     5,
 		},
 		"interval": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  60,
+			Description: "The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase the load on the origin as we check from multiple locations.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     60,
 		},
 		"check_regions": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
+			Description: fmt.Sprintf("A list of regions from which to run health checks. If not set, Cloudflare will pick a default region. %s", renderAvailableDocumentationValuesStringSlice(healthcheckRegions)),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Computed:    true,
+
 			Elem: &schema.Schema{
 				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"WNAM", "ENAM", "WEU", "EEU", "NSAM", "SSAM", "OC", "ME", "NAF", "SAF", "IN", "SEAS", "NEAS", "ALL_REGIONS"}, false),
+				ValidateFunc: validation.StringInSlice(healthcheckRegions, false),
 			},
 		},
 		"type": {
+			Description:  fmt.Sprintf("The protocol to use for the health check. %s", renderAvailableDocumentationValuesStringSlice(healthcheckType)),
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"TCP", "HTTP", "HTTPS"}, false),
+			ValidateFunc: validation.StringInSlice(healthcheckType, false),
 		},
 		"method": {
+			Description:  fmt.Sprintf("The HTTP method to use for the health check. %s", renderAvailableDocumentationValuesStringSlice(healthcheckMethod)),
 			Type:         schema.TypeString,
 			Optional:     true,
 			Computed:     true,
-			ValidateFunc: validation.StringInSlice([]string{"connection_established", "GET", "HEAD"}, false),
+			ValidateFunc: validation.StringInSlice(healthcheckMethod, false),
 		},
 		"port": {
+			Description:  "Port number to connect to for the health check.",
 			Type:         schema.TypeInt,
 			Optional:     true,
 			Default:      80,
 			ValidateFunc: validation.IntBetween(0, 65535),
 		},
 		"path": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "/",
+			Description: "The endpoint path to health check against.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "/",
 		},
 		"expected_codes": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Description: "The expected HTTP response codes (e.g. '200') or code ranges (e.g. '2xx' for all codes starting with 2) of the health check.",
+			Type:        schema.TypeList,
+			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"expected_body": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "A case-insensitive sub-string to look for in the response body. If this string is not found the origin will be marked as unhealthy.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 		"follow_redirects": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Description: "Follow redirects if the origin returns a 3xx status code.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
 		},
 		"allow_insecure": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Description: "Do not validate the certificate when the health check uses HTTPS.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
 		},
 		"header": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
+			Type:        schema.TypeSet,
+			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"header": {
-						Type:     schema.TypeString,
-						Required: true,
+						Description: "The header name.",
+						Type:        schema.TypeString,
+						Required:    true,
 					},
 					"values": {
-						Type:     schema.TypeSet,
-						Required: true,
+						Description: "A list of string values for the header.",
+						Type:        schema.TypeSet,
+						Required:    true,
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
@@ -127,26 +154,30 @@ func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 			},
 		},
 		"notification_suspended": {
-			Type:       schema.TypeBool,
-			Optional:   true,
-			Default:    false,
-			Deprecated: "Use `cloudflare_notification_policy` instead.",
+			Description: "Whether the notifications are suspended or not. Useful for maintenance periods.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Deprecated:  "Use `cloudflare_notification_policy` instead.",
 		},
 		"notification_email_addresses": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Description: "A list of email addresses we want to send the notifications to. Deprecated, use cloudflare_notification_policy instead.",
+			Type:        schema.TypeList,
+			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 			Deprecated: "Use `cloudflare_notification_policy` instead.",
 		},
 		"created_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Description: "Creation time.",
+			Type:        schema.TypeString,
+			Computed:    true,
 		},
 		"modified_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Description: "Last modified time.",
+			Type:        schema.TypeString,
+			Computed:    true,
 		},
 	}
 }

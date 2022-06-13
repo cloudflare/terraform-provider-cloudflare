@@ -10,19 +10,28 @@ func resourceCloudflareTunnelRouteSchema() map[string]*schema.Schema {
 			Description: "The account identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"tunnel_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The ID of the tunnel that will service the tunnel route.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"network": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "The IPv4 or IPv6 network that should use this tunnel route, in CIDR notation.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"comment": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "Description of the tunnel route.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"virtual_network_id": {
+			Description: "The ID of the virtual network for which this route is being added; uses the default virtual network of the account if none is provided.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			ForceNew:    true,
 		},
 	}
 }

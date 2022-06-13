@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_tunnel_route: Add `virtual_network_id` attribute
+```

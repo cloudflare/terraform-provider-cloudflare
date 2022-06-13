@@ -19,12 +19,14 @@ func resourceCloudflareAccessMutualTLSCertificateSchema() map[string]*schema.Sch
 			ConflictsWith: []string{"account_id"},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the certificate.",
 		},
 		"certificate": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The Root CA for your certificates.",
 		},
 		"associated_hostnames": {
 			Type:     schema.TypeList,
@@ -32,6 +34,7 @@ func resourceCloudflareAccessMutualTLSCertificateSchema() map[string]*schema.Sch
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "The hostnames that will be prompted for this certificate.",
 		},
 		"fingerprint": {
 			Type:     schema.TypeString,

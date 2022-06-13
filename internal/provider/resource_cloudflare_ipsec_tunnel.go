@@ -22,6 +22,7 @@ func resourceCloudflareIPsecTunnel() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareIPsecTunnelImport,
 		},
+		Description: "Provides a resource, that manages IPsec tunnels for Magic Transit.",
 	}
 }
 
@@ -38,6 +39,19 @@ func resourceCloudflareIPsecTunnelCreate(ctx context.Context, d *schema.Resource
 	}
 
 	d.SetId(newTunnel[0].ID)
+
+	// If PSK is not specified, call generate PSK and populate the field
+	psk, pskOk := d.Get("psk").(string)
+	if !pskOk || psk == "" {
+		psk, _, err = client.GenerateMagicTransitIPsecTunnelPSK(ctx, accountID, d.Id())
+		if err != nil {
+			defer d.SetId("")
+			tflog.Error(ctx, fmt.Sprintf("error creating PSK: %s %s", accountID, d.Id()))
+			// Need to delete the tunnel
+			return resourceCloudflareIPsecTunnelDelete(ctx, d, meta)
+		}
+		d.Set("psk", psk)
+	}
 
 	return resourceCloudflareIPsecTunnelRead(ctx, d, meta)
 }
@@ -79,6 +93,15 @@ func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("customer_endpoint", tunnel.CustomerEndpoint)
 	d.Set("cloudflare_endpoint", tunnel.CloudflareEndpoint)
 	d.Set("interface_address", tunnel.InterfaceAddress)
+	d.Set("health_check_enabled", tunnel.HealthCheck.Enabled)
+	d.Set("health_check_target", tunnel.HealthCheck.Target)
+	d.Set("health_check_type", tunnel.HealthCheck.Type)
+
+	// Set Remote Identities
+	d.Set("hex_id", tunnel.RemoteIdentities.HexID)
+	d.Set("fqdn_id", tunnel.RemoteIdentities.FQDNID)
+	d.Set("user_id", tunnel.RemoteIdentities.UserID)
+	d.Set("remote_id", accountID+"_"+d.Id())
 
 	if len(tunnel.Description) > 0 {
 		d.Set("description", tunnel.Description)
@@ -90,10 +113,22 @@ func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceDa
 func resourceCloudflareIPsecTunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
-
 	_, err := client.UpdateMagicTransitIPsecTunnel(ctx, accountID, d.Id(), IPsecTunnelFromResource(d))
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating IPsec tunnel %q", d.Id())))
+	}
+
+	// Note: PSK field is expected to be populated during create. The only reason
+	// it can be empty is when the resource wants to regenerate it.
+	psk, pskOk := d.Get("psk").(string)
+	if !pskOk || psk == "" {
+		psk, _, err = client.GenerateMagicTransitIPsecTunnelPSK(ctx, accountID, d.Id())
+		if err != nil {
+			// Return Update PSK generation failed
+			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error regenerating PSK: %s %s", accountID, d.Id())))
+		} else {
+			d.Set("psk", psk)
+		}
 	}
 
 	return resourceCloudflareIPsecTunnelRead(ctx, d, meta)
@@ -124,6 +159,11 @@ func IPsecTunnelFromResource(d *schema.ResourceData) cloudflare.MagicTransitIPse
 	description, descriptionOk := d.GetOk("description")
 	if descriptionOk {
 		tunnel.Description = description.(string)
+	}
+
+	psk, pskOk := d.GetOk("psk")
+	if pskOk {
+		tunnel.Psk = psk.(string)
 	}
 
 	return tunnel
