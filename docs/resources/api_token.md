@@ -143,7 +143,7 @@ resource "cloudflare_api_token" "dns_edit_all_account" {
 
 ### Optional
 
-- `condition` (Block List, Max: 1) Conditions under which the token should be considerd valid. (see [below for nested schema](#nestedblock--condition))
+- `condition` (Block List, Max: 1) Conditions under which the token should be considered valid. (see [below for nested schema](#nestedblock--condition))
 
 ### Read-Only
 
