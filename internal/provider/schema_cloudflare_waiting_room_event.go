@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,91 +18,108 @@ func resourceCloudflareWaitingRoomEventSchema() map[string]*schema.Schema {
 		},
 
 		"waiting_room_id": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "The Waiting Room ID the event should apply to.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "A unique name to identify the event. Only alphanumeric characters, hyphens, and underscores are allowed.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 			StateFunc: func(i interface{}) string {
 				return strings.ToLower(i.(string))
 			},
 		},
 
 		"event_start_time": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "ISO 8601 timestamp that marks the start of the event. Must occur at least 1 minute before `event_end_time`.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 
 		"event_end_time": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "ISO 8601 timestamp that marks the end of the event.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
 
 		"total_active_users": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Description: "The total number of active user sessions on the route at a point in time.",
+			Type:        schema.TypeInt,
+			Optional:    true,
 		},
 
 		"new_users_per_minute": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Description: "The number of new users that will be let into the route every minute.",
+			Type:        schema.TypeInt,
+			Optional:    true,
 		},
 
 		"custom_page_html": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "This is a templated html file that will be rendered at the edge.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 
 		"queueing_method": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description:  fmt.Sprintf("The queueing method used by the waiting room. %s", renderAvailableDocumentationValuesStringSlice(waitingRoomQueueingMethod)),
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice(waitingRoomQueueingMethod, false),
 		},
 
 		"shuffle_at_event_start": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Description: "Users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
 		},
 
 		"disable_session_renewal": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Description: "Disables automatic renewal of session cookies.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 
 		"prequeue_start_time": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "ISO 8601 timestamp that marks when to begin queueing all users before the event starts. Must occur at least 5 minutes before `event_start_time`.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 
 		"suspended": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Description: "If suspended, the event is ignored and traffic will be handled based on the waiting room configuration.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 
 		"description": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "A description to let users add more details about the event.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 
 		"session_duration": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Description: "Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin.",
+			Type:        schema.TypeInt,
+			Optional:    true,
 		},
 
 		"created_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Description: "Creation time.",
+			Type:        schema.TypeString,
+			Computed:    true,
 		},
 
 		"modified_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Description: "Last modified time.",
+			Type:        schema.TypeString,
+			Computed:    true,
 		},
 	}
 }
