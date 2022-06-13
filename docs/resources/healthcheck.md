@@ -73,13 +73,13 @@ resource "cloudflare_healthcheck" "tcp_health_check" {
 
 - `address` (String) The hostname or IP address of the origin server to run health checks on.
 - `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens, and underscores are allowed.
-- `type` (String) The protocol to use for the health check. Available values: `"TCP"`, `"HTTP"`, `"HTTPS"`.
+- `type` (String) The protocol to use for the health check. Available values: `TCP`, `HTTP`, `HTTPS`.
 - `zone_id` (String) The zone identifier to target for the resource.
 
 ### Optional
 
 - `allow_insecure` (Boolean) Do not validate the certificate when the health check uses HTTPS. Defaults to `false`.
-- `check_regions` (List of String) A list of regions from which to run health checks. If not set, Cloudflare will pick a default region. Available values: `"WNAM"`, `"ENAM"`, `"WEU"`, `"EEU"`, `"NSAM"`, `"SSAM"`, `"OC"`, `"ME"`, `"NAF"`, `"SAF"`, `"IN"`, `"SEAS"`, `"NEAS"`, `"ALL_REGIONS"`.
+- `check_regions` (List of String) A list of regions from which to run health checks. If not set, Cloudflare will pick a default region. Available values: `WNAM`, `ENAM`, `WEU`, `EEU`, `NSAM`, `SSAM`, `OC`, `ME`, `NAF`, `SAF`, `IN`, `SEAS`, `NEAS`, `ALL_REGIONS`.
 - `consecutive_fails` (Number) The number of consecutive fails required from a health check before changing the health to unhealthy. Defaults to `1`.
 - `consecutive_successes` (Number) The number of consecutive successes required from a health check before changing the health to healthy. Defaults to `1`.
 - `description` (String) A human-readable description of the health check.
@@ -88,7 +88,7 @@ resource "cloudflare_healthcheck" "tcp_health_check" {
 - `follow_redirects` (Boolean) Follow redirects if the origin returns a 3xx status code. Defaults to `false`.
 - `header` (Block Set) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. (see [below for nested schema](#nestedblock--header))
 - `interval` (Number) The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase the load on the origin as we check from multiple locations. Defaults to `60`.
-- `method` (String) The HTTP method to use for the health check. Available values: `"connection_established"`, `"GET"`, `"HEAD"`.
+- `method` (String) The HTTP method to use for the health check. Available values: `connection_established`, `GET`, `HEAD`.
 - `notification_email_addresses` (List of String, Deprecated) A list of email addresses we want to send the notifications to. Deprecated, use cloudflare_notification_policy instead.
 - `notification_suspended` (Boolean, Deprecated) Whether the notifications are suspended or not. Useful for maintenance periods. Defaults to `false`.
 - `path` (String) The endpoint path to health check against. Defaults to `/`.

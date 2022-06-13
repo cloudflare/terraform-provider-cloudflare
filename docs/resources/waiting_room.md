@@ -36,7 +36,7 @@ resource "cloudflare_waiting_room" "example" {
 ### Optional
 
 - `custom_page_html` (String) This is a templated html file that will be rendered at the edge.
-- `default_template_language` (String) The language to use for the default waiting room page. Available values: `"de-DE"`, `"es-ES"`, `"en-US"`, `"fr-FR"`, `"id-ID"`, `"it-IT"`, `"ja-JP"`, `"ko-KR"`, `"nl-NL"`, `"pl-PL"`, `"pt-BR"`, `"tr-TR"`, `"zh-CN"`, `"zh-TW"`. Defaults to `en-US`.
+- `default_template_language` (String) The language to use for the default waiting room page. Available values: `de-DE`, `es-ES`, `en-US`, `fr-FR`, `id-ID`, `it-IT`, `ja-JP`, `ko-KR`, `nl-NL`, `pl-PL`, `pt-BR`, `tr-TR`, `zh-CN`, `zh-TW`. Defaults to `en-US`.
 - `description` (String) A description to add more details about the waiting room.
 - `disable_session_renewal` (Boolean) Disables automatic renewal of session cookies.
 - `json_response_enabled` (Boolean) If true, requests to the waiting room with the header `Accept: application/json` will receive a JSON response object.

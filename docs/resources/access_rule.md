@@ -59,7 +59,7 @@ resource "cloudflare_access_rule" "office_network" {
 ### Required
 
 - `configuration` (Block List, Min: 1, Max: 1) Rule configuration to apply to a matched request. (see [below for nested schema](#nestedblock--configuration))
-- `mode` (String) The action to apply to a matched request. Available values: `"block"`, `"challenge"`, `"whitelist"`, `"js_challenge"`, `"managed_challenge"`.
+- `mode` (String) The action to apply to a matched request. Available values: `block`, `challenge`, `whitelist`, `js_challenge`, `managed_challenge`.
 
 ### Optional
 
@@ -75,7 +75,7 @@ resource "cloudflare_access_rule" "office_network" {
 
 Required:
 
-- `target` (String) The request property to target. Available values: `"ip"`, `"ip6"`, `"ip_range"`, `"asn"`, `"country"`.
+- `target` (String) The request property to target. Available values: `ip`, `ip6`, `ip_range`, `asn`, `country`.
 - `value` (String) The value to target. Depends on target's type.
 
 ## Import

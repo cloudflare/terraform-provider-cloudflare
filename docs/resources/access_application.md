@@ -40,11 +40,11 @@ zone needs to use the `zone_id` argument.
 - `enable_binding_cookie` (Boolean) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
 - `http_only_cookie_attribute` (Boolean) Option to add the `HttpOnly` cookie flag to access tokens. Defaults to `true`.
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
-- `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `"none"`, `"lax"`, `"strict"`.
+- `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
 - `service_auth_401_redirect` (Boolean) Option to return a 401 status code in service authentication rules on failed requests. Defaults to `false`.
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`. Defaults to `24h`.
 - `skip_interstitial` (Boolean) Option to skip the authorization interstitial when using the CLI. Defaults to `false`.
-- `type` (String) The application type. Available values: `"self_hosted"`, `"ssh"`, `"vnc"`, `"file"`. Defaults to `self_hosted`.
+- `type` (String) The application type. Available values: `self_hosted`, `ssh`, `vnc`, `file`. Defaults to `self_hosted`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
 ### Read-Only
