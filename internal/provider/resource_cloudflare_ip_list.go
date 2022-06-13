@@ -29,7 +29,12 @@ func resourceCloudflareIPListCreate(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	list, err := client.CreateIPList(ctx, accountID, d.Get("name").(string), d.Get("description").(string), d.Get("kind").(string))
+	list, err := client.CreateList(ctx, cloudflare.ListCreateParams{
+		AccountID:   accountID,
+		Name:        d.Get("name").(string),
+		Description: d.Get("description").(string),
+		Kind:        d.Get("kind").(string),
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating IP List %s", d.Get("name").(string))))
 	}
@@ -38,7 +43,11 @@ func resourceCloudflareIPListCreate(ctx context.Context, d *schema.ResourceData,
 
 	if items, ok := d.GetOk("item"); ok {
 		IPListItems := buildIPListItemsCreateRequest(items.(*schema.Set).List())
-		_, err = client.CreateIPListItems(ctx, accountID, d.Id(), IPListItems)
+		_, err = client.CreateListItems(ctx, cloudflare.ListCreateItemsParams{
+			AccountID: accountID,
+			ID:        d.Id(),
+			Items:     IPListItems,
+		})
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating IP List Items")))
 		}
@@ -67,7 +76,10 @@ func resourceCloudflareIPListRead(ctx context.Context, d *schema.ResourceData, m
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	list, err := client.GetIPList(ctx, accountID, d.Id())
+	list, err := client.GetList(ctx, cloudflare.ListGetParams{
+		AccountID: accountID,
+		ID:        d.Id(),
+	})
 	if err != nil {
 		if strings.Contains(err.Error(), "could not find list") {
 			tflog.Info(ctx, fmt.Sprintf("IP List %s no longer exists", d.Id()))
@@ -81,7 +93,10 @@ func resourceCloudflareIPListRead(ctx context.Context, d *schema.ResourceData, m
 	d.Set("description", list.Description)
 	d.Set("kind", list.Kind)
 
-	items, err := client.ListIPListItems(ctx, accountID, d.Id())
+	items, err := client.ListListItems(ctx, cloudflare.ListListItemsParams{
+		AccountID: accountID,
+		ID:        d.Id(),
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error reading IP List Items")))
 	}
@@ -106,14 +121,22 @@ func resourceCloudflareIPListUpdate(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.UpdateIPList(ctx, accountID, d.Id(), d.Get("description").(string))
+	_, err := client.UpdateList(ctx, cloudflare.ListUpdateParams{
+		AccountID:   accountID,
+		ID:          d.Id(),
+		Description: d.Get("description").(string),
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating IP List description")))
 	}
 
 	if items, ok := d.GetOk("item"); ok {
 		IPListItems := buildIPListItemsCreateRequest(items.(*schema.Set).List())
-		_, err = client.ReplaceIPListItems(ctx, accountID, d.Id(), IPListItems)
+		_, err = client.ReplaceListItems(ctx, cloudflare.ListReplaceItemsParams{
+			AccountID: accountID,
+			ID:        d.Id(),
+			Items:     IPListItems,
+		})
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating IP List Items")))
 		}
@@ -126,7 +149,10 @@ func resourceCloudflareIPListDelete(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.DeleteIPList(ctx, accountID, d.Id())
+	_, err := client.DeleteList(ctx, cloudflare.ListDeleteParams{
+		AccountID: accountID,
+		ID:        d.Id(),
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error deleting IP List with ID %q", d.Id())))
 	}
@@ -134,12 +160,12 @@ func resourceCloudflareIPListDelete(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func buildIPListItemsCreateRequest(items []interface{}) []cloudflare.IPListItemCreateRequest {
-	var IPListItems []cloudflare.IPListItemCreateRequest
+func buildIPListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreateRequest {
+	var IPListItems []cloudflare.ListItemCreateRequest
 
 	for _, item := range items {
-		IPListItems = append(IPListItems, cloudflare.IPListItemCreateRequest{
-			IP:      item.(map[string]interface{})["value"].(string),
+		IPListItems = append(IPListItems, cloudflare.ListItemCreateRequest{
+			IP:      cloudflare.StringPtr(item.(map[string]interface{})["value"].(string)),
 			Comment: item.(map[string]interface{})["comment"].(string),
 		})
 	}
