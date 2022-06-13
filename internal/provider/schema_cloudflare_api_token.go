@@ -27,7 +27,7 @@ func resourceCloudflareApiTokenSchema() map[string]*schema.Schema {
 				Optional:     true,
 				Default:      "allow",
 				ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, false),
-				Description:  fmt.Sprint("Effect of the policy. %s", renderAvailableDocumentationValuesStringSlice([]string{"allow", "deny"})),
+				Description:  fmt.Sprintf("Effect of the policy. %s", renderAvailableDocumentationValuesStringSlice([]string{"allow", "deny"})),
 			},
 		},
 	}
@@ -49,7 +49,7 @@ func resourceCloudflareApiTokenSchema() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			Optional:    true,
 			MaxItems:    1,
-			Description: "Conditions under which the token should be considerd valid.",
+			Description: "Conditions under which the token should be considered valid.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"request_ip": {

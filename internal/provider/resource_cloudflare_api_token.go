@@ -24,9 +24,9 @@ func resourceCloudflareApiToken() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Description: `
-		Provides a resource which manages Cloudflare API tokens.
+Provides a resource which manages Cloudflare API tokens.
 
-		Read more about permission groups and their applicable scopes in the [developer documentation](https://developers.cloudflare.com/api/tokens/create/permissions).
+Read more about permission groups and their applicable scopes in the [developer documentation](https://developers.cloudflare.com/api/tokens/create/permissions).
 		`,
 	}
 }
