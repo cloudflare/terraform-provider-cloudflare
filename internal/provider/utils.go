@@ -245,7 +245,7 @@ func renderAvailableDocumentationValuesStringSlice(s []string) string {
 	if s != nil && len(s) > 0 {
 		values := make([]string, len(s))
 		for i, c := range s {
-			values[i] = fmt.Sprintf("`\"%s\"`", c)
+			values[i] = fmt.Sprintf("`%s`", c)
 		}
 		output = fmt.Sprintf("Available values: %s", strings.Join(values, ", "))
 	}

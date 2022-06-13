@@ -22,7 +22,7 @@ zone needs to use the `zone_id` argument.
 ### Required
 
 - `name` (String) Friendly name of the Access Identity Provider configuration.
-- `type` (String) The provider type to use. Available values: `"centrify"`, `"facebook"`, `"google-apps"`, `"oidc"`, `"github"`, `"google"`, `"saml"`, `"linkedin"`, `"azureAD"`, `"okta"`, `"onetimepin"`, `"onelogin"`, `"yandex"`.
+- `type` (String) The provider type to use. Available values: `centrify`, `facebook`, `google-apps`, `oidc`, `github`, `google`, `saml`, `linkedin`, `azureAD`, `okta`, `onetimepin`, `onelogin`, `yandex`.
 
 ### Optional
 
@@ -54,6 +54,7 @@ Optional:
 - `issuer_url` (String)
 - `okta_account` (String)
 - `onelogin_account` (String)
+- `pkce_enabled` (Boolean)
 - `redirect_url` (String)
 - `sign_request` (Boolean)
 - `sso_target_url` (String)

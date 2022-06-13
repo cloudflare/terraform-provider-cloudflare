@@ -27,8 +27,8 @@ resource "cloudflare_argo" "example" {
 
 ### Optional
 
-- `smart_routing` (String) Whether smart routing is enabled. Available values: `"on"`, `"off"`.
-- `tiered_caching` (String) Whether tiered caching is enabled. Available values: `"on"`, `"off"`.
+- `smart_routing` (String) Whether smart routing is enabled. Available values: `on`, `off`.
+- `tiered_caching` (String) Whether tiered caching is enabled. Available values: `on`, `off`.
 
 ### Read-Only
 

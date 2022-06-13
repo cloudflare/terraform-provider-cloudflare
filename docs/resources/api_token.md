@@ -163,7 +163,7 @@ Required:
 
 Optional:
 
-- `effect` (String) Effect of the policy. Available values: `"allow"`, `"deny"`. Defaults to `allow`.
+- `effect` (String) Effect of the policy. Available values: `allow`, `deny`. Defaults to `allow`.
 
 
 <a id="nestedblock--condition"></a>

@@ -39,7 +39,7 @@ resource "cloudflare_waiting_room_event" "example" {
 - `disable_session_renewal` (Boolean) Disables automatic renewal of session cookies.
 - `new_users_per_minute` (Number) The number of new users that will be let into the route every minute.
 - `prequeue_start_time` (String) ISO 8601 timestamp that marks when to begin queueing all users before the event starts. Must occur at least 5 minutes before `event_start_time`.
-- `queueing_method` (String) The queueing method used by the waiting room. Available values: `"fifo"`, `"random"`, `"passthrough"`, `"reject"`.
+- `queueing_method` (String) The queueing method used by the waiting room. Available values: `fifo`, `random`, `passthrough`, `reject`.
 - `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin.
 - `shuffle_at_event_start` (Boolean) Users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. Defaults to `false`.
 - `suspended` (Boolean) If suspended, the event is ignored and traffic will be handled based on the waiting room configuration.

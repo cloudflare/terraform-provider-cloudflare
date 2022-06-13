@@ -137,6 +137,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Type:     schema.TypeString,
 						Optional: true,
 					},
+					"pkce_enabled": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 				},
 			},
 		},
