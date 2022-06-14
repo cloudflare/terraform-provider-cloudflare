@@ -12,6 +12,9 @@ import (
 	"github.com/pkg/errors"
 )
 
+// The resource in this file is deprecated and should be removed on the next major release.
+// Use the more general `list` resource instead.
+
 func resourceCloudflareIPList() *schema.Resource {
 	return &schema.Resource{
 		Schema:        resourceCloudflareIPListSchema(),
@@ -22,6 +25,7 @@ func resourceCloudflareIPList() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareIPListImport,
 		},
+		DeprecationMessage: "This resource is deprecated, use the `cloudflare_list` instead.",
 	}
 }
 
