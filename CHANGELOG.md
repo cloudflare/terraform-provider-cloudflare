@@ -1,4 +1,6 @@
-## 3.17.0 (Unreleased)
+## 3.18.0 (Unreleased)
+
+## 3.17.0 (June 15th, 2022)
 
 BREAKING CHANGES:
 
