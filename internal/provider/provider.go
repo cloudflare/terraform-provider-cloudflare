@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
@@ -16,8 +17,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
-
-	"strings"
 )
 
 func init() {
@@ -27,12 +26,16 @@ func init() {
 		desc := s.Description
 		desc = strings.TrimSpace(desc)
 
-		if !bytes.HasSuffix([]byte(s.Description), []byte(".")) {
+		if !bytes.HasSuffix([]byte(s.Description), []byte(".")) && s.Description != "" {
 			desc += "."
 		}
 
 		if s.Default != nil {
-			desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
+			if s.Default == "" {
+				desc += " Defaults to `\"\"`."
+			} else {
+				desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
+			}
 		}
 
 		if s.ConflictsWith != nil && len(s.ConflictsWith) > 0 {

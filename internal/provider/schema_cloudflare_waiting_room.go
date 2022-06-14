@@ -1,12 +1,36 @@
 package provider
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+var defaultTemplateLanguages = []string{
+	"de-DE",
+	"es-ES",
+	"en-US",
+	"fr-FR",
+	"id-ID",
+	"it-IT",
+	"ja-JP",
+	"ko-KR",
+	"nl-NL",
+	"pl-PL",
+	"pt-BR",
+	"tr-TR",
+	"zh-CN",
+	"zh-TW",
+}
+var waitingRoomQueueingMethod = []string{
+	"fifo",
+	"random",
+	"passthrough",
+	"reject",
+}
 
 func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
@@ -18,91 +42,90 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 		},
 
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Description: "A unique name to identify the waiting room.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 			StateFunc: func(i interface{}) string {
 				return strings.ToLower(i.(string))
 			},
 		},
 
 		"host": {
-			Type:     schema.TypeString,
-			Required: true,
+			Description: "Host name for which the waiting room will be applied (no wildcards)",
+			Type:        schema.TypeString,
+			Required:    true,
 			StateFunc: func(i interface{}) string {
 				return strings.ToLower(i.(string))
 			},
 		},
 
 		"path": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "The path within the host to enable the waiting room on.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 
 		"total_active_users": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Description: "The total number of active user sessions on the route at a point in time.",
+			Type:        schema.TypeInt,
+			Required:    true,
 		},
 
 		"new_users_per_minute": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Description: "The number of new users that will be let into the route every minute.",
+			Type:        schema.TypeInt,
+			Required:    true,
 		},
 
 		"custom_page_html": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "This is a templated html file that will be rendered at the edge.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 
 		"default_template_language": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "en-US",
-			ValidateFunc: validation.StringInSlice([]string{
-				"de-DE",
-				"es-ES",
-				"en-US",
-				"fr-FR",
-				"id-ID",
-				"it-IT",
-				"ja-JP",
-				"ko-KR",
-				"nl-NL",
-				"pl-PL",
-				"pt-BR",
-				"tr-TR",
-				"zh-CN",
-				"zh-TW",
-			}, false),
+			Description:  fmt.Sprintf("The language to use for the default waiting room page. %s", renderAvailableDocumentationValuesStringSlice(defaultTemplateLanguages)),
+			Type:         schema.TypeString,
+			Optional:     true,
+			Default:      "en-US",
+			ValidateFunc: validation.StringInSlice(defaultTemplateLanguages, false),
 		},
 
 		"queue_all": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Description: "If queue_all is true, then all traffic will be sent to the waiting room.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 
 		"disable_session_renewal": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Description: "Disables automatic renewal of session cookies.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 
 		"suspended": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Description: "Suspends the waiting room.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 
 		"description": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Description: "A description to add more details about the waiting room.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 
 		"session_duration": {
-			Type:     schema.TypeInt,
-			Optional: true,
+			Description: "Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin.",
+			Type:        schema.TypeInt,
+			Optional:    true,
 		},
+
 		"json_response_enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Description: "If true, requests to the waiting room with the header `Accept: application/json` will receive a JSON response object.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 	}
 }

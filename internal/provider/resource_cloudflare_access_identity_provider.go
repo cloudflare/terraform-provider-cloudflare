@@ -23,6 +23,7 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessIdentityProviderImport,
 		},
+		Description: "Provides a Cloudflare Access Identity Provider resource. Identity Providers are used as an authentication or authorisation source within Access.",
 	}
 }
 
@@ -207,6 +208,7 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 		IDPConfig.SsoTargetURL = d.Get("config.0.sso_target_url").(string)
 		IDPConfig.SupportGroups = d.Get("config.0.support_groups").(bool)
 		IDPConfig.TokenURL = d.Get("config.0.token_url").(string)
+		IDPConfig.PKCEEnabled = cloudflare.BoolPtr(d.Get("config.0.pkce_enabled").(bool))
 	}
 
 	return IDPConfig, nil
@@ -243,6 +245,7 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 		"sso_target_url":       options.SsoTargetURL,
 		"support_groups":       options.SupportGroups,
 		"token_url":            options.TokenURL,
+		"pkce_enabled":         options.PKCEEnabled,
 	}
 
 	return []interface{}{m}

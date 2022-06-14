@@ -21,21 +21,25 @@ func resourceCloudflareAccessBookmarkSchema() map[string]*schema.Schema {
 			ConflictsWith: []string{"account_id"},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Name of the bookmark application.",
 		},
 		"domain": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The domain of the bookmark application. Can include subdomains, paths, or both.",
 		},
 		"logo_url": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The image URL for the logo shown in the app launcher dashboard.",
 		},
 		"app_launcher_visible": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+			Description: "Option to show/hide the bookmark in the app launcher.",
 		},
 	}
 }

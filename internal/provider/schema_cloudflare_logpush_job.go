@@ -62,7 +62,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Optional:     true,
 			Default:      "high",
 			ValidateFunc: validation.StringInSlice([]string{"high", "low"}, false),
-			Description:  fmt.Sprintf("A higher frequency will result in logs being pushed on faster with smaller files. `\"low\"` frequency will push logs less often with larger files. %s", renderAvailableDocumentationValuesStringSlice([]string{"high", "low"})),
+			Description:  fmt.Sprintf("A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. %s", renderAvailableDocumentationValuesStringSlice([]string{"high", "low"})),
 		},
 	}
 }

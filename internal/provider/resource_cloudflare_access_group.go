@@ -21,6 +21,7 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessGroupImport,
 		},
+		Description: "Provides a Cloudflare Access Group resource. Access Groups are used in conjunction with Access Policies to restrict access to a particular resource based on group membership.",
 	}
 }
 
