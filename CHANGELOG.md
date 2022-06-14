@@ -10,6 +10,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_identity_provider: Add support for PKCE when creating IDPS. ([#1667](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1667))
 * resource/cloudflare_device_posture_integration: add support for managing `uptycs`, `intune` and `crowdstrike` third party posture providers. ([#1628](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1628))
 * resource/cloudflare_ipsec_tunnel: add support for `healthcheck_enabled`, `health_check_target`, `healthcheck_type`, `psk` ([#1685](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1685))
 * resource/cloudflare_logpush_job: Add `filter` field support ([#1660](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1660))
