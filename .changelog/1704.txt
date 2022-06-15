@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_logpush_job: Fix null 'filter' attribute throwing "error parsing logpush job from resource: unexpected end of JSON input"
+```
