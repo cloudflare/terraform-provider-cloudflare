@@ -42,7 +42,7 @@ func resourceCloudflareListCreate(ctx context.Context, d *schema.ResourceData, m
 	d.SetId(list.ID)
 
 	if items, ok := d.GetOk("item"); ok {
-		items := buildListItemsCreateRequest(items.(*schema.Set).List())
+		items := buildListItemsCreateRequest(d, items.([]interface{}))
 		_, err = client.CreateListItems(ctx, cloudflare.ListCreateItemsParams{
 			AccountID: accountID,
 			ID:        d.Id(),
@@ -106,9 +106,25 @@ func resourceCloudflareListRead(ctx context.Context, d *schema.ResourceData, met
 
 	for _, i := range items {
 		item = make(map[string]interface{})
-		item["value"] = []map[string]interface{}{
-			{"ip": i.IP},
+
+		value := make(map[string]interface{})
+
+		if i.IP != nil {
+			value["ip"] = *i.IP
 		}
+		if i.Redirect != nil {
+			value["redirect"] = []map[string]interface{}{{
+				"source_url":            i.Redirect.SourceUrl,
+				"include_subdomains":    i.Redirect.IncludeSubdomains,
+				"target_url":            i.Redirect.TargetUrl,
+				"status_code":           i.Redirect.StatusCode,
+				"preserve_query_string": i.Redirect.PreserveQueryString,
+				"subpath_matching":      i.Redirect.SubpathMatching,
+				"preserve_path_suffix":  i.Redirect.PreservePathSuffix,
+			}}
+		}
+
+		item["value"] = []map[string]interface{}{value}
 		item["comment"] = i.Comment
 
 		itemData = append(itemData, item)
@@ -133,7 +149,7 @@ func resourceCloudflareListUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	if items, ok := d.GetOk("item"); ok {
-		items := buildListItemsCreateRequest(items.(*schema.Set).List())
+		items := buildListItemsCreateRequest(d, items.([]interface{}))
 		_, err = client.ReplaceListItems(ctx, cloudflare.ListReplaceItemsParams{
 			AccountID: accountID,
 			ID:        d.Id(),
@@ -162,15 +178,71 @@ func resourceCloudflareListDelete(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func buildListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreateRequest {
+func buildListItemsCreateRequest(resource *schema.ResourceData, items []interface{}) []cloudflare.ListItemCreateRequest {
 	var listItems []cloudflare.ListItemCreateRequest
 
-	for _, item := range items {
-		value := item.(map[string]interface{})["value"].([]interface{})[0]
+	for i, item := range items {
+		value := item.(map[string]interface{})["value"].([]interface{})[0].(map[string]interface{})
+
+		_, hasIP := resource.GetOkExists(fmt.Sprintf("item.%d.value.0.ip", i))
+
+		var ip *string = nil
+		if hasIP {
+			maybeIP := value["ip"].(string)
+			ip = &maybeIP
+		}
+
+		_, hasRedirect := resource.GetOkExists(fmt.Sprintf("item.%d.value.0.redirect", i))
+
+		var redirect *cloudflare.Redirect = nil
+		if hasRedirect {
+			r := value["redirect"].([]interface{})[0].(map[string]interface{})
+
+			sourceUrl := r["source_url"].(string)
+			targetUrl := r["target_url"].(string)
+
+			var includeSubdomains *bool = nil
+			var subpathMatching *bool = nil
+			var statusCode *int = nil
+			var preserveQueryString *bool = nil
+			var preservePathSuffix *bool = nil
+
+			hasField := func(field string) bool {
+				_, has := resource.GetOkExists(fmt.Sprintf("item.%d.value.0.redirect.0.%s", i, field))
+				return has
+			}
+
+			if hasField("include_subdomains") {
+				includeSubdomains = cloudflare.BoolPtr(r["include_subdomains"].(bool))
+			}
+			if hasField("subpath_matching") {
+				subpathMatching = cloudflare.BoolPtr(r["subpath_matching"].(bool))
+			}
+			if hasField("status_code") {
+				statusCode = cloudflare.IntPtr(r["status_code"].(int))
+			}
+			if hasField("preserve_query_string") {
+				preserveQueryString = cloudflare.BoolPtr(r["preserve_query_string"].(bool))
+			}
+			if hasField("preserve_path_suffix") {
+				preservePathSuffix = cloudflare.BoolPtr(r["preserve_path_suffix"].(bool))
+			}
+
+			redirect = &cloudflare.Redirect{
+				SourceUrl:           sourceUrl,
+				IncludeSubdomains:   includeSubdomains,
+				TargetUrl:           targetUrl,
+				StatusCode:          statusCode,
+				PreserveQueryString: preserveQueryString,
+				SubpathMatching:     subpathMatching,
+				PreservePathSuffix:  preservePathSuffix,
+			}
+		}
 
 		listItems = append(listItems, cloudflare.ListItemCreateRequest{
-			IP:      cloudflare.StringPtr(value.(map[string]interface{})["ip"].(string)),
-			Comment: item.(map[string]interface{})["comment"].(string),
+			IP:       ip,
+			Redirect: redirect,
+			Comment:  item.(map[string]interface{})["comment"].(string),
 		})
 	}
 
