@@ -88,6 +88,8 @@ The following arguments are supported:
 - `universal_ssl_event_type` - (Optional) Universal certificate notices (refer to the [nested schema](#nestedblock--alert-type-universal-ssl-event-type)).
 - `bgp_hijack_notification` - (Optional) Alerts for BGP hijack (refer to the [nested schema](#nestedblock--alert-type-bgp-hijack-notification)).
 - `http_alert_origin_error` - (Optional) HTTP origin error rate alert (refer to the [nested schema](#nestedblock--alert-type-http-alert-origin-error)).
+- `workers_alert` - (Optional) Daily report of Workers that experience a 25% increase in average CPU time compared to the average of the previous 7 days (refer to the [nested schema](#nestedblock--alert-type-workers-alert)).
+- `weekly_account_overview` - (Optional) Receive a weekly usage summary containing select information about your Workers account (refer to the [nested schema](#nestedblock--alert-type-weekly-account-overview)).
 
 <a id="nestedblock--alert-type-billing-usage-alert"></a>
 **Nested schema for `billing_usage_alert`**
@@ -121,6 +123,12 @@ The following arguments are supported:
 
 - `zones` - (Optional) A list of zone identifiers.
 - `slo` - (Optional) A numerical limit. Example: `"99.9"`
+
+<a id="#nestedblock--alert-type-workers-alert"></a>
+**Nested schema for `workers_alert`**
+
+<a id="#nestedblock--alert-type-weekly-account-overview"></a>
+**Nested schema for `weekly_account_overview`**
 
 ## Import
 
