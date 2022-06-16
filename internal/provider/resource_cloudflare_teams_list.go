@@ -73,6 +73,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	listItems, _, err := client.TeamsListItems(ctx, cloudflare.TeamsListItemsParams{
 		AccountID: accountID,
 		ListID:    d.Id(),
+		PaginationOptions: cloudflare.PaginationOptions{ PerPage: 1000 },
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
