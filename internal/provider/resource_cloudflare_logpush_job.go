@@ -118,15 +118,13 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 		return nil
 	}
         
-	if job.Filter != nil {
-		if job.Filter.Where.Validate() == nil {
-			filterstr, err := json.Marshal(job.Filter)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-	
-			d.Set("filter", string(filterstr))
+	if job.Filter.Where.Validate() == nil && d.Get("filter") != nil {
+		filterstr, err := json.Marshal(job.Filter)
+		if err != nil {
+			return diag.FromErr(err)
 		}
+
+		d.Set("filter", string(filterstr))
 	}
 
 	d.Set("name", job.Name)
