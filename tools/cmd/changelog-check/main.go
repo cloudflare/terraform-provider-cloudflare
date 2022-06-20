@@ -100,24 +100,28 @@ func main() {
 		}
 	}
 
-	// if changelogEntryPresent {
-	// 	_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
-	// 		Body: cloudflare.StringPtr(changelogDetectedMessage),
-	// 	})
-	// 	log.Printf("changelog found for %d, skipping remainder of checks\n", prNo)
-	// 	os.Exit(0)
-	// }
+	if changelogEntryPresent {
+		_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
+			Body: cloudflare.StringPtr(changelogDetectedMessage),
+		})
+		log.Printf("changelog found for %d, skipping remainder of checks\n", prNo)
+		os.Exit(0)
+	}
 
-	// body := "Oops! It looks like no changelog entry is attached to" +
-	// 	" this PR. Please include a release note as described in " +
-	// 	changelogProcessDocumentation + ".\n\nExample: " +
-	// 	"\n\n~~~\n```release-note:TYPE\nRelease note" +
-	// 	"\n```\n~~~\n\n" +
-	// 	"If you do not require a release note to be included, please add the `workflow/skip-changelog-entry` label."
+	body := "Oops! It looks like no changelog entry is attached to" +
+		" this PR. Please include a release note as described in " +
+		changelogProcessDocumentation + ".\n\nExample: " +
+		"\n\n~~~\n```release-note:TYPE\nRelease note" +
+		"\n```\n~~~\n\n" +
+		"If you do not require a release note to be included, please add the `workflow/skip-changelog-entry` label."
 
-	// _, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
-	// 	Body: &body,
-	// })
+	_, _, err = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
+		Body: &body,
+	})
+
+	if err != nil {
+		log.Fatalf("failed to comment on pull request %s/%s#%d: %s", owner, repo, prNo, err)
+	}	
 
 	os.Exit(1)
 }
