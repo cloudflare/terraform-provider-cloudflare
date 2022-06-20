@@ -46,10 +46,27 @@ func resourceCloudflareManagedHeadersRead(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("error reading managed headers: %w", err))
 	}
 
-	if err := d.Set("managed_request_headers", buildResourceFromManagedHeaders(headers.ManagedRequestHeaders)); err != nil {
+	// Filter out headers that are not enabled. This will eventually move into
+	// the API endpoint or the SDK.
+	var enabledRequestHeaders []cloudflare.ManagedHeader
+	var enabledResponseHeaders []cloudflare.ManagedHeader
+
+	for _, header := range headers.ManagedRequestHeaders {
+		if header.Enabled {
+			enabledRequestHeaders = append(enabledRequestHeaders, header)
+		}
+	}
+
+	for _, header := range headers.ManagedResponseHeaders {
+		if header.Enabled {
+			enabledResponseHeaders = append(enabledResponseHeaders, header)
+		}
+	}
+
+	if err := d.Set("managed_request_headers", buildResourceFromManagedHeaders(enabledRequestHeaders)); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("managed_response_headers", buildResourceFromManagedHeaders(headers.ManagedResponseHeaders)); err != nil {
+	if err := d.Set("managed_response_headers", buildResourceFromManagedHeaders(enabledResponseHeaders)); err != nil {
 		return diag.FromErr(err)
 	}
 	return nil
@@ -86,7 +103,7 @@ func resourceCloudflareManagedHeadersUpdate(ctx context.Context, d *schema.Resou
 
 // receives the resource config and builds a managed headers struct.
 func buildManagedHeadersFromResource(d *schema.ResourceData) (cloudflare.ManagedHeaders, error) {
-	requestHeaders, ok := d.Get("managed_request_headers").([]interface{})
+	requestHeaders, ok := d.Get("managed_request_headers").(*schema.Set)
 	if !ok {
 		return cloudflare.ManagedHeaders{}, errors.New("unable to create interface array type assertion")
 	}
@@ -95,7 +112,7 @@ func buildManagedHeadersFromResource(d *schema.ResourceData) (cloudflare.Managed
 		return cloudflare.ManagedHeaders{}, err
 	}
 
-	responseHeaders, ok := d.Get("managed_response_headers").([]interface{})
+	responseHeaders, ok := d.Get("managed_response_headers").(*schema.Set)
 	if !ok {
 		return cloudflare.ManagedHeaders{}, errors.New("unable to create interface array type assertion")
 	}
@@ -110,9 +127,9 @@ func buildManagedHeadersFromResource(d *schema.ResourceData) (cloudflare.Managed
 	}, nil
 }
 
-func buildManagedHeadersListFromResource(resource []interface{}) ([]cloudflare.ManagedHeader, error) {
-	headers := make([]cloudflare.ManagedHeader, 0, len(resource))
-	for _, header := range resource {
+func buildManagedHeadersListFromResource(resource *schema.Set) ([]cloudflare.ManagedHeader, error) {
+	headers := make([]cloudflare.ManagedHeader, 0, len(resource.List()))
+	for _, header := range resource.List() {
 		h, ok := header.(map[string]interface{})
 		if !ok {
 			return nil, errors.New("unable to create interface map type assertion for managed header")
@@ -125,10 +142,14 @@ func buildManagedHeadersListFromResource(resource []interface{}) ([]cloudflare.M
 		if !ok {
 			return nil, errors.New("unable to create bool type assertion for managed header enabled")
 		}
-		headers = append(headers, cloudflare.ManagedHeader{
-			ID:      id,
-			Enabled: enabled,
-		})
+
+		if enabled {
+			headers = append(headers, cloudflare.ManagedHeader{
+				ID:      id,
+				Enabled: enabled,
+			})
+		}
+
 	}
 	return headers, nil
 }

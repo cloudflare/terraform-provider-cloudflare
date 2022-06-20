@@ -79,12 +79,18 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 				Config: testAccCheckCloudflareManagedHeaders(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.2.id", "add_true_client_ip_headers"),
-					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.2.enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.1.id", "add_security_headers"),
-					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.1.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.id", "add_visitor_location_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.1.enabled", "true"),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
 				),
 			},
 		},
@@ -99,6 +105,12 @@ func testAccCheckCloudflareManagedHeaders(rnd, zoneID string) string {
 		id = "add_true_client_ip_headers"
 		enabled = true
 	}
+
+	managed_request_headers {
+		id = "add_visitor_location_headers"
+		enabled = true
+	}
+
 	managed_response_headers {
 		id = "add_security_headers"
 		enabled = true

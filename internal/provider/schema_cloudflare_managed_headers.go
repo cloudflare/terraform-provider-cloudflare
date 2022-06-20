@@ -11,7 +11,7 @@ func resourceCloudflareManagedHeadersSchema() map[string]*schema.Schema {
 		},
 		"managed_request_headers": {
 			Description: "The list of managed request headers",
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -30,7 +30,7 @@ func resourceCloudflareManagedHeadersSchema() map[string]*schema.Schema {
 		},
 		"managed_response_headers": {
 			Description: "The list of managed response headers",
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
