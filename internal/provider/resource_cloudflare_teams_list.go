@@ -70,15 +70,32 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	d.Set("type", list.Type)
 	d.Set("description", list.Description)
 
-	listItems, _, err := client.TeamsListItems(ctx, cloudflare.TeamsListItemsParams{
-		AccountID: accountID,
-		ListID:    d.Id(),
-		PaginationOptions: cloudflare.PaginationOptions{ PerPage: 1000 },
+	var allListItems []cloudflare.TeamsListItem
+
+	listItems, responseInfo, err := client.TeamsListItems(ctx, cloudflare.TeamsListItemsParams{
+		AccountID:         accountID,
+		ListID:            d.Id(),
+		PaginationOptions: cloudflare.PaginationOptions{PerPage: 1000},
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
 	}
-	d.Set("items", convertListItemsToSchema(listItems))
+
+	allListItems = append(allListItems, listItems...)
+
+	for i := 2; i < responseInfo.TotalPages; i++ {
+		listItems, _, err := client.TeamsListItems(ctx, cloudflare.TeamsListItemsParams{
+			AccountID:         accountID,
+			ListID:            d.Id(),
+			PaginationOptions: cloudflare.PaginationOptions{PerPage: 1000, Page: i},
+		})
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
+		}
+		allListItems = append(allListItems, listItems...)
+	}
+
+	d.Set("items", convertListItemsToSchema(allListItems))
 
 	return nil
 }
