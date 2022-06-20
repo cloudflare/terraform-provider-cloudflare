@@ -237,3 +237,4 @@ require (
 	mvdan.cc/unparam v0.0.0-20211214103731-d0ef000c54e5 // indirect
 )
 
+replace github.com/hashicorp/terraform-plugin-docs => github.com/jacobbednarz/terraform-plugin-docs v0.5.1-0.20220620022151-c3ba333e39ff
