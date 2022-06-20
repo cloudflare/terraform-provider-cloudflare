@@ -22,7 +22,8 @@ func resourceCloudflareWaitingRoomEvent() *schema.Resource {
 			StateContext: resourceCloudflareWaitingRoomEventImport,
 		},
 
-		Schema: resourceCloudflareWaitingRoomEventSchema(),
+		Schema:      resourceCloudflareWaitingRoomEventSchema(),
+		Description: "Provides a Cloudflare Waiting Room Event resource.",
 	}
 }
 

@@ -1,10 +1,22 @@
-## 3.17.0 (Unreleased)
+## 3.18.0 (Unreleased)
+
+## 3.17.0 (June 15th, 2022)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: deprecates `enabled` in overridden configurations immediately in favour of `status` ([#1689](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1689))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_tunnel_virtual_network` ([#1672](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1672))
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_identity_provider: Add support for PKCE when creating IDPS. ([#1667](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1667))
 * resource/cloudflare_device_posture_integration: add support for managing `uptycs`, `intune` and `crowdstrike` third party posture providers. ([#1628](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1628))
 * resource/cloudflare_ipsec_tunnel: add support for `healthcheck_enabled`, `health_check_target`, `healthcheck_type`, `psk` ([#1685](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1685))
 * resource/cloudflare_logpush_job: Add `filter` field support ([#1660](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1660))
+* resource/cloudflare_tunnel_route: Add `virtual_network_id` attribute ([#1668](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1668))
 
 BUG FIXES:
 

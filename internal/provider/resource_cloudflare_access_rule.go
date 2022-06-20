@@ -32,6 +32,7 @@ func resourceCloudflareAccessRule() *schema.Resource {
 				Version: 0,
 			},
 		},
+		Description: "Provides a Cloudflare IP Firewall Access Rule resource. Access control can be applied on basis of IP addresses, IP ranges, AS numbers or countries.",
 	}
 }
 

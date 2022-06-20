@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -22,17 +24,20 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 			ConflictsWith: []string{"account_id"},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Friendly name of the Access Identity Provider configuration.",
 		},
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"centrify", "facebook", "google-apps", "oidc", "github", "google", "saml", "linkedin", "azureAD", "okta", "onetimepin", "onelogin", "yandex"}, false),
+			Description:  fmt.Sprintf("The provider type to use. %s", renderAvailableDocumentationValuesStringSlice([]string{"centrify", "facebook", "google-apps", "oidc", "github", "google", "saml", "linkedin", "azureAD", "okta", "onetimepin", "onelogin", "yandex"})),
 		},
 		"config": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "Provider configuration from the [developer documentation](https://developers.cloudflare.com/access/configuring-identity-providers/).",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"api_token": {
@@ -130,6 +135,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 					},
 					"token_url": {
 						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"pkce_enabled": {
+						Type:     schema.TypeBool,
 						Optional: true,
 					},
 				},

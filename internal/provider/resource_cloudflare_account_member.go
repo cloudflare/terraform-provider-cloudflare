@@ -21,6 +21,7 @@ func resourceCloudflareAccountMember() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccountMemberImport,
 		},
+		Description: "Provides a resource which manages Cloudflare account members.",
 	}
 }
 

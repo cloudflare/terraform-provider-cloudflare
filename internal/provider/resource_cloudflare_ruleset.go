@@ -46,18 +46,6 @@ The engine syntax, inspired by the Wireshark Display Filter language, is the
 same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
 in different products, allowing you to configure several products using the same
 basic syntax.
-
-~> **NOTE:** If you previously configured Rulesets using the dashboard,
-you first need to delete them ([zone](https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset),
-[account](https://api.cloudflare.com/#account-rulesets-delete-account-ruleset) documentation)
-and clean up the resources before attempting to configure them with
-Terraform. This is because Terraform will fail to apply if configuration
-already exists to prevent blindly overwriting changes.
-
-~> **NOTE:** Until [issue #1397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1397)
-is fixed, when configuring a ruleset with overrides, you will need to set
-` + "`enabled = true`" + `under ` + "`action_parameters`" + `to ensure rules are not unintentially
- disabled.
 `,
 	}
 }
@@ -270,7 +258,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 					idBasedOverrides = append(idBasedOverrides, map[string]interface{}{
 						"id":                overrideRule.ID,
 						"action":            overrideRule.Action,
-						"enabled":           overrideRule.Enabled,
+						"status":            apiEnabledToStatusFieldConversion(overrideRule.Enabled),
 						"score_threshold":   overrideRule.ScoreThreshold,
 						"sensitivity_level": overrideRule.SensitivityLevel,
 					})
@@ -280,14 +268,14 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 					categoryBasedOverrides = append(categoryBasedOverrides, map[string]interface{}{
 						"category": overrideRule.Category,
 						"action":   overrideRule.Action,
-						"enabled":  overrideRule.Enabled,
+						"status":   apiEnabledToStatusFieldConversion(overrideRule.Enabled),
 					})
 				}
 
 				overrides = append(overrides, map[string]interface{}{
 					"categories": categoryBasedOverrides,
 					"rules":      idBasedOverrides,
-					"enabled":    r.ActionParameters.Overrides.Enabled,
+					"status":     apiEnabledToStatusFieldConversion(r.ActionParameters.Overrides.Enabled),
 					"action":     r.ActionParameters.Overrides.Action,
 				})
 			}
@@ -440,7 +428,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			var logging []map[string]interface{}
 
 			logging = append(logging, map[string]interface{}{
-				"enabled": r.Logging.Enabled,
+				"status": apiEnabledToStatusFieldConversion(r.Logging.Enabled),
 			})
 
 			rule["logging"] = logging
@@ -530,9 +518,10 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						var rules []cloudflare.RulesetRuleActionParametersRules
 
 						for overrideCounter, overrideParamValue := range pValue.([]interface{}) {
-							//nolint:staticcheck
-							if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.enabled", rulesCounter, overrideCounter)); ok {
-								overrideConfiguration.Enabled = cloudflare.BoolPtr(value.(bool))
+							if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.status", rulesCounter, overrideCounter)); ok {
+								if value.(string) != "" {
+									overrideConfiguration.Enabled = statusToAPIEnabledFieldConversion(value.(string))
+								}
 							}
 
 							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
@@ -541,13 +530,20 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 							// Category based overrides
 							if val, ok := overrideParamValue.(map[string]interface{})["categories"]; ok {
-								for _, category := range val.([]interface{}) {
+								for categoryCounter, category := range val.([]interface{}) {
 									cData := category.(map[string]interface{})
-									categories = append(categories, cloudflare.RulesetRuleActionParametersCategories{
+									categoryOverride := cloudflare.RulesetRuleActionParametersCategories{
 										Category: cData["category"].(string),
 										Action:   cData["action"].(string),
-										Enabled:  cloudflare.BoolPtr(cData["enabled"].(bool)),
-									})
+									}
+
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.categories.%d.status", rulesCounter, overrideCounter, categoryCounter)); ok {
+										if value != "" {
+											categoryOverride.Enabled = statusToAPIEnabledFieldConversion(value.(string))
+										}
+									}
+
+									categories = append(categories, categoryOverride)
 								}
 							}
 
@@ -555,20 +551,20 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							if val, ok := overrideParamValue.(map[string]interface{})["rules"]; ok {
 								for ruleOverrideCounter, rule := range val.([]interface{}) {
 									rData := rule.(map[string]interface{})
-
-									var enabled *bool
-									//nolint:staticcheck
-									if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.enabled", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
-										enabled = cloudflare.BoolPtr(value.(bool))
-									}
-
-									rules = append(rules, cloudflare.RulesetRuleActionParametersRules{
+									ruleOverride := cloudflare.RulesetRuleActionParametersRules{
 										ID:               rData["id"].(string),
 										Action:           rData["action"].(string),
-										Enabled:          enabled,
 										ScoreThreshold:   rData["score_threshold"].(int),
 										SensitivityLevel: rData["sensitivity_level"].(string),
-									})
+									}
+
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.overrides.%d.rules.%d.status", rulesCounter, overrideCounter, ruleOverrideCounter)); ok {
+										if value != "" {
+											ruleOverride.Enabled = statusToAPIEnabledFieldConversion(value.(string))
+										}
+									}
+
+									rules = append(rules, ruleOverride)
 								}
 							}
 						}
@@ -730,9 +726,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 			for _, parameter := range resourceRule["logging"].([]interface{}) {
 				for pKey, pValue := range parameter.(map[string]interface{}) {
 					switch pKey {
-					case "enabled":
-						rule.Logging.Enabled = cloudflare.BoolPtr(pValue.(bool))
-
+					case "status":
+						rule.Logging.Enabled = statusToAPIEnabledFieldConversion(pValue.(string))
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for logging: %s", pKey)
 					}
@@ -755,4 +750,32 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 	}
 
 	return rulesetRules, nil
+}
+
+// statusToAPIEnabledFieldConversion takes the "status" field from the Terraform
+// schema/state and converts it to the API equivalent for the "enabled" field.
+func statusToAPIEnabledFieldConversion(s string) *bool {
+	if s == "enabled" {
+		return cloudflare.BoolPtr(true)
+	} else if s == "disabled" {
+		return cloudflare.BoolPtr(false)
+	} else {
+		return nil
+	}
+}
+
+// apiEnabledToStatusFieldConversion takes the "enabled" field from the API and
+// converts it to the Terraform schema/state key "status".
+func apiEnabledToStatusFieldConversion(s *bool) string {
+	if s == nil {
+		return ""
+	}
+
+	if *s == true {
+		return "enabled"
+	} else if *s == false {
+		return "disabled"
+	} else {
+		return ""
+	}
 }
