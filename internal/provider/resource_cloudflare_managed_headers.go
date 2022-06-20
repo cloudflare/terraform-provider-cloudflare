@@ -17,16 +17,10 @@ func resourceCloudflareManagedHeaders() *schema.Resource {
 		ReadContext:   resourceCloudflareManagedHeadersRead,
 		UpdateContext: resourceCloudflareManagedHeadersUpdate,
 		DeleteContext: resourceCloudflareManagedHeadersDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: resourceCloudflareManagedHeadersImport,
-		},
 		SchemaVersion: 0,
 		Description: `
 The [Cloudflare Managed Headers](https://developers.cloudflare.com/rules/transform/managed-transforms/)
-allows you to add or remove some predefined headers to one's requests or origin responses.
-
-~> **NOTE:** You can configure Managed Headers using the dashboard (https://api.cloudflare.com/#managed-headers-api-properties)
-Terraform will override your configuration if it exists.`,
+allows you to add or remove some predefined headers to one's requests or origin responses.`,
 	}
 }
 
@@ -187,8 +181,4 @@ func resourceCloudflareManagedHeadersDelete(ctx context.Context, d *schema.Resou
 	}
 
 	return nil
-}
-
-func resourceCloudflareManagedHeadersImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	return nil, errors.New("Import is not yet supported for Managed Headers")
 }
