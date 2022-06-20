@@ -27,6 +27,12 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "Whether to enable the job.",
 		},
+		"kind": {
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"edge", "instant-logs", ""}, false),
+			Description:  `The kind of logpush job to create. Valid values are "edge", "instant-logs", or "".`,
+		},
 		"name": {
 			Type:         schema.TypeString,
 			Optional:     true,

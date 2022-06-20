@@ -63,6 +63,7 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 	job := cloudflare.LogpushJob{
 		ID:                 id,
 		Enabled:            d.Get("enabled").(bool),
+		Kind:               d.Get("kind").(string),
 		Name:               d.Get("name").(string),
 		Dataset:            d.Get("dataset").(string),
 		LogpullOptions:     d.Get("logpull_options").(string),
@@ -130,6 +131,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	}
 
 	d.Set("name", job.Name)
+	d.Set("kind", job.Kind)
 	d.Set("enabled", job.Enabled)
 	d.Set("logpull_options", job.LogpullOptions)
 	d.Set("destination_conf", job.DestinationConf)
