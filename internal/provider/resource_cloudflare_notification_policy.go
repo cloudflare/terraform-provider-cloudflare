@@ -21,6 +21,7 @@ func resourceCloudflareNotificationPolicy() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceNotificationPolicyImport,
 		},
+		Description: "Provides a resource, that manages a notification policy for Cloudflare's products. The delivery mechanisms supported are email, webhooks, and PagerDuty.",
 	}
 }
 

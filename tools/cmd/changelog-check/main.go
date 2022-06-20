@@ -6,7 +6,9 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
@@ -14,6 +16,7 @@ import (
 const (
 	changelogEntryFileFormat      = ".changelog/%d.txt"
 	changelogProcessDocumentation = "https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/contributing/changelog-process.md"
+	changelogDetectedMessage      = "changelog detected :white_check_mark:"
 )
 
 var (
@@ -83,21 +86,38 @@ func main() {
 		}
 	}
 
-	if changelogEntryPresent {
-		log.Printf("changelog found for %d, skipping remainder of checks\n", prNo)
-		os.Exit(0)
+	comments, _, _ := client.Issues.ListComments(ctx, owner, repo, prNo, &github.IssueListCommentsOptions{})
+	for _, comment := range comments {
+		if strings.Contains(comment.GetBody(), "no changelog entry is attached to") {
+			if changelogEntryPresent {
+				client.Issues.EditComment(ctx, owner, repo, *comment.ID, &github.IssueComment{
+					Body: cloudflare.StringPtr(changelogDetectedMessage),
+				})
+				os.Exit(0)
+			}
+			log.Println("no change in status of changelog checks; exiting")
+			os.Exit(1)
+		}
 	}
 
-	body := "Oops! It looks like no changelog entry is attached to" +
-		" this PR. Please include a release note as described in " +
-		changelogProcessDocumentation + ".\n\nExample: " +
-		"\n\n~~~\n```release-note:TYPE\nRelease note" +
-		"\n```\n~~~\n\n" +
-		"If you do not require a release note to be included, please add the `workflow/skip-changelog-entry` label."
+	// if changelogEntryPresent {
+	// 	_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
+	// 		Body: cloudflare.StringPtr(changelogDetectedMessage),
+	// 	})
+	// 	log.Printf("changelog found for %d, skipping remainder of checks\n", prNo)
+	// 	os.Exit(0)
+	// }
 
-	_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
-		Body: &body,
-	})
+	// body := "Oops! It looks like no changelog entry is attached to" +
+	// 	" this PR. Please include a release note as described in " +
+	// 	changelogProcessDocumentation + ".\n\nExample: " +
+	// 	"\n\n~~~\n```release-note:TYPE\nRelease note" +
+	// 	"\n```\n~~~\n\n" +
+	// 	"If you do not require a release note to be included, please add the `workflow/skip-changelog-entry` label."
+
+	// _, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
+	// 	Body: &body,
+	// })
 
 	os.Exit(1)
 }
