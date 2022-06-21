@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -27,9 +28,10 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Description: "Whether to enable the job.",
 		},
 		"name": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "The name of the logpush job to create. Must match the regular expression `^[a-zA-Z0-9\\-\\.]*$`.",
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringMatch(regexp.MustCompile(`^[a-zA-Z0-9.-]+$`), "must contain only alphanumeric characters, hyphens, and periods"),
+			Description:  "The name of the logpush job to create.",
 		},
 		"dataset": {
 			Type:         schema.TypeString,
