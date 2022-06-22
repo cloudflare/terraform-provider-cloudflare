@@ -143,7 +143,6 @@ func buildManagedHeadersListFromResource(resource *schema.Set) ([]cloudflare.Man
 				Enabled: enabled,
 			})
 		}
-
 	}
 	return headers, nil
 }
