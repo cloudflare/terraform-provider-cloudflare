@@ -81,7 +81,7 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 		if err != nil {
 			return job, identifier, err
 		}
-		job.Filter = jobFilter
+		job.Filter = &jobFilter
 	}
 
 	return job, identifier, nil
@@ -118,13 +118,15 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 		return nil
 	}
 
-	if job.Filter.Where.Validate() == nil {
-		filterstr, err := json.Marshal(job.Filter)
+	var filter string
+
+	if job.Filter != nil {
+		b, err := json.Marshal(job.Filter)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 
-		d.Set("filter", string(filterstr))
+		filter = string(b)
 	}
 
 	d.Set("name", job.Name)
@@ -133,6 +135,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	d.Set("destination_conf", job.DestinationConf)
 	d.Set("ownership_challenge", d.Get("ownership_challenge"))
 	d.Set("frequency", job.Frequency)
+	d.Set("filter", filter)
 
 	return nil
 }

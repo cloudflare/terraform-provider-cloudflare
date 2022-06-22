@@ -1,5 +1,13 @@
 ## 3.18.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: validate name attribute ([#1717](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1717))
+
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: Fix for optional `filter` attribute ([#1712](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1712))
+
 ## 3.17.0 (June 15th, 2022)
 
 BREAKING CHANGES:
