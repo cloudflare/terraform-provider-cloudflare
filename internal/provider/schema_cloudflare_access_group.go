@@ -65,6 +65,13 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 				Type: schema.TypeString,
 			},
 		},
+		"ip_list": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"service_token": {
 			Type:     schema.TypeList,
 			Optional: true,

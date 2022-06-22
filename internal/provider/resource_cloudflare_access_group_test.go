@@ -394,6 +394,62 @@ resource "cloudflare_access_group" "%[2]s" {
 }`, accountID, rnd, githubOrg, team)
 }
 
+func testAccCloudflareAccessGroupConfigIPList(resourceName string, ip string, identifier AccessIdentifier) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_group" "%[1]s" {
+  %[3]s_id = "%[4]s"
+  name     = "%[1]s"
+
+  include {
+    ip_list = ["%[2]s"]
+  }
+}`, resourceName, ip, identifier.Type, identifier.Value)
+}
+
+func TestAccCloudflareAccessGroupConfig_IPlistInclude(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	ip := "1.1.1.2"
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigIPList(rnd, ip, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.0", ip),
+				),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigIPList(rnd, ip, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: ZoneType, Value: zoneID}, &accessGroup),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.0", ip),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessIdentifier, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]

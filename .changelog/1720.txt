@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_group: Adds teams_list ip_list support access_group 
+```
