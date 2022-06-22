@@ -1,8 +1,13 @@
 ## 3.18.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_managed_headers` ([#1688](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1688))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_logpush_job: validate name attribute ([#1717](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1717))
+* resource/cloudflare_ruleset: add support for set cache settings ([#1701](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1701))
 
 BUG FIXES:
 

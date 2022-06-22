@@ -250,6 +250,10 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				requestFields          []string
 				responseFields         []string
 				cookieFields           []string
+				edgeTTLFields          []map[string]interface{}
+				browserTTLFields       []map[string]interface{}
+				serveStaleFields       []map[string]interface{}
+				cacheKeyFields         []map[string]interface{}
 			)
 			actionParameterRules := make(map[string]string)
 
@@ -374,25 +378,143 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				}
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.EdgeTTL).IsNil() {
+				edgeTTL := map[string]interface{}{
+					"mode":    r.ActionParameters.EdgeTTL.Mode,
+					"default": r.ActionParameters.EdgeTTL.Default,
+				}
+				if !reflect.ValueOf(r.ActionParameters.EdgeTTL.StatusCodeTTL).IsNil() {
+					edgeTTL["status_code_ttl"] = []interface{}{}
+					for _, sc := range r.ActionParameters.EdgeTTL.StatusCodeTTL {
+						scTTL := map[string]interface{}{
+							"status_code": sc.StatusCodeValue,
+							"value":       sc.Value,
+						}
+						if !reflect.ValueOf(sc.StatusCodeRange).IsNil() {
+							scTTL["status_code_range"] = []interface{}{map[string]interface{}{
+								"from": sc.StatusCodeRange.From,
+								"to":   sc.StatusCodeRange.To,
+							}}
+						}
+						edgeTTL["status_code_ttl"] = append(edgeTTL["status_code_ttl"].([]interface{}), scTTL)
+					}
+				}
+				edgeTTLFields = append(edgeTTLFields, edgeTTL)
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.BrowserTTL).IsNil() {
+				browserTTLFields = append(browserTTLFields, map[string]interface{}{
+					"mode":    r.ActionParameters.BrowserTTL.Mode,
+					"default": r.ActionParameters.BrowserTTL.Default,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.ServeStale).IsNil() {
+				serveStaleFields = append(serveStaleFields, map[string]interface{}{
+					"disable_stale_while_updating": r.ActionParameters.ServeStale.DisableStaleWhileUpdating,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.CacheKey).IsNil() {
+				cacheKey := map[string]interface{}{
+					"cache_by_device_type":       r.ActionParameters.CacheKey.CacheByDeviceType,
+					"ignore_query_strings_order": r.ActionParameters.CacheKey.IgnoreQueryStringsOrder,
+					"cache_deception_armor":      r.ActionParameters.CacheKey.CacheDeceptionArmor,
+				}
+				if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey).IsNil() {
+					customKey := map[string]interface{}{}
+					if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey.Query).IsNil() {
+						query := map[string]interface{}{}
+						if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey.Query.Include).IsNil() {
+							query["include"] = []interface{}{}
+							for _, v := range r.ActionParameters.CacheKey.CustomKey.Query.Include.List {
+								query["include"] = append(query["include"].([]interface{}), v)
+							}
+							if r.ActionParameters.CacheKey.CustomKey.Query.Include.All {
+								query["include"] = append(query["include"].([]interface{}), "*")
+							}
+						}
+						if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey.Query.Exclude).IsNil() {
+							query["exclude"] = []interface{}{}
+							for _, v := range r.ActionParameters.CacheKey.CustomKey.Query.Exclude.List {
+								query["exclude"] = append(query["exclude"].([]interface{}), v)
+							}
+							if r.ActionParameters.CacheKey.CustomKey.Query.Exclude.All {
+								query["exclude"] = append(query["exclude"].([]interface{}), "*")
+							}
+						}
+						customKey["query_string"] = []interface{}{query}
+					}
+					if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey.Header).IsNil() {
+						header := map[string]interface{}{
+							"exclude_origin": r.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin,
+							"include":        []interface{}{},
+							"check_presence": []interface{}{},
+						}
+						for _, h := range r.ActionParameters.CacheKey.CustomKey.Header.Include {
+							header["include"] = append(header["include"].([]interface{}), h)
+						}
+						for _, h := range r.ActionParameters.CacheKey.CustomKey.Header.CheckPresence {
+							header["check_presence"] = append(header["check_presence"].([]interface{}), h)
+						}
+						customKey["header"] = []interface{}{header}
+					}
+					if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey.Cookie).IsNil() {
+						cookie := map[string]interface{}{
+							"include":        []interface{}{},
+							"check_presence": []interface{}{},
+						}
+						for _, h := range r.ActionParameters.CacheKey.CustomKey.Cookie.Include {
+							cookie["include"] = append(cookie["include"].([]interface{}), h)
+						}
+						for _, h := range r.ActionParameters.CacheKey.CustomKey.Cookie.CheckPresence {
+							cookie["check_presence"] = append(cookie["check_presence"].([]interface{}), h)
+						}
+						customKey["cookie"] = []interface{}{cookie}
+					}
+					if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey.User).IsNil() {
+						customKey["user"] = []interface{}{map[string]interface{}{
+							"device_type": r.ActionParameters.CacheKey.CustomKey.User.DeviceType,
+							"geo":         r.ActionParameters.CacheKey.CustomKey.User.Geo,
+							"lang":        r.ActionParameters.CacheKey.CustomKey.User.Lang,
+						}}
+					}
+					if !reflect.ValueOf(r.ActionParameters.CacheKey.CustomKey.Host).IsNil() {
+						customKey["host"] = []interface{}{map[string]interface{}{
+							"resolved": r.ActionParameters.CacheKey.CustomKey.Host.Resolved,
+						}}
+					}
+					cacheKey["custom_key"] = []interface{}{customKey}
+				}
+				cacheKeyFields = append(cacheKeyFields, cacheKey)
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
-				"id":              r.ActionParameters.ID,
-				"increment":       r.ActionParameters.Increment,
-				"headers":         headers,
-				"overrides":       overrides,
-				"products":        r.ActionParameters.Products,
-				"phases":          r.ActionParameters.Phases,
-				"ruleset":         r.ActionParameters.Ruleset,
-				"rulesets":        r.ActionParameters.Rulesets,
-				"rules":           actionParameterRules,
-				"uri":             uri,
-				"matched_data":    matchedData,
-				"response":        response,
-				"version":         r.ActionParameters.Version,
-				"host_header":     r.ActionParameters.HostHeader,
-				"origin":          origin,
-				"request_fields":  requestFields,
-				"response_fields": responseFields,
-				"cookie_fields":   cookieFields,
+				"id":                         r.ActionParameters.ID,
+				"increment":                  r.ActionParameters.Increment,
+				"headers":                    headers,
+				"overrides":                  overrides,
+				"products":                   r.ActionParameters.Products,
+				"phases":                     r.ActionParameters.Phases,
+				"ruleset":                    r.ActionParameters.Ruleset,
+				"rulesets":                   r.ActionParameters.Rulesets,
+				"rules":                      actionParameterRules,
+				"uri":                        uri,
+				"matched_data":               matchedData,
+				"response":                   response,
+				"version":                    r.ActionParameters.Version,
+				"host_header":                r.ActionParameters.HostHeader,
+				"origin":                     origin,
+				"request_fields":             requestFields,
+				"response_fields":            responseFields,
+				"cookie_fields":              cookieFields,
+				"bypass_cache":               r.ActionParameters.BypassCache,
+				"edge_ttl":                   edgeTTLFields,
+				"browser_ttl":                browserTTLFields,
+				"serve_stale":                serveStaleFields,
+				"respect_strong_etags":       r.ActionParameters.RespectStrongETags,
+				"cache_key":                  cacheKeyFields,
+				"origin_error_page_passthru": r.ActionParameters.OriginErrorPagePassthru,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -639,6 +761,254 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 								Host: pValue.([]interface{})[i].(map[string]interface{})["host"].(string),
 								Port: uint16(pValue.([]interface{})[i].(map[string]interface{})["port"].(int)),
 							}
+						}
+
+					case "bypass_cache":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.bypass_cache", rulesCounter)); ok {
+							rule.ActionParameters.BypassCache = cloudflare.BoolPtr(value.(bool))
+						}
+
+					case "edge_ttl":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.EdgeTTL = &cloudflare.RulesetRuleActionParametersEdgeTTL{}
+							for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
+								switch pKey {
+								case "default":
+									rule.ActionParameters.EdgeTTL.Default = cloudflare.UintPtr(uint(pValue.(int)))
+								case "mode":
+									rule.ActionParameters.EdgeTTL.Mode = pValue.(string)
+								case "status_code_ttl":
+									for statusCodesCounter := range pValue.([]interface{}) {
+										sc := cloudflare.RulesetRuleActionParametersStatusCodeTTL{}
+										if pValue.([]interface{})[statusCodesCounter] == nil {
+											continue
+										}
+										for pKey, pValue := range pValue.([]interface{})[statusCodesCounter].(map[string]interface{}) {
+											switch pKey {
+											case "status_code":
+												if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.edge_ttl.0.status_code_ttl.%d.status_code", rulesCounter, statusCodesCounter)); ok {
+													sc.StatusCodeValue = cloudflare.UintPtr(uint(value.(int)))
+												}
+											case "value":
+												sc.Value = cloudflare.IntPtr(pValue.(int))
+											case "status_code_range":
+												for i := range pValue.([]interface{}) {
+													sc.StatusCodeRange = &cloudflare.RulesetRuleActionParametersStatusCodeRange{}
+													if pValue.([]interface{})[i] == nil {
+														continue
+													}
+													for pKey := range pValue.([]interface{})[i].(map[string]interface{}) {
+														switch pKey {
+														case "from":
+															if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.edge_ttl.0.status_code_ttl.%d.status_code_range.0.from", rulesCounter, statusCodesCounter)); ok {
+																sc.StatusCodeRange.From = cloudflare.UintPtr(uint(value.(int)))
+															}
+														case "to":
+															if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.edge_ttl.0.status_code_ttl.%d.status_code_range.0.to", rulesCounter, statusCodesCounter)); ok {
+																sc.StatusCodeRange.To = cloudflare.UintPtr(uint(value.(int)))
+															}
+														}
+													}
+												}
+											}
+										}
+										rule.ActionParameters.EdgeTTL.StatusCodeTTL = append(rule.ActionParameters.EdgeTTL.StatusCodeTTL, sc)
+									}
+								}
+							}
+						}
+
+					case "browser_ttl":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.BrowserTTL = &cloudflare.RulesetRuleActionParametersBrowserTTL{}
+							for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
+								switch pKey {
+								case "default":
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.browser_ttl.0.default", rulesCounter)); ok {
+										rule.ActionParameters.BrowserTTL.Default = cloudflare.UintPtr(uint(value.(int)))
+									}
+								case "mode":
+									rule.ActionParameters.BrowserTTL.Mode = pValue.(string)
+								}
+							}
+						}
+
+					case "serve_stale":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.ServeStale = &cloudflare.RulesetRuleActionParametersServeStale{}
+							if pValue.([]interface{})[i] == nil {
+								continue
+							}
+							for pKey := range pValue.([]interface{})[i].(map[string]interface{}) {
+								switch pKey {
+								case "disable_stale_while_updating":
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.serve_stale.0.disable_stale_while_updating", rulesCounter)); ok {
+										rule.ActionParameters.ServeStale.DisableStaleWhileUpdating = cloudflare.BoolPtr(value.(bool))
+									}
+								}
+							}
+						}
+
+					case "respect_strong_etags":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.respect_strong_etags", rulesCounter)); ok {
+							rule.ActionParameters.RespectStrongETags = cloudflare.BoolPtr(value.(bool))
+						}
+
+					case "cache_key":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.CacheKey = &cloudflare.RulesetRuleActionParametersCacheKey{}
+							if pValue.([]interface{})[i] == nil {
+								continue
+							}
+							for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
+								switch pKey {
+								case "cache_by_device_type":
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.cache_by_device_type", rulesCounter)); ok {
+										rule.ActionParameters.CacheKey.CacheByDeviceType = cloudflare.BoolPtr(value.(bool))
+									}
+								case "ignore_query_strings_order":
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.ignore_query_strings_order", rulesCounter)); ok {
+										rule.ActionParameters.CacheKey.IgnoreQueryStringsOrder = cloudflare.BoolPtr(value.(bool))
+									}
+								case "cache_deception_armor":
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.cache_deception_armor", rulesCounter)); ok {
+										rule.ActionParameters.CacheKey.CacheDeceptionArmor = cloudflare.BoolPtr(value.(bool))
+									}
+								case "custom_key":
+									for i := range pValue.([]interface{}) {
+										rule.ActionParameters.CacheKey.CustomKey = &cloudflare.RulesetRuleActionParametersCustomKey{}
+										if pValue.([]interface{})[i] == nil {
+											continue
+										}
+										for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
+											switch pKey {
+											case "query_string":
+												for i := range pValue.([]interface{}) {
+													rule.ActionParameters.CacheKey.CustomKey.Query = &cloudflare.RulesetRuleActionParametersCustomKeyQuery{}
+													if pValue.([]interface{})[i] == nil {
+														continue
+													}
+													for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
+														switch pKey {
+														case "include":
+															if len(pValue.([]interface{})) == 0 {
+																continue
+															}
+															rule.ActionParameters.CacheKey.CustomKey.Query.Include = &cloudflare.RulesetRuleActionParametersCustomKeyList{}
+															for i := range pValue.([]interface{}) {
+																entry := pValue.([]interface{})[i].(string)
+																if entry == "*" {
+																	rule.ActionParameters.CacheKey.CustomKey.Query.Include.All = true
+																	break
+																}
+																rule.ActionParameters.CacheKey.CustomKey.Query.Include.List = append(rule.ActionParameters.CacheKey.CustomKey.Query.Include.List, entry)
+															}
+														case "exclude":
+															if len(pValue.([]interface{})) == 0 {
+																continue
+															}
+															rule.ActionParameters.CacheKey.CustomKey.Query.Exclude = &cloudflare.RulesetRuleActionParametersCustomKeyList{}
+															for i := range pValue.([]interface{}) {
+																entry := pValue.([]interface{})[i].(string)
+																if entry == "*" {
+																	rule.ActionParameters.CacheKey.CustomKey.Query.Exclude.All = true
+																	break
+																}
+																rule.ActionParameters.CacheKey.CustomKey.Query.Exclude.List = append(rule.ActionParameters.CacheKey.CustomKey.Query.Exclude.List, entry)
+															}
+														}
+													}
+												}
+											case "header":
+												for i := range pValue.([]interface{}) {
+													rule.ActionParameters.CacheKey.CustomKey.Header = &cloudflare.RulesetRuleActionParametersCustomKeyHeader{}
+													if pValue.([]interface{})[i] == nil {
+														continue
+													}
+													for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
+														switch pKey {
+														case "include":
+															for i := range pValue.([]interface{}) {
+																rule.ActionParameters.CacheKey.CustomKey.Header.Include = append(rule.ActionParameters.CacheKey.CustomKey.Header.Include, pValue.([]interface{})[i].(string))
+															}
+														case "check_presence":
+															for i := range pValue.([]interface{}) {
+																rule.ActionParameters.CacheKey.CustomKey.Header.CheckPresence = append(rule.ActionParameters.CacheKey.CustomKey.Header.CheckPresence, pValue.([]interface{})[i].(string))
+															}
+														case "exclude_origin":
+															if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", rulesCounter)); ok {
+																rule.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin = cloudflare.BoolPtr(value.(bool))
+															}
+														}
+													}
+												}
+											case "cookie":
+												for i := range pValue.([]interface{}) {
+													rule.ActionParameters.CacheKey.CustomKey.Cookie = &cloudflare.RulesetRuleActionParametersCustomKeyCookie{}
+													if pValue.([]interface{})[i] == nil {
+														continue
+													}
+													for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
+														switch pKey {
+														case "include":
+															for i := range pValue.([]interface{}) {
+																rule.ActionParameters.CacheKey.CustomKey.Cookie.Include = append(rule.ActionParameters.CacheKey.CustomKey.Cookie.Include, pValue.([]interface{})[i].(string))
+															}
+														case "check_presence":
+															for i := range pValue.([]interface{}) {
+																rule.ActionParameters.CacheKey.CustomKey.Cookie.CheckPresence = append(rule.ActionParameters.CacheKey.CustomKey.Cookie.CheckPresence, pValue.([]interface{})[i].(string))
+															}
+														}
+													}
+												}
+											case "user":
+												for i := range pValue.([]interface{}) {
+													rule.ActionParameters.CacheKey.CustomKey.User = &cloudflare.RulesetRuleActionParametersCustomKeyUser{}
+													if pValue.([]interface{})[i] == nil {
+														continue
+													}
+													for pKey := range pValue.([]interface{})[i].(map[string]interface{}) {
+														switch pKey {
+														case "device_type":
+															if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.custom_key.0.user.0.device_type", rulesCounter)); ok {
+																rule.ActionParameters.CacheKey.CustomKey.User.DeviceType = cloudflare.BoolPtr(value.(bool))
+															}
+														case "geo":
+															if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.custom_key.0.user.0.geo", rulesCounter)); ok {
+																rule.ActionParameters.CacheKey.CustomKey.User.Geo = cloudflare.BoolPtr(value.(bool))
+															}
+														case "lang":
+															if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.custom_key.0.user.0.lang", rulesCounter)); ok {
+																rule.ActionParameters.CacheKey.CustomKey.User.Lang = cloudflare.BoolPtr(value.(bool))
+															}
+														}
+													}
+												}
+											case "host":
+												for i := range pValue.([]interface{}) {
+													rule.ActionParameters.CacheKey.CustomKey.Host = &cloudflare.RulesetRuleActionParametersCustomKeyHost{}
+													if pValue.([]interface{})[i] == nil {
+														continue
+													}
+													for pKey := range pValue.([]interface{})[i].(map[string]interface{}) {
+														switch pKey {
+														case "resolved":
+															if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache_key.0.custom_key.0.host.0.resolved", rulesCounter)); ok {
+																rule.ActionParameters.CacheKey.CustomKey.Host.Resolved = cloudflare.BoolPtr(value.(bool))
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
+					case "origin_error_page_passthru":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.origin_error_page_passthru", rulesCounter)); ok {
+							rule.ActionParameters.OriginErrorPagePassthru = cloudflare.BoolPtr(value.(bool))
 						}
 
 					case "request_fields":
