@@ -274,7 +274,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
 
 - `kind` (String) Type of Ruleset to create. Available values: `custom`, `managed`, `root`, `schema`, `zone`.
 - `name` (String) Name of the ruleset.
-- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_main`, `http_request_sanitize`, `http_request_transform`, `http_request_origin`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
 
 ### Optional
 
@@ -297,7 +297,7 @@ Required:
 
 Optional:
 
-- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `skip`.
 - `action_parameters` (Block List, Max: 1) List of parameters that configure the behavior of the ruleset rule action. (see [below for nested schema](#nestedblock--rules--action_parameters))
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
@@ -324,7 +324,7 @@ Optional:
 - `matched_data` (Block List, Max: 1) List of properties to configure WAF payload logging. (see [below for nested schema](#nestedblock--rules--action_parameters--matched_data))
 - `origin` (Block List, Max: 1) List of properties to change request origin. (see [below for nested schema](#nestedblock--rules--action_parameters--origin))
 - `overrides` (Block List, Max: 1) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
-- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_main`, `http_request_sanitize`, `http_request_transform`, `http_request_origin`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
 - `products` (Set of String) Products to target with the actions. Available values: `bic`, `hot`, `ratelimit`, `securityLevel`, `uablock`, `waf`, `zonelockdown`.
 - `request_fields` (Set of String) List of request headers to include as part of custom fields logging, in lowercase.
 - `response` (Block List) List of parameters that configure the response given to end users. (see [below for nested schema](#nestedblock--rules--action_parameters--response))
@@ -368,7 +368,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `skip`.
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
 - `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
@@ -379,7 +379,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `skip`.
 - `category` (String) Tag name to apply the ruleset rule override to.
 - `enabled` (Boolean, Deprecated) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 - `status` (String) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag. Available values: `enabled`, `disabled`. Defaults to `""`.
@@ -390,7 +390,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `managed_challenge`, `log`, `log_custom_field`, `rewrite`, `score`, `skip`, `route`.
+- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `skip`.
 - `enabled` (Boolean, Deprecated) Defines if the current rule-level override enables or disables the rule.
 - `id` (String) Rule ID to apply the override to.
 - `score_threshold` (Number) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
