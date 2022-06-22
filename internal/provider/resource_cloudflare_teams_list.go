@@ -83,7 +83,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 
 	allListItems = append(allListItems, listItems...)
 
-	for i := 2; i < responseInfo.TotalPages; i++ {
+	for i := 2; i <= responseInfo.TotalPages; i++ {
 		listItems, _, err := client.TeamsListItems(ctx, cloudflare.TeamsListItemsParams{
 			AccountID:         accountID,
 			ListID:            d.Id(),
