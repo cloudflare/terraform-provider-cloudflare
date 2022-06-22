@@ -105,10 +105,12 @@ func main() {
 		}
 	}
 
-	if changelogEntryPresent && !successMessageAlreadyPresent {
-		_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
-			Body: cloudflare.StringPtr(changelogDetectedMessage),
-		})
+	if changelogEntryPresent {
+		if !successMessageAlreadyPresent {
+			_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
+				Body: cloudflare.StringPtr(changelogDetectedMessage),
+			})
+		}
 		log.Printf("changelog found for %d, skipping remainder of checks\n", prNo)
 		os.Exit(0)
 	}
