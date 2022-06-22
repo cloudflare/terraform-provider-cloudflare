@@ -356,6 +356,10 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					group = append(group, cloudflare.AccessGroupDevicePosture{DevicePosture: struct {
 						ID string `json:"integration_uid"`
 					}{ID: value.(string)}})
+				case "ip_list":
+					group = append(group, cloudflare.AccessGroupIPList{IPList: struct {
+						ID string `json:"id"`
+					}{ID: value.(string)}})
 				}
 			}
 		}
