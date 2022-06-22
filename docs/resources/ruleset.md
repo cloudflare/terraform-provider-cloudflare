@@ -615,7 +615,7 @@ Optional:
 - `query` (Block List, Max: 1) Query string configuration when performing a URL rewrite. (see [below for nested schema](#nestedblock--rules--action_parameters--uri--query))
 
 <a id="nestedblock--rules--action_parameters--uri--path"></a>
-### Nested Schema for `rules.action_parameters.uri.query`
+### Nested Schema for `rules.action_parameters.uri.path`
 
 Optional:
 
