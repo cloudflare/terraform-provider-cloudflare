@@ -1,8 +1,13 @@
 ## 3.18.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_ip_list: Deprecated cloudflare_ip_list in favor of cloudflare_list. ([#1700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1700))
+
 FEATURES:
 
 * **New Resource:** `cloudflare_managed_headers` ([#1688](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1688))
+* **New Resource:** `resource/cloudflare_list: Added support for generic list types, including redirect lists.` ([#1700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1700))
 
 ENHANCEMENTS:
 
