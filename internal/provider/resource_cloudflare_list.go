@@ -22,6 +22,7 @@ func resourceCloudflareList() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareListImport,
 		},
+		Description: "Provides Lists (IPs, Redirects) to be used in Edge Rules Engine across all zones within the same account.",
 	}
 }
 
