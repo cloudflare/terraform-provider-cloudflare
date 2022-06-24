@@ -72,7 +72,7 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 	}
 
 	filter := d.Get("filter")
-	if filter != nil {
+	if filter != "" {
 		var jobFilter cloudflare.LogpushJobFilters
 		if err := json.Unmarshal([]byte(filter.(string)), &jobFilter); err != nil {
 			return cloudflare.LogpushJob{}, identifier, err
