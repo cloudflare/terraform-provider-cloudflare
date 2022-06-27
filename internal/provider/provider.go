@@ -58,14 +58,14 @@ func New(version string) func() *schema.Provider {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-					Description: "A registered Cloudflare email address. Alternatively, can be configured using the `CLOUDFLARE_EMAIL` environment variable.",
+					Description: "A registered Cloudflare email address. Alternatively, can be configured using the `CLOUDFLARE_EMAIL` environment variable. An email address for API authentication is only necessary when used with an API Key which is now considered as legacy by Cloudflare, it is not required with API tokens anymore.",
 				},
 
 				"api_key": {
 					Type:         schema.TypeString,
 					Optional:     true,
 					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
-					Description:  "The API key for operations. Alternatively, can be configured using the `CLOUDFLARE_API_KEY` environment variable.",
+					Description:  "The API key for operations. Alternatively, can be configured using the `CLOUDFLARE_API_KEY` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead.",
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must only contain characters 0-9 and a-f (all lowercased)"),
 				},
 
