@@ -17,6 +17,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_logpush_job: Fix for optional `filter` attribute ([#1712](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1712))
+* resource/cloudflare_logpush_job: fix unmarhalling job with empty/no filter ([#1723](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1723))
 
 ## 3.17.0 (June 15th, 2022)
 
