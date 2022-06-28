@@ -31,7 +31,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"edge", "instant-logs", ""}, false),
-			Description:  fmt.Sprintf("The kind of logpush job to create. %s", renderAvailableDocumentationValuesStringSlice([]string{"edge", "instant-logs", ""})),
+			Description:  fmt.Sprintf("The kind of logpush job to create. %s", renderAvailableDocumentationValuesStringSlice([]string{"edge", "instant-logs", `""`})),
 		},
 		"name": {
 			Type:         schema.TypeString,
