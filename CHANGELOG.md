@@ -11,6 +11,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_logpush_job: adds support for `kind` attribute ([#1718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1718))
 * resource/cloudflare_logpush_job: validate name attribute ([#1717](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1717))
 * resource/cloudflare_ruleset: add support for set cache settings ([#1701](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1701))
 
