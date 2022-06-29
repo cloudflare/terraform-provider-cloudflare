@@ -9,4 +9,5 @@ resource "cloudflare_ipsec_tunnel" "example" {
   health_check_target  = "203.0.113.1"
   health_check_type    = "reply"
   psk                  = "asdf12341234"
+  allow_null_cipher    = false
 }
