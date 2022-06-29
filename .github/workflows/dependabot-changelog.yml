@@ -4,6 +4,7 @@ permissions:
   pull-requests: write
   issues: write
   repository-projects: write
+  contents: write
 jobs:
   dependabot:
     runs-on: ubuntu-latest
