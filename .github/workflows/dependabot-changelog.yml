@@ -18,6 +18,8 @@ jobs:
           provider: bumps $DEP_NAME from $DEP_PREV_VERSION to $DEP_NEXT_VERSION
           \`\`\`
           EOF
+          git config --local user.email changelogbot@cloudflare.com
+          git config --local user.name changelogbot
           git add .changelog/$PR_NUMBER.txt
           git commit -m "add CHANGELOG"
           git push
