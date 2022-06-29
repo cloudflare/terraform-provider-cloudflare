@@ -3,15 +3,57 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"testing"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/pkg/errors"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_load_balancer_monitor", &resource.Sweeper{
+		Name: "cloudflare_load_balancer_monitor",
+		F:    testSweepCloudflareLoadBalancerMonitors,
+	})
+}
+
+func testSweepCloudflareLoadBalancerMonitors(r string) error {
+	ctx := context.Background()
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	client.AccountID = accountID
+	monitors, err := client.ListLoadBalancerMonitors(ctx)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancer Monitors: %s", err))
+	}
+
+	if len(monitors) == 0 {
+		log.Print("[DEBUG] No Cloudflare Load Balancer Monitors to sweep")
+		return nil
+	}
+
+	for _, monitor := range monitors {
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Monitor ID: %s", monitor.ID))
+		//nolint:errcheck
+		client.DeleteLoadBalancerPool(ctx, monitor.ID)
+	}
+
+	return nil
+}
 
 func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 	testStartTime := time.Now().UTC()
