@@ -1,5 +1,9 @@
 ## 3.19.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
+
 ## 3.18.0 (June 29th, 2022)
 
 NOTES:
