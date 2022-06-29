@@ -20,4 +20,4 @@ jobs:
       - run: semgrep ci --config .semgrep.yml
         env:
           # only trigger for files in this change
-          SEMGREP_BASELINE_REF: ${{ github.ref_name }}
+          SEMGREP_BASELINE_BRANCH: ${{ github.head_ref }}
