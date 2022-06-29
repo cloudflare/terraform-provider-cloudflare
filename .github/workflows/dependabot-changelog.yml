@@ -24,7 +24,7 @@ jobs:
           git commit -m "add CHANGELOG"
           git push
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_CHANGELOG_PAT }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           DEP_NAME: ${{ steps.dependabot-metadata.outputs.dependency-names }}
