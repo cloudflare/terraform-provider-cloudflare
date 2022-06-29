@@ -4,6 +4,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/stretchr/testify from 1.7.5 to 1.8.0 ([#1738](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1738))
+
 ## 3.18.0 (June 29th, 2022)
 
 NOTES:
