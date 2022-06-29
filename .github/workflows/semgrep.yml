@@ -11,7 +11,12 @@ jobs:
     if: (github.actor != 'dependabot[bot]')
     steps:
       - uses: actions/checkout@v3
+      - name: set latest master sha
+        run: |
+          git config --global --add safe.directory /__w/terraform-provider-cloudflare/terraform-provider-cloudflare
+          SHA=$(git rev-parse master)
+          echo "master_branch_sha=$SHA" >> $GITHUB_ENV
       - run: semgrep ci --config .semgrep.yml
         env:
           # only trigger for files in this change
-          SEMGREP_BASELINE_REF: ${{ github.ref_name }}
+          SEMGREP_BASELINE_REF: ${{ env.master_branch_sha }}
