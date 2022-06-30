@@ -99,8 +99,8 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	// Validate value based on type
-	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return diag.FromErr(fmt.Errorf("error validating record name %q: %w", newRecord.Name, err))
+	if err := validateRecordContent(newRecord.Type, newRecord.Content); err != nil {
+		return diag.FromErr(fmt.Errorf("error validating record content of %q: %w", newRecord.Name, err))
 	}
 
 	var proxiedVal *bool
