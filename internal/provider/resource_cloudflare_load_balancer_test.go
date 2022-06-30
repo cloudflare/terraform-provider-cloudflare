@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"testing"
 
 	"time"
@@ -12,9 +13,49 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/pkg/errors"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_load_balancer", &resource.Sweeper{
+		Name: "cloudflare_load_balancer",
+		F:    testSweepCloudflareLoadBalancer,
+	})
+}
+
+func testSweepCloudflareLoadBalancer(r string) error {
+	ctx := context.Background()
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
+		return errors.New("CLOUDFLARE_ZONE_ID must be set")
+	}
+
+	lbs, err := client.ListLoadBalancers(ctx, zoneID)
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancers: %s", err))
+	}
+
+	if len(lbs) == 0 {
+		log.Print("[DEBUG] No Cloudflare Load Balancers to sweep")
+		return nil
+	}
+
+	for _, lb := range lbs {
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer ID: %s", lb.ID))
+		//nolint:errcheck
+		client.DeleteLoadBalancer(ctx, zoneID, lb.ID)
+	}
+
+	return nil
+}
 
 func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once

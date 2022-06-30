@@ -1,4 +1,14 @@
-## 3.18.0 (Unreleased)
+## 3.19.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/stretchr/testify from 1.7.5 to 1.8.0 ([#1738](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1738))
+
+## 3.18.0 (June 29th, 2022)
 
 NOTES:
 
@@ -11,6 +21,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_logpush_job: adds support for `kind` attribute ([#1718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1718))
 * resource/cloudflare_logpush_job: validate name attribute ([#1717](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1717))
 * resource/cloudflare_ruleset: add support for set cache settings ([#1701](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1701))
 
@@ -18,6 +29,7 @@ BUG FIXES:
 
 * resource/cloudflare_logpush_job: Fix for optional `filter` attribute ([#1712](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1712))
 * resource/cloudflare_logpush_job: fix unmarhalling job with empty/no filter ([#1723](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1723))
+* resource/cloudflare_record: ensure trailing `.` in `value` don't cause surious diffs ([#1713](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1713))
 
 ## 3.17.0 (June 15th, 2022)
 
