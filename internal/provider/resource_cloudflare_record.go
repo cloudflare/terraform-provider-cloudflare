@@ -189,8 +189,8 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 
 	record, err := client.DNSRecord(ctx, zoneID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
-			strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Warn(ctx, fmt.Sprintf("Removing record from state because it's not found in API"))
 			d.SetId("")
 			return nil
