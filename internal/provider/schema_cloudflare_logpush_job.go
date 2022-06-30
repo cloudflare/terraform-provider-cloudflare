@@ -36,7 +36,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"name": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			ValidateFunc: validation.StringMatch(regexp.MustCompile(`^[a-zA-Z0-9.-]+$`), "must contain only alphanumeric characters, hyphens, and periods"),
+			ValidateFunc: validation.StringMatch(regexp.MustCompile(`^[a-zA-Z0-9.-]*$`), "must contain only alphanumeric characters, hyphens, and periods"),
 			Description:  "The name of the logpush job to create.",
 		},
 		"dataset": {
