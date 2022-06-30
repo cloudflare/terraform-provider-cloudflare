@@ -42,11 +42,11 @@ resource "cloudflare_list" "example" {
       redirect {
         source_url            = "example.com/foo"
         target_url            = "https://foo.example.com"
-        include_subdomains    = true
-        subpath_matching      = true
+        include_subdomains    = "enabled"
+        subpath_matching      = "enabled"
         status_code           = 301
-        preserve_query_string = true
-        preserve_path_suffix  = false
+        preserve_query_string = "enabled"
+        preserve_path_suffix  = "disabled"
       }
     }
     comment = "two"

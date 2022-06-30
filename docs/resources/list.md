@@ -56,11 +56,11 @@ resource "cloudflare_list" "example" {
       redirect {
         source_url            = "example.com/foo"
         target_url            = "https://foo.example.com"
-        include_subdomains    = true
-        subpath_matching      = true
+        include_subdomains    = "enabled"
+        subpath_matching      = "enabled"
         status_code           = 301
-        preserve_query_string = true
-        preserve_path_suffix  = false
+        preserve_query_string = "enabled"
+        preserve_path_suffix  = "disabled"
       }
     }
     comment = "two"
@@ -114,11 +114,11 @@ Required:
 
 Optional:
 
-- `include_subdomains` (Boolean) Whether the redirect also matches subdomains of the source url.
-- `preserve_path_suffix` (Boolean) Whether to preserve the path suffix when doing subpath matching.
-- `preserve_query_string` (Boolean) Whether the redirect target url should keep the query string of the request's url.
+- `include_subdomains` (String) Whether the redirect also matches subdomains of the source url.
+- `preserve_path_suffix` (String) Whether to preserve the path suffix when doing subpath matching.
+- `preserve_query_string` (String) Whether the redirect target url should keep the query string of the request's url.
 - `status_code` (Number) The status code to be used when redirecting a request.
-- `subpath_matching` (Boolean) Whether the redirect also matches subpaths of the source url.
+- `subpath_matching` (String) Whether the redirect also matches subpaths of the source url.
 
 ## Import
 
