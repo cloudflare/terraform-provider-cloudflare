@@ -40,6 +40,7 @@ rules:
         - 'docs/'
         - 'examples/'
         - 'templates/'
+    fix: zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
     patterns:
       - pattern: zone_id = "..."
       - pattern-not: zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -63,6 +64,7 @@ rules:
         - 'docs/'
         - 'examples/'
         - 'templates/'
+    fix: account_id = "f037e56e89293a057740de681ac9abbe"
     patterns:
       - pattern: account_id = "..."
       - pattern-not: account_id = "f037e56e89293a057740de681ac9abbe"
@@ -79,4 +81,47 @@ rules:
             provider "..." "..." {
               ...
             }
+    severity: WARNING
+
+  - id: calling-fmt.Print-and-variants
+    languages: [go]
+    message: Do not call `fmt.Print` and variants. Use `tflog` where logged output is required.
+    paths:
+      include:
+        - 'internal/'
+    patterns:
+      - pattern-either:
+        - pattern: |
+            fmt.Print(...)
+        - pattern: |
+            fmt.Printf(...)
+        - pattern: |
+            fmt.Println(...)
+    severity: WARNING
+
+  - id: calling-SetId-with-empty-string-in-resource-create
+    languages: [go]
+    message: Do not call `d.SetId("")` inside a resource create or update function.
+    paths:
+      include:
+        - 'internal/'
+    patterns:
+      - pattern: |
+          func $FUNC(...) {
+            ...
+            d.SetId("")
+            ...
+          }
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^resource\\w*(Create|Update)$"
+    severity: WARNING
+
+  - id: use-acctest-provider-factories
+    languages: [go]
+    message: Use acctest.ProviderFactories, not acctest.Providers
+    paths:
+      include:
+        - '*_test.go'
+    pattern-regex: Providers:\s+(acctest\.)?Providers,
     severity: WARNING
