@@ -55,12 +55,12 @@ func New(version string) func() *schema.Provider {
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
 				"email": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-					Description: "A registered Cloudflare email address. Alternatively, can be configured using the `CLOUDFLARE_EMAIL` environment variable.",
+					Type:          schema.TypeString,
+					Optional:      true,
+					DefaultFunc:   schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
+					Description:   "A registered Cloudflare email address. Alternatively, can be configured using the `CLOUDFLARE_EMAIL` environment variable.",
 					ConflictsWith: []string{"api_token"},
-					RequiredWith: []string{"api_key"},
+					RequiredWith:  []string{"api_key"},
 				},
 
 				"api_key": {
