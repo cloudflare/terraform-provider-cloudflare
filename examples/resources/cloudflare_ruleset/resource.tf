@@ -295,3 +295,24 @@ resource "cloudflare_ruleset" "cache_settings_example" {
     enabled = true
   }
 }
+
+resource "cloudflare_ruleset" "redirect_from_list_example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "redirects"
+  description = "Redirect ruleset"
+  kind        = "root"
+  phase       = "http_request_redirect"
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_list {
+        name = "redirect_list"
+        key = "http.request.full_uri"
+      }
+    }
+    expression = "http.request.full_uri in $redirect_list"
+    description = "Apply redirects from redirect_list"
+    enabled = true
+  }
+}
