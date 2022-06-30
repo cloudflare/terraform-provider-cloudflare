@@ -98,6 +98,10 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		newRecord.TTL = ttl.(int)
 	}
 
+	if newRecord.Name == "" {
+		return diag.FromErr(fmt.Errorf("record on zone %s must not have an empty name (use @ for the zone apex)", newRecord.ZoneID))
+	}
+
 	// Validate value based on type
 	if err := validateRecordContent(newRecord.Type, newRecord.Content); err != nil {
 		return diag.FromErr(fmt.Errorf("error validating record content of %q: %w", newRecord.Name, err))
