@@ -27,9 +27,9 @@ func validateRecordType(t string, proxied bool) error {
 	return fmt.Errorf("type %q cannot be proxied", t)
 }
 
-// validateRecordName ensures that based on supplied record type, the name content matches
-// Currently only validates A and AAAA types.
-func validateRecordName(t string, value string) error {
+// validateRecordContent ensures that the record's content is valid for the
+// supplied record type. Currently only validates A and AAAA types.
+func validateRecordContent(t string, value string) error {
 	switch t {
 	case "A":
 		// Must be ipv4 addr

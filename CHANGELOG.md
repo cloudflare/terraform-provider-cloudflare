@@ -4,8 +4,13 @@ ENHANCEMENTS:
 
 * resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
 
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: fix logpush job name validation regex ([#1743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1743))
+
 DEPENDENCIES:
 
+* provider: bumps dependabot/fetch-metadata from 1.3.1 to 1.3.2 ([#1747](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1747))
 * provider: bumps github.com/stretchr/testify from 1.7.5 to 1.8.0 ([#1738](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1738))
 
 ## 3.18.0 (June 29th, 2022)

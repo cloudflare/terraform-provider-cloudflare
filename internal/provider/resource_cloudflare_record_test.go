@@ -476,7 +476,7 @@ func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, rnd, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
-					resource.TestCheckResourceAttr(resourceName, "value", "."),
+					resource.TestCheckResourceAttr(resourceName, "value", "mail.terraform.cfapi.net"),
 				),
 			},
 		},
@@ -772,7 +772,7 @@ func testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, name, zoneName
 resource "cloudflare_record" "%[2]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "."
+	value = "mail.terraform.cfapi.net"
 	type = "MX"
 	priority = 0
 	proxied = false
