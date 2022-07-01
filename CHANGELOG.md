@@ -3,6 +3,7 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
+* resource/cloudflare_record: Validate that DNS record names are non-empty ([#1740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1740))
 
 BUG FIXES:
 
