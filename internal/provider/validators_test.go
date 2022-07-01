@@ -51,8 +51,8 @@ func TestValidateRecordName(t *testing.T) {
 	}
 
 	for k, v := range validNames {
-		if err := validateRecordName(k, v); err != nil {
-			t.Fatalf("%q should be a valid name for type %q: %v", v, k, err)
+		if err := validateRecordContent(k, v); err != nil {
+			t.Fatalf("%q should be valid content for type %q: %v", v, k, err)
 		}
 	}
 
@@ -62,8 +62,8 @@ func TestValidateRecordName(t *testing.T) {
 		"TXT":  "\n",
 	}
 	for k, v := range invalidNames {
-		if err := validateRecordName(k, v); err == nil {
-			t.Fatalf("%q should be an invalid name for type %q", v, k)
+		if err := validateRecordContent(k, v); err == nil {
+			t.Fatalf("%q should be invalid content for type %q", v, k)
 		}
 	}
 }
