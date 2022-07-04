@@ -807,9 +807,9 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", "some.host"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", "some.host"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.port", "80"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
@@ -2352,9 +2352,9 @@ func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) str
     rules {
       action = "route"
       action_parameters {
-        host_header = "some.host"
+        host_header = "%[1]s.terraform.cfapi.net"
         origin {
-          host = "some.host"
+          host = "%[1]s.terraform.cfapi.net"
           port = 80
         }
       }
