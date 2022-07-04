@@ -1,3 +1,3 @@
 ```release-note:enhancement
-resource/cloudflare_ruleset: add support for `redirect` action
+resource/cloudflare_ruleset: add support for `from_list` action parameter when using redirect action
 ```
