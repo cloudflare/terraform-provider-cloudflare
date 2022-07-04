@@ -4,6 +4,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
 * resource/cloudflare_record: Validate that DNS record names are non-empty ([#1740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1740))
+* resource/cloudflare_ruleset: add support for `from_list` action parameter when using redirect action ([#1744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1744))
 
 BUG FIXES:
 
