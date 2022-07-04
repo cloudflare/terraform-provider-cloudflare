@@ -254,6 +254,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				browserTTLFields       []map[string]interface{}
 				serveStaleFields       []map[string]interface{}
 				cacheKeyFields         []map[string]interface{}
+				fromListFields         []map[string]interface{}
 			)
 			actionParameterRules := make(map[string]string)
 
@@ -489,6 +490,13 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				cacheKeyFields = append(cacheKeyFields, cacheKey)
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.FromList).IsNil() {
+				fromListFields = append(origin, map[string]interface{}{
+					"name": r.ActionParameters.FromList.Name,
+					"key":  r.ActionParameters.FromList.Key,
+				})
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
 				"id":                         r.ActionParameters.ID,
 				"increment":                  r.ActionParameters.Increment,
@@ -515,6 +523,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"respect_strong_etags":       r.ActionParameters.RespectStrongETags,
 				"cache_key":                  cacheKeyFields,
 				"origin_error_page_passthru": r.ActionParameters.OriginErrorPagePassthru,
+				"from_list":                  fromListFields,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -1037,6 +1046,14 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							})
 						}
 						rule.ActionParameters.CookieFields = fields
+
+					case "from_list":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.FromList = &cloudflare.RulesetRuleActionParametersFromList{
+								Name: pValue.([]interface{})[i].(map[string]interface{})["name"].(string),
+								Key:  pValue.([]interface{})[i].(map[string]interface{})["key"].(string),
+							}
+						}
 
 					default:
 						log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for action parameters: %s", pKey)
