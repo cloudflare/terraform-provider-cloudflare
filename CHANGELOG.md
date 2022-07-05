@@ -9,6 +9,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_logpush_job: fix logpush job name validation regex ([#1743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1743))
+* resource/cloudflare_tunnel_route: Fix incorrect indexing of resource data id attributes ([#1753](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1753))
 
 DEPENDENCIES:
 
