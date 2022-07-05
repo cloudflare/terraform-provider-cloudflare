@@ -250,6 +250,13 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed:     true,
 	},
 
+	"origin_max_http_version": {
+		Type:         schema.TypeString,
+		Optional:     true,
+		Computed:     true,
+		ValidateFunc: validation.StringInSlice([]string{"1", "2"}, false),
+	},
+
 	"polish": {
 		Type:         schema.TypeString,
 		Optional:     true,
