@@ -43,5 +43,5 @@ resource "cloudflare_tunnel_virtual_network" "example" {
 
 Import is supported using the following syntax:
 ```shell
-$ terraform import cloudflare_tunnel_virtual_network <account_id>/<vnet_id>
+$ terraform import cloudflare_tunnel_virtual_network.example <account_id>/<vnet_id>
 ```
