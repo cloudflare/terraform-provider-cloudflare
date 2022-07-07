@@ -114,11 +114,11 @@ Required:
 
 Optional:
 
-- `include_subdomains` (String) Whether the redirect also matches subdomains of the source url.
-- `preserve_path_suffix` (String) Whether to preserve the path suffix when doing subpath matching.
-- `preserve_query_string` (String) Whether the redirect target url should keep the query string of the request's url.
+- `include_subdomains` (String) Whether the redirect also matches subdomains of the source url. Available values: `disabled`, `enabled`.
+- `preserve_path_suffix` (String) Whether to preserve the path suffix when doing subpath matching. Available values: `disabled`, `enabled`.
+- `preserve_query_string` (String) Whether the redirect target url should keep the query string of the request's url. Available values: `disabled`, `enabled`.
 - `status_code` (Number) The status code to be used when redirecting a request.
-- `subpath_matching` (String) Whether the redirect also matches subpaths of the source url.
+- `subpath_matching` (String) Whether the redirect also matches subpaths of the source url. Available values: `disabled`, `enabled`.
 
 ## Import
 
