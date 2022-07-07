@@ -69,13 +69,13 @@ var listItemElem = &schema.Resource{
 									Required:    true,
 								},
 								"include_subdomains": {
-									Description:  "Whether the redirect also matches subdomains of the source url.",
+									Description:  fmt.Sprintf("Whether the redirect also matches subdomains of the source url. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 									Type:         schema.TypeString,
 									Optional:     true,
 									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
 								},
 								"subpath_matching": {
-									Description:  "Whether the redirect also matches subpaths of the source url.",
+									Description:  fmt.Sprintf("Whether the redirect also matches subpaths of the source url. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 									Type:         schema.TypeString,
 									Optional:     true,
 									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
@@ -86,13 +86,13 @@ var listItemElem = &schema.Resource{
 									Optional:    true,
 								},
 								"preserve_query_string": {
-									Description:  "Whether the redirect target url should keep the query string of the request's url.",
+									Description:  fmt.Sprintf("Whether the redirect target url should keep the query string of the request's url. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 									Type:         schema.TypeString,
 									Optional:     true,
 									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
 								},
 								"preserve_path_suffix": {
-									Description:  "Whether to preserve the path suffix when doing subpath matching.",
+									Description:  fmt.Sprintf("Whether to preserve the path suffix when doing subpath matching. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 									Type:         schema.TypeString,
 									Optional:     true,
 									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
