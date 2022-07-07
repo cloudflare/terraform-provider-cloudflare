@@ -51,7 +51,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM"}),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -104,6 +104,12 @@ resource "cloudflare_worker_script" "%[1]s" {
   webassembly_binding {
     name = "MY_WASM"
     module = "%[3]s"
+  }
+
+  service_binding {
+	name = "MY_SERVICE_BINDING"
+    service = "MY_SERVICE"
+    environment = "production"
   }
 }`, rnd, scriptContent2, encodedWasm)
 }

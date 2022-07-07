@@ -93,6 +93,14 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			Module: module,
 		}
 	}
+
+	for _, rawData := range d.Get("service_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerServiceBinding{
+			Service:     data["service"].(string),
+			Environment: data["environment"].(*string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -169,6 +177,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	plainTextBindings := &schema.Set{F: schema.HashResource(plainTextBindingResource)}
 	secretTextBindings := &schema.Set{F: schema.HashResource(secretTextBindingResource)}
 	webAssemblyBindings := &schema.Set{F: schema.HashResource(webAssemblyBindingResource)}
+	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -201,6 +210,12 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"name":   name,
 				"module": base64.StdEncoding.EncodeToString(module),
 			})
+		case cloudflare.WorkerServiceBinding:
+			serviceBindings.Add(map[string]interface{}{
+				"name":        name,
+				"service":     v.Service,
+				"environment": v.Environment,
+			})
 		}
 	}
 
@@ -222,6 +237,10 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 
 	if err := d.Set("webassembly_binding", webAssemblyBindings); err != nil {
 		return diag.FromErr(fmt.Errorf("cannot set webassembly bindings (%s): %w", d.Id(), err))
+	}
+
+	if err := d.Set("service_binding", serviceBindings); err != nil {
+		return diag.FromErr(fmt.Errorf("cannot set service bindings (%s): %w", d.Id(), err))
 	}
 
 	return nil
