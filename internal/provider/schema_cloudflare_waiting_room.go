@@ -84,6 +84,14 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 
+		"queueing_method": {
+			Description:  fmt.Sprintf("The queueing method used by the waiting room. %s", renderAvailableDocumentationValuesStringSlice(waitingRoomQueueingMethod)),
+			Type:         schema.TypeString,
+			Default:      "fifo",
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice(waitingRoomQueueingMethod, false),
+		},
+
 		"default_template_language": {
 			Description:  fmt.Sprintf("The language to use for the default waiting room page. %s", renderAvailableDocumentationValuesStringSlice(defaultTemplateLanguages)),
 			Type:         schema.TypeString,

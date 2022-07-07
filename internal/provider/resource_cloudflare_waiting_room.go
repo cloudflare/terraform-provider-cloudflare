@@ -41,6 +41,7 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		TotalActiveUsers:        d.Get("total_active_users").(int),
 		NewUsersPerMinute:       d.Get("new_users_per_minute").(int),
 		CustomPageHTML:          d.Get("custom_page_html").(string),
+		QueueingMethod:          d.Get("queueing_method").(string),
 		DefaultTemplateLanguage: d.Get("default_template_language").(string),
 		SessionDuration:         d.Get("session_duration").(int),
 		JsonResponseEnabled:     d.Get("json_response_enabled").(bool),
@@ -93,6 +94,7 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("total_active_users", waitingRoom.TotalActiveUsers)
 	d.Set("session_duration", waitingRoom.SessionDuration)
 	d.Set("disable_session_renewal", waitingRoom.DisableSessionRenewal)
+	d.Set("queueing_method", waitingRoom.QueueingMethod)
 	d.Set("custom_page_html", waitingRoom.CustomPageHTML)
 	d.Set("default_template_language", waitingRoom.DefaultTemplateLanguage)
 	d.Set("json_response_enabled", waitingRoom.JsonResponseEnabled)

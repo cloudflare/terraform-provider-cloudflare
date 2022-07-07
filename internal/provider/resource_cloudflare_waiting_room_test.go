@@ -30,6 +30,7 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", waitingRoomName),
 					resource.TestCheckResourceAttr(name, "description", "my desc"),
+					resource.TestCheckResourceAttr(name, "queueing_method", "fifo"),
 					resource.TestCheckResourceAttr(name, "custom_page_html", "foobar"),
 					resource.TestCheckResourceAttr(name, "default_template_language", "en-US"),
 					resource.TestCheckResourceAttr(name, "disable_session_renewal", "true"),
@@ -72,6 +73,7 @@ resource "cloudflare_waiting_room" "%[1]s" {
   total_active_users        = 405
   path                      = "%[5]s"
   session_duration          = 10
+  queueing_method           = "fifo"
   custom_page_html          = "foobar"
   default_template_language = "en-US"
   description               = "my desc"
