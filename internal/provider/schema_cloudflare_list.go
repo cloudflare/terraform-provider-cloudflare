@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -69,14 +70,16 @@ var listItemElem = &schema.Resource{
 									Required:    true,
 								},
 								"include_subdomains": {
-									Description: "Whether the redirect also matches subdomains of the source url.",
-									Type:        schema.TypeBool,
-									Optional:    true,
+									Description:  fmt.Sprintf("Whether the redirect also matches subdomains of the source url. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+									Type:         schema.TypeString,
+									Optional:     true,
+									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
 								},
 								"subpath_matching": {
-									Description: "Whether the redirect also matches subpaths of the source url.",
-									Type:        schema.TypeBool,
-									Optional:    true,
+									Description:  fmt.Sprintf("Whether the redirect also matches subpaths of the source url. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+									Type:         schema.TypeString,
+									Optional:     true,
+									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
 								},
 								"status_code": {
 									Description: "The status code to be used when redirecting a request.",
@@ -84,14 +87,16 @@ var listItemElem = &schema.Resource{
 									Optional:    true,
 								},
 								"preserve_query_string": {
-									Description: "Whether the redirect target url should keep the query string of the request's url.",
-									Type:        schema.TypeBool,
-									Optional:    true,
+									Description:  fmt.Sprintf("Whether the redirect target url should keep the query string of the request's url. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+									Type:         schema.TypeString,
+									Optional:     true,
+									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
 								},
 								"preserve_path_suffix": {
-									Description: "Whether to preserve the path suffix when doing subpath matching.",
-									Type:        schema.TypeBool,
-									Optional:    true,
+									Description:  fmt.Sprintf("Whether to preserve the path suffix when doing subpath matching. %s", renderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+									Type:         schema.TypeString,
+									Optional:     true,
+									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
 								},
 							},
 						},

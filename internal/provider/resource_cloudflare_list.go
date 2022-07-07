@@ -114,14 +114,30 @@ func resourceCloudflareListRead(ctx context.Context, d *schema.ResourceData, met
 			value["ip"] = *i.IP
 		}
 		if i.Redirect != nil {
+			optBoolToString := func(b *bool) string {
+				if b != nil {
+					switch *b {
+					case true:
+						return "enabled"
+					case false:
+						return "disabled"
+					}
+				}
+				return ""
+			}
+			statusCode := 0
+			if i.Redirect.StatusCode != nil {
+				statusCode = *i.Redirect.StatusCode
+			}
+
 			value["redirect"] = []map[string]interface{}{{
 				"source_url":            i.Redirect.SourceUrl,
-				"include_subdomains":    i.Redirect.IncludeSubdomains,
+				"include_subdomains":    optBoolToString(i.Redirect.IncludeSubdomains),
 				"target_url":            i.Redirect.TargetUrl,
-				"status_code":           i.Redirect.StatusCode,
-				"preserve_query_string": i.Redirect.PreserveQueryString,
-				"subpath_matching":      i.Redirect.SubpathMatching,
-				"preserve_path_suffix":  i.Redirect.PreservePathSuffix,
+				"status_code":           statusCode,
+				"preserve_query_string": optBoolToString(i.Redirect.PreserveQueryString),
+				"subpath_matching":      optBoolToString(i.Redirect.SubpathMatching),
+				"preserve_path_suffix":  optBoolToString(i.Redirect.PreservePathSuffix),
 			}}
 		}
 
@@ -185,7 +201,7 @@ func buildListItemsCreateRequest(resource *schema.ResourceData, items []interfac
 	for i, item := range items {
 		value := item.(map[string]interface{})["value"].([]interface{})[0].(map[string]interface{})
 
-		_, hasIP := resource.GetOkExists(fmt.Sprintf("item.%d.value.0.ip", i))
+		_, hasIP := resource.GetOk(fmt.Sprintf("item.%d.value.0.ip", i))
 
 		var ip *string = nil
 		if hasIP {
@@ -193,7 +209,7 @@ func buildListItemsCreateRequest(resource *schema.ResourceData, items []interfac
 			ip = &maybeIP
 		}
 
-		_, hasRedirect := resource.GetOkExists(fmt.Sprintf("item.%d.value.0.redirect", i))
+		_, hasRedirect := resource.GetOk(fmt.Sprintf("item.%d.value.0.redirect", i))
 
 		var redirect *cloudflare.Redirect = nil
 		if hasRedirect {
@@ -208,26 +224,27 @@ func buildListItemsCreateRequest(resource *schema.ResourceData, items []interfac
 			var preserveQueryString *bool = nil
 			var preservePathSuffix *bool = nil
 
-			hasField := func(field string) bool {
-				_, has := resource.GetOkExists(fmt.Sprintf("item.%d.value.0.redirect.0.%s", i, field))
-				return has
+			stringToOptBool := func(s string) *bool {
+				switch s {
+				case "enabled":
+					return cloudflare.BoolPtr(true)
+				case "disabled":
+					return cloudflare.BoolPtr(false)
+				default:
+					return nil
+				}
 			}
 
-			if hasField("include_subdomains") {
-				includeSubdomains = cloudflare.BoolPtr(r["include_subdomains"].(bool))
+			includeSubdomains = stringToOptBool(r["include_subdomains"].(string))
+			subpathMatching = stringToOptBool(r["subpath_matching"].(string))
+
+			vint := r["status_code"].(int)
+			if vint != 0 {
+				statusCode = cloudflare.IntPtr(vint)
 			}
-			if hasField("subpath_matching") {
-				subpathMatching = cloudflare.BoolPtr(r["subpath_matching"].(bool))
-			}
-			if hasField("status_code") {
-				statusCode = cloudflare.IntPtr(r["status_code"].(int))
-			}
-			if hasField("preserve_query_string") {
-				preserveQueryString = cloudflare.BoolPtr(r["preserve_query_string"].(bool))
-			}
-			if hasField("preserve_path_suffix") {
-				preservePathSuffix = cloudflare.BoolPtr(r["preserve_path_suffix"].(bool))
-			}
+
+			preserveQueryString = stringToOptBool(r["preserve_query_string"].(string))
+			preservePathSuffix = stringToOptBool(r["preserve_path_suffix"].(string))
 
 			redirect = &cloudflare.Redirect{
 				SourceUrl:           sourceUrl,

@@ -174,6 +174,22 @@ func TestAccCloudflareList_Update(t *testing.T) {
 					resource.TestCheckResourceAttr(nameRedirect, "item.#", "2"),
 				),
 			},
+			{
+				PreConfig: func() {
+					initialID = list.ID
+				},
+				Config: testAccCheckCloudflareListRedirectUpdateTargetUrl(rndRedirect, rndRedirect, rndRedirect, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(nameRedirect, &list),
+					func(state *terraform.State) error {
+						if initialID != list.ID {
+							return fmt.Errorf("wanted update but List got recreated (id changed %q -> %q)", initialID, list.ID)
+						}
+						return nil
+					},
+					resource.TestCheckResourceAttr(nameRedirect, "item.#", "1"),
+				),
+			},
 		},
 	})
 }
@@ -252,8 +268,8 @@ func testAccCheckCloudflareListRedirectUpdate(ID, name, description, accountID s
         redirect {
           source_url = "cloudflare.com/blog"
           target_url = "https://blog.cloudflare.com"
-		}
-     }
+        }
+      }
       comment = "one"
     }
 
@@ -262,14 +278,33 @@ func testAccCheckCloudflareListRedirectUpdate(ID, name, description, accountID s
         redirect {
           source_url = "cloudflare.com/foo"
           target_url = "https://foo.cloudflare.com"
-          include_subdomains = true
-          subpath_matching = true
+          include_subdomains = "enabled"
+          subpath_matching = "enabled"
           status_code = 301
-          preserve_query_string = true
-          preserve_path_suffix = false
+          preserve_query_string = "enabled"
+          preserve_path_suffix = "disabled"
 		}
       }
       comment = "two"
+    }
+  }`, ID, name, description, accountID)
+}
+
+func testAccCheckCloudflareListRedirectUpdateTargetUrl(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "redirect"
+
+    item {
+      value {
+        redirect {
+          source_url = "cloudflare.com/blog"
+          target_url = "https://theblog.cloudflare.com"
+        }
+      }
     }
   }`, ID, name, description, accountID)
 }
