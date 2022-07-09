@@ -113,8 +113,8 @@ func TestAccCloudflareAccessApplication_WithSass(t *testing.T) {
 		PreCheck: func() {
 			testAccessAccPreCheck(t)
 		},
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudflareAccessApplicationDestroy,
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID),
