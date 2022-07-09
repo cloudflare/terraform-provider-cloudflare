@@ -19,6 +19,7 @@ DEPENDENCIES:
 * provider: bumps dependabot/fetch-metadata from 1.3.1 to 1.3.2 ([#1747](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1747))
 * provider: bumps dependabot/fetch-metadata from 1.3.2 to 1.3.2 ([#1748](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1748))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.43.0 to 0.44.0 ([#1757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1757))
+* provider: bumps github.com/hashicorp/terraform-plugin-docs from 0.12.0 to 0.13.0 ([#1763](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1763))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.17.0 to 2.18.0 ([#1758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1758))
 * provider: bumps github.com/stretchr/testify from 1.7.5 to 1.8.0 ([#1738](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1738))
 
