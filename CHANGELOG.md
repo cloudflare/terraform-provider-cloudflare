@@ -6,6 +6,7 @@ ENHANCEMENTS:
 * resource/cloudflare_record: Validate that DNS record names are non-empty ([#1740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1740))
 * resource/cloudflare_ruleset: add support for `from_list` action parameter when using redirect action ([#1744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1744))
 * resource/cloudflare_waiting_room: Add queueing_method field. ([#1759](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1759))
+* resource/cloudflare_workers_script: add support for `service_binding` bindings ([#1760](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1760))
 * resource/cloudflare_zone_settings_override: Add support for `origin_max_http_version` ([#1755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1755))
 
 BUG FIXES:
