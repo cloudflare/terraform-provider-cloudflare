@@ -98,7 +98,7 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 		data := rawData.(map[string]interface{})
 		bindings[data["name"].(string)] = cloudflare.WorkerServiceBinding{
 			Service:     data["service"].(string),
-			Environment: cloudflare.BoolPtr(data["environment"].(string)),
+			Environment: cloudflare.StringPtr(data["environment"].(string)),
 		}
 	}
 }
