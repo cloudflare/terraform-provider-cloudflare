@@ -286,7 +286,7 @@ func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.Acces
 	return []interface{}{m}
 }
 
-func convertSaasSchemaToStruct(d *schema.ResourceData) (*cloudflare.SaasApplication, error) {
+func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplication {
 	SaasConfig := cloudflare.SaasApplication{}
 	if _, ok := d.GetOk("saas_app"); ok {
 		SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
@@ -294,7 +294,7 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) (*cloudflare.SaasApplicat
 		SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
 	}
 
-	return &SaasConfig, nil
+	return &SaasConfig
 }
 
 func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasApplication) []interface{} {

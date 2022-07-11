@@ -65,10 +65,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	}
 
 	if _, ok := d.GetOk("saas_app"); ok {
-		saasApp, err := convertSaasSchemaToStruct(d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
+		saasApp := convertSaasSchemaToStruct(d)
 		newAccessApplication.SaasApplication = saasApp
 	}
 
@@ -190,10 +187,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	}
 
 	if _, ok := d.GetOk("saas_app"); ok {
-		saasConfig, err := convertSaasSchemaToStruct(d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
+		saasConfig := convertSaasSchemaToStruct(d)
 		updatedAccessApplication.SaasApplication = saasConfig
 	}
 
