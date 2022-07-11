@@ -82,6 +82,11 @@ resource "cloudflare_workers_kv_namespace" "%[1]s" {
   title = "%[1]s"
 }
 
+resource "cloudflare_worker_script" "%[1]s-service" {
+	name    = "%[1]s-service"
+	content = "%[2]s"
+}
+
 resource "cloudflare_worker_script" "%[1]s" {
   name    = "%[1]s"
   content = "%[2]s"
@@ -108,7 +113,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 
   service_binding {
 	name = "MY_SERVICE_BINDING"
-    service = "MY_SERVICE"
+    service = cloudflare_worker_script.%[1]s-service.name
     environment = "production"
   }
 }`, rnd, scriptContent2, encodedWasm)

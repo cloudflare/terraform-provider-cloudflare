@@ -214,7 +214,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 			serviceBindings.Add(map[string]interface{}{
 				"name":        name,
 				"service":     v.Service,
-				"environment": v.Environment,
+				"environment": cloudflare.String(v.Environment),
 			})
 		}
 	}
