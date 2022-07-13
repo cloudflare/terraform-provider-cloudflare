@@ -32,7 +32,7 @@ func testSweepCloudflareManagedHeaders(r string) error {
 	}
 
 	managedHeaders, err := client.ListZoneManagedHeaders(context.Background(), client.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
-		OnlyEnabled: true,
+		Status: "enabled",
 	})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Zone Managed Headers: %s", err))
