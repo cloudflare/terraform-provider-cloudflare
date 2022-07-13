@@ -13,7 +13,7 @@ Provides a resource, that manages a notification policy for Cloudflare's product
 
 ```terraform
 resource "cloudflare_notification_policy" "example" {
-  account_id  = "c4a7362d577a6c3019a474fd6f485821"
+  account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "Policy for SSL notification events"
   description = "Notification policy to alert when my SSL certificates are modified"
   enabled     = true
@@ -34,7 +34,7 @@ resource "cloudflare_notification_policy" "example" {
 
 ### With Filters
 resource "cloudflare_notification_policy" "example" {
-  account_id  = "c4a7362d577a6c3019a474fd6f485821"
+  account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "Policy for Healthcheck notification"
   description = "Notification policy to alert on unhealthy Healthcheck status"
   enabled     = true

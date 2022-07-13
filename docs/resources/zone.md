@@ -15,7 +15,7 @@ Provides a Cloudflare Zone resource. Zone is the basic resource for working with
 
 ```terraform
 resource "cloudflare_zone" "example" {
-  account_id = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   zone       = "example.com"
 }
 ```

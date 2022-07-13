@@ -40,7 +40,9 @@ rules:
         - 'docs/'
         - 'examples/'
         - 'templates/'
-    fix: zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    fix-regex:
+      regex: (zone_id\s*=\s*)\".*\"
+      replacement: \1"0da42c8d2132a9ddaf714f9e7c920711"
     patterns:
       - pattern: zone_id = "..."
       - pattern-not: zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -64,7 +66,9 @@ rules:
         - 'docs/'
         - 'examples/'
         - 'templates/'
-    fix: account_id = "f037e56e89293a057740de681ac9abbe"
+    fix-regex:
+      regex: (account_id\s*=\s*)\".*\"
+      replacement: \1"f037e56e89293a057740de681ac9abbe"
     patterns:
       - pattern: account_id = "..."
       - pattern-not: account_id = "f037e56e89293a057740de681ac9abbe"

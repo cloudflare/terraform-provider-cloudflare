@@ -20,7 +20,7 @@ zone needs to use the `zone_id` argument.
 ```terraform
 # Allowing access to `test@example.com` email address only
 resource "cloudflare_access_group" "test_group" {
-  account_id = "975ecf5a45e3bcb680dba0722a420ad9"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "staging group"
 
   include {
@@ -31,7 +31,7 @@ resource "cloudflare_access_group" "test_group" {
 # Allowing `test@example.com` to access but only when coming from a
 # specific IP.
 resource "cloudflare_access_group" "test_group" {
-  account_id = "975ecf5a45e3bcb680dba0722a420ad9"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "staging group"
 
   include {

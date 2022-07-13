@@ -1,13 +1,13 @@
 # one time pin
 resource "cloudflare_access_identity_provider" "pin_login" {
-  account_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "PIN login"
   type       = "onetimepin"
 }
 
 # oauth
 resource "cloudflare_access_identity_provider" "github_oauth" {
-  account_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "GitHub OAuth"
   type       = "github"
   config {
@@ -18,7 +18,7 @@ resource "cloudflare_access_identity_provider" "github_oauth" {
 
 # saml
 resource "cloudflare_access_identity_provider" "jumpcloud_saml" {
-  account_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "JumpCloud SAML"
   type       = "saml"
   config {
@@ -32,7 +32,7 @@ resource "cloudflare_access_identity_provider" "jumpcloud_saml" {
 
 # okta
 resource "cloudflare_access_identity_provider" "okta" {
-  account_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "Okta"
   type       = "okta"
   config {

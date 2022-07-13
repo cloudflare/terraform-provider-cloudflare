@@ -1,5 +1,5 @@
 resource "cloudflare_access_bookmark" "my_bookmark_app" {
-  account_id           = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id           = "f037e56e89293a057740de681ac9abbe"
   name                 = "My Bookmark App"
   domain               = "example.com"
   logo_url             = "https://example.com/example.png"

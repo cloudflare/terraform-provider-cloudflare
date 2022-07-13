@@ -63,7 +63,7 @@ resource "cloudflare_logpush_job" "http_requests" {
 # must match identically in all resources. Otherwise the challenge validation
 # will fail.
 resource "cloudflare_logpush_ownership_challenge" "ownership_challenge" {
-  zone_id          = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id          = "0da42c8d2132a9ddaf714f9e7c920711"
   destination_conf = "s3://my-bucket-path?region=us-west-2"
 }
 
@@ -74,7 +74,7 @@ data "aws_s3_bucket_object" "challenge_file" {
 
 resource "cloudflare_logpush_job" "example_job" {
   enabled             = true
-  zone_id             = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id             = "0da42c8d2132a9ddaf714f9e7c920711"
   name                = "My-logpush-job"
   logpull_options     = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
   destination_conf    = "s3://my-bucket-path?region=us-west-2"
@@ -87,7 +87,7 @@ resource "cloudflare_logpush_job" "example_job" {
 # 1. Create `cloudflare_logpush_ownership_challenge` resource
 
 resource "cloudflare_logpush_ownership_challenge" "ownership_challenge" {
-  zone_id          = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id          = "0da42c8d2132a9ddaf714f9e7c920711"
   destination_conf = "s3://my-bucket-path?region=us-west-2"
 }
 
@@ -95,7 +95,7 @@ resource "cloudflare_logpush_ownership_challenge" "ownership_challenge" {
 # 3. Create the `cloudflare_logpush_job` substituting in your manual `ownership_challenge`.
 resource "cloudflare_logpush_job" "example_job" {
   enabled             = true
-  zone_id             = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id             = "0da42c8d2132a9ddaf714f9e7c920711"
   name                = "My-logpush-job"
   logpull_options     = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
   destination_conf    = "s3://my-bucket-path?region=us-west-2"

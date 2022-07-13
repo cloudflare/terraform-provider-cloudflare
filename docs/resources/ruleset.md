@@ -35,7 +35,7 @@ have inconsistent operations and inadvertently disable rulesets.
 ```terraform
 # Magic Transit
 resource "cloudflare_ruleset" "magic_transit_example" {
-  account_id  = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "account magic transit"
   description = "example magic transit ruleset description"
   kind        = "root"
@@ -50,7 +50,7 @@ resource "cloudflare_ruleset" "magic_transit_example" {
 
 # Zone-level WAF Managed Ruleset
 resource "cloudflare_ruleset" "zone_level_managed_waf" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "managed WAF"
   description = "managed WAF ruleset description"
   kind        = "zone"
@@ -69,7 +69,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
 
 # Zone-level WAF with tag-based overrides
 resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overrides" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "managed WAF with tag-based overrides"
   description = "managed WAF with tag-based overrides ruleset description"
   kind        = "zone"
@@ -102,7 +102,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
 
 # Rewrite the URI path component to a static path
 resource "cloudflare_ruleset" "transform_uri_rule_path" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for URI path"
   description = "change the URI path to a new static path"
   kind        = "zone"
@@ -126,7 +126,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
 
 # Rewrite the URI query component to a static query
 resource "cloudflare_ruleset" "transform_uri_rule_query" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for URI query parameter"
   description = "change the URI query to a new static query"
   kind        = "zone"
@@ -150,7 +150,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
 
 # Rewrite HTTP headers to a modified values
 resource "cloudflare_ruleset" "transform_uri_http_headers" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for HTTP headers"
   description = "modify HTTP headers before reaching origin"
   kind        = "zone"
@@ -185,7 +185,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
 
 # HTTP rate limit for an API route
 resource "cloudflare_ruleset" "rate_limiting_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "restrict API requests count"
   description = "apply HTTP rate limiting for a route"
   kind        = "zone"
@@ -211,7 +211,7 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
 
 # Change origin for an API route
 resource "cloudflare_ruleset" "http_origin_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "Change to some origin"
   description = "Change origin for a route"
   kind        = "zone"
@@ -234,7 +234,7 @@ resource "cloudflare_ruleset" "http_origin_example" {
 
 # Custom fields logging
 resource "cloudflare_ruleset" "custom_fields_logging_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "log custom fields"
   description = "add custom fields to logging"
   kind        = "zone"
@@ -268,7 +268,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
 
 # Custom cache keys + settings
 resource "cloudflare_ruleset" "cache_settings_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "set cache settings"
   description = "set cache settings for the request"
   kind        = "zone"
