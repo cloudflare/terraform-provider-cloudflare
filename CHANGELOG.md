@@ -1,5 +1,14 @@
 ## 3.20.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_account_member: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+* resource/cloudflare_zone: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+
+BUG FIXES:
+
+* resource/cloudflare_waiting_room: fix default waiting room `session_duration` and `path` values ([#1766](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1766))
+
 ## 3.19.0 (July 13th, 2022)
 
 ENHANCEMENTS:
