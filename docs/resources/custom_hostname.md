@@ -53,15 +53,15 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-- `ownership_verification.type` - Domain control validation (DCV) method used
+- `ownership_verification.type` - Cloudflare Custom Hostname verification method used
   for the hostname.
-- `ownership_verification.value` - Domain control validation (DCV) value for
+- `ownership_verification.value` - Domain control validation  value for
   confirming ownership. Example, "\_cf-custom-hostname.example.com`
-- `ownership_verification.name` - Domain control validation (DCV) name
+- `ownership_verification.name` - Cloudflare Custom Hostname verification name
   confirming ownership. Example, "03f28e11-fa64-4966-bb1e-dd2423e16f36"`
-- `ownership_verification_http.http_url` - Domain control validation (DCV) URL for
+- `ownership_verification_http.http_url` - Cloudflare Custom Hostname verification URL for
   confirming ownership. Example, `http://hostname.example.com/.well-known/cf-custom-hostname-challenge/643395f9-de80-42f5-a2a0-e03ff60cf2a7`
-- `ownership_verification_http.http_body` - Domain control validation (DCV) body for
+- `ownership_verification_http.http_body` - Cloudflare Custom Hostname verification body for
   confirming ownership. Example, `03f28e11-fa64-4966-bb1e-dd2423e16f36`
 
 ## Import

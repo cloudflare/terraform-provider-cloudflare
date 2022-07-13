@@ -17,7 +17,7 @@ func resourceCloudflareCertificatePackSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.StringInSlice([]string{"custom", "dedicated_custom", "advanced"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"advanced"}, false),
 		},
 		"hosts": {
 			Type:     schema.TypeSet,
@@ -29,22 +29,21 @@ func resourceCloudflareCertificatePackSchema() map[string]*schema.Schema {
 		},
 		"validation_method": {
 			Type:         schema.TypeString,
-			Optional:     true,
+			Required:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.StringInSlice([]string{"txt", "http", "email"}, false),
 		},
 		"validity_days": {
 			Type:         schema.TypeInt,
-			Optional:     true,
+			Required:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.IntInSlice([]int{14, 30, 90, 365}),
 		},
 		"certificate_authority": {
 			Type:         schema.TypeString,
-			Optional:     true,
-			Computed:     true,
+			Required:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.StringInSlice([]string{"digicert", "lets_encrypt"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"digicert", "lets_encrypt", "google"}, false),
 			Default:      nil,
 		},
 		"validation_records": {

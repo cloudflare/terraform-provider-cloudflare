@@ -21,11 +21,6 @@ you've confirmed the certificate is available.
 ## Example Usage
 
 ```hcl
-resource "cloudflare_certificate_pack" "dedicated_custom_example" {
-  zone_id = "1d5fdc9e88c8a8c4518b068cd94331fe"
-  type    = "dedicated_custom"
-  hosts   = ["example.com", "sub.example.com"]
-}
 
 # Advanced certificate manager for DigiCert
 resource "cloudflare_certificate_pack" "advanced_example_for_digicert" {
@@ -57,7 +52,7 @@ The following arguments are supported:
 
 - `zone_id` - (Required) The DNS zone to which the certificate pack should be added.
 - `type` - (Required) Certificate pack configuration type.
-  Allowed values: `"custom"`, `"dedicated_custom"`, `"advanced"`.
+  Allowed values: `"advanced"`.
 - `hosts` - (Required) List of hostnames to provision the certificate pack for.
   The zone name must be included as a host. Note: If using Let's Encrypt, you
   cannot use individual subdomains and only a wildcard for subdomain is available.

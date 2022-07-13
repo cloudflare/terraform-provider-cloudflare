@@ -144,10 +144,10 @@ func TestAccCertificatePack_DedicatedCustom(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCertificatePackDedicatedCustomConfig(zoneID, domain, "dedicated_custom", rnd),
+				Config: testAccCertificatePackAdvancedConfig(zoneID, domain, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(name, "type", "dedicated_custom"),
+					resource.TestCheckResourceAttr(name, "type", "advanced"),
 					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 				),
 			},
@@ -155,16 +155,19 @@ func TestAccCertificatePack_DedicatedCustom(t *testing.T) {
 	})
 }
 
-func testAccCertificatePackDedicatedCustomConfig(zoneID, domain, certType, rnd string) string {
+func testAccCertificatePackAdvancedConfig(zoneID, domain, rnd string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_certificate_pack" "%[3]s" {
+  validity_days = 90,
+  certificate_authority = "lets_encrypt",
+  validation_method = "txt"
   zone_id = "%[1]s"
-  type = "%[4]s"
+  type = "advanced"
   hosts = [
     "%[3]s.%[2]s",
     "%[2]s"
   ]
-}`, zoneID, domain, rnd, certType)
+}`, zoneID, domain, rnd)
 }
 
 func TestAccCertificatePack_WaitForActive(t *testing.T) {

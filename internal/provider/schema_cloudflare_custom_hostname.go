@@ -52,7 +52,7 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 						Type:         schema.TypeString,
 						Optional:     true,
 						Computed:     true,
-						ValidateFunc: validation.StringInSlice([]string{"lets_encrypt", "digicert"}, false),
+						ValidateFunc: validation.StringInSlice([]string{"lets_encrypt", "digicert", "google"}, false),
 						Default:      nil,
 					},
 					"validation_records": {
