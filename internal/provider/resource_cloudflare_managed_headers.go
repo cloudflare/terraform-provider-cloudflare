@@ -34,7 +34,7 @@ func resourceCloudflareManagedHeadersRead(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 	headers, err := client.ListZoneManagedHeaders(ctx, client.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
-		OnlyEnabled: true,
+		Status: "enabled",
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading managed headers: %w", err))
