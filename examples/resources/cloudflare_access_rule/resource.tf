@@ -16,7 +16,7 @@ resource "cloudflare_access_rule" "antarctica" {
     target = "country"
     value  = "AQ"
   }
-  zone_id = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
 }
 
 # Whitelist office's network IP ranges on all account zones (or other lists of resources).
