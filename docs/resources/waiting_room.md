@@ -40,10 +40,10 @@ resource "cloudflare_waiting_room" "example" {
 - `description` (String) A description to add more details about the waiting room.
 - `disable_session_renewal` (Boolean) Disables automatic renewal of session cookies.
 - `json_response_enabled` (Boolean) If true, requests to the waiting room with the header `Accept: application/json` will receive a JSON response object.
-- `path` (String) The path within the host to enable the waiting room on.
+- `path` (String) The path within the host to enable the waiting room on. Defaults to `/`.
 - `queue_all` (Boolean) If queue_all is true, then all traffic will be sent to the waiting room.
 - `queueing_method` (String) The queueing method used by the waiting room. Available values: `fifo`, `random`, `passthrough`, `reject`. Defaults to `fifo`.
-- `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin.
+- `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin. Defaults to `5`.
 - `suspended` (Boolean) Suspends the waiting room.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
