@@ -1,3 +1,3 @@
 ```release-note:enhancement
-resource/cloudflare_managed_headers: Use API level filtering
+resource/cloudflare_managed_headers: swap filtering to use API instead of custom logic
 ```
