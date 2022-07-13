@@ -135,7 +135,7 @@ func resourceCloudflareManagedHeadersDelete(ctx context.Context, d *schema.Resou
 	zoneID := d.Get("zone_id").(string)
 
 	headers, err := client.ListZoneManagedHeaders(ctx, client.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
-		OnlyEnabled: true,
+		Status: "enabled",
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading managed headers: %w", err))
