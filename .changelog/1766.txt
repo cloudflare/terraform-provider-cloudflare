@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_waiting_room: Fix default waiting room session duration and path
+```
