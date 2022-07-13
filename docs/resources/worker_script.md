@@ -39,6 +39,12 @@ resource "cloudflare_worker_script" "my_script" {
     name = "MY_EXAMPLE_WASM"
     module = filebase64("example.wasm")
   }
+
+  service_binding {
+    name = "MY_SERVICE_BINDING"
+    service = "MY_SERVICE"
+    environment = "production"
+  }
 }
 ```
 
@@ -68,6 +74,12 @@ The following arguments are supported:
 
 - `name` - (Required) The global variable for the binding in your Worker code.
 - `module` - (Required) The base64 encoded wasm module you want to store.
+
+**service_binding** supports:
+
+- `name` - (Required) The global variable for the binding in your Worker code.
+- `service` - (Required) The name of the Worker to bind to.
+- `environment` - (Optional) The name of the Worker environment to bind to.
 
 ## Import
 

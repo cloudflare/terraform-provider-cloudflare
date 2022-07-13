@@ -1,6 +1,6 @@
 # Enable security headers using Managed Meaders
 resource "cloudflare_managed_headers" "example" {
-  zone_id = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
 
   managed_request_headers {
     id      = "add_true_client_ip_headers"

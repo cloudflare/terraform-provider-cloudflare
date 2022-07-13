@@ -55,6 +55,23 @@ var webAssemblyBindingResource = &schema.Resource{
 	},
 }
 
+var serviceBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"service": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"environment": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+	},
+}
+
 func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
@@ -85,6 +102,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     webAssemblyBindingResource,
+		},
+		"service_binding": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     serviceBindingResource,
 		},
 	}
 }

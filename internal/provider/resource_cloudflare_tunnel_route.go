@@ -149,11 +149,11 @@ func resourceCloudflareTunnelRouteImport(ctx context.Context, d *schema.Resource
 		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/network/virtual_network_id"`, d.Id())
 	}
 
-	accountID, network := attributes[0], fmt.Sprintf("%s/%s", attributes[1], attributes[2])
+	accountID, network, vnetID := attributes[0], fmt.Sprintf("%s/%s", attributes[1], attributes[2]), attributes[3]
 
 	// It's possible to create several routes with the same network but different virtual network ids.
-	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", network, attributes[4])))
-	d.Set("virtual_network_id", accountID)
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", network, vnetID)))
+	d.Set("virtual_network_id", vnetID)
 
 	d.Set("account_id", accountID)
 	d.Set("network", network)

@@ -32,12 +32,12 @@ func resourceCloudflareIPListSchema() map[string]*schema.Schema {
 		"item": {
 			Type:     schema.TypeSet,
 			Optional: true,
-			Elem:     listItemElem,
+			Elem:     ipListItemElem,
 		},
 	}
 }
 
-var listItemElem = &schema.Resource{
+var ipListItemElem = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"value": {
 			Type:     schema.TypeString,

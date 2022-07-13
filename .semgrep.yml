@@ -1,0 +1,131 @@
+rules:
+  - id: rfc-5737-ip-address
+    languages:
+      - generic
+    message: Where a real IPv4 address isn't needed, use IPv4 addresses from RFC5737.
+    paths:
+      include:
+        - '*_test.go'
+        - 'docs/'
+        - 'examples/'
+        - 'templates/'
+    patterns:
+      - pattern-regex: '\d+\.\d+\.\d+\.\d+'
+      - pattern-not-regex: '10\.\d+\.\d+.\d+'
+      - pattern-not-regex: '192\.168\.\d+.\d+'
+      - pattern-not-regex: '192\.0\.2\.\d+'    # 192.0.2.0/24 (TEST-NET-1, rfc5737)
+      - pattern-not-regex: '198\.51\.100\.\d+' # 198.51.100.0/24 (TEST-NET-2, rfc5737)
+      - pattern-not-regex: '203\.0\.113\.\d+'  # 203.0.113.0/24 (TEST-NET-3, rfc5737)
+    severity: WARNING
+  - id: rfc-3849-ip-address
+    languages:
+      - generic
+    message: Where a real IPv6 address isn't needed, use IPv6 addresses from RFC3849.
+    paths:
+      include:
+        - '*_test.go'
+        - 'docs/'
+        - 'examples/'
+        - 'templates/'
+    patterns:
+      - pattern-regex: '(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))'
+    severity: WARNING
+  - id: use-test-zone-ids
+    languages:
+      - hcl
+    message: In examples and acceptance tests, we should only use the test zone ID ("0da42c8d2132a9ddaf714f9e7c920711" or `testZoneID` in tests).
+    paths:
+      include:
+        - '*_test.go'
+        - 'docs/'
+        - 'examples/'
+        - 'templates/'
+    fix-regex:
+      regex: (zone_id\s*=\s*)\".*\"
+      replacement: \1"0da42c8d2132a9ddaf714f9e7c920711"
+    patterns:
+      - pattern: zone_id = "..."
+      - pattern-not: zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+      - pattern-either:
+        - pattern-inside: |
+            resource "..." "..." {
+              ...
+            }
+        - pattern-inside: |
+            data "..." "..." {
+              ...
+            }
+    severity: WARNING
+  - id: use-test-account-ids
+    languages:
+      - hcl
+    message: In examples and acceptance tests, we should only use the test account ID ("f037e56e89293a057740de681ac9abbe" or `testAccountID` in tests).
+    paths:
+      include:
+        - '*_test.go'
+        - 'docs/'
+        - 'examples/'
+        - 'templates/'
+    fix-regex:
+      regex: (account_id\s*=\s*)\".*\"
+      replacement: \1"f037e56e89293a057740de681ac9abbe"
+    patterns:
+      - pattern: account_id = "..."
+      - pattern-not: account_id = "f037e56e89293a057740de681ac9abbe"
+      - pattern-either:
+        - pattern-inside: |
+            resource "..." "..." {
+              ...
+            }
+        - pattern-inside: |
+            data "..." "..." {
+              ...
+            }
+        - pattern-inside: |
+            provider "..." "..." {
+              ...
+            }
+    severity: WARNING
+
+  - id: calling-fmt.Print-and-variants
+    languages: [go]
+    message: Do not call `fmt.Print` and variants. Use `tflog` where logged output is required.
+    paths:
+      include:
+        - 'internal/'
+    patterns:
+      - pattern-either:
+        - pattern: |
+            fmt.Print(...)
+        - pattern: |
+            fmt.Printf(...)
+        - pattern: |
+            fmt.Println(...)
+    severity: WARNING
+
+  - id: calling-SetId-with-empty-string-in-resource-create
+    languages: [go]
+    message: Do not call `d.SetId("")` inside a resource create or update function.
+    paths:
+      include:
+        - 'internal/'
+    patterns:
+      - pattern: |
+          func $FUNC(...) {
+            ...
+            d.SetId("")
+            ...
+          }
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^resource\\w*(Create|Update)$"
+    severity: WARNING
+
+  - id: use-acctest-provider-factories
+    languages: [go]
+    message: Use acctest.ProviderFactories, not acctest.Providers
+    paths:
+      include:
+        - '*_test.go'
+    pattern-regex: Providers:\s+(acctest\.)?Providers,
+    severity: WARNING

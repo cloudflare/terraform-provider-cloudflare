@@ -17,8 +17,9 @@ func resourceCloudflareFilterSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 		"paused": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Whether this filter is currently paused.",
 		},
 		"expression": {
 			Type:     schema.TypeString,
@@ -26,6 +27,7 @@ func resourceCloudflareFilterSchema() map[string]*schema.Schema {
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return strings.TrimSpace(new) == old
 			},
+			Description: "The filter expression to be used.",
 		},
 		"description": {
 			Type:         schema.TypeString,
@@ -37,11 +39,13 @@ func resourceCloudflareFilterSchema() map[string]*schema.Schema {
 				}
 				return false
 			},
+			Description: "A note that you can use to describe the purpose of the filter.",
 		},
 		"ref": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringLenBetween(0, 50),
+			Description:  "Short reference tag to quickly select related rules.",
 		},
 	}
 }

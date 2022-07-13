@@ -17,7 +17,7 @@ handle overlapping private IPs in your origins.
 
 ```terraform
 resource "cloudflare_tunnel_virtual_network" "example" {
-  account_id = "c4a7362d577a6c3019a474fd6f485821"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name = "vnet-for-documentation"
   comment = "New tunnel virtual network for documentation"
 }
@@ -43,5 +43,5 @@ resource "cloudflare_tunnel_virtual_network" "example" {
 
 Import is supported using the following syntax:
 ```shell
-$ terraform import cloudflare_tunnel_virtual_network <account_id>/<vnet_id>
+$ terraform import cloudflare_tunnel_virtual_network.example <account_id>/<vnet_id>
 ```

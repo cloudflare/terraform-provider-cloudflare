@@ -4,6 +4,12 @@ import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 func resourceCloudflareAccountMemberSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"account_id": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Account ID to create the account member in.",
+		},
+
 		"email_address": {
 			Type:        schema.TypeString,
 			Required:    true,

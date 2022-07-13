@@ -20,7 +20,8 @@ const (
 )
 
 var (
-	changelogEntryPresent = false
+	changelogEntryPresent        = false
+	successMessageAlreadyPresent = false
 )
 
 func getSkipLabels() []string {
@@ -98,12 +99,18 @@ func main() {
 			log.Println("no change in status of changelog checks; exiting")
 			os.Exit(1)
 		}
+
+		if strings.Contains(comment.GetBody(), changelogDetectedMessage) {
+			successMessageAlreadyPresent = true
+		}
 	}
 
 	if changelogEntryPresent {
-		_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
-			Body: cloudflare.StringPtr(changelogDetectedMessage),
-		})
+		if !successMessageAlreadyPresent {
+			_, _, _ = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
+				Body: cloudflare.StringPtr(changelogDetectedMessage),
+			})
+		}
 		log.Printf("changelog found for %d, skipping remainder of checks\n", prNo)
 		os.Exit(0)
 	}

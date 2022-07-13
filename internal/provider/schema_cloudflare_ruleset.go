@@ -427,6 +427,292 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										Type: schema.TypeString,
 									},
 								},
+								"bypass_cache": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Whether to bypass the cache if expression matches",
+								},
+								"edge_ttl": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "List of edge TTL parameters to apply to the request",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"mode": {
+												Type:        schema.TypeString,
+												Required:    true,
+												Description: "Mode of the edge TTL",
+											},
+											"default": {
+												Type:        schema.TypeInt,
+												Required:    true,
+												Description: "Default edge TTL",
+											},
+											"status_code_ttl": {
+												Type:        schema.TypeList,
+												Optional:    true,
+												Description: "Edge TTL for the status codes",
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														"status_code": {
+															Type:        schema.TypeInt,
+															Optional:    true,
+															Description: "Status code for which the edge TTL is applied. Conflicts with \"status_code_range\".",
+														},
+														"status_code_range": {
+															Type:        schema.TypeList,
+															Optional:    true,
+															Description: "Status code range for which the edge TTL is applied. Conflicts with \"status_code\".",
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	"from": {
+																		Type:        schema.TypeInt,
+																		Optional:    true,
+																		Description: "From status code",
+																	},
+																	"to": {
+																		Type:        schema.TypeInt,
+																		Optional:    true,
+																		Description: "To status code",
+																	},
+																},
+															},
+														},
+														"value": {
+															Type:        schema.TypeInt,
+															Required:    true,
+															Description: "Status code edge TTL value",
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+								"browser_ttl": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "List of browser TTL parameters to apply to the request",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"mode": {
+												Type:        schema.TypeString,
+												Required:    true,
+												Description: "Mode of the browser TTL",
+											},
+											"default": {
+												Type:        schema.TypeInt,
+												Optional:    true,
+												Description: "Default browser TTL",
+											},
+										},
+									},
+								},
+								"serve_stale": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "List of serve stale parameters to apply to the request",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"disable_stale_while_updating": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Disable stale while updating",
+											},
+										},
+									},
+								},
+								"respect_strong_etags": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Respect strong ETags",
+								},
+								"cache_key": {
+									Type:        schema.TypeList,
+									MaxItems:    1,
+									Optional:    true,
+									Description: "List of cache key parameters to apply to the request",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"cache_by_device_type": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Cache by device type. Conflicts with \"custom_key.user.device_type\".",
+											},
+											"ignore_query_strings_order": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Ignore query strings order",
+											},
+											"cache_deception_armor": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Cache deception armor",
+											},
+											"custom_key": {
+												Type:        schema.TypeList,
+												Optional:    true,
+												MaxItems:    1,
+												Description: "Custom key parameters for the request",
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														"query_string": {
+															Type:        schema.TypeList,
+															Optional:    true,
+															MaxItems:    1,
+															Description: "Query string parameters for the custom key",
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	"include": {
+																		Type:        schema.TypeList,
+																		Optional:    true,
+																		Description: "List of query string parameters to include in the custom key. Conflicts with \"exclude\".",
+																		Elem: &schema.Schema{
+																			Type: schema.TypeString,
+																		},
+																	},
+																	"exclude": {
+																		Type:        schema.TypeList,
+																		Optional:    true,
+																		Description: "List of query string parameters to exclude from the custom key. Conflicts with \"include\".",
+																		Elem: &schema.Schema{
+																			Type: schema.TypeString,
+																		},
+																	},
+																},
+															},
+														},
+														"header": {
+															Type:        schema.TypeList,
+															MaxItems:    1,
+															Optional:    true,
+															Description: "Header parameters for the custom key",
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	"include": {
+																		Type:        schema.TypeList,
+																		Optional:    true,
+																		Description: "List of headers to include in the custom key",
+																		Elem: &schema.Schema{
+																			Type: schema.TypeString,
+																		},
+																	},
+																	"check_presence": {
+																		Type:        schema.TypeList,
+																		Optional:    true,
+																		Description: "List of headers to check for presence in the custom key",
+																		Elem: &schema.Schema{
+																			Type: schema.TypeString,
+																		},
+																	},
+																	"exclude_origin": {
+																		Type:        schema.TypeBool,
+																		Optional:    true,
+																		Description: "Exclude the origin header from the custom key",
+																	},
+																},
+															},
+														},
+														"cookie": {
+															Type:        schema.TypeList,
+															MaxItems:    1,
+															Optional:    true,
+															Description: "Cookie parameters for the custom key",
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	"include": {
+																		Type:        schema.TypeList,
+																		Optional:    true,
+																		Description: "List of cookies to include in the custom key",
+																		Elem: &schema.Schema{
+																			Type: schema.TypeString,
+																		},
+																	},
+																	"check_presence": {
+																		Type:        schema.TypeList,
+																		Optional:    true,
+																		Description: "List of cookies to check for presence in the custom key",
+																		Elem: &schema.Schema{
+																			Type: schema.TypeString,
+																		},
+																	},
+																},
+															},
+														},
+														"user": {
+															Type:        schema.TypeList,
+															MaxItems:    1,
+															Optional:    true,
+															Description: "User parameters for the custom key",
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	"device_type": {
+																		Type:        schema.TypeBool,
+																		Optional:    true,
+																		Description: "Add device type to the custom key. Conflicts with \"cache_key.cache_by_device_type\".",
+																	},
+																	"geo": {
+																		Type:        schema.TypeBool,
+																		Optional:    true,
+																		Description: "Add geo data to the custom key",
+																	},
+																	"lang": {
+																		Type:        schema.TypeBool,
+																		Optional:    true,
+																		Description: "Add language data to the custom key",
+																	},
+																},
+															},
+														},
+														"host": {
+															Type:        schema.TypeList,
+															MaxItems:    1,
+															Optional:    true,
+															Description: "Host parameters for the custom key",
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	"resolved": {
+																		Type:        schema.TypeBool,
+																		Optional:    true,
+																		Description: "Resolve hostname to IP address",
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+								"origin_error_page_passthru": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Pass-through error page for origin",
+								},
+								"from_list": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "Use a list to lookup information for the action.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"name": {
+												Type:        schema.TypeString,
+												Description: "Name of the list.",
+												Required:    true,
+											},
+											"key": {
+												Type:        schema.TypeString,
+												Description: "Expression to use for the list lookup.",
+												Required:    true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},

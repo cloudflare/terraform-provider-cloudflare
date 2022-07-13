@@ -28,7 +28,14 @@ func resourceCloudflareAccountMember() *schema.Resource {
 func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	member, err := client.AccountMember(ctx, client.AccountID, d.Id())
+	var accountID string
+	if d.Get("account_id").(string) != "" {
+		accountID = d.Get("account_id").(string)
+	} else {
+		accountID = client.AccountID
+	}
+
+	member, err := client.AccountMember(ctx, accountID, d.Id())
 	if err != nil {
 		if strings.Contains(err.Error(), "Member not found") ||
 			strings.Contains(err.Error(), "HTTP status 404") {
@@ -44,6 +51,7 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 		memberIDs = append(memberIDs, role.ID)
 	}
 
+	d.Set("account_id", accountID)
 	d.Set("email_address", member.User.Email)
 	d.Set("role_ids", memberIDs)
 	d.SetId(d.Id())

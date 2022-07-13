@@ -64,6 +64,7 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Description: "The path within the host to enable the waiting room on.",
 			Type:        schema.TypeString,
 			Optional:    true,
+			Default:     "/",
 		},
 
 		"total_active_users": {
@@ -82,6 +83,14 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Description: "This is a templated html file that will be rendered at the edge.",
 			Type:        schema.TypeString,
 			Optional:    true,
+		},
+
+		"queueing_method": {
+			Description:  fmt.Sprintf("The queueing method used by the waiting room. %s", renderAvailableDocumentationValuesStringSlice(waitingRoomQueueingMethod)),
+			Type:         schema.TypeString,
+			Default:      "fifo",
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice(waitingRoomQueueingMethod, false),
 		},
 
 		"default_template_language": {
@@ -120,6 +129,7 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Description: "Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin.",
 			Type:        schema.TypeInt,
 			Optional:    true,
+			Default:     5,
 		},
 
 		"json_response_enabled": {

@@ -13,7 +13,7 @@ Cloudflare Argo controls the routing to your origin and tiered caching options t
 
 ```terraform
 resource "cloudflare_argo" "example" {
-  zone_id        = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id        = "0da42c8d2132a9ddaf714f9e7c920711"
   tiered_caching = "on"
   smart_routing  = "on"
 }
