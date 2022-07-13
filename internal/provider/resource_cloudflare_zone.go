@@ -85,17 +85,23 @@ func resourceCloudflareZone() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Provides a Cloudflare Zone resource. Zone is the basic resource for working with Cloudflare and is roughly equivalent to a domain name that the user purchases.",
 	}
 }
 
 func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-
+	var accountID string
+	if d.Get("account_id").(string) != "" {
+		accountID = d.Get("account_id").(string)
+	} else {
+		accountID = client.AccountID
+	}
 	zoneName := d.Get("zone").(string)
 	jumpstart := d.Get("jump_start").(bool)
 	zoneType := d.Get("type").(string)
 	account := cloudflare.Account{
-		ID: client.AccountID,
+		ID: accountID,
 	}
 
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Zone: name %s", zoneName))
@@ -162,6 +168,7 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 		plan = zone.Plan.LegacyID
 	}
 
+	d.Set("account_id", zone.Account.ID)
 	d.Set("paused", zone.Paused)
 	d.Set("vanity_name_servers", zone.VanityNS)
 	d.Set("status", zone.Status)
