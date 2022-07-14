@@ -9,6 +9,10 @@ BUG FIXES:
 
 * resource/cloudflare_waiting_room: fix default waiting room `session_duration` and `path` values ([#1766](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1766))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.4.1 to 0.5.0 ([#1773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1773))
+
 ## 3.19.0 (July 13th, 2022)
 
 ENHANCEMENTS:
