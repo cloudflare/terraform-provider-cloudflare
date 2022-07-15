@@ -12,6 +12,7 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bumps github.com/hashicorp/terraform-plugin-log from 0.4.1 to 0.5.0 ([#1773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1773))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.5.0 to 0.6.0 ([#1780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1780))
 
 ## 3.19.0 (July 13th, 2022)
 
