@@ -8,6 +8,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_waiting_room: fix default waiting room `session_duration` and `path` values ([#1766](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1766))
+* resource/cloudflare_zone_lockdown: Fix crash when logging upstream error message ([#1777](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1777))
 
 DEPENDENCIES:
 
