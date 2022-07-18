@@ -1,6 +1,6 @@
 # Advanced certificate manager for DigiCert
 resource "cloudflare_certificate_pack" "example" {
-  zone_id               = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  zone_id               = "0da42c8d2132a9ddaf714f9e7c920711"
   type                  = "advanced"
   hosts                 = ["example.com", "sub.example.com"]
   validation_method     = "txt"
@@ -11,7 +11,7 @@ resource "cloudflare_certificate_pack" "example" {
 
 # Advanced certificate manager for Let's Encrypt
 resource "cloudflare_certificate_pack" "example" {
-  zone_id                = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  zone_id                = "0da42c8d2132a9ddaf714f9e7c920711"
   type                   = "advanced"
   hosts                  = ["example.com", "*.example.com"]
   validation_method      = "http"
