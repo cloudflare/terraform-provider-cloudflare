@@ -713,6 +713,46 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"from_value": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "Use a value to lookup information for the action.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"status_code": {
+												Type:        schema.TypeInt,
+												Description: "Status code for redirect.",
+												Optional:    true,
+											},
+											"target_url": {
+												Type:        schema.TypeList,
+												Optional:    true,
+												MaxItems:    1,
+												Description: "Target URL for redirect.",
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														"value": {
+															Type:        schema.TypeString,
+															Optional:    true,
+															Description: "Static value to provide as the HTTP request header value. Conflicts with `\"expression\"`.",
+														},
+														"expression": {
+															Description: "Use a value dynamically determined by the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions. Conflicts with `\"value\"`.",
+															Type:        schema.TypeString,
+															Optional:    true,
+														},
+													},
+												},
+											},
+											"preserve_query_string": {
+												Type:        schema.TypeBool,
+												Description: "Preserve query string for redirect URL.",
+												Optional:    true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},
