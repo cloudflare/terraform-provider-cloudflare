@@ -61,6 +61,9 @@ func buildAPIToken(d *schema.ResourceData) cloudflare.APIToken {
 		}
 	}
 
+	token.NotBefore = d.Get("not_before").(*time.Time) 
+	token.ExpiresOn = d.Get("expires_on").(*time.Time)
+
 	return token
 }
 
@@ -160,6 +163,8 @@ func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("status", t.Status)
 	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
+	d.Set("expires_on", t.ExpiresOn.Format(time.RFC3339Nano))
+	d.Set("not_before", t.ExpiresOn.Format(time.RFC3339Nano))
 
 	var ipIn []string
 	var ipNotIn []string
