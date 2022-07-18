@@ -427,10 +427,10 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										Type: schema.TypeString,
 									},
 								},
-								"bypass_cache": {
+								"cache": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "Whether to bypass the cache if expression matches",
+									Description: "Whether to the cache if expression matches",
 								},
 								"edge_ttl": {
 									Type:        schema.TypeList,
