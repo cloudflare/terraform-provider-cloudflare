@@ -168,8 +168,14 @@ func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("status", t.Status)
 	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
-	d.Set("expires_on", t.ExpiresOn.Format(time.RFC3339Nano))
-	d.Set("not_before", t.ExpiresOn.Format(time.RFC3339Nano))
+
+	if t.ExpiresOn != nil {
+		d.Set("expires_on", t.ExpiresOn.Format(time.RFC3339Nano))
+	}
+
+	if t.NotBefore != nil {
+		d.Set("not_before", t.NotBefore.Format(time.RFC3339Nano))
+	}
 
 	var ipIn []string
 	var ipNotIn []string
@@ -203,7 +209,7 @@ func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceDat
 
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare API Token: name %s", name))
 
-	t, err := client.UpdateAPIToken(ctx, tokenID, t)
+	_, err := client.UpdateAPIToken(ctx, tokenID, t)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Cloudflare API Token %q: %w", name, err))
 	}
