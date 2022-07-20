@@ -59,7 +59,6 @@ func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceDa
 		d.Set("expected_body", healthcheck.HTTPConfig.ExpectedBody)
 		d.Set("follow_redirects", healthcheck.HTTPConfig.FollowRedirects)
 		d.Set("allow_insecure", healthcheck.HTTPConfig.AllowInsecure)
-		d.Set("notification_email_addresses", healthcheck.Notification.EmailAddresses)
 
 		if err := d.Set("header", flattenHealthcheckHeader(healthcheck.HTTPConfig.Header)); err != nil {
 			tflog.Warn(ctx, fmt.Sprintf("Error setting header for standalone healthcheck %q: %s", d.Id(), err))
@@ -69,7 +68,6 @@ func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("name", healthcheck.Name)
 	d.Set("description", healthcheck.Description)
 	d.Set("suspended", healthcheck.Suspended)
-	d.Set("notification_suspended", healthcheck.Notification.Suspended)
 	d.Set("address", healthcheck.Address)
 	d.Set("consecutive_fails", healthcheck.ConsecutiveFails)
 	d.Set("consecutive_successes", healthcheck.ConsecutiveSuccesses)
@@ -184,14 +182,6 @@ func healthcheckSetStruct(d *schema.ResourceData) (cloudflare.Healthcheck, error
 
 	if region, ok := d.GetOk("check_regions"); ok {
 		healthcheck.CheckRegions = expandInterfaceToStringList(region)
-	}
-
-	if notificationSuspended, ok := d.GetOk("notification_suspended"); ok {
-		healthcheck.Notification.Suspended = notificationSuspended.(bool)
-	}
-
-	if notificationEmailAddresses, ok := d.GetOk("notification_email_addresses"); ok {
-		healthcheck.Notification.EmailAddresses = expandInterfaceToStringList(notificationEmailAddresses)
 	}
 
 	switch healthcheck.Type {
