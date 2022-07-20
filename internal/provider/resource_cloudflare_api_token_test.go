@@ -275,7 +275,7 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "not_before", "2018-07-01T05:20:00Z"),
-					resource.TestCheckResourceAttr(name, "expires_on", "2020-01-01T00:00:00Z"),
+					resource.TestCheckResourceAttr(name, "expires_on", "2032-01-01T00:00:00Z"),
 				),
 			},
 		},
@@ -294,7 +294,7 @@ func testAccCloudflareAPITokenWithTTL(rnd string, permissionID string) string {
 		}
 
 		not_before = "2018-07-01T05:20:00Z"
-		expires_on = "2020-01-01T00:00:00Z"
+		expires_on = "2032-01-01T00:00:00Z"
 	}
 `, rnd, permissionID)
 }
