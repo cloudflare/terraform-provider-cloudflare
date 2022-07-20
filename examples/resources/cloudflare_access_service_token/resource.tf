@@ -1,11 +1,11 @@
 resource "cloudflare_access_service_token" "my_app" {
-  account_id = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "CI/CD app"
 }
 
 # Generate a service token that will renew if terraform is ran within 30 days of expiration
 resource "cloudflare_access_service_token" "my_app" {
-  account_id = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "CI/CD app renewed"
 
   min_days_for_renewal = 30

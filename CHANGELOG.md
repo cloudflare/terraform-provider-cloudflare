@@ -1,4 +1,31 @@
-## 3.19.0 (Unreleased)
+## 3.20.0 (Unreleased)
+
+NOTES:
+
+* resource/cloudflare_certificate_pack: remove references to long-deprecated dedicated certs (replaced by `advanced`) ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_rule: add support for `account_id` ([#1790](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1790))
+* resource/cloudflare_account_member: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+* resource/cloudflare_certificate_pack: fix some of the custom hostname docs copy ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_certificate_pack: update the list of allowed certificate authorities ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_zone: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+
+BUG FIXES:
+
+* resource/cloudflare_waiting_room: fix default waiting room `session_duration` and `path` values ([#1766](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1766))
+* resource/cloudflare_zone_lockdown: Fix crash when logging upstream error message ([#1777](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1777))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/golangci/golangci-lint from 1.46.2 to 1.47.0 ([#1786](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1786))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.0 to 1.47.1 ([#1788](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1788))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.4.1 to 0.5.0 ([#1773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1773))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.5.0 to 0.6.0 ([#1780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1780))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.18.0 to 2.19.0 ([#1779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1779))
+
+## 3.19.0 (July 13th, 2022)
 
 ENHANCEMENTS:
 

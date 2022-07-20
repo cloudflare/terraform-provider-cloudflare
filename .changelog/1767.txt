@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_zone: add support for `account_id`
+```
+
+```release-note:enhancement
+resource/cloudflare_account_member: add support for `account_id`
+```

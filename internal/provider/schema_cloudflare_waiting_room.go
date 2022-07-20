@@ -64,6 +64,7 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Description: "The path within the host to enable the waiting room on.",
 			Type:        schema.TypeString,
 			Optional:    true,
+			Default:     "/",
 		},
 
 		"total_active_users": {
@@ -128,6 +129,7 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Description: "Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin.",
 			Type:        schema.TypeInt,
 			Optional:    true,
+			Default:     5,
 		},
 
 		"json_response_enabled": {
