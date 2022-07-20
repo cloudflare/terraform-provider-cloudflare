@@ -78,16 +78,16 @@ func resourceCloudflareApiTokenSchema() map[string]*schema.Schema {
 			},
 		},
 		"not_before": {
-			Type: schema.TypeString,
+			Type:         schema.TypeString,
 			ValidateFunc: validation.IsRFC3339Time,
-			Description: "The time before which the token MUST NOT be accepted for processing",
-			Optional: true,
+			Description:  "The time before which the token MUST NOT be accepted for processing",
+			Optional:     true,
 		},
 		"expires_on": {
-			Type: schema.TypeString,
+			Type:         schema.TypeString,
 			ValidateFunc: validation.IsRFC3339Time,
-			Description: "The expiration time on or after which the token MUST NOT be accepted for processing",
-			Optional: true,
+			Description:  "The expiration time on or after which the token MUST NOT be accepted for processing",
+			Optional:     true,
 		},
 		"value": {
 			Type:        schema.TypeString,
