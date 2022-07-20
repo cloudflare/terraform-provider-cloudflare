@@ -209,6 +209,27 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
   }
 }
 
+# Serve some custom error response
+resource "cloudflare_ruleset" "http_custom_error_example" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  name        = "Serve some error response"
+  description = "Serve some error response"
+  kind        = "zone"
+  phase       = "http_custom_errors"
+
+  rules {
+    action = "serve_error"
+    action_parameters {
+      content = "some error html"
+      content_type = "text/html"
+      status_code = 530
+    }
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    description = "serve some error response"
+    enabled     = true
+  }
+}
+
 # Change origin for an API route
 resource "cloudflare_ruleset" "http_origin_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -362,7 +383,7 @@ resource "cloudflare_ruleset" "redirect_from_list_example" {
 
 - `kind` (String) Type of Ruleset to create. Available values: `custom`, `managed`, `root`, `schema`, `zone`.
 - `name` (String) Name of the ruleset.
-- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_custom_errors`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
 
 ### Optional
 
@@ -411,6 +432,9 @@ Optional:
 - `edge_ttl` (Block List, Max: 1) List of edge TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl))
 - `from_list` (Block List, Max: 1) Use a list to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_list))
 - `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
+- `content` (String) Content of the served error response.
+- `content_type` (String) Content-Type of the served error response.
+- `status_code` (Number) HTTP status code of the served error response.
 - `host_header` (String) Host Header that request origin receives.
 - `id` (String) Identifier of the action parameter to modify.
 - `increment` (Number)

@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -524,6 +524,9 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"cache_key":                  cacheKeyFields,
 				"origin_error_page_passthru": r.ActionParameters.OriginErrorPagePassthru,
 				"from_list":                  fromListFields,
+				"content":                    r.ActionParameters.Content,
+				"content_type":               r.ActionParameters.ContentType,
+				"status_code":                r.ActionParameters.StatusCode,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -760,6 +763,15 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						}
 
 						rule.ActionParameters.Headers = headers
+
+					case "content":
+						rule.ActionParameters.Content = pValue.(string)
+
+					case "content_type":
+						rule.ActionParameters.ContentType = pValue.(string)
+
+					case "status_code":
+						rule.ActionParameters.StatusCode = pValue.(uint16)
 
 					case "host_header":
 						rule.ActionParameters.HostHeader = pValue.(string)

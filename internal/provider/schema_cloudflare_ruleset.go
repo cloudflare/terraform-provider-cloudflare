@@ -3,7 +3,7 @@ package provider
 import (
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -377,6 +377,21 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 											},
 										},
 									},
+								},
+								"content": {
+									Type:        schema.TypeString,
+									Optional:    false,
+									Description: "Content of the custom error response",
+								},
+								"content_type": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Content-Type of the custom error response",
+								},
+								"status_code": {
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Description: "HTTP status code of the custom error response",
 								},
 								"host_header": {
 									Type:        schema.TypeString,
