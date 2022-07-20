@@ -1,5 +1,9 @@
 ## 3.20.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_healthcheck: deprecates `notification_email_addresses` and `notification_suspended` in favour of `cloudflare_notification_policy` ([#1789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1789))
+
 NOTES:
 
 * resource/cloudflare_certificate_pack: remove references to long-deprecated dedicated certs (replaced by `advanced`) ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
