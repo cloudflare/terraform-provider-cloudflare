@@ -60,9 +60,14 @@ func buildAPIToken(d *schema.ResourceData) cloudflare.APIToken {
 			token.Condition.RequestIP.NotIn = ipsNotIn
 		}
 	}
-
-	token.NotBefore = d.Get("not_before").(*time.Time) 
-	token.ExpiresOn = d.Get("expires_on").(*time.Time)
+	if before, ok := d.GetOk("not_before"); ok {
+		notBefore, _ := time.Parse(time.RFC3339Nano, before.(string))
+		token.NotBefore = &notBefore
+	}
+	if expires, ok := d.GetOk("not_before"); ok {
+		expiresOn, _ := time.Parse(time.RFC3339Nano, expires.(string))
+		token.ExpiresOn = &expiresOn
+	}
 
 	return token
 }

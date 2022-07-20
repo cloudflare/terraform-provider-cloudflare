@@ -293,7 +293,7 @@ func testAccCloudflareAPITokenWithTTL(rnd string, permissionID string) string {
 			resources = { "com.cloudflare.api.account.zone.*" = "*" }
 		}
 
-		not_before = "2018-07-01T05:20:00Z"
+		not_before = "2018-07-01"
 		expires_on = "2020-01-01T00:00:00Z"
 	}
 `, rnd, permissionID)
