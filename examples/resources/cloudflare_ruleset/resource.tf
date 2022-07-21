@@ -1,6 +1,6 @@
 # Magic Transit
 resource "cloudflare_ruleset" "magic_transit_example" {
-  account_id  = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "account magic transit"
   description = "example magic transit ruleset description"
   kind        = "root"
@@ -15,7 +15,7 @@ resource "cloudflare_ruleset" "magic_transit_example" {
 
 # Zone-level WAF Managed Ruleset
 resource "cloudflare_ruleset" "zone_level_managed_waf" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "managed WAF"
   description = "managed WAF ruleset description"
   kind        = "zone"
@@ -34,7 +34,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
 
 # Zone-level WAF with tag-based overrides
 resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overrides" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "managed WAF with tag-based overrides"
   description = "managed WAF with tag-based overrides ruleset description"
   kind        = "zone"
@@ -67,7 +67,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
 
 # Rewrite the URI path component to a static path
 resource "cloudflare_ruleset" "transform_uri_rule_path" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for URI path"
   description = "change the URI path to a new static path"
   kind        = "zone"
@@ -91,7 +91,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
 
 # Rewrite the URI query component to a static query
 resource "cloudflare_ruleset" "transform_uri_rule_query" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for URI query parameter"
   description = "change the URI query to a new static query"
   kind        = "zone"
@@ -115,7 +115,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
 
 # Rewrite HTTP headers to a modified values
 resource "cloudflare_ruleset" "transform_uri_http_headers" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for HTTP headers"
   description = "modify HTTP headers before reaching origin"
   kind        = "zone"
@@ -150,7 +150,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
 
 # HTTP rate limit for an API route
 resource "cloudflare_ruleset" "rate_limiting_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "restrict API requests count"
   description = "apply HTTP rate limiting for a route"
   kind        = "zone"
@@ -176,7 +176,7 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
 
 # Change origin for an API route
 resource "cloudflare_ruleset" "http_origin_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "Change to some origin"
   description = "Change origin for a route"
   kind        = "zone"
@@ -199,7 +199,7 @@ resource "cloudflare_ruleset" "http_origin_example" {
 
 # Custom fields logging
 resource "cloudflare_ruleset" "custom_fields_logging_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "log custom fields"
   description = "add custom fields to logging"
   kind        = "zone"
@@ -231,8 +231,9 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
   }
 }
 
+# Custom cache keys + settings
 resource "cloudflare_ruleset" "cache_settings_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "set cache settings"
   description = "set cache settings for the request"
   kind        = "zone"
@@ -242,16 +243,16 @@ resource "cloudflare_ruleset" "cache_settings_example" {
     action = "set_cache_settings"
     action_parameters {
       edge_ttl {
-        mode = "override_origin"
+        mode    = "override_origin"
         default = 60
         status_code_ttl {
           status_code = 200
-          value = 50
+          value       = 50
         }
         status_code_ttl {
           status_code_range {
             from = 201
-            to = 300
+            to   = 300
           }
           value = 30
         }
@@ -265,23 +266,23 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       respect_strong_etags = true
       cache_key {
         ignore_query_strings_order = false
-        cache_deception_armor = true
+        cache_deception_armor      = true
         custom_key {
           query_string {
             exclude = ["*"]
           }
           header {
-            include = ["habc", "hdef"]
+            include        = ["habc", "hdef"]
             check_presence = ["habc_t", "hdef_t"]
             exclude_origin = true
           }
           cookie {
-            include = ["cabc", "cdef"]
+            include        = ["cabc", "cdef"]
             check_presence = ["cabc_t", "cdef_t"]
           }
           user {
             device_type = true
-            geo = false
+            geo         = false
           }
           host {
             resolved = true
@@ -290,8 +291,30 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       }
       origin_error_page_passthru = false
     }
-    expression = "true"
+    expression  = "true"
     description = "set cache settings rule"
-    enabled = true
+    enabled     = true
+  }
+}
+
+# Redirects based on a List resource
+resource "cloudflare_ruleset" "redirect_from_list_example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "redirects"
+  description = "Redirect ruleset"
+  kind        = "root"
+  phase       = "http_request_redirect"
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_list {
+        name = "redirect_list"
+        key  = "http.request.full_uri"
+      }
+    }
+    expression  = "http.request.full_uri in $redirect_list"
+    description = "Apply redirects from redirect_list"
+    enabled     = true
   }
 }

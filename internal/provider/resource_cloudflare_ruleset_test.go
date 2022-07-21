@@ -807,9 +807,9 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", "some.host"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", "some.host"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.port", "80"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
@@ -1683,6 +1683,34 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_Redirect(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetRedirectFromList(rnd, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "kind", "root"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_redirect"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "redirect"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_list.0.name", "redirect_list_"+rnd),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_list.0.key", "http.request.full_uri"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -2324,9 +2352,9 @@ func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) str
     rules {
       action = "route"
       action_parameters {
-        host_header = "some.host"
+        host_header = "%[1]s.terraform.cfapi.net"
         origin {
-          host = "some.host"
+          host = "%[1]s.terraform.cfapi.net"
           port = 80
         }
       }
@@ -2931,4 +2959,35 @@ func testAccCloudflareRulesetCacheSettingsCustomKeyEmpty(rnd, accountID, zoneID 
 	  enabled = true
     }
   }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetRedirectFromList(rnd, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "list-%[1]s" {
+    account_id = "%[2]s"
+    name = "redirect_list_%[1]s"
+    description = "%[1]s list description"
+    kind = "redirect"
+  }
+
+  resource "cloudflare_ruleset" "%[1]s" {
+	account_id  = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "root"
+    phase       = "http_request_redirect"
+
+    rules {
+      action = "redirect"
+      action_parameters {
+        from_list {
+      	  name = cloudflare_list.list-%[1]s.name
+      	  key = "http.request.full_uri"
+        }
+      }
+      expression = "http.request.full_uri in $redirect_list_%[1]s"
+      description = "Apply redirects from redirect list"
+      enabled = true
+    }
+  }`, rnd, accountID)
 }

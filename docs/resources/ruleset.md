@@ -35,7 +35,7 @@ have inconsistent operations and inadvertently disable rulesets.
 ```terraform
 # Magic Transit
 resource "cloudflare_ruleset" "magic_transit_example" {
-  account_id  = "d41d8cd98f00b204e9800998ecf8427e"
+  account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "account magic transit"
   description = "example magic transit ruleset description"
   kind        = "root"
@@ -50,7 +50,7 @@ resource "cloudflare_ruleset" "magic_transit_example" {
 
 # Zone-level WAF Managed Ruleset
 resource "cloudflare_ruleset" "zone_level_managed_waf" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "managed WAF"
   description = "managed WAF ruleset description"
   kind        = "zone"
@@ -69,7 +69,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
 
 # Zone-level WAF with tag-based overrides
 resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overrides" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "managed WAF with tag-based overrides"
   description = "managed WAF with tag-based overrides ruleset description"
   kind        = "zone"
@@ -102,7 +102,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
 
 # Rewrite the URI path component to a static path
 resource "cloudflare_ruleset" "transform_uri_rule_path" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for URI path"
   description = "change the URI path to a new static path"
   kind        = "zone"
@@ -126,7 +126,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
 
 # Rewrite the URI query component to a static query
 resource "cloudflare_ruleset" "transform_uri_rule_query" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for URI query parameter"
   description = "change the URI query to a new static query"
   kind        = "zone"
@@ -150,7 +150,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
 
 # Rewrite HTTP headers to a modified values
 resource "cloudflare_ruleset" "transform_uri_http_headers" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "transform rule for HTTP headers"
   description = "modify HTTP headers before reaching origin"
   kind        = "zone"
@@ -185,7 +185,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
 
 # HTTP rate limit for an API route
 resource "cloudflare_ruleset" "rate_limiting_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "restrict API requests count"
   description = "apply HTTP rate limiting for a route"
   kind        = "zone"
@@ -211,7 +211,7 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
 
 # Change origin for an API route
 resource "cloudflare_ruleset" "http_origin_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "Change to some origin"
   description = "Change origin for a route"
   kind        = "zone"
@@ -234,7 +234,7 @@ resource "cloudflare_ruleset" "http_origin_example" {
 
 # Custom fields logging
 resource "cloudflare_ruleset" "custom_fields_logging_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "log custom fields"
   description = "add custom fields to logging"
   kind        = "zone"
@@ -266,8 +266,9 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
   }
 }
 
+# Custom cache keys + settings
 resource "cloudflare_ruleset" "cache_settings_example" {
-  zone_id     = "cb029e245cfdd66dc8d2e570d5dd3322"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "set cache settings"
   description = "set cache settings for the request"
   kind        = "zone"
@@ -277,16 +278,16 @@ resource "cloudflare_ruleset" "cache_settings_example" {
     action = "set_cache_settings"
     action_parameters {
       edge_ttl {
-        mode = "override_origin"
+        mode    = "override_origin"
         default = 60
         status_code_ttl {
           status_code = 200
-          value = 50
+          value       = 50
         }
         status_code_ttl {
           status_code_range {
             from = 201
-            to = 300
+            to   = 300
           }
           value = 30
         }
@@ -300,23 +301,23 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       respect_strong_etags = true
       cache_key {
         ignore_query_strings_order = false
-        cache_deception_armor = true
+        cache_deception_armor      = true
         custom_key {
           query_string {
             exclude = ["*"]
           }
           header {
-            include = ["habc", "hdef"]
+            include        = ["habc", "hdef"]
             check_presence = ["habc_t", "hdef_t"]
             exclude_origin = true
           }
           cookie {
-            include = ["cabc", "cdef"]
+            include        = ["cabc", "cdef"]
             check_presence = ["cabc_t", "cdef_t"]
           }
           user {
             device_type = true
-            geo = false
+            geo         = false
           }
           host {
             resolved = true
@@ -325,9 +326,31 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       }
       origin_error_page_passthru = false
     }
-    expression = "true"
+    expression  = "true"
     description = "set cache settings rule"
-    enabled = true
+    enabled     = true
+  }
+}
+
+# Redirects based on a List resource
+resource "cloudflare_ruleset" "redirect_from_list_example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "redirects"
+  description = "Redirect ruleset"
+  kind        = "root"
+  phase       = "http_request_redirect"
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_list {
+        name = "redirect_list"
+        key  = "http.request.full_uri"
+      }
+    }
+    expression  = "http.request.full_uri in $redirect_list"
+    description = "Apply redirects from redirect_list"
+    enabled     = true
   }
 }
 ```
@@ -339,7 +362,7 @@ resource "cloudflare_ruleset" "cache_settings_example" {
 
 - `kind` (String) Type of Ruleset to create. Available values: `custom`, `managed`, `root`, `schema`, `zone`.
 - `name` (String) Name of the ruleset.
-- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
 
 ### Optional
 
@@ -386,6 +409,7 @@ Optional:
 - `cache_key` (Block List, Max: 1) List of cache key parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key))
 - `cookie_fields` (Set of String) List of cookie values to include as part of custom fields logging.
 - `edge_ttl` (Block List, Max: 1) List of edge TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl))
+- `from_list` (Block List, Max: 1) Use a list to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_list))
 - `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
 - `host_header` (String) Host Header that request origin receives.
 - `id` (String) Identifier of the action parameter to modify.
@@ -394,7 +418,7 @@ Optional:
 - `origin` (Block List, Max: 1) List of properties to change request origin. (see [below for nested schema](#nestedblock--rules--action_parameters--origin))
 - `origin_error_page_passthru` (Boolean) Pass-through error page for origin.
 - `overrides` (Block List, Max: 1) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
-- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
 - `products` (Set of String) Products to target with the actions. Available values: `bic`, `hot`, `ratelimit`, `securityLevel`, `uablock`, `waf`, `zonelockdown`.
 - `request_fields` (Set of String) List of request headers to include as part of custom fields logging, in lowercase.
 - `respect_strong_etags` (Boolean) Respect strong ETags.
@@ -430,18 +454,18 @@ Optional:
 - `ignore_query_strings_order` (Boolean) Ignore query strings order.
 
 <a id="nestedblock--rules--action_parameters--cache_key--custom_key"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order`
+### Nested Schema for `rules.action_parameters.cache_key.custom_key`
 
 Optional:
 
-- `cookie` (Block List, Max: 1) Cookie parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--cookie))
-- `header` (Block List, Max: 1) Header parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--header))
-- `host` (Block List, Max: 1) Host parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--host))
-- `query_string` (Block List, Max: 1) Query string parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--query_string))
-- `user` (Block List, Max: 1) User parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--user))
+- `cookie` (Block List, Max: 1) Cookie parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--custom_key--cookie))
+- `header` (Block List, Max: 1) Header parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--custom_key--header))
+- `host` (Block List, Max: 1) Host parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--custom_key--host))
+- `query_string` (Block List, Max: 1) Query string parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--custom_key--query_string))
+- `user` (Block List, Max: 1) User parameters for the custom key. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--custom_key--user))
 
-<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--cookie"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.cookie`
+<a id="nestedblock--rules--action_parameters--cache_key--custom_key--cookie"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.cookie`
 
 Optional:
 
@@ -449,8 +473,8 @@ Optional:
 - `include` (List of String) List of cookies to include in the custom key.
 
 
-<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--header"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.header`
+<a id="nestedblock--rules--action_parameters--cache_key--custom_key--header"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.header`
 
 Optional:
 
@@ -459,16 +483,16 @@ Optional:
 - `include` (List of String) List of headers to include in the custom key.
 
 
-<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--host"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.host`
+<a id="nestedblock--rules--action_parameters--cache_key--custom_key--host"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.host`
 
 Optional:
 
 - `resolved` (Boolean) Resolve hostname to IP address.
 
 
-<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--query_string"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.query_string`
+<a id="nestedblock--rules--action_parameters--cache_key--custom_key--query_string"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.query_string`
 
 Optional:
 
@@ -476,8 +500,8 @@ Optional:
 - `include` (List of String) List of query string parameters to include in the custom key. Conflicts with "exclude".
 
 
-<a id="nestedblock--rules--action_parameters--cache_key--ignore_query_strings_order--user"></a>
-### Nested Schema for `rules.action_parameters.cache_key.ignore_query_strings_order.user`
+<a id="nestedblock--rules--action_parameters--cache_key--custom_key--user"></a>
+### Nested Schema for `rules.action_parameters.cache_key.custom_key.user`
 
 Optional:
 
@@ -523,6 +547,15 @@ Optional:
 
 
 
+<a id="nestedblock--rules--action_parameters--from_list"></a>
+### Nested Schema for `rules.action_parameters.from_list`
+
+Required:
+
+- `key` (String) Expression to use for the list lookup.
+- `name` (String) Name of the list.
+
+
 <a id="nestedblock--rules--action_parameters--headers"></a>
 ### Nested Schema for `rules.action_parameters.headers`
 
@@ -563,7 +596,7 @@ Optional:
 - `status` (String) Defines if the current ruleset-level override enables or disables the ruleset. Available values: `enabled`, `disabled`. Defaults to `""`.
 
 <a id="nestedblock--rules--action_parameters--overrides--categories"></a>
-### Nested Schema for `rules.action_parameters.overrides.status`
+### Nested Schema for `rules.action_parameters.overrides.categories`
 
 Optional:
 
@@ -574,7 +607,7 @@ Optional:
 
 
 <a id="nestedblock--rules--action_parameters--overrides--rules"></a>
-### Nested Schema for `rules.action_parameters.overrides.status`
+### Nested Schema for `rules.action_parameters.overrides.rules`
 
 Optional:
 
@@ -615,7 +648,7 @@ Optional:
 - `query` (Block List, Max: 1) Query string configuration when performing a URL rewrite. (see [below for nested schema](#nestedblock--rules--action_parameters--uri--query))
 
 <a id="nestedblock--rules--action_parameters--uri--path"></a>
-### Nested Schema for `rules.action_parameters.uri.query`
+### Nested Schema for `rules.action_parameters.uri.path`
 
 Optional:
 

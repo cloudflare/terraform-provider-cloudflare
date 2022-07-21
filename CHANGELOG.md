@@ -1,17 +1,83 @@
-## 3.18.0 (Unreleased)
+## 3.20.0 (Unreleased)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_healthcheck: deprecates `notification_email_addresses` and `notification_suspended` in favour of `cloudflare_notification_policy` ([#1789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1789))
+
+NOTES:
+
+* resource/cloudflare_certificate_pack: remove references to long-deprecated dedicated certs (replaced by `advanced`) ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_rule: add support for `account_id` ([#1790](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1790))
+* resource/cloudflare_account_member: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+* resource/cloudflare_api_token: add support for `not_before` and `expires_on` ([#1792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1792))
+* resource/cloudflare_certificate_pack: fix some of the custom hostname docs copy ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_certificate_pack: update the list of allowed certificate authorities ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_zone: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+
+BUG FIXES:
+
+* resource/cloudflare_waiting_room: fix default waiting room `session_duration` and `path` values ([#1766](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1766))
+* resource/cloudflare_zone_lockdown: Fix crash when logging upstream error message ([#1777](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1777))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/golangci/golangci-lint from 1.46.2 to 1.47.0 ([#1786](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1786))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.0 to 1.47.1 ([#1788](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1788))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.4.1 to 0.5.0 ([#1773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1773))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.5.0 to 0.6.0 ([#1780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1780))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.18.0 to 2.19.0 ([#1779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1779))
+
+## 3.19.0 (July 13th, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ipsec_tunnel: add allow_null_cipher to ipsec tunnel ([#1736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1736))
+* resource/cloudflare_record: Validate that DNS record names are non-empty ([#1740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1740))
+* resource/cloudflare_ruleset: add support for `from_list` action parameter when using redirect action ([#1744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1744))
+* resource/cloudflare_waiting_room: Add queueing_method field. ([#1759](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1759))
+* resource/cloudflare_workers_script: add support for `service_binding` bindings ([#1760](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1760))
+* resource/cloudflare_zone_settings_override: Add support for `origin_max_http_version` ([#1755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1755))
+
+BUG FIXES:
+
+* resource/cloudflare_list: fix default values for redirect list updates ([#1746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1746))
+* resource/cloudflare_logpush_job: fix logpush job name validation regex ([#1743](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1743))
+* resource/cloudflare_tunnel_route: Fix incorrect indexing of resource data id attributes ([#1753](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1753))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.3.1 to 1.3.2 ([#1747](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1747))
+* provider: bumps dependabot/fetch-metadata from 1.3.2 to 1.3.2 ([#1748](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1748))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.43.0 to 0.44.0 ([#1757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1757))
+* provider: bumps github.com/hashicorp/terraform-plugin-docs from 0.12.0 to 0.13.0 ([#1763](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1763))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.17.0 to 2.18.0 ([#1758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1758))
+* provider: bumps github.com/stretchr/testify from 1.7.5 to 1.8.0 ([#1738](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1738))
+
+## 3.18.0 (June 29th, 2022)
+
+NOTES:
+
+* resource/cloudflare_ip_list: Deprecated cloudflare_ip_list in favor of cloudflare_list. ([#1700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1700))
 
 FEATURES:
 
 * **New Resource:** `cloudflare_managed_headers` ([#1688](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1688))
+* **New Resource:** `resource/cloudflare_list: Added support for generic list types, including redirect lists.` ([#1700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1700))
 
 ENHANCEMENTS:
 
+* resource/cloudflare_logpush_job: adds support for `kind` attribute ([#1718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1718))
 * resource/cloudflare_logpush_job: validate name attribute ([#1717](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1717))
 * resource/cloudflare_ruleset: add support for set cache settings ([#1701](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1701))
 
 BUG FIXES:
 
 * resource/cloudflare_logpush_job: Fix for optional `filter` attribute ([#1712](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1712))
+* resource/cloudflare_logpush_job: fix unmarhalling job with empty/no filter ([#1723](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1723))
+* resource/cloudflare_record: ensure trailing `.` in `value` don't cause surious diffs ([#1713](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1713))
 
 ## 3.17.0 (June 15th, 2022)
 

@@ -63,7 +63,7 @@ resource "cloudflare_logpush_job" "http_requests" {
 # must match identically in all resources. Otherwise the challenge validation
 # will fail.
 resource "cloudflare_logpush_ownership_challenge" "ownership_challenge" {
-  zone_id          = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id          = "0da42c8d2132a9ddaf714f9e7c920711"
   destination_conf = "s3://my-bucket-path?region=us-west-2"
 }
 
@@ -74,7 +74,7 @@ data "aws_s3_bucket_object" "challenge_file" {
 
 resource "cloudflare_logpush_job" "example_job" {
   enabled             = true
-  zone_id             = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id             = "0da42c8d2132a9ddaf714f9e7c920711"
   name                = "My-logpush-job"
   logpull_options     = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
   destination_conf    = "s3://my-bucket-path?region=us-west-2"
@@ -87,7 +87,7 @@ resource "cloudflare_logpush_job" "example_job" {
 # 1. Create `cloudflare_logpush_ownership_challenge` resource
 
 resource "cloudflare_logpush_ownership_challenge" "ownership_challenge" {
-  zone_id          = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id          = "0da42c8d2132a9ddaf714f9e7c920711"
   destination_conf = "s3://my-bucket-path?region=us-west-2"
 }
 
@@ -95,7 +95,7 @@ resource "cloudflare_logpush_ownership_challenge" "ownership_challenge" {
 # 3. Create the `cloudflare_logpush_job` substituting in your manual `ownership_challenge`.
 resource "cloudflare_logpush_job" "example_job" {
   enabled             = true
-  zone_id             = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id             = "0da42c8d2132a9ddaf714f9e7c920711"
   name                = "My-logpush-job"
   logpull_options     = "fields=RayID,ClientIP,EdgeStartTimestamp&timestamps=rfc3339"
   destination_conf    = "s3://my-bucket-path?region=us-west-2"
@@ -118,8 +118,9 @@ resource "cloudflare_logpush_job" "example_job" {
 - `enabled` (Boolean) Whether to enable the job.
 - `filter` (String) Use filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/logpush-api-configuration/filters/).
 - `frequency` (String) A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. Available values: `high`, `low`. Defaults to `high`.
+- `kind` (String) The kind of logpush job to create. Available values: `edge`, `instant-logs`, `""`.
 - `logpull_options` (String) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpull options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
-- `name` (String) The name of the logpush job to create. Must match the regular expression `^[a-zA-Z0-9\-\.]*$`.
+- `name` (String) The name of the logpush job to create.
 - `ownership_challenge` (String) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage, Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
 - `zone_id` (String) The zone identifier to target for the resource.
 

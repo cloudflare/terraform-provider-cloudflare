@@ -693,6 +693,26 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Optional:    true,
 									Description: "Pass-through error page for origin",
 								},
+								"from_list": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "Use a list to lookup information for the action.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"name": {
+												Type:        schema.TypeString,
+												Description: "Name of the list.",
+												Required:    true,
+											},
+											"key": {
+												Type:        schema.TypeString,
+												Description: "Expression to use for the list lookup.",
+												Required:    true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},

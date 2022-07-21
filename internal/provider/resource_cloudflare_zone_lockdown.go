@@ -147,7 +147,7 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 	r, err := client.UpdateZoneLockdown(ctx, zoneID, d.Id(), newZoneLockdown)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating zone lockdown for zone %q: %w", d.Get("zone").(string), err))
+		return diag.FromErr(fmt.Errorf("error updating zone lockdown for zone %q: %w", zoneID, err))
 	}
 
 	if r.Result.ID == "" {

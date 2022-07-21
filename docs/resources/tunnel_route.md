@@ -14,7 +14,7 @@ Provides a resource, that manages Cloudflare tunnel routes for Zero Trust. Tunne
 ```terraform
 # Tunnel route
 resource "cloudflare_tunnel_route" "example" {
-  account_id         = "c4a7362d577a6c3019a474fd6f485821"
+  account_id         = "f037e56e89293a057740de681ac9abbe"
   tunnel_id          = "f70ff985-a4ef-4643-bbbc-4a0ed4fc8415"
   network            = "192.0.2.24/32"
   comment            = "New tunnel route for documentation"
@@ -23,13 +23,13 @@ resource "cloudflare_tunnel_route" "example" {
 
 # Tunnel with tunnel route
 resource "cloudflare_argo_tunnel" "tunnel" {
-  account_id = "c4a7362d577a6c3019a474fd6f485821"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "my_tunnel"
   secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
 }
 
 resource "cloudflare_tunnel_route" "example" {
-  account_id         = "c4a7362d577a6c3019a474fd6f485821"
+  account_id         = "f037e56e89293a057740de681ac9abbe"
   tunnel_id          = cloudflare_argo_tunnel.tunnel.id
   network            = "192.0.2.24/32"
   comment            = "New tunnel route for documentation"
@@ -59,5 +59,5 @@ resource "cloudflare_tunnel_route" "example" {
 Import is supported using the following syntax:
 ```shell
 # Use account ID, network CIDR and virtual network ID.
-$ terraform import cloudflare_tunnel_route <account_id/<network_cidr>/<virtual_network_id>
+$ terraform import cloudflare_tunnel_route.example <account_id/<network_cidr>/<virtual_network_id>
 ```

@@ -98,9 +98,13 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		newRecord.TTL = ttl.(int)
 	}
 
+	if newRecord.Name == "" {
+		return diag.FromErr(fmt.Errorf("record on zone %s must not have an empty name (use @ for the zone apex)", newRecord.ZoneID))
+	}
+
 	// Validate value based on type
-	if err := validateRecordName(newRecord.Type, newRecord.Content); err != nil {
-		return diag.FromErr(fmt.Errorf("error validating record name %q: %w", newRecord.Name, err))
+	if err := validateRecordContent(newRecord.Type, newRecord.Content); err != nil {
+		return diag.FromErr(fmt.Errorf("error validating record content of %q: %w", newRecord.Name, err))
 	}
 
 	var proxiedVal *bool
@@ -185,8 +189,8 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 
 	record, err := client.DNSRecord(ctx, zoneID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "Invalid dns record identifier") ||
-			strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Warn(ctx, fmt.Sprintf("Removing record from state because it's not found in API"))
 			d.SetId("")
 			return nil

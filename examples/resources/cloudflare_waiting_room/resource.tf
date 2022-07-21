@@ -1,6 +1,6 @@
 # Waiting Room
 resource "cloudflare_waiting_room" "example" {
-  zone_id              = "ae36f999674d196762efcc5abb06b345"
+  zone_id              = "0da42c8d2132a9ddaf714f9e7c920711"
   name                 = "foo"
   host                 = "foo.example.com"
   path                 = "/"

@@ -239,13 +239,29 @@ func getRawValue(key string, value cty.Value) cty.Value {
 // renderAvailableDocumentationValuesStringSlice takes a slice of strings and
 // formats it for documentation output use.
 //
-// Example: ["foo", "bar", "baz"] -> `"foo"`, `"bar"`, `"baz"`.
+// Example: ["foo", "bar", "baz"] -> `foo`, `bar`, `baz`.
 func renderAvailableDocumentationValuesStringSlice(s []string) string {
 	output := ""
 	if s != nil && len(s) > 0 {
 		values := make([]string, len(s))
 		for i, c := range s {
 			values[i] = fmt.Sprintf("`%s`", c)
+		}
+		output = fmt.Sprintf("Available values: %s", strings.Join(values, ", "))
+	}
+	return output
+}
+
+// renderAvailableDocumentationValuesIntSlice takes a slice of ints and
+// formats it for documentation output use.
+//
+// Example: [1, 2, 3] -> `1`, `2`, `3`.
+func renderAvailableDocumentationValuesIntSlice(s []int) string {
+	output := ""
+	if s != nil && len(s) > 0 {
+		values := make([]string, len(s))
+		for i, c := range s {
+			values[i] = fmt.Sprintf("`%d`", c)
 		}
 		output = fmt.Sprintf("Available values: %s", strings.Join(values, ", "))
 	}

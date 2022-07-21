@@ -14,7 +14,7 @@ Provides a Cloudflare Waiting Room Event resource.
 ```terraform
 # Waiting Room Event
 resource "cloudflare_waiting_room_event" "example" {
-  zone_id              = "ae36f999674d196762efcc5abb06b345"
+  zone_id              = "0da42c8d2132a9ddaf714f9e7c920711"
   waiting_room_id      = "d41d8cd98f00b204e9800998ecf8427e"
   name                 = "foo"
   event_start_time     = "2006-01-02T15:04:05Z"
