@@ -124,23 +124,27 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			},
 		},
 		"saas_app": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "SaaS configuration for the Access Application. See below for reference structure.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"sp_entity_id": {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "A globally unique name for an identity or service provider.",
 					},
 					"consumer_service_url": {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
 					},
 					"name_id_format": {
 						Type:         schema.TypeString,
 						Optional:     true,
 						Default:      "email",
 						ValidateFunc: validation.StringInSlice([]string{"email", "id"}, false),
+						Description:  "The format of the name identifier sent to the SaaS application.",
 					},
 				},
 			},

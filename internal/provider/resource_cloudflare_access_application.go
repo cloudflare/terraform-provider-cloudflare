@@ -65,8 +65,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	}
 
 	if _, ok := d.GetOk("saas_app"); ok {
-		saasApp := convertSaasSchemaToStruct(d)
-		newAccessApplication.SaasApplication = saasApp
+		newAccessApplication.SaasApplication = convertSaasSchemaToStruct(d)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
