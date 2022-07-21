@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareTeamsListBasic(t *testing.T) {
+func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -27,6 +27,7 @@ func TestAccCloudflareTeamsListBasic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -47,7 +48,7 @@ func TestAccCloudflareTeamsListBasic(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareTeamsListReordered(t *testing.T) {
+func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -62,6 +63,7 @@ func TestAccCloudflareTeamsListReordered(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
