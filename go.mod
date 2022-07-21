@@ -9,7 +9,7 @@ require (
 	github.com/client9/misspell v0.3.4
 	github.com/cloudflare/cloudflare-go v0.44.0
 	github.com/fatih/color v1.13.0 // indirect
-	github.com/golangci/golangci-lint v1.47.1
+	github.com/golangci/golangci-lint v1.47.2
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
