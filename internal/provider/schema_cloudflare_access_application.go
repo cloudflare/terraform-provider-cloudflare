@@ -37,10 +37,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Description: "Friendly name of the Access Application.",
 		},
 		"domain": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true, // REVIEW
-			// Required:    true,
+			Type:        schema.TypeString,
+			Computed:    true,
 			Description: "The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.",
 		},
 		"type": {
@@ -126,7 +124,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 		"saas_app": {
 			Type:        schema.TypeList,
 			Optional:    true,
-			Description: "SaaS configuration for the Access Application. See below for reference structure.",
+			MaxItems:    1,
+			Description: "SaaS configuration for the Access Application.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"sp_entity_id": {
