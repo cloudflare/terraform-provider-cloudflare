@@ -49,6 +49,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -108,6 +109,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 func TestAccCloudflareAccessApplication_WithSass(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -215,6 +217,7 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
