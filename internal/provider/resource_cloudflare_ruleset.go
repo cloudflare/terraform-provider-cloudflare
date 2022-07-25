@@ -516,7 +516,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"request_fields":             requestFields,
 				"response_fields":            responseFields,
 				"cookie_fields":              cookieFields,
-				"bypass_cache":               r.ActionParameters.BypassCache,
+				"cache":                      r.ActionParameters.Cache,
 				"edge_ttl":                   edgeTTLFields,
 				"browser_ttl":                browserTTLFields,
 				"serve_stale":                serveStaleFields,
@@ -772,9 +772,9 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							}
 						}
 
-					case "bypass_cache":
-						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.bypass_cache", rulesCounter)); ok {
-							rule.ActionParameters.BypassCache = cloudflare.BoolPtr(value.(bool))
+					case "cache":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache", rulesCounter)); ok {
+							rule.ActionParameters.Cache = cloudflare.BoolPtr(value.(bool))
 						}
 
 					case "edge_ttl":
