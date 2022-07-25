@@ -7,6 +7,7 @@ BREAKING CHANGES:
 NOTES:
 
 * resource/cloudflare_certificate_pack: remove references to long-deprecated dedicated certs (replaced by `advanced`) ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_rulesets: Cache Rules use cache flag instead of bypass_cache ([#1785](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1785))
 
 ENHANCEMENTS:
 
@@ -24,6 +25,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.44.0 to 0.45.0 ([#1793](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1793))
 * provider: bumps github.com/golangci/golangci-lint from 1.46.2 to 1.47.0 ([#1786](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1786))
 * provider: bumps github.com/golangci/golangci-lint from 1.47.0 to 1.47.1 ([#1788](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1788))
 * provider: bumps github.com/golangci/golangci-lint from 1.47.1 to 1.47.2 ([#1795](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1795))
