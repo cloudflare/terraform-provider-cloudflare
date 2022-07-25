@@ -251,3 +251,50 @@ func testAPITokenConfigAllowDeny(resourceID, permissionID, zoneID string, allowA
 		}
 		`, resourceID, permissionID, add)
 }
+
+func TestAccAPIToken_TokenTTL(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// endpoint does not yet support the API tokens without an explicit scope.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := "cloudflare_api_token." + rnd
+	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAPITokenWithTTL(rnd, permissionID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "not_before", "2018-07-01T05:20:00Z"),
+					resource.TestCheckResourceAttr(name, "expires_on", "2032-01-01T00:00:00Z"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCloudflareAPITokenWithTTL(rnd string, permissionID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_api_token" "%[1]s" {
+		name = "%[1]s"
+
+		policy {
+			effect = "allow"
+			permission_groups = [ "%[2]s" ]
+			resources = { "com.cloudflare.api.account.zone.*" = "*" }
+		}
+
+		not_before = "2018-07-01T05:20:00Z"
+		expires_on = "2032-01-01T00:00:00Z"
+	}
+`, rnd, permissionID)
+}
