@@ -255,6 +255,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				serveStaleFields       []map[string]interface{}
 				cacheKeyFields         []map[string]interface{}
 				fromListFields         []map[string]interface{}
+				fromValueFields        []map[string]interface{}
 			)
 			actionParameterRules := make(map[string]string)
 
@@ -491,9 +492,20 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			}
 
 			if !reflect.ValueOf(r.ActionParameters.FromList).IsNil() {
-				fromListFields = append(origin, map[string]interface{}{
+				fromListFields = append(fromListFields, map[string]interface{}{
 					"name": r.ActionParameters.FromList.Name,
 					"key":  r.ActionParameters.FromList.Key,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.FromValue).IsNil() {
+				fromValueFields = append(fromValueFields, map[string]interface{}{
+					"status_code": r.ActionParameters.FromValue.StatusCode,
+					"target_url": []interface{}{map[string]interface{}{
+						"value":      r.ActionParameters.FromValue.TargetURL.Value,
+						"expression": r.ActionParameters.FromValue.TargetURL.Expression,
+					}},
+					"preserve_query_string": r.ActionParameters.FromValue.PreserveQueryString,
 				})
 			}
 
@@ -524,6 +536,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"cache_key":                  cacheKeyFields,
 				"origin_error_page_passthru": r.ActionParameters.OriginErrorPagePassthru,
 				"from_list":                  fromListFields,
+				"from_value":                 fromValueFields,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -1052,6 +1065,27 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.FromList = &cloudflare.RulesetRuleActionParametersFromList{
 								Name: pValue.([]interface{})[i].(map[string]interface{})["name"].(string),
 								Key:  pValue.([]interface{})[i].(map[string]interface{})["key"].(string),
+							}
+						}
+
+					case "from_value":
+						for i := range pValue.([]interface{}) {
+							var targetURL cloudflare.RulesetRuleActionParametersTargetURL
+							for _, pValue := range pValue.([]interface{})[i].(map[string]interface{})["target_url"].([]interface{}) {
+								for pKey, pValue := range pValue.(map[string]interface{}) {
+									switch pKey {
+									case "value":
+										targetURL.Value = pValue.(string)
+									case "expression":
+										targetURL.Expression = pValue.(string)
+									}
+								}
+							}
+
+							rule.ActionParameters.FromValue = &cloudflare.RulesetRuleActionParametersFromValue{
+								StatusCode:          uint16(pValue.([]interface{})[i].(map[string]interface{})["status_code"].(int)),
+								TargetURL:           targetURL,
+								PreserveQueryString: pValue.([]interface{})[i].(map[string]interface{})["preserve_query_string"].(bool),
 							}
 						}
 
