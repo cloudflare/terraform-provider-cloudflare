@@ -153,22 +153,6 @@ func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 				},
 			},
 		},
-		"notification_suspended": {
-			Description: "Whether the notifications are suspended or not. Useful for maintenance periods.",
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Deprecated:  "Use `cloudflare_notification_policy` instead.",
-		},
-		"notification_email_addresses": {
-			Description: "A list of email addresses we want to send the notifications to. Deprecated, use cloudflare_notification_policy instead.",
-			Type:        schema.TypeList,
-			Optional:    true,
-			Elem: &schema.Schema{
-				Type: schema.TypeString,
-			},
-			Deprecated: "Use `cloudflare_notification_policy` instead.",
-		},
 		"created_on": {
 			Description: "Creation time.",
 			Type:        schema.TypeString,

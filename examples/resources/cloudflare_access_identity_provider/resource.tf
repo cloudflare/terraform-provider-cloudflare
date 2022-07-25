@@ -39,5 +39,6 @@ resource "cloudflare_access_identity_provider" "okta" {
     client_id     = "example"
     client_secret = "secret_key"
     api_token     = "okta_api_token"
+    okta_account  = "https://example.com"
   }
 }

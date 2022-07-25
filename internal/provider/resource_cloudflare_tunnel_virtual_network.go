@@ -24,7 +24,7 @@ func resourceCloudflareTunnelVirtualNetwork() *schema.Resource {
 		},
 		Description: `
 Provides a resource, that manages Cloudflare tunnel virtual networks for Zero Trust. Tunnel
-virtual networks are used for segregation of Tunnel IP Routes via Virtualized Networks to 
+virtual networks are used for segregation of Tunnel IP Routes via Virtualized Networks to
 handle overlapping private IPs in your origins.`,
 	}
 }
@@ -33,8 +33,7 @@ func resourceCloudflareTunnelVirtualNetworkRead(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	tunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(ctx, cloudflare.TunnelVirtualNetworksListParams{
-		AccountID: accountID,
+	tunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.TunnelVirtualNetworksListParams{
 		IsDeleted: cloudflare.BoolPtr(false),
 		ID:        d.Id(),
 	})
@@ -64,9 +63,9 @@ func resourceCloudflareTunnelVirtualNetworkRead(ctx context.Context, d *schema.R
 func resourceCloudflareTunnelVirtualNetworkCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	name := d.Get("name").(string)
+	accountID := d.Get("account_id").(string)
 
 	resource := cloudflare.TunnelVirtualNetworkCreateParams{
-		AccountID: d.Get("account_id").(string),
 		Name:      name,
 		IsDefault: d.Get("is_default_network").(bool),
 	}
@@ -75,7 +74,7 @@ func resourceCloudflareTunnelVirtualNetworkCreate(ctx context.Context, d *schema
 		resource.Comment = comment
 	}
 
-	newTunnelVirtualNetwork, err := client.CreateTunnelVirtualNetwork(ctx, resource)
+	newTunnelVirtualNetwork, err := client.CreateTunnelVirtualNetwork(ctx, cloudflare.AccountIdentifier(accountID), resource)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Tunnel Virtual Network %q: %w", name, err))
 	}
@@ -87,9 +86,9 @@ func resourceCloudflareTunnelVirtualNetworkCreate(ctx context.Context, d *schema
 
 func resourceCloudflareTunnelVirtualNetworkUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
 
 	resource := cloudflare.TunnelVirtualNetworkUpdateParams{
-		AccountID:        d.Get("account_id").(string),
 		Name:             d.Get("name").(string),
 		IsDefaultNetwork: cloudflare.BoolPtr(d.Get("is_default_network").(bool)),
 		VnetID:           d.Id(),
@@ -99,7 +98,7 @@ func resourceCloudflareTunnelVirtualNetworkUpdate(ctx context.Context, d *schema
 		resource.Comment = comment
 	}
 
-	_, err := client.UpdateTunnelVirtualNetwork(ctx, resource)
+	_, err := client.UpdateTunnelVirtualNetwork(ctx, cloudflare.AccountIdentifier(accountID), resource)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Tunnel Virtual Network %q: %w", d.Id(), err))
 	}
@@ -109,11 +108,9 @@ func resourceCloudflareTunnelVirtualNetworkUpdate(ctx context.Context, d *schema
 
 func resourceCloudflareTunnelVirtualNetworkDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
 
-	err := client.DeleteTunnelVirtualNetwork(ctx, cloudflare.TunnelVirtualNetworkDeleteParams{
-		AccountID: d.Get("account_id").(string),
-		VnetID:    d.Id(),
-	})
+	err := client.DeleteTunnelVirtualNetwork(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Tunnel Virtual Network %q: %w", d.Id(), err))
 	}

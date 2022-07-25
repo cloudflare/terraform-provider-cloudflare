@@ -60,6 +60,14 @@ func buildAPIToken(d *schema.ResourceData) cloudflare.APIToken {
 			token.Condition.RequestIP.NotIn = ipsNotIn
 		}
 	}
+	if before, ok := d.GetOk("not_before"); ok {
+		notBefore, _ := time.Parse(time.RFC3339Nano, before.(string))
+		token.NotBefore = &notBefore
+	}
+	if expires, ok := d.GetOk("expires_on"); ok {
+		expiresOn, _ := time.Parse(time.RFC3339Nano, expires.(string))
+		token.ExpiresOn = &expiresOn
+	}
 
 	return token
 }
@@ -161,6 +169,14 @@ func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("issued_on", t.IssuedOn.Format(time.RFC3339Nano))
 	d.Set("modified_on", t.ModifiedOn.Format(time.RFC3339Nano))
 
+	if t.ExpiresOn != nil {
+		d.Set("expires_on", t.ExpiresOn.Format(time.RFC3339Nano))
+	}
+
+	if t.NotBefore != nil {
+		d.Set("not_before", t.NotBefore.Format(time.RFC3339Nano))
+	}
+
 	var ipIn []string
 	var ipNotIn []string
 	if t.Condition != nil && t.Condition.RequestIP != nil && t.Condition.RequestIP.In != nil {
@@ -193,7 +209,7 @@ func resourceCloudflareApiTokenUpdate(ctx context.Context, d *schema.ResourceDat
 
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare API Token: name %s", name))
 
-	t, err := client.UpdateAPIToken(ctx, tokenID, t)
+	_, err := client.UpdateAPIToken(ctx, tokenID, t)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Cloudflare API Token %q: %w", name, err))
 	}

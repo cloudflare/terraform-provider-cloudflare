@@ -207,10 +207,7 @@ func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundList, err := client.GetList(context.Background(), cloudflare.ListGetParams{
-			AccountID: accountID,
-			ID:        rs.Primary.ID,
-		})
+		foundList, err := client.GetList(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
