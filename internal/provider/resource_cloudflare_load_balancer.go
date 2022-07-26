@@ -233,8 +233,9 @@ var regionPoolElem = &schema.Resource{
 }
 
 var localPoolElems = map[string]*schema.Resource{
-	"pop":    popPoolElem,
-	"region": regionPoolElem,
+	"pop":     popPoolElem,
+	"region":  regionPoolElem,
+	"country": countryPoolElem,
 }
 
 func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -325,7 +326,6 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -423,7 +423,8 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 
 	loadBalancer, err := client.LoadBalancerDetails(ctx, zoneID, loadBalancerID)
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer %s in zone %s not found", loadBalancerID, zoneID))
 			d.SetId("")
 			return nil
