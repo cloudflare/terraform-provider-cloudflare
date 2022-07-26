@@ -182,7 +182,6 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 		"http_only_cookie_attribute": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Default:     true,
 			Description: "Option to add the `HttpOnly` cookie flag to access tokens.",
 		},
 		"same_site_cookie_attribute": {
