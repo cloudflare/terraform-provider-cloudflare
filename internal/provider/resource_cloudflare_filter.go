@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -79,7 +80,8 @@ func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, m
 	tflog.Debug(ctx, fmt.Sprintf("filter error: %#v", err))
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Filter %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

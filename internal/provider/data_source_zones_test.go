@@ -242,27 +242,31 @@ data "cloudflare_zones" "%[2]s" {
 `, testZones, rnd)
 }
 
-const testZones = `resource "cloudflare_zone" "baa_com" {
+var testZones = fmt.Sprintf(`resource "cloudflare_zone" "baa_com" {
+  account_id = "%[1]s"
   zone       = "baa-com.cfapi.net"
   paused     = false
   jump_start = false
 }
 
 resource "cloudflare_zone" "baa_org" {
+  account_id = "%[1]s"
   zone       = "baa-org.cfapi.net"
   paused     = true
   jump_start = false
 }
 
 resource "cloudflare_zone" "baa_net" {
+  account_id = "%[1]s"
   zone       = "baa-net.cfapi.net"
   paused     = true
   jump_start = false
 }
 
 resource "cloudflare_zone" "foo_net" {
+  account_id = "%[1]s"
   zone       = "foo-net.cfapi.net"
   paused     = false
   jump_start = false
   depends_on = ["cloudflare_zone.baa_net", "cloudflare_zone.baa_org", "cloudflare_zone.baa_com"]
-}`
+}`, accountID)

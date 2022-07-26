@@ -382,7 +382,8 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 
 	loadBalancer, err := client.LoadBalancerDetails(ctx, zoneID, loadBalancerID)
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer %s in zone %s not found", loadBalancerID, zoneID))
 			d.SetId("")
 			return nil

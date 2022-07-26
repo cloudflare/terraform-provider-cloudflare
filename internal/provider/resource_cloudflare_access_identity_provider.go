@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -42,7 +43,8 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Access Identity Provider %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
