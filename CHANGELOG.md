@@ -11,6 +11,7 @@ NOTES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: Add support for Saas applications ([#1762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1762))
 * resource/cloudflare_access_rule: add support for `account_id` ([#1790](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1790))
 * resource/cloudflare_account_member: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
 * resource/cloudflare_api_token: add support for `not_before` and `expires_on` ([#1792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1792))
