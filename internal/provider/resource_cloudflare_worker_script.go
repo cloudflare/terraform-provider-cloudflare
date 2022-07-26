@@ -155,7 +155,8 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		// If the resource is deleted, we should set the ID to "" and not
 		// return an error according to the terraform spec
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			d.SetId("")
 			return nil
 		}
@@ -292,7 +293,8 @@ func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.Resourc
 	if err != nil {
 		// If the resource is already deleted, we should return without an error
 		// according to the terraform spec
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			return nil
 		}
 

@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -61,7 +62,8 @@ func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.Reso
 
 	devicePostureRule, err := client.DevicePostureRule(ctx, accountID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Device Posture Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

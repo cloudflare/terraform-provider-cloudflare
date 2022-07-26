@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
@@ -109,8 +110,9 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 
 	pageRule, err := client.PageRule(ctx, zoneID, d.Id())
 	if err != nil {
+		var notFoundError *cloudflare.NotFoundError
 		if strings.Contains(err.Error(), "Invalid Page Rule identifier") || // api bug - this indicates non-existing resource
-			strings.Contains(err.Error(), "HTTP status 404") {
+			errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Page Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

@@ -2,9 +2,9 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"strings"
 
 	"golang.org/x/net/idna"
 
@@ -150,7 +150,8 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 	tflog.Debug(ctx, fmt.Sprintf("ZoneDetails error: %#v", err))
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Zone %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
