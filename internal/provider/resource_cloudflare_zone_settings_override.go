@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	"strings"
-
 	"time"
 
 	"reflect"
@@ -111,7 +109,8 @@ func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.R
 
 	zone, err := client.ZoneDetails(ctx, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Zone %q not found", d.Id()))
 			d.SetId("")
 			return nil

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"strings"
 
 	"time"
 
@@ -218,7 +217,8 @@ func resourceCloudflareLoadBalancerPoolRead(ctx context.Context, d *schema.Resou
 
 	loadBalancerPool, err := client.LoadBalancerPoolDetails(ctx, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer pool %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

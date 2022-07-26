@@ -52,7 +52,6 @@ func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *sche
 	}
 
 	d.SetId(accessIdentityProvider.ID)
-	d.Set("id", accessIdentityProvider.ID)
 	d.Set("name", accessIdentityProvider.Name)
 	d.Set("type", accessIdentityProvider.Type)
 

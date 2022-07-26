@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -37,8 +38,8 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 
 	member, err := client.AccountMember(ctx, accountID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "Member not found") ||
-			strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Warn(ctx, fmt.Sprintf("Removing account member from state because it's not present in API"))
 			d.SetId("")
 			return nil

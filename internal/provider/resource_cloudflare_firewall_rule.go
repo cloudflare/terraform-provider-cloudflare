@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -95,7 +96,8 @@ func resourceCloudflareFirewallRuleRead(ctx context.Context, d *schema.ResourceD
 	tflog.Debug(ctx, fmt.Sprintf("firewallRule error: %#v", err))
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Firewall Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

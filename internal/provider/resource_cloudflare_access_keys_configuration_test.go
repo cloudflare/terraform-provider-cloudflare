@@ -24,7 +24,10 @@ func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
+		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -61,7 +64,10 @@ func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
+		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
