@@ -33,32 +33,19 @@ func resourceCloudflareManagedHeadersCreate(ctx context.Context, d *schema.Resou
 func resourceCloudflareManagedHeadersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{})
+
+	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
+		Status: "enabled",
+	})
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading managed headers: %w", err))
 	}
 
-	// Filter out headers that are not enabled. This will eventually move into
-	// the API endpoint or the SDK.
-	var enabledRequestHeaders []cloudflare.ManagedHeader
-	var enabledResponseHeaders []cloudflare.ManagedHeader
-
-	for _, header := range headers.ManagedRequestHeaders {
-		if header.Enabled {
-			enabledRequestHeaders = append(enabledRequestHeaders, header)
-		}
-	}
-
-	for _, header := range headers.ManagedResponseHeaders {
-		if header.Enabled {
-			enabledResponseHeaders = append(enabledResponseHeaders, header)
-		}
-	}
-
-	if err := d.Set("managed_request_headers", buildResourceFromManagedHeaders(enabledRequestHeaders)); err != nil {
+	if err := d.Set("managed_request_headers", buildResourceFromManagedHeaders(headers.ManagedRequestHeaders)); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("managed_response_headers", buildResourceFromManagedHeaders(enabledResponseHeaders)); err != nil {
+	if err := d.Set("managed_response_headers", buildResourceFromManagedHeaders(headers.ManagedResponseHeaders)); err != nil {
 		return diag.FromErr(err)
 	}
 	return nil
@@ -148,7 +135,10 @@ func resourceCloudflareManagedHeadersDelete(ctx context.Context, d *schema.Resou
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{})
+	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
+		Status: "enabled",
+	})
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading managed headers: %w", err))
 	}
