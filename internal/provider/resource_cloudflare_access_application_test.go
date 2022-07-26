@@ -24,6 +24,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -38,6 +39,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+					resource.TestCheckResourceAttr(name, "saas_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 				),
 			},
@@ -51,6 +53,7 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -66,6 +69,7 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 				),
 			},
@@ -79,6 +83,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -103,12 +108,43 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "saas"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "saas_app.#", "1"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.sp_entity_id", "saas-app.example"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -135,6 +171,7 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -161,6 +198,7 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -188,6 +226,7 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -215,6 +254,7 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -241,6 +281,7 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -267,6 +308,7 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -293,6 +335,7 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -319,6 +362,7 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -345,6 +389,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -395,6 +440,23 @@ resource "cloudflare_access_application" "%[1]s" {
   auto_redirect_to_identity = false
 }
 `, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  type             = "saas"
+  session_duration = "24h"
+  saas_app {
+    consumer_service_url = "https://saas-app.example/sso/saml/consume"
+    sp_entity_id  = "saas-app.example"
+    name_id_format =  "email"
+  }
+  auto_redirect_to_identity = false
+}
+`, rnd, accountID)
 }
 
 func testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain string) string {

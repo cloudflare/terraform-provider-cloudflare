@@ -1,15 +1,23 @@
 ## 3.20.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_healthcheck: deprecates `notification_email_addresses` and `notification_suspended` in favour of `cloudflare_notification_policy` ([#1789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1789))
+
 NOTES:
 
 * resource/cloudflare_certificate_pack: remove references to long-deprecated dedicated certs (replaced by `advanced`) ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_rulesets: Cache Rules use cache flag instead of bypass_cache ([#1785](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1785))
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: Add support for Saas applications ([#1762](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1762))
 * resource/cloudflare_access_rule: add support for `account_id` ([#1790](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1790))
 * resource/cloudflare_account_member: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
+* resource/cloudflare_api_token: add support for `not_before` and `expires_on` ([#1792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1792))
 * resource/cloudflare_certificate_pack: fix some of the custom hostname docs copy ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
 * resource/cloudflare_certificate_pack: update the list of allowed certificate authorities ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_ruleset: add support for `from_value` action parameter when using redirect action ([#1781](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1781))
 * resource/cloudflare_zone: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
 
 BUG FIXES:
@@ -19,10 +27,13 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.44.0 to 0.45.0 ([#1793](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1793))
 * provider: bumps github.com/golangci/golangci-lint from 1.46.2 to 1.47.0 ([#1786](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1786))
 * provider: bumps github.com/golangci/golangci-lint from 1.47.0 to 1.47.1 ([#1788](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1788))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.1 to 1.47.2 ([#1795](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1795))
 * provider: bumps github.com/hashicorp/terraform-plugin-log from 0.4.1 to 0.5.0 ([#1773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1773))
 * provider: bumps github.com/hashicorp/terraform-plugin-log from 0.5.0 to 0.6.0 ([#1780](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1780))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.6.0 to 0.7.0 ([#1798](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1798))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.18.0 to 2.19.0 ([#1779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1779))
 
 ## 3.19.0 (July 13th, 2022)
