@@ -31,7 +31,7 @@ func testSweepCloudflareManagedHeaders(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-  managedHeaders, err := client.ListZoneManagedHeaders(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
+	managedHeaders, err := client.ListZoneManagedHeaders(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
 		Status: "enabled",
 	})
 	if err != nil {

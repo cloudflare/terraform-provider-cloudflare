@@ -33,11 +33,11 @@ func resourceCloudflareManagedHeadersCreate(ctx context.Context, d *schema.Resou
 func resourceCloudflareManagedHeadersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
-  
+
 	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
 		Status: "enabled",
 	})
-  
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading managed headers: %w", err))
 	}
@@ -135,7 +135,7 @@ func resourceCloudflareManagedHeadersDelete(ctx context.Context, d *schema.Resou
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-  headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
+	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
 		Status: "enabled",
 	})
 
