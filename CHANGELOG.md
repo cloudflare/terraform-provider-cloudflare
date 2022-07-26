@@ -6,8 +6,11 @@ BREAKING CHANGES:
 
 NOTES:
 
+* resource/cloudflare_access_rule: this resource now supports an explicit `account_id` instead of the implied one from the client configuration. You should update your configuration to include `account_id` and remove permadiffs. ([#1790](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1790))
+* resource/cloudflare_account_member: this resource now supports an explicit `account_id` instead of the implied one from the client configuration. You should update your configuration to include `account_id` and remove permadiffs. ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
 * resource/cloudflare_certificate_pack: remove references to long-deprecated dedicated certs (replaced by `advanced`) ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
 * resource/cloudflare_rulesets: Cache Rules use cache flag instead of bypass_cache ([#1785](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1785))
+* resource/cloudflare_zone: this resource now supports an explicit `account_id` instead of the implied one from the client configuration. You should update your configuration to include `account_id` and remove permadiffs. ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
 
 ENHANCEMENTS:
 
