@@ -20,6 +20,7 @@ ENHANCEMENTS:
 * resource/cloudflare_api_token: add support for `not_before` and `expires_on` ([#1792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1792))
 * resource/cloudflare_certificate_pack: fix some of the custom hostname docs copy ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
 * resource/cloudflare_certificate_pack: update the list of allowed certificate authorities ([#1778](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1778))
+* resource/cloudflare_load_balancer: Add support for LB country pools ([#1797](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1797))
 * resource/cloudflare_managed_headers: swap filtering to use API instead of custom logic ([#1765](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1765))
 * resource/cloudflare_ruleset: add support for `from_value` action parameter when using redirect action ([#1781](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1781))
 * resource/cloudflare_zone: add support for `account_id` ([#1767](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1767))
