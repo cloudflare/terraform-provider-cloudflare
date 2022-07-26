@@ -28,6 +28,11 @@ resource "cloudflare_load_balancer" "bar" {
     pool_ids = [cloudflare_load_balancer_pool.foo.id]
   }
 
+  country_pools {
+    country  = "US"
+    pool_ids = [cloudflare_load_balancer_pool.foo.id]
+  }
+
   region_pools {
     region   = "WNAM"
     pool_ids = [cloudflare_load_balancer_pool.foo.id]
@@ -68,7 +73,8 @@ The following arguments are supported:
 - `steering_policy` - (Optional) Determine which method the load balancer uses to determine the fastest route to your origin. Valid values are: `"off"`, `"geo"`, `"dynamic_latency"`, `"random"`, `"proximity"` or `""`. Default is `""`.
 - `proxied` - (Optional) Whether the hostname gets Cloudflare's origin protection. Defaults to `false`.
 - `enabled` - (Optional) Enable or disable the load balancer. Defaults to `true` (enabled).
-- `region_pools` - (Optional) A set containing mappings of region/country codes to a list of pool IDs (ordered by their failover priority) for the given region. Fields documented below.
+- `region_pools` - (Optional) A set containing mappings of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Fields documented below.
+- `country_pools` - (Optional) A set containing mappings of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Fields documented below.
 - `pop_pools` - (Optional) A set containing mappings of Cloudflare Point-of-Presence (PoP) identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). This feature is only available to enterprise customers. Fields documented below.
 - `session_affinity` - (Optional) Associates all requests coming from an end-user with a single origin. Cloudflare will set a cookie on the initial response to the client, such that consequent requests with the cookie in the request will go to the same origin, so long as it is available. Valid values are: `""`, `"none"`, `"cookie"`, and `"ip_cookie"`. Default is `""`.
 - `session_affinity_ttl` - (Optional) Time, in seconds, until this load balancers session affinity cookie expires after being created. This parameter is ignored unless a supported session affinity policy is set. The current default of 23 hours will be used unless `session_affinity_ttl` is explicitly set. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. Valid values are between 1800 and 604800.
@@ -77,8 +83,13 @@ The following arguments are supported:
 
 **region_pools** requires the following:
 
-- `region` - (Required) A region code which must be in the list defined [here](https://support.cloudflare.com/hc/en-us/articles/115000540888-Load-Balancing-Geographic-Regions). Multiple entries should not be specified with the same region.
+- `region` - (Required) A region code which must be in the list defined [here](https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/#list-of-load-balancer-regions). Multiple entries should not be specified with the same region.
 - `pool_ids` - (Required) A list of pool IDs in failover priority to use in the given region.
+
+**country_pools** requires the following:
+
+- `country` - (Required) A country code which can be determined with the Load Balancing Regions API described [here](https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/). Multiple entries should not be specified with the same country.
+- `pool_ids` - (Required) A list of pool IDs in failover priority to use in the given country.
 
 **pop_pools** requires the following:
 
@@ -111,6 +122,7 @@ The following arguments are supported:
 - `fallback_pool` - (Optional) See fallback_pool_id above.
 - `default_pools` - (Optional) See default_pool_ids above.
 - `pop_pools` - (Optional) See pop_pools above.
+- `country_pools` - (Optional) See country_pools above.
 - `region_pools` - (Optional) See region_pools above.
 
 **fixed_response** optionally as the following:
