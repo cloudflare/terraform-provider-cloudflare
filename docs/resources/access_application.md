@@ -52,7 +52,6 @@ resource "cloudflare_access_application" "staging_app" {
 
 ### Required
 
-- `domain` (String) The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.
 - `name` (String) Friendly name of the Access Application.
 
 ### Optional
@@ -64,14 +63,16 @@ resource "cloudflare_access_application" "staging_app" {
 - `cors_headers` (Block List) CORS configuration for the Access Application. See below for reference structure. (see [below for nested schema](#nestedblock--cors_headers))
 - `custom_deny_message` (String) Option that returns a custom error message when a user is denied access to the application.
 - `custom_deny_url` (String) Option that redirects to a custom URL when a user is denied access to the application.
+- `domain` (String) The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.
 - `enable_binding_cookie` (Boolean) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
 - `http_only_cookie_attribute` (Boolean) Option to add the `HttpOnly` cookie flag to access tokens. Defaults to `true`.
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
+- `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
 - `service_auth_401_redirect` (Boolean) Option to return a 401 status code in service authentication rules on failed requests. Defaults to `false`.
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`. Defaults to `24h`.
 - `skip_interstitial` (Boolean) Option to skip the authorization interstitial when using the CLI. Defaults to `false`.
-- `type` (String) The application type. Available values: `self_hosted`, `ssh`, `vnc`, `file`. Defaults to `self_hosted`.
+- `type` (String) The application type. Available values: `self_hosted`, `saas`, `ssh`, `vnc`, `file`. Defaults to `self_hosted`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
 ### Read-Only
@@ -92,6 +93,19 @@ Optional:
 - `allowed_methods` (Set of String) List of methods to expose via CORS.
 - `allowed_origins` (Set of String) List of origins permitted to make CORS requests.
 - `max_age` (Number) The maximum time a preflight request will be cached.
+
+
+<a id="nestedblock--saas_app"></a>
+### Nested Schema for `saas_app`
+
+Required:
+
+- `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
+- `sp_entity_id` (String) A globally unique name for an identity or service provider.
+
+Optional:
+
+- `name_id_format` (String) The format of the name identifier sent to the SaaS application. Defaults to `email`.
 
 ## Import
 
