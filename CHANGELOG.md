@@ -1,4 +1,6 @@
-## 3.20.0 (Unreleased)
+## 3.21.0 (Unreleased)
+
+## 3.20.0 (July 27th, 2022)
 
 BREAKING CHANGES:
 
