@@ -31,6 +31,7 @@ var fetchAsSingleSetting = []string{
 	"h2_prioritization",
 	"image_resizing",
 	"early_hints",
+	"origin_max_http_version",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
