@@ -215,7 +215,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					},
 					"identity_provider_id": {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 					},
 				},
 			},

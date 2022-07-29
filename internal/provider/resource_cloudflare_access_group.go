@@ -388,6 +388,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	githubID := ""
 	azureID := ""
 	azureIDs := []string{}
+	samlID := ""
 	samlAttrName := ""
 	samlAttrValue := ""
 	externalEvaluationURL := ""
@@ -454,6 +455,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				azureIDs = append(azureIDs, azureCfg["id"].(string))
 			case "saml":
 				samlCfg := groupValue.(map[string]interface{})
+				samlID = samlCfg["identity_provider_id"].(string)
 				samlAttrName = samlCfg["attribute_name"].(string)
 				samlAttrValue = samlCfg["attribute_value"].(string)
 			case "external_evaluation":
@@ -567,8 +569,9 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 		data = append(data, map[string]interface{}{
 			"saml": []interface{}{
 				map[string]interface{}{
-					"attribute_name":  samlAttrName,
-					"attribute_value": samlAttrValue,
+					"attribute_name":       samlAttrName,
+					"attribute_value":      samlAttrValue,
+					"identity_provider_id": samlID,
 				}},
 		})
 	}

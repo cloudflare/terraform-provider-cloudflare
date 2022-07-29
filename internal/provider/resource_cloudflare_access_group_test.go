@@ -401,6 +401,31 @@ resource "cloudflare_access_group" "%[2]s" {
 }`, accountID, rnd, githubOrg, team)
 }
 
+func testAccCloudflareAccessGroupWithIDPSAML(accountID, rnd, samlOrg, team string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_access_identity_provider" "%[2]s" {
+			account_id = "%[1]s"
+			name = "%[2]s"
+			type = "saml"
+			config {
+				client_id = "test"
+				client_secret = "secret"
+			}
+		}
+
+		resource "cloudflare_access_group" "%[2]s" {
+			account_id = "%[1]s"
+			name = "%[2]s"
+
+			include {
+				saml { 
+					attribute_name = "%[3]s"
+					attribute_value = "access-group-xyz"
+					identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
+				}
+			}
+		}`, accountID, rnd, samlOrg, team)
+}
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessIdentifier, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -494,4 +519,34 @@ func testAccCheckCloudflareAccessGroupRecreated(before, after *cloudflare.Access
 		}
 		return nil
 	}
+}
+
+func TestAccCloudflareAccessGroupWithIDPSAML(t *testing.T) {
+	rnd := generateRandomResourceName()
+	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	samlOrg := "Terraform-Cloudflare-Provider-Test-Org"
+	team := "test-team-1"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, samlOrg, team),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(groupName, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					resource.TestCheckResourceAttr(groupName, "account_id", accountID),
+					resource.TestCheckResourceAttr(groupName, "name", rnd),
+					resource.TestCheckResourceAttrSet(groupName, "include.0.saml.0.identity_provider_id"),
+					resource.TestCheckResourceAttr(groupName, "include.0.saml.0.attribute_name", samlOrg),
+					resource.TestCheckResourceAttr(groupName, "include.0.saml.0.attribute_value.0", "access-group-xyz"),
+				),
+			},
+		},
+	})
 }
