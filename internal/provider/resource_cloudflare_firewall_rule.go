@@ -69,7 +69,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 
 	var r []cloudflare.FirewallRule
 
-	r, err = client.CreateFirewallRules(ctx, zoneID, []cloudflare.FirewallRule{newFirewallRule})
+	r, err = client.CreateFirewallRules(ctx, &cloudflare.ResourceContainer{Identifier: zoneID}, []cloudflare.FirewallRule{newFirewallRule})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Firewall Rule for zone %q: %w", zoneID, err))
@@ -90,7 +90,7 @@ func resourceCloudflareFirewallRuleRead(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	firewallRule, err := client.FirewallRule(ctx, zoneID, d.Id())
+	firewallRule, err := client.FirewallRule(ctx, &cloudflare.ResourceContainer{Identifier: zoneID}, d.Id())
 
 	tflog.Debug(ctx, fmt.Sprintf("firewallRule: %#v", firewallRule))
 	tflog.Debug(ctx, fmt.Sprintf("firewallRule error: %#v", err))
@@ -153,7 +153,7 @@ func resourceCloudflareFirewallRuleUpdate(ctx context.Context, d *schema.Resourc
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Firewall Rule from struct: %+v", newFirewallRule))
 
-	r, err := client.UpdateFirewallRule(ctx, zoneID, newFirewallRule)
+	r, err := client.UpdateFirewallRule(ctx, &cloudflare.ResourceContainer{Identifier: zoneID}, newFirewallRule)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Firewall Rule for zone %q: %w", zoneID, err))
@@ -172,7 +172,7 @@ func resourceCloudflareFirewallRuleDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Firewall Rule: id %s for zone %s", d.Id(), zoneID))
 
-	err := client.DeleteFirewallRule(ctx, zoneID, d.Id())
+	err := client.DeleteFirewallRule(ctx, &cloudflare.ResourceContainer{Identifier: zoneID}, d.Id())
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Firewall Rule: %w", err))

@@ -33,7 +33,7 @@ func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.Resou
 		Name:               d.Get("name").(string),
 		Domain:             d.Get("domain").(string),
 		LogoURL:            d.Get("logo_url").(string),
-		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
+		AppLauncherVisible: d.Get("app_launcher_visible").(*bool),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Bookmark from struct: %+v", newAccessBookmark))
@@ -99,7 +99,7 @@ func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.Resou
 		Name:               d.Get("name").(string),
 		Domain:             d.Get("domain").(string),
 		LogoURL:            d.Get("logo_url").(string),
-		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
+		AppLauncherVisible: d.Get("app_launcher_visible").(*bool),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Bookmark from struct: %+v", updatedAccessBookmark))

@@ -40,16 +40,16 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		Domain:                  d.Get("domain").(string),
 		Type:                    cloudflare.AccessApplicationType(appType),
 		SessionDuration:         d.Get("session_duration").(string),
-		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(bool),
-		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
+		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(*bool),
+		EnableBindingCookie:     d.Get("enable_binding_cookie").(*bool),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
-		SkipInterstitial:        d.Get("skip_interstitial").(bool),
-		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
-		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
+		SkipInterstitial:        d.Get("skip_interstitial").(*bool),
+		AppLauncherVisible:      d.Get("app_launcher_visible").(*bool),
+		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(*bool),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -157,16 +157,16 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		Domain:                  d.Get("domain").(string),
 		Type:                    cloudflare.AccessApplicationType(appType),
 		SessionDuration:         d.Get("session_duration").(string),
-		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(bool),
-		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
+		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(*bool),
+		EnableBindingCookie:     d.Get("enable_binding_cookie").(*bool),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
-		SkipInterstitial:        d.Get("skip_interstitial").(bool),
-		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
-		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
+		SkipInterstitial:        d.Get("skip_interstitial").(*bool),
+		AppLauncherVisible:      d.Get("app_launcher_visible").(*bool),
+		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(*bool),
 	}
 
 	if appType != "saas" {
