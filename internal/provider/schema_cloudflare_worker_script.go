@@ -72,6 +72,19 @@ var serviceBindingResource = &schema.Resource{
 	},
 }
 
+var r2BucketBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"bucket_name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	},
+}
+
 func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
@@ -107,6 +120,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     serviceBindingResource,
+		},
+		"r2_bucket_binding": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     r2BucketBindingResource,
 		},
 	}
 }
