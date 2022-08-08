@@ -343,3 +343,23 @@ resource "cloudflare_ruleset" "redirect_from_value_example" {
     enabled     = true
   }
 }
+
+# Serve some custom error response
+resource "cloudflare_ruleset" "http_custom_error_example" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  name        = "Serve some error response"
+  description = "Serve some error response"
+  kind        = "zone"
+  phase       = "http_custom_errors"
+  rules {
+    action = "serve_error"
+    action_parameters {
+      content      = "some error html"
+      content_type = "text/html"
+      status_code  = 530
+    }
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    description = "serve some error response"
+    enabled     = true
+  }
+}
