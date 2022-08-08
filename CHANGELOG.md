@@ -7,6 +7,7 @@ BREAKING CHANGES:
 ENHANCEMENTS:
 
 * resource/cloudflare_custom_ssl: handle when remote ID changes during updates ([#1824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1824))
+* resource/cloudflare_ruleset: add support and configuration for `serve_errors` action ([#1794](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1794))
 * resource/cloudflare_ruleset: add support for sni override in route action ([#1816](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1816))
 
 BUG FIXES:
