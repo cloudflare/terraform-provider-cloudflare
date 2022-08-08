@@ -26,14 +26,14 @@ func testSweepCloudflareFirewallRuleSweeper(r string) error {
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rules, rulesErr := client.FirewallRules(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	rules, _, rulesErr := client.FirewallRules(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.FirewallRuleListParams{})
 
 	if rulesErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare firewall rules: %s", rulesErr))
 	}
 
 	for _, rule := range rules {
-		err := client.DeleteFirewallRule(context.Background(), zoneID, rule.ID)
+		err := client.DeleteFirewallRule(context.Background(), cloudflare.ZoneIdentifier(zoneID), rule.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare firewall rule (%s) in zone ID: %s", rule.ID, zoneID))

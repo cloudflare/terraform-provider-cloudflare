@@ -217,7 +217,6 @@ func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceDat
 }
 
 var pageRuleAPIOnOffFields = []string{
-	"always_online",
 	"automatic_https_rewrites",
 	"browser_check",
 	"cache_by_device_type",

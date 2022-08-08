@@ -1,8 +1,18 @@
 ## 3.21.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_page_rule: Removed `always_online` from page rules since this action has been decommissioned from page rules ([#1817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1817))
+
+BUG FIXES:
+
+* resource/cloudflare_zone_settings_override: add missing allowed value of 120 for `browser_cache_ttl` ([#1822](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1822))
+
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.45.0 to 0.46.0 ([#1815](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1815))
 * provider: bumps github.com/golangci/golangci-lint from 1.47.2 to 1.47.3 ([#1813](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1813))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.3 to 1.48.0 ([#1820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1820))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.19.0 to 2.20.0 ([#1804](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1804))
 
 ## 3.20.0 (July 27th, 2022)

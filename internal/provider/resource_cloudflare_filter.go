@@ -52,7 +52,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Filter from struct: %+v", newFilter))
 
-	r, err := client.CreateFilters(ctx, zoneID, []cloudflare.Filter{newFilter})
+	r, err := client.CreateFilters(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.Filter{newFilter})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Filter for zone %q: %w", zoneID, err))
@@ -74,7 +74,7 @@ func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, m
 	zoneID := d.Get("zone_id").(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Getting a Filter record for zone %q, id %s", zoneID, d.Id()))
-	filter, err := client.Filter(ctx, zoneID, d.Id())
+	filter, err := client.Filter(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 
 	tflog.Debug(ctx, fmt.Sprintf("filter: %#v", filter))
 	tflog.Debug(ctx, fmt.Sprintf("filter error: %#v", err))
@@ -124,7 +124,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Filter from struct: %+v", newFilter))
 
-	r, err := client.UpdateFilter(ctx, zoneID, newFilter)
+	r, err := client.UpdateFilter(ctx, cloudflare.ZoneIdentifier(zoneID), newFilter)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Filter for zone %q: %w", zoneID, err))
@@ -143,7 +143,7 @@ func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID))
 
-	err := client.DeleteFilter(ctx, zoneID, d.Id())
+	err := client.DeleteFilter(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Filter: %w", err))
