@@ -4,6 +4,10 @@ BREAKING CHANGES:
 
 * resource/cloudflare_page_rule: Removed `always_online` from page rules since this action has been decommissioned from page rules ([#1817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1817))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_custom_ssl: handle when remote ID changes during updates ([#1824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1824))
+
 BUG FIXES:
 
 * resource/cloudflare_account_member: actually use the `account_id` value ([#1823](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1823))
