@@ -2,8 +2,8 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -29,7 +29,8 @@ func resourceCloudflareZoneCacheVariantsRead(ctx context.Context, d *schema.Reso
 	zoneCacheVariants, err := client.ZoneCacheVariants(ctx, d.Id())
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Zone Cache Variants for zone %q not found", d.Id()))
 			d.SetId("")
 			return nil

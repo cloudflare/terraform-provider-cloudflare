@@ -41,7 +41,6 @@ The following arguments are supported:
 
 Action blocks support the following:
 
-- `always_online` - (Optional) Whether this action is `"on"` or `"off"`.
 - `always_use_https` - (Optional) Boolean of whether this action is enabled. Default: false.
 - `automatic_https_rewrites` - (Optional) Whether this action is `"on"` or `"off"`.
 - `browser_cache_ttl` - (Optional) The Time To Live for the browser cache. `0` means 'Respect Existing Headers'

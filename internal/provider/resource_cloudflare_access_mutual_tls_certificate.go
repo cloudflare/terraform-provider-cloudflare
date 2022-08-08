@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -73,7 +74,8 @@ func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *sc
 	}
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Access Mutal TLS Certificate %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
