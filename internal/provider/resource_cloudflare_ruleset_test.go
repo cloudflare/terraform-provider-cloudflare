@@ -807,9 +807,9 @@ func TestAccCloudflareRuleset_CustomErrors(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "serve_error"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.content", rnd+".terraform.cfapi.net"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.content_type", rnd+".terraform.cfapi.net"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.status_code", rnd+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.content", "my example error page"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.content_type", "text/plain"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.status_code", "530"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http custom error response"),
 				),
@@ -2425,9 +2425,9 @@ func testAccCheckCloudflareRulesetCustomErrors(rnd, name, zoneID, zoneName strin
     rules {
       action = "serve_error"
       action_parameters {
-        content = "%[1]s.terraform.cfapi.net"
-        content_type = "%[1]s.terraform.cfapi.net"
-        status_code = "%[1]s.terraform.cfapi.net"
+        content = "my example error page"
+        content_type = "text/plain"
+        status_code = "530"
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http custom error response"

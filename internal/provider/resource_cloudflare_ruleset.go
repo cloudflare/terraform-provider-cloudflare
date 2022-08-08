@@ -784,7 +784,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						rule.ActionParameters.ContentType = pValue.(string)
 
 					case "status_code":
-						rule.ActionParameters.StatusCode = pValue.(uint16)
+						rule.ActionParameters.StatusCode = uint16(pValue.(int))
 
 					case "host_header":
 						rule.ActionParameters.HostHeader = pValue.(string)
