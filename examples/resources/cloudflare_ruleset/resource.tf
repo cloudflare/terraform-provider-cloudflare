@@ -318,3 +318,28 @@ resource "cloudflare_ruleset" "redirect_from_list_example" {
     enabled     = true
   }
 }
+
+# Dynamic Redirects from value resource
+resource "cloudflare_ruleset" "redirect_from_value_example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "redirects"
+  description = "Redirect ruleset"
+  kind        = "root"
+  phase       = "http_request_dynamic_redirect"
+
+  rules {
+    action = "redirect"
+    action_parameters {
+      from_value {
+        status_code = 301
+        target_url {
+          value = "some_host.com"
+        }
+        preserve_query_string = true
+      }
+    }
+    expression  = "true"
+    description = "Apply redirect from value"
+    enabled     = true
+  }
+}

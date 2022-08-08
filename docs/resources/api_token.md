@@ -30,6 +30,8 @@ resource "cloudflare_api_token" "api_token_create" {
     resources = {
       "com.cloudflare.api.user.${var.user_id}" = "*"
     }
+    not_before = "2018-07-01T05:20:00Z"
+    expires_on = "2020-01-01T00:00:00Z"
   }
 
   condition {
@@ -144,6 +146,8 @@ resource "cloudflare_api_token" "dns_edit_all_account" {
 ### Optional
 
 - `condition` (Block List, Max: 1) Conditions under which the token should be considered valid. (see [below for nested schema](#nestedblock--condition))
+- `expires_on` (String) The expiration time on or after which the token MUST NOT be accepted for processing.
+- `not_before` (String) The time before which the token MUST NOT be accepted for processing.
 
 ### Read-Only
 

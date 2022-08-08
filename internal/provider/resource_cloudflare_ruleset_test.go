@@ -1753,6 +1753,37 @@ func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetRedirectFromValue(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_dynamic_redirect"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "redirect"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.status_code", "301"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.target_url.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.target_url.0.expression", ""),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.target_url.0.value", "some_host.com"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.preserve_query_string", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -3055,4 +3086,31 @@ func testAccCloudflareRulesetRedirectFromList(rnd, accountID string) string {
       enabled = true
     }
   }`, rnd, accountID)
+}
+
+func testAccCloudflareRulesetRedirectFromValue(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_dynamic_redirect"
+
+    rules {
+      action = "redirect"
+      action_parameters {
+        from_value {
+		  status_code = 301
+		  target_url {
+			value = "some_host.com"
+		  }
+		  preserve_query_string = true
+        }
+      }
+      expression = "true"
+      description = "Apply redirect from value"
+      enabled = true
+    }
+  }`, rnd, zoneID)
 }

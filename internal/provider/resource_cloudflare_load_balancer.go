@@ -126,6 +126,12 @@ var rulesElem = &schema.Resource{
 						Elem:     popPoolElem,
 					},
 
+					"country_pools": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     countryPoolElem,
+					},
+
 					"region_pools": {
 						Type:     schema.TypeSet,
 						Optional: true,
@@ -188,6 +194,25 @@ var popPoolElem = &schema.Resource{
 	},
 }
 
+var countryPoolElem = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"country": {
+			Type:     schema.TypeString,
+			Required: true,
+			// let the api handle validating countries
+		},
+
+		"pool_ids": {
+			Type:     schema.TypeList,
+			Required: true,
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringLenBetween(1, 32),
+			},
+		},
+	},
+}
+
 var regionPoolElem = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"region": {
@@ -208,8 +233,9 @@ var regionPoolElem = &schema.Resource{
 }
 
 var localPoolElems = map[string]*schema.Resource{
-	"pop":    popPoolElem,
-	"region": regionPoolElem,
+	"pop":     popPoolElem,
+	"region":  regionPoolElem,
+	"country": countryPoolElem,
 }
 
 func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -243,6 +269,14 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 			return diag.FromErr(err)
 		}
 		newLoadBalancer.RegionPools = expandedRegionPools
+	}
+
+	if countryPools, ok := d.GetOk("country_pools"); ok {
+		expandedCountryPools, err := expandGeoPools(countryPools, "country")
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		newLoadBalancer.CountryPools = expandedCountryPools
 	}
 
 	if popPools, ok := d.GetOk("pop_pools"); ok {
@@ -292,7 +326,6 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
@@ -319,6 +352,14 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 			return diag.FromErr(err)
 		}
 		loadBalancer.RegionPools = expandedRegionPools
+	}
+
+	if countryPools, ok := d.GetOk("country_pools"); ok {
+		expandedCountryPools, err := expandGeoPools(countryPools, "country")
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		loadBalancer.CountryPools = expandedCountryPools
 	}
 
 	if popPools, ok := d.GetOk("pop_pools"); ok {
@@ -382,7 +423,8 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 
 	loadBalancer, err := client.LoadBalancerDetails(ctx, zoneID, loadBalancerID)
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer %s in zone %s not found", loadBalancerID, zoneID))
 			d.SetId("")
 			return nil
@@ -425,6 +467,10 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 
 	if err := d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop")); err != nil {
 		tflog.Warn(ctx, fmt.Sprintf("Error setting pop_pools on load balancer %q: %s", d.Id(), err))
+	}
+
+	if err := d.Set("country_pools", flattenGeoPools(loadBalancer.CountryPools, "country")); err != nil {
+		tflog.Warn(ctx, fmt.Sprintf("Error setting country_pools on load balancer %q: %s", d.Id(), err))
 	}
 
 	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region")); err != nil {
@@ -565,6 +611,10 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 				om["pop_pools"] = flattenGeoPools(o.PoPPools, "pop")
 				m["overrides"] = []interface{}{om}
 			}
+			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.country_pools", idx)); ok {
+				om["country_pools"] = flattenGeoPools(o.CountryPools, "country")
+				m["overrides"] = []interface{}{om}
+			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.region_pools", idx)); ok {
 				om["region_pools"] = flattenGeoPools(o.RegionPools, "region")
 				m["overrides"] = []interface{}{om}
@@ -659,6 +709,14 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 					return nil, err
 				}
 				lbr.Overrides.PoPPools = expandedPopPools
+			}
+
+			if cp, ok := ov["country_pools"]; ok {
+				expandedCountryPools, err := expandGeoPools(cp, "country")
+				if err != nil {
+					return nil, err
+				}
+				lbr.Overrides.CountryPools = expandedCountryPools
 			}
 
 			if rp, ok := ov["region_pools"]; ok {

@@ -104,6 +104,13 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 			Elem:     popPoolElem,
 		},
 
+		"country_pools": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Computed: true,
+			Elem:     countryPoolElem,
+		},
+
 		"region_pools": {
 			Type:     schema.TypeSet,
 			Optional: true,

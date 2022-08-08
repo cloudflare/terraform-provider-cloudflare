@@ -24,6 +24,7 @@ func resourceCloudflareCertificatePack() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareCertificatePackImport,
 		},
+		Description: "Provides a Cloudflare Certificate Pack resource that is used to provision managed TLS certificates.",
 	}
 }
 

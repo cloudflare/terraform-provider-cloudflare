@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -39,6 +40,7 @@ func resourceCloudflareAccessRule() *schema.Resource {
 func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get("account_id").(string)
 
 	newRule := cloudflare.AccessRule{
 		Notes: d.Get("notes").(string),
@@ -57,14 +59,12 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 	var r *cloudflare.AccessRuleResponse
 	var err error
 
-	if zoneID == "" {
-		if client.AccountID != "" {
-			r, err = client.CreateAccountAccessRule(ctx, client.AccountID, newRule)
-		} else {
-			r, err = client.CreateUserAccessRule(ctx, newRule)
-		}
-	} else {
+	if accountID != "" {
+		r, err = client.CreateAccountAccessRule(ctx, accountID, newRule)
+	} else if zoneID != "" {
 		r, err = client.CreateZoneAccessRule(ctx, zoneID, newRule)
+	} else {
+		r, err = client.CreateUserAccessRule(ctx, newRule)
 	}
 
 	if err != nil {
@@ -83,25 +83,25 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get("account_id").(string)
 
 	var accessRuleResponse *cloudflare.AccessRuleResponse
 	var err error
 
-	if zoneID == "" {
-		if client.AccountID != "" {
-			accessRuleResponse, err = client.AccountAccessRule(ctx, client.AccountID, d.Id())
-		} else {
-			accessRuleResponse, err = client.UserAccessRule(ctx, d.Id())
-		}
-	} else {
+	if accountID != "" {
+		accessRuleResponse, err = client.AccountAccessRule(ctx, accountID, d.Id())
+	} else if zoneID != "" {
 		accessRuleResponse, err = client.ZoneAccessRule(ctx, zoneID, d.Id())
+	} else {
+		accessRuleResponse, err = client.UserAccessRule(ctx, d.Id())
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("accessRuleResponse: %#v", accessRuleResponse))
 	tflog.Debug(ctx, fmt.Sprintf("accessRuleResponse error: %#v", err))
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Access Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
@@ -130,6 +130,7 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get("account_id").(string)
 
 	updatedRule := cloudflare.AccessRule{
 		Notes: d.Get("notes").(string),
@@ -145,17 +146,14 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
-	// var accessRuleResponse *cloudflare.AccessRuleResponse
 	var err error
 
-	if zoneID == "" {
-		if client.AccountID != "" {
-			_, err = client.UpdateAccountAccessRule(ctx, client.AccountID, d.Id(), updatedRule)
-		} else {
-			_, err = client.UpdateUserAccessRule(ctx, d.Id(), updatedRule)
-		}
-	} else {
+	if accountID != "" {
+		_, err = client.UpdateAccountAccessRule(ctx, accountID, d.Id(), updatedRule)
+	} else if zoneID != "" {
 		_, err = client.UpdateZoneAccessRule(ctx, zoneID, d.Id(), updatedRule)
+	} else {
+		_, err = client.UpdateUserAccessRule(ctx, d.Id(), updatedRule)
 	}
 
 	if err != nil {
@@ -168,19 +166,18 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get("account_id").(string)
 
-	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Access Rule: id %s for zone_id %s", d.Id(), zoneID))
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Access Rule: id %s", d.Id()))
 
 	var err error
 
-	if zoneID == "" {
-		if client.AccountID != "" {
-			_, err = client.DeleteAccountAccessRule(ctx, client.AccountID, d.Id())
-		} else {
-			_, err = client.DeleteUserAccessRule(ctx, d.Id())
-		}
-	} else {
+	if accountID != "" {
+		_, err = client.DeleteAccountAccessRule(ctx, accountID, d.Id())
+	} else if zoneID != "" {
 		_, err = client.DeleteZoneAccessRule(ctx, zoneID, d.Id())
+	} else {
+		_, err = client.DeleteUserAccessRule(ctx, d.Id())
 	}
 
 	if err != nil {
@@ -191,7 +188,6 @@ func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceCloudflareAccessRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
 	attributes := strings.Split(d.Id(), "/")
 
 	var (
@@ -210,7 +206,7 @@ func resourceCloudflareAccessRuleImport(ctx context.Context, d *schema.ResourceD
 
 	switch accessRuleType {
 	case "account":
-		client.AccountID = accessRuleTypeIdentifier
+		d.Set("account_id", accessRuleTypeIdentifier)
 	case "zone":
 		d.Set("zone_id", accessRuleTypeIdentifier)
 	}

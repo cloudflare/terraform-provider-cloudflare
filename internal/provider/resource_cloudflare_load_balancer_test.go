@@ -80,6 +80,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
 					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerDates(name, &loadBalancer, testStartTime),
@@ -119,6 +120,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
 					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
 				),
 			},
@@ -143,6 +145,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
 					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
 				),
 			},
@@ -174,6 +177,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "ttl", "0"),
 					resource.TestCheckResourceAttr(name, "steering_policy", "geo"),
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "1"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "1"),
 					resource.TestCheckResourceAttr(name, "region_pools.#", "1"),
 				),
 			},
@@ -502,6 +506,10 @@ resource "cloudflare_load_balancer" "%[3]s" {
   steering_policy = "geo"
   pop_pools {
     pop = "LAX"
+    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  }
+  country_pools {
+    country = "US"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   }
   region_pools {

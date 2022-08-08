@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"time"
 
@@ -208,7 +207,8 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schem
 
 	loadBalancerMonitor, err := client.LoadBalancerMonitorDetails(ctx, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer monitor %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
@@ -264,7 +264,8 @@ func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *sch
 
 	err := client.DeleteLoadBalancerMonitor(ctx, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer monitor %s no longer exists", d.Id()))
 			return nil
 		} else {

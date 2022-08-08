@@ -33,7 +33,7 @@ func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.Resou
 		Name:               d.Get("name").(string),
 		Domain:             d.Get("domain").(string),
 		LogoURL:            d.Get("logo_url").(string),
-		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
+		AppLauncherVisible: cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Bookmark from struct: %+v", newAccessBookmark))
@@ -74,7 +74,8 @@ func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.Resourc
 	}
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Access Bookmark %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
@@ -98,7 +99,7 @@ func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.Resou
 		Name:               d.Get("name").(string),
 		Domain:             d.Get("domain").(string),
 		LogoURL:            d.Get("logo_url").(string),
-		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
+		AppLauncherVisible: cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Bookmark from struct: %+v", updatedAccessBookmark))

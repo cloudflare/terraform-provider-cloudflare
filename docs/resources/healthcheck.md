@@ -89,8 +89,6 @@ resource "cloudflare_healthcheck" "tcp_health_check" {
 - `header` (Block Set) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. (see [below for nested schema](#nestedblock--header))
 - `interval` (Number) The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase the load on the origin as we check from multiple locations. Defaults to `60`.
 - `method` (String) The HTTP method to use for the health check. Available values: `connection_established`, `GET`, `HEAD`.
-- `notification_email_addresses` (List of String, Deprecated) A list of email addresses we want to send the notifications to. Deprecated, use cloudflare_notification_policy instead.
-- `notification_suspended` (Boolean, Deprecated) Whether the notifications are suspended or not. Useful for maintenance periods. Defaults to `false`.
 - `path` (String) The endpoint path to health check against. Defaults to `/`.
 - `port` (Number) Port number to connect to for the health check. Defaults to `80`.
 - `retries` (Number) The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately. Defaults to `2`.

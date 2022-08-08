@@ -264,7 +264,8 @@ func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData
 
 	rateLimit, err := client.RateLimit(ctx, zoneID, rateLimitId)
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Resource %s in zone %s no longer exists", rateLimitId, zoneID))
 			d.SetId("")
 			return nil
