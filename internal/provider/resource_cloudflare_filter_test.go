@@ -26,14 +26,14 @@ func testSweepCloudflareFilterSweeper(r string) error {
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	filters, filtersErr := client.Filters(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	filters, _, filtersErr := client.Filters(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.FilterListParams{})
 
 	if filtersErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare filters: %s", filtersErr))
 	}
 
 	for _, filter := range filters {
-		err := client.DeleteFilter(context.Background(), zoneID, filter.ID)
+		err := client.DeleteFilter(context.Background(), cloudflare.ZoneIdentifier(zoneID), filter.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare filter (%s) in zone ID: %s", filter.ID, zoneID))
