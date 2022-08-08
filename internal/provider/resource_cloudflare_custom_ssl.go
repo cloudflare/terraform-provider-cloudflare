@@ -103,6 +103,9 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 			updateErr = true
 		} else {
 			tflog.Debug(ctx, fmt.Sprintf("Custom SSL set to: %s", res.ID))
+			if res.ID != certID {
+				d.SetId(res.ID)
+			}
 		}
 	}
 
