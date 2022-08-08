@@ -545,6 +545,9 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"origin_error_page_passthru": r.ActionParameters.OriginErrorPagePassthru,
 				"from_list":                  fromListFields,
 				"from_value":                 fromValueFields,
+				"content":                    r.ActionParameters.Content,
+				"content_type":               r.ActionParameters.ContentType,
+				"status_code":                r.ActionParameters.StatusCode,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -781,6 +784,15 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						}
 
 						rule.ActionParameters.Headers = headers
+
+					case "content":
+						rule.ActionParameters.Content = pValue.(string)
+
+					case "content_type":
+						rule.ActionParameters.ContentType = pValue.(string)
+
+					case "status_code":
+						rule.ActionParameters.StatusCode = uint16(pValue.(int))
 
 					case "host_header":
 						rule.ActionParameters.HostHeader = pValue.(string)

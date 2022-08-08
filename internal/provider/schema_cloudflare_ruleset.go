@@ -378,6 +378,21 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"content": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Content of the custom error response",
+								},
+								"content_type": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Content-Type of the custom error response",
+								},
+								"status_code": {
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Description: "HTTP status code of the custom error response",
+								},
 								"host_header": {
 									Type:        schema.TypeString,
 									Optional:    true,
