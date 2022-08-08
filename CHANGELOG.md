@@ -8,6 +8,7 @@ DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.45.0 to 0.46.0 ([#1815](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1815))
 * provider: bumps github.com/golangci/golangci-lint from 1.47.2 to 1.47.3 ([#1813](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1813))
+* provider: bumps github.com/golangci/golangci-lint from 1.47.3 to 1.48.0 ([#1820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1820))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.19.0 to 2.20.0 ([#1804](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1804))
 
 ## 3.20.0 (July 27th, 2022)
