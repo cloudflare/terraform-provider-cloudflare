@@ -1,5 +1,9 @@
 ## 3.21.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_page_rule: Removed `always_online` from page rules since this action has been decommissioned from page rules ([#1817](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1817))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/golangci/golangci-lint from 1.47.2 to 1.47.3 ([#1813](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1813))
