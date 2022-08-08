@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -247,6 +247,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				matchedData            []map[string]interface{}
 				response               []map[string]interface{}
 				origin                 []map[string]interface{}
+				sni                    []map[string]interface{}
 				requestFields          []string
 				responseFields         []string
 				cookieFields           []string
@@ -356,6 +357,12 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				origin = append(origin, map[string]interface{}{
 					"host": r.ActionParameters.Origin.Host,
 					"port": r.ActionParameters.Origin.Port,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.SNI).IsNil() {
+				sni = append(sni, map[string]interface{}{
+					"value": r.ActionParameters.SNI.Value,
 				})
 			}
 
@@ -524,6 +531,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"response":                   response,
 				"version":                    r.ActionParameters.Version,
 				"host_header":                r.ActionParameters.HostHeader,
+				"sni":                        sni,
 				"origin":                     origin,
 				"request_fields":             requestFields,
 				"response_fields":            responseFields,
@@ -794,6 +802,13 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.Origin = &cloudflare.RulesetRuleActionParametersOrigin{
 								Host: pValue.([]interface{})[i].(map[string]interface{})["host"].(string),
 								Port: uint16(pValue.([]interface{})[i].(map[string]interface{})["port"].(int)),
+							}
+						}
+
+					case "sni":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.SNI = &cloudflare.RulesetRuleActionParametersSni{
+								Value: pValue.([]interface{})[i].(map[string]interface{})["value"].(string),
 							}
 						}
 

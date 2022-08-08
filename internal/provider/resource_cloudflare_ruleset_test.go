@@ -853,6 +853,7 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.port", "80"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sni.0.value", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
 				),
@@ -2452,6 +2453,9 @@ func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) str
         origin {
           host = "%[1]s.terraform.cfapi.net"
           port = 80
+        }
+        sni {
+          value = "%[1]s.terraform.cfapi.net"
         }
       }
       expression = "(http.request.uri.path matches \"^/api/\")"

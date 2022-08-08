@@ -418,6 +418,21 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"sni": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "List of properties to manange Server Name Indication.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"value": {
+												Type:        schema.TypeString,
+												Optional:    true,
+												Description: "Value to define for SNI.",
+											},
+										},
+									},
+								},
 								"request_fields": {
 									Type:        schema.TypeSet,
 									Optional:    true,

@@ -391,7 +391,7 @@ resource "cloudflare_ruleset" "http_custom_error_example" {
     action_parameters {
       content      = "some error html"
       content_type = "text/html"
-      status_code  = 530
+      status_code  = "530"
     }
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "serve some error response"
@@ -476,6 +476,7 @@ Optional:
 - `ruleset` (String) Which ruleset ID to target.
 - `rulesets` (Set of String) List of managed WAF rule IDs to target. Only valid when the `"action"` is set to skip.
 - `serve_stale` (Block List, Max: 1) List of serve stale parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--serve_stale))
+- `sni` (Block List, Max: 1) List of properties to manange Server Name Indication. (see [below for nested schema](#nestedblock--rules--action_parameters--sni))
 - `status_code` (Number) HTTP status code of the custom error response.
 - `uri` (Block List, Max: 1) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations. (see [below for nested schema](#nestedblock--rules--action_parameters--uri))
 - `version` (String) Version of the ruleset to deploy.
@@ -704,6 +705,14 @@ Optional:
 Optional:
 
 - `disable_stale_while_updating` (Boolean) Disable stale while updating.
+
+
+<a id="nestedblock--rules--action_parameters--sni"></a>
+### Nested Schema for `rules.action_parameters.sni`
+
+Optional:
+
+- `value` (String) Value to define for SNI.
 
 
 <a id="nestedblock--rules--action_parameters--uri"></a>

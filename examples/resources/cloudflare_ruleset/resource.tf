@@ -356,7 +356,7 @@ resource "cloudflare_ruleset" "http_custom_error_example" {
     action_parameters {
       content      = "some error html"
       content_type = "text/html"
-      status_code  = 530
+      status_code  = "530"
     }
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "serve some error response"
