@@ -6,6 +6,7 @@ BREAKING CHANGES:
 
 BUG FIXES:
 
+* resource/cloudflare_account_member: actually use the `account_id` value ([#1823](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1823))
 * resource/cloudflare_zone_settings_override: add missing allowed value of 120 for `browser_cache_ttl` ([#1822](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1822))
 
 DEPENDENCIES:
