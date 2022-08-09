@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,7 +25,10 @@ func resourceCloudflareCertificatePack() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareCertificatePackImport,
 		},
-		Description: "Provides a Cloudflare Certificate Pack resource that is used to provision managed TLS certificates.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Certificate Pack resource that is used to
+			provision managed TLS certificates.
+		`),
 	}
 }
 

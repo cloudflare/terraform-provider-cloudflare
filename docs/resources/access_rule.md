@@ -2,12 +2,16 @@
 page_title: "cloudflare_access_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare IP Firewall Access Rule resource. Access control can be applied on basis of IP addresses, IP ranges, AS numbers or countries.
+  Provides a Cloudflare IP Firewall Access Rule resource. Access
+  control can be applied on basis of IP addresses, IP ranges, AS
+  numbers or countries.
 ---
 
 # cloudflare_access_rule (Resource)
 
-Provides a Cloudflare IP Firewall Access Rule resource. Access control can be applied on basis of IP addresses, IP ranges, AS numbers or countries.
+Provides a Cloudflare IP Firewall Access Rule resource. Access
+control can be applied on basis of IP addresses, IP ranges, AS
+numbers or countries.
 
 ## Example Usage
 

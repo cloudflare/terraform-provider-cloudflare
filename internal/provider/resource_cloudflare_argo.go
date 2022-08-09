@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -21,7 +22,10 @@ func resourceCloudflareArgo() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareArgoImport,
 		},
-		Description: "Cloudflare Argo controls the routing to your origin and tiered caching options to speed up your website browsing experience.",
+		Description: heredoc.Doc(`
+			Cloudflare Argo controls the routing to your origin and tiered
+			caching options to speed up your website browsing experience.
+		`),
 	}
 }
 

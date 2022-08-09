@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -21,7 +22,10 @@ func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareKeysConfigurationImport,
 		},
-		Description: "Access Keys Configuration defines the rotation policy for the keys that access will use to sign data.",
+		Description: heredoc.Doc(`
+			Access Keys Configuration defines the rotation policy for the keys
+			that access will use to sign data.
+		`),
 	}
 }
 

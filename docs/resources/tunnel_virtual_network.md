@@ -2,16 +2,18 @@
 page_title: "cloudflare_tunnel_virtual_network Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a resource, that manages Cloudflare tunnel virtual networks for Zero Trust. Tunnel
-  virtual networks are used for segregation of Tunnel IP Routes via Virtualized Networks to
-  handle overlapping private IPs in your origins.
+  Provides a resource, that manages Cloudflare tunnel virtual networks
+  for Zero Trust. Tunnel virtual networks are used for segregation of
+  Tunnel IP Routes via Virtualized Networks to handle overlapping
+  private IPs in your origins.
 ---
 
 # cloudflare_tunnel_virtual_network (Resource)
 
-Provides a resource, that manages Cloudflare tunnel virtual networks for Zero Trust. Tunnel
-virtual networks are used for segregation of Tunnel IP Routes via Virtualized Networks to
-handle overlapping private IPs in your origins.
+Provides a resource, that manages Cloudflare tunnel virtual networks
+for Zero Trust. Tunnel virtual networks are used for segregation of
+Tunnel IP Routes via Virtualized Networks to handle overlapping
+private IPs in your origins.
 
 ## Example Usage
 
