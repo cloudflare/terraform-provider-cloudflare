@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,7 +25,11 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessIdentityProviderImport,
 		},
-		Description: "Provides a Cloudflare Access Identity Provider resource. Identity Providers are used as an authentication or authorisation source within Access.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Identity Provider resource. Identity
+			Providers are used as an authentication or authorisation source
+			within Access.
+		`),
 	}
 }
 

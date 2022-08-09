@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/net/idna"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -85,7 +86,11 @@ func resourceCloudflareZone() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: "Provides a Cloudflare Zone resource. Zone is the basic resource for working with Cloudflare and is roughly equivalent to a domain name that the user purchases.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Zone resource. Zone is the basic resource for
+			working with Cloudflare and is roughly equivalent to a domain name
+			that the user purchases.
+		`),
 	}
 }
 

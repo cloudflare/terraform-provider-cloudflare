@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,7 +23,10 @@ func resourceCloudflareList() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareListImport,
 		},
-		Description: "Provides Lists (IPs, Redirects) to be used in Edge Rules Engine across all zones within the same account.",
+		Description: heredoc.Doc(`
+			Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
+			across all zones within the same account.
+		`),
 	}
 }
 

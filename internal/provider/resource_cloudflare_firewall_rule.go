@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,12 +23,15 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareFirewallRuleImport,
 		},
-		Description: `
-Define Firewall rules using filter expressions for more control over how traffic is matched to the rule.
-A filter expression permits selecting traffic by multiple criteria allowing greater freedom in rule creation.
+		Description: heredoc.Doc(`
+			Define Firewall rules using filter expressions for more control over
+			how traffic is matched to the rule. A filter expression permits
+			selecting traffic by multiple criteria allowing greater freedom in
+			rule creation.
 
-Filter expressions needs to be created first before using Firewall Rule.
-		`,
+			Filter expressions needs to be created first before using Firewall
+			Rule.
+		`),
 	}
 }
 

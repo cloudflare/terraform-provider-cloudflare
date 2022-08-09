@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,7 +23,11 @@ func resourceCloudflareFilter() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareFilterImport,
 		},
-		Description: "Filter expressions that can be referenced across multiple features, e.g. Firewall Rules. See [what is a filter](https://developers.cloudflare.com/firewall/api/cf-filters/what-is-a-filter/) for more details and available fields and operators.",
+		Description: heredoc.Doc(`
+			Filter expressions that can be referenced across multiple features,
+			e.g. Firewall Rules. See [what is a filter](https://developers.cloudflare.com/firewall/api/cf-filters/what-is-a-filter/)
+			for more details and available fields and operators.
+		`),
 	}
 }
 

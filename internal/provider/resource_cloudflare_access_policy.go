@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,7 +23,11 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessPolicyImport,
 		},
-		Description: "Provides a Cloudflare Access Policy resource. Access Policies are used in conjunction with Access Applications to restrict access to a particular resource.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Policy resource. Access Policies are
+			used in conjunction with Access Applications to restrict access to
+			a particular resource.
+		`),
 	}
 }
 

@@ -2,12 +2,16 @@
 page_title: "cloudflare_zone Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare Zone resource. Zone is the basic resource for working with Cloudflare and is roughly equivalent to a domain name that the user purchases.
+  Provides a Cloudflare Zone resource. Zone is the basic resource for
+  working with Cloudflare and is roughly equivalent to a domain name
+  that the user purchases.
 ---
 
 # cloudflare_zone (Resource)
 
-Provides a Cloudflare Zone resource. Zone is the basic resource for working with Cloudflare and is roughly equivalent to a domain name that the user purchases.
+Provides a Cloudflare Zone resource. Zone is the basic resource for
+working with Cloudflare and is roughly equivalent to a domain name
+that the user purchases.
 
 -> If you are attempting to sign up a subdomain of a zone you must first have Subdomain Support entitlement for your account.
 

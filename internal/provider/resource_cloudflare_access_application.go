@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,10 +23,11 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessApplicationImport,
 		},
-		Description: `Provides a Cloudflare Access Application resource. Access
-Applications are used to restrict access to a whole application using an
-authorisation gateway managed by Cloudflare.
-		`,
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Application resource. Access
+			Applications are used to restrict access to a whole application using an
+			authorisation gateway managed by Cloudflare.
+		`),
 	}
 }
 

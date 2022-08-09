@@ -2,10 +2,10 @@
 page_title: "cloudflare_logpush_job Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a resource which manages Cloudflare Logpush jobs. For Logpush jobs pushing to Amazon S3, Google Cloud Storage,
-  
-  Microsoft Azure or Sumo Logic, this resource cannot be automatically created. In order to have this automated, you must
-  have:
+  Provides a resource which manages Cloudflare Logpush jobs. For
+  Logpush jobs pushing to Amazon S3, Google Cloud Storage, Microsoft
+  Azure or Sumo Logic, this resource cannot be automatically created.
+  In order to have this automated, you must have:
   cloudflare_logpush_ownership_challenge: Configured to generate the challenge
   to confirm ownership of the destination.Either manual inspection or another Terraform Provider to get the contents of
   the ownership_challenge_filename value from thecloudflare_logpush_ownership_challenge resource.cloudflare_logpush_job: Create and manage the Logpush Job itself.
@@ -13,14 +13,15 @@ description: |-
 
 # cloudflare_logpush_job (Resource)
 
-Provides a resource which manages Cloudflare Logpush jobs. For Logpush jobs pushing to Amazon S3, Google Cloud Storage,
-Microsoft Azure or Sumo Logic, this resource cannot be automatically created. In order to have this automated, you must
-have:
+Provides a resource which manages Cloudflare Logpush jobs. For
+Logpush jobs pushing to Amazon S3, Google Cloud Storage, Microsoft
+Azure or Sumo Logic, this resource cannot be automatically created.
+In order to have this automated, you must have:
 
 - `cloudflare_logpush_ownership_challenge`: Configured to generate the challenge
-  to confirm ownership of the destination.
+to confirm ownership of the destination.
 - Either manual inspection or another Terraform Provider to get the contents of
-  the `ownership_challenge_filename` value from the`cloudflare_logpush_ownership_challenge` resource.
+the `ownership_challenge_filename` value from the`cloudflare_logpush_ownership_challenge` resource.
 - `cloudflare_logpush_job`: Create and manage the Logpush Job itself.
 
 ## Example Usage

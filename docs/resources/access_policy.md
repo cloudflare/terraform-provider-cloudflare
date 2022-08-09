@@ -2,12 +2,16 @@
 page_title: "cloudflare_access_policy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare Access Policy resource. Access Policies are used in conjunction with Access Applications to restrict access to a particular resource.
+  Provides a Cloudflare Access Policy resource. Access Policies are
+  used in conjunction with Access Applications to restrict access to
+  a particular resource.
 ---
 
 # cloudflare_access_policy (Resource)
 
-Provides a Cloudflare Access Policy resource. Access Policies are used in conjunction with Access Applications to restrict access to a particular resource.
+Provides a Cloudflare Access Policy resource. Access Policies are
+used in conjunction with Access Applications to restrict access to
+a particular resource.
 
 ~> It's required that an `account_id` or `zone_id` is provided and in
 most cases using either is fine. However, if you're using a scoped

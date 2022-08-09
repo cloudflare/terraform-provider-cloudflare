@@ -65,7 +65,7 @@ resource "cloudflare_access_application" "staging_app" {
 - `custom_deny_url` (String) Option that redirects to a custom URL when a user is denied access to the application.
 - `domain` (String) The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.
 - `enable_binding_cookie` (Boolean) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
-- `http_only_cookie_attribute` (Boolean) Option to add the `HttpOnly` cookie flag to access tokens. Defaults to `true`.
+- `http_only_cookie_attribute` (Boolean) Option to add the `HttpOnly` cookie flag to access tokens.
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
 - `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.

@@ -2,12 +2,16 @@
 page_title: "cloudflare_notification_policy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a resource, that manages a notification policy for Cloudflare's products. The delivery mechanisms supported are email, webhooks, and PagerDuty.
+  Provides a resource, that manages a notification policy for
+  Cloudflare's products. The delivery mechanisms supported are email,
+  webhooks, and PagerDuty.
 ---
 
 # cloudflare_notification_policy (Resource)
 
-Provides a resource, that manages a notification policy for Cloudflare's products. The delivery mechanisms supported are email, webhooks, and PagerDuty.
+Provides a resource, that manages a notification policy for
+Cloudflare's products. The delivery mechanisms supported are email,
+webhooks, and PagerDuty.
 
 ## Example Usage
 

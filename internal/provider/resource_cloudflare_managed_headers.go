@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,9 +19,11 @@ func resourceCloudflareManagedHeaders() *schema.Resource {
 		UpdateContext: resourceCloudflareManagedHeadersUpdate,
 		DeleteContext: resourceCloudflareManagedHeadersDelete,
 		SchemaVersion: 0,
-		Description: `
-The [Cloudflare Managed Headers](https://developers.cloudflare.com/rules/transform/managed-transforms/)
-allows you to add or remove some predefined headers to one's requests or origin responses.`,
+		Description: heredoc.Doc(`
+			The [Cloudflare Managed Headers](https://developers.cloudflare.com/rules/transform/managed-transforms/)
+			allows you to add or remove some predefined headers to one's
+			requests or origin responses.
+		`),
 	}
 }
 

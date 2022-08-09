@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,7 +24,13 @@ func resourceCloudflareAccessMutualTLSCertificate() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessMutualTLSCertificateImport,
 		},
-		Description: "Provides a Cloudflare Access Mutual TLS Certificate resource. Mutual TLS authentication ensures that the traffic is secure and trusted in both directions between a client and server and can be used with Access to only allows requests from devices with a corresponding client certificate.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Mutual TLS Certificate resource.
+			Mutual TLS authentication ensures that the traffic is secure and
+			trusted in both directions between a client and server and can be
+			 used with Access to only allows requests from devices with a
+			 corresponding client certificate.
+		`),
 	}
 }
 

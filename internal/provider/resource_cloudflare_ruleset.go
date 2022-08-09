@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,14 +40,15 @@ func resourceCloudflareRuleset() *schema.Resource {
 				Version: 0,
 			},
 		},
-		Description: `
-The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
-allows you to create and deploy rules and rulesets.
-The engine syntax, inspired by the Wireshark Display Filter language, is the
-same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
-in different products, allowing you to configure several products using the same
-basic syntax.
-`,
+		Description: heredoc.Doc(`
+			The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
+			allows you to create and deploy rules and rulesets.
+
+			The engine syntax, inspired by the Wireshark Display Filter language, is the
+			same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
+			in different products, allowing you to configure several products using the same
+			basic syntax.
+		`),
 	}
 }
 
