@@ -550,6 +550,22 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"content":                    r.ActionParameters.Content,
 				"content_type":               r.ActionParameters.ContentType,
 				"status_code":                r.ActionParameters.StatusCode,
+				"automatic_https_rewrites":   r.ActionParameters.AutomaticHTTPSRewrites,
+				"autominify": r.ActionParameters.AutoMinify,
+				"bic": r.ActionParameters.BrowserIntegrityCheck,
+				"disable_apps": r.ActionParameters.DisableApps,
+				"disable_zaraz": r.ActionParameters.DisableZaraz,
+				"disable_railgun": r.ActionParameters.DisableRailgun,
+				"email_obfuscation": r.ActionParameters.EmailObfuscation,
+				"mirage": r.ActionParameters.Mirage, 
+				"opportunistic_encryption": r.ActionParameters.OpportunisticEncryption,
+				"polish": r.ActionParameters.Polish,
+				"rocket_loader": r.ActionParameters.RocketLoader,
+				"security_level": r.ActionParameters.SecurityLevel,
+				"server_side_excludes": r.ActionParameters.ServerSideExcludes,
+				"ssl": r.ActionParameters.SSL,
+				"sxg": r.ActionParameters.SXG,
+				"hotlink_protection": r.ActionParameters.HotLinkProtection,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -806,7 +822,42 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 								Port: uint16(pValue.([]interface{})[i].(map[string]interface{})["port"].(int)),
 							}
 						}
-
+					case "automatic_https_rewrites":
+						rule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(pValue.(bool))
+					case "autominify":
+						rule.ActionParameters.AutoMinify = &cloudflare.RulesetRuleActionParametersAutominify{
+							HTML: pValue.(bool),
+							CSS: pValue.(bool),
+							JS: pValue.(bool),
+						}
+					case "bic":
+						rule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(pValue.(bool))
+					case "disable_apps":
+						rule.ActionParameters.DisableApps = cloudflare.BoolPtr(pValue.(bool))
+					case "disable_zaraz":
+						rule.ActionParameters.DisableZaraz = cloudflare.BoolPtr(pValue.(bool))
+					case "disable_railgun":
+						rule.ActionParameters.DisableRailgun = cloudflare.BoolPtr(pValue.(bool))
+					case "email_obfuscation":
+						rule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(pValue.(bool))
+					case "mirage":
+						rule.ActionParameters.Mirage = pValue.(string)
+					case "opportunistic_encryption":
+						rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(pValue.(bool))
+					case "polish":
+						rule.ActionParameters.Polish = pValue.(string)
+					case "rocket_loader":
+						rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(pValue.(bool))
+					case "security_level":
+						rule.ActionParameters.SecurityLevel = pValue.(string)
+					case "server_side_excludes":
+						rule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(pValue.(bool))
+					case "ssl":
+						rule.ActionParameters.SSL = pValue.(string)
+					case "sxg":
+						rule.ActionParameters.SXG = cloudflare.BoolPtr(pValue.(bool))
+					case "hotlink_protection":
+						rule.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(pValue.(bool))
 					case "sni":
 						for i := range pValue.([]interface{}) {
 							rule.ActionParameters.SNI = &cloudflare.RulesetRuleActionParametersSni{

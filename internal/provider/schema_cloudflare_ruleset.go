@@ -462,6 +462,105 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Optional:    true,
 									Description: "Whether to cache if expression matches.",
 								},
+								"automatic_https_rewrites": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off Cloudflare Automatic HTTPS rewrites.",
+								},
+								"autominify": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									Description: "Indicate which file extensions to minify automatically.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"html": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "HTML minification.",
+											},
+											"css": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "SSL minification.",
+											},
+											"js": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "JS minification.",
+											},
+										},
+									},
+								},
+								"bic": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Inspect the visitor's browser for headers commonly associated with spammers and certain bots.",
+								},
+								"disable_apps": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn off all active Cloudflare Apps.",
+								},
+								"disable_zaraz": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn off zaraz feature.",
+								},
+								"disable_railgun": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn off railgun feature of the Cloudflare Speed app.",
+								},
+								"email_obfuscation": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the Cloudflare Email Obfuscation feature of the Cloudflare Scrape Shield app.",
+								},
+								"mirage": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off Cloudflare Mirage of the Cloudflare Speed app.",
+								},
+								"opportunistic_encryption": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the Cloudflare Opportunistic Encryption feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.",
+								},
+								"polish": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Apply options from the Polish feature of the Cloudflare Speed app.",
+								},
+								"rocket_loader": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off Cloudflare Rocket Loader in the Cloudflare Speed app.",
+								},
+								"security_level": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Control options for the Security Level feature from the Security app.",
+								},
+								"server_side_excludes": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the Server Side Excludes feature of the Cloudflare Scrape Shield app.",
+								},
+								"ssl": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Control options for the SSL feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.",
+								},
+								"sxg": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the SXG feature.",
+								},
+								"hotlink_protection": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the hotlink protection feature.",
+								},
 								"edge_ttl": {
 									Type:        schema.TypeList,
 									Optional:    true,
