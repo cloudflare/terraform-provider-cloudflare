@@ -206,6 +206,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_notification_policy":                    resourceCloudflareNotificationPolicy(),
 				"cloudflare_origin_ca_certificate":                  resourceCloudflareOriginCACertificate(),
 				"cloudflare_page_rule":                              resourceCloudflarePageRule(),
+				"cloudflare_pages_domain":                           resourceCloudflarePagesDomain(),
 				"cloudflare_rate_limit":                             resourceCloudflareRateLimit(),
 				"cloudflare_record":                                 resourceCloudflareRecord(),
 				"cloudflare_ruleset":                                resourceCloudflareRuleset(),
