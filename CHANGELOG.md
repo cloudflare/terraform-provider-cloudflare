@@ -1,5 +1,9 @@
 ## 3.22.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_fallback_domain: fix perpetual changes due to ordering ([#1828](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1828))
+
 ## 3.21.0 (August 10th, 2022)
 
 BREAKING CHANGES:
