@@ -80,7 +80,7 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 				"web_analytics_metrics_update",
 				"workers_uptime",
 			}, false),
-			Description: fmt.Sprintf("The event type that will trigger the dispatch of a notification. See the developer documentation for descriptions of [available alert types](https://developers.cloudflare.com/fundamentals/notifications/notification-available/) %s", renderAvailableDocumentationValuesStringSlice([]string{
+			Description: fmt.Sprintf("The event type that will trigger the dispatch of a notification. See the developer documentation for descriptions of [available alert types](https://developers.cloudflare.com/fundamentals/notifications/notification-available/). %s", renderAvailableDocumentationValuesStringSlice([]string{
 				"billing_usage_alert",
 				"health_check_status_notification",
 				"g6_pool_toggle_alert",
