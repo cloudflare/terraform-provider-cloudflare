@@ -27,12 +27,20 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 
 	buildConfig := cloudflare.PagesProjectBuildConfig{}
 	if _, ok := d.GetOk("build_config"); ok {
-		buildConfig = cloudflare.PagesProjectBuildConfig{
-			BuildCommand:      d.Get("build_config.0.build_command").(string),
-			DestinationDir:    d.Get("build_config.0.destination_dir").(string),
-			RootDir:           d.Get("build_config.0.root_dir").(string),
-			WebAnalyticsTag:   d.Get("build_config.0.web_analytics_tag").(string),
-			WebAnalyticsToken: d.Get("build_config.0.web_analytics_tag").(string),
+		if _, ok := d.GetOk("build_config.0.build_command"); ok {
+			buildConfig.BuildCommand = d.Get("build_config.0.build_command").(string)
+		}
+		if _, ok := d.GetOk("build_config.0.destination_dir"); ok {
+			buildConfig.DestinationDir = d.Get("build_config.0.destination_dir").(string)
+		}
+		if _, ok := d.GetOk("build_config.0.root_dir"); ok {
+			buildConfig.RootDir = d.Get("build_config.0.root_dir").(string)
+		}
+		if _, ok := d.GetOk("build_config.0.web_analytics_tag"); ok {
+			buildConfig.WebAnalyticsTag = d.Get("build_config.0.web_analytics_tag").(string)
+		}
+		if _, ok := d.GetOk("build_config.0.web_analytics_tag"); ok {
+			buildConfig.WebAnalyticsToken = d.Get("build_config.0.web_analytics_tag").(string)
 		}
 	}
 
@@ -47,11 +55,9 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	accountID := d.Get("account_id").(string)
 	projectName := d.Get("name").(string)
 
-	pageProject := buildPagesProject(d)
-
 	res, err := client.PagesProject(ctx, accountID, projectName)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error reading cloudflare pages project %q: %w", pageProject.Name, err))
+		return diag.FromErr(fmt.Errorf("error reading cloudflare pages project %q: %w", projectName, err))
 	}
 
 	d.SetId(res.ID)
