@@ -83,6 +83,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			"env_vars": {
 				Type:        schema.TypeSet,
 				Description: "Environment variables for build configs",
+				MaxItems:    1,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -90,6 +91,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Description: "Environment variable",
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"value": {
