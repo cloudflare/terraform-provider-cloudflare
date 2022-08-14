@@ -8,16 +8,19 @@ func resourceCloudflarePagesDomainSchema() map[string]*schema.Schema {
 			Description: "The account identifier to target for the resource",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"domain": {
 			Description: "Name of the project",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"project_name": {
 			Description: "Name of the project",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"id": {
 			Description: "Id of the project",

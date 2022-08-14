@@ -55,7 +55,7 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 		`, resourceID, accountID, projectName)
 }
 
-func TestPagesProject(t *testing.T) {
+func TestAccTestPagesProject(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -77,7 +77,7 @@ func TestPagesProject(t *testing.T) {
 	})
 }
 
-func TestPagesProjectBuildConfig(t *testing.T) {
+func TestAccTestPagesProjectBuildConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -104,7 +104,7 @@ func TestPagesProjectBuildConfig(t *testing.T) {
 	})
 }
 
-func TestPagesProjectDeploymentConfig(t *testing.T) {
+func TestAccTestPagesProjectDeploymentConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

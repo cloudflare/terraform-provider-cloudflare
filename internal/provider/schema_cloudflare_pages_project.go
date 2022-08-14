@@ -3,7 +3,6 @@ package provider
 import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
-
 	buildConfig := schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"build_command": {
@@ -42,7 +41,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Computed:    true,
 			},
 			"config": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				MaxItems:    1,
 				Description: "",
 				Elem: &schema.Resource{
@@ -81,14 +80,14 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 	deploymentConfig := schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"env_vars": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Description: "Environment variables for build configs",
 				MaxItems:    1,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"BUILD_VERSION": {
-							Type:        schema.TypeSet,
+							Type:        schema.TypeList,
 							Optional:    true,
 							Description: "Environment variable",
 							MaxItems:    1,
@@ -143,14 +142,14 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 		},
 		"build_config": {
 			Description: "Configs for the project build process",
-			Type:        schema.TypeSet,
+			Type:        schema.TypeList,
 			Set:         schema.HashResource(&buildConfig),
 			Elem:        &buildConfig,
 			MaxItems:    1,
 		},
 		"source": {
 			Description: "Configs for the project source",
-			Type:        schema.TypeSet,
+			Type:        schema.TypeList,
 			Set:         schema.HashResource(&source),
 			Elem:        &source,
 			MaxItems:    1,
@@ -159,6 +158,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Description: "Configs for deployments in a project",
 			Type:        schema.TypeSet,
 			MaxItems:    1,
+			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"preview": {

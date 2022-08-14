@@ -17,7 +17,7 @@ func testPagesDomainConfig(resourceID, accountID, projectName, domain string) st
 		`, resourceID, accountID, projectName, domain)
 }
 
-func TestPagesDomain(t *testing.T) {
+func TestAccTestPagesDomain(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_domain." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
