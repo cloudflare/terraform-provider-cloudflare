@@ -18,7 +18,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 			Description: "Cloudflare Account ID",
 		},
 		"warp_routing": {
-			Type:     schema.TypeMap,
+			Type:     schema.TypeSet,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -31,7 +31,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 			},
 		},
 		"origin_request": {
-			Type:     schema.TypeMap,
+			Type:     schema.TypeSet,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -113,7 +113,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 						ValidateFunc: validation.StringInSlice([]string{"", "socks"}, false),
 					},
 					"ip_rules": {
-						Type:        schema.TypeList,
+						Type:        schema.TypeSet,
 						Optional:    true,
 						Description: "IP rules for the proxy service",
 						Elem: &schema.Resource{
@@ -138,7 +138,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 			},
 		},
 		"ingres_rule": {
-			Type:     schema.TypeMap,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
