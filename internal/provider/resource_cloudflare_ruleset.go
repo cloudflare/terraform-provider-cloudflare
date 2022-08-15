@@ -825,7 +825,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 					case "automatic_https_rewrites":
 						rule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(pValue.(bool))
 					case "autominify":
-						rule.ActionParameters.AutoMinify = &cloudflare.RulesetRuleActionParametersAutominify{
+						rule.ActionParameters.AutoMinify = &cloudflare.RulesetRuleActionParametersAutoMinify{
 							HTML: pValue.(bool),
 							CSS: pValue.(bool),
 							JS: pValue.(bool),
@@ -841,19 +841,19 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 					case "email_obfuscation":
 						rule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(pValue.(bool))
 					case "mirage":
-						rule.ActionParameters.Mirage = pValue.(string)
+						rule.ActionParameters.Mirage = cloudflare.BoolPtr(pValue.(bool))
 					case "opportunistic_encryption":
 						rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(pValue.(bool))
 					case "polish":
-						rule.ActionParameters.Polish = pValue.(string)
+						rule.ActionParameters.Polish = cloudflare.Polish(pValue.(int)).IntoRef()
 					case "rocket_loader":
 						rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(pValue.(bool))
 					case "security_level":
-						rule.ActionParameters.SecurityLevel = pValue.(string)
+						rule.ActionParameters.SecurityLevel = cloudflare.SecurityLevel(pValue.(int)).IntoRef()
 					case "server_side_excludes":
 						rule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(pValue.(bool))
 					case "ssl":
-						rule.ActionParameters.SSL = pValue.(string)
+						rule.ActionParameters.SSL = cloudflare.SSL(pValue.(int)).IntoRef()
 					case "sxg":
 						rule.ActionParameters.SXG = cloudflare.BoolPtr(pValue.(bool))
 					case "hotlink_protection":
@@ -864,7 +864,6 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 								Value: pValue.([]interface{})[i].(map[string]interface{})["value"].(string),
 							}
 						}
-
 					case "cache":
 						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache", rulesCounter)); ok {
 							rule.ActionParameters.Cache = cloudflare.BoolPtr(value.(bool))
