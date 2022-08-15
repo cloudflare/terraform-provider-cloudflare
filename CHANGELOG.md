@@ -4,6 +4,10 @@ BUG FIXES:
 
 * resource/cloudflare_fallback_domain: fix perpetual changes due to ordering ([#1828](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1828))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.20.0 to 2.21.0 ([#1838](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1838))
+
 ## 3.21.0 (August 10th, 2022)
 
 BREAKING CHANGES:
