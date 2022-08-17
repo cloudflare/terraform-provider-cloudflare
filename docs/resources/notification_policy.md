@@ -104,24 +104,23 @@ Read-Only:
 Optional:
 
 - `enabled` (Set of String) State of the pool to alert on.
+- `event_source` (Set of String) Source configuration to alert on for pool or origin.
+- `event_type` (Set of String) Stream event type to alert on.
 - `health_check_id` (Set of String) Identifier health check.
+- `input_id` (Set of String) Stream input id to alert on.
 - `limit` (Set of String) A numerical limit. Example: `100`.
+- `new_health` (Set of String) Health status to alert on for pool or origin.
+- `packets_per_second` (Set of String) Packets per second threshold for dos alert.
 - `pool_id` (Set of String) Load balancer pool identifier.
 - `product` (Set of String) Product name. Available values: `worker_requests`, `worker_durable_objects_requests`, `worker_durable_objects_duration`, `worker_durable_objects_data_transfer`, `worker_durable_objects_stored_data`, `worker_durable_objects_storage_deletes`, `worker_durable_objects_storage_writes`, `worker_durable_objects_storage_reads`.
+- `protocol` (Set of String) Protocol to alert on for dos.
+- `requests_per_second` (Set of String) Requests per second threshold for dos alert.
 - `services` (Set of String) A list of clickhouse services to alert on.
 - `slo` (Set of String) A numerical limit. Example: `99.9`.
 - `status` (Set of String) Status to alert on.
-- `zones` (Set of String) A list of zone identifiers.
-- `requests_per_second` (Set of String) Requests per second threshold for dos alert.
-- `target_zone_name` (Set of String) Target domain to alert on.
 - `target_host` (Set of String) Target host to alert on for dos.
-- `packets_per_second` (Set of String) Packets per second threshold for dos alert.
-- `protocol` (Set of String) Protocol to alert on for dos.
-- `event_source` (Set of String) Source configuration to alert on for pool or origin.
-- `new_health` (Set of String) Health status to alert on for pool or origin.
-- `input_id` (Set of String) Stream input id to alert on.
-- `event_type` (Set of String)Stream event type  to alert on.
-
+- `target_zone_name` (Set of String) Target domain to alert on.
+- `zones` (Set of String) A list of zone identifiers.
 
 <a id="nestedblock--pagerduty_integration"></a>
 ### Nested Schema for `pagerduty_integration`

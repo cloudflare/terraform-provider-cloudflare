@@ -239,9 +239,8 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Elem: &schema.Schema{
 						Type: schema.TypeString,
 					},
-					Optional:     true,
-					RequiredWith: []string{"filters.0.enabled"},
-					Description:  "Load balancer pool identifier.",
+					Optional:    true,
+					Description: "Load balancer pool identifier.",
 				},
 				"slo": {
 					Type: schema.TypeSet,
@@ -249,7 +248,79 @@ func notificationPolicyFilterSchema() *schema.Schema {
 						Type: schema.TypeString,
 					},
 					Optional:    true,
-					Description: "A numerical limit. Example: `99.9`",
+					Description: "A numerical limit. Example: `99.9`.",
+				},
+				"requests_per_second": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Requests per second threshold for dos alert.",
+				},
+				"target_zone_name": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Target domain to alert on.",
+				},
+				"target_host": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Target host to alert on for dos.",
+				},
+				"packets_per_second": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Packets per second threshold for dos alert.",
+				},
+				"protocol": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Protocol to alert on for dos.",
+				},
+				"event_source": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Source configuration to alert on for pool or origin.",
+				},
+				"new_health": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Health status to alert on for pool or origin.",
+				},
+				"input_id": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Stream input id to alert on.",
+				},
+				"event_type": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Stream event type to alert on.",
 				},
 			},
 		},
