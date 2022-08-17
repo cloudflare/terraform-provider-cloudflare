@@ -38,18 +38,13 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 		  project_name = "%[3]s"
 		  deployment_configs {
 		 	preview {
-          		env_vars {
-            		BUILD_VERSION {
-						value = "3.3"
-					}
+				environment_variables = {
+					ENVIROMENT = "preview"
           		}
 			},
         	production {
-          		env_vars {
-            		BUILD_VERSION {
-              			value = "3.4"
-            		}
-          		}
+				environment_variables = {
+					ENVIRONMENT = "production"
         	}
       	}
 		`, resourceID, accountID, projectName)
@@ -120,8 +115,8 @@ func TestAccTestPagesProjectDeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "project_name", "this-is-my-project-01"),
 					resource.TestCheckResourceAttr(name, "domain", "example.com"),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.env_vars.0.BUILD_VERSION.0.value=3.3", "npm run build"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.env_vars.0.BUILD_VERSION.0.value=3.4", "npm run build"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.environment_variables.0.ENVIRONMENT", "preview"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.0.ENVIRONMENT", "production"),
 				),
 			},
 		},

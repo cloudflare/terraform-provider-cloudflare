@@ -74,31 +74,29 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 	// I hate everything
 	deploymentVariables := cloudflare.PagesProjectDeploymentConfigs{}
 	if previewVars, ok := d.GetOk("deployment_configs.0.preview.0.environment_variables"); ok {
-		preview := cloudflare.PagesProjectDeploymentConfigEnvironment{}
+		preview := make(map[string]cloudflare.PagesProjectDeploymentVar)
 		variables := previewVars.(map[string]interface{})
 		for i, variable := range variables {
-			value := variable.(map[string]interface{})["value"]
-			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: value.(string)}
-			preview.EnvVars[i] = deploymentVar
+			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
+			preview[i] = deploymentVar
 		}
-		deploymentVariables.Preview = preview
+		deploymentVariables.Preview.EnvVars = preview
 	}
 	if productionVars, ok := d.GetOk("deployment_configs.0.production.0.environment_variables"); ok {
-		production := cloudflare.PagesProjectDeploymentConfigEnvironment{}
+		production := make(map[string]cloudflare.PagesProjectDeploymentVar)
 		variables := productionVars.(map[string]interface{})
 		for i, variable := range variables {
-			value := variable.(map[string]interface{})["value"]
-			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: value.(string)}
-			production.EnvVars[i] = deploymentVar
+			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
+			production[i] = deploymentVar
 		}
-		deploymentVariables.Production = production
+		deploymentVariables.Production.EnvVars = production
 	}
 
 	return cloudflare.PagesProject{
 		Name:              name,
 		BuildConfig:       buildConfig,
 		DeploymentConfigs: deploymentVariables,
-		Source: source,
+		Source:            source,
 	}
 }
 
@@ -116,7 +114,8 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	d.Set("subdomain", res.SubDomain)
 	d.Set("created_on", res.CreatedOn.String())
 	d.Set("domains", res.Domains)
-	d.Set("source", res.Source)
+	d.Set("source.0.type", res.Source.Type)
+	d.Set("source.0.config.0.owner", res.Source.Config.Owner)
 
 	return nil
 }

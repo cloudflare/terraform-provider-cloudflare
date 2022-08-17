@@ -81,11 +81,9 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 	deploymentConfig := schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"environment_variables": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeMap,
 				Description: "Environment variables for build configs",
-				MaxItems:    1,
 				Optional:    true,
-				Elem:        schema.TypeMap,
 			},
 		},
 	}
@@ -150,12 +148,14 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 						Type:        schema.TypeList,
 						Optional:    true,
 						Elem:        &deploymentConfig,
+						MaxItems:    1,
 					},
 					"production": {
 						Description: "Configs for production deploys",
 						Type:        schema.TypeList,
 						Optional:    true,
 						Elem:        &deploymentConfig,
+						MaxItems:    1,
 					},
 				},
 			},
