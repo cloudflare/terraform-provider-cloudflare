@@ -1,6 +1,8 @@
 package provider
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+import (
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
 
 func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 	buildConfig := schema.Resource{
@@ -84,6 +86,19 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:        schema.TypeMap,
 				Description: "Environment variables for build configs",
 				Optional:    true,
+			},
+			"compatibility_date": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "",
+			},
+			"compatibility_flags": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 		},
 	}

@@ -71,8 +71,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 		}
 	}
 
-	// I hate everything
-	deploymentVariables := cloudflare.PagesProjectDeploymentConfigs{}
+	deploymentConfig := cloudflare.PagesProjectDeploymentConfigs{}
 	if previewVars, ok := d.GetOk("deployment_configs.0.preview.0.environment_variables"); ok {
 		preview := make(map[string]cloudflare.PagesProjectDeploymentVar)
 		variables := previewVars.(map[string]interface{})
@@ -80,8 +79,16 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
 			preview[i] = deploymentVar
 		}
-		deploymentVariables.Preview.EnvVars = preview
+		deploymentConfig.Preview.EnvVars = preview
 	}
+
+	if _, ok := d.GetOk("deployment_configs.0.preview.0.compatibility_date"); ok {
+		deploymentConfig.Preview.CompatibilityDate = d.Get("deployment_configs.0.preview.0.compatibility_date").(string)
+	}
+	if previewCompatibilityFlags, ok := d.GetOk("deployment_configs.0.preview.0.compatibility_flags"); ok {
+		deploymentConfig.Preview.CompatibilityFlags = previewCompatibilityFlags.([]string)
+	}
+
 	if productionVars, ok := d.GetOk("deployment_configs.0.production.0.environment_variables"); ok {
 		production := make(map[string]cloudflare.PagesProjectDeploymentVar)
 		variables := productionVars.(map[string]interface{})
@@ -89,13 +96,21 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
 			production[i] = deploymentVar
 		}
-		deploymentVariables.Production.EnvVars = production
+		deploymentConfig.Production.EnvVars = production
+	}
+
+	if _, ok := d.GetOk("deployment_configs.0.production.0.compatibility_date"); ok {
+		deploymentConfig.Production.CompatibilityDate = d.Get("deployment_configs.0.production.0.compatibility_date").(string)
+	}
+
+	if productionCompatibilityFlags, ok := d.GetOk("deployment_configs.0.preview.0.compatibility_flags"); ok {
+		deploymentConfig.Production.CompatibilityFlags = productionCompatibilityFlags.([]string)
 	}
 
 	return cloudflare.PagesProject{
 		Name:              name,
 		BuildConfig:       buildConfig,
-		DeploymentConfigs: deploymentVariables,
+		DeploymentConfigs: deploymentConfig,
 		Source:            source,
 	}
 }

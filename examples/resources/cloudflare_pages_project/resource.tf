@@ -32,18 +32,37 @@ resource "cloudflare_pages_project" "build_config" {
   }
   deployment_configs {
     preview {
-      environment_variables {
-        BUILD_VERSION {
-          value = "3.3"
-        }
+      environment_variables = {
+        BUILD_VERSION = "3.3"
       }
     }
     production {
-      environment_variables {
-        BUILD_VERSION {
-          value = "3.3"
-        }
+      environment_variables = {
+        BUILD_VERSION = "3.3"
       }
+    }
+  }
+}
+
+# Manage compatiablity date and flags
+resource "cloudflare_pages_project" "build_config" {
+  account_id = var.account_id
+  name = "this-is-my-project-01"
+  build_config {
+    build_command = "npm run build"
+    destination_dir = "build"
+    root_dir = "/"
+    web_analytics_tag = "cee1c73f6e4743d0b5e6bb1a0bcaabcc"
+    web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
+  }
+  deployment_configs {
+    preview {
+      compatibility_date = "2022-08-15"
+      compatibility_flags = ["url_standard"]
+    }
+    production {
+      compatibility_date = "2022-08-15"
+      compatibility_flags = ["url_standard"]
     }
   }
 }
