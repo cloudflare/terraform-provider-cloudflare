@@ -38,37 +38,38 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			"type": {
 				Type:        schema.TypeString,
 				Description: "",
-				Computed:    true,
+				Optional:    true,
 			},
 			"config": {
 				Type:        schema.TypeList,
 				MaxItems:    1,
+				Optional:    true,
 				Description: "",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"owner": {
 							Type:        schema.TypeString,
-							Computed:    true,
+							Required:    true,
 							Description: "Project owner username",
 						},
 						"repo_name": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: "Project repository name",
 						},
 						"production_branch": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: "Project production branch name",
 						},
 						"pr_comments_enabled": {
 							Type:        schema.TypeBool,
-							Required:    true,
+							Optional:    true,
 							Description: "Enable Pages to comment on Pull Requests",
 						},
 						"deployments_enabled": {
 							Type:        schema.TypeBool,
-							Required:    true,
+							Optional:    true,
 							Description: "Toggle deployments on this repo",
 						},
 					},
@@ -79,29 +80,12 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 
 	deploymentConfig := schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"env_vars": {
+			"environment_variables": {
 				Type:        schema.TypeList,
 				Description: "Environment variables for build configs",
 				MaxItems:    1,
 				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"BUILD_VERSION": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "Environment variable",
-							MaxItems:    1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"value": {
-										Description: "Environment variable value",
-										Type:        schema.TypeString,
-									},
-								},
-							},
-						},
-					},
-				},
+				Elem:        schema.TypeMap,
 			},
 		},
 	}
@@ -143,36 +127,34 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 		"build_config": {
 			Description: "Configs for the project build process",
 			Type:        schema.TypeList,
-			Set:         schema.HashResource(&buildConfig),
 			Elem:        &buildConfig,
 			MaxItems:    1,
+			Optional:    true,
 		},
 		"source": {
 			Description: "Configs for the project source",
+			Optional:    true,
 			Type:        schema.TypeList,
-			Set:         schema.HashResource(&source),
 			Elem:        &source,
 			MaxItems:    1,
 		},
 		"deployment_configs": {
 			Description: "Configs for deployments in a project",
-			Type:        schema.TypeSet,
+			Type:        schema.TypeList,
 			MaxItems:    1,
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"preview": {
 						Description: "Configs for preview deploys",
-						Type:        schema.TypeSet,
-						Set:         schema.HashResource(&deploymentConfig),
-						MaxItems:    1,
+						Type:        schema.TypeList,
+						Optional:    true,
 						Elem:        &deploymentConfig,
 					},
 					"production": {
 						Description: "Configs for production deploys",
-						Type:        schema.TypeSet,
-						Set:         schema.HashResource(&deploymentConfig),
-						MaxItems:    1,
+						Type:        schema.TypeList,
+						Optional:    true,
 						Elem:        &deploymentConfig,
 					},
 				},
