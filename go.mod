@@ -7,7 +7,7 @@ require (
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/bflad/tfproviderlint v0.28.1
 	github.com/client9/misspell v0.3.4
-	github.com/cloudflare/cloudflare-go v0.46.0
+	github.com/cloudflare/cloudflare-go v0.47.1
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/golangci/golangci-lint v1.48.0
 	github.com/google/go-github v17.0.0+incompatible
@@ -226,10 +226,10 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
-	golang.org/x/exp/typeparams v0.0.0-20220613132600-b0d781184e0d // indirect
+	golang.org/x/exp/typeparams v0.0.0-20220722155223-a9213eeb770e // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/tools v0.1.12 // indirect
+	golang.org/x/tools v0.1.13-0.20220812184215-3f9b119300de // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	google.golang.org/grpc v1.48.0 // indirect
