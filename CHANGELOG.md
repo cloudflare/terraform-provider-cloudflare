@@ -1,5 +1,9 @@
 ## 3.22.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `http_config_settings` ([#1837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1837))
+
 BUG FIXES:
 
 * resource/cloudflare_fallback_domain: fix perpetual changes due to ordering ([#1828](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1828))
