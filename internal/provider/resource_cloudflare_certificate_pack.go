@@ -45,7 +45,7 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 		ca := d.Get("certificate_authority").(string)
 		cloudflareBranding := d.Get("cloudflare_branding").(bool)
 
-		cert := cloudflare.CertificatePackAdvancedCertificate{
+		cert := cloudflare.CertificatePackRequest{
 			Type:                 "advanced",
 			Hosts:                expandInterfaceToStringList(certificateHostSet.List()),
 			ValidationMethod:     validationMethod,
@@ -53,7 +53,7 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 			CertificateAuthority: ca,
 			CloudflareBranding:   cloudflareBranding,
 		}
-		certPackResponse, err := client.CreateAdvancedCertificatePack(ctx, zoneID, cert)
+		certPackResponse, err := client.CreateCertificatePack(ctx, zoneID, cert)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err)))
 		}
