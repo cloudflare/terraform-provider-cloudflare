@@ -551,21 +551,21 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"content_type":               r.ActionParameters.ContentType,
 				"status_code":                r.ActionParameters.StatusCode,
 				"automatic_https_rewrites":   r.ActionParameters.AutomaticHTTPSRewrites,
-				"autominify": r.ActionParameters.AutoMinify,
-				"bic": r.ActionParameters.BrowserIntegrityCheck,
-				"disable_apps": r.ActionParameters.DisableApps,
-				"disable_zaraz": r.ActionParameters.DisableZaraz,
-				"disable_railgun": r.ActionParameters.DisableRailgun,
-				"email_obfuscation": r.ActionParameters.EmailObfuscation,
-				"mirage": r.ActionParameters.Mirage, 
-				"opportunistic_encryption": r.ActionParameters.OpportunisticEncryption,
-				"polish": r.ActionParameters.Polish,
-				"rocket_loader": r.ActionParameters.RocketLoader,
-				"security_level": r.ActionParameters.SecurityLevel,
-				"server_side_excludes": r.ActionParameters.ServerSideExcludes,
-				"ssl": r.ActionParameters.SSL,
-				"sxg": r.ActionParameters.SXG,
-				"hotlink_protection": r.ActionParameters.HotLinkProtection,
+				"autominify":                 r.ActionParameters.AutoMinify,
+				"bic":                        r.ActionParameters.BrowserIntegrityCheck,
+				"disable_apps":               r.ActionParameters.DisableApps,
+				"disable_zaraz":              r.ActionParameters.DisableZaraz,
+				"disable_railgun":            r.ActionParameters.DisableRailgun,
+				"email_obfuscation":          r.ActionParameters.EmailObfuscation,
+				"mirage":                     r.ActionParameters.Mirage,
+				"opportunistic_encryption":   r.ActionParameters.OpportunisticEncryption,
+				"polish":                     r.ActionParameters.Polish,
+				"rocket_loader":              r.ActionParameters.RocketLoader,
+				"security_level":             r.ActionParameters.SecurityLevel,
+				"server_side_excludes":       r.ActionParameters.ServerSideExcludes,
+				"ssl":                        r.ActionParameters.SSL,
+				"sxg":                        r.ActionParameters.SXG,
+				"hotlink_protection":         r.ActionParameters.HotLinkProtection,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -827,8 +827,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 					case "autominify":
 						rule.ActionParameters.AutoMinify = &cloudflare.RulesetRuleActionParametersAutoMinify{
 							HTML: pValue.(bool),
-							CSS: pValue.(bool),
-							JS: pValue.(bool),
+							CSS:  pValue.(bool),
+							JS:   pValue.(bool),
 						}
 					case "bic":
 						rule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(pValue.(bool))
