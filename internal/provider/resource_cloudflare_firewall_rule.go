@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,12 +23,15 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareFirewallRuleImport,
 		},
-		Description: `
-Define Firewall rules using filter expressions for more control over how traffic is matched to the rule.
-A filter expression permits selecting traffic by multiple criteria allowing greater freedom in rule creation.
+		Description: heredoc.Doc(`
+			Define Firewall rules using filter expressions for more control over
+			how traffic is matched to the rule. A filter expression permits
+			selecting traffic by multiple criteria allowing greater freedom in
+			rule creation.
 
-Filter expressions needs to be created first before using Firewall Rule.
-		`,
+			Filter expressions needs to be created first before using Firewall
+			Rule.
+		`),
 	}
 }
 
@@ -37,7 +41,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 
 	var err error
 
-	var newFirewallRule cloudflare.FirewallRule
+	var newFirewallRule cloudflare.FirewallRuleCreateParams
 
 	if paused, ok := d.GetOk("paused"); ok {
 		newFirewallRule.Paused = paused.(bool)
@@ -69,7 +73,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 
 	var r []cloudflare.FirewallRule
 
-	r, err = client.CreateFirewallRules(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.FirewallRule{newFirewallRule})
+	r, err = client.CreateFirewallRules(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.FirewallRuleCreateParams{newFirewallRule})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Firewall Rule for zone %q: %w", zoneID, err))
@@ -122,7 +126,7 @@ func resourceCloudflareFirewallRuleUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	var newFirewallRule cloudflare.FirewallRule
+	var newFirewallRule cloudflare.FirewallRuleUpdateParams
 	newFirewallRule.ID = d.Id()
 
 	if paused, ok := d.GetOk("paused"); ok {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,7 +23,11 @@ func resourceCloudflareTunnelRoute() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTunnelRouteImport,
 		},
-		Description: "Provides a resource, that manages Cloudflare tunnel routes for Zero Trust. Tunnel routes are used to direct IP traffic through Cloudflare Tunnels.",
+		Description: heredoc.Doc(`
+			Provides a resource, that manages Cloudflare tunnel routes for Zero
+			Trust. Tunnel routes are used to direct IP traffic through
+			Cloudflare Tunnels.
+		`),
 	}
 }
 

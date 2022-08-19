@@ -2,12 +2,14 @@
 page_title: "cloudflare_access_service_token Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Access Service Tokens are used for service-to-service communication when an application is behind Cloudflare Access.
+  Access Service Tokens are used for service-to-service communication
+  when an application is behind Cloudflare Access.
 ---
 
 # cloudflare_access_service_token (Resource)
 
-Access Service Tokens are used for service-to-service communication when an application is behind Cloudflare Access.
+Access Service Tokens are used for service-to-service communication
+when an application is behind Cloudflare Access.
 
 ## Example Usage
 

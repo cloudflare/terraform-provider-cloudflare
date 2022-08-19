@@ -3,13 +3,15 @@ page_title: "cloudflare_managed_headers Resource - Cloudflare"
 subcategory: ""
 description: |-
   The Cloudflare Managed Headers https://developers.cloudflare.com/rules/transform/managed-transforms/
-  allows you to add or remove some predefined headers to one's requests or origin responses.
+  allows you to add or remove some predefined headers to one's
+  requests or origin responses.
 ---
 
 # cloudflare_managed_headers (Resource)
 
 The [Cloudflare Managed Headers](https://developers.cloudflare.com/rules/transform/managed-transforms/)
-allows you to add or remove some predefined headers to one's requests or origin responses.
+allows you to add or remove some predefined headers to one's
+requests or origin responses.
 
 ~> You can configure Managed Headers using the dashboard (https://api.cloudflare.com/#managed-headers-api-properties)
 Terraform will override your configuration if it exists.

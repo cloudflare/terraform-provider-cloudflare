@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,7 +24,9 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareCustomHostnameImport,
 		},
-		Description: "Provides a Cloudflare custom hostname (also known as SSL for SaaS) resource.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare custom hostname (also known as SSL for SaaS) resource.
+		`),
 	}
 }
 

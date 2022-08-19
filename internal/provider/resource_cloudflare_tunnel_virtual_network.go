@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,10 +23,12 @@ func resourceCloudflareTunnelVirtualNetwork() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTunnelVirtualNetworkImport,
 		},
-		Description: `
-Provides a resource, that manages Cloudflare tunnel virtual networks for Zero Trust. Tunnel
-virtual networks are used for segregation of Tunnel IP Routes via Virtualized Networks to
-handle overlapping private IPs in your origins.`,
+		Description: heredoc.Doc(`
+			Provides a resource, that manages Cloudflare tunnel virtual networks
+			for Zero Trust. Tunnel virtual networks are used for segregation of
+			Tunnel IP Routes via Virtualized Networks to handle overlapping
+			private IPs in your origins.
+		`),
 	}
 }
 

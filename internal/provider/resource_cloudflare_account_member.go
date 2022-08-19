@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,7 +23,9 @@ func resourceCloudflareAccountMember() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccountMemberImport,
 		},
-		Description: "Provides a resource which manages Cloudflare account members.",
+		Description: heredoc.Doc(`
+			Provides a resource which manages Cloudflare account members.
+		`),
 	}
 }
 

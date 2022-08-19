@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,7 +23,11 @@ func resourceCloudflareAccessBookmark() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessBookmarkImport,
 		},
-		Description: "Provides a Cloudflare Access Bookmark resource. Access Bookmark applications are not protected behind Access but are displayed in the App Launcher.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Bookmark resource. Access Bookmark
+			applications are not protected behind Access but are displayed in
+			the App Launcher.
+		`),
 	}
 }
 

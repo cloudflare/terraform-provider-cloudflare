@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
@@ -24,7 +25,10 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.ComputedIf("expires_at", resourceCloudflareAccessServiceTokenExpireDiff),
-		Description:   "Access Service Tokens are used for service-to-service communication when an application is behind Cloudflare Access.",
+		Description: heredoc.Doc(`
+			Access Service Tokens are used for service-to-service communication
+			when an application is behind Cloudflare Access.
+		`),
 	}
 }
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,7 +25,10 @@ func resourceCloudflareCertificatePack() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareCertificatePackImport,
 		},
-		Description: "Provides a Cloudflare Certificate Pack resource that is used to provision managed TLS certificates.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Certificate Pack resource that is used to
+			provision managed TLS certificates.
+		`),
 	}
 }
 
@@ -41,7 +45,7 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 		ca := d.Get("certificate_authority").(string)
 		cloudflareBranding := d.Get("cloudflare_branding").(bool)
 
-		cert := cloudflare.CertificatePackAdvancedCertificate{
+		cert := cloudflare.CertificatePackRequest{
 			Type:                 "advanced",
 			Hosts:                expandInterfaceToStringList(certificateHostSet.List()),
 			ValidationMethod:     validationMethod,
@@ -49,7 +53,7 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 			CertificateAuthority: ca,
 			CloudflareBranding:   cloudflareBranding,
 		}
-		certPackResponse, err := client.CreateAdvancedCertificatePack(ctx, zoneID, cert)
+		certPackResponse, err := client.CreateCertificatePack(ctx, zoneID, cert)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create certificate pack: %s", err)))
 		}

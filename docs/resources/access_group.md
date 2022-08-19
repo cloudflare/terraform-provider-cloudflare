@@ -2,12 +2,16 @@
 page_title: "cloudflare_access_group Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare Access Group resource. Access Groups are used in conjunction with Access Policies to restrict access to a particular resource based on group membership.
+  Provides a Cloudflare Access Group resource. Access Groups are used
+  in conjunction with Access Policies to restrict access to a
+  particular resource based on group membership.
 ---
 
 # cloudflare_access_group (Resource)
 
-Provides a Cloudflare Access Group resource. Access Groups are used in conjunction with Access Policies to restrict access to a particular resource based on group membership.
+Provides a Cloudflare Access Group resource. Access Groups are used
+in conjunction with Access Policies to restrict access to a
+particular resource based on group membership.
 
 ~> It's required that an `account_id` or `zone_id` is provided and in
 most cases using either is fine. However, if you're using a scoped

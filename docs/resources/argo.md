@@ -2,12 +2,14 @@
 page_title: "cloudflare_argo Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Cloudflare Argo controls the routing to your origin and tiered caching options to speed up your website browsing experience.
+  Cloudflare Argo controls the routing to your origin and tiered
+  caching options to speed up your website browsing experience.
 ---
 
 # cloudflare_argo (Resource)
 
-Cloudflare Argo controls the routing to your origin and tiered caching options to speed up your website browsing experience.
+Cloudflare Argo controls the routing to your origin and tiered
+caching options to speed up your website browsing experience.
 
 ## Example Usage
 
