@@ -3121,7 +3121,7 @@ func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) str
 		automatic_https_rewrites = true
 		autominify {
 			html = true
-			css = tue
+			css = true
 			js = true
 		}
 		bic = true
@@ -3131,11 +3131,11 @@ func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) str
 		email_obfuscation = true
 		mirage = true
 		opportunistic_encryption = true
-		polish = off
+		polish = "off"
 		rocket_loader = true
-		security_level = off
+		security_level = "off"
 		server_side_excludes = true
-		ssl = off
+		ssl = "off"
 		sxg = true
 		hotlink_protection = true
       }
