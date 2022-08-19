@@ -37,7 +37,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	var err error
 
-	var newFilter cloudflare.Filter
+	var newFilter cloudflare.FilterCreateParams
 
 	if paused, ok := d.GetOk("paused"); ok {
 		newFilter.Paused = paused.(bool)
@@ -57,7 +57,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Filter from struct: %+v", newFilter))
 
-	r, err := client.CreateFilters(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.Filter{newFilter})
+	r, err := client.CreateFilters(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.FilterCreateParams{newFilter})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Filter for zone %q: %w", zoneID, err))
@@ -108,7 +108,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	var newFilter cloudflare.Filter
+	var newFilter cloudflare.FilterUpdateParams
 	newFilter.ID = d.Id()
 
 	if paused, ok := d.GetOk("paused"); ok {

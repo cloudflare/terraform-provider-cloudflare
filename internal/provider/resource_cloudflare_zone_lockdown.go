@@ -31,7 +31,7 @@ func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.Resourc
 
 	var err error
 
-	var newZoneLockdown cloudflare.ZoneLockdown
+	var newZoneLockdown cloudflare.ZoneLockdownCreateParams
 
 	if paused, ok := d.GetOk("paused"); ok {
 		newZoneLockdown.Paused = paused.(bool)
@@ -55,19 +55,19 @@ func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.Resourc
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown))
 
-	var r *cloudflare.ZoneLockdownResponse
+	var r cloudflare.ZoneLockdown
 
-	r, err = client.CreateZoneLockdown(ctx, zoneID, newZoneLockdown)
+	r, err = client.CreateZoneLockdown(ctx, cloudflare.ZoneIdentifier(zoneID), newZoneLockdown)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating zone lockdown for zone ID %q: %w", zoneID, err))
 	}
 
-	if r.Result.ID == "" {
+	if r.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
-	d.SetId(r.Result.ID)
+	d.SetId(r.ID)
 
 	tflog.Info(ctx, fmt.Sprintf("Cloudflare Zone Lockdown ID: %s", d.Id()))
 
@@ -78,7 +78,7 @@ func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	zoneLockdownResponse, err := client.ZoneLockdown(ctx, zoneID, d.Id())
+	zoneLockdownResponse, err := client.ZoneLockdown(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 
 	tflog.Debug(ctx, fmt.Sprintf("zoneLockdownResponse: %#v", zoneLockdownResponse))
 	tflog.Debug(ctx, fmt.Sprintf("zoneLockdownResponse error: %#v", err))
@@ -95,15 +95,15 @@ func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceD
 
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Zone Lockdown read configuration: %#v", zoneLockdownResponse))
 
-	d.Set("paused", zoneLockdownResponse.Result.Paused)
-	d.Set("priority", zoneLockdownResponse.Result.Priority)
-	d.Set("description", zoneLockdownResponse.Result.Description)
-	d.Set("urls", zoneLockdownResponse.Result.URLs)
+	d.Set("paused", zoneLockdownResponse.Paused)
+	d.Set("priority", zoneLockdownResponse.Priority)
+	d.Set("description", zoneLockdownResponse.Description)
+	d.Set("urls", zoneLockdownResponse.URLs)
 	tflog.Debug(ctx, fmt.Sprintf("read configurations: %#v", d.Get("configurations")))
 
-	configurations := make([]map[string]interface{}, len(zoneLockdownResponse.Result.Configurations))
+	configurations := make([]map[string]interface{}, len(zoneLockdownResponse.Configurations))
 
-	for i, entryconfigZoneLockdownConfig := range zoneLockdownResponse.Result.Configurations {
+	for i, entryconfigZoneLockdownConfig := range zoneLockdownResponse.Configurations {
 		configurations[i] = map[string]interface{}{
 			"target": entryconfigZoneLockdownConfig.Target,
 			"value":  entryconfigZoneLockdownConfig.Value,
@@ -122,8 +122,9 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	var newZoneLockdown cloudflare.ZoneLockdown
+	var newZoneLockdown cloudflare.ZoneLockdownUpdateParams
 
+	newZoneLockdown.ID = d.Id()
 	if paused, ok := d.GetOk("paused"); ok {
 		newZoneLockdown.Paused = paused.(bool)
 	}
@@ -146,17 +147,17 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Zone Lockdown from struct: %+v", newZoneLockdown))
 
-	r, err := client.UpdateZoneLockdown(ctx, zoneID, d.Id(), newZoneLockdown)
+	r, err := client.UpdateZoneLockdown(ctx, cloudflare.ZoneIdentifier(zoneID), newZoneLockdown)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating zone lockdown for zone %q: %w", zoneID, err))
 	}
 
-	if r.Result.ID == "" {
+	if r.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find id in Update response; resource was empty"))
 	}
 
-	d.SetId(r.Result.ID)
+	d.SetId(r.ID)
 
 	tflog.Info(ctx, fmt.Sprintf("Cloudflare Zone Lockdown ID: %s", d.Id()))
 
@@ -169,7 +170,7 @@ func resourceCloudflareZoneLockdownDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Zone Lockdown: id %s for zone %s", d.Id(), zoneID))
 
-	_, err := client.DeleteZoneLockdown(ctx, zoneID, d.Id())
+	_, err := client.DeleteZoneLockdown(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Zone Lockdown: %w", err))

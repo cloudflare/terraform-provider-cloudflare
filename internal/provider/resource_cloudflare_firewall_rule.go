@@ -41,7 +41,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 
 	var err error
 
-	var newFirewallRule cloudflare.FirewallRule
+	var newFirewallRule cloudflare.FirewallRuleCreateParams
 
 	if paused, ok := d.GetOk("paused"); ok {
 		newFirewallRule.Paused = paused.(bool)
@@ -73,7 +73,7 @@ func resourceCloudflareFirewallRuleCreate(ctx context.Context, d *schema.Resourc
 
 	var r []cloudflare.FirewallRule
 
-	r, err = client.CreateFirewallRules(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.FirewallRule{newFirewallRule})
+	r, err = client.CreateFirewallRules(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.FirewallRuleCreateParams{newFirewallRule})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Firewall Rule for zone %q: %w", zoneID, err))
@@ -126,7 +126,7 @@ func resourceCloudflareFirewallRuleUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	var newFirewallRule cloudflare.FirewallRule
+	var newFirewallRule cloudflare.FirewallRuleUpdateParams
 	newFirewallRule.ID = d.Id()
 
 	if paused, ok := d.GetOk("paused"); ok {
