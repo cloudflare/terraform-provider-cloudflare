@@ -23,6 +23,22 @@ func resourceCloudflarePagesProject() *schema.Resource {
 	}
 }
 
+func parseEnvironmentVariables(environment interface{}) map[string]cloudflare.PagesProjectDeploymentVar {
+	production := make(map[string]cloudflare.PagesProjectDeploymentVar)
+	variables := environment.(map[string]map[string]interface{})
+	for variableName, variableValue := range variables {
+		deploymentVar := cloudflare.PagesProjectDeploymentVar{}
+		for subvalueName, subvalueValue := range variableValue {
+			switch subvalueName  {
+			case "value":
+				deploymentVar.Value = subvalueValue.(string)
+			}
+		}
+		production[variableName] = deploymentVar
+	}
+	return production
+}
+
 func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 	name := d.Get("name").(string)
 
@@ -73,13 +89,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 
 	deploymentConfig := cloudflare.PagesProjectDeploymentConfigs{}
 	if previewVars, ok := d.GetOk("deployment_configs.0.preview.0.environment_variables"); ok {
-		preview := make(map[string]cloudflare.PagesProjectDeploymentVar)
-		variables := previewVars.(map[string]interface{})
-		for i, variable := range variables {
-			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
-			preview[i] = deploymentVar
-		}
-		deploymentConfig.Preview.EnvVars = preview
+		deploymentConfig.Preview.EnvVars = parseEnvironmentVariables(previewVars)
 	}
 
 	if _, ok := d.GetOk("deployment_configs.0.preview.0.compatibility_date"); ok {
@@ -90,13 +100,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 	}
 
 	if productionVars, ok := d.GetOk("deployment_configs.0.production.0.environment_variables"); ok {
-		production := make(map[string]cloudflare.PagesProjectDeploymentVar)
-		variables := productionVars.(map[string]interface{})
-		for i, variable := range variables {
-			deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
-			production[i] = deploymentVar
-		}
-		deploymentConfig.Production.EnvVars = production
+		deploymentConfig.Production.EnvVars = parseEnvironmentVariables(productionVars)
 	}
 
 	if _, ok := d.GetOk("deployment_configs.0.production.0.compatibility_date"); ok {

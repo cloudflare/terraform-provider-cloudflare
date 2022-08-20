@@ -39,15 +39,19 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 		  deployment_configs {
 		 	preview {
 				environment_variables = {
-					ENVIROMENT = "preview"
-          		}
+					ENVIRONMENT = {
+					  value = "preview"
+					}
+				  }
 				compatibility_date = "2022-08-15"
 				compatibility_flags = ["preview_flag"]
 			},
         	production {
 				environment_variables = {
-					ENVIRONMENT = "production"
-        		}
+					ENVIRONMENT = {
+					  value = "production"
+					}
+				  
 				compatibility_date = "2022-08-15"
 				compatibility_flags = ["preview_flag"]
       		}
