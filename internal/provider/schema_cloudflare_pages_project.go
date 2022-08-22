@@ -68,11 +68,13 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Description: "Enable Pages to comment on Pull Requests",
+							Computed:    true,
 						},
 						"deployments_enabled": {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Description: "Toggle deployments on this repo",
+							Computed:    true,
 						},
 					},
 				},
@@ -91,6 +93,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "",
+				Computed:    true,
 			},
 			"compatibility_flags": {
 				Type:        schema.TypeList,
@@ -99,6 +102,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+				Computed: true,
 			},
 		},
 	}

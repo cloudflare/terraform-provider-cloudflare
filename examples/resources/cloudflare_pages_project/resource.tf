@@ -70,3 +70,10 @@ resource "cloudflare_pages_project" "build_config" {
     }
   }
 }
+
+# Add custom domain to pages project
+resource "cloudflare_pages_domain" "my-domain" {
+  account_id = var.account_id
+  project_name = cloudflare_pages_project.build_config.name
+  domain = "example.com"
+}
