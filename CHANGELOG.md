@@ -7,6 +7,7 @@ NOTES:
 ENHANCEMENTS:
 
 * resource/cloudflare_ruleset: add support for `http_config_settings` ([#1837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1837))
+* resources/worker_script: add support for r2_bucket_binding ([#1825](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1825))
 
 BUG FIXES:
 
