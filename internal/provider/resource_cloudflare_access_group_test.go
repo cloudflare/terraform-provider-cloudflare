@@ -419,6 +419,7 @@ func TestAccCloudflareAccessGroupConfig_IPlistInclude(t *testing.T) {
 	ip := "1.1.1.2"
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+		    testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
