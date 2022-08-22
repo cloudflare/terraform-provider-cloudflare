@@ -1,0 +1,3 @@
+```release-note:dependency
+deps: bump cloudflare-go to v0.48.0
+```
