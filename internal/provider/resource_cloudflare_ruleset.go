@@ -259,6 +259,10 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				cacheKeyFields         []map[string]interface{}
 				fromListFields         []map[string]interface{}
 				fromValueFields        []map[string]interface{}
+				autoMinifyFields       []map[string]interface{}
+				polishSetting          string
+				sslSetting             string
+				securityLevel          string
 			)
 			actionParameterRules := make(map[string]string)
 
@@ -518,6 +522,26 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				})
 			}
 
+			if !reflect.ValueOf(r.ActionParameters.AutoMinify).IsNil() {
+				autoMinifyFields = append(autoMinifyFields, map[string]interface{}{
+					"html": r.ActionParameters.AutoMinify.HTML,
+					"css":  r.ActionParameters.AutoMinify.CSS,
+					"js":   r.ActionParameters.AutoMinify.JS,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.Polish).IsNil() {
+				polishSetting = r.ActionParameters.Polish.String()
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.SecurityLevel).IsNil() {
+				securityLevel = r.ActionParameters.SecurityLevel.String()
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.SecurityLevel).IsNil() {
+				sslSetting = r.ActionParameters.SSL.String()
+			}
+
 			actionParameters = append(actionParameters, map[string]interface{}{
 				"id":                         r.ActionParameters.ID,
 				"increment":                  r.ActionParameters.Increment,
@@ -550,6 +574,22 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"content":                    r.ActionParameters.Content,
 				"content_type":               r.ActionParameters.ContentType,
 				"status_code":                r.ActionParameters.StatusCode,
+				"automatic_https_rewrites":   r.ActionParameters.AutomaticHTTPSRewrites,
+				"autominify":                 autoMinifyFields,
+				"bic":                        r.ActionParameters.BrowserIntegrityCheck,
+				"disable_apps":               r.ActionParameters.DisableApps,
+				"disable_zaraz":              r.ActionParameters.DisableZaraz,
+				"disable_railgun":            r.ActionParameters.DisableRailgun,
+				"email_obfuscation":          r.ActionParameters.EmailObfuscation,
+				"mirage":                     r.ActionParameters.Mirage,
+				"opportunistic_encryption":   r.ActionParameters.OpportunisticEncryption,
+				"polish":                     polishSetting,
+				"rocket_loader":              r.ActionParameters.RocketLoader,
+				"security_level":             securityLevel,
+				"server_side_excludes":       r.ActionParameters.ServerSideExcludes,
+				"ssl":                        sslSetting,
+				"sxg":                        r.ActionParameters.SXG,
+				"hotlink_protection":         r.ActionParameters.HotLinkProtection,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -806,14 +846,84 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 								Port: uint16(pValue.([]interface{})[i].(map[string]interface{})["port"].(int)),
 							}
 						}
+					case "automatic_https_rewrites":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.automatic_https_rewrites", rulesCounter)); ok {
+							rule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(value.(bool))
+						}
+					case "autominify":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.AutoMinify = &cloudflare.RulesetRuleActionParametersAutoMinify{
+								HTML: pValue.([]interface{})[i].(map[string]interface{})["html"].(bool),
+								CSS:  pValue.([]interface{})[i].(map[string]interface{})["css"].(bool),
+								JS:   pValue.([]interface{})[i].(map[string]interface{})["js"].(bool),
+							}
+						}
 
+					case "bic":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.bic", rulesCounter)); ok {
+							rule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(value.(bool))
+						}
+					case "disable_apps":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_apps", rulesCounter)); ok {
+							rule.ActionParameters.DisableApps = cloudflare.BoolPtr(value.(bool))
+						}
+					case "disable_zaraz":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_zaraz", rulesCounter)); ok {
+							rule.ActionParameters.DisableZaraz = cloudflare.BoolPtr(value.(bool))
+						}
+					case "disable_railgun":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_zaraz", rulesCounter)); ok {
+							rule.ActionParameters.DisableRailgun = cloudflare.BoolPtr(value.(bool))
+						}
+					case "email_obfuscation":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.email_obfuscation", rulesCounter)); ok {
+							rule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(value.(bool))
+						}
+					case "mirage":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.mirage", rulesCounter)); ok {
+							rule.ActionParameters.Mirage = cloudflare.BoolPtr(value.(bool))
+						}
+					case "opportunistic_encryption":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.opportunistic_encryption", rulesCounter)); ok {
+							rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(value.(bool))
+						}
+					case "polish":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.polish", rulesCounter)); ok {
+							p, _ := cloudflare.PolishFromString(value.(string))
+							rule.ActionParameters.Polish = p
+						}
+					case "rocket_loader":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.rocket_loader", rulesCounter)); ok {
+							rule.ActionParameters.RocketLoader = cloudflare.BoolPtr(value.(bool))
+						}
+					case "security_level":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.security_level", rulesCounter)); ok {
+							sl, _ := cloudflare.SecurityLevelFromString(value.(string))
+							rule.ActionParameters.SecurityLevel = sl
+						}
+					case "server_side_excludes":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.server_side_excludes", rulesCounter)); ok {
+							rule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(value.(bool))
+						}
+					case "ssl":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.ssl", rulesCounter)); ok {
+							ssl, _ := cloudflare.SSLFromString(value.(string))
+							rule.ActionParameters.SSL = ssl
+						}
+					case "sxg":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.sxg", rulesCounter)); ok {
+							rule.ActionParameters.SXG = cloudflare.BoolPtr(value.(bool))
+						}
+					case "hotlink_protection":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.hotlink_protection", rulesCounter)); ok {
+							rule.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(value.(bool))
+						}
 					case "sni":
 						for i := range pValue.([]interface{}) {
 							rule.ActionParameters.SNI = &cloudflare.RulesetRuleActionParametersSni{
 								Value: pValue.([]interface{})[i].(map[string]interface{})["value"].(string),
 							}
 						}
-
 					case "cache":
 						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache", rulesCounter)); ok {
 							rule.ActionParameters.Cache = cloudflare.BoolPtr(value.(bool))

@@ -1726,6 +1726,51 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_Config(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetConfigAllEnabled(rnd, "my basic config ruleset", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic config ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_config_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_config"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set config rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.automatic_https_rewrites", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.html", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.css", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.js", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.bic", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_apps", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_zaraz", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_railgun", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.email_obfuscation", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.mirage", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.opportunistic_encryption", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.polish", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.rocket_loader", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.security_level", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.server_side_excludes", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.ssl", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sxg", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.hotlink_protection", "true"),
+				),
+			},
+		},
+	})
+}
 func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 	t.Parallel()
 	rnd := generateRandomResourceName()
@@ -3056,6 +3101,46 @@ func testAccCloudflareRulesetCacheSettingsCustomKeyEmpty(rnd, accountID, zoneID 
       }
 	  expression = "true"
 	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_config_settings"
+
+    rules {
+      action = "set_config"
+      action_parameters {
+		automatic_https_rewrites = true
+		autominify {
+			html = true
+			css = true
+			js = true
+		}
+		bic = true
+		disable_apps = true
+		disable_zaraz = true
+		disable_railgun = true
+		email_obfuscation = true
+		mirage = true
+		opportunistic_encryption = true
+		polish = "off"
+		rocket_loader = true
+		security_level = "off"
+		server_side_excludes = true
+		ssl = "off"
+		sxg = true
+		hotlink_protection = true
+      }
+	  expression = "true"
+	  description = "%[1]s set config rule"
 	  enabled = true
     }
   }`, rnd, accountID, zoneID)

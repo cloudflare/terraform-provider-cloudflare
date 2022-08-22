@@ -28,6 +28,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
+			testAccCheckCloudflareWorkerScriptCreateBucket(t, rnd)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
@@ -51,12 +52,28 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING"}),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
 			},
 		},
+	})
+}
+
+// Create a bucket before creating a worker script binding.
+// When a cloudflare_r2_bucket resource is added, we can switch to that instead
+func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
+	client := testAccProvider.Meta().(*cloudflare.API)
+	err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateR2BucketParameters{Name: rnd})
+	if err != nil {
+		t.Fatalf("unable to create test bucket named %s: %v", rnd, err)
+	}
+	t.Cleanup(func() {
+		err := client.DeleteR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), rnd)
+		if err != nil {
+			t.Errorf("Failed to clean up bucket named %s: %v", rnd, err)
+		}
 	})
 }
 
@@ -109,6 +126,11 @@ resource "cloudflare_worker_script" "%[1]s" {
   webassembly_binding {
     name = "MY_WASM"
     module = "%[3]s"
+  }
+
+  r2_bucket_binding {
+	name = "MY_BUCKET"
+	bucket_name = "%[1]s"
   }
 
   service_binding {

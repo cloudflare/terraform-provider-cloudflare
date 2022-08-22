@@ -1,8 +1,24 @@
 ## 3.22.0 (Unreleased)
 
+NOTES:
+
+* update local setup documentation to reflect newer required Go version ([#1847](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1847))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `http_config_settings` ([#1837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1837))
+* resources/worker_script: add support for r2_bucket_binding ([#1825](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1825))
+
 BUG FIXES:
 
 * resource/cloudflare_fallback_domain: fix perpetual changes due to ordering ([#1828](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1828))
+* resource/cloudflare_notification_policy: add missing alert types and filters to validation and docs ([#1830](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1830))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.46.0 to 0.47.1 ([#1844](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1844))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.20.0 to 2.21.0 ([#1838](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1838))
+* provider: bumps github.com/hcloudflare-go from 0.47.1 to 0.48.0 ([#1848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1848))
 
 ## 3.21.0 (August 10th, 2022)
 
