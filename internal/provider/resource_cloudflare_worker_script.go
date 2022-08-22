@@ -228,7 +228,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		case cloudflare.WorkerR2BucketBinding:
 			r2BucketBindings.Add(map[string]interface{}{
 				"name":        name,
-				"bucket_name":     v.BucketName,
+				"bucket_name": v.BucketName,
 			})
 		}
 	}

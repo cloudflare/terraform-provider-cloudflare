@@ -65,7 +65,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 // When a cloudflare_r2_bucket resource is added, we can switch to that instead
 func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 	client := testAccProvider.Meta().(*cloudflare.API)
-	err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), rnd)
+	err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateR2BucketParameters{Name: rnd})
 	if err != nil {
 		t.Fatalf("unable to create test bucket named %s: %v", rnd, err)
 	}
