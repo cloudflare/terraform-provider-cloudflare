@@ -1,0 +1,3 @@
+```release-note:note
+update local setup documentation to reflect newer required Go version
+```

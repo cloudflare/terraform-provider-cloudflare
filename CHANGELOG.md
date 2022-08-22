@@ -1,5 +1,9 @@
 ## 3.22.0 (Unreleased)
 
+NOTES:
+
+* update local setup documentation to reflect newer required Go version ([#1847](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1847))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_ruleset: add support for `http_config_settings` ([#1837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1837))
