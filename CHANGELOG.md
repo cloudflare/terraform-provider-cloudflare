@@ -17,6 +17,7 @@ DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.46.0 to 0.47.1 ([#1844](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1844))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.20.0 to 2.21.0 ([#1838](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1838))
+* provider: bumps github.com/hcloudflare-go from 0.47.1 to 0.48.0 ([#1848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1848))
 
 ## 3.21.0 (August 10th, 2022)
 
