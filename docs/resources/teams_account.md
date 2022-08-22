@@ -75,8 +75,8 @@ The **block_page** block supports:
 
 - `name` - (Optional) Name of block page configuration.
 - `enabled` - (Optional) Indicator of enablement.
-- `footer_text` - (Optional) Block page header text.
-- `header_text` - (Optional) Block page footer text.
+- `footer_text` - (Optional) Block page footer text.
+- `header_text` - (Optional) Block page header text.
 - `logo_path` - (Optional) URL of block page logo.
 - `background_color` - (Optional) Hex code of block page background color.
 
