@@ -33,16 +33,12 @@ resource "cloudflare_pages_project" "build_config" {
   deployment_configs {
     preview {
       environment_variables = {
-        BUILD_VERSION = {
-          value = "3.3"
-        }
+        ENVIRONMENT = "preview"
       }
     }
     production {
       environment_variables = {
-        BUILD_VERSION = {
-          value = "3.3"
-        }
+        ENVIRONMENT = "production"
       }
     }
   }
