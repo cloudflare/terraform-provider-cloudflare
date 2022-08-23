@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceCloudflareEmailAddress() *schema.Resource {
+func resourceCloudflareEmailRoutingAddress() *schema.Resource {
 	return &schema.Resource{
-		Schema:        resourceCloudflareEmailRoutingAddress(),
+		Schema:        resourceCloudflareEmailRoutingAddressSchema(),
 		ReadContext:   resourceCloudflareEmailRoutingAddressRead,
 		CreateContext: resourceCloudflareEmailRoutingAddressCreate,
 		DeleteContext: resourceCloudflareEmailRoutingAddressDelete,

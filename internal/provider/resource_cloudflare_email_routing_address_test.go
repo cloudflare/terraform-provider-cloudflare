@@ -21,7 +21,7 @@ func TestAccTestEmailRoutingAddress(t *testing.T) {
 	name := "cloudflare_email_routing_address." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	//resourceCloudflarePagesDomain
+	//resourceCloudflareEmailRoutingAddress
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,

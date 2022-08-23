@@ -1,0 +1,38 @@
+package provider
+
+import (
+	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"os"
+	"testing"
+)
+
+func testEmailRoutingSettingsConfig(resourceID, zoneID string, enabled bool) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_email_routing_address" "%[1]s" {
+		  zone_id = "%[2]s"
+		  enabled = "%[3]t"
+		}
+		`, resourceID, accountID, enabled)
+}
+
+func TestAccTestEmailRoutingSettings(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_email_routing_address." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	//resourceCloudflareEmailRoutingSettings
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testEmailRoutingSettingsConfig(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "enable", "true"),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+				),
+			},
+		},
+	})
+}
