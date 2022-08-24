@@ -133,8 +133,8 @@ Optional:
 
 Optional:
 
-- `compatibility_date` (String)
-- `compatibility_flags` (List of String)
+- `compatibility_date` (String) Compatibility date used for Pages Functions.
+- `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `environment_variables` (Map of String) Environment variables for build configs.
 
 
@@ -143,8 +143,8 @@ Optional:
 
 Optional:
 
-- `compatibility_date` (String)
-- `compatibility_flags` (List of String)
+- `compatibility_date` (String) Compatibility date used for Pages Functions.
+- `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `environment_variables` (Map of String) Environment variables for build configs.
 
 
@@ -155,7 +155,7 @@ Optional:
 Optional:
 
 - `config` (Block List, Max: 1) (see [below for nested schema](#nestedblock--source--config))
-- `type` (String)
+- `type` (String) Project host type.
 
 <a id="nestedblock--source--config"></a>
 ### Nested Schema for `source.config`
