@@ -12,7 +12,9 @@ Provides a resource which manages Cloudflare Pages projects.
 ## Example Usage
 
 ```terraform
+# Cloudflare Account ID
 account_id = ""
+
 # Basic project
 resource "cloudflare_pages_project" "basic_project" {
   account_id = var.account_id
@@ -57,7 +59,7 @@ resource "cloudflare_pages_project" "build_config" {
   }
 }
 
-# Manage compatiablity date and flags
+# Manage compatibility date and flags
 resource "cloudflare_pages_project" "build_config" {
   account_id = var.account_id
   name = "this-is-my-project-01"
