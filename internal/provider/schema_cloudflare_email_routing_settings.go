@@ -8,6 +8,7 @@ func resourceCloudflareEmailRoutingSettingsSchema() map[string]*schema.Schema {
 			Description: "The zone identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"tag": {
 			Description: "Email Routing settings identifier.",
@@ -23,6 +24,7 @@ func resourceCloudflareEmailRoutingSettingsSchema() map[string]*schema.Schema {
 			Description: "State of the zone settings for Email Routing.",
 			Type:        schema.TypeBool,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"created": {
 			Description: "The date and time the settings have been created.",

@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,18 +21,20 @@ func resourceCloudflareEmailRoutingAddress() *schema.Resource {
 func resourceCloudflareEmailRoutingAddressRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	addressTag := d.Get("tag").(string)
-	res, err := client.GetEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), addressTag)
+
+	res, err := client.GetEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error getting email routing destination address %q: %w", addressTag, err))
+		return diag.FromErr(fmt.Errorf("error getting email routing destination address %q: %w", d.Id(), err))
 	}
 
 	d.SetId(res.Tag)
 	d.Set("email", res.Email)
-	d.Set("verified", res.Verified)
-	d.Set("created", res.Created)
-	d.Set("modified", res.Modified)
+	if res.Verified != nil {
+		d.Set("verified", res.Verified.String())
+	}
+	d.Set("created", res.Created.String())
+	d.Set("modified", res.Modified.String())
 	return nil
 }
 
@@ -39,6 +42,7 @@ func resourceCloudflareEmailRoutingAddressCreate(ctx context.Context, d *schema.
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	email := d.Get("email").(string)
+
 	createParams := cloudflare.CreateEmailRoutingAddressParameters{
 		Email: email,
 	}
@@ -54,11 +58,10 @@ func resourceCloudflareEmailRoutingAddressCreate(ctx context.Context, d *schema.
 func resourceCloudflareEmailRoutingAddressDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	addressTag := d.Get("tag").(string)
 
-	_, err := client.DeleteEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), addressTag)
+	_, err := client.DeleteEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleteing email routing destination address %q, %w", addressTag, err))
+		return diag.FromErr(fmt.Errorf("error deleteing email routing destination address %q, %w", d.Id(), err))
 	}
 
 	return nil

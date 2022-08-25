@@ -187,6 +187,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_device_policy_certificates":             resourceCloudflareDevicePolicyCertificates(),
 				"cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
 				"cloudflare_email_routing_address":                  resourceCloudflareEmailRoutingAddress(),
+				"cloudflare_email_routing_rule":                     resourceCloudflareEmailRoutingRule(),
 				"cloudflare_email_routing_settings":                 resourceCloudflareEmailRoutingSettings(),
 				"cloudflare_fallback_domain":                        resourceCloudflareFallbackDomain(),
 				"cloudflare_filter":                                 resourceCloudflareFilter(),

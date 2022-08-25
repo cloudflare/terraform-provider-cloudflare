@@ -45,11 +45,6 @@ resource "cloudflare_worker_script" "my_script" {
     service = "MY_SERVICE"
     environment = "production"
   }
-
-  r2_bucket_binding {
-    name = "MY_BUCKET"
-    bucket_name = "MY_BUCKET_NAME"
-  }
 }
 ```
 
@@ -85,11 +80,6 @@ The following arguments are supported:
 - `name` - (Required) The global variable for the binding in your Worker code.
 - `service` - (Required) The name of the Worker to bind to.
 - `environment` - (Optional) The name of the Worker environment to bind to.
-
-**r2_bucket_binding** supports:
-
-- `name` - (Required) The global variable for the binding in your Worker code.
-- `bucket_name` - (Required) The name of the Bucket to bind to.
 
 ## Import
 

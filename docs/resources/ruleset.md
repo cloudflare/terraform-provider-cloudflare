@@ -408,7 +408,7 @@ resource "cloudflare_ruleset" "http_custom_error_example" {
 
 - `kind` (String) Type of Ruleset to create. Available values: `custom`, `managed`, `root`, `schema`, `zone`.
 - `name` (String) Name of the ruleset.
-- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_custom_errors`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_dynamic_redirect`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_custom_errors`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_dynamic_redirect`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`, `http_config_settings`.
 
 ### Optional
 
@@ -431,7 +431,7 @@ Required:
 
 Optional:
 
-- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `action_parameters` (Block List, Max: 1) List of parameters that configure the behavior of the ruleset rule action. (see [below for nested schema](#nestedblock--rules--action_parameters))
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
@@ -450,37 +450,63 @@ Read-Only:
 
 Optional:
 
+- `automatic_https_rewrites` (Boolean) Turn on or off Cloudflare Automatic HTTPS rewrites.
+- `autominify` (Block List) Indicate which file extensions to minify automatically. (see [below for nested schema](#nestedblock--rules--action_parameters--autominify))
+- `bic` (Boolean) Inspect the visitor's browser for headers commonly associated with spammers and certain bots.
 - `browser_ttl` (Block List, Max: 1) List of browser TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--browser_ttl))
 - `cache` (Boolean) Whether to cache if expression matches.
 - `cache_key` (Block List, Max: 1) List of cache key parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key))
 - `content` (String) Content of the custom error response.
 - `content_type` (String) Content-Type of the custom error response.
 - `cookie_fields` (Set of String) List of cookie values to include as part of custom fields logging.
+- `disable_apps` (Boolean) Turn off all active Cloudflare Apps.
+- `disable_railgun` (Boolean) Turn off railgun feature of the Cloudflare Speed app.
+- `disable_zaraz` (Boolean) Turn off zaraz feature.
 - `edge_ttl` (Block List, Max: 1) List of edge TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl))
+- `email_obfuscation` (Boolean) Turn on or off the Cloudflare Email Obfuscation feature of the Cloudflare Scrape Shield app.
 - `from_list` (Block List, Max: 1) Use a list to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_list))
 - `from_value` (Block List, Max: 1) Use a value to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_value))
 - `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
 - `host_header` (String) Host Header that request origin receives.
+- `hotlink_protection` (Boolean) Turn on or off the hotlink protection feature.
 - `id` (String) Identifier of the action parameter to modify.
 - `increment` (Number)
 - `matched_data` (Block List, Max: 1) List of properties to configure WAF payload logging. (see [below for nested schema](#nestedblock--rules--action_parameters--matched_data))
+- `mirage` (Boolean) Turn on or off Cloudflare Mirage of the Cloudflare Speed app.
+- `opportunistic_encryption` (Boolean) Turn on or off the Cloudflare Opportunistic Encryption feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.
 - `origin` (Block List, Max: 1) List of properties to change request origin. (see [below for nested schema](#nestedblock--rules--action_parameters--origin))
 - `origin_error_page_passthru` (Boolean) Pass-through error page for origin.
 - `overrides` (Block List, Max: 1) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
-- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_custom_errors`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_dynamic_redirect`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`.
+- `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_custom_errors`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_dynamic_redirect`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`, `http_config_settings`.
+- `polish` (String) Apply options from the Polish feature of the Cloudflare Speed app.
 - `products` (Set of String) Products to target with the actions. Available values: `bic`, `hot`, `ratelimit`, `securityLevel`, `uablock`, `waf`, `zonelockdown`.
 - `request_fields` (Set of String) List of request headers to include as part of custom fields logging, in lowercase.
 - `respect_strong_etags` (Boolean) Respect strong ETags.
 - `response` (Block List) List of parameters that configure the response given to end users. (see [below for nested schema](#nestedblock--rules--action_parameters--response))
 - `response_fields` (Set of String) List of response headers to include as part of custom fields logging, in lowercase.
+- `rocket_loader` (Boolean) Turn on or off Cloudflare Rocket Loader in the Cloudflare Speed app.
 - `rules` (Map of String) Map of managed WAF rule ID to comma-delimited string of ruleset rule IDs. Example: `rules = { "efb7b8c949ac4650a09736fc376e9aee" = "5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760" }`.
 - `ruleset` (String) Which ruleset ID to target.
 - `rulesets` (Set of String) List of managed WAF rule IDs to target. Only valid when the `"action"` is set to skip.
+- `security_level` (String) Control options for the Security Level feature from the Security app.
 - `serve_stale` (Block List, Max: 1) List of serve stale parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--serve_stale))
+- `server_side_excludes` (Boolean) Turn on or off the Server Side Excludes feature of the Cloudflare Scrape Shield app.
 - `sni` (Block List, Max: 1) List of properties to manange Server Name Indication. (see [below for nested schema](#nestedblock--rules--action_parameters--sni))
+- `ssl` (String) Control options for the SSL feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.
 - `status_code` (Number) HTTP status code of the custom error response.
+- `sxg` (Boolean) Turn on or off the SXG feature.
 - `uri` (Block List, Max: 1) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations. (see [below for nested schema](#nestedblock--rules--action_parameters--uri))
 - `version` (String) Version of the ruleset to deploy.
+
+<a id="nestedblock--rules--action_parameters--autominify"></a>
+### Nested Schema for `rules.action_parameters.autominify`
+
+Optional:
+
+- `css` (Boolean) SSL minification.
+- `html` (Boolean) HTML minification.
+- `js` (Boolean) JS minification.
+
 
 <a id="nestedblock--rules--action_parameters--browser_ttl"></a>
 ### Nested Schema for `rules.action_parameters.browser_ttl`
@@ -659,7 +685,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
 - `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
@@ -670,7 +696,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `category` (String) Tag name to apply the ruleset rule override to.
 - `enabled` (Boolean, Deprecated) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 - `status` (String) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag. Available values: `enabled`, `disabled`. Defaults to `""`.
@@ -681,7 +707,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `enabled` (Boolean, Deprecated) Defines if the current rule-level override enables or disables the rule.
 - `id` (String) Rule ID to apply the override to.
 - `score_threshold` (Number) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
