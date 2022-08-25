@@ -19,10 +19,14 @@ resource "cloudflare_device_posture_rule" "corporate_devices_posture_rule" {
   schedule    = "24h"
   expiration  = "24h"
   match {
-    platform = "mac"
+    platform = "linux"
   }
   input {
     id = cloudflare_teams_list.corporate_devices.id
+    version            = 1.0.0
+    operator           = <
+    os_distro_name     = ubuntu
+    os_distro_revision = 1.0.0
   }
 }
 ```
@@ -74,6 +78,8 @@ The input structure depends on the device posture rule type.
 
 - `version` = (Required) The operating system semantic version.
 - `operator` = (Required) The version comparison operator in (>,>=,<,<=,==)
+- `os_distro_name` = (Optional) The operating system excluding version information.
+- `os_distro_revision` = (Optional) The operating system version excluding OS name information or release name.
 
 **domain_joined**
 
