@@ -474,6 +474,12 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[1]s" {
+  zone_id = "%[2]s"
+  name    = "%[1]s"
+  type    = "onetimepin"
+}
+
 resource "cloudflare_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
@@ -481,6 +487,8 @@ resource "cloudflare_access_application" "%[1]s" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = true
+
+  depends_on = ["cloudflare_access_identity_provider.%[1]s"]
 }
 `, rnd, zoneID, domain)
 }
