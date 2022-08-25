@@ -18,8 +18,8 @@ description: |-
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource.
-- `name` (String)
-- `zone_id` (String) The zone identifier to target for the resource.
+- `name` (String) Must provide only one of `zone_id`, `name`.
+- `zone_id` (String) The zone identifier to target for the resource. Must provide only one of `zone_id`, `name`.
 
 ### Read-Only
 
