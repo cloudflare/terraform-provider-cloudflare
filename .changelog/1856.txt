@@ -1,0 +1,9 @@
+```release-note:enhancement
+resource/cloudflare_email_routing_address: Adds support for Email Routing destination address.
+```
+```release-note:enhancement
+resource/cloudflare_email_routing_rules: Adds support for Email Routing rules.
+```
+```release-note:enhancement
+resource/cloudflare_email_routing_settings: Adds support for Email Routing settings.
+```
