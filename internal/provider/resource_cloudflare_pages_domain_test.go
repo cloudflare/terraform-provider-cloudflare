@@ -2,9 +2,10 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"os"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func testPagesDomainConfig(resourceID, accountID, projectName, domain string) string {
@@ -17,12 +18,11 @@ func testPagesDomainConfig(resourceID, accountID, projectName, domain string) st
 		`, resourceID, accountID, projectName, domain)
 }
 
-func TestAccTestPagesDomain(t *testing.T) {
+func TestAccTestPagesDomain_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_domain." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	//resourceCloudflarePagesDomain
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
