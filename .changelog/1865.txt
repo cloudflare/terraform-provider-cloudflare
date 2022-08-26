@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_worker: provide js module option to allow service bindings
+```

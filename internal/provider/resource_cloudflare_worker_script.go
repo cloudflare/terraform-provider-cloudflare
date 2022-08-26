@@ -129,6 +129,11 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
+	moduleEnabled := d.Get("module_enabled").(bool)
+	if moduleEnabled != true {
+		moduleEnabled = false
+	}
+
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
 	bindings := make(ScriptBindings)
@@ -137,6 +142,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
+		Module:   moduleEnabled,
 		Bindings: bindings,
 	}
 
@@ -277,6 +283,11 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
+	moduleEnabled := d.Get("module_enabled").(bool)
+	if moduleEnabled != true {
+		moduleEnabled = false
+	}
+
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
 	bindings := make(ScriptBindings)
@@ -285,6 +296,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
+		Module:   moduleEnabled,
 		Bindings: bindings,
 	}
 
