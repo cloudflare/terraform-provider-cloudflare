@@ -16,12 +16,13 @@ description: |-
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `domain` (String) Name of the project.
-- `project_name` (String) Name of the project.
+- `domain` (String) Custom domain.
+- `project_name` (String) Name of the Pages Project.
 
 ### Read-Only
 
-- `id` (String) Id of the project.
+- `ID` (String) Id of the project.
+- `id` (String) The ID of this resource.
 - `status` (String) Status of the custom domain.
 
 

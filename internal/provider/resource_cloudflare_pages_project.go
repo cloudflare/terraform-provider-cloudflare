@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -23,21 +24,72 @@ func resourceCloudflarePagesProject() *schema.Resource {
 	}
 }
 
-func parseEnvironmentVariables(environment interface{}) map[string]cloudflare.PagesProjectDeploymentVar {
-	deploymentVariables := make(map[string]cloudflare.PagesProjectDeploymentVar)
-	variables := environment.(map[string]interface{})
-	for i, variable := range variables {
-		deploymentVar := cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
-		deploymentVariables[i] = deploymentVar
+func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeploymentConfigEnvironment {
+	config := cloudflare.PagesProjectDeploymentConfigEnvironment{}
+	parsed := environment.(map[string]interface{})
+	for key, value := range parsed {
+		switch key {
+		case "environment_variables":
+			deploymentVariables := make(map[string]cloudflare.PagesProjectDeploymentVar)
+			variables := value.(map[string]interface{})
+			for i, variable := range variables {
+				deploymentVariables[i] = cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
+			}
+			config.EnvVars = deploymentVariables
+			break
+		case "kv_namespaces":
+			namespace := cloudflare.NamespaceBindingMap{}
+			variables := value.(map[string]interface{})
+			for i, variable := range variables {
+				namespace[i] = &cloudflare.NamespaceBindingValue{Value: variable.(string)}
+			}
+			config.KvNamespaces = namespace
+			break
+		case "durable_object_namespaces":
+			namespace := cloudflare.NamespaceBindingMap{}
+			variables := value.(map[string]interface{})
+			for i, variable := range variables {
+				namespace[i] = &cloudflare.NamespaceBindingValue{Value: variable.(string)}
+			}
+			config.DoNamespaces = namespace
+			break
+		case "d1_databases":
+			bindingMap := cloudflare.D1BindingMap{}
+			variables := value.(map[string]interface{})
+			for i, variable := range variables {
+				bindingMap[i] = &cloudflare.D1Binding{ID: variable.(string)}
+			}
+			config.D1Databases = bindingMap
+			break
+		case "r2_buckets":
+			bindingMap := cloudflare.R2BindingMap{}
+			variables := value.(map[string]interface{})
+			for i, variable := range variables {
+				bindingMap[i] = &cloudflare.R2BindingValue{Name: variable.(string)}
+			}
+			config.R2Bindings = bindingMap
+			break
+		case "compatibility_date":
+			config.CompatibilityDate = value.(string)
+			break
+		case "compatibility_flags":
+			for _, item := range value.([]interface{}) {
+				config.CompatibilityFlags = append(config.CompatibilityFlags, item.(string))
+			}
+			break
+		}
 	}
-	return deploymentVariables
+
+	return config
 }
 
 func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
-	name := d.Get("name").(string)
+	project := cloudflare.PagesProject{}
+	project.Name = d.Get("name").(string)
+	project.ProductionBranch = d.Get("production_branch").(string)
 
-	buildConfig := cloudflare.PagesProjectBuildConfig{}
 	if _, ok := d.GetOk("build_config"); ok {
+		buildConfig := cloudflare.PagesProjectBuildConfig{}
 		if buildCommand, ok := d.GetOk("build_config.0.build_command"); ok {
 			buildConfig.BuildCommand = buildCommand.(string)
 		}
@@ -53,6 +105,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 		if webAnalyticsToken, ok := d.GetOk("build_config.0.web_analytics_tag"); ok {
 			buildConfig.WebAnalyticsToken = webAnalyticsToken.(string)
 		}
+		project.BuildConfig = buildConfig
 	}
 
 	source := cloudflare.PagesProjectSource{}
@@ -68,8 +121,8 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 			if sourceRepoName, ok := d.GetOk("source.0.config.0.repo_name"); ok {
 				sourceConfig.RepoName = sourceRepoName.(string)
 			}
-			if sourceProducationBranch, ok := d.GetOk("source.0.config.0.production_branch"); ok {
-				sourceConfig.ProductionBranch = sourceProducationBranch.(string)
+			if sourceProductionBranch, ok := d.GetOk("source.0.config.0.production_branch"); ok {
+				sourceConfig.ProductionBranch = sourceProductionBranch.(string)
 			}
 			if sourcePRComments, ok := d.GetOk("source.0.config.0.pr_comments_enabled"); ok {
 				sourceConfig.PRCommentsEnabled = sourcePRComments.(bool)
@@ -77,43 +130,34 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 			if sourceDeploymentsEnabled, ok := d.GetOk("source.0.config.0.deployments_enabled"); ok {
 				sourceConfig.DeploymentsEnabled = sourceDeploymentsEnabled.(bool)
 			}
+			if productionBranch, ok := d.GetOk("source.0.config.0.production_branch"); ok {
+				sourceConfig.ProductionBranch = productionBranch.(string)
+			}
+			if previewBranchIncludes, ok := d.GetOk("source.0.config.0.preview_branch_includes"); ok {
+				for _, item := range previewBranchIncludes.([]interface{}) {
+					sourceConfig.PreviewBranchIncludes = append(sourceConfig.PreviewBranchIncludes, item.(string))
+				}
+			}
+			if previewBranchExcludes, ok := d.GetOk("source.0.config.0.preview_branch_excludes"); ok {
+				for _, item := range previewBranchExcludes.([]interface{}) {
+					sourceConfig.PreviewBranchExcludes = append(sourceConfig.PreviewBranchExcludes, item.(string))
+				}
+			}
+			if previewDeploymentSetting, ok := d.GetOk("source.0.config.0.preview_deployment_setting"); ok {
+				sourceConfig.PreviewDeploymentSetting = cloudflare.PagesPreviewDeploymentSetting(previewDeploymentSetting.(string))
+			}
 			source.Config = &sourceConfig
 		}
 	}
 
-	deploymentConfig := cloudflare.PagesProjectDeploymentConfigs{}
-	if previewVars, ok := d.GetOk("deployment_configs.0.preview.0.environment_variables"); ok {
-		deploymentConfig.Preview.EnvVars = parseEnvironmentVariables(previewVars)
+	if previewConfig, ok := d.GetOk("deployment_configs.0.preview.0"); ok {
+		project.DeploymentConfigs.Preview = buildDeploymentConfig(previewConfig)
+	}
+	if productionConfig, ok := d.GetOk("deployment_configs.0.production.0"); ok {
+		project.DeploymentConfigs.Production = buildDeploymentConfig(productionConfig)
 	}
 
-	if _, ok := d.GetOk("deployment_configs.0.preview.0.compatibility_date"); ok {
-		deploymentConfig.Preview.CompatibilityDate = d.Get("deployment_configs.0.preview.0.compatibility_date").(string)
-	}
-	if previewCompatibilityFlags, ok := d.GetOk("deployment_configs.0.preview.0.compatibility_flags"); ok {
-		deploymentConfig.Preview.CompatibilityFlags = previewCompatibilityFlags.([]string)
-	}
-
-	if productionCompatibilityFlags, ok := d.GetOk("deployment_configs.0.preview.0.compatibility_flags"); ok {
-		deploymentConfig.Production.CompatibilityFlags = productionCompatibilityFlags.([]string)
-	}
-
-
-	if _, ok := d.GetOk("deployment_configs.0.production.0.compatibility_date"); ok {
-		deploymentConfig.Production.CompatibilityDate = d.Get("deployment_configs.0.production.0.compatibility_date").(string)
-	}
-
-	if productionVars, ok := d.GetOk("deployment_configs.0.production.0.environment_variables"); ok {
-		deploymentConfig.Production.EnvVars = parseEnvironmentVariables(productionVars)
-	}
-
-
-
-	return cloudflare.PagesProject{
-		Name:              name,
-		BuildConfig:       buildConfig,
-		DeploymentConfigs: deploymentConfig,
-		Source:            source,
-	}
+	return project
 }
 
 func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -128,10 +172,8 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 
 	d.SetId(res.ID)
 	d.Set("subdomain", res.SubDomain)
-	d.Set("created_on", res.CreatedOn.String())
+	d.Set("created_on", res.CreatedOn.Format(time.RFC3339))
 	d.Set("domains", res.Domains)
-	d.Set("source.0.type", res.Source.Type)
-	d.Set("source.0.config.0.owner", res.Source.Config.Owner)
 
 	return nil
 }

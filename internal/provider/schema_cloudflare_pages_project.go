@@ -2,6 +2,7 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
@@ -52,7 +53,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 						"owner": {
 							Description: "Project owner username.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
 						"repo_name": {
 							Description: "Project repository name.",
@@ -62,7 +63,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 						"production_branch": {
 							Description: "Project production branch name.",
 							Type:        schema.TypeString,
-							Optional:    true,
+							Required:    true,
 						},
 						"pr_comments_enabled": {
 							Description: "Enable Pages to comment on Pull Requests.",
@@ -76,6 +77,34 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 							Optional:    true,
 							Computed:    true,
 						},
+						"production_deployment_enabled": {
+							Description: "Enable production deployments.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+						"preview_branch_includes": {
+							Description: "Branches will be included for automatic deployment.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"preview_branch_excludes": {
+							Description: "Branches will be excluded from automatic deployment.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"preview_deployment_setting": {
+							Description:  "Preview Deployment Setting.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"custom", "all", "none"}, false),
+						},
 					},
 				},
 			},
@@ -86,7 +115,27 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 		Schema: map[string]*schema.Schema{
 			"environment_variables": {
 				Type:        schema.TypeMap,
-				Description: "Environment variables for build configs.",
+				Description: "Environment variables for Pages Functions.",
+				Optional:    true,
+			},
+			"kv_namespaces": {
+				Type:        schema.TypeMap,
+				Description: "KV namespaces used for Pages Functions.",
+				Optional:    true,
+			},
+			"durable_object_namespaces": {
+				Type:        schema.TypeMap,
+				Description: "Durable Object namespaces used for Pages Functions.",
+				Optional:    true,
+			},
+			"d1_databases": {
+				Type:        schema.TypeMap,
+				Description: "D1 Databases used for Pages Functions.",
+				Optional:    true,
+			},
+			"r2_buckets": {
+				Type:        schema.TypeMap,
+				Description: "R2 Buckets used for Pages Functions.",
 				Optional:    true,
 			},
 			"compatibility_date": {
@@ -140,6 +189,11 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Description: "When the project was created.",
 			Computed:    true,
+		},
+		"production_branch": {
+			Type:        schema.TypeString,
+			Description: "The name of the branch that is used for the production environment.",
+			Required:    true,
 		},
 		"build_config": {
 			Description: "Configs for the project build process.",
