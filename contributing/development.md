@@ -28,6 +28,13 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 $ make testacc
 ```
 
+To run a subsection of the Acceptation tests you can run
+```sh
+TESTARGS='-run "^<regex target of tests>" -count 1 -parallel 1' make testacc
+# Example
+# TESTARGS='-run "^TestAccTestPagesProject" -count 1 -parallel 1' make testacc
+```
+
 You can also install other optional (but great to have tools) using `make tools`.
 Most of these tools run in CI automatically but helps having these locally to
 either hook into your editor or debug CI failures.
