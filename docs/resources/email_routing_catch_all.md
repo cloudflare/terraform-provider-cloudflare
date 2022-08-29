@@ -1,11 +1,11 @@
 ---
-page_title: "cloudflare_email_routing_rule Resource - Cloudflare"
+page_title: "cloudflare_email_routing_catch_all Resource - Cloudflare"
 subcategory: ""
 description: |-
   
 ---
 
-# cloudflare_email_routing_rule (Resource)
+# cloudflare_email_routing_catch_all (Resource)
 
 
 

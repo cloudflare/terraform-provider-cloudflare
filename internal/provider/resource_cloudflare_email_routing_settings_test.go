@@ -9,16 +9,16 @@ import (
 
 func testEmailRoutingSettingsConfig(resourceID, zoneID string, enabled bool) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_email_routing_address" "%[1]s" {
+		resource "cloudflare_email_routing_settings" "%[1]s" {
 		  zone_id = "%[2]s"
 		  enabled = "%[3]t"
 		}
-		`, resourceID, accountID, enabled)
+		`, resourceID, zoneID, enabled)
 }
 
 func TestAccTestEmailRoutingSettings(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "cloudflare_email_routing_address." + rnd
+	name := "cloudflare_email_routing_settings." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	//resourceCloudflareEmailRoutingSettings
@@ -29,7 +29,7 @@ func TestAccTestEmailRoutingSettings(t *testing.T) {
 			{
 				Config: testEmailRoutingSettingsConfig(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "enable", "true"),
+					resource.TestCheckResourceAttr(name, "enabled", "true"),
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 				),
 			},

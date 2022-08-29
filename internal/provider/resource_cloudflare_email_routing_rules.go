@@ -19,8 +19,35 @@ func resourceCloudflareEmailRoutingRule() *schema.Resource {
 	}
 }
 
+func buildMatchersAndActions(d *schema.ResourceData) (matchers []cloudflare.EmailRoutingRuleMatcher, actions []cloudflare.EmailRoutingRuleAction, ) {
+	if items, ok := d.GetOk("matcher"); ok {
+		for _, item := range items.(*schema.Set).List() {
+			matcher := item.(map[string]interface{})
+			matchers = append(matchers, cloudflare.EmailRoutingRuleMatcher{
+				Type:  matcher["type"].(string),
+				Field: matcher["field"].(string),
+				Value: matcher["value"].(string),
+			})
+		}
+	}
+
+	if items, ok := d.GetOk("action"); ok {
+		for _, item := range items.(*schema.Set).List() {
+			action := item.(map[string]interface{})
+			ruleAction := cloudflare.EmailRoutingRuleAction{}
+			ruleAction.Type = action["type"].(string)
+			for _, value := range action["value"].([]interface{}) {
+				ruleAction.Value = append(ruleAction.Value, value.(string))
+			}
+
+			actions = append(actions, ruleAction)
+		}
+	}
+	return
+}
+
 func resourceCloudflareEmailRoutingRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(cloudflare.API)
+	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	res, err := client.GetEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
@@ -36,7 +63,7 @@ func resourceCloudflareEmailRoutingRuleRead(ctx context.Context, d *schema.Resou
 }
 
 func resourceCloudflareEmailRoutingRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(cloudflare.API)
+	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	createParams := cloudflare.CreateEmailRoutingRuleParameters{}
@@ -44,30 +71,9 @@ func resourceCloudflareEmailRoutingRuleCreate(ctx context.Context, d *schema.Res
 	createParams.Enabled = cloudflare.BoolPtr(d.Get("enabled").(bool))
 	createParams.Priority = d.Get("priority").(int)
 
-	if items, ok := d.GetOk("matchers"); ok {
-		var matchRules []cloudflare.EmailRoutingRuleMatcher
-		for _, item := range items.(*schema.Set).List() {
-			matcher := item.(map[string]string)
-			matchRules = append(matchRules, cloudflare.EmailRoutingRuleMatcher{
-				Type:  matcher["type"],
-				Field: matcher["field"],
-				Value: matcher["value"],
-			})
-		}
-		createParams.Matchers = matchRules
-	}
 
-	if items, ok := d.GetOk("actions"); ok {
-		var actions []cloudflare.EmailRoutingRuleAction
-		for _, item := range items.(*schema.Set).List() {
-			action := item.(map[string]interface{})
-			actions = append(actions, cloudflare.EmailRoutingRuleAction{
-				Type:  action["type"].(string),
-				Value: action["value"].([]string),
-			})
-		}
-		createParams.Actions = actions
-	}
+	createParams.Matchers, createParams.Actions = buildMatchersAndActions(d)
+
 
 	res, err := client.CreateEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), createParams)
 	if err != nil {
@@ -79,38 +85,16 @@ func resourceCloudflareEmailRoutingRuleCreate(ctx context.Context, d *schema.Res
 }
 
 func resourceCloudflareEmailRoutingRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(cloudflare.API)
+	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	createParams := cloudflare.UpdateEmailRoutingRuleParameters{}
+	createParams.RuleID = d.Id()
 	createParams.Name = d.Get("name").(string)
 	createParams.Enabled = cloudflare.BoolPtr(d.Get("enabled").(bool))
 	createParams.Priority = d.Get("priority").(int)
 
-	if items, ok := d.GetOk("matchers"); ok {
-		var matchRules []cloudflare.EmailRoutingRuleMatcher
-		for _, item := range items.(*schema.Set).List() {
-			matcher := item.(map[string]string)
-			matchRules = append(matchRules, cloudflare.EmailRoutingRuleMatcher{
-				Type:  matcher["type"],
-				Field: matcher["field"],
-				Value: matcher["value"],
-			})
-		}
-		createParams.Matchers = matchRules
-	}
-
-	if items, ok := d.GetOk("actions"); ok {
-		var actions []cloudflare.EmailRoutingRuleAction
-		for _, item := range items.(*schema.Set).List() {
-			action := item.(map[string]interface{})
-			actions = append(actions, cloudflare.EmailRoutingRuleAction{
-				Type:  action["type"].(string),
-				Value: action["value"].([]string),
-			})
-		}
-		createParams.Actions = actions
-	}
+	createParams.Matchers, createParams.Actions = buildMatchersAndActions(d)
 
 	res, err := client.UpdateEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), createParams)
 	if err != nil {
@@ -122,7 +106,7 @@ func resourceCloudflareEmailRoutingRuleUpdate(ctx context.Context, d *schema.Res
 }
 
 func resourceCloudflareEmailRoutingRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(cloudflare.API)
+	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
 	_, err := client.DeleteEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())

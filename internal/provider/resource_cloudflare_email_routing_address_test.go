@@ -29,7 +29,7 @@ func TestAccTestEmailRoutingAddress(t *testing.T) {
 			{
 				Config: testEmailRoutingAddressConfig(rnd, accountID, "user@example.com"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "domain", "user@example.com"),
+					resource.TestCheckResourceAttr(name, "email", "user@example.com"),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 				),
 			},

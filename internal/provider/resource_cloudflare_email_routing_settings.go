@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,8 +31,8 @@ func resourceCloudflareEmailRoutingSettingsRead(ctx context.Context, d *schema.R
 	d.SetId(res.Tag)
 	d.Set("name", res.Name)
 	d.Set("enabled", res.Enabled)
-	d.Set("created", res.Created.String())
-	d.Set("modified", res.Modified.String())
+	d.Set("created", res.Created.Format(time.RFC3339))
+	d.Set("modified", res.Modified.Format(time.RFC3339))
 	d.Set("skip_wizard", res.SkipWizard)
 	d.Set("status", res.Status)
 

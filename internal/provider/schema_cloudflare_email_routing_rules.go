@@ -27,44 +27,43 @@ func resourceCloudflareEmailRoutingRuleSchema() map[string]*schema.Schema {
 			Type:         schema.TypeInt,
 			ValidateFunc: validation.IntAtLeast(0),
 			Optional:     true,
+			Computed:     true,
 		},
 		"enabled": {
 			Description: "Routing rule status.",
 			Type:        schema.TypeBool,
 			Optional:    true,
 		},
-		"matchers": {
+		"matcher": {
 			Description: "Matching patterns to forward to your actions.",
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Required:    true,
-			MinItems:    1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
 						Description:  "Type of matcher.",
 						Type:         schema.TypeString,
 						Required:     true,
-						ValidateFunc: validation.StringInSlice([]string{"literal"}, true),
+						ValidateFunc: validation.StringInSlice([]string{"literal", "all"}, true),
 					},
 					"field": {
 						Description: "Field for type matcher.",
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 					},
 					"value": {
 						Description:  "Value for matcher.",
 						Type:         schema.TypeString,
-						Required:     true,
+						Optional:     true,
 						ValidateFunc: validation.StringLenBetween(0, 90),
 					},
 				},
 			},
 		},
-		"actions": {
+		"action": {
 			Description: "List actions patterns.",
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Required:    true,
-			MinItems:    1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {

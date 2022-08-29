@@ -7,17 +7,15 @@ import (
 	"testing"
 )
 
-func testEmailRoutingRuleConfig(resourceID, zoneID string, enabled bool, priority int) string {
+func testEmailRoutingRuleCatchAllConfig(resourceID, zoneID string, enabled bool) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_email_routing_rule" "%[1]s" {
+		resource "cloudflare_email_routing_catch_all" "%[1]s" {
 		  zone_id = "%[2]s"
 		  enabled = "%[3]t"
-          priority = "%[4]d"
-		  name = "terraform rule"
+		  name = "terraform rule catch all"
+
 		  matcher {
-			field  = "to"
-			type = "literal"
-			value = "test@example.com"
+			type  = "all"
 		  }
 
 		  action {
@@ -25,12 +23,12 @@ func testEmailRoutingRuleConfig(resourceID, zoneID string, enabled bool, priorit
 			value = ["destinationaddress@example.net"]
 		  }
 	}
-		`, resourceID, zoneID, enabled, priority)
+		`, resourceID, zoneID, enabled)
 }
 
-func TestAccTestEmailRoutingRule(t *testing.T) {
+func TestAccTestEmailRoutingCatchAll(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "cloudflare_email_routing_rule." + rnd
+	name := "cloudlfare_email_routing_catch_all." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	//resourceCloudflareEmailRoutingRule
@@ -39,16 +37,14 @@ func TestAccTestEmailRoutingRule(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testEmailRoutingRuleConfig(rnd, zoneID, true, 10),
+				Config: testEmailRoutingRuleCatchAllConfig(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(name, "priority", "10"),
-					resource.TestCheckResourceAttr(name, "name", "terraform rule"),
+					resource.TestCheckResourceAttr(name, "name", "terraform rule catch all"),
 
-					resource.TestCheckResourceAttr(name, "matcher.0.type", "literal"),
-					resource.TestCheckResourceAttr(name, "matcher.0.field", "to"),
-					resource.TestCheckResourceAttr(name, "matcher.0.value", "test@example.com"),
+					resource.TestCheckResourceAttr(name, "matcher.0.type", "all"),
+
 
 					resource.TestCheckResourceAttr(name, "action.0.type", "forward"),
 					resource.TestCheckResourceAttr(name, "action.0.value.#", "1"),

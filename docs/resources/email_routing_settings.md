@@ -18,13 +18,17 @@ description: |-
 - `enabled` (Boolean) State of the zone settings for Email Routing.
 - `zone_id` (String) The zone identifier to target for the resource.
 
+### Optional
+
+- `skip_wizard` (Boolean) Flag to check if the user skipped the configuration wizard.
+
 ### Read-Only
 
 - `created` (String) The date and time the settings have been created.
 - `id` (String) The ID of this resource.
 - `modified` (String) The date and time the settings have been modified.
 - `name` (String) Domain of your zone.
-- `skip_wizard` (Boolean) Flag to check if the user skipped the configuration wizard.
+- `status` (String) Show the state of your account, and the type or configuration error.
 - `tag` (String) Email Routing settings identifier.
 
 

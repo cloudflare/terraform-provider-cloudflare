@@ -40,6 +40,12 @@ func resourceCloudflareEmailRoutingSettingsSchema() map[string]*schema.Schema {
 			Description: "Flag to check if the user skipped the configuration wizard.",
 			Type:        schema.TypeBool,
 			Computed:    true,
+			Optional:    true,
+		},
+		"status": {
+			Description: "Show the state of your account, and the type or configuration error.",
+			Type:        schema.TypeString,
+			Computed:    true,
 		},
 	}
 }
