@@ -22,11 +22,6 @@ func resourceCloudflarePagesDomainSchema() map[string]*schema.Schema {
 			Required:    true,
 			ForceNew:    true,
 		},
-		"id": {
-			Description: "ID of the project.",
-			Type:        schema.TypeString,
-			Computed:    true,
-		},
 		"status": {
 			Description: "Status of the custom domain.",
 			Type:        schema.TypeString,

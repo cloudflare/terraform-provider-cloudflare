@@ -47,7 +47,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
-				Description: "",
+				Description: "Configuration for the source of the Cloudflare Pages project.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"owner": {
@@ -167,11 +167,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Required:    true,
 		},
-		"id": {
-			Description: "ID of the project.",
-			Type:        schema.TypeString,
-			Computed:    true,
-		},
 		"subdomain": {
 			Description: "The Cloudflare subdomain associated with the project.",
 			Type:        schema.TypeString,
@@ -196,35 +191,35 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"build_config": {
-			Description: "Configs for the project build process.",
+			Description: "Configuration for the project build process.",
 			Type:        schema.TypeList,
 			Elem:        &buildConfig,
 			MaxItems:    1,
 			Optional:    true,
 		},
 		"source": {
-			Description: "Configs for the project source.",
+			Description: "Configuration for the project source.",
 			Optional:    true,
 			Type:        schema.TypeList,
 			Elem:        &source,
 			MaxItems:    1,
 		},
 		"deployment_configs": {
-			Description: "Configs for deployments in a project.",
+			Description: "Configuration for deployments in a project.",
 			Type:        schema.TypeList,
 			MaxItems:    1,
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"preview": {
-						Description: "Configs for preview deploys.",
+						Description: "Configuration for preview deploys.",
 						Type:        schema.TypeList,
 						Optional:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},
 					"production": {
-						Description: "Configs for production deploys.",
+						Description: "Configuration for production deploys.",
 						Type:        schema.TypeList,
 						Optional:    true,
 						Elem:        &deploymentConfig,
