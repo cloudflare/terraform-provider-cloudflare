@@ -24,7 +24,7 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 		"jump_start": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Wwhether to scan for DNS records on creation. Ignored after zone is created.",
+			Description: "Whether to scan for DNS records on creation. Ignored after zone is created.",
 		},
 		"paused": {
 			Type:        schema.TypeBool,
