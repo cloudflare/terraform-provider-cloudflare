@@ -3,6 +3,7 @@
 DEPENDENCIES:
 
 * provider: bumps github.com/golangci/golangci-lint from 1.48.0 to 1.49.0 ([#1855](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1855))
+* provider: bumps goreleaser/goreleaser-action from 3.0.0 to 3.1.0 ([#1868](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1868))
 
 ## 3.22.0 (August 24th, 2022)
 

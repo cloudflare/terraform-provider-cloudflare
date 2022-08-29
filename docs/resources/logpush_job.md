@@ -115,7 +115,7 @@ resource "cloudflare_logpush_job" "example_job" {
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource.
+- `account_id` (String) The account identifier to target for the resource. Must provide only one of `account_id`, `zone_id`.
 - `enabled` (Boolean) Whether to enable the job.
 - `filter` (String) Use filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/logpush-api-configuration/filters/).
 - `frequency` (String) A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. Available values: `high`, `low`. Defaults to `high`.
@@ -123,7 +123,7 @@ resource "cloudflare_logpush_job" "example_job" {
 - `logpull_options` (String) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpull options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
 - `name` (String) The name of the logpush job to create.
 - `ownership_challenge` (String) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage, Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. Must provide only one of `account_id`, `zone_id`.
 
 ### Read-Only
 
