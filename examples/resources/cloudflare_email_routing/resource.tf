@@ -5,12 +5,13 @@ resource "cloudflare_email_routing_address" "example" {
     email = "user@example.com"
 }
 
-# Manage Email Routing on zone
+# Managed Email Routing Settings on zone
 resource "cloudflare_email_routing_settings" "my_zone" {
     zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
     enabled = "true"
 }
 
+# Managed Email Routing Rule
 resource "cloudflare_email_routing_rule" "main" {
     zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
     name = "terraform rule"
@@ -20,6 +21,25 @@ resource "cloudflare_email_routing_rule" "main" {
             type = "literal",
             field = "to",
             value = "test@example.com"
+        }
+    ] 
+
+    actions = [
+        {
+            type = "forward"
+            value = ["destinationaddress@example.net"]
+        }   
+    ]
+}
+
+# Managed Email Routing Rule
+resource "cloudflare_email_routing_rule_catch_all" "main" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    name = "terraform rule"
+    enabled =  true
+    matchers = [
+        {
+            type = "all",
         }
     ] 
 

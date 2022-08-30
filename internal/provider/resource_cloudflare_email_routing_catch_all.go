@@ -23,15 +23,13 @@ func resourceCloudflareEmailRoutingCatchAllRead(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	res, err := client.GetEmailRoutingCatchAllRule(ctx, cloudflare.ZoneIdentifier(zoneID))
+	res, err := client.GetEmailRoutingCatchAllRule(ctx, cloudflare.AccountIdentifier(zoneID))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading email routing catch all rule %q: %w", d.Id(), err))
 	}
 	d.SetId(res.Tag)
 	d.Set("name", res.Name)
 	d.Set("enabled", res.Enabled)
-	d.Set("priority", 2147483647)
-
 	return nil
 }
 
@@ -56,10 +54,12 @@ func resourceCloudflareEmailRoutingCatchAllUpdate(ctx context.Context, d *schema
 func resourceCloudflareEmailRoutingCatchAllDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
+
 	createParams := cloudflare.EmailRoutingCatchAllRule{}
 	createParams.Name = d.Get("name").(string)
 	createParams.Enabled = cloudflare.BoolPtr(false)
 
+	createParams.Matchers, createParams.Actions = buildMatchersAndActions(d)
 
 	_, err := client.UpdateEmailRoutingCatchAllRule(ctx, cloudflare.ZoneIdentifier(zoneID), createParams)
 	if err != nil {
