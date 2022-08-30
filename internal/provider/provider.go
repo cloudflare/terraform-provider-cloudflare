@@ -38,12 +38,36 @@ func init() {
 			}
 		}
 
+		if s.RequiredWith != nil && len(s.RequiredWith) > 0 {
+			requiredWith := make([]string, len(s.RequiredWith))
+			for i, c := range s.RequiredWith {
+				requiredWith[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Required when using %s.", strings.Join(requiredWith, ", "))
+		}
+
 		if s.ConflictsWith != nil && len(s.ConflictsWith) > 0 {
 			conflicts := make([]string, len(s.ConflictsWith))
 			for i, c := range s.ConflictsWith {
 				conflicts[i] = fmt.Sprintf("`%s`", c)
 			}
 			desc += fmt.Sprintf(" Conflicts with %s.", strings.Join(conflicts, ", "))
+		}
+
+		if s.ExactlyOneOf != nil && len(s.ExactlyOneOf) > 0 {
+			exactlyOneOfs := make([]string, len(s.ExactlyOneOf))
+			for i, c := range s.ExactlyOneOf {
+				exactlyOneOfs[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Must provide only one of %s.", strings.Join(exactlyOneOfs, ", "))
+		}
+
+		if s.AtLeastOneOf != nil && len(s.AtLeastOneOf) > 0 {
+			atLeastOneOfs := make([]string, len(s.AtLeastOneOf))
+			for i, c := range s.AtLeastOneOf {
+				atLeastOneOfs[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Must provide at least one of %s.", strings.Join(atLeastOneOfs, ", "))
 		}
 
 		return strings.TrimSpace(desc)
