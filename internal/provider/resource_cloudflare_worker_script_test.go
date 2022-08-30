@@ -82,7 +82,7 @@ func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd string) stri
 resource "cloudflare_worker_script" "%[1]s" {
   name = "%[1]s"
   content = "%[2]s"
-  module_enabled = %[3]t
+  module = %[3]t
 }`, rnd, scriptContent1, true)
 }
 
@@ -91,7 +91,7 @@ func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd string) strin
 resource "cloudflare_worker_script" "%[1]s" {
   name = "%[1]s"
   content = "%[2]s"
-  module_enabled = %[3]t
+  module = %[3]t
 }`, rnd, scriptContent2, true)
 }
 
@@ -104,13 +104,13 @@ resource "cloudflare_workers_kv_namespace" "%[1]s" {
 resource "cloudflare_worker_script" "%[1]s-service" {
 	name    = "%[1]s-service"
 	content = "%[2]s"
-	module_enabled = %[4]t
+	module = %[4]t
 }
 
 resource "cloudflare_worker_script" "%[1]s" {
   name    = "%[1]s"
   content = "%[2]s"
-  module_enabled = %[4]t
+  module = %[4]t
 
   kv_namespace_binding {
     name         = "MY_KV_NAMESPACE"

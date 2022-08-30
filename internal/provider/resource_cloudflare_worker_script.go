@@ -129,7 +129,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
-	moduleEnabled := d.Get("module_enabled").(bool)
+	moduleEnabled := d.Get("module").(bool)
 	if moduleEnabled != true {
 		moduleEnabled = false
 	}
@@ -283,7 +283,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("script content cannot be empty"))
 	}
 
-	moduleEnabled := d.Get("module_enabled").(bool)
+	moduleEnabled := d.Get("module").(bool)
 	if moduleEnabled != true {
 		moduleEnabled = false
 	}

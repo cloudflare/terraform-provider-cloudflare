@@ -19,7 +19,7 @@ resource "cloudflare_workers_kv_namespace" "my_namespace" {
 resource "cloudflare_worker_script" "my_script" {
   name = "script_1"
   content = file("script.js")
-  module_enabled = true
+  module = true
 
   kv_namespace_binding {
     name         = "MY_EXAMPLE_KV_NAMESPACE"
@@ -60,7 +60,7 @@ The following arguments are supported:
 
 - `name` - (Required) The name for the script.
 - `content` - (Required) The script content.
-- `module_enabled` - (Optional) Default: false. Allow upload of js-module worker.
+- `module` - (Optional) Default: false. Allow upload of js-module worker.
 
 **kv_namespace_binding** supports:
 
