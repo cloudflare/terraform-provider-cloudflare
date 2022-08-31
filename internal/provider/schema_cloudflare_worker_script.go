@@ -5,12 +5,14 @@ import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 var kvNamespaceBindingResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
 		},
 		"namespace_id": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "ID of the KV namespace you want to use.",
 		},
 	},
 }
@@ -18,12 +20,14 @@ var kvNamespaceBindingResource = &schema.Resource{
 var plainTextBindingResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
 		},
 		"text": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The plain text you want to store.",
 		},
 	},
 }
@@ -31,13 +35,15 @@ var plainTextBindingResource = &schema.Resource{
 var secretTextBindingResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
 		},
 		"text": {
-			Type:      schema.TypeString,
-			Required:  true,
-			Sensitive: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Sensitive:   true,
+			Description: "The secret text you want to store.",
 		},
 	},
 }
@@ -45,12 +51,14 @@ var secretTextBindingResource = &schema.Resource{
 var webAssemblyBindingResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
 		},
 		"module": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The base64 encoded wasm module you want to store.",
 		},
 	},
 }
@@ -58,16 +66,19 @@ var webAssemblyBindingResource = &schema.Resource{
 var serviceBindingResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
 		},
 		"service": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the Worker to bind to.",
 		},
 		"environment": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The name of the Worker environment to bind to.",
 		},
 	},
 }
@@ -75,12 +86,14 @@ var serviceBindingResource = &schema.Resource{
 var r2BucketBindingResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
 		},
 		"bucket_name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the Bucket to bind to.",
 		},
 	},
 }
@@ -88,13 +101,20 @@ var r2BucketBindingResource = &schema.Resource{
 func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The name for the script.",
 		},
 		"content": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The script content.",
+		},
+		"module": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Whether to upload Worker as a module.",
 		},
 		"plain_text_binding": {
 			Type:     schema.TypeSet,
