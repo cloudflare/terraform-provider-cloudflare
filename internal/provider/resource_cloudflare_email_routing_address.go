@@ -66,7 +66,7 @@ func resourceCloudflareEmailRoutingAddressDelete(ctx context.Context, d *schema.
 
 	_, err := client.DeleteEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleteing email routing destination address %q, %w", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error deleting email routing destination address %q, %w", d.Id(), err))
 	}
 
 	return nil
