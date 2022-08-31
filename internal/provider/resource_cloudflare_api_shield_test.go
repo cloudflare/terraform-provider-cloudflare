@@ -21,29 +21,32 @@ func TestAccAPIShield_Basic(t *testing.T) {
 
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_api_shield." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPIShieldSingleEntry(resourceID, rnd, cloudflare.AuthIdCharacteristics{Name: "test-header", Type: "header"}),
+				Config: testAccCloudflareAPIShieldSingleEntry(rnd, zoneID, cloudflare.AuthIdCharacteristics{Name: "test-header", Type: "header"}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, "zone_id", rnd),
+					resource.TestCheckResourceAttr(resourceID, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.#", "1"),
+					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.0.name", "test-header"),
+					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.0.type", "header"),
 				),
 			},
 		},
 	})
 }
 
-func testAccCloudflareAPIShieldSingleEntry(resourceName string, rnd string, authChar cloudflare.AuthIdCharacteristics) string {
+func testAccCloudflareAPIShieldSingleEntry(resourceName, rnd string, authChar cloudflare.AuthIdCharacteristics) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_api_token" "%[1]s" {
-		zone_id = "%s"
+	resource "cloudflare_api_shield" "%[1]s" {
+		zone_id = "%[2]s"
 		auth_id_characteristics {
-			name = "%s"
-			type = "%s"
+			name = "%[3]s"
+			type = "%[4]s"
 		}
 	}
 `, resourceName, rnd, authChar.Name, authChar.Type)
