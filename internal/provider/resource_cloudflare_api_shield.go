@@ -2,9 +2,9 @@ package provider
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,8 +53,7 @@ func resourceCloudflareAPIShieldRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(fmt.Errorf("failed to fetch API Shield Configuration: %w", err))
 	}
 
-	asJson, _ := json.Marshal(as.AuthIdCharacteristics)
-	d.Set("auth_id_characteristics", string(asJson))
+	d.Set("auth_id_characteristics", flattenAPIShieldConfiguration(as.AuthIdCharacteristics))
 	d.Set("zone_id", zoneID)
 	d.SetId(zoneID)
 
@@ -82,8 +81,7 @@ func resourceCloudflareAPIShieldDelete(ctx context.Context, d *schema.ResourceDa
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id")
 
-	// send an empty payload to "Delete"
-	_, err := client.UpdateAPIShieldConfiguration(ctx, cloudflare.ZoneIdentifier(zoneID.(string)), cloudflare.UpdateAPIShieldParams{})
+	_, err := client.UpdateAPIShieldConfiguration(ctx, cloudflare.ZoneIdentifier(zoneID.(string)), cloudflare.UpdateAPIShieldParams{nil})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create API Shield Configuration")))
 	}
@@ -91,7 +89,6 @@ func resourceCloudflareAPIShieldDelete(ctx context.Context, d *schema.ResourceDa
 	return resourceCloudflareAPIShieldRead(ctx, d, meta)
 }
 
-// helpers
 func buildAPIShieldConfiguration(d *schema.ResourceData) (cloudflare.APIShield, error) {
 	var as cloudflare.APIShield
 
@@ -106,4 +103,15 @@ func buildAPIShieldConfiguration(d *schema.ResourceData) (cloudflare.APIShield, 
 	}
 
 	return as, nil
+}
+
+func flattenAPIShieldConfiguration(characteristics []cloudflare.AuthIdCharacteristics) []interface{} {
+	var flattened []interface{}
+	for _, c := range characteristics {
+		flattened = append(flattened, map[string]interface{}{
+			"name": c.Name,
+			"type": c.Type,
+		})
+	}
+	return flattened
 }
