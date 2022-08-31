@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,6 +17,9 @@ func resourceCloudflareEmailRoutingSettings() *schema.Resource {
 		ReadContext:   resourceCloudflareEmailRoutingSettingsRead,
 		CreateContext: resourceCloudflareEmailRoutingSettingsCreate,
 		DeleteContext: resourceCloudflareEmailRoutingSettingsDelete,
+		Description: heredoc.Doc(`
+			Provides a resource for managing Email Routing settings.
+		`),
 	}
 }
 
