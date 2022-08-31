@@ -14,6 +14,7 @@ import (
 const (
 	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
+	moduleContent  = `export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm    = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 )
 
@@ -61,6 +62,33 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
+	t.Parallel()
+
+	var script cloudflare.WorkerScript
+	rnd := generateRandomResourceName()
+	name := "cloudflare_worker_script." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "content", moduleContent),
+				),
+			},
+		},
+	})
+}
+
 // Create a bucket before creating a worker script binding.
 // When a cloudflare_r2_bucket resource is added, we can switch to that instead
 func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
@@ -82,8 +110,7 @@ func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd string) stri
 resource "cloudflare_worker_script" "%[1]s" {
   name = "%[1]s"
   content = "%[2]s"
-  module = %[3]t
-}`, rnd, scriptContent1, true)
+}`, rnd, scriptContent1)
 }
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd string) string {
@@ -91,8 +118,7 @@ func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd string) strin
 resource "cloudflare_worker_script" "%[1]s" {
   name = "%[1]s"
   content = "%[2]s"
-  module = %[3]t
-}`, rnd, scriptContent2, true)
+}`, rnd, scriptContent2)
 }
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd string) string {
@@ -104,13 +130,11 @@ resource "cloudflare_workers_kv_namespace" "%[1]s" {
 resource "cloudflare_worker_script" "%[1]s-service" {
 	name    = "%[1]s-service"
 	content = "%[2]s"
-	module = %[4]t
 }
 
 resource "cloudflare_worker_script" "%[1]s" {
   name    = "%[1]s"
   content = "%[2]s"
-  module = %[4]t
 
   kv_namespace_binding {
     name         = "MY_KV_NAMESPACE"
@@ -142,7 +166,16 @@ resource "cloudflare_worker_script" "%[1]s" {
     service = cloudflare_worker_script.%[1]s-service.name
     environment = "production"
   }
-}`, rnd, scriptContent2, encodedWasm, true)
+}`, rnd, scriptContent2, encodedWasm)
+}
+
+func testAccCheckCloudflareWorkerScriptUploadModule(rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_worker_script" "%[1]s" {
+  name = "%[1]s"
+  content = "%[2]s"
+  module = true
+}`, rnd, moduleContent)
 }
 
 func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.WorkerRequestParams {
