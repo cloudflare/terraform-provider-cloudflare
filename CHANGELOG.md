@@ -11,6 +11,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_pages_domain: Adds support for Pages domains ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
 * resource/cloudflare_pages_project: Adds support for Pages Projects ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+* resource/cloudflare_worker: provide js module option to allow service bindings ([#1865](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1865))
 
 DEPENDENCIES:
 
