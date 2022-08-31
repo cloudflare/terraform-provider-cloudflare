@@ -160,6 +160,16 @@ func testAccPreCheckWorkspaceOne(t *testing.T) {
 	}
 }
 
+func testAccPreCheckPages(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_PAGES_OWNER"); v == "" {
+		t.Fatal("CLOUDFLARE_PAGES_OWNER must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_PAGES_REPO"); v == "" {
+		t.Fatal("CLOUDFLARE_PAGES_REPO must be set for this acceptance test")
+	}
+}
+
 func testAccPreCheckBYOIPPrefix(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
 		t.Skip("Skipping acceptance test as CLOUDFLARE_BYO_IP_PREFIX_ID is not set")
