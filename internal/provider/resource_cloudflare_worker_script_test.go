@@ -14,6 +14,7 @@ import (
 const (
 	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
+	moduleContent  = `export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm    = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 )
 
@@ -55,6 +56,33 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
+	t.Parallel()
+
+	var script cloudflare.WorkerScript
+	rnd := generateRandomResourceName()
+	name := "cloudflare_worker_script." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "content", moduleContent),
 				),
 			},
 		},
@@ -139,6 +167,15 @@ resource "cloudflare_worker_script" "%[1]s" {
     environment = "production"
   }
 }`, rnd, scriptContent2, encodedWasm)
+}
+
+func testAccCheckCloudflareWorkerScriptUploadModule(rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_worker_script" "%[1]s" {
+  name = "%[1]s"
+  content = "%[2]s"
+  module = true
+}`, rnd, moduleContent)
 }
 
 func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.WorkerRequestParams {

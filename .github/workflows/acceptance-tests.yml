@@ -38,12 +38,14 @@ jobs:
       CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET }}
       CLOUDFLARE_WORKSPACE_ONE_API_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_API_URL }}
       CLOUDFLARE_WORKSPACE_ONE_AUTH_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_AUTH_URL }}
+      CLOUDFLARE_PAGES_OWNER: jacobbednarz
+      CLOUDFLARE_PAGES_REPO: pages-example
 
     steps:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: ^1.17
+        go-version: ^1.18
       id: go
 
     - name: Check out code into the Go module directory
