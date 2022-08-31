@@ -196,6 +196,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
 				"cloudflare_access_bookmark":                        resourceCloudflareAccessBookmark(),
 				"cloudflare_account_member":                         resourceCloudflareAccountMember(),
+				"cloudflare_api_shield":                             resourceCloudflareAPIShield(),
 				"cloudflare_api_token":                              resourceCloudflareApiToken(),
 				"cloudflare_argo_tunnel":                            resourceCloudflareArgoTunnel(),
 				"cloudflare_argo":                                   resourceCloudflareArgo(),
