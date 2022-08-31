@@ -2,9 +2,10 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"os"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func testEmailRoutingRuleConfig(resourceID, zoneID string, enabled bool, priority int) string {
@@ -33,7 +34,6 @@ func TestAccTestEmailRoutingRule(t *testing.T) {
 	name := "cloudflare_email_routing_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	//resourceCloudflareEmailRoutingRule
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,

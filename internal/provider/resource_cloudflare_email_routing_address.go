@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -35,10 +36,10 @@ func resourceCloudflareEmailRoutingAddressRead(ctx context.Context, d *schema.Re
 	d.SetId(res.Tag)
 	d.Set("email", res.Email)
 	if res.Verified != nil {
-		d.Set("verified", res.Verified.String())
+		d.Set("verified", res.Verified.Format(time.RFC3339Nano))
 	}
-	d.Set("created", res.Created.String())
-	d.Set("modified", res.Modified.String())
+	d.Set("created", res.Created.Format(time.RFC3339Nano))
+	d.Set("modified", res.Modified.Format(time.RFC3339Nano))
 	return nil
 }
 

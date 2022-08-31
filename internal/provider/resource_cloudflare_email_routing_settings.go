@@ -59,7 +59,7 @@ func resourceCloudflareEmailRoutingSettingsDelete(ctx context.Context, d *schema
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	_, err := client.EnableEmailRouting(ctx, cloudflare.ZoneIdentifier(zoneID))
+	_, err := client.DisableEmailRouting(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error disabling email routing %q: %w", zoneID, err))
 	}

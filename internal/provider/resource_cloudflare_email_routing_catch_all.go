@@ -31,9 +31,11 @@ func resourceCloudflareEmailRoutingCatchAllRead(ctx context.Context, d *schema.R
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading email routing catch all rule %q: %w", d.Id(), err))
 	}
+
 	d.SetId(res.Tag)
 	d.Set("name", res.Name)
 	d.Set("enabled", res.Enabled)
+
 	return nil
 }
 
@@ -41,15 +43,16 @@ func resourceCloudflareEmailRoutingCatchAllUpdate(ctx context.Context, d *schema
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	createParams := cloudflare.EmailRoutingCatchAllRule{}
-	createParams.Name = d.Get("name").(string)
-	createParams.Enabled = cloudflare.BoolPtr(d.Get("enabled").(bool))
+	updateParams := cloudflare.EmailRoutingCatchAllRule{
+		Name:    d.Get("name").(string),
+		Enabled: cloudflare.BoolPtr(d.Get("enabled").(bool)),
+	}
 
-	createParams.Matchers, createParams.Actions = buildMatchersAndActions(d)
+	updateParams.Matchers, updateParams.Actions = buildMatchersAndActions(d)
 
-	_, err := client.UpdateEmailRoutingCatchAllRule(ctx, cloudflare.ZoneIdentifier(zoneID), createParams)
+	_, err := client.UpdateEmailRoutingCatchAllRule(ctx, cloudflare.ZoneIdentifier(zoneID), updateParams)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating email routing catch all rule %q: %w", createParams.Name, err))
+		return diag.FromErr(fmt.Errorf("error updating email routing catch all rule %q: %w", updateParams.Name, err))
 	}
 
 	return resourceCloudflareEmailRoutingCatchAllRead(ctx, d, meta)
@@ -59,13 +62,13 @@ func resourceCloudflareEmailRoutingCatchAllDelete(ctx context.Context, d *schema
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	createParams := cloudflare.EmailRoutingCatchAllRule{}
-	createParams.Name = d.Get("name").(string)
-	createParams.Enabled = cloudflare.BoolPtr(false)
+	deleteParams := cloudflare.EmailRoutingCatchAllRule{
+		Name:    d.Get("name").(string),
+		Enabled: cloudflare.BoolPtr(false),
+	}
+	deleteParams.Matchers, deleteParams.Actions = buildMatchersAndActions(d)
 
-	createParams.Matchers, createParams.Actions = buildMatchersAndActions(d)
-
-	_, err := client.UpdateEmailRoutingCatchAllRule(ctx, cloudflare.ZoneIdentifier(zoneID), createParams)
+	_, err := client.UpdateEmailRoutingCatchAllRule(ctx, cloudflare.ZoneIdentifier(zoneID), deleteParams)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error delete email routing catch all rule %q: %w", d.Id(), err))
 	}

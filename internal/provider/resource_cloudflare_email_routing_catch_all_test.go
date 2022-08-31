@@ -2,9 +2,10 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"os"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func testEmailRoutingRuleCatchAllConfig(resourceID, zoneID string, enabled bool) string {
@@ -31,7 +32,6 @@ func TestAccTestEmailRoutingCatchAll(t *testing.T) {
 	name := "cloudflare_email_routing_catch_all." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	//resourceCloudflareEmailRoutingCatchAllRule
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -44,7 +44,6 @@ func TestAccTestEmailRoutingCatchAll(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", "terraform rule catch all"),
 
 					resource.TestCheckResourceAttr(name, "matcher.0.type", "all"),
-
 
 					resource.TestCheckResourceAttr(name, "action.0.type", "forward"),
 					resource.TestCheckResourceAttr(name, "action.0.value.#", "1"),
