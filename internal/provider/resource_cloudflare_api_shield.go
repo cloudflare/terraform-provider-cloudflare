@@ -13,7 +13,7 @@ import (
 
 func resourceCloudflareAPIShield() *schema.Resource {
 	return &schema.Resource{
-		Schema:        resourceCloudflareAPIShieldConfiguration(),
+		Schema:        resourceCloudflareAPIShieldSchema(),
 		CreateContext: resourceCloudflareAPIShieldCreate,
 		ReadContext:   resourceCloudflareAPIShieldRead,
 		UpdateContext: resourceCloudflareAPIShieldUpdate,
@@ -21,6 +21,9 @@ func resourceCloudflareAPIShield() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: nil,
 		},
+		Description: heredoc.Doc(`
+			Provides a resource to manage API Shield configurations.
+		`),
 	}
 }
 

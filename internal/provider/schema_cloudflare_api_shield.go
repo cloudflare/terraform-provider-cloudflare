@@ -1,8 +1,13 @@
 package provider
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+import (
+	"fmt"
 
-func resourceCloudflareAPIShieldConfiguration() map[string]*schema.Schema {
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+)
+
+func resourceCloudflareAPIShieldSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"zone_id": {
 			Description: "The zone identifier to target for the resource.",
@@ -17,9 +22,10 @@ func resourceCloudflareAPIShieldConfiguration() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
-						Description: "The type of characteristic. Currently accepts header or cookie.",
-						Required:    true,
-						Type:        schema.TypeString,
+						Description:  fmt.Sprintf("The type of characteristic. %s", renderAvailableDocumentationValuesStringSlice([]string{"header", "cookie"})),
+						Required:     true,
+						Type:         schema.TypeString,
+						ValidateFunc: validation.StringInSlice([]string{"header", "cookie"}, false),
 					},
 					"name": {
 						Description: "The name of the characteristic.",
