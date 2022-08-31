@@ -1,5 +1,12 @@
 ## 3.23.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_email_routing_address` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_catch_all` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_rules` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_settings` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_pages_domain: Adds support for Pages domains ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
