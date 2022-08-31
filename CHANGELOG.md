@@ -1,5 +1,10 @@
 ## 3.23.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_pages_domain: Adds support for Pages domains ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+* resource/cloudflare_pages_project: Adds support for Pages Projects ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.48.0 to 0.49.0 ([#1871](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1871))
