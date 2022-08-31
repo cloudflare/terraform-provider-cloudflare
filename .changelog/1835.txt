@@ -1,0 +1,6 @@
+```release-note:enhancement
+resource/cloudflare_pages_domain: Adds support for Pages domains
+```
+```release-note:enhancement
+resource/cloudflare_pages_project: Adds support for Pages Projects
+```
