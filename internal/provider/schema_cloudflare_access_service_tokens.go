@@ -37,14 +37,13 @@ func resourceCloudflareAccessServiceTokenSchema() map[string]*schema.Schema {
 		"expires_at": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			ForceNew:    true,
 			Description: "Date when the token expires",
 		},
 		"min_days_for_renewal": {
 			Type:        schema.TypeInt,
 			Optional:    true,
 			Default:     0,
-			Description: "Regenerates the token if terraform is run within the specified amount of days before expiration",
+			Description: "Refresh the token if terraform is run within the specified amount of days before expiration",
 		},
 	}
 }
