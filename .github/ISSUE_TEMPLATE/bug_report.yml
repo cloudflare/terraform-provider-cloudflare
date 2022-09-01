@@ -57,7 +57,7 @@ body:
   attributes:
     label: Link to debug output
     description: |
-      A link to the output (gist, pastebin, etc) provided from prepending `TF_LOG=DEBUG` to your 
+      A link to the output (https://gist.github.com) provided from prepending `TF_LOG=DEBUG` to your 
       Terraform apply or plan.  **Do not truncate or trim the output as the surrounding context 
       is useful for debugging and without it, maintainers are restricted in what assistance and 
       diagnosis they can provide**. 
