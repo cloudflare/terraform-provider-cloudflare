@@ -1,0 +1,15 @@
+```release-note:new-resource
+cloudflare_email_routing_address
+```
+
+```release-note:new-resource
+cloudflare_email_routing_rules
+```
+
+```release-note:new-resource
+cloudflare_email_routing_settings
+```
+
+```release-note:new-resource
+cloudflare_email_routing_catch_all
+```

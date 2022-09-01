@@ -8,7 +8,7 @@
 ## Quick Start
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org)
-installed on your machine (version 1.18+ is *required*). You'll also need to
+installed on your machine (version 1.18+ is _required_). You'll also need to
 correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well
 as adding `$GOPATH/bin` to your `$PATH`.
 
@@ -22,10 +22,18 @@ $ make test
 
 In order to run the full suite of Acceptance tests, run `make testacc`.
 
-*Note:* Acceptance tests create real resources, and often cost money to run.
+_Note:_ Acceptance tests create real resources, and often cost money to run.
 
 ```sh
 $ make testacc
+```
+
+To run a subset of the acceptance test suite, you can run
+
+```sh
+TESTARGS='-run "^<regex target of tests>" -count 1 -parallel 1' make testacc
+# Example
+# TESTARGS='-run "^TestAccTestPagesProject" -count 1 -parallel 1' make testacc
 ```
 
 You can also install other optional (but great to have tools) using `make tools`.

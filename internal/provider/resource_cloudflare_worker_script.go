@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,6 +25,9 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareWorkerScriptImport,
 		},
+		Description: heredoc.Doc(
+			"Provides a Cloudflare worker script resource. In order for a script to be active, you'll also need to setup a `cloudflare_worker_route`.",
+		),
 	}
 }
 
@@ -137,6 +141,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
+		Module:   d.Get("module").(bool),
 		Bindings: bindings,
 	}
 
@@ -285,6 +290,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
+		Module:   d.Get("module").(bool),
 		Bindings: bindings,
 	}
 
