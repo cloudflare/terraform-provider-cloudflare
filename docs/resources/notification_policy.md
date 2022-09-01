@@ -68,7 +68,7 @@ resource "cloudflare_notification_policy" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `alert_type` (String) The event type that will trigger the dispatch of a notification. See the developer documentation for descriptions of [available alert types](https://developers.cloudflare.com/fundamentals/notifications/notification-available/) Available values: `billing_usage_alert`, `health_check_status_notification`, `g6_pool_toggle_alert`, `real_origin_monitoring`, `universal_ssl_event_type`, `bgp_hijack_notification`, `http_alert_origin_error`, `workers_alert`, `weekly_account_overview`.
+- `alert_type` (String) The event type that will trigger the dispatch of a notification. See the developer documentation for descriptions of [available alert types](https://developers.cloudflare.com/fundamentals/notifications/notification-available/). Available values: `billing_usage_alert`, `health_check_status_notification`, `g6_pool_toggle_alert`, `real_origin_monitoring`, `universal_ssl_event_type`, `dedicated_ssl_certificate_event_type`, `custom_ssl_certificate_event_type`, `access_custom_certificate_expiration_type`, `zone_aop_custom_certificate_expiration_type`, `bgp_hijack_notification`, `http_alert_origin_error`, `workers_alert`, `weekly_account_overview`, `expiring_service_token_alert`, `secondary_dns_all_primaries_failing`, `secondary_dns_zone_validation_warning`, `secondary_dns_primaries_failing`, `secondary_dns_zone_successfully_updated`, `dos_attack_l7`, `dos_attack_l4`, `advanced_ddos_attack_l7_alert`, `advanced_ddos_attack_l4_alert`, `fbm_volumetric_attack`, `fbm_auto_advertisement`, `load_balancing_pool_enablement_alert`, `load_balancing_health_alert`, `g6_health_alert`, `http_alert_edge_error`, `clickhouse_alert_fw_anomaly`, `clickhouse_alert_fw_ent_anomaly`, `failing_logpush_job_disabled_alert`, `scriptmonitor_alert_new_hosts`, `scriptmonitor_alert_new_scripts`, `scriptmonitor_alert_new_malicious_scripts`, `scriptmonitor_alert_new_malicious_url`, `scriptmonitor_alert_new_code_change_detections`, `scriptmonitor_alert_new_max_length_script_url`, `scriptmonitor_alert_new_malicious_hosts`, `sentinel_alert`, `hostname_aop_custom_certificate_expiration_type`, `stream_live_notifications`, `block_notification_new_block`, `block_notification_review_rejected`, `block_notification_review_accepted`, `web_analytics_metrics_update`, `workers_uptime`.
 - `enabled` (Boolean) The status of the notification policy.
 - `name` (String) The name of the notification policy.
 
@@ -104,13 +104,22 @@ Read-Only:
 Optional:
 
 - `enabled` (Set of String) State of the pool to alert on.
-- `health_check_id` (Set of String) Identifier health check.
+- `event_source` (Set of String) Source configuration to alert on for pool or origin.
+- `event_type` (Set of String) Stream event type to alert on.
+- `health_check_id` (Set of String) Identifier health check. Required when using `filters.0.status`.
+- `input_id` (Set of String) Stream input id to alert on.
 - `limit` (Set of String) A numerical limit. Example: `100`.
+- `new_health` (Set of String) Health status to alert on for pool or origin.
+- `packets_per_second` (Set of String) Packets per second threshold for dos alert.
 - `pool_id` (Set of String) Load balancer pool identifier.
 - `product` (Set of String) Product name. Available values: `worker_requests`, `worker_durable_objects_requests`, `worker_durable_objects_duration`, `worker_durable_objects_data_transfer`, `worker_durable_objects_stored_data`, `worker_durable_objects_storage_deletes`, `worker_durable_objects_storage_writes`, `worker_durable_objects_storage_reads`.
+- `protocol` (Set of String) Protocol to alert on for dos.
+- `requests_per_second` (Set of String) Requests per second threshold for dos alert.
 - `services` (Set of String)
 - `slo` (Set of String) A numerical limit. Example: `99.9`.
 - `status` (Set of String) Status to alert on.
+- `target_host` (Set of String) Target host to alert on for dos.
+- `target_zone_name` (Set of String) Target domain to alert on.
 - `zones` (Set of String) A list of zone identifiers.
 
 

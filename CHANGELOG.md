@@ -1,4 +1,50 @@
-## 3.22.0 (Unreleased)
+## 3.23.0 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_email_routing_address` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_catch_all` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_rules` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_email_routing_settings` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_service_token: updates internals to allow in place refreshing instead of full replacement based on the `expires_at` and `min_days_for_renewal` values ([#1872](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1872))
+* resource/cloudflare_pages_domain: Adds support for Pages domains ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+* resource/cloudflare_pages_project: Adds support for Pages Projects ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+* resource/cloudflare_worker: provide js module option to allow service bindings ([#1865](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1865))
+
+BUG FIXES:
+
+* resource/cloudflare_authenticated_origin_pulls: fix improper handling of enabled=false ([#1861](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1861))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.48.0 to 0.49.0 ([#1871](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1871))
+* provider: bumps github.com/golangci/golangci-lint from 1.48.0 to 1.49.0 ([#1855](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1855))
+* provider: bumps goreleaser/goreleaser-action from 3.0.0 to 3.1.0 ([#1868](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1868))
+
+## 3.22.0 (August 24th, 2022)
+
+NOTES:
+
+* update local setup documentation to reflect newer required Go version ([#1847](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1847))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `http_config_settings` ([#1837](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1837))
+* resources/worker_script: add support for r2_bucket_binding ([#1825](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1825))
+
+BUG FIXES:
+
+* resource/cloudflare_fallback_domain: fix perpetual changes due to ordering ([#1828](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1828))
+* resource/cloudflare_notification_policy: add missing alert types and filters to validation and docs ([#1830](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1830))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.46.0 to 0.47.1 ([#1844](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1844))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.20.0 to 2.21.0 ([#1838](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1838))
+* provider: bumps github.com/hcloudflare-go from 0.47.1 to 0.48.0 ([#1848](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1848))
 
 ## 3.21.0 (August 10th, 2022)
 

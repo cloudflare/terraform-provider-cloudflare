@@ -14,6 +14,7 @@ import (
 const (
 	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
+	moduleContent  = `export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm    = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 )
 
@@ -28,6 +29,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
+			testAccCheckCloudflareWorkerScriptCreateBucket(t, rnd)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
@@ -51,12 +53,55 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING"}),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
 			},
 		},
+	})
+}
+
+func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
+	t.Parallel()
+
+	var script cloudflare.WorkerScript
+	rnd := generateRandomResourceName()
+	name := "cloudflare_worker_script." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "content", moduleContent),
+				),
+			},
+		},
+	})
+}
+
+// Create a bucket before creating a worker script binding.
+// When a cloudflare_r2_bucket resource is added, we can switch to that instead
+func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
+	client := testAccProvider.Meta().(*cloudflare.API)
+	err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateR2BucketParameters{Name: rnd})
+	if err != nil {
+		t.Fatalf("unable to create test bucket named %s: %v", rnd, err)
+	}
+	t.Cleanup(func() {
+		err := client.DeleteR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), rnd)
+		if err != nil {
+			t.Errorf("Failed to clean up bucket named %s: %v", rnd, err)
+		}
 	})
 }
 
@@ -111,12 +156,26 @@ resource "cloudflare_worker_script" "%[1]s" {
     module = "%[3]s"
   }
 
+  r2_bucket_binding {
+	name = "MY_BUCKET"
+	bucket_name = "%[1]s"
+  }
+
   service_binding {
 	name = "MY_SERVICE_BINDING"
     service = cloudflare_worker_script.%[1]s-service.name
     environment = "production"
   }
 }`, rnd, scriptContent2, encodedWasm)
+}
+
+func testAccCheckCloudflareWorkerScriptUploadModule(rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_worker_script" "%[1]s" {
+  name = "%[1]s"
+  content = "%[2]s"
+  module = true
+}`, rnd, moduleContent)
 }
 
 func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.WorkerRequestParams {

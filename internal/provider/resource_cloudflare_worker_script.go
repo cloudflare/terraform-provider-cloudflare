@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,6 +25,9 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareWorkerScriptImport,
 		},
+		Description: heredoc.Doc(
+			"Provides a Cloudflare worker script resource. In order for a script to be active, you'll also need to setup a `cloudflare_worker_route`.",
+		),
 	}
 }
 
@@ -101,6 +105,13 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			Environment: cloudflare.StringPtr(data["environment"].(string)),
 		}
 	}
+
+	for _, rawData := range d.Get("r2_bucket_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerR2BucketBinding{
+			BucketName: data["bucket_name"].(string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -130,6 +141,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
+		Module:   d.Get("module").(bool),
 		Bindings: bindings,
 	}
 
@@ -179,6 +191,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	secretTextBindings := &schema.Set{F: schema.HashResource(secretTextBindingResource)}
 	webAssemblyBindings := &schema.Set{F: schema.HashResource(webAssemblyBindingResource)}
 	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
+	r2BucketBindings := &schema.Set{F: schema.HashResource(r2BucketBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -217,6 +230,11 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"service":     v.Service,
 				"environment": cloudflare.String(v.Environment),
 			})
+		case cloudflare.WorkerR2BucketBinding:
+			r2BucketBindings.Add(map[string]interface{}{
+				"name":        name,
+				"bucket_name": v.BucketName,
+			})
 		}
 	}
 
@@ -244,6 +262,10 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("cannot set service bindings (%s): %w", d.Id(), err))
 	}
 
+	if err := d.Set("r2_bucket_binding", r2BucketBindings); err != nil {
+		return diag.FromErr(fmt.Errorf("cannot set r2 bucket bindings (%s): %w", d.Id(), err))
+	}
+
 	return nil
 }
 
@@ -268,6 +290,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	scriptParams := cloudflare.WorkerScriptParams{
 		Script:   scriptBody,
+		Module:   d.Get("module").(bool),
 		Bindings: bindings,
 	}
 

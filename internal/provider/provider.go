@@ -38,12 +38,36 @@ func init() {
 			}
 		}
 
+		if s.RequiredWith != nil && len(s.RequiredWith) > 0 {
+			requiredWith := make([]string, len(s.RequiredWith))
+			for i, c := range s.RequiredWith {
+				requiredWith[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Required when using %s.", strings.Join(requiredWith, ", "))
+		}
+
 		if s.ConflictsWith != nil && len(s.ConflictsWith) > 0 {
 			conflicts := make([]string, len(s.ConflictsWith))
 			for i, c := range s.ConflictsWith {
 				conflicts[i] = fmt.Sprintf("`%s`", c)
 			}
 			desc += fmt.Sprintf(" Conflicts with %s.", strings.Join(conflicts, ", "))
+		}
+
+		if s.ExactlyOneOf != nil && len(s.ExactlyOneOf) > 0 {
+			exactlyOneOfs := make([]string, len(s.ExactlyOneOf))
+			for i, c := range s.ExactlyOneOf {
+				exactlyOneOfs[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Must provide only one of %s.", strings.Join(exactlyOneOfs, ", "))
+		}
+
+		if s.AtLeastOneOf != nil && len(s.AtLeastOneOf) > 0 {
+			atLeastOneOfs := make([]string, len(s.AtLeastOneOf))
+			for i, c := range s.AtLeastOneOf {
+				atLeastOneOfs[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Must provide at least one of %s.", strings.Join(atLeastOneOfs, ", "))
 		}
 
 		return strings.TrimSpace(desc)
@@ -162,6 +186,7 @@ func New(version string) func() *schema.Provider {
 
 			ResourcesMap: map[string]*schema.Resource{
 				"cloudflare_access_application":                     resourceCloudflareAccessApplication(),
+				"cloudflare_access_bookmark":                        resourceCloudflareAccessBookmark(),
 				"cloudflare_access_ca_certificate":                  resourceCloudflareAccessCACertificate(),
 				"cloudflare_access_group":                           resourceCloudflareAccessGroup(),
 				"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
@@ -170,7 +195,6 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_access_policy":                          resourceCloudflareAccessPolicy(),
 				"cloudflare_access_rule":                            resourceCloudflareAccessRule(),
 				"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
-				"cloudflare_access_bookmark":                        resourceCloudflareAccessBookmark(),
 				"cloudflare_account_member":                         resourceCloudflareAccountMember(),
 				"cloudflare_api_token":                              resourceCloudflareApiToken(),
 				"cloudflare_argo_tunnel":                            resourceCloudflareArgoTunnel(),
@@ -183,9 +207,13 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_custom_hostname":                        resourceCloudflareCustomHostname(),
 				"cloudflare_custom_pages":                           resourceCloudflareCustomPages(),
 				"cloudflare_custom_ssl":                             resourceCloudflareCustomSsl(),
-				"cloudflare_device_posture_rule":                    resourceCloudflareDevicePostureRule(),
 				"cloudflare_device_policy_certificates":             resourceCloudflareDevicePolicyCertificates(),
 				"cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
+				"cloudflare_device_posture_rule":                    resourceCloudflareDevicePostureRule(),
+				"cloudflare_email_routing_address":                  resourceCloudflareEmailRoutingAddress(),
+				"cloudflare_email_routing_catch_all":                resourceCloudflareEmailRoutingCatchAll(),
+				"cloudflare_email_routing_rule":                     resourceCloudflareEmailRoutingRule(),
+				"cloudflare_email_routing_settings":                 resourceCloudflareEmailRoutingSettings(),
 				"cloudflare_fallback_domain":                        resourceCloudflareFallbackDomain(),
 				"cloudflare_filter":                                 resourceCloudflareFilter(),
 				"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
@@ -206,6 +234,8 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_notification_policy":                    resourceCloudflareNotificationPolicy(),
 				"cloudflare_origin_ca_certificate":                  resourceCloudflareOriginCACertificate(),
 				"cloudflare_page_rule":                              resourceCloudflarePageRule(),
+				"cloudflare_pages_domain":                           resourceCloudflarePagesDomain(),
+				"cloudflare_pages_project":                          resourceCloudflarePagesProject(),
 				"cloudflare_rate_limit":                             resourceCloudflareRateLimit(),
 				"cloudflare_record":                                 resourceCloudflareRecord(),
 				"cloudflare_ruleset":                                resourceCloudflareRuleset(),
@@ -215,17 +245,17 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_teams_account":                          resourceCloudflareTeamsAccount(),
 				"cloudflare_teams_list":                             resourceCloudflareTeamsList(),
 				"cloudflare_teams_location":                         resourceCloudflareTeamsLocation(),
-				"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
 				"cloudflare_teams_proxy_endpoint":                   resourceCloudflareTeamsProxyEndpoint(),
 				"cloudflare_tunnel_config":                          resourceCloudflareTunnelConfig(),
+				"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
 				"cloudflare_tunnel_route":                           resourceCloudflareTunnelRoute(),
 				"cloudflare_tunnel_virtual_network":                 resourceCloudflareTunnelVirtualNetwork(),
 				"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
 				"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
 				"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
 				"cloudflare_waf_rule":                               resourceCloudflareWAFRule(),
-				"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
 				"cloudflare_waiting_room_event":                     resourceCloudflareWaitingRoomEvent(),
+				"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
 				"cloudflare_worker_cron_trigger":                    resourceCloudflareWorkerCronTrigger(),
 				"cloudflare_worker_route":                           resourceCloudflareWorkerRoute(),
 				"cloudflare_worker_script":                          resourceCloudflareWorkerScript(),

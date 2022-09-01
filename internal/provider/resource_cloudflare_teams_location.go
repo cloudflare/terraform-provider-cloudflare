@@ -30,7 +30,7 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 
 	location, err := client.TeamsLocation(ctx, accountID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 400") {
+		if strings.Contains(err.Error(), "Location ID is invalid") {
 			tflog.Info(ctx, fmt.Sprintf("Teams Location %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
