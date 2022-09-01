@@ -81,7 +81,7 @@ func resourceCloudflareAPIShieldDelete(ctx context.Context, d *schema.ResourceDa
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id")
 
-	_, err := client.UpdateAPIShieldConfiguration(ctx, cloudflare.ZoneIdentifier(zoneID.(string)), cloudflare.UpdateAPIShieldParams{nil})
+	_, err := client.UpdateAPIShieldConfiguration(ctx, cloudflare.ZoneIdentifier(zoneID.(string)), cloudflare.UpdateAPIShieldParams{AuthIdCharacteristics: []cloudflare.AuthIdCharacteristics{}})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create API Shield Configuration")))
 	}
