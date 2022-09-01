@@ -2,6 +2,7 @@
 
 FEATURES:
 
+* **New Resource:** `cloudflare_api_shield` ([#1874](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1874))
 * **New Resource:** `cloudflare_email_routing_address` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
 * **New Resource:** `cloudflare_email_routing_catch_all` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
 * **New Resource:** `cloudflare_email_routing_rules` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
