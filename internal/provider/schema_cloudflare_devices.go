@@ -51,6 +51,16 @@ func resoureceCloudflareDevicesSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "The operating system version.",
 					},
+					"os_distro_name": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The Linux distribution name.",
+					},
+					"os_distro_revision": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The Linux distribution revision.",
+					},
 					"ip": {
 						Type:        schema.TypeString,
 						Optional:    true,
