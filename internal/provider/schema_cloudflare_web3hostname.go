@@ -13,9 +13,9 @@ func resourceCloudflareWeb3HostnameSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"name": {
-			Description:  "The hostname that will point to the target gateway via CNAME.",
-			Type:         schema.TypeString,
-			Required:     true,
+			Description: "The hostname that will point to the target gateway via CNAME.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"target": {
 			Description:  "Target gateway of the hostname.",
