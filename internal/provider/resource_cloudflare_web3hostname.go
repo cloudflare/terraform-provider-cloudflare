@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,6 +17,9 @@ func resourceCloudflareWeb3Hostname() *schema.Resource {
 		ReadContext:   resourceCloudflareWeb3HostnameRead,
 		UpdateContext: resourceCloudflareWeb3HostnameUpdate,
 		DeleteContext: resourceCloudflareWeb3HostnameDelete,
+		Description: heredoc.Doc(`
+			Manages Web3 hostnames for IPFS and Ethereum gateways.
+		`),
 	}
 }
 
@@ -53,7 +57,7 @@ func resourceCloudflareWeb3HostnameRead(ctx context.Context, d *schema.ResourceD
 
 	d.SetId(hostname.ID)
 
-	return resourceCloudflareWeb3HostnameRead(ctx, d, meta)
+	return nil
 }
 
 func resourceCloudflareWeb3HostnameUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

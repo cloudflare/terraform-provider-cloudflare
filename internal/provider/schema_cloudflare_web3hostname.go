@@ -44,7 +44,7 @@ func resourceCloudflareWeb3HostnameSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
-		"modifled_on": {
+		"modified_on": {
 			Description: "Last modification time.",
 			Type:        schema.TypeString,
 			Computed:    true,

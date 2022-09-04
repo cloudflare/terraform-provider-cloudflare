@@ -68,10 +68,10 @@ func TestAccCloudflareWeb3Hostname(t *testing.T) {
 				Config: buildWeb3HostnameConfigIPFS(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd+"."+domain),
 					resource.TestCheckResourceAttr(name, "target", "ipfs"),
 					resource.TestCheckResourceAttr(name, "description", "test"),
-					resource.TestCheckResourceAttr(name, "dnslink", "test"),
+					resource.TestCheckResourceAttr(name, "dnslink", "/ipns/onboarding.ipfs.cloudflare.com"),
 				),
 			},
 		},
