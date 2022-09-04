@@ -7,6 +7,7 @@ FEATURES:
 * **New Resource:** `cloudflare_email_routing_catch_all` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
 * **New Resource:** `cloudflare_email_routing_rules` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
 * **New Resource:** `cloudflare_email_routing_settings` ([#1856](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1856))
+* **New Resource:** `cloudflare_web3_hostname` ([#1882](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1882))
 
 ENHANCEMENTS:
 
