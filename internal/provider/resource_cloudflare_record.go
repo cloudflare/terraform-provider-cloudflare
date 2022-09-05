@@ -49,7 +49,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		ZoneID: d.Get("zone_id").(string),
 	}
 
-	proxied, proxiedOk := d.GetOkExists("proxied")
+	proxied, proxiedOk := d.GetOk("proxied")
 	if proxiedOk {
 		newRecord.Proxied = cloudflare.BoolPtr(proxied.(bool))
 	}
@@ -280,7 +280,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 		updateRecord.Priority = &p
 	}
 
-	proxied, proxiedOk := d.GetOkExists("proxied")
+	proxied, proxiedOk := d.GetOk("proxied")
 	if proxiedOk {
 		updateRecord.Proxied = cloudflare.BoolPtr(proxied.(bool))
 	}
@@ -347,7 +347,7 @@ func expandStringMap(inVal interface{}) map[string]string {
 func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
-	// split the id so we can lookup
+	// split the id so we can look up
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
 	var recordID string
