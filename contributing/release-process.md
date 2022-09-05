@@ -3,6 +3,11 @@
 We aim to release on a fortnightly cadence. This is to accommodate downstream tools 
 (such as [cf-terraforming](https://github.com/cloudflare/cf-terraforming)) and 
 systems that may need to integrate the changes made in the Terraform provider. 
+To determine when the next release is due, you can either:
+
+- Review the latest [releases](https://github.com/cloudflare/terraform-provider-cloudflare/releases); or
+- Review the [current milestones](https://github.com/cloudflare/terraform-provider-cloudflare/milestones).
+
 If a hotfix is needed, the same process outlined below is used however only the 
 semantic versioning patch version is bumped.
 
