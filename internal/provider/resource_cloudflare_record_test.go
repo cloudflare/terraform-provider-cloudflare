@@ -528,7 +528,6 @@ func TestAccCloudflareRecordHTTPS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "priority", "0"),
 					resource.TestCheckResourceAttr(name, "target", "."),
 					resource.TestCheckResourceAttr(name, "value", "alpn=h2"),
-					
 				),
 			},
 		},
