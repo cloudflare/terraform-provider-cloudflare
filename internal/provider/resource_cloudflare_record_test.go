@@ -510,6 +510,32 @@ func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecordHTTPS(t *testing.T) {
+	t.Parallel()
+	// domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	recordName := "tf-acctest-ttl-validation"
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigHTTPS(zoneID, recordName, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "priority", "0"),
+					resource.TestCheckResourceAttr(name, "target", "."),
+					resource.TestCheckResourceAttr(name, "value", "alpn=h2"),
+					
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
@@ -778,4 +804,19 @@ resource "cloudflare_record" "%[2]s" {
 	proxied = false
 	ttl = 300
 }`, zoneID, name, zoneName)
+}
+
+func testAccCheckCloudflareRecordConfigHTTPS(zoneID, name, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	type = "HTTPS"
+	data {
+		priority = "1"
+		target   = "."
+		value    = "alpn=h2"
+	}
+	ttl = 300
+}`, zoneID, name, rnd)
 }
