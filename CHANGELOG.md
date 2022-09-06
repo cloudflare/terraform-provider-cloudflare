@@ -14,6 +14,7 @@ ENHANCEMENTS:
 * resource/cloudflare_access_service_token: updates internals to allow in place refreshing instead of full replacement based on the `expires_at` and `min_days_for_renewal` values ([#1872](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1872))
 * resource/cloudflare_pages_domain: Adds support for Pages domains ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
 * resource/cloudflare_pages_project: Adds support for Pages Projects ([#1835](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1835))
+* resource/cloudflare_record: Add HTTPS DNS record type ([#1887](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1887))
 * resource/cloudflare_worker: provide js module option to allow service bindings ([#1865](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1865))
 
 BUG FIXES:
