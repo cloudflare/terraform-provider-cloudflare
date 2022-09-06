@@ -203,4 +203,10 @@ Optional:
 - `production_deployment_enabled` (Boolean) Enable production deployments.
 - `repo_name` (String) Project repository name.
 
+## Import
 
+Import is supported using the following syntax:
+```shell
+# Use account ID, and project name.
+$ terraform import cloudflare_pages_project.example <account_id>/<project_name>
+```
