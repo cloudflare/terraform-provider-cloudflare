@@ -512,7 +512,6 @@ func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 
 func TestAccCloudflareRecordHTTPS(t *testing.T) {
 	t.Parallel()
-	// domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-ttl-validation"
 	rnd := generateRandomResourceName()
