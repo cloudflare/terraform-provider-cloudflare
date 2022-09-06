@@ -161,6 +161,8 @@ func testAccPreCheckWorkspaceOne(t *testing.T) {
 }
 
 func testAccPreCheckPages(t *testing.T) {
+	testAccPreCheckAccount(t)
+	
 	if v := os.Getenv("CLOUDFLARE_PAGES_OWNER"); v == "" {
 		t.Fatal("CLOUDFLARE_PAGES_OWNER must be set for this acceptance test")
 	}

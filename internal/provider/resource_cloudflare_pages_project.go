@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"strings"
 	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -18,6 +20,9 @@ func resourceCloudflarePagesProject() *schema.Resource {
 		ReadContext:   resourceCloudflarePagesProjectRead,
 		UpdateContext: resourceCloudflarePagesProjectUpdate,
 		DeleteContext: resourceCloudflarePagesProjectDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflarePagesProjectImport,
+		},
 		Description: heredoc.Doc(`
 			Provides a resource which manages Cloudflare Pages projects.
 		`),
@@ -170,7 +175,7 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error reading cloudflare pages project %q: %w", projectName, err))
 	}
 
-	d.SetId(res.ID)
+	d.SetId(res.Name)
 	d.Set("subdomain", res.SubDomain)
 	d.Set("created_on", res.CreatedOn.Format(time.RFC3339))
 	d.Set("domains", res.Domains)
@@ -216,4 +221,35 @@ func resourceCloudflarePagesProjectDelete(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("error deleting cloudflare pages project %q: %w", projectName, err))
 	}
 	return nil
+}
+
+func resourceCloudflarePagesProjectImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+
+	// split the id so we can look up
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var accountID string
+	var projectName string
+	if len(idAttr) == 2 {
+		accountID = idAttr[0]
+		projectName = idAttr[1]
+	} else {
+		return nil, fmt.Errorf("invalid id %q specified, should be in format \"accountID/project-name\" for import", d.Id())
+	}
+
+	project, err := client.PagesProject(ctx, accountID, projectName)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to find record with ID %q: %w", d.Id(), err)
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("Found project: %s", project.Name))
+
+	d.SetId(project.Name)
+	d.Set("name", project.Name)
+	d.Set("account_id", accountID)
+	d.Set("production_branch", project.ProductionBranch)
+
+	resourceCloudflarePagesProjectRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
