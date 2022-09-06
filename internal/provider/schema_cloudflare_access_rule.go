@@ -10,20 +10,18 @@ import (
 func resourceCloudflareAccessRuleSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
-			Description:  "The account identifier to target for the resource.",
-			Type:         schema.TypeString,
-			Optional:     true,
-			ForceNew:     true,
-			Computed:     true,
-			ExactlyOneOf: []string{"account_id", "zone_id"},
+			Description: "The account identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			ForceNew:    true,
+			Computed:    true,
 		},
 		"zone_id": {
-			Description:  "The zone identifier to target for the resource.",
-			Type:         schema.TypeString,
-			Optional:     true,
-			ForceNew:     true,
-			Computed:     true,
-			ExactlyOneOf: []string{"account_id", "zone_id"},
+			Description: "The zone identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			ForceNew:    true,
+			Computed:    true,
 		},
 		"mode": {
 			Type:         schema.TypeString,
