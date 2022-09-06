@@ -510,10 +510,9 @@ func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRecordHTTPS(t *testing.T) {
+func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	recordName := "tf-acctest-ttl-validation"
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
@@ -523,11 +522,11 @@ func TestAccCloudflareRecordHTTPS(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigHTTPS(zoneID, recordName, rnd),
+				Config: testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "priority", "0"),
-					resource.TestCheckResourceAttr(name, "target", "."),
-					resource.TestCheckResourceAttr(name, "value", "alpn=h2"),
+					resource.TestCheckResourceAttr(name, "data.0.priority", "1"),
+					resource.TestCheckResourceAttr(name, "data.0.target", "."),
+					resource.TestCheckResourceAttr(name, "data.0.value", "alpn=h2"),
 				),
 			},
 		},
@@ -804,9 +803,9 @@ resource "cloudflare_record" "%[2]s" {
 }`, zoneID, name, zoneName)
 }
 
-func testAccCheckCloudflareRecordConfigHTTPS(zoneID, name, rnd string) string {
+func testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
+resource "cloudflare_record" "%[2]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
 	type = "HTTPS"
@@ -816,5 +815,5 @@ resource "cloudflare_record" "%[3]s" {
 		value    = "alpn=h2"
 	}
 	ttl = 300
-}`, zoneID, name, rnd)
+}`, zoneID, rnd)
 }
