@@ -10,7 +10,7 @@ resource "cloudflare_user_agent_blocking_rule" "example-1" {
 }
 resource "cloudflare_user_agent_blocking_rule" "example-2" {
 	zone_id      = "24670de1ee826d9591121cbd94418f7b"
-	mode         = "managed_challenge"
+	mode         = "challenge"
 	paused       = true
 	description  = "My description 22"
 	configuration {

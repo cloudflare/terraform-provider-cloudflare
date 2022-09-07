@@ -42,9 +42,10 @@ func resourceCloudflareUserAgentBlockingRulesSchema() map[string]*schema.Schema 
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"target": {
-						Description: "The configuration target for this rule. You must set the target to ua for User Agent Blocking rules.",
-						Required:    true,
-						Type:        schema.TypeString,
+						Description:  "The configuration target for this rule. You must set the target to ua for User Agent Blocking rules.",
+						Required:     true,
+						Type:         schema.TypeString,
+						ValidateFunc: validation.StringInSlice([]string{"ua"}, false),
 					},
 					"value": {
 						Description: "The exact user agent string to match. This value will be compared to the received User-Agent HTTP header value.",
