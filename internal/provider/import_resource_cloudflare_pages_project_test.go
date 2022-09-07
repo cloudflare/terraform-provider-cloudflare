@@ -9,9 +9,9 @@ import (
 )
 
 func TestAccCloudflarePagesProject_Import(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_pages_project.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -21,14 +21,13 @@ func TestAccCloudflarePagesProject_Import(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectDirectUpload(rnd, accountID),
+				Config: testPagesProjectBuildConfig(rnd, accountID, rnd, "project_owner", "project_repo"),
 			},
 			{
 				ResourceName:            name,
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"allow_overwrite"},
 			},
 		},
 	})

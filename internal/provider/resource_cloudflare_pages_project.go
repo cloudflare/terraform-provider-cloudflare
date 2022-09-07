@@ -107,7 +107,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 		if webAnalyticsTag, ok := d.GetOk("build_config.0.web_analytics_tag"); ok {
 			buildConfig.WebAnalyticsTag = webAnalyticsTag.(string)
 		}
-		if webAnalyticsToken, ok := d.GetOk("build_config.0.web_analytics_tag"); ok {
+		if webAnalyticsToken, ok := d.GetOk("build_config.0.web_analytics_token"); ok {
 			buildConfig.WebAnalyticsToken = webAnalyticsToken.(string)
 		}
 		project.BuildConfig = buildConfig
@@ -170,15 +170,54 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	accountID := d.Get("account_id").(string)
 	projectName := d.Get("name").(string)
 
-	res, err := client.PagesProject(ctx, accountID, projectName)
+	project, err := client.PagesProject(ctx, accountID, projectName)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading cloudflare pages project %q: %w", projectName, err))
 	}
 
-	d.SetId(res.Name)
-	d.Set("subdomain", res.SubDomain)
-	d.Set("created_on", res.CreatedOn.Format(time.RFC3339))
-	d.Set("domains", res.Domains)
+	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Pages Project Response: %#v", project))
+	d.SetId(project.Name)
+	d.Set("subdomain", project.SubDomain)
+	d.Set("production_branch", project.ProductionBranch)
+	d.Set("account_id", accountID)
+	d.Set("domains", project.Domains)
+	if project.Source != nil {
+		source := []map[string]interface{}{}
+		source = append(source, map[string]interface{}{
+			"type": project.Source.Type,
+			"config": []map[string]interface{}{
+				{
+					"owner":                      project.Source.Config.Owner,
+					"repo_name":                  project.Source.Config.RepoName,
+					"production_branch":          project.Source.Config.ProductionBranch,
+					"pr_comments_enabled":        project.Source.Config.PRCommentsEnabled,
+					"deployments_enabled":        project.Source.Config.DeploymentsEnabled,
+					"preview_branch_includes":    project.Source.Config.PreviewBranchIncludes,
+					"preview_branch_excludes":    project.Source.Config.PreviewBranchExcludes,
+					"preview_deployment_setting": project.Source.Config.PreviewDeploymentSetting,
+				},
+			},
+		},
+		)
+		d.Set("source", source)
+	}
+	emptyProjectBuildConfig := cloudflare.PagesProjectBuildConfig{}
+	if project.BuildConfig != emptyProjectBuildConfig {
+		buildConfig := []map[string]interface{}{}
+		buildConfig = append(buildConfig, map[string]interface{}{
+			"build_command":       project.BuildConfig.BuildCommand,
+			"destination_dir":     project.BuildConfig.DestinationDir,
+			"root_dir":            project.BuildConfig.RootDir,
+			"web_analytics_tag":   project.BuildConfig.WebAnalyticsTag,
+			"web_analytics_token": project.BuildConfig.WebAnalyticsToken,
+		},
+		)
+		d.Set("build_config", buildConfig)
+	}
+
+
+
+	d.Set("created_on", project.CreatedOn.Format(time.RFC3339))
 
 	return nil
 }
@@ -244,10 +283,8 @@ func resourceCloudflarePagesProjectImport(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Found project: %s", project.Name))
 
-	d.SetId(project.Name)
 	d.Set("name", project.Name)
 	d.Set("account_id", accountID)
-	d.Set("production_branch", project.ProductionBranch)
 
 	resourceCloudflarePagesProjectRead(ctx, d, meta)
 
