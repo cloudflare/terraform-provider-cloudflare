@@ -1,5 +1,5 @@
 resource "cloudflare_user_agent_blocking_rule" "example-1" {
-	zone_id      = "24670de1ee826d9591121cbd94418f7b"
+	zone_id      = "0da42c8d2132a9ddaf714f9e7c920711"
 	mode         = "js_challenge"
 	paused       = false
 	description  = "My description 1"
@@ -9,7 +9,7 @@ resource "cloudflare_user_agent_blocking_rule" "example-1" {
 	}
 }
 resource "cloudflare_user_agent_blocking_rule" "example-2" {
-	zone_id      = "24670de1ee826d9591121cbd94418f7b"
+	zone_id      = "0da42c8d2132a9ddaf714f9e7c920711"
 	mode         = "challenge"
 	paused       = true
 	description  = "My description 22"
