@@ -29,10 +29,9 @@
           "ui.semanticTokens": true
         },
         "go.survey.prompt": false,
-        // Terraform
         "terraform.languageServer.enabled": true
       },
-      "extensions": ["golang.Go"]
+      "extensions": ["golang.Go", "hashicorp.terraform"]
     }
   }
 }
