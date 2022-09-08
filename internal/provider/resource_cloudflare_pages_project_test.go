@@ -177,7 +177,7 @@ func testPagesProjectProductionOnly(resourceID, accountID, projectName string) s
 		`, resourceID, accountID, projectName)
 }
 
-func TestAccTestPagesProject_Basic(t *testing.T) {
+func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -218,7 +218,7 @@ func TestAccTestPagesProject_Basic(t *testing.T) {
 	})
 }
 
-func TestAccTestPagesProject_BuildConfig(t *testing.T) {
+func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -248,7 +248,7 @@ func TestAccTestPagesProject_BuildConfig(t *testing.T) {
 	})
 }
 
-func TestAccTestPagesProject_DeploymentConfig(t *testing.T) {
+func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -316,7 +316,7 @@ func TestAccTestPagesProject_DeploymentConfig(t *testing.T) {
 	})
 }
 
-func TestAccTestPagesProject_DirectUpload(t *testing.T) {
+func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -340,7 +340,7 @@ func TestAccTestPagesProject_DirectUpload(t *testing.T) {
 	})
 }
 
-func TestAccTestPagesProject_PreviewOnly(t *testing.T) {
+func TestAccCloudflarePagesProject_PreviewOnly(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -382,7 +382,7 @@ func TestAccTestPagesProject_PreviewOnly(t *testing.T) {
 	})
 }
 
-func TestAccTestPagesProject_ProductionOnly(t *testing.T) {
+func TestAccCloudflarePagesProject_ProductionOnly(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

@@ -1,0 +1,7 @@
+```release-note:note
+resource/cloudflare_email_routing_rule: Fix example resource to use correct syntax
+```
+
+```release-note:note
+resource/cloudflare_email_routing_rule_catch_all: Fix example resource to use correct syntax
+```

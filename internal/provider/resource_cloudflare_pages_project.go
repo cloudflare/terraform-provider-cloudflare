@@ -102,7 +102,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 		if webAnalyticsTag, ok := d.GetOk("build_config.0.web_analytics_tag"); ok {
 			buildConfig.WebAnalyticsTag = webAnalyticsTag.(string)
 		}
-		if webAnalyticsToken, ok := d.GetOk("build_config.0.web_analytics_tag"); ok {
+		if webAnalyticsToken, ok := d.GetOk("build_config.0.web_analytics_token"); ok {
 			buildConfig.WebAnalyticsToken = webAnalyticsToken.(string)
 		}
 		project.BuildConfig = buildConfig
@@ -148,6 +148,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 			}
 			source.Config = &sourceConfig
 		}
+		project.Source = &source
 	}
 
 	if previewConfig, ok := d.GetOk("deployment_configs.0.preview.0"); ok {

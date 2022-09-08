@@ -1,5 +1,18 @@
 ## 3.24.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_email_routing_rule: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
+* resource/cloudflare_email_routing_rule_catch_all: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
+
+ENHANCEMENTS:
+
+* tools: add devcontainer for local development ([#1892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1892))
+
+BUG FIXES:
+
+* resource/cloudflare_pages_project: fix null source on project create ([#1898](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1898))
+
 ## 3.23.0 (September 7th, 2022)
 
 FEATURES:
