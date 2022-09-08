@@ -14,12 +14,10 @@
   "customizations": {
     "vscode": {
       "settings": {
+        "editor.formatOnSave": true,
         "go.toolsManagement.checkForUpdates": "local",
         "go.useLanguageServer": true,
         "go.gopath": "/go",
-        "[go]": {
-          "editor.formatOnSave": true
-        },
         "go.formatTool": "gofmt",
         "go.formatFlags": ["-w", "-s"],
         "go.toolsManagement.autoUpdate": true,
