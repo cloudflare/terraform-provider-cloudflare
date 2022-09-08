@@ -153,6 +153,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 			}
 			source.Config = &sourceConfig
 		}
+		project.Source = &source
 	}
 
 	if previewConfig, ok := d.GetOk("deployment_configs.0.preview.0"); ok {
