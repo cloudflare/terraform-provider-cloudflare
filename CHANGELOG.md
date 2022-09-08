@@ -1,5 +1,9 @@
 ## 3.24.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* tools: add devcontainer for local development ([#1892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1892))
+
 ## 3.23.0 (September 7th, 2022)
 
 FEATURES:
