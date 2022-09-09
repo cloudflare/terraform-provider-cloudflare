@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,6 +24,9 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDevicePostureRuleImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Device Posture Rule resource. Device posture rules configure security policies for device posture checks.
+		`),
 	}
 }
 
