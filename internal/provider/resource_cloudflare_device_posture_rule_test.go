@@ -27,6 +27,7 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -63,6 +64,7 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -100,6 +102,7 @@ func TestAccCloudflareDevicePostureRule_OsDistroName(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -136,6 +139,7 @@ func TestAccCloudflareDevicePostureRule_OsDistroRevision(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -172,6 +176,7 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -208,6 +213,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -246,6 +252,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,

@@ -17,8 +17,8 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "disk_encryption", "firewall", "workspace_one"}, false),
-			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "disk_encryption", "firewall", "workspace_one"})),
+			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "os_distro_name", "os_distro_revision", "disk_encryption", "firewall", "workspace_one"}, false),
+			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "os_distro_name", "os_distro_revision", "disk_encryption", "firewall", "workspace_one"})),
 		},
 		"name": {
 			Type:        schema.TypeString,

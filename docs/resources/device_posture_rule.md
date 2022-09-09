@@ -39,7 +39,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `disk_encryption`, `firewall`, `workspace_one`.
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `os_distro_name`, `os_distro_revision`, `disk_encryption`, `firewall`, `workspace_one`.
 
 ### Optional
 
