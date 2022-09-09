@@ -24,13 +24,13 @@ func resourceCloudflareUserAgentBlockingRulesSchema() map[string]*schema.Schema 
 			Required:    true,
 		},
 		"description": {
-			Description:  "An informative summary of the rule.\n\n",
+			Description:  "An informative summary of the rule.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringLenBetween(0, 1024),
 		},
 		"mode": {
-			Description:  "The action to apply to a matched request.",
+			Description:  fmt.Sprintf("The action to apply to a matched request. %s", renderAvailableDocumentationValuesStringSlice([]string{"block", "challenge", "js_challenge", "managed_challenge"})),
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"block", "challenge", "js_challenge", "managed_challenge"}, false),
@@ -39,6 +39,7 @@ func resourceCloudflareUserAgentBlockingRulesSchema() map[string]*schema.Schema 
 			Description: "The configuration object for the current rule.",
 			Required:    true,
 			Type:        schema.TypeList,
+			MaxItems:    1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"target": {
