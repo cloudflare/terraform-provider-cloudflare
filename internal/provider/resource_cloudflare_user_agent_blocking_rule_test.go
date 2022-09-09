@@ -11,8 +11,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareUserAgentBlockingRules(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+func TestAccCloudflareUserAgentBlockingRule(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the UA
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -32,7 +32,7 @@ func TestAccCloudflareUserAgentBlockingRules(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareUserAgentBlockingRules(rnd, zoneID, "js_challenge"),
+				Config: testAccCloudflareUserAgentBlockingRule(rnd, zoneID, "js_challenge"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "mode", "js_challenge"),
@@ -47,7 +47,7 @@ func TestAccCloudflareUserAgentBlockingRules(t *testing.T) {
 	})
 }
 
-func testAccCloudflareUserAgentBlockingRules(rnd, zoneID, mode string) string {
+func testAccCloudflareUserAgentBlockingRule(rnd, zoneID, mode string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_user_agent_blocking_rule" "%[1]s" {
 	zone_id     = "%[2]s"
@@ -66,13 +66,13 @@ func testAccCheckCloudflareUserAgentBlockingRulesDestroy(s *terraform.State) err
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_device_posture_rule" {
+		if rs.Type != "cloudflare_user_agent_blocking_rule" {
 			continue
 		}
 
 		_, err := client.UserAgentRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
-			return fmt.Errorf("Device Posture Rule still exists")
+			return fmt.Errorf("User Agent Blocking Rule still exists")
 		}
 	}
 

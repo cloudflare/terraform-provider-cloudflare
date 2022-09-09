@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -95,7 +96,6 @@ func resourceCloudflareUserAgentBlockingRulesDelete(ctx context.Context, d *sche
 
 func buildUserAgentBlockingRules(d *schema.ResourceData) cloudflare.UserAgentRule {
 	rule := cloudflare.UserAgentRule{
-		ID:          d.Get("id").(string),
 		Description: d.Get("description").(string),
 		Paused:      d.Get("paused").(bool),
 		Mode:        d.Get("mode").(string),
