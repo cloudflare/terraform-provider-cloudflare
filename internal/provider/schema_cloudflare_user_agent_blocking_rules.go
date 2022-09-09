@@ -13,11 +13,6 @@ func resourceCloudflareUserAgentBlockingRulesSchema() map[string]*schema.Schema 
 			Required:    true,
 			ForceNew:    true,
 		},
-		"id": {
-			Description: "The unique identifier of the User Agent Blocking rule.",
-			Type:        schema.TypeString,
-			Computed:    true,
-		},
 		"paused": {
 			Description: "When true, indicates that the rule is currently paused.",
 			Type:        schema.TypeBool,
