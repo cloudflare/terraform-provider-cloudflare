@@ -13,6 +13,10 @@ BUG FIXES:
 
 * resource/cloudflare_pages_project: fix null source on project create ([#1898](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1898))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.21.0 to 2.22.0 ([#1900](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1900))
+
 ## 3.23.0 (September 7th, 2022)
 
 FEATURES:
