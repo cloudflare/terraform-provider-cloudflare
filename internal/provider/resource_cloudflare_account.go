@@ -116,20 +116,22 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 
 	if accountName, ok := d.GetOkExists("name"); ok && d.HasChange("name") {
 		foundAcc.Name = accountName.(string)
-		client.UpdateAccount(ctx, accountID, foundAcc)
 	}
 
 	if accountType, ok := d.GetOkExists("type"); ok && d.HasChange("type") {
 		foundAcc.Type = accountType.(string)
-		client.UpdateAccount(ctx, accountID, foundAcc)
 	}
 
 	if enforce_twofactor, ok := d.GetOkExists("enforce_twofactor"); ok && d.HasChange("enforce_twofactor") {
 		foundAcc.Settings.EnforceTwoFactor = enforce_twofactor.(bool)
-		client.UpdateAccount(ctx, accountID, foundAcc)
 	}
 
-	return resourceCloudflareAccountRead(ctx, d, meta)
+	_, err = client.UpdateAccount(ctx, accountID, foundAcc)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("error updating Account %q: %w", d.Id(), err))
+	} else {
+		return resourceCloudflareAccountRead(ctx, d, meta)
+	}
 }
 
 func resourceCloudflareAccountDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
