@@ -5,6 +5,10 @@ NOTES:
 * resource/cloudflare_email_routing_rule: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
 * resource/cloudflare_email_routing_rule_catch_all: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_accounts` ([#1899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1899))
+
 ENHANCEMENTS:
 
 * tools: add devcontainer for local development ([#1892](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1892))
