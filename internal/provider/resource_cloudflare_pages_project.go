@@ -3,9 +3,11 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"reflect"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -86,6 +88,46 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 	}
 
 	return config
+}
+
+func parseDeployementConfig(deployment cloudflare.PagesProjectDeploymentConfigEnvironment) (returnValue []map[string]interface{}) {
+	config := make(map[string]interface{})
+
+	config["compatibility_date"] = deployment.CompatibilityDate
+	config["compatibility_flags"] = deployment.CompatibilityFlags
+
+	deploymentVars := map[string]string{}
+	for key, value := range deployment.EnvVars {
+		deploymentVars[key] = value.Value
+	}
+	config["environment_variables"] = deploymentVars
+
+	deploymentVars = map[string]string{}
+	for key, value := range deployment.KvNamespaces {
+		deploymentVars[key] = value.Value
+	}
+	config["kv_namespaces"] = deploymentVars
+
+	deploymentVars = map[string]string{}
+	for key, value := range deployment.DoNamespaces {
+		deploymentVars[key] = value.Value
+	}
+	config["durable_object_namespaces"] = deploymentVars
+
+	deploymentVars = map[string]string{}
+	for key, value := range deployment.R2Bindings {
+		deploymentVars[key] = value.Name
+	}
+	config["r2_buckets"] = deploymentVars
+
+	deploymentVars = map[string]string{}
+	for key, value := range deployment.D1Databases {
+		deploymentVars[key] = value.ID
+	}
+	config["d1_databases"] = deploymentVars
+
+	returnValue = append(returnValue, config)
+	return
 }
 
 func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
@@ -182,6 +224,8 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	d.Set("production_branch", project.ProductionBranch)
 	d.Set("account_id", accountID)
 	d.Set("domains", project.Domains)
+	d.Set("created_on", project.CreatedOn.Format(time.RFC3339))
+
 	if project.Source != nil {
 		source := []map[string]interface{}{}
 		source = append(source, map[string]interface{}{
@@ -216,9 +260,15 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 		d.Set("build_config", buildConfig)
 	}
 
-
-
-	d.Set("created_on", project.CreatedOn.Format(time.RFC3339))
+	emptyDeploymentConfig := cloudflare.PagesProjectDeploymentConfigs{}
+	if !reflect.DeepEqual(project.DeploymentConfigs, emptyDeploymentConfig) {
+		deploymentConfig := []map[string]interface{}{}
+		deploymentConfig = append(deploymentConfig, map[string]interface{}{
+			"preview":    parseDeployementConfig(project.DeploymentConfigs.Preview),
+			"production": parseDeployementConfig(project.DeploymentConfigs.Production),
+		})
+		d.Set("deployment_configs", deploymentConfig)
+	}
 
 	return nil
 }
