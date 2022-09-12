@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -43,10 +44,6 @@ func dataSourceCloudflareRecord() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-			"priority": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
 			"proxiable": {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -56,6 +53,10 @@ func dataSourceCloudflareRecord() *schema.Resource {
 				Computed: true,
 			},
 			"zone_name": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"created_on": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -69,7 +70,7 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	recordID := d.Get("record_id").(string)
 	record, err := client.DNSRecord(ctx, zoneID, recordID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error finding record %q: %s", recordID, err))
+		return diag.FromErr(fmt.Errorf("error finding record %q: %w", recordID, err))
 	}
 	d.SetId(record.ID)
 	d.Set("hostname", record.Name)
@@ -77,9 +78,9 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("value", record.Content)
 	d.Set("proxied", record.Proxied)
 	d.Set("ttl", record.TTL)
-	d.Set("priority", record.Priority)
 	d.Set("proxiable", record.Proxiable)
 	d.Set("locked", record.Locked)
+	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("zone_name", record.ZoneName)
 	return nil
 }
