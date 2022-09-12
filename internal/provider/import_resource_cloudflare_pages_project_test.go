@@ -8,8 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-
-func testPagesProjectFull(resourceID, accountID, projectName, repoOwner, repoName  string) string {
+func testPagesProjectFull(resourceID, accountID, projectName, repoOwner, repoName string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_pages_project" "%[1]s" {
 		  account_id = "%[2]s"
@@ -86,75 +85,6 @@ func testPagesProjectFull(resourceID, accountID, projectName, repoOwner, repoNam
 		`, resourceID, accountID, projectName, repoOwner, repoName)
 }
 
-func testPagesProjectFullTEMP(resourceID, accountID, projectName, repoOwner, repoName  string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_pages_project" "%[1]s" {
-		  account_id = "%[2]s"
-		  name = "%[3]s"
-		  production_branch = "main"
-		  build_config {
-			build_command = "npm run build"
-			destination_dir = "build"
-			root_dir = "/"
-		  }
-		  source {
-			type = "github"
-			config {
-				owner = "%[4]s"
-				repo_name = "%[5]s"
-				production_branch = "main"
-				pr_comments_enabled = true
-				deployments_enabled = true
-				production_deployment_enabled = false
-				preview_deployment_setting = "all"
-				preview_branch_includes = ["*"]
-				preview_branch_excludes = []
-
-			}
-		  }
-		  deployment_configs {
-		 	preview {
-				environment_variables = {
-					ENVIRONMENT = "preview"
-				}
-				kv_namespaces = {
-					KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-				}
-				durable_object_namespaces = {
-					DO_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-				}
-				r2_buckets = {}
-				d1_databases = {
-					D1_BINDING = "445e2955-951a-4358-a35b-a4d0c813f63"
-				}
-				compatibility_date = "2022-08-15"
-				compatibility_flags = ["preview_flag"]
-			}
-        	production {
-				environment_variables = {
-					ENVIRONMENT = "production"
-					OTHER_VALUE = "other value"
-				}
-				kv_namespaces = {
-					KV_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-					KV_BINDING_2 = "3cdca5f8bb22bc390deee10ebbb36be5"
-				}
-				durable_object_namespaces = {
-					DO_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-					DO_BINDING_2 = "3cdca5f8bb22bc390deee10ebbb36be5"
-				}
-				r2_buckets = {}
-				d1_databases = {
-					D1_BINDING_1 = "445e2955-951a-4358-a35b-a4d0c813f63"
-					D1_BINDING_2 = "a399414b-c697-409a-a688-377db6433cd9"
-				}
-				compatibility_date = "2022-08-16"
-				compatibility_flags = ["production_flag", "second flag"]
-      		}
-		}
-		}
-		`, resourceID, accountID, projectName, repoOwner, repoName)
-}
 
 func TestAccCloudflarePagesProject_Import(t *testing.T) {
 	rnd := generateRandomResourceName()
@@ -162,7 +92,6 @@ func TestAccCloudflarePagesProject_Import(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
 	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")
-
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -172,13 +101,13 @@ func TestAccCloudflarePagesProject_Import(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectFullTEMP(rnd, accountID, rnd, pagesOwner, pagesRepo),
+				Config: testPagesProjectFull(rnd, accountID, rnd, pagesOwner, pagesRepo),
 			},
 			{
-				ResourceName:            name,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportState:             true,
-				ImportStateVerify:       true,
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})
