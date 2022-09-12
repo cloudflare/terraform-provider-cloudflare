@@ -85,7 +85,6 @@ func testPagesProjectFull(resourceID, accountID, projectName, repoOwner, repoNam
 		`, resourceID, accountID, projectName, repoOwner, repoName)
 }
 
-
 func TestAccCloudflarePagesProject_Import(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_pages_project.%s", rnd)

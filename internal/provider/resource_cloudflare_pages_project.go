@@ -211,15 +211,13 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	projectName := d.Get("name").(string)
 
-	project, err := client.PagesProject(ctx, accountID, projectName)
+	project, err := client.PagesProject(ctx, accountID, d.Id())
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error reading cloudflare pages project %q: %w", projectName, err))
+		return diag.FromErr(fmt.Errorf("error reading cloudflare pages project %q: %w", d.Id(), err))
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Pages Project Response: %#v", project))
-	d.SetId(project.Name)
 	d.Set("subdomain", project.SubDomain)
 	d.Set("production_branch", project.ProductionBranch)
 	d.Set("account_id", accountID)
@@ -278,24 +276,24 @@ func resourceCloudflarePagesProjectCreate(ctx context.Context, d *schema.Resourc
 	accountID := d.Get("account_id").(string)
 	pageProject := buildPagesProject(d)
 
-	_, err := client.CreatePagesProject(ctx, accountID, pageProject)
+	project, err := client.CreatePagesProject(ctx, accountID, pageProject)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating cloudflare pages project %q: %w", pageProject.Name, err))
 	}
 
+	d.SetId(project.Name)
 	return resourceCloudflarePagesProjectRead(ctx, d, meta)
 }
 
 func resourceCloudflarePagesProjectUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	projectName := d.Get("name").(string)
 
 	pageProject := buildPagesProject(d)
 
-	_, err := client.UpdatePagesProject(ctx, accountID, projectName, pageProject)
+	_, err := client.UpdatePagesProject(ctx, accountID, d.Id(), pageProject)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating cloudflare pages project %q: %w", pageProject.Name, err))
+		return diag.FromErr(fmt.Errorf("error updating cloudflare pages project %q: %w", d.Id(), err))
 	}
 
 	return resourceCloudflarePagesProjectRead(ctx, d, meta)
@@ -304,11 +302,10 @@ func resourceCloudflarePagesProjectUpdate(ctx context.Context, d *schema.Resourc
 func resourceCloudflarePagesProjectDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	projectName := d.Get("name").(string)
 
-	err := client.DeletePagesProject(ctx, accountID, projectName)
+	err := client.DeletePagesProject(ctx, accountID, d.Id())
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting cloudflare pages project %q: %w", projectName, err))
+		return diag.FromErr(fmt.Errorf("error deleting cloudflare pages project %q: %w", d.Id(), err))
 	}
 	return nil
 }
@@ -334,6 +331,7 @@ func resourceCloudflarePagesProjectImport(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Found project: %s", project.Name))
 
+	d.SetId(project.Name)
 	d.Set("name", project.Name)
 	d.Set("account_id", accountID)
 
