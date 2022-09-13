@@ -20,7 +20,6 @@ description: |-
 
 ### Read-Only
 
-- `created_on` (String)
 - `hostname` (String)
 - `id` (String) The ID of this resource.
 - `locked` (Boolean)

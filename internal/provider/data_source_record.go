@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -56,10 +55,6 @@ func dataSourceCloudflareRecord() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created_on": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 	}
 }
@@ -80,7 +75,6 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("ttl", record.TTL)
 	d.Set("proxiable", record.Proxiable)
 	d.Set("locked", record.Locked)
-	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
 	d.Set("zone_name", record.ZoneName)
 	return nil
 }
