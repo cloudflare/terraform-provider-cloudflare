@@ -49,7 +49,7 @@ Action blocks support the following:
 - `cache_by_device_type` - (Optional) Whether this action is `"on"` or `"off"`.
 - `cache_deception_armor` - (Optional) Whether this action is `"on"` or `"off"`.
 - `cache_key_fields` - (Optional) Controls how Cloudflare creates Cache Keys used to identify files in cache. [See below](#cache-key-fields) for full description.
-- `cache_level` - (Optional) Whether to set the cache level to `"bypass"`, `"basic"`, `"simplified"`, `"aggressive"`, or `"cache_everything"`.
+- `cache_level` - (Optional) Apply custom caching based on the level selected. See below for full list of options.
 - `cache_on_cookie` - (Optional) String value of cookie name to conditionally cache the page.
 - `cache_ttl_by_status` - (Optional) Set cache TTL based on the response status from the origin web server. Can be specified multiple times. [See below](#cache-ttl-by-status) for full description.
 - `disable_apps` - (Optional) Boolean of whether this action is enabled. Default: false.
@@ -79,6 +79,13 @@ Action blocks support the following:
 - `ssl` - (Optional) Whether to set the SSL mode to `"off"`, `"flexible"`, `"full"`, `"strict"`, or `"origin_pull"`.
 - `true_client_ip_header` - (Optional) Whether this action is `"on"` or `"off"`.
 - `waf` - (Optional) Whether this action is `"on"` or `"off"`.
+
+Cache Level actions support the following levels:
+ - `"bypass"` - Bypass - Cloudflare does not cache.
+ - `"basic"` - No Query String - Delivers resources from cache when there is no query string. Example URL: `example.com/pic.jpg`
+ - `"simplified"` - Ignore Query String - Delivers the same resource to everyone independent of the query string. Example URL: `example.com/pic.jpg?ignore=this-query-string`
+ - `"aggressive"` - Standard - Caches all static content that has a query string. Example URL: `example.com/pic.jpg?with=query`
+ - `"cache_everything"` - Cache Everything -  Treats all content as static and caches all file types beyond the [Cloudflare default cached content](https://developers.cloudflare.com/cache/about/default-cache-behavior#default-cached-file-extensions).  Respects cache headers from the origin web server unless Edge Cache TTL is also set in the Page Rule. When combined with an Edge Cache TTL > 0, Cache Everything removes cookies from the origin web server response. 
 
 Forwarding URL actions support the following:
 
