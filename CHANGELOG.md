@@ -16,6 +16,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* provider: allow setting `api_user_service_key` without token and/or key ([#1907](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1907))
 * resource/cloudflare_load_balancer_monitor: fix detection of headers values changing ([#1903](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1903))
 * resource/cloudflare_pages_project: fix null source on project create ([#1898](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1898))
 
