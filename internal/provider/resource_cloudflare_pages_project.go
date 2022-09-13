@@ -180,6 +180,9 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 			if productionBranch, ok := d.GetOk("source.0.config.0.production_branch"); ok {
 				sourceConfig.ProductionBranch = productionBranch.(string)
 			}
+			if productionBranchEnable, ok := d.GetOk("source.0.config.0.production_deployment_enabled"); ok {
+				sourceConfig.ProductionDeploymentsEnabled = productionBranchEnable.(bool)
+			}
 			if previewBranchIncludes, ok := d.GetOk("source.0.config.0.preview_branch_includes"); ok {
 				for _, item := range previewBranchIncludes.([]interface{}) {
 					sourceConfig.PreviewBranchIncludes = append(sourceConfig.PreviewBranchIncludes, item.(string))
@@ -230,14 +233,15 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 			"type": project.Source.Type,
 			"config": []map[string]interface{}{
 				{
-					"owner":                      project.Source.Config.Owner,
-					"repo_name":                  project.Source.Config.RepoName,
-					"production_branch":          project.Source.Config.ProductionBranch,
-					"pr_comments_enabled":        project.Source.Config.PRCommentsEnabled,
-					"deployments_enabled":        project.Source.Config.DeploymentsEnabled,
-					"preview_branch_includes":    project.Source.Config.PreviewBranchIncludes,
-					"preview_branch_excludes":    project.Source.Config.PreviewBranchExcludes,
-					"preview_deployment_setting": project.Source.Config.PreviewDeploymentSetting,
+					"owner":                         project.Source.Config.Owner,
+					"repo_name":                     project.Source.Config.RepoName,
+					"production_branch":             project.Source.Config.ProductionBranch,
+					"pr_comments_enabled":           project.Source.Config.PRCommentsEnabled,
+					"deployments_enabled":           project.Source.Config.DeploymentsEnabled,
+					"production_deployment_enabled": project.Source.Config.ProductionDeploymentsEnabled,
+					"preview_branch_includes":       project.Source.Config.PreviewBranchIncludes,
+					"preview_branch_excludes":       project.Source.Config.PreviewBranchExcludes,
+					"preview_deployment_setting":    project.Source.Config.PreviewDeploymentSetting,
 				},
 			},
 		},
@@ -260,12 +264,20 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 
 	emptyDeploymentConfig := cloudflare.PagesProjectDeploymentConfigs{}
 	if !reflect.DeepEqual(project.DeploymentConfigs, emptyDeploymentConfig) {
-		deploymentConfig := []map[string]interface{}{}
-		deploymentConfig = append(deploymentConfig, map[string]interface{}{
-			"preview":    parseDeployementConfig(project.DeploymentConfigs.Preview),
-			"production": parseDeployementConfig(project.DeploymentConfigs.Production),
-		})
-		d.Set("deployment_configs", deploymentConfig)
+		deploymentConfigs := []map[string]interface{}{}
+		deploymentConfig := make(map[string]interface{})
+		emptyDeploymentEnviroment := cloudflare.PagesProjectDeploymentConfigEnvironment{}
+		if !reflect.DeepEqual(project.DeploymentConfigs.Preview, emptyDeploymentEnviroment) {
+			fmt.Println("Preview Deployment Enviroment Detected")
+			deploymentConfig["preview"] = parseDeployementConfig(project.DeploymentConfigs.Preview)
+		}
+
+		if !reflect.DeepEqual(project.DeploymentConfigs.Production, emptyDeploymentEnviroment) {
+			fmt.Println("Production Deployment Enviroment Detected")
+			deploymentConfig["production"] = parseDeployementConfig(project.DeploymentConfigs.Production)
+		}
+		deploymentConfigs = append(deploymentConfigs, deploymentConfig)
+		d.Set("deployment_configs", deploymentConfigs)
 	}
 
 	return nil
