@@ -268,12 +268,10 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 		deploymentConfig := make(map[string]interface{})
 		emptyDeploymentEnviroment := cloudflare.PagesProjectDeploymentConfigEnvironment{}
 		if !reflect.DeepEqual(project.DeploymentConfigs.Preview, emptyDeploymentEnviroment) {
-			fmt.Println("Preview Deployment Enviroment Detected")
 			deploymentConfig["preview"] = parseDeployementConfig(project.DeploymentConfigs.Preview)
 		}
 
 		if !reflect.DeepEqual(project.DeploymentConfigs.Production, emptyDeploymentEnviroment) {
-			fmt.Println("Production Deployment Enviroment Detected")
 			deploymentConfig["production"] = parseDeployementConfig(project.DeploymentConfigs.Production)
 		}
 		deploymentConfigs = append(deploymentConfigs, deploymentConfig)
