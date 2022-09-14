@@ -38,14 +38,7 @@ func resourceCloudflareAccount() *schema.Resource {
 func resourceCloudflareAccountCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountName := d.Get("name").(string)
-	var accountType string
-	if d.Get("type").(string) == "" {
-		accountType = accountTypeStandard
-	} else if d.Get("type").(string) == accountTypeStandard || d.Get("type").(string) == accountTypeEnterprise {
-		accountType = d.Get("type").(string)
-	} else {
-		return diag.FromErr(fmt.Errorf("invalid account type %s", d.Get("type").(string)))
-	}
+	accountType := d.Get("type").(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Account: name %s", accountName))
 
