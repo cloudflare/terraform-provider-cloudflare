@@ -57,26 +57,11 @@ func resourceCloudflareAccountCreate(ctx context.Context, d *schema.ResourceData
 	return resourceCloudflareAccountRead(ctx, d, meta)
 }
 
-func getCloudflareAccontFromId(accountID string, client *cloudflare.API, ctx context.Context) (cloudflare.Account, error) {
-	accs, _, err := client.Accounts(ctx, cloudflare.AccountsListParams{})
-	if err != nil {
-		return cloudflare.Account{}, err
-	} else {
-		for _, acc := range accs {
-			if acc.ID == accountID {
-				return acc, nil
-			}
-		}
-
-		return cloudflare.Account{}, fmt.Errorf("Account %s does not exist", accountID)
-	}
-}
-
 func resourceCloudflareAccountRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Id()
 
-	foundAcc, err := getCloudflareAccontFromId(accountID, client, ctx)
+	foundAcc, _, err := client.Account(ctx, accountID)
 	tflog.Debug(ctx, fmt.Sprintf("AccountDetails error: %#v", err))
 
 	if err != nil || foundAcc.ID == "" {
@@ -101,7 +86,7 @@ func resourceCloudflareAccountRead(ctx context.Context, d *schema.ResourceData, 
 func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Id()
-	foundAcc, err := getCloudflareAccontFromId(accountID, client, ctx)
+	foundAcc, _, err := client.Account(ctx, accountID)
 
 	tflog.Debug(ctx, fmt.Sprintf("AccountDetails error: %#v", err))
 
