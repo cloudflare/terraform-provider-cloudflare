@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
-
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -89,7 +87,7 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(fmt.Errorf("error finding Account %q: %w", d.Id(), err))
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("[INFO] Updating Cloudflare Account: id %s", accountID))
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Account: id %s", accountID))
 
 	if accountName, ok := d.GetOk("name"); ok && d.HasChange("name") {
 		foundAcc.Name = accountName.(string)
@@ -119,7 +117,7 @@ func resourceCloudflareAccountDelete(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	accountID := d.Id()
 
-	log.Printf("[INFO] Deleting Cloudflare Account: id %s", accountID)
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Account: id %s", accountID))
 
 	err := client.DeleteAccount(ctx, accountID)
 
