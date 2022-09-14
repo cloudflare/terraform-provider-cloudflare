@@ -62,8 +62,6 @@ func resourceCloudflareAccountRead(ctx context.Context, d *schema.ResourceData, 
 	accountID := d.Id()
 
 	foundAcc, _, err := client.Account(ctx, accountID)
-	tflog.Debug(ctx, fmt.Sprintf("AccountDetails error: %#v", err))
-
 	if err != nil || foundAcc.ID == "" {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -87,8 +85,9 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	accountID := d.Id()
 	foundAcc, _, err := client.Account(ctx, accountID)
-
-	tflog.Debug(ctx, fmt.Sprintf("AccountDetails error: %#v", err))
+	if err != nil || foundAcc.ID == "" {
+		return diag.FromErr(fmt.Errorf("error finding Account %q: %w", d.Id(), err))
+	}
 
 	log.Printf("[INFO] Updating Cloudflare Account: id %s", accountID)
 
