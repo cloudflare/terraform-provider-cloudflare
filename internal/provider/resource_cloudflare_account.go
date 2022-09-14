@@ -89,14 +89,10 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(fmt.Errorf("error finding Account %q: %w", d.Id(), err))
 	}
 
-	log.Printf("[INFO] Updating Cloudflare Account: id %s", accountID)
+	tflog.Debug(ctx, fmt.Sprintf("[INFO] Updating Cloudflare Account: id %s", accountID))
 
 	if accountName, ok := d.GetOk("name"); ok && d.HasChange("name") {
 		foundAcc.Name = accountName.(string)
-	}
-
-	if accountType, ok := d.GetOk("type"); ok && d.HasChange("type") {
-		foundAcc.Type = accountType.(string)
 	}
 
 	if enforce_twofactor, ok := d.GetOk("enforce_twofactor"); ok && d.HasChange("enforce_twofactor") {
@@ -105,6 +101,14 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 
 	_, err = client.UpdateAccount(ctx, accountID, foundAcc)
 	if err != nil {
+		if ferr, ok := err.(*cloudflare.RequestError); ok {
+			errCodes := ferr.ErrorCodes()
+			if len(errCodes) == 1 && errCodes[0] == 1001 {
+				tflog.Debug(ctx, "Ignoring error 1001: Updating account type is not supported from client api")
+				return resourceCloudflareAccountRead(ctx, d, meta)
+			}
+		}
+		tflog.Error(ctx, fmt.Sprintf("%#v", err))
 		return diag.FromErr(fmt.Errorf("error updating Account %q: %w", d.Id(), err))
 	} else {
 		return resourceCloudflareAccountRead(ctx, d, meta)

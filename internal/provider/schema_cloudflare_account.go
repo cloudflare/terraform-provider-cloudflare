@@ -16,7 +16,7 @@ func resourceCloudflareAccountSchema() map[string]*schema.Schema {
 			Description:  "Valid values are standard (default) and enterprise. For self-serve customers, use standard. For enterprise customers, use enterprise.",
 			Default:      accountTypeStandard,
 			ValidateFunc: validation.StringInSlice([]string{accountTypeEnterprise, accountTypeStandard}, false),
-			ForceNew:     true,
+			ForceNew:     true, // Because "Updating account type is not supported from client api"
 		},
 		"enforce_twofactor": {
 			Description: "Whether 2FA is enforced on the account.",
