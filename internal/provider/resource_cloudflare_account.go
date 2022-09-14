@@ -91,15 +91,15 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 
 	log.Printf("[INFO] Updating Cloudflare Account: id %s", accountID)
 
-	if accountName, ok := d.GetOkExists("name"); ok && d.HasChange("name") {
+	if accountName, ok := d.GetOk("name"); ok && d.HasChange("name") {
 		foundAcc.Name = accountName.(string)
 	}
 
-	if accountType, ok := d.GetOkExists("type"); ok && d.HasChange("type") {
+	if accountType, ok := d.GetOk("type"); ok && d.HasChange("type") {
 		foundAcc.Type = accountType.(string)
 	}
 
-	if enforce_twofactor, ok := d.GetOkExists("enforce_twofactor"); ok && d.HasChange("enforce_twofactor") {
+	if enforce_twofactor, ok := d.GetOk("enforce_twofactor"); ok && d.HasChange("enforce_twofactor") {
 		foundAcc.Settings.EnforceTwoFactor = enforce_twofactor.(bool)
 	}
 
