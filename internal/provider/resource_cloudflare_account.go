@@ -38,7 +38,7 @@ func resourceCloudflareAccountCreate(ctx context.Context, d *schema.ResourceData
 	accountName := d.Get("name").(string)
 	accountType := d.Get("type").(string)
 
-	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Account: name %s", accountName))
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Account: name %s", accountName))
 
 	account := cloudflare.Account{
 		Name: accountName,
@@ -108,9 +108,9 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 		}
 		tflog.Error(ctx, fmt.Sprintf("%#v", err))
 		return diag.FromErr(fmt.Errorf("error updating Account %q: %w", d.Id(), err))
-	} else {
-		return resourceCloudflareAccountRead(ctx, d, meta)
 	}
+
+	return resourceCloudflareAccountRead(ctx, d, meta)
 }
 
 func resourceCloudflareAccountDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
