@@ -86,7 +86,7 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareDevicePostureRule_OsDistroName(t *testing.T) {
+func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -109,51 +109,16 @@ func TestAccCloudflareDevicePostureRule_OsDistroName(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareDevicePostureRuleConfigOsDistroName(rnd, accountID),
+				Config: testAccCloudflareDevicePostureRuleConfigLinuxDistro(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "type", "os_distro_name"),
+					resource.TestCheckResourceAttr(name, "type", "os_version"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "linux"),
+					resource.TestCheckResourceAttr(name, "input.0.version", "1.0.0"),
 					resource.TestCheckResourceAttr(name, "input.0.os_distro_name", "ubuntu"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareDevicePostureRule_OsDistroRevision(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
-		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCloudflareDevicePostureRuleConfigOsDistroRevision(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "type", "os_distro_revision"),
-					resource.TestCheckResourceAttr(name, "description", "My description"),
-					resource.TestCheckResourceAttr(name, "match.0.platform", "linux"),
-					resource.TestCheckResourceAttr(name, "input.0.os_distro_revision", "os_distro_revision"),
+					resource.TestCheckResourceAttr(name, "input.0.os_distro_revision", "1.0.0"),
 				),
 			},
 		},
@@ -314,12 +279,12 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 `, rnd, accountID)
 }
 
-func testAccCloudflareDevicePostureRuleConfigOsDistroName(rnd, accountID string) string {
+func testAccCloudflareDevicePostureRuleConfigLinuxDistro(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
-	type                      = "os_distro_name"
+	type                      = "os_version"
 	description               = "My description"
 	schedule                  = "24h"
 	expiration                = "24h"
@@ -327,25 +292,9 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 		platform = "linux"
 	}
 	input {
+		version = "1.0.0"
+        operator = "<"
 		os_distro_name = "ubuntu"
-	}
-}
-`, rnd, accountID)
-}
-
-func testAccCloudflareDevicePostureRuleConfigOsDistroRevision(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "os_distro_revision"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "linux"
-	}
-	input {
 		os_distro_revision = "1.0.0"
 	}
 }

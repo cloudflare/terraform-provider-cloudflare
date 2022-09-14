@@ -1,7 +1,7 @@
 resource "cloudflare_device_posture_rule" "eaxmple" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "Corporate devices posture rule"
-  type        = "serial_number"
+  type        = "os_version"
   description = "Device posture rule for corporate devices."
   schedule    = "24h"
   expiration  = "24h"

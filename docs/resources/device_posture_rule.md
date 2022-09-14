@@ -15,7 +15,7 @@ Provides a Cloudflare Device Posture Rule resource. Device posture rules configu
 resource "cloudflare_device_posture_rule" "eaxmple" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "Corporate devices posture rule"
-  type        = "serial_number"
+  type        = "os_version"
   description = "Device posture rule for corporate devices."
   schedule    = "24h"
   expiration  = "24h"
@@ -39,7 +39,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `os_distro_name`, `os_distro_revision`, `disk_encryption`, `firewall`, `workspace_one`.
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`.
 
 ### Optional
 
