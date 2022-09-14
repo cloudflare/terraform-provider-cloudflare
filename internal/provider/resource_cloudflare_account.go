@@ -30,7 +30,7 @@ func resourceCloudflareAccount() *schema.Resource {
 		},
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Account resource. Account is the basic resource for
-			working with Cloudflare zones, teams and users. Requires the tenant entitlement
+			working with Cloudflare zones, teams and users. 
 		`),
 	}
 }
