@@ -96,6 +96,9 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 				break
 			}
 		}
+		if len(records) != 1 {
+			return diag.Errorf("unable to find single record for %s type %s", searchRecord.Name, searchRecord.Type)
+		}
 	}
 
 	record := records[0]
