@@ -97,16 +97,9 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 		foundAcc.Settings.EnforceTwoFactor = enforce_twofactor.(bool)
 	}
 
+	foundAcc.Type = "" // To avoid error 1001: Updating account type is not supported from client api
 	_, err = client.UpdateAccount(ctx, accountID, foundAcc)
 	if err != nil {
-		var cfError *cloudflare.RequestError
-		if errors.As(err, &cfError) {
-			errCodes := cfError.ErrorCodes()
-			if len(errCodes) == 1 && errCodes[0] == 1001 {
-				tflog.Debug(ctx, "Ignoring error 1001: Updating account type is not supported from client api")
-				return resourceCloudflareAccountRead(ctx, d, meta)
-			}
-		}
 		tflog.Error(ctx, fmt.Sprintf("%#v", err))
 		return diag.FromErr(fmt.Errorf("error updating Account %q: %w", d.Id(), err))
 	}
