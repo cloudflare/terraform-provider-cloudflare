@@ -82,6 +82,7 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing DNS records: %w", err))
 	}
+
 	if len(records) == 0 {
 		return diag.Errorf("didn't get any DNS records for hostname: %s", searchRecord.Name)
 	}
@@ -103,9 +104,15 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("value", record.Content)
 	d.Set("proxied", record.Proxied)
 	d.Set("ttl", record.TTL)
-	d.Set("priority", record.Priority)
 	d.Set("proxiable", record.Proxiable)
 	d.Set("locked", record.Locked)
 	d.Set("zone_name", record.ZoneName)
+
+	if record.Priority != nil {
+		priority := record.Priority
+		p := *priority
+		d.Set("priority", int(p))
+	}
+
 	return nil
 }
