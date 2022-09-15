@@ -9,6 +9,8 @@ description: |-
 
 # cloudflare_access_bookmark (Resource)
 
+-> **Note:** This endpoint is deprecated in favor of using a specialized Access Application App Type.
+
 Provides a Cloudflare Access Bookmark resource. Access Bookmark
 applications are not protected behind Access but are displayed in
 the App Launcher.

@@ -1,0 +1,3 @@
+```release-note:note
+resource/schema_cloudflare_access_application: Bookmarks is deprecated in favor of using a specialized Access Application App Type.
+```

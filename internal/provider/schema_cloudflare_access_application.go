@@ -46,8 +46,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file"}, false),
-			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file"})),
+			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file", "bookmark"}, false),
+			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file", "bookmark"})),
 		},
 		"session_duration": {
 			Type:     schema.TypeString,

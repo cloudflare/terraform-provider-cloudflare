@@ -28,6 +28,7 @@ func resourceCloudflareAccessBookmark() *schema.Resource {
 			applications are not protected behind Access but are displayed in
 			the App Launcher.
 		`),
+		DeprecationMessage: "This endpoint is deprecated in favor of using a specialized Access Application App Type.",
 	}
 }
 
