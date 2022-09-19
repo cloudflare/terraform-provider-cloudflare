@@ -46,8 +46,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file"}, false),
-			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file"})),
+			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "bookmark"}, false),
+			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "saas", "ssh", "vnc", "bookmark"})),
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
@@ -57,7 +57,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				v := val.(string)
 				_, err := time.ParseDuration(v)
 				if err != nil {
-					errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`, key))
+					errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`, key))
 				}
 				return
 			},

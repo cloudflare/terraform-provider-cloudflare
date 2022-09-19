@@ -1,0 +1,4 @@
+```release-note:note
+resource/cloudflare_access_bookmark: Bookmark resource is deprecated in
+favor of using the cloudflare_access_application resource.
+```
