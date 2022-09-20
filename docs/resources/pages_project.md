@@ -207,6 +207,5 @@ Optional:
 
 Import is supported using the following syntax:
 ```shell
-# Use account ID, and project name.
 $ terraform import cloudflare_pages_project.example <account_id>/<project_name>
 ```
