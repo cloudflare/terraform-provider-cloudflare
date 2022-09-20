@@ -105,14 +105,14 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 		`, resourceID, accountID, projectName)
 }
 
-func testPagesProjectDirectUpload(resourceID, accountID, projectName string) string {
+func testPagesProjectDirectUpload(resourceID, accountID string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_pages_project" "%[1]s" {
 		  account_id = "%[2]s"
-		  name = "%[3]s"
+		  name = "%[1]s"
 		  production_branch = "main"
 		}
-		`, resourceID, accountID, projectName)
+		`, resourceID, accountID)
 }
 
 func testPagesProjectPreviewOnly(resourceID, accountID, projectName string) string {
@@ -324,12 +324,11 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheckPages(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectDirectUpload(rnd, accountID, rnd),
+				Config: testPagesProjectDirectUpload(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
