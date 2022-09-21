@@ -9,8 +9,7 @@ description: |-
 
 # cloudflare_access_bookmark (Resource)
 
--> **Note:** this resource is deprecated in favor of using the
-[cloudflare_access_application](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_application) resource.
+-> This resource is deprecated in favor of using the [cloudflare_access_application](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_application) resource and will be removed in the next major version.
 
 Provides a Cloudflare Access Bookmark resource. Access Bookmark
 applications are not protected behind Access but are displayed in
