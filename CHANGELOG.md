@@ -1,5 +1,9 @@
 ## 3.25.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 5 to 6 ([#1922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1922))
+
 ## 3.24.0 (September 21st, 2022)
 
 NOTES:
