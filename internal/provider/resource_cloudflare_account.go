@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -28,7 +29,7 @@ func resourceCloudflareAccount() *schema.Resource {
 		},
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Account resource. Account is the basic resource for
-			working with Cloudflare zones, teams and users. 
+			working with Cloudflare zones, teams and users.
 		`),
 	}
 }
@@ -60,7 +61,7 @@ func resourceCloudflareAccountRead(ctx context.Context, d *schema.ResourceData, 
 	accountID := d.Id()
 
 	foundAcc, _, err := client.Account(ctx, accountID)
-	if err != nil || foundAcc.ID == "" {
+	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Account %s no longer exists", d.Id()))
@@ -82,23 +83,19 @@ func resourceCloudflareAccountRead(ctx context.Context, d *schema.ResourceData, 
 func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Id()
-	foundAcc, _, err := client.Account(ctx, accountID)
-	if err != nil || foundAcc.ID == "" {
-		return diag.FromErr(fmt.Errorf("error finding Account %q: %w", d.Id(), err))
-	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Account: id %s", accountID))
 
-	if accountName, ok := d.GetOk("name"); ok && d.HasChange("name") {
-		foundAcc.Name = accountName.(string)
+	updatedAcc := cloudflare.Account{}
+	if accountName, ok := d.GetOk("name"); ok {
+		updatedAcc.Name = accountName.(string)
 	}
 
-	if enforce_twofactor, ok := d.GetOk("enforce_twofactor"); ok && d.HasChange("enforce_twofactor") {
-		foundAcc.Settings.EnforceTwoFactor = enforce_twofactor.(bool)
+	if enforce_twofactor, ok := d.GetOk("enforce_twofactor"); ok {
+		updatedAcc.Settings.EnforceTwoFactor = enforce_twofactor.(bool)
 	}
 
-	foundAcc.Type = "" // To avoid error 1001: Updating account type is not supported from client api
-	_, err = client.UpdateAccount(ctx, accountID, foundAcc)
+	_, err := client.UpdateAccount(ctx, accountID, updatedAcc)
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("%#v", err))
 		return diag.FromErr(fmt.Errorf("error updating Account %q: %w", d.Id(), err))

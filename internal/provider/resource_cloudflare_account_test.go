@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccCloudflareAccount(t *testing.T) {
+func TestAccCloudflareAccount_Basic(t *testing.T) {
 	t.Parallel()
 
 	rnd := generateRandomResourceName()
@@ -20,17 +20,17 @@ func TestAccCloudflareAccount(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccountName(fmt.Sprintf("%s old", rnd)),
+				Config: testAccCheckCloudflareAccountName(fmt.Sprintf("%s_old", rnd)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						name, "name", fmt.Sprintf("%s old", rnd)),
+						name, "name", fmt.Sprintf("%s_old", rnd)),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareAccountName(fmt.Sprintf("%s new", rnd)),
+				Config: testAccCheckCloudflareAccountName(fmt.Sprintf("%s_new", rnd)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						name, "name", fmt.Sprintf("%s new", rnd)),
+						name, "name", fmt.Sprintf("%s_new", rnd)),
 				),
 			},
 		},
