@@ -347,7 +347,7 @@ func expandStringMap(inVal interface{}) map[string]string {
 func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 
-	// split the id so we can lookup
+	// split the id so we can look up
 	idAttr := strings.SplitN(d.Id(), "/", 2)
 	var zoneID string
 	var recordID string

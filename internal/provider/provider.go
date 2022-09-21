@@ -92,7 +92,7 @@ func New(version string) func() *schema.Provider {
 					Optional:     true,
 					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
 					Description:  "The API key for operations. Alternatively, can be configured using the `CLOUDFLARE_API_KEY` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead.",
-					ExactlyOneOf: []string{"api_key", "api_token"},
+					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must only contain characters 0-9 and a-f (all lowercased)"),
 				},
 
@@ -101,14 +101,16 @@ func New(version string) func() *schema.Provider {
 					Optional:     true,
 					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
 					Description:  "The API Token for operations. Alternatively, can be configured using the `CLOUDFLARE_API_TOKEN` environment variable.",
+					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
 				},
 
 				"api_user_service_key": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_USER_SERVICE_KEY", nil),
-					Description: "A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `CLOUDFLARE_API_USER_SERVICE_KEY` environment variable.",
+					Type:         schema.TypeString,
+					Optional:     true,
+					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_USER_SERVICE_KEY", nil),
+					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
+					Description:  "A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `CLOUDFLARE_API_USER_SERVICE_KEY` environment variable.",
 				},
 
 				"rps": {
@@ -172,10 +174,12 @@ func New(version string) func() *schema.Provider {
 			DataSourcesMap: map[string]*schema.Resource{
 				"cloudflare_access_identity_provider":    dataSourceCloudflareAccessIdentityProvider(),
 				"cloudflare_account_roles":               dataSourceCloudflareAccountRoles(),
+				"cloudflare_accounts":                    dataSourceCloudflareAccounts(),
 				"cloudflare_api_token_permission_groups": dataSourceCloudflareApiTokenPermissionGroups(),
 				"cloudflare_devices":                     dataSourceCloudflareDevices(),
 				"cloudflare_ip_ranges":                   dataSourceCloudflareIPRanges(),
 				"cloudflare_origin_ca_root_certificate":  dataSourceCloudflareOriginCARootCertificate(),
+				"cloudflare_record":                      dataSourceCloudflareRecord(),
 				"cloudflare_waf_groups":                  dataSourceCloudflareWAFGroups(),
 				"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
 				"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
@@ -196,6 +200,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_access_rule":                            resourceCloudflareAccessRule(),
 				"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
 				"cloudflare_account_member":                         resourceCloudflareAccountMember(),
+				"cloudflare_api_shield":                             resourceCloudflareAPIShield(),
 				"cloudflare_api_token":                              resourceCloudflareApiToken(),
 				"cloudflare_argo_tunnel":                            resourceCloudflareArgoTunnel(),
 				"cloudflare_argo":                                   resourceCloudflareArgo(),
@@ -250,6 +255,8 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
 				"cloudflare_tunnel_route":                           resourceCloudflareTunnelRoute(),
 				"cloudflare_tunnel_virtual_network":                 resourceCloudflareTunnelVirtualNetwork(),
+				"cloudflare_user_agent_blocking_rule":               resourceCloudflareUserAgentBlockingRules(),
+				"cloudflare_web3_hostname":                          resourceCloudflareWeb3Hostname(),
 				"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
 				"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
 				"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
@@ -302,7 +309,9 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 
 		if v, ok := d.GetOk("api_token"); ok {
 			config.APIToken = v.(string)
-		} else if v, ok := d.GetOk("api_key"); ok {
+		}
+
+		if v, ok := d.GetOk("api_key"); ok {
 			config.APIKey = v.(string)
 			if v, ok = d.GetOk("email"); ok {
 				config.Email = v.(string)
@@ -314,12 +323,6 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 
 				return nil, diags
 			}
-		} else {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "credentials are not set correctly",
-			})
-			return nil, diags
 		}
 
 		if v, ok := d.GetOk("api_user_service_key"); ok {

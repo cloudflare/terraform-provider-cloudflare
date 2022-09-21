@@ -14,7 +14,8 @@ jobs:
         with:
           go-version: ^1.18
       - run: make tools
-      - run: go run tools/cmd/changelog-check/main.go ${{ github.event.pull_request.number }}
+      - run: go run cmd/changelog-check/main.go ${{ github.event.pull_request.number }}
+        working-directory: ./tools
         env:
           GITHUB_OWNER: cloudflare
           GITHUB_REPO: terraform-provider-cloudflare

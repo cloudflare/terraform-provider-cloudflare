@@ -273,6 +273,34 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 	})
 }
 
+func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *testing.T) {
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "header.0.header", "Host"),
+					resource.TestCheckResourceAttr(name, "header.0.values.0", domain),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, fmt.Sprintf("%s.%s", rnd, domain)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "header.0.header", "Host"),
+					resource.TestCheckResourceAttr(name, "header.0.values.0", fmt.Sprintf("%s.%s", rnd, domain)),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
@@ -377,6 +405,25 @@ resource "cloudflare_load_balancer_monitor" "test" {
     values = ["%[1]s"]
   }
 }`, zoneName)
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, hostname string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_monitor" "%[1]s" {
+  expected_body = "dead"
+  expected_codes = "5xx"
+  method = "HEAD"
+  timeout = 9
+  path = "/custom"
+  interval = 60
+  retries = 5
+  port = 8080
+  description = "this is a very weird load balancer"
+  header {
+    header = "Host"
+    values = ["%[2]s"]
+  }
+}`, rnd, hostname)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(resourceName string) string {

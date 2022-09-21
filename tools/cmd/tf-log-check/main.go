@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -62,12 +66,36 @@ func main() {
 		os.Exit(0)
 	}
 
-	if !strings.Contains(*issue.Body, "Terraform version") &&
-		!strings.Contains(*issue.Body, "Go runtime version") &&
-		!strings.Contains(*issue.Body, "CLI args") &&
-		!strings.Contains(*issue.Body, "created provider logger") &&
-		!strings.Contains(*issue.Body, "CLI command args") &&
-		!strings.Contains(*issue.Body, "provider: plugin process exited") {
+	var re = regexp.MustCompile(`### Link to debug output\n\n(?P<link>.*)\n\n### Panic output`)
+	matches := re.FindStringSubmatch(*issue.Body)
+	link := matches[1]
+
+	if strings.Contains(link, "gist.github.com") {
+		link = link + "/raw"
+	}
+
+	res, err := http.Get(link)
+	if err != nil {
+		fmt.Printf("error making http request: %s\n", err)
+		os.Exit(1)
+	}
+
+	if res.StatusCode != 200 {
+		log.Fatalf("failed to fetch remote link: %s, status %d", link, res.StatusCode)
+	}
+
+	resBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatalf("could not ready response: %s", err)
+	}
+	body := string(resBody)
+
+	if !strings.Contains(body, "Terraform version") &&
+		!strings.Contains(body, "Go runtime version") &&
+		!strings.Contains(body, "CLI args") &&
+		!strings.Contains(body, "created provider logger") &&
+		!strings.Contains(body, "CLI command args") &&
+		!strings.Contains(body, "provider: plugin process exited") {
 		_, _, err := client.Issues.CreateComment(ctx, owner, repo, issueNumber, &github.IssueComment{
 			Body: &missingLogFileBody,
 		})
