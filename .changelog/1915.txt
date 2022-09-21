@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_account_member: permit setting status in terraform schema if desired
+```
