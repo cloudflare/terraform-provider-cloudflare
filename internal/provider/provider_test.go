@@ -161,6 +161,8 @@ func testAccPreCheckWorkspaceOne(t *testing.T) {
 }
 
 func testAccPreCheckPages(t *testing.T) {
+	testAccPreCheckAccount(t)
+
 	if v := os.Getenv("CLOUDFLARE_PAGES_OWNER"); v == "" {
 		t.Fatal("CLOUDFLARE_PAGES_OWNER must be set for this acceptance test")
 	}
@@ -197,5 +199,15 @@ func skipMagicTransitTestForNonConfiguredDefaultZone(t *testing.T) {
 func skipV1WAFTestForNonConfiguredDefaultZone(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
 		t.Skipf("Skipping acceptance test as %s is using WAF v2 and cannot assert v1 resource configurations", testAccCloudflareZoneID)
+	}
+}
+
+// skipPagesProjectForNonConfiguredDefaultAccount ignores the pages project tests
+// due to not having a dedicated GitHub account setup in Cloudflare for the
+// default account. This will allow those who intentionally want to run the test
+// to do so while keeping CI sane.
+func skipPagesProjectForNonConfiguredDefaultAccount(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
+		t.Skipf("Skipping acceptance test as %s is using pages project that isn't setup for CI", testAccCloudflareAccountID)
 	}
 }
