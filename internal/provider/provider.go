@@ -179,6 +179,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_devices":                     dataSourceCloudflareDevices(),
 				"cloudflare_ip_ranges":                   dataSourceCloudflareIPRanges(),
 				"cloudflare_origin_ca_root_certificate":  dataSourceCloudflareOriginCARootCertificate(),
+				"cloudflare_record":                      dataSourceCloudflareRecord(),
 				"cloudflare_waf_groups":                  dataSourceCloudflareWAFGroups(),
 				"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
 				"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
