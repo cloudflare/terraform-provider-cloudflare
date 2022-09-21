@@ -122,9 +122,7 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("zone_name", record.ZoneName)
 
 	if record.Priority != nil {
-		priority := record.Priority
-		p := *priority
-		d.Set("priority", int(p))
+		d.Set("priority", int(cloudflare.Uint16(record.Priority)))
 	}
 
 	return nil
