@@ -14,7 +14,7 @@ import (
 func dataSourceCloudflareRecord() *schema.Resource {
 	return &schema.Resource{
 		Description: heredoc.Doc(`
-			Use this data source to lookup a [DNS Record](https://api.cloudflare.com/#dns-records-for-a-zone-properties)
+			Use this data source to lookup a single [DNS Record](https://api.cloudflare.com/#dns-records-for-a-zone-properties).
 		`),
 		ReadContext: dataSourceCloudflareRecordRead,
 		Schema: map[string]*schema.Schema{
@@ -24,43 +24,52 @@ func dataSourceCloudflareRecord() *schema.Resource {
 				Required:    true,
 			},
 			"hostname": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Hostname to filter DNS record results on.",
 			},
 			"type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "A",
 				ValidateFunc: validation.StringInSlice([]string{"A", "AAAA", "CAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR", "HTTPS"}, false),
+				Description:  "DNS record type to filter record results on.",
 			},
 			"priority": {
 				Type:             schema.TypeInt,
 				Optional:         true,
 				DiffSuppressFunc: suppressPriority,
+				Description:      "DNS priority to filter record results on.",
 			},
 			"value": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Value of the found DNS record.",
 			},
 			"proxied": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Proxied status of the found DNS record.",
 			},
 			"ttl": {
-				Type:     schema.TypeInt,
-				Computed: true,
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "TTL of the found DNS record.",
 			},
 			"proxiable": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Proxiable status of the found DNS record.",
 			},
 			"locked": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Locked status of the found DNS record.",
 			},
 			"zone_name": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Zone name of the found DNS record.",
 			},
 		},
 	}

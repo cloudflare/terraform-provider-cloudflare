@@ -2,12 +2,12 @@
 page_title: "cloudflare_record Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Use this data source to lookup a DNS Record https://api.cloudflare.com/#dns-records-for-a-zone-properties
+  Use this data source to lookup a single DNS Record https://api.cloudflare.com/#dns-records-for-a-zone-properties.
 ---
 
 # cloudflare_record (Data Source)
 
-Use this data source to lookup a [DNS Record](https://api.cloudflare.com/#dns-records-for-a-zone-properties)
+Use this data source to lookup a single [DNS Record](https://api.cloudflare.com/#dns-records-for-a-zone-properties).
 
 ## Example Usage
 
@@ -22,22 +22,22 @@ data "cloudflare_record" "example" {
 
 ### Required
 
-- `hostname` (String)
+- `hostname` (String) Hostname to filter DNS record results on.
 - `zone_id` (String) The zone identifier to target for the resource.
 
 ### Optional
 
-- `priority` (Number)
-- `type` (String) Defaults to `A`.
+- `priority` (Number) DNS priority to filter record results on.
+- `type` (String) DNS record type to filter record results on. Defaults to `A`.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `locked` (Boolean)
-- `proxiable` (Boolean)
-- `proxied` (Boolean)
-- `ttl` (Number)
-- `value` (String)
-- `zone_name` (String)
+- `locked` (Boolean) Locked status of the found DNS record.
+- `proxiable` (Boolean) Proxiable status of the found DNS record.
+- `proxied` (Boolean) Proxied status of the found DNS record.
+- `ttl` (Number) TTL of the found DNS record.
+- `value` (String) Value of the found DNS record.
+- `zone_name` (String) Zone name of the found DNS record.
 
 
