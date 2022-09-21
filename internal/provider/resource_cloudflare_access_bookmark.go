@@ -28,6 +28,7 @@ func resourceCloudflareAccessBookmark() *schema.Resource {
 			applications are not protected behind Access but are displayed in
 			the App Launcher.
 		`),
+		DeprecationMessage: "This resource is deprecated in favor of the cloudflare_access_application resource: https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_application.",
 	}
 }
 
