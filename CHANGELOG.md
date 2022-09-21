@@ -8,6 +8,7 @@ NOTES:
 FEATURES:
 
 * **New Data Source:** `cloudflare_accounts` ([#1899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1899))
+* **New Data Source:** `cloudflare_record` ([#1906](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1906))
 * **New Resource:** `cloudflare_user_agent_blocking_rule` ([#1894](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1894))
 
 ENHANCEMENTS:
