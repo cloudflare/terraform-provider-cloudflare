@@ -1,7 +1,11 @@
 package provider
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+import (
+	"fmt"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+)
 
 func resourceCloudflareAccountSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
@@ -13,10 +17,10 @@ func resourceCloudflareAccountSchema() map[string]*schema.Schema {
 		"type": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			Description:  "Valid values are standard (default) and enterprise. For self-serve customers, use standard. For enterprise customers, use enterprise.",
+			Description:  fmt.Sprintf("Account type. %s", renderAvailableDocumentationValuesStringSlice([]string{accountTypeEnterprise, accountTypeStandard})),
 			Default:      accountTypeStandard,
 			ValidateFunc: validation.StringInSlice([]string{accountTypeEnterprise, accountTypeStandard}, false),
-			ForceNew:     true, // Because "Updating account type is not supported from client api"
+			ForceNew:     true, // "Updating account type is not supported from client api"
 		},
 		"enforce_twofactor": {
 			Description: "Whether 2FA is enforced on the account.",
