@@ -76,8 +76,9 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	}
 	if priority, ok := d.GetOkExists("priority"); ok {
 		p := uint16(priority.(int))
-		searchRecord.Priority = &p
+		searchRecord.Priority = cloudflare.Uint16Ptr(p)
 	}
+
 	records, err := client.DNSRecords(ctx, zoneID, searchRecord)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing DNS records: %w", err))
@@ -91,7 +92,7 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 		return diag.Errorf("only wanted 1 DNS record. Got %d records", len(records))
 	} else {
 		for _, record := range records {
-			if record.Priority == searchRecord.Priority {
+			if cloudflare.Uint16(record.Priority) == cloudflare.Uint16(searchRecord.Priority) {
 				records = []cloudflare.DNSRecord{record}
 				break
 			}
