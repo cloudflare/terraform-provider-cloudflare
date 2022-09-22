@@ -1,5 +1,9 @@
 ## 3.25.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_account_member: permit setting status in terraform schema if desired ([#1920](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1920))
+
 BUG FIXES:
 
 * provider: allow individual setting of x-auth-service-key ([#1923](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1923))
