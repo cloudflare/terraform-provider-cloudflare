@@ -31,6 +31,7 @@ resource "cloudflare_account_member" "example_user" {
 ### Optional
 
 - `account_id` (String) Account ID to create the account member in.
+- `status` (String) A member's status in the account. Available values: `accepted`, `pending`.
 
 ### Read-Only
 

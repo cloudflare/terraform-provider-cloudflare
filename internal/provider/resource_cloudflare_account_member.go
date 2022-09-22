@@ -101,7 +101,8 @@ func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.Resour
 		accountID = client.AccountID
 	}
 
-	r, err := client.CreateAccountMember(ctx, accountID, memberEmailAddress, accountMemberRoleIDs)
+	status := d.Get("status").(string)
+	r, err := client.CreateAccountMemberWithStatus(ctx, accountID, memberEmailAddress, accountMemberRoleIDs, status)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare account member: %w", err))
