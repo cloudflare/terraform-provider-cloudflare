@@ -22,5 +22,10 @@ func resourceCloudflareAccountMemberSchema() map[string]*schema.Schema {
 			Elem:        &schema.Schema{Type: schema.TypeString},
 			Description: "List of account role IDs that you want to assign to a member.",
 		},
+		"status": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "A member's status in the account. default value in API: pending; valid values: accepted, pending",
+		},
 	}
 }
