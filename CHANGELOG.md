@@ -1,5 +1,9 @@
 ## 3.25.0 (Unreleased)
 
+BUG FIXES:
+
+* provider: allow individual setting of x-auth-service-key ([#1923](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1923))
+
 DEPENDENCIES:
 
 * provider: bumps actions/stale from 5 to 6 ([#1922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1922))
