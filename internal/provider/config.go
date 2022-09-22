@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -22,17 +23,18 @@ func (c *Config) Client() (*cloudflare.API, error) {
 	var client *cloudflare.API
 	ctx := context.Background()
 
-	if c.APIToken != "" {
+	if c.APIUserServiceKey != "" {
+		client, err = cloudflare.NewWithUserServiceKey(c.APIUserServiceKey, c.Options...)
+	} else if c.APIToken != "" {
 		client, err = cloudflare.NewWithAPIToken(c.APIToken, c.Options...)
-	} else {
+	} else if c.APIKey != "" {
 		client, err = cloudflare.New(c.APIKey, c.Email, c.Options...)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("error creating new Cloudflare client: %w", err)
+	} else {
+		return nil, errors.New("no credentials detected")
 	}
 
-	if c.APIUserServiceKey != "" {
-		client.APIUserServiceKey = c.APIUserServiceKey
+	if err != nil {
+		return nil, fmt.Errorf("error creating new Cloudflare client: %w", err)
 	}
 
 	tflog.Info(ctx, fmt.Sprintf("cloudflare Client configured for user: %s", c.Email))
