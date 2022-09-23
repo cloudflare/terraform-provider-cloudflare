@@ -41,5 +41,10 @@ func resourceCloudflareSplitTunnelSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"policy_id": {
+			Optional:    true,
+			Type:        schema.TypeString,
+			Description: "The settings policy for which to configure this split tunnel policy.",
+		},
 	}
 }

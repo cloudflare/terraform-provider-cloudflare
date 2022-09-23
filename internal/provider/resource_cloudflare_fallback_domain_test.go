@@ -31,30 +31,43 @@ func TestAccCloudflareFallbackDomain(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareFallbackDomain(rnd, accountID, "example domain", "example.com", "1.0.0.1"),
+				Config: testAccCloudflareDefaultFallbackDomain(rnd, accountID, "example domain", "example.com", "1.0.0.1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.com"),
 					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.0.0.1"),
+					resource.TestCheckNoResourceAttr(name, "policy_id"),
 				),
 			},
 			{
-				Config: testAccCloudflareFallbackDomain(rnd, accountID, "second example domain", "example.net", "1.1.1.1"),
+				Config: testAccCloudflareDefaultFallbackDomain(rnd, accountID, "second example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "second example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
 					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.1.1.1"),
+					resource.TestCheckNoResourceAttr(name, "policy_id"),
+				),
+			},
+			{
+				Config: testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "domains.#", "1"),
+					resource.TestCheckResourceAttr(name, "domains.0.description", "third example domain"),
+					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
+					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.1.1.1"),
+					resource.TestCheckResourceAttrSet(name, "policy_id"),
 				),
 			},
 		},
 	})
 }
 
-func testAccCloudflareFallbackDomain(rnd, accountID string, description string, suffix string, dns_server string) string {
+func testAccCloudflareDefaultFallbackDomain(rnd, accountID string, description string, suffix string, dns_server string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_fallback_domain" "%[1]s" {
   account_id = "%[2]s"
@@ -63,6 +76,36 @@ resource "cloudflare_fallback_domain" "%[1]s" {
     suffix      = "%[4]s"
     dns_server  = ["%[5]s"]
   }
+}
+`, rnd, accountID, description, suffix, dns_server)
+}
+
+func testAccCloudflareFallbackDomain(rnd, accountID, description string, suffix string, dns_server string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_device_policy" "%[1]s" {
+	account_id                = "%[2]s"
+	allow_mode_switch         = true
+	allow_updates             = true
+	allowed_to_leave          = true
+	auto_connect              = 0
+	captive_portal            = 5
+	disable_auto_fallback     = true
+	enabled                   = true
+	match                     = "identity.email == \"foo@example.com\""
+	name                      = "%[1]s"
+	precedence                = 10
+	support_url               = "support_url"
+	switch_locked             = true
+}
+
+resource "cloudflare_fallback_domain" "%[1]s" {
+  account_id = "%[2]s"
+  domains {
+    description = "%[3]s"
+    suffix      = "%[4]s"
+    dns_server  = ["%[5]s"]
+  }
+	policy_id = "${cloudflare_device_policy.%[1]s.id}"
 }
 `, rnd, accountID, description, suffix, dns_server)
 }
