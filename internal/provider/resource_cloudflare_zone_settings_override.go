@@ -229,11 +229,9 @@ func updateSingleZoneSettings(ctx context.Context, zoneSettings []cloudflare.Zon
 		}
 	}
 
-	// precondition: indexesToCut is in ascending order
 	offset := 0
 	for _, indexToCut := range indexesToCut {
 		adjustedIndexToCut := indexToCut - offset
-		// loop postcondition: len(zoneSettings) decreases by 1 each iteration
 		zoneSettings = append(zoneSettings[:adjustedIndexToCut], zoneSettings[adjustedIndexToCut+1:]...)
 		offset += 1
 	}
