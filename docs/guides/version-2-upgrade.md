@@ -1,6 +1,6 @@
 ---
 layout: "cloudflare"
-page_title: "Upgrading to version 2"
+page_title: "Upgrading to version 2 (from 1.x)"
 description: Terraform Cloudflare Provider Version 2 Upgrade Guide
 ---
 

@@ -4,7 +4,7 @@ page_title: "Cloudflare: cloudflare_zone_dnssec"
 description: Get information on a Cloudflare Zone DNSSEC.
 ---
 
-# cloudflare_zones
+# cloudflare_zone_dnssec
 
 Use this data source to look up [Zone][1] DNSSEC settings.
 

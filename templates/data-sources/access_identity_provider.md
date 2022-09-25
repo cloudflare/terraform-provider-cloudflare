@@ -4,8 +4,6 @@ page_title: "Cloudflare: cloudflare_access_identity_provider"
 description: Get information on a Cloudflare Access Identity Provider by name.
 ---
 
-# foo
-
 # cloudflare_access_identity_provider
 
 Use this data source to lookup a single [Access Identity Provider][access_identity_provider_guide] by name.
