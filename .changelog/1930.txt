@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_byo_ip_prefix: fix `Import` to set `account_id`
+```
