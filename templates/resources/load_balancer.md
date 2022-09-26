@@ -106,7 +106,7 @@ The following arguments are supported:
 
 - `name` - (Required) Human readable name for this rule.
 - `priority` - (Optional) Priority used when determining the order of rule execution. Lower values are executed first. If not provided list order will be used.
-- `disabled` - (Optional) A disabled rule will be be executed.
+- `disabled` - (Optional) A disabled rule will not be executed.
 - `condition` - (Optional) The statement to evaluate to determine if this rules effects should be applied. An empty condition is always true. See [load balancing rules](https://developers.cloudflare.com/load-balancing/understand-basics/load-balancing-rules).
 - `terminates` - (Optional) Terminates indicates that if this rule is true no further rules should be executed. Note: setting a fixed_response forces this field to true.
 - `overrides` - (Optional) The Load Balancer settings to alter if this rules condition is true. Note: overrides or fixed_response must be set. See the field documentation below.
