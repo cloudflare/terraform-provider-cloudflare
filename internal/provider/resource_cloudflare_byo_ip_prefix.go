@@ -3,7 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,6 +22,10 @@ func resourceCloudflareBYOIPPrefix() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareBYOIPPrefixImport,
 		},
+		Description: heredoc.Doc(`
+			Provides the ability to manage Bring-Your-Own-IP prefixes (BYOIP)
+			which are used with or without Magic Transit.
+		`),
 	}
 }
 
@@ -35,7 +41,15 @@ func resourceCloudflareBYOIPPrefixCreate(ctx context.Context, d *schema.Resource
 }
 
 func resourceCloudflareBYOIPPrefixImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	prefixID := d.Id()
+	attributes := strings.SplitN(d.Id(), "/", 2)
+
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/prefixID"`, d.Id())
+	}
+
+	accountID, prefixID := attributes[0], attributes[1]
+
+	d.Set("account_id", accountID)
 	d.Set("prefix_id", prefixID)
 
 	resourceCloudflareBYOIPPrefixRead(ctx, d, meta)
