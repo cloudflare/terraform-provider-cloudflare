@@ -7,6 +7,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * provider: allow individual setting of x-auth-service-key ([#1923](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1923))
+* resource/cloudflare_byo_ip_prefix: fix `Import` to set `account_id` ([#1930](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1930))
 
 DEPENDENCIES:
 
