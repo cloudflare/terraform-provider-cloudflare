@@ -229,8 +229,11 @@ func updateSingleZoneSettings(ctx context.Context, zoneSettings []cloudflare.Zon
 		}
 	}
 
+	offset := 0
 	for _, indexToCut := range indexesToCut {
-		zoneSettings = append(zoneSettings[:indexToCut], zoneSettings[indexToCut+1:]...)
+		adjustedIndexToCut := indexToCut - offset
+		zoneSettings = append(zoneSettings[:adjustedIndexToCut], zoneSettings[adjustedIndexToCut+1:]...)
+		offset += 1
 	}
 	return zoneSettings, nil
 }
