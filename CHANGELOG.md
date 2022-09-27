@@ -8,6 +8,7 @@ BUG FIXES:
 
 * provider: allow individual setting of x-auth-service-key ([#1923](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1923))
 * resource/cloudflare_byo_ip_prefix: fix `Import` to set `account_id` ([#1930](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1930))
+* resource/cloudflare_zone_settings_override: Fix array manipulation bug related to single zone settings ([#1925](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1925))
 
 DEPENDENCIES:
 
