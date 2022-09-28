@@ -731,7 +731,7 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithInvalidSessionDuration(rnd, zone, zoneID),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`)),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta(`"session_duration" only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`)),
 			},
 		},
 	})
