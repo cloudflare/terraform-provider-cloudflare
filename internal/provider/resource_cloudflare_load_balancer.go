@@ -309,7 +309,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer))
 
-	r, err := client.CreateLoadBalancer(ctx, zoneID, newLoadBalancer)
+	r, err := client.CreateLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.CreateLoadBalancerParams{LoadBalancer: newLoadBalancer})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
 	}
@@ -392,9 +392,9 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer from struct: %+v", loadBalancer))
 
-	_, err := client.ModifyLoadBalancer(ctx, zoneID, loadBalancer)
+	_, err := client.UpdateLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateLoadBalancerParams{loadBalancer})
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
+		return diag.FromErr(errors.Wrap(err, "error updating load balancer for zone"))
 	}
 
 	return resourceCloudflareLoadBalancerRead(ctx, d, meta)
@@ -421,7 +421,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	zoneID := d.Get("zone_id").(string)
 	loadBalancerID := d.Id()
 
-	loadBalancer, err := client.LoadBalancerDetails(ctx, zoneID, loadBalancerID)
+	loadBalancer, err := client.GetLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), loadBalancerID)
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -511,7 +511,7 @@ func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID))
 
-	err := client.DeleteLoadBalancer(ctx, zoneID, loadBalancerID)
+	err := client.DeleteLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), loadBalancerID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Load Balancer: %w", err))
 	}
