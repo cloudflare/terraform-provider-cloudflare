@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
@@ -24,18 +23,18 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 	ctx := context.Background()
 	client, clientErr := sharedClient()
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(ctx, fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	perZoneCertificates, certsErr := client.ListPerZoneAuthenticatedOriginPullsCertificates(context.Background(), zoneID)
 
 	if certsErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare authenticated origin pull certificates: %s", certsErr))
+		tflog.Error(ctx, fmt.Sprintf("failed to fetch per-zone authenticated origin pull certificates: %s", certsErr))
 	}
 
 	if len(perZoneCertificates) == 0 {
-		log.Print("[DEBUG] No Cloudflare authenticated origin pull certificates to sweep")
+		tflog.Debug(ctx, "no authenticated origin pull certificates to sweep")
 		return nil
 	}
 
@@ -43,7 +42,25 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 		_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certificate.ID)
 
 		if err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare authenticated origin pull certificate (%s) in zone ID: %s", certificate.ID, zoneID))
+			tflog.Error(ctx, fmt.Sprintf("failed to delete per-zone authenticated origin pull certificate (%s) in zone ID: %s", certificate.ID, zoneID))
+		}
+	}
+
+	perHostnameCertificates, certsErr := client.ListPerHostnameAuthenticatedOriginPullsCertificates(context.Background(), zoneID)
+	if certsErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("failed to fetch per-hostname authenticated origin pull certificates: %s", certsErr))
+	}
+
+	if len(perHostnameCertificates) == 0 {
+		tflog.Debug(ctx, "no authenticated origin pull certificates to sweep")
+		return nil
+	}
+
+	for _, certificate := range perHostnameCertificates {
+		_, err := client.DeletePerHostnameAuthenticatedOriginPullsCertificate(context.Background(), zoneID, certificate.CertID)
+
+		if err != nil {
+			tflog.Error(ctx, fmt.Sprintf("failed to delete per-hostname authenticated origin pull certificate (%s) in zone ID: %s", certificate.CertID, zoneID))
 		}
 	}
 
