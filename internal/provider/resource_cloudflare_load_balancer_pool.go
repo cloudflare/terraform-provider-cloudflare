@@ -72,7 +72,7 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
-	r, err := client.CreateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.CreateLoadBalancerPoolParams{loadBalancerPool})
+	r, err := client.CreateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.CreateLoadBalancerPoolParams{LoadBalancerPool: loadBalancerPool})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer pool"))
 	}
@@ -134,7 +134,7 @@ func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.Res
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
-	_, err := client.UpdateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.UpdateLoadBalancerPoolParams{loadBalancerPool})
+	_, err := client.UpdateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.UpdateLoadBalancerPoolParams{LoadBalancer: loadBalancerPool})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating load balancer pool"))
 	}

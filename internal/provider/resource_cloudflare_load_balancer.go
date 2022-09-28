@@ -392,7 +392,7 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer from struct: %+v", loadBalancer))
 
-	_, err := client.UpdateLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateLoadBalancerParams{loadBalancer})
+	_, err := client.UpdateLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateLoadBalancerParams{LoadBalancer: loadBalancer})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating load balancer for zone"))
 	}

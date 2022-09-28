@@ -94,7 +94,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
-	r, err := client.CreateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.CreateLoadBalancerMonitorParams{loadBalancerMonitor})
+	r, err := client.CreateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.CreateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer monitor"))
 	}
@@ -182,7 +182,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 
 	tflog.Debug(ctx, fmt.Sprintf("Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
-	_, err := client.UpdateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.UpdateLoadBalancerMonitorParams{loadBalancerMonitor})
+	_, err := client.UpdateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.UpdateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error modifying load balancer monitor"))
 	}
