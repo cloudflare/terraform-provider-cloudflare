@@ -1,5 +1,9 @@
 ## 3.25.0 (Unreleased)
 
+NOTES:
+
+* resource/device_posture_rule: update device posture rule to reflect new linux posture fields ([#1842](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1842))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_account_member: permit setting status in terraform schema if desired ([#1920](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1920))
