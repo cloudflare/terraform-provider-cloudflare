@@ -38,7 +38,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	lbs, err := client.ListLoadBalancers(ctx, zoneID)
+	lbs, err := client.ListLoadBalancers(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListLoadBalancerParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancers: %s", err))
 	}
@@ -51,7 +51,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 	for _, lb := range lbs {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer ID: %s", lb.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancer(ctx, zoneID, lb.ID)
+		client.DeleteLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), lb.ID)
 	}
 
 	return nil
@@ -268,10 +268,6 @@ func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 	})
 }
 
-/**
-Any change to a load balancer  results in a new resource
-Although the API client contains a modify method, this always results in 405 status.
-*/
 func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
@@ -362,7 +358,7 @@ func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.LoadBalancerDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("load balancer still exists: %s", rs.Primary.ID)
 		}
@@ -383,7 +379,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancer, err := client.LoadBalancerDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundLoadBalancer, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -447,7 +443,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancer.ID
-		err := client.DeleteLoadBalancer(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeleteLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
