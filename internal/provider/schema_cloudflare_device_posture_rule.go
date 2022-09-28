@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -16,32 +18,38 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one"}, false),
+			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one"})),
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Name of the device posture rule.",
 		},
 		"description": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
 		"schedule": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Tells the client when to run the device posture check. Must be in the format `1h` or `30m`. Valid units are `h` and `m`.",
 		},
 		"expiration": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Expire posture results after the specified amount of time. Must be in the format `1h` or `30m`. Valid units are `h` and `m`.",
 		},
 		"match": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "The conditions that the client must match to run the rule.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"platform": {
 						Type:         schema.TypeString,
 						Optional:     true,
 						ValidateFunc: validation.StringInSlice([]string{"windows", "mac", "linux", "android", "ios"}, false),
+						Description:  fmt.Sprintf("The platform of the device. %s", renderAvailableDocumentationValuesStringSlice([]string{"windows", "mac", "linux", "android", "ios"})),
 					},
 				},
 			},
@@ -122,6 +130,16 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Optional:     true,
 						ValidateFunc: validation.StringInSlice([]string{"compliant", "noncompliant"}, true),
 						Description:  "The workspace one device compliance status.",
+					},
+					"os_distro_name": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The operating system excluding version information.",
+					},
+					"os_distro_revision": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The operating system version excluding OS name information or release name.",
 					},
 				},
 			},

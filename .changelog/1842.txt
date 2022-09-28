@@ -1,0 +1,3 @@
+```release-note:note
+resource/device_posture_rule: update device posture rule to reflect new linux posture fields
+```

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,6 +24,9 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDevicePostureRuleImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Device Posture Rule resource. Device posture rules configure security policies for device posture checks.
+		`),
 	}
 }
 
@@ -193,6 +197,12 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if connectionID, ok := d.GetOk("input.0.connection_id"); ok {
 			input.ConnectionID = connectionID.(string)
 		}
+		if osDistroName, ok := d.GetOk("input.0.os_distro_name"); ok {
+			input.OsDistroName = osDistroName.(string)
+		}
+		if osDistroRevision, ok := d.GetOk("input.0.os_distro_revision"); ok {
+			input.OsDistroRevision = osDistroRevision.(string)
+		}
 		rule.Input = input
 	}
 }
@@ -230,19 +240,21 @@ func convertMatchToSchema(matches []cloudflare.DevicePostureRuleMatch) []map[str
 
 func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]interface{} {
 	m := map[string]interface{}{
-		"id":                input.ID,
-		"path":              input.Path,
-		"exists":            input.Exists,
-		"thumbprint":        input.Thumbprint,
-		"sha256":            input.Sha256,
-		"running":           input.Running,
-		"require_all":       input.RequireAll,
-		"enabled":           input.Enabled,
-		"version":           input.Version,
-		"operator":          input.Operator,
-		"domain":            input.Domain,
-		"compliance_status": input.ComplianceStatus,
-		"connection_id":     input.ConnectionID,
+		"id":                 input.ID,
+		"path":               input.Path,
+		"exists":             input.Exists,
+		"thumbprint":         input.Thumbprint,
+		"sha256":             input.Sha256,
+		"running":            input.Running,
+		"require_all":        input.RequireAll,
+		"enabled":            input.Enabled,
+		"version":            input.Version,
+		"os_distro_name":     input.OsDistroName,
+		"os_distro_revision": input.OsDistroRevision,
+		"operator":           input.Operator,
+		"domain":             input.Domain,
+		"compliance_status":  input.ComplianceStatus,
+		"connection_id":      input.ConnectionID,
 	}
 
 	return []map[string]interface{}{m}
