@@ -20,26 +20,28 @@ func TestAccCloudflareAccount_Basic(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccountName(fmt.Sprintf("%s_old", rnd)),
+				Config: testAccCheckCloudflareAccountName(rnd, fmt.Sprintf("%s_old", rnd)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						name, "name", fmt.Sprintf("%s_old", rnd)),
+						name, "name", fmt.Sprintf("%s_old", rnd),
+					),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareAccountName(fmt.Sprintf("%s_new", rnd)),
+				Config: testAccCheckCloudflareAccountName(rnd, fmt.Sprintf("%s_new", rnd)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						name, "name", fmt.Sprintf("%s_new", rnd)),
+						name, "name", fmt.Sprintf("%s_new", rnd),
+					),
 				),
 			},
 		},
 	})
 }
 
-func testAccCheckCloudflareAccountName(name string) string {
+func testAccCheckCloudflareAccountName(rnd, name string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_account" "%[1]s" {
-	  name = "%[1]s"
-  }`, name)
+	  name = "%[2]s"
+  }`, rnd, name)
 }
