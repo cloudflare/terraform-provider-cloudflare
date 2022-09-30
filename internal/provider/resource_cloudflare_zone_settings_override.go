@@ -23,6 +23,9 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 		ReadContext:   resourceCloudflareZoneSettingsOverrideRead,
 		UpdateContext: resourceCloudflareZoneSettingsOverrideUpdate,
 		DeleteContext: resourceCloudflareZoneSettingsOverrideDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareZoneSettingsOverrideImport,
+		},
 	}
 }
 
@@ -442,4 +445,19 @@ func schemaValueEquals(a, b interface{}) bool {
 	}
 
 	return reflect.DeepEqual(a, b)
+}
+
+func resourceCloudflareZoneSettingsOverrideImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+
+	_, err := client.ZoneDetails(ctx, d.Id())
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch details for zone %s", d.Id()))
+	}
+
+	d.Set("zone_id", d.Id())
+
+	resourceCloudflareZoneSettingsOverrideRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
