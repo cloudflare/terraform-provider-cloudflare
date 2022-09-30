@@ -198,15 +198,14 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 
-	data, dataOk := d.GetOk("data")
-	tflog.Debug(ctx, fmt.Sprintf("Data found in config: %#v", data))
+	tflog.Debug(ctx, fmt.Sprintf("Data found in config: %#v", record.Data))
 
 	readDataMap := make(map[string]interface{})
 
-	if dataOk {
-		dataMap := data.([]interface{})[0]
+	if record.Data != nil {
+		dataMap := record.Data.(map[string]interface{})
 		if dataMap != nil {
-			for id, value := range dataMap.(map[string]interface{}) {
+			for id, value := range dataMap {
 				newData, err := transformToCloudflareDNSData(record.Type, id, value)
 				if err != nil {
 					return diag.FromErr(err)
@@ -409,11 +408,19 @@ func transformToCloudflareDNSData(recordType string, id string, value interface{
 	case id == "flags":
 		switch {
 		case strings.ToUpper(recordType) == "SRV",
-			strings.ToUpper(recordType) == "CAA",
 			strings.ToUpper(recordType) == "DNSKEY":
 			newValue, err = value.(string), nil
 		case strings.ToUpper(recordType) == "NAPTR":
 			newValue, err = value.(string), nil
+		case strings.ToUpper(recordType) == "CAA":
+			// this is required because "flags" is shared however, it comes from
+			// the API as a float64 but the Terraform internal type is string 😢.
+			switch value.(type) {
+			case float64:
+				newValue, err = fmt.Sprintf("%.0f", value.(float64)), nil
+			case string:
+				newValue, err = value.(string), nil
+			}
 		}
 	case contains(dnsTypeIntFields, id):
 		newValue, err = value, nil

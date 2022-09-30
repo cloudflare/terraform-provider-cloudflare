@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: update Read method to pull from remote API instead of local configuration which is empty during `Import`
+```
