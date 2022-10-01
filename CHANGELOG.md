@@ -22,6 +22,7 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bumps actions/stale from 5 to 6 ([#1922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1922))
+* provider: bumps dependabot/fetch-metadata from 1.3.3 to 1.3.4 ([#1945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1945))
 
 ## 3.24.0 (September 21st, 2022)
 
