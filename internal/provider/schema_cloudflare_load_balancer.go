@@ -90,6 +90,24 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 			},
 		},
 
+		"adaptive_routing": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     adaptiveRoutingElem,
+		},
+
+		"location_strategy": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     locationStrategyElem,
+		},
+
+		"random_steering": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     randomSteeringElem,
+		},
+
 		"rules": {
 			Type:     schema.TypeList,
 			Optional: true,
