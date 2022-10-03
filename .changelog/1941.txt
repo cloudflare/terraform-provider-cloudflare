@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_load_balancer: Add support for adaptive_routing, location_strategy, random_steering, and zero_downtime_failover
+```

@@ -79,6 +79,9 @@ The following arguments are supported:
 - `session_affinity` - (Optional) Associates all requests coming from an end-user with a single origin. Cloudflare will set a cookie on the initial response to the client, such that consequent requests with the cookie in the request will go to the same origin, so long as it is available. Valid values are: `""`, `"none"`, `"cookie"`, and `"ip_cookie"`. Default is `""`.
 - `session_affinity_ttl` - (Optional) Time, in seconds, until this load balancers session affinity cookie expires after being created. This parameter is ignored unless a supported session affinity policy is set. The current default of 23 hours will be used unless `session_affinity_ttl` is explicitly set. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. Valid values are between 1800 and 604800.
 - `session_affinity_attributes` - (Optional) Configure cookie attributes for session affinity cookie. See the field documentation below.
+- `adaptive_routing` - (Optional) Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. See the field documentation below.
+- `location_strategy` - (Optional) Controls location-based steering for non-proxied requests. See the field documentation below.
+- `random_steering` - (Optional) Configures pool weights for random steering. When the `steering_policy="random"`, a random pool is selected with probability proportional to these pool weights. See the field documentation below.
 - `rules` - (Optional) A list of conditions and overrides for each load balancer operation. See the field documentation below.
 
 **region_pools** requires the following:
@@ -101,6 +104,21 @@ The following arguments are supported:
 - `samesite` - (Optional) Configures the SameSite attribute on session affinity cookie. Value "Auto" will be translated to "Lax" or "None" depending if Always Use HTTPS is enabled. Note: when using value "None", the secure attribute can not be set to "Never". Valid values: `"Auto"`, `"Lax"`, `"None"` or `"Strict"`.
 - `secure` - (Optional) Configures the Secure attribute on session affinity cookie. Value "Always" indicates the Secure attribute will be set in the Set-Cookie header, "Never" indicates the Secure attribute will not be set, and "Auto" will set the Secure attribute depending if Always Use HTTPS is enabled. Valid values: `"Auto"`, `"Always"` or `"Never"`.
 - `drain_duration` - (Optional) Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.
+- `zero_downtime_failover` - (Optional) Configures the zero-downtime failover between origins within a pool when session affinity is enabled. Value "none" means no failover takes place for sessions pinned to the origin. Value "temporary" means traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. Value "sticky" means the session affinity cookie is updated and subsequent requests are sent to the new origin. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. Valid values: `"none"`, `"temporary"` or `"sticky"`. Default is `"none"`.
+
+**adaptive_routing** optionally as the following:
+
+- `failover_across_pools` - (Optional) Extends zero-downtime failover of requests to healthy origins from alternate pools, when no healthy alternate exists in the same pool, according to the failover order defined by traffic and origin steering. When set `false` (the default) zero-downtime failover will only occur between origins within the same pool.
+
+**location_strategy** optionally as the following:
+
+- `prefer_ecs` - (Optional) Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location. Value "always" will always prefer ECS, "never" will never prefer ECS, "proximity" will prefer ECS only when `steering_policy="proximity"`, and "geo" will prefer ECS only when `steering_policy="geo"`. Valid values: `"always"`, `"never"`, `"proximity"`, or `"geo"`. Default is `"proximity"`.
+- `mode` - (Optional) Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful. Value "pop" will use the Cloudflare PoP location. Value "resolver_ip" will use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, it will use the Cloudflare PoP location. Valid values: `"pop"` or `"resolver_ip"`. Default is `"pop"`.
+
+**random_steering** optionally as the following:
+
+- `pool_weights` - (Optional) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.
+- `default_weight` - (Optional) The default weight for pools in the load balancer that are not specified in the `pool_weights` map.
 
 **rules** optionally as the following:
 
@@ -117,6 +135,9 @@ The following arguments are supported:
 - `session_affinity` - (Optional) See field above.
 - `session_affinity_ttl` - (Optional) See field above.
 - `session_affinity_attributes` - (Optional) See field above.
+- `adaptive_routing` - (Optional) See field above.
+- `location_strategy` - (Optional) See field above.
+- `random_steering` - (Optional) See field above.
 - `ttl` - (Optional) See field above.
 - `steering_policy` - (Optional) See field above.
 - `fallback_pool` - (Optional) See fallback_pool_id above.
