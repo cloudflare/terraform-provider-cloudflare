@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -34,7 +35,7 @@ func resourceCloudflareEmailRoutingCatchAllSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
-						Description:  "Type of matcher.",
+						Description:  fmt.Sprintf("Type of matcher. %s", renderAvailableDocumentationValuesStringSlice([]string{"all"})),
 						Type:         schema.TypeString,
 						Required:     true,
 						ValidateFunc: validation.StringInSlice([]string{"all"}, true),
@@ -49,13 +50,13 @@ func resourceCloudflareEmailRoutingCatchAllSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
-						Description:  "Type of supported action.",
+						Description:  fmt.Sprintf("Type of supported action. %s", renderAvailableDocumentationValuesStringSlice([]string{"drop", "forward", "worker"})),
 						Type:         schema.TypeString,
 						Required:     true,
 						ValidateFunc: validation.StringInSlice([]string{"drop", "forward", "worker"}, true),
 					},
 					"value": {
-						Description: "An array with items in the following form.",
+						Description: "A list with items in the following form.",
 						Type:        schema.TypeList,
 						Required:    true,
 						Elem: &schema.Schema{
