@@ -12,7 +12,7 @@ import (
 
 func resourceCloudflareEmailRoutingCatchAll() *schema.Resource {
 	return &schema.Resource{
-		Schema:        resourceCloudflareEmailRoutingRuleSchema(),
+		Schema:        resourceCloudflareEmailRoutingCatchAllSchema(),
 		ReadContext:   resourceCloudflareEmailRoutingCatchAllRead,
 		CreateContext: resourceCloudflareEmailRoutingCatchAllUpdate,
 		UpdateContext: resourceCloudflareEmailRoutingCatchAllUpdate,

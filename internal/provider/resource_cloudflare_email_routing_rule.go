@@ -27,11 +27,16 @@ func buildMatchersAndActions(d *schema.ResourceData) (matchers []cloudflare.Emai
 	if items, ok := d.GetOk("matcher"); ok {
 		for _, item := range items.(*schema.Set).List() {
 			matcher := item.(map[string]interface{})
-			matchers = append(matchers, cloudflare.EmailRoutingRuleMatcher{
+			matcherStruct := cloudflare.EmailRoutingRuleMatcher{
 				Type:  matcher["type"].(string),
-				Field: matcher["field"].(string),
-				Value: matcher["value"].(string),
-			})
+			}
+			if val, ok := matcher["field"]; ok {
+				matcherStruct.Field = val.(string)
+			}
+			if val, ok := matcher["value"]; ok {
+				matcherStruct.Value = val.(string)
+			}
+			matchers = append(matchers, matcherStruct)
 		}
 	}
 
