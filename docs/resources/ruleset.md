@@ -62,7 +62,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
     action_parameters {
       id = "efb7b8c949ac4650a09736fc376e9aee"
     }
-    expression = "(http.host eq \"example.host.com\")"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
     enabled     = true
   }
@@ -95,7 +95,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
       }
     }
 
-    expression = "(http.host eq \"example.host.com\")"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "overrides to only enable wordpress rules to block"
     enabled     = false
   }
@@ -143,7 +143,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
       }
     }
 
-    expression = "(http.host eq \"example.host.com\")"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "URI transformation query example"
     enabled     = true
   }
@@ -178,7 +178,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
       }
     }
 
-    expression = "(http.host eq \"example.host.com\")"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "example request header transform rule"
     enabled     = false
   }
@@ -261,7 +261,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
       ]
     }
 
-    expression = "(http.host eq \"example.host.com\")"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "log custom fields rule"
     enabled     = true
   }
@@ -327,7 +327,7 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       }
       origin_error_page_passthru = false
     }
-    expression = "(http.host eq \"example.host.com\")"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "set cache settings rule"
     enabled     = true
   }
