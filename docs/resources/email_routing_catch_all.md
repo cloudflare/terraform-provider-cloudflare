@@ -40,7 +40,6 @@ resource "cloudflare_email_routing_catch_all" "example" {
 ### Optional
 
 - `enabled` (Boolean) Routing rule status.
-- `priority` (Number) Priority of the routing rule.
 
 ### Read-Only
 
@@ -52,8 +51,8 @@ resource "cloudflare_email_routing_catch_all" "example" {
 
 Required:
 
-- `type` (String) Type of supported action.
-- `value` (List of String) An array with items in the following form.
+- `type` (String) Type of supported action. Available values: `drop`, `forward`, `worker`.
+- `value` (List of String) A list with items in the following form.
 
 
 <a id="nestedblock--matcher"></a>
@@ -61,11 +60,6 @@ Required:
 
 Required:
 
-- `type` (String) Type of matcher.
-
-Optional:
-
-- `field` (String) Field for type matcher.
-- `value` (String) Value for matcher.
+- `type` (String) Type of matcher. Available values: `all`.
 
 
