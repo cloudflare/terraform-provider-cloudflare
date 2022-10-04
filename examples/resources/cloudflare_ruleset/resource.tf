@@ -26,7 +26,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
     action_parameters {
       id = "efb7b8c949ac4650a09736fc376e9aee"
     }
-    expression  = "true"
+    expression = "(http.host eq \"example.host.com\")"
     description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
     enabled     = true
   }
@@ -59,7 +59,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
       }
     }
 
-    expression  = "true"
+    expression = "(http.host eq \"example.host.com\")"
     description = "overrides to only enable wordpress rules to block"
     enabled     = false
   }
@@ -107,7 +107,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
       }
     }
 
-    expression  = "true"
+    expression = "(http.host eq \"example.host.com\")"
     description = "URI transformation query example"
     enabled     = true
   }
@@ -142,7 +142,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
       }
     }
 
-    expression  = "true"
+    expression = "(http.host eq \"example.host.com\")"
     description = "example request header transform rule"
     enabled     = false
   }
@@ -225,7 +225,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
       ]
     }
 
-    expression  = "true"
+    expression = "(http.host eq \"example.host.com\")"
     description = "log custom fields rule"
     enabled     = true
   }
@@ -291,7 +291,7 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       }
       origin_error_page_passthru = false
     }
-    expression  = "true"
+    expression = "(http.host eq \"example.host.com\")"
     description = "set cache settings rule"
     enabled     = true
   }
@@ -321,7 +321,7 @@ resource "cloudflare_ruleset" "redirect_from_list_example" {
 
 # Dynamic Redirects from value resource
 resource "cloudflare_ruleset" "redirect_from_value_example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "redirects"
   description = "Redirect ruleset"
   kind        = "root"
@@ -338,7 +338,7 @@ resource "cloudflare_ruleset" "redirect_from_value_example" {
         preserve_query_string = true
       }
     }
-    expression  = "true"
+    expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "Apply redirect from value"
     enabled     = true
   }
