@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_byo_ip_prefix: set correct prefix ID for the byoip prefix during import.
+```
