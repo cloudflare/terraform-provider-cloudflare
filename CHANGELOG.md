@@ -1,5 +1,9 @@
 ## 3.26.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_byo_ip_prefix: set correct prefix ID for the byoip prefix during import. ([#1951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1951))
+
 ## 3.25.0 (October 5th, 2022)
 
 NOTES:
