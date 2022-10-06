@@ -24,31 +24,7 @@ data "cloudflare_devices" "devices" {
 
 - `devices` - A list of device object. See below for nested attributes.
 
-- `devices` (List of Object) (see [below for nested schema](#nestedatt--devices))
-- `id` (String) The ID of this resource.
-
-<a id="nestedatt--devices"></a>
-
-### Nested Schema for `devices`
-
-Read-Only:
-
-- `created` (String)
-- `device_type` (String)
-- `id` (String)
-- `ip` (String)
-- `key` (String)
-- `last_seen` (String)
-- `model` (String)
-- `name` (String)
-- `os_distro_name` (String)
-- `os_distro_revision` (String)
-- `os_version` (String)
-- `updated` (String)
-- `user_email` (String)
-- `user_id` (String)
-- `user_name` (String)
-- `version` (String)
+**devices**
 
 - `id` - Device ID.
 - `key` - The device's public key.
