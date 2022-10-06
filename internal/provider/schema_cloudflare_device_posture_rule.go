@@ -17,8 +17,8 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one"}, false),
-			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one"})),
+			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id"}, false),
+			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id"})),
 		},
 		"name": {
 			Type:        schema.TypeString,
@@ -48,8 +48,8 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 					"platform": {
 						Type:         schema.TypeString,
 						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"windows", "mac", "linux", "android", "ios"}, false),
-						Description:  fmt.Sprintf("The platform of the device. %s", renderAvailableDocumentationValuesStringSlice([]string{"windows", "mac", "linux", "android", "ios"})),
+						ValidateFunc: validation.StringInSlice([]string{"windows", "mac", "linux", "android", "ios", "chromeos"}, false),
+						Description:  fmt.Sprintf("The platform of the device. %s", renderAvailableDocumentationValuesStringSlice([]string{"windows", "mac", "linux", "android", "ios", "chromeos"})),
 					},
 				},
 			},
