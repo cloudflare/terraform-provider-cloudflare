@@ -1,5 +1,9 @@
 ## 3.26.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: Add chromeos and unique_client_id values ([#1950](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1950))
+
 BUG FIXES:
 
 * resource/cloudflare_byo_ip_prefix: set correct prefix ID for the byoip prefix during import. ([#1951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1951))
