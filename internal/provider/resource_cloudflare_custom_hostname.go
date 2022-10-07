@@ -141,10 +141,9 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 	hostnameID := newCertificate.Result.ID
 
 	if d.Get("wait_for_active_status").(bool) {
-		tflog.Info(ctx, fmt.Sprintf("enter wait_for_active_status"))
 		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
 			customHostname, err := client.CustomHostname(ctx, zoneID, hostnameID)
-			tflog.Info(ctx, fmt.Sprintf("got customHostname status %s", customHostname.Status))
+			tflog.Debug(ctx, fmt.Sprintf("got customHostname status %s", customHostname.Status))
 			if err != nil {
 				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch custom hostname"))
 			}
@@ -153,7 +152,6 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 			}
 			return nil
 		})
-		tflog.Info(ctx, fmt.Sprintf("exit wait_for_active_status"))
 		if err != nil {
 			return diag.FromErr(err)
 		}
