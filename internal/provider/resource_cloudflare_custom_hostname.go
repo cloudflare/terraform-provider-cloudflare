@@ -3,8 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -134,6 +136,27 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 	newCertificate, err := client.CreateCustomHostname(ctx, zoneID, certificate)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to create custom hostname certificate"))
+	}
+
+	hostnameID := newCertificate.Result.ID
+
+	if d.Get("wait_for_active_status").(bool) {
+		tflog.Info(ctx, fmt.Sprintf("enter wait_for_active_status"))
+		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+			customHostname, err := client.CustomHostname(ctx, zoneID, hostnameID)
+			tflog.Info(ctx, fmt.Sprintf("got customHostname status %s", customHostname.Status))
+			if err != nil {
+				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch custom hostname"))
+			}
+			if customHostname.Status != "active" {
+				return resource.RetryableError(fmt.Errorf("hostname is not in active status"))
+			}
+			return nil
+		})
+		tflog.Info(ctx, fmt.Sprintf("exit wait_for_active_status"))
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	d.SetId(newCertificate.Result.ID)

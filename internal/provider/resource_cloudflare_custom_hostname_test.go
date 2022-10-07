@@ -95,6 +95,47 @@ resource "cloudflare_custom_hostname" "%[2]s" {
 `, zoneID, rnd, domain)
 }
 
+func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameWaitForActive(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_active_status", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification_http.http_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification_http.http_body"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareCustomHostnameWaitForActive(zoneID, rnd, domain string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_custom_hostname" "%[2]s" {
+  zone_id = "%[1]s"
+  hostname = "%[2]s.%[3]s"
+  ssl {
+    method = "txt"
+  }
+  wait_for_active_status = true
+}
+`, zoneID, rnd, domain)
+}
+
 func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

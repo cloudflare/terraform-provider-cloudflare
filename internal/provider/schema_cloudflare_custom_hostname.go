@@ -155,5 +155,12 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 				Computed: true,
 			},
 		},
+		"wait_for_active_status": {
+			Type:        schema.TypeBool,
+			ForceNew:    true,
+			Optional:    true,
+			Default:     false,
+			Description: "Whether or not to wait for a custom hostname to reach status `active` during creation.",
+		},
 	}
 }
