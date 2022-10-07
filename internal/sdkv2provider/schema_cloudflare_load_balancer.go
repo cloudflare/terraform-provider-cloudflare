@@ -9,6 +9,71 @@ import (
 )
 
 var (
+	loadBalancerSessionAffinityAttributesElem = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"samesite": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Lax", "None", "Strict"}, false),
+				Default:      "Auto",
+				Description:  fmt.Sprintf("Configures the SameSite attribute on session affinity cookie. Value `Auto` will be translated to `Lax` or `None` depending if Always Use HTTPS is enabled. Note: when using value `None`, then you can not set [`secure=\"Never\"`](#secure). %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Lax", "None", "Strict"})),
+			},
+
+			"secure": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "Auto",
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Always", "Never"}, false),
+				Description:  fmt.Sprintf("Configures the Secure attribute on session affinity cookie. Value `Always` indicates the Secure attribute will be set in the Set-Cookie header, `Never` indicates the Secure attribute will not be set, and `Auto` will set the Secure attribute depending if Always Use HTTPS is enabled. %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Always", "Never"})),
+			},
+
+			"drain_duration": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      0,
+				ValidateFunc: validation.IntBetween(0, 86400), // less than 24 hours
+				Description:  "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+			},
+
+			"zero_downtime_failover": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "none",
+				ValidateFunc: validation.StringInSlice([]string{"none", "temporary", "sticky"}, false),
+				Description:  fmt.Sprintf("Configures the zero-downtime failover between origins within a pool when session affinity is enabled. Value `none` means no failover takes place for sessions pinned to the origin. Value `temporary` means traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. Value `sticky` means the session affinity cookie is updated and subsequent requests are sent to the new origin. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. %s", renderAvailableDocumentationValuesStringSlice([]string{"none", "temporary", "sticky"})),
+			},
+		},
+	}
+
+	loadBalancerOverridesSessionAffinityAttributesElem = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"samesite": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Lax", "None", "Strict"}, false),
+				Description:  "See [`samesite`](#samesite).",
+			},
+
+			"secure": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Always", "Never"}, false),
+				Description:  "See [`secure`](#secure).",
+			},
+
+			//
+			// "drain_duration" not currently supported as a rule override
+			//
+
+			"zero_downtime_failover": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"none", "temporary", "sticky"}, false),
+				Description:  "See [`zero_downtime_failover`](#zero_downtime_failover).",
+			},
+		},
+	}
+
 	loadBalancerAdaptiveRoutingElem = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"failover_across_pools": {
@@ -304,12 +369,10 @@ var (
 						},
 
 						"session_affinity_attributes": {
-							Type:     schema.TypeMap,
-							Optional: true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							Description: "See [`session_affinity_attributes`](#nested-schema-for-session_affinity_attributes). Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        loadBalancerOverridesSessionAffinityAttributesElem,
+							Description: "See [`session_affinity_attributes`](#session_affinity_attributes). Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
 						},
 
 						"adaptive_routing": {
@@ -515,12 +578,10 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		},
 
 		"session_affinity_attributes": {
-			Type:     schema.TypeMap,
-			Optional: true,
-			Elem: &schema.Schema{
-				Type: schema.TypeString,
-			},
-			Description: "See [`session_affinity_attributes`](#nested-schema-for-session_affinity_attributes)",
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Elem:        loadBalancerSessionAffinityAttributesElem,
+			Description: "Configure cookie attributes for session affinity cookie.",
 		},
 
 		"adaptive_routing": {

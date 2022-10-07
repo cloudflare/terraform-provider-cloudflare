@@ -115,10 +115,11 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					// explicitly verify that our session_affinity has been set
 					resource.TestCheckResourceAttr(name, "session_affinity", "cookie"),
 					resource.TestCheckResourceAttr(name, "session_affinity_ttl", "1800"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.samesite", "Auto"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.secure", "Auto"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.drain_duration", "60"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.zero_downtime_failover", "sticky"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.#", "1"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.samesite", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.secure", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.drain_duration", "60"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.zero_downtime_failover", "sticky"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
@@ -143,7 +144,8 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_affinity", "ip_cookie"),
 					// session_affinity_ttl should not be present as it isn't set
 					resource.TestCheckNoResourceAttr(name, "session_affinity_ttl"),
-					resource.TestCheckNoResourceAttr(name, "session_affinity_attributes"),
+					// session_affinity_attributes should not be present as it isn't set
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.#", "0"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
@@ -339,9 +341,10 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.condition", "dns.qry.type == 28"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.#", "1"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.steering_policy", "geo"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.samesite", "Auto"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.secure", "Auto"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.zero_downtime_failover", "sticky"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.#", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.0.samesite", "Auto"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.0.secure", "Auto"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.0.zero_downtime_failover", "sticky"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.adaptive_routing.#", "1"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.adaptive_routing.0.failover_across_pools", "true"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.location_strategy.#", "1"),
@@ -582,7 +585,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   session_affinity = "cookie"
   session_affinity_ttl = 1800
-  session_affinity_attributes = {
+  session_affinity_attributes {
     samesite = "Auto"
     secure = "Auto"
     drain_duration = 60
@@ -598,7 +601,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
   name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-	session_affinity = "ip_cookie"
+  session_affinity = "ip_cookie"
 }`, zoneID, zone, id)
 }
 
@@ -715,7 +718,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
     condition = "dns.qry.type == 28"
     overrides {
       steering_policy = "geo"
-      session_affinity_attributes = {
+      session_affinity_attributes {
         samesite = "Auto"
         secure = "Auto"
         zero_downtime_failover = "sticky"

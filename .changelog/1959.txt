@@ -1,0 +1,3 @@
+```release-note:breaking-change
+resource/cloudflare_load_balancer: Migrate session_affinity_attributes from TypeMap to TypeSet
+```
