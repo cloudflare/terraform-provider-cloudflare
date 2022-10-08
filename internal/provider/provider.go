@@ -262,6 +262,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
 				"cloudflare_waf_rule":                               resourceCloudflareWAFRule(),
 				"cloudflare_waiting_room_event":                     resourceCloudflareWaitingRoomEvent(),
+				"cloudflare_waiting_room_rules":                     resourceCloudflareWaitingRoomRules(),
 				"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
 				"cloudflare_web3_hostname":                          resourceCloudflareWeb3Hostname(),
 				"cloudflare_worker_cron_trigger":                    resourceCloudflareWorkerCronTrigger(),
