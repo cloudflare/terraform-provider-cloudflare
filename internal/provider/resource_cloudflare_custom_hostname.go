@@ -148,7 +148,7 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch custom hostname"))
 			}
 			if customHostname.Status != "active" {
-				return resource.RetryableError(fmt.Errorf("hostname is not in active status"))
+				return resource.RetryableError(fmt.Errorf("hostname is not yet in active status"))
 			}
 			return nil
 		})
