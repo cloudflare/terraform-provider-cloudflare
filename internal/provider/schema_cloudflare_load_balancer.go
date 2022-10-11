@@ -308,7 +308,7 @@ var (
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-							Description: "See [`session_affinity_attributes`](#session_affinity_attributes). Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
+							Description: "See [`session_affinity_attributes`](#nested-schema-for-session_affinity_attributes). Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
 						},
 
 						"adaptive_routing": {
@@ -519,13 +519,7 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
-			Description: fmt.Sprintf("%s %s. %s. %s %s",
-				"Configure cookie attributes for session affinity cookie.",
-				fmt.Sprintf("Property [`secure`](#secure) configures the SameSite attribute on session affinity cookie. Value `Auto` will be translated to `Lax` or `None` depending if Always Use HTTPS is enabled. Note: when using value `None`, then you can not set [`secure=\"Never\"`](#secure). %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Lax", "None", "Strict"})),
-				fmt.Sprintf("Property [`secure`](#secure) configures the Secure attribute on session affinity cookie. Value `Always` indicates the Secure attribute will be set in the Set-Cookie header, `Never` indicates the Secure attribute will not be set, and `Auto` will set the Secure attribute depending if Always Use HTTPS is enabled. %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Always", "Never"})),
-				"Property [`drain_duration`](#drain_duration) configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
-				fmt.Sprintf("Property [`zero_downtime_failover`](#zero_downtime_failover) configures the zero-downtime failover between origins within a pool when session affinity is enabled. Value `none` means no failover takes place for sessions pinned to the origin. Value `temporary` means traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. Value `sticky` means the session affinity cookie is updated and subsequent requests are sent to the new origin. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. %s", renderAvailableDocumentationValuesStringSlice([]string{"none", "temporary", "sticky"})),
-			),
+			Description: "See [`session_affinity_attributes`](#nested-schema-for-session_affinity_attributes)",
 		},
 
 		"adaptive_routing": {
