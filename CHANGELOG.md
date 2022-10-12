@@ -3,6 +3,7 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_device_posture_rule: Add chromeos and unique_client_id values ([#1950](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1950))
+* resource/cloudflare_load_balancer: Migrate to autogen docs, improve docs ([#1954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1954))
 
 BUG FIXES:
 
