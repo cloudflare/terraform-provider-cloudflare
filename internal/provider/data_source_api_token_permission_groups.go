@@ -32,6 +32,11 @@ func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *sc
 		return diag.FromErr(fmt.Errorf("error listing API Token Permission Groups: %w", err))
 	}
 
+	err = d.Set("raw_permissions", permissions)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("error setting API Token Permission Group structs: %w", err))
+	}
+
 	permissionDetails := make(map[string]interface{}, 0)
 	ids := []string{}
 	for _, v := range permissions {
