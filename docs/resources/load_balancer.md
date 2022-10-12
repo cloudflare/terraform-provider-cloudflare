@@ -20,34 +20,32 @@ this resource.
 ## Example Usage
 
 ```terraform
-# Example Usage
-#
 # Define a load balancer which always points to a pool we define below.
 # In normal usage, would have different pools set for different pops
 # (cloudflare points-of-presence) and/or for different regions.
 # Within each pop or region we can define multiple pools in failover order.
-resource "cloudflare_load_balancer" "bar" {
+resource "cloudflare_load_balancer" "example" {
   zone_id          = "0da42c8d2132a9ddaf714f9e7c920711"
   name             = "example-load-balancer.example.com"
-  fallback_pool_id = cloudflare_load_balancer_pool.foo.id
-  default_pool_ids = [cloudflare_load_balancer_pool.foo.id]
+  fallback_pool_id = cloudflare_load_balancer_pool.example.id
+  default_pool_ids = [cloudflare_load_balancer_pool.example.id]
   description      = "example load balancer using geo-balancing"
   proxied          = true
   steering_policy  = "geo"
 
   pop_pools {
     pop      = "LAX"
-    pool_ids = [cloudflare_load_balancer_pool.foo.id]
+    pool_ids = [cloudflare_load_balancer_pool.example.id]
   }
 
   country_pools {
     country  = "US"
-    pool_ids = [cloudflare_load_balancer_pool.foo.id]
+    pool_ids = [cloudflare_load_balancer_pool.example.id]
   }
 
   region_pools {
     region   = "WNAM"
-    pool_ids = [cloudflare_load_balancer_pool.foo.id]
+    pool_ids = [cloudflare_load_balancer_pool.example.id]
   }
 
   rules {
@@ -62,7 +60,7 @@ resource "cloudflare_load_balancer" "bar" {
   }
 }
 
-resource "cloudflare_load_balancer_pool" "foo" {
+resource "cloudflare_load_balancer_pool" "example" {
   name = "example-lb-pool"
   origins {
     name    = "example-1"
@@ -272,6 +270,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Use the Zone ID and Load Balancer ID to import.
 $ terraform import cloudflare_load_balancer.example <zone_id>/<load_balancer_id>
 ```
