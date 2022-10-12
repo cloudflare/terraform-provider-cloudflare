@@ -8,11 +8,11 @@ import (
 
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -37,267 +37,15 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Version: 0,
 			},
 		},
+
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Load Balancer resource. This sits in front of
+			a number of defined pools of origins and provides various options
+			for geographically-aware load balancing. Note that the load balancing
+			feature must be enabled in your Cloudflare account before you can use
+			this resource.
+		`),
 	}
-}
-
-var rulesElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": {
-			Type:         schema.TypeString,
-			Required:     true,
-			ValidateFunc: validation.StringLenBetween(1, 200),
-		},
-
-		"priority": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Computed: true,
-		},
-
-		"disabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-
-		"condition": {
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-
-		"terminates": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Computed: true,
-		},
-
-		"overrides": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-
-					"session_affinity": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"", "none", "cookie", "ip_cookie"}, false),
-					},
-
-					"session_affinity_ttl": {
-						Type:         schema.TypeInt,
-						Optional:     true,
-						ValidateFunc: validation.IntBetween(1800, 604800),
-					},
-
-					"session_affinity_attributes": {
-						Type:     schema.TypeMap,
-						Optional: true,
-						Elem: &schema.Schema{
-							Type: schema.TypeString,
-						},
-					},
-
-					"adaptive_routing": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     adaptiveRoutingElem,
-					},
-
-					"location_strategy": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     locationStrategyElem,
-					},
-
-					"random_steering": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     randomSteeringElem,
-					},
-
-					"ttl": {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-
-					"steering_policy": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", ""}, false),
-					},
-
-					"fallback_pool": {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-
-					"default_pools": {
-						Type:     schema.TypeList,
-						Optional: true,
-						Elem: &schema.Schema{
-							Type: schema.TypeString,
-						},
-					},
-
-					"pop_pools": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     popPoolElem,
-					},
-
-					"country_pools": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     countryPoolElem,
-					},
-
-					"region_pools": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     regionPoolElem,
-					},
-				},
-			},
-		},
-
-		"fixed_response": {
-			Type:     schema.TypeList,
-			MaxItems: 1,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"message_body": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringLenBetween(0, 1024),
-					},
-
-					"status_code": {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-
-					"content_type": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringLenBetween(0, 32),
-					},
-
-					"location": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringLenBetween(0, 2048),
-					},
-				},
-			},
-		},
-	},
-}
-
-var adaptiveRoutingElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"failover_across_pools": {
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-	},
-}
-
-var locationStrategyElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"prefer_ecs": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"", "always", "never", "proximity", "geo"}, false),
-		},
-
-		"mode": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"", "pop", "resolver_ip"}, false),
-		},
-	},
-}
-
-var randomSteeringElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"pool_weights": {
-			Type:     schema.TypeMap,
-			Optional: true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeFloat,
-				ValidateFunc: validation.FloatBetween(0, 1),
-			},
-		},
-
-		"default_weight": {
-			Type:         schema.TypeFloat,
-			Optional:     true,
-			ValidateFunc: validation.FloatBetween(0, 1),
-		},
-	},
-}
-
-var popPoolElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"pop": {
-			Type:     schema.TypeString,
-			Required: true,
-			// let the api handle validating pops
-		},
-
-		"pool_ids": {
-			Type:     schema.TypeList,
-			Required: true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-			},
-		},
-	},
-}
-
-var countryPoolElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"country": {
-			Type:     schema.TypeString,
-			Required: true,
-			// let the api handle validating countries
-		},
-
-		"pool_ids": {
-			Type:     schema.TypeList,
-			Required: true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-			},
-		},
-	},
-}
-
-var regionPoolElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"region": {
-			Type:     schema.TypeString,
-			Required: true,
-			// let the api handle validating regions
-		},
-
-		"pool_ids": {
-			Type:     schema.TypeList,
-			Required: true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-			},
-		},
-	},
-}
-
-var localPoolElems = map[string]*schema.Resource{
-	"pop":     popPoolElem,
-	"region":  regionPoolElem,
-	"country": countryPoolElem,
 }
 
 func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -569,15 +317,15 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 		tflog.Warn(ctx, fmt.Sprintf("Error setting default_pool_ids on load balancer %q: %s", d.Id(), err))
 	}
 
-	if err := d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop")); err != nil {
+	if err := d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop", loadBalancerLocalPoolElems)); err != nil {
 		tflog.Warn(ctx, fmt.Sprintf("Error setting pop_pools on load balancer %q: %s", d.Id(), err))
 	}
 
-	if err := d.Set("country_pools", flattenGeoPools(loadBalancer.CountryPools, "country")); err != nil {
+	if err := d.Set("country_pools", flattenGeoPools(loadBalancer.CountryPools, "country", loadBalancerLocalPoolElems)); err != nil {
 		tflog.Warn(ctx, fmt.Sprintf("Error setting country_pools on load balancer %q: %s", d.Id(), err))
 	}
 
-	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region")); err != nil {
+	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region", loadBalancerLocalPoolElems)); err != nil {
 		tflog.Warn(ctx, fmt.Sprintf("Error setting region_pools on load balancer %q: %s", d.Id(), err))
 	}
 
@@ -588,7 +336,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
+func flattenGeoPools(pools map[string][]string, geoType string, hashResourceMap map[string]*schema.Resource) *schema.Set {
 	flattened := make([]interface{}, 0)
 	for k, v := range pools {
 		geoConf := map[string]interface{}{
@@ -597,7 +345,7 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 		}
 		flattened = append(flattened, geoConf)
 	}
-	return schema.NewSet(schema.HashResource(localPoolElems[geoType]), flattened)
+	return schema.NewSet(schema.HashResource(hashResourceMap[geoType]), flattened)
 }
 
 func flattenSessionAffinityAttrs(attrs *cloudflare.SessionAffinityAttributes) map[string]interface{} {
@@ -615,7 +363,7 @@ func flattenAdaptiveRouting(properties *cloudflare.AdaptiveRouting) *schema.Set 
 			"failover_across_pools": bool(properties.FailoverAcrossPools != nil && *properties.FailoverAcrossPools),
 		},
 	}
-	return schema.NewSet(schema.HashResource(adaptiveRoutingElem), flattened)
+	return schema.NewSet(schema.HashResource(loadBalancerAdaptiveRoutingElem), flattened)
 }
 
 func flattenLocationStrategy(properties *cloudflare.LocationStrategy) *schema.Set {
@@ -625,7 +373,7 @@ func flattenLocationStrategy(properties *cloudflare.LocationStrategy) *schema.Se
 			"mode":       properties.Mode,
 		},
 	}
-	return schema.NewSet(schema.HashResource(locationStrategyElem), flattened)
+	return schema.NewSet(schema.HashResource(loadBalancerLocationStrategyElem), flattened)
 }
 
 func flattenRandomSteering(properties *cloudflare.RandomSteering) *schema.Set {
@@ -639,7 +387,7 @@ func flattenRandomSteering(properties *cloudflare.RandomSteering) *schema.Set {
 			"default_weight": properties.DefaultWeight,
 		},
 	}
-	return schema.NewSet(schema.HashResource(randomSteeringElem), flattened)
+	return schema.NewSet(schema.HashResource(loadBalancerRandomSteeringElem), flattened)
 }
 
 func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -746,15 +494,15 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.pop_pools", idx)); ok {
-				om["pop_pools"] = flattenGeoPools(o.PoPPools, "pop")
+				om["pop_pools"] = flattenGeoPools(o.PoPPools, "pop", loadBalancerOverridesLocalPoolElems)
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.country_pools", idx)); ok {
-				om["country_pools"] = flattenGeoPools(o.CountryPools, "country")
+				om["country_pools"] = flattenGeoPools(o.CountryPools, "country", loadBalancerOverridesLocalPoolElems)
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.region_pools", idx)); ok {
-				om["region_pools"] = flattenGeoPools(o.RegionPools, "region")
+				om["region_pools"] = flattenGeoPools(o.RegionPools, "region", loadBalancerOverridesLocalPoolElems)
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes", idx)); o.SessionAffinityAttrs != nil && ok {
@@ -782,7 +530,7 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 					}
 				}
 				flattened := []interface{}{ar}
-				om["adaptive_routing"] = schema.NewSet(schema.HashResource(adaptiveRoutingElem), flattened)
+				om["adaptive_routing"] = schema.NewSet(schema.HashResource(loadBalancerOverridesAdaptiveRoutingElem), flattened)
 				m["overrides"] = []interface{}{om}
 			}
 			if lsOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.location_strategy", idx)); o.LocationStrategy != nil && ok {
@@ -798,7 +546,7 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 					}
 				}
 				flattened := []interface{}{ls}
-				om["location_strategy"] = schema.NewSet(schema.HashResource(locationStrategyElem), flattened)
+				om["location_strategy"] = schema.NewSet(schema.HashResource(loadBalancerOverridesLocationStrategyElem), flattened)
 				m["overrides"] = []interface{}{om}
 			}
 			if rsOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.random_steering", idx)); o.RandomSteering != nil && ok {
@@ -818,7 +566,7 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 					}
 				}
 				flattened := []interface{}{rs}
-				om["random_steering"] = schema.NewSet(schema.HashResource(randomSteeringElem), flattened)
+				om["random_steering"] = schema.NewSet(schema.HashResource(loadBalancerOverridesRandomSteeringElem), flattened)
 				m["overrides"] = []interface{}{om}
 			}
 		}
