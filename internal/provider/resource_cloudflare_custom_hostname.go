@@ -140,15 +140,15 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 
 	hostnameID := newCertificate.Result.ID
 
-	if d.Get("wait_for_active_status").(bool) {
+	if d.Get("wait_for_ssl_pending_validation").(bool) {
 		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
 			customHostname, err := client.CustomHostname(ctx, zoneID, hostnameID)
-			tflog.Debug(ctx, fmt.Sprintf("custom hostname status %s", customHostname.Status))
+			tflog.Debug(ctx, fmt.Sprintf("custom hostname ssl status %s", customHostname.SSL.Status))
 			if err != nil {
 				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch custom hostname"))
 			}
-			if customHostname.Status != "active" {
-				return resource.RetryableError(fmt.Errorf("hostname is not yet in active status"))
+			if customHostname.SSL.Status != "pending_validation" {
+				return resource.RetryableError(fmt.Errorf("hostname ssl sub-object is not yet in pending_validation status"))
 			}
 			return nil
 		})

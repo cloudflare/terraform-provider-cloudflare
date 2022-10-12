@@ -111,7 +111,7 @@ func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
-					resource.TestCheckResourceAttr(resourceName, "wait_for_active_status", "true"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_ssl_pending_validation", "true"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -131,7 +131,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
   ssl {
     method = "txt"
   }
-  wait_for_active_status = true
+  wait_for_ssl_pending_validation = true
 }
 `, zoneID, rnd, domain)
 }
