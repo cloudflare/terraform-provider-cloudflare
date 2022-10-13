@@ -1267,6 +1267,50 @@ func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ActionParametersOverrideAllRulesetRules(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRulesetRules(rnd, "overriding all ruleset rules sensitivity", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "overriding all ruleset rules sensitivity"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "ddos_l7"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "execute"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "4d21379b4f9f4bb088e0729962c8b3cf"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.action", "log"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.sensitivity_level", "low"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "override HTTP DDoS ruleset rule"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -3202,4 +3246,29 @@ func testAccCloudflareRulesetRedirectFromValue(rnd, zoneID string) string {
       enabled = true
     }
   }`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRulesetRules(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "ddos_l7"
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = "4d21379b4f9f4bb088e0729962c8b3cf"
+        overrides {
+		  action            = "log"
+		  sensitivity_level = "low"
+        }
+      }
+      expression = "true"
+      description = "override HTTP DDoS ruleset rule"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
 }

@@ -286,10 +286,11 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				}
 
 				overrides = append(overrides, map[string]interface{}{
-					"categories": categoryBasedOverrides,
-					"rules":      idBasedOverrides,
-					"status":     apiEnabledToStatusFieldConversion(r.ActionParameters.Overrides.Enabled),
-					"action":     r.ActionParameters.Overrides.Action,
+					"categories":        categoryBasedOverrides,
+					"rules":             idBasedOverrides,
+					"status":            apiEnabledToStatusFieldConversion(r.ActionParameters.Overrides.Enabled),
+					"action":            r.ActionParameters.Overrides.Action,
+					"sensitivity_level": r.ActionParameters.Overrides.SensitivityLevel,
 				})
 			}
 
@@ -723,6 +724,10 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 							if val, ok := overrideParamValue.(map[string]interface{})["action"]; ok {
 								overrideConfiguration.Action = val.(string)
+							}
+
+							if val, ok := overrideParamValue.(map[string]interface{})["sensitivity_level"]; ok {
+								overrideConfiguration.SensitivityLevel = val.(string)
 							}
 
 							// Category based overrides

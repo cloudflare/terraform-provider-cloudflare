@@ -260,6 +260,12 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 												ValidateFunc: validation.StringInSlice(cloudflare.RulesetRuleActionValues(), false),
 												Description:  fmt.Sprintf("Action to perform in the rule-level override. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.RulesetRuleActionValues())),
 											},
+											"sensitivity_level": {
+												Type:         schema.TypeString,
+												Optional:     true,
+												ValidateFunc: validation.StringInSlice([]string{"high", "medium", "low", "eoff"}, false),
+												Description:  fmt.Sprintf("Sensitivity level to override for all ruleset rules. %s", renderAvailableDocumentationValuesStringSlice([]string{"high", "medium", "low", "eoff"})),
+											},
 											"categories": {
 												Type:        schema.TypeList,
 												Optional:    true,
