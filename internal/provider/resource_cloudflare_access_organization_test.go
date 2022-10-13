@@ -82,7 +82,6 @@ func testAccCheckCloudflareAccessOrganizationDestroy(s *terraform.State) error {
 				return fmt.Errorf("AccessOrganization still exists")
 			}
 		}
-
 	}
 
 	return nil
