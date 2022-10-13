@@ -9,6 +9,7 @@ BUG FIXES:
 
 * resource/cloudflare_byo_ip_prefix: set correct prefix ID for the byoip prefix during import. ([#1951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1951))
 * resource/cloudflare_custom_ssl: check GeoRestrictions is not nil before attempting to compare it ([#1964](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1964))
+* resource/cloudflare_zone_settings_override: Fetch/modify `origin_max_http_version` as a single setting. ([#1805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1805))
 
 DEPENDENCIES:
 
