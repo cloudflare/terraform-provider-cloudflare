@@ -1,7 +1,7 @@
 name: TF_LOG=DEBUG check
 on:
   issues:
-    types: [opened]
+    types: [opened, labeled, edited]
 
 jobs:
   tf-log-check:
