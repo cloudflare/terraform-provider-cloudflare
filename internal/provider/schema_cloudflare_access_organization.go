@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -75,7 +77,7 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 func convertLoginDesignSchemaToStruct(d *schema.ResourceData) *cloudflare.AccessOrganizationLoginDesign {
 	LoginDesign := cloudflare.AccessOrganizationLoginDesign{}
 
-	if _, ok := d.GetOk("login_design"); ok {
+	if _, ok := d.GetOk("login_design.0"); ok {
 		LoginDesign.BackgroundColor = d.Get("login_design.0.background_color").(string)
 		LoginDesign.TextColor = d.Get("login_design.0.text_color").(string)
 		LoginDesign.LogoPath = d.Get("login_design.0.logo_path").(string)
@@ -86,8 +88,14 @@ func convertLoginDesignSchemaToStruct(d *schema.ResourceData) *cloudflare.Access
 	return &LoginDesign
 }
 
-func convertLoginDesignStructToSchema(d *schema.ResourceData, loginDesign *cloudflare.AccessOrganizationLoginDesign) []interface{} {
-	if _, ok := d.GetOk("login_design"); !ok {
+func convertLoginDesignStructToSchema(ctx context.Context, d *schema.ResourceData, loginDesign *cloudflare.AccessOrganizationLoginDesign) []interface{} {
+	var onImport bool
+	var ok bool
+	if onImport, ok = ctx.Value(orgAccessImportCtxKey).(bool); !ok {
+		onImport = false
+	}
+
+	if _, ok := d.GetOk("login_design"); !ok && !onImport {
 		return []interface{}{}
 	}
 

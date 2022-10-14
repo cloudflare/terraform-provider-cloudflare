@@ -1,12 +1,9 @@
 package provider
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -15,8 +12,6 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_organization.%s", rnd)
 
-	updatedName := fmt.Sprintf("%s-updated", rnd)
-
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -24,63 +19,38 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessOrganizationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "auth_domain", fmt.Sprintf("%s.cloudflareaccess.com", rnd)),
-					resource.TestCheckResourceAttr(name, "is_ui_read_only", "true"),
-					resource.TestCheckResourceAttr(name, "login_design.#", "1"),
-					resource.TestCheckResourceAttr(name, "login_design.0.background_color", "#FFFFFF"),
-					resource.TestCheckResourceAttr(name, "login_design.0.text_color", "#000000"),
-					resource.TestCheckResourceAttr(name, "login_design.0.logo_path", "https://example.com/logo.png"),
-					resource.TestCheckResourceAttr(name, "login_design.0.header_text", "My header text"),
-					resource.TestCheckResourceAttr(name, "login_design.0.footer_text", "My footer text"),
-				),
-			},
-			{
-				Config: testAccCloudflareAccessOrganizationConfigBasicUpdated(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "name", updatedName),
-					resource.TestCheckResourceAttr(name, "auth_domain", fmt.Sprintf("%s.cloudflareaccess.com", rnd)),
-					resource.TestCheckResourceAttr(name, "is_ui_read_only", "false"),
-					resource.TestCheckResourceAttr(name, "login_design.#", "1"),
-					resource.TestCheckResourceAttr(name, "login_design.0.background_color", "#FFFFFF"),
-					resource.TestCheckResourceAttr(name, "login_design.0.text_color", "#000000"),
-					resource.TestCheckResourceAttr(name, "login_design.0.logo_path", "https://example.com/logo.png"),
-					resource.TestCheckResourceAttr(name, "login_design.0.header_text", "My header text"),
-					resource.TestCheckResourceAttr(name, "login_design.0.footer_text", "My footer text"),
-				),
+				Config:           testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID),
+				ResourceName:     name,
+				ImportState:      true,
+				ImportStateId:    accountID,
+				ImportStateCheck: accessOrgImportStateCheck,
 			},
 		},
 	})
 }
 
-func testAccCheckCloudflareAccessOrganizationDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error {
+	state := instanceStates[0]
+	attrs := state.Attributes
 
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_organization" {
-			continue
-		}
+	stateChecks := []struct {
+		field         string
+		stateValue    string
+		expectedValue string
+	}{
+		{field: "ID", stateValue: state.ID, expectedValue: accountID},
+		{field: "account_id", stateValue: attrs["account_id"], expectedValue: accountID},
+		{field: "name", stateValue: attrs["name"], expectedValue: "my test org"},
+		{field: "auth_domain", stateValue: attrs["auth_domain"], expectedValue: "authdomain.cloudflareaccess.com"},
+		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
+		{field: "login_design.#", stateValue: attrs["login_design.#"], expectedValue: "1"},
+	}
 
-		var notFoundError *cloudflare.NotFoundError
-		if rs.Primary.Attributes["zone_id"] != "" {
-			_, _, err := client.ZoneLevelAccessOrganization(context.Background(), rs.Primary.Attributes["zone_id"])
-			if !errors.As(err, &notFoundError) {
-				return fmt.Errorf("AccessOrganization still exists")
-			}
-		}
-
-		if rs.Primary.Attributes["account_id"] != "" {
-			_, _, err := client.AccessOrganization(context.Background(), rs.Primary.Attributes["account_id"])
-			if !errors.As(err, &notFoundError) {
-				return fmt.Errorf("AccessOrganization still exists")
-			}
+	for _, check := range stateChecks {
+		if check.stateValue != check.expectedValue {
+			return fmt.Errorf("%s has value %s and does not match expected value %s", check.field, check.stateValue, check.expectedValue)
 		}
 	}
 
@@ -91,27 +61,8 @@ func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID string) strin
 	return fmt.Sprintf(`
 		resource "cloudflare_access_organization" "%[1]s" {
 			account_id                = "%[2]s"
-			name                      = "%[1]s"
-			auth_domain               = "%[1]s.cloudflareaccess.com"
-			is_ui_read_only           = true
-
-			login_design {
-				background_color = "#FFFFFF"
-				text_color       = "#000000"
-				logo_path        = "https://example.com/logo.png"
-				header_text      = "My header text"
-				footer_text      = "My footer text"
-			}
-		}
-		`, rnd, accountID)
-}
-
-func testAccCloudflareAccessOrganizationConfigBasicUpdated(rnd, accountID string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_access_organization" "%[1]s" {
-			account_id                = "%[2]s"
-			name                      = "%[1]s-updated"
-			auth_domain               = "%[1]s.cloudflareaccess.com"
+			name                      = "my test org"
+			auth_domain               = "authdomain.cloudflareaccess.com"
 			is_ui_read_only           = false
 
 			login_design {

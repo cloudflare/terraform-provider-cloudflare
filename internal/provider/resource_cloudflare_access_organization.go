@@ -12,6 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+type contextKey int
+
+const orgAccessImportCtxKey contextKey = iota
+
 func resourceCloudflareAccessOrganization() *schema.Resource {
 	return &schema.Resource{
 		Schema:        resourceCloudflareAccessOrganizationSchema(),
@@ -58,7 +62,7 @@ func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.Res
 	d.Set("auth_domain", organization.AuthDomain)
 	d.Set("is_ui_read_only", organization.IsUIReadOnly)
 
-	loginDesign := convertLoginDesignStructToSchema(d, &organization.LoginDesign)
+	loginDesign := convertLoginDesignStructToSchema(ctx, d, &organization.LoginDesign)
 	if loginDesignErr := d.Set("login_design", loginDesign); loginDesignErr != nil {
 		return diag.FromErr(fmt.Errorf("error setting Access Organization Login Design configuration: %w", loginDesignErr))
 	}
@@ -97,6 +101,8 @@ func resourceCloudflareAccessOrganizationUpdate(ctx context.Context, d *schema.R
 }
 
 func resourceCloudflareAccessOrganizationImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	ctx = context.WithValue(ctx, orgAccessImportCtxKey, true)
+
 	accountID := d.Id()
 
 	tflog.Info(ctx, fmt.Sprintf("Importing Cloudflare Access Organization for account %s", accountID))
