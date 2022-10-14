@@ -140,12 +140,12 @@ func main() {
 
 		_, err = client.Issues.RemoveLabelForIssue(ctx, owner, repo, issueNumber, needsInformationLabel)
 		if err != nil {
-			log.Fatalf("error removing label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+			log.Printf("error removing label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
 		}
 
 		_, _, err = client.Issues.AddLabelsToIssue(ctx, owner, repo, issueNumber, []string{debugLogDetected})
 		if err != nil {
-			log.Fatalf("error adding label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+			log.Printf("error adding label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
 		}
 	}
 
@@ -175,16 +175,16 @@ func postMissingLogPayload(ctx context.Context, client *github.Client, owner, re
 		Body: &missingLogFileBody,
 	})
 	if err != nil {
-		log.Fatalf("failed to create comment for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+		log.Printf("failed to create comment for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
 	}
 
 	_, _, err = client.Issues.AddLabelsToIssue(ctx, owner, repo, issueNumber, []string{needsInformationLabel})
 	if err != nil {
-		log.Fatalf("error adding label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+		log.Printf("error adding label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
 	}
 
 	_, err = client.Issues.RemoveLabelForIssue(ctx, owner, repo, issueNumber, needsTriageLabel)
 	if err != nil {
-		log.Fatalf("error removing label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
+		log.Printf("error removing label for issue %s/%s#%d: %s", owner, repo, issueNumber, err)
 	}
 }
