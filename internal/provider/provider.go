@@ -93,7 +93,7 @@ func New(version string) func() *schema.Provider {
 					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
 					Description:  "The API key for operations. Alternatively, can be configured using the `CLOUDFLARE_API_KEY` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead.",
 					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
-					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must only contain characters 0-9 and a-f (all lowercased)"),
+					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)"),
 				},
 
 				"api_token": {
@@ -102,7 +102,7 @@ func New(version string) func() *schema.Provider {
 					DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
 					Description:  "The API Token for operations. Alternatively, can be configured using the `CLOUDFLARE_API_TOKEN` environment variable.",
 					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
-					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
+					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
 				},
 
 				"api_user_service_key": {
