@@ -160,7 +160,7 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 			Optional:    true,
 			Default:     false,
-			Description: "Whether or not to wait for a custom hostname SSL sub-object to reach status `pending_validation` during creation.",
+			Description: "Whether to wait for a custom hostname SSL sub-object to reach status `pending_validation` during creation.",
 		},
 	}
 }
