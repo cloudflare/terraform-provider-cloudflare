@@ -1,3 +1,3 @@
-```release-note:bug
-resource/cloudflare_pages_project: add defaults to deployment_config. Closes #1924
+```release-note:enhancement
+resource/cloudflare_pages_domain: add Pages project domain importer. Closes #1958
 ```
