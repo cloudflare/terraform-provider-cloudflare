@@ -194,13 +194,13 @@ Required:
 
 Optional:
 
-- `deployments_enabled` (Boolean) Toggle deployments on this repo.
+- `deployments_enabled` (Boolean) Toggle deployments on this repo. Defaults to `true`.
 - `owner` (String) Project owner username.
-- `pr_comments_enabled` (Boolean) Enable Pages to comment on Pull Requests.
+- `pr_comments_enabled` (Boolean) Enable Pages to comment on Pull Requests. Defaults to `true`.
 - `preview_branch_excludes` (List of String) Branches will be excluded from automatic deployment.
 - `preview_branch_includes` (List of String) Branches will be included for automatic deployment.
-- `preview_deployment_setting` (String) Preview Deployment Setting.
-- `production_deployment_enabled` (Boolean) Enable production deployments.
+- `preview_deployment_setting` (String) Preview Deployment Setting. Defaults to `all`.
+- `production_deployment_enabled` (Boolean) Enable production deployments. Defaults to `true`.
 - `repo_name` (String) Project repository name.
 
 ## Import
