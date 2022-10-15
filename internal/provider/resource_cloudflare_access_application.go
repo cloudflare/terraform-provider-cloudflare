@@ -52,6 +52,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:  cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		PrivateAddress:          d.Get("private_address").(string),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -133,6 +134,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("logo_url", accessApplication.LogoURL)
 	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
 	d.Set("service_auth_401_redirect", accessApplication.ServiceAuth401Redirect)
+	d.Set("private_address", accessApplication.PrivateAddress)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -169,6 +171,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:  cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		PrivateAddress:          d.Get("private_address").(string),
 	}
 
 	if appType != "saas" {

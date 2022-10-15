@@ -46,8 +46,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "bookmark"}, false),
-			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "saas", "ssh", "vnc", "bookmark"})),
+			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "bookmark", "private_ip"}, false),
+			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "saas", "ssh", "vnc", "bookmark", "private_ip"})),
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
@@ -212,6 +212,12 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Default:     false,
 			Description: "Option to return a 401 status code in service authentication rules on failed requests.",
+		},
+		"private_address": {
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.IsIPv4Address,
+			Description:  fmt.Sprintf("private_address"),
 		},
 	}
 }
