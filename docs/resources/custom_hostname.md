@@ -33,7 +33,7 @@ resource "cloudflare_custom_hostname" "example" {
 - `custom_origin_server` (String) The custom origin server used for certificates.
 - `custom_origin_sni` (String) The [custom origin SNI](https://developers.cloudflare.com/ssl/ssl-for-saas/hostname-specific-behavior/custom-origin) used for certificates.
 - `ssl` (Block List) SSL configuration of the certificate. (see [below for nested schema](#nestedblock--ssl))
-- `wait_for_ssl_pending_validation` (Boolean) Whether or not to wait for a custom hostname SSL sub-object to reach status `pending_validation` during creation. Defaults to `false`.
+- `wait_for_ssl_pending_validation` (Boolean) Whether to wait for a custom hostname SSL sub-object to reach status `pending_validation` during creation. Defaults to `false`.
 
 ### Read-Only
 
