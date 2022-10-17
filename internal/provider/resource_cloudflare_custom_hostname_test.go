@@ -435,6 +435,7 @@ func TestAccCloudflareCustomHostname_Import(t *testing.T) {
 					"ssl.0.status",
 					"ssl.0.type",
 					"ssl.0.wildcard",
+					"wait_for_ssl_pending_validation",
 				},
 			},
 		},
