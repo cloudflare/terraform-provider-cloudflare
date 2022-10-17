@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -134,6 +136,25 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 	newCertificate, err := client.CreateCustomHostname(ctx, zoneID, certificate)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to create custom hostname certificate"))
+	}
+
+	hostnameID := newCertificate.Result.ID
+
+	if d.Get("wait_for_ssl_pending_validation").(bool) {
+		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+			customHostname, err := client.CustomHostname(ctx, zoneID, hostnameID)
+			tflog.Debug(ctx, fmt.Sprintf("custom hostname ssl status %s", customHostname.SSL.Status))
+			if err != nil {
+				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch custom hostname"))
+			}
+			if customHostname.SSL != nil && customHostname.SSL.Status != "pending_validation" {
+				return resource.RetryableError(fmt.Errorf("hostname ssl sub-object is not yet in pending_validation status"))
+			}
+			return nil
+		})
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	d.SetId(newCertificate.Result.ID)
