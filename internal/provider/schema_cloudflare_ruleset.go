@@ -263,8 +263,8 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 											"sensitivity_level": {
 												Type:         schema.TypeString,
 												Optional:     true,
-												ValidateFunc: validation.StringInSlice([]string{"high", "medium", "low", "eoff"}, false),
-												Description:  fmt.Sprintf("Sensitivity level to override for all ruleset rules. %s", renderAvailableDocumentationValuesStringSlice([]string{"high", "medium", "low", "eoff"})),
+												ValidateFunc: validation.StringInSlice([]string{"default", "medium", "low", "eoff"}, false),
+												Description:  fmt.Sprintf("Sensitivity level to override for all ruleset rules. %s", renderAvailableDocumentationValuesStringSlice([]string{"default", "medium", "low", "eoff"})),
 											},
 											"categories": {
 												Type:        schema.TypeList,
