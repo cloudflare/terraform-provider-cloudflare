@@ -32,4 +32,9 @@ resource "cloudflare_pages_domain" "my-domain" {
 - `id` (String) The ID of this resource.
 - `status` (String) Status of the custom domain.
 
+## Import
 
+Import is supported using the following syntax:
+```shell
+$ terraform import cloudflare_pages_domain.example <account_id>/<project_name>/<domain-name>
+```
