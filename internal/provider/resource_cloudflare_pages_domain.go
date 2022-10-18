@@ -18,6 +18,9 @@ func resourceCloudflarePagesDomain() *schema.Resource {
 		CreateContext: resourceCloudflarePagesDomainCreate,
 		ReadContext:   resourceCloudflarePagesDomainRead,
 		DeleteContext: resourceCloudflarePagesDomainDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflarePagesDomainImport,
+		},
 		Description: heredoc.Doc(`
 			Provides a resource for managing Cloudflare Pages domains.
 		`),
@@ -85,34 +88,34 @@ func resourceCloudflarePagesDomainImport(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 
 	// split the id so we can look up
-	idAttr := strings.SplitN(d.Id(), "/", 2)
+	idAttr := strings.SplitN(d.Id(), "/", 3)
 	var accountID string
 	var projectName string
-	if len(idAttr) == 2 {
+	var domainName string
+	if len(idAttr) == 3 {
 		accountID = idAttr[0]
 		projectName = idAttr[1]
+		domainName = idAttr[2]
 	} else {
-		return nil, fmt.Errorf("invalid id %q specified, should be in format \"accountID/project-name\" for import", d.Id())
+		return nil, fmt.Errorf("invalid id %q specified, should be in format \"accountID/project-name/domain\" for import", d.Id())
 	}
 
-	domains, err := client.GetPagesDomains(ctx, cloudflare.PagesDomainsParameters{AccountID: accountID, ProjectName: projectName})
+	domain, err := client.GetPagesDomain(ctx, cloudflare.PagesDomainParameters{
+		AccountID:   accountID,
+		ProjectName: projectName,
+		DomainName:  domainName,
+	})
 	if err != nil {
-		return nil, fmt.Errorf("unable to find domains for project %q: %w", d.Id(), err)
+		return nil, fmt.Errorf("unable to find domain for project %q: %w", d.Id(), err)
 	}
 
-	tflog.Info(ctx, fmt.Sprintf("Found domains: %+v", domains))
+	tflog.Info(ctx, fmt.Sprintf("Found domain: %+v", domain))
 
-	resourceData := []*schema.ResourceData{}
+	d.SetId(domain.ID)
+	d.Set("account_id", accountID)
+	d.Set("project_name", projectName)
+	d.Set("domain", domain.Name)
+	resourceCloudflarePagesDomainRead(ctx, d, meta)
 
-	for _, domain := range domains {
-		d.SetId(domain.ID)
-		d.Set("account_id", accountID)
-		d.Set("project_name", projectName)
-		d.Set("domain", domain.Name)
-		resourceCloudflarePagesDomainRead(ctx, d, meta)
-
-		resourceData = append(resourceData, d)
-	}
-
-	return resourceData, nil
+	return []*schema.ResourceData{d}, nil
 }

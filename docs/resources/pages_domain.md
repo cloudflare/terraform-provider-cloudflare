@@ -36,5 +36,5 @@ resource "cloudflare_pages_domain" "my-domain" {
 
 Import is supported using the following syntax:
 ```shell
-$ terraform import cloudflare_pages_domain.example <account_id>/<project_name>
+$ terraform import cloudflare_pages_domain.example <account_id>/<project_name>/<domain-name>
 ```
