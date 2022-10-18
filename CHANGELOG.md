@@ -1,4 +1,6 @@
-## 3.26.0 (Unreleased)
+## 3.27.0 (Unreleased)
+
+## 3.26.0 (19th October, 2022)
 
 ENHANCEMENTS:
 
