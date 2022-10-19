@@ -1,22 +1,27 @@
-## 3.26.0 (Unreleased)
+## 3.27.0 (Unreleased)
+
+## 3.26.0 (19th October, 2022)
 
 ENHANCEMENTS:
 
 * resource/cloudflare_custom_hostname: Add `wait_for_ssl_pending_validation` attribute ([#1953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1953))
 * resource/cloudflare_device_posture_rule: Add chromeos and unique_client_id values ([#1950](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1950))
 * resource/cloudflare_load_balancer: Migrate to autogen docs, improve docs ([#1954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1954))
+* resource/cloudflare_pages_domain: add Pages project domain importer. ([#1973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1973))
 * resource/cloudflare_ruleset: add support for overriding sensitivity levels for ruleset rules ([#1965](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1965))
 
 BUG FIXES:
 
 * resource/cloudflare_byo_ip_prefix: set correct prefix ID for the byoip prefix during import. ([#1951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1951))
 * resource/cloudflare_custom_ssl: check GeoRestrictions is not nil before attempting to compare it ([#1964](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1964))
+* resource/cloudflare_pages_project: add defaults to Pages project deployment config ([#1973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1973))
 * resource/cloudflare_zone_settings_override: Fetch/modify `origin_max_http_version` as a single setting. ([#1805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1805))
 
 DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.51.0 to 0.52.0 ([#1962](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1962))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.23.0 to 2.24.0 ([#1969](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1969))
+* provider: bumps goreleaser/goreleaser-action from 3.1.0 to 3.2.0 ([#1977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1977))
 
 ## 3.25.0 (October 5th, 2022)
 
