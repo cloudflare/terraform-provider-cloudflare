@@ -253,6 +253,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_teams_location":                         resourceCloudflareTeamsLocation(),
 				"cloudflare_teams_proxy_endpoint":                   resourceCloudflareTeamsProxyEndpoint(),
 				"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
+				"cloudflare_total_tls":                              resourceCloudflareTotalTLS(),
 				"cloudflare_tunnel_route":                           resourceCloudflareTunnelRoute(),
 				"cloudflare_tunnel_virtual_network":                 resourceCloudflareTunnelVirtualNetwork(),
 				"cloudflare_user_agent_blocking_rule":               resourceCloudflareUserAgentBlockingRules(),
