@@ -1,5 +1,9 @@
 ## 3.27.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_access_organization` ([#1961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1961))
+
 ## 3.26.0 (19th October, 2022)
 
 ENHANCEMENTS:
