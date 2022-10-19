@@ -42,8 +42,8 @@ func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error 
 	}{
 		{field: "ID", stateValue: state.ID, expectedValue: accountID},
 		{field: "account_id", stateValue: attrs["account_id"], expectedValue: accountID},
-		{field: "name", stateValue: attrs["name"], expectedValue: "my test org"},
-		{field: "auth_domain", stateValue: attrs["auth_domain"], expectedValue: "authdomain.cloudflareaccess.com"},
+		{field: "name", stateValue: attrs["name"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
+		{field: "auth_domain", stateValue: attrs["auth_domain"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
 		{field: "login_design.#", stateValue: attrs["login_design.#"], expectedValue: "1"},
 	}
@@ -60,10 +60,10 @@ func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error 
 func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_access_organization" "%[1]s" {
-			account_id                = "%[2]s"
-			name                      = "my test org"
-			auth_domain               = "authdomain.cloudflareaccess.com"
-			is_ui_read_only           = false
+			account_id      = "%[2]s"
+			name            = "terraform-cfapi.cloudflareaccess.com"
+			auth_domain     = "terraform-cfapi.cloudflareaccess.com1"
+			is_ui_read_only = false
 
 			login_design {
 				background_color = "#FFFFFF"
