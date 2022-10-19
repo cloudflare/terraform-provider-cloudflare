@@ -4,6 +4,10 @@ FEATURES:
 
 * **New Resource:** `cloudflare_access_organization` ([#1961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1961))
 
+BUG FIXES:
+
+* resource/cloudflare_access_group: fix issue where policy groups were always showing a diff during plans ([#1983](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1983))
+
 ## 3.26.0 (19th October, 2022)
 
 ENHANCEMENTS:
