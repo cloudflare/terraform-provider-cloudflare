@@ -1,0 +1,4 @@
+```release-note:bug
+resource/cloudflare_access_group: fix issue where policy groups were always
+showing a diff during plans
+```

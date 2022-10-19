@@ -99,6 +99,7 @@ func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.Resource
 	}
 
 	d.SetId(accessGroup.ID)
+
 	return resourceCloudflareAccessGroupRead(ctx, d, meta)
 }
 
@@ -375,6 +376,14 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 // response and converts it to a usable schema for the conditions.
 func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{}) []map[string]interface{} {
 	data := []map[string]interface{}{}
+
+	if len(accessGroup) == 0 {
+		return data
+	}
+
+	everyone := false
+	anyValidServiceToken := false
+	certificate := false
 	emails := []string{}
 	emailDomains := []string{}
 	ips := []string{}
@@ -402,10 +411,12 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
 			switch groupKey {
-			case "everyone", "any_valid_service_token", "certificate":
-				data = append(data, map[string]interface{}{
-					groupKey: true,
-				})
+			case "everyone":
+				everyone = true
+			case "any_valid_service_token":
+				anyValidServiceToken = true
+			case "certificate":
+				certificate = true
 			case "email":
 				for _, email := range groupValue.(map[string]interface{}) {
 					emails = append(emails, email.(string))
@@ -479,126 +490,116 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 		}
 	}
 
+	groupMap := map[string]interface{}{}
+
+	if everyone {
+		groupMap["everyone"] = everyone
+	}
+
+	if anyValidServiceToken {
+		groupMap["any_valid_service_token"] = anyValidServiceToken
+	}
+
+	if certificate {
+		groupMap["certificate"] = certificate
+	}
+
 	if len(emails) > 0 {
-		data = append(data, map[string]interface{}{
-			"email": emails,
-		})
+		groupMap["email"] = emails
 	}
 
 	if len(emailDomains) > 0 {
-		data = append(data, map[string]interface{}{
-			"email_domain": emailDomains,
-		})
+		groupMap["email_domain"] = emailDomains
 	}
 
 	if len(ips) > 0 {
-		data = append(data, map[string]interface{}{
-			"ip": ips,
-		})
+		groupMap["ip"] = ips
 	}
 
 	if len(serviceTokens) > 0 {
-		data = append(data, map[string]interface{}{
-			"service_token": serviceTokens,
-		})
+		groupMap["service_token"] = serviceTokens
 	}
 
 	if commonName != "" {
-		data = append(data, map[string]interface{}{
-			"common_name": commonName,
-		})
+		groupMap["common_name"] = commonName
 	}
 
 	if authMethod != "" {
-		data = append(data, map[string]interface{}{
-			"auth_method": authMethod,
-		})
+		groupMap["auth_method"] = authMethod
 	}
 
 	if len(geos) > 0 {
-		data = append(data, map[string]interface{}{
-			"geo": geos,
-		})
+		groupMap["geo"] = geos
 	}
 
 	if len(loginMethod) > 0 {
-		data = append(data, map[string]interface{}{
-			"login_method": loginMethod,
-		})
+		groupMap["login_method"] = loginMethod
 	}
 
 	if len(oktaGroups) > 0 && oktaID != "" {
-		data = append(data, map[string]interface{}{
-			"okta": []interface{}{
-				map[string]interface{}{
-					"identity_provider_id": oktaID,
-					"name":                 oktaGroups,
-				}},
-		})
+		groupMap["okta"] = []interface{}{
+			map[string]interface{}{
+				"identity_provider_id": oktaID,
+				"name":                 oktaGroups,
+			},
+		}
 	}
 
 	if len(gsuiteEmails) > 0 && gsuiteID != "" {
-		data = append(data, map[string]interface{}{
-			"gsuite": []interface{}{
-				map[string]interface{}{
-					"identity_provider_id": gsuiteID,
-					"email":                gsuiteEmails,
-				}},
-		})
+		groupMap["gsuite"] = []interface{}{
+			map[string]interface{}{
+				"identity_provider_id": gsuiteID,
+				"email":                gsuiteEmails,
+			},
+		}
 	}
 
 	if githubID != "" && githubName != "" {
-		data = append(data, map[string]interface{}{
-			"github": []interface{}{
-				map[string]interface{}{
-					"name":                 githubName,
-					"teams":                githubTeams,
-					"identity_provider_id": githubID,
-				}},
-		})
+		groupMap["github"] = []interface{}{
+			map[string]interface{}{
+				"name":                 githubName,
+				"teams":                githubTeams,
+				"identity_provider_id": githubID,
+			},
+		}
 	}
 
 	if len(azureIDs) > 0 && azureID != "" {
-		data = append(data, map[string]interface{}{
-			"azure": []interface{}{
-				map[string]interface{}{
-					"identity_provider_id": azureID,
-					"id":                   azureIDs,
-				}},
-		})
+		groupMap["azure"] = []interface{}{
+			map[string]interface{}{
+				"identity_provider_id": azureID,
+				"id":                   azureIDs,
+			},
+		}
 	}
 
 	if samlAttrName != "" && samlAttrValue != "" {
-		data = append(data, map[string]interface{}{
-			"saml": []interface{}{
-				map[string]interface{}{
-					"attribute_name":  samlAttrName,
-					"attribute_value": samlAttrValue,
-				}},
-		})
+		groupMap["saml"] = []interface{}{
+			map[string]interface{}{
+				"attribute_name":  samlAttrName,
+				"attribute_value": samlAttrValue,
+			},
+		}
 	}
 
 	if externalEvaluationURL != "" && externalEvaluationKeysURL != "" {
-		data = append(data, map[string]interface{}{
-			"external_evaluation": []interface{}{
-				map[string]interface{}{
-					"evaluate_url": externalEvaluationURL,
-					"keys_url":     externalEvaluationKeysURL,
-				}},
-		})
+		groupMap["external_evaluation"] = []interface{}{
+			map[string]interface{}{
+				"evaluate_url": externalEvaluationURL,
+				"keys_url":     externalEvaluationKeysURL,
+			},
+		}
 	}
 
 	if len(groups) > 0 {
-		data = append(data, map[string]interface{}{
-			"group": groups,
-		})
+		groupMap["group"] = groups
 	}
 
 	if len(devicePostureRuleIDs) > 0 {
-		data = append(data, map[string]interface{}{
-			"device_posture": devicePostureRuleIDs,
-		})
+		groupMap["device_posture"] = devicePostureRuleIDs
 	}
+
+	data = append(data, groupMap)
 
 	return data
 }
