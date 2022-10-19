@@ -14,7 +14,7 @@ func resourceCloudflareTotalTLSSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 		"enabled": {
-			Description: "Enable TOTAL TLS for the zone.",
+			Description: "Enable Total TLS for the zone.",
 			Type:        schema.TypeBool,
 			Required:    true,
 		},
