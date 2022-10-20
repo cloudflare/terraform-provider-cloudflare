@@ -2,9 +2,11 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,7 +25,11 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessIdentityProviderImport,
 		},
-		Description: "Provides a Cloudflare Access Identity Provider resource. Identity Providers are used as an authentication or authorisation source within Access.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Identity Provider resource. Identity
+			Providers are used as an authentication or authorisation source
+			within Access.
+		`),
 	}
 }
 
@@ -42,7 +48,8 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(ctx, identifier.Value, d.Id())
 	}
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Access Identity Provider %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

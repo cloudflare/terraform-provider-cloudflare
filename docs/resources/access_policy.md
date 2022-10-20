@@ -2,12 +2,16 @@
 page_title: "cloudflare_access_policy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare Access Policy resource. Access Policies are used in conjunction with Access Applications to restrict access to a particular resource.
+  Provides a Cloudflare Access Policy resource. Access Policies are
+  used in conjunction with Access Applications to restrict access to
+  a particular resource.
 ---
 
 # cloudflare_access_policy (Resource)
 
-Provides a Cloudflare Access Policy resource. Access Policies are used in conjunction with Access Applications to restrict access to a particular resource.
+Provides a Cloudflare Access Policy resource. Access Policies are
+used in conjunction with Access Applications to restrict access to
+a particular resource.
 
 ~> It's required that an `account_id` or `zone_id` is provided and in
 most cases using either is fine. However, if you're using a scoped
@@ -71,7 +75,7 @@ resource "cloudflare_access_policy" "test_policy" {
 - `approval_group` (Block List) (see [below for nested schema](#nestedblock--approval_group))
 - `approval_required` (Boolean)
 - `exclude` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--exclude))
-- `purpose_justification_prompt` (String) The prompt to display to the user for a justification for accessing the resource.
+- `purpose_justification_prompt` (String) The prompt to display to the user for a justification for accessing the resource. Required when using `purpose_justification_required`.
 - `purpose_justification_required` (Boolean) Whether to prompt the user for a justification for accessing the resource.
 - `require` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--require))
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.

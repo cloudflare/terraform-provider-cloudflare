@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,14 +40,15 @@ func resourceCloudflareRuleset() *schema.Resource {
 				Version: 0,
 			},
 		},
-		Description: `
-The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
-allows you to create and deploy rules and rulesets.
-The engine syntax, inspired by the Wireshark Display Filter language, is the
-same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
-in different products, allowing you to configure several products using the same
-basic syntax.
-`,
+		Description: heredoc.Doc(`
+			The [Cloudflare Ruleset Engine](https://developers.cloudflare.com/firewall/cf-rulesets)
+			allows you to create and deploy rules and rulesets.
+
+			The engine syntax, inspired by the Wireshark Display Filter language, is the
+			same syntax used in custom Firewall Rules. Cloudflare uses the Ruleset Engine
+			in different products, allowing you to configure several products using the same
+			basic syntax.
+		`),
 	}
 }
 
@@ -247,6 +249,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				matchedData            []map[string]interface{}
 				response               []map[string]interface{}
 				origin                 []map[string]interface{}
+				sni                    []map[string]interface{}
 				requestFields          []string
 				responseFields         []string
 				cookieFields           []string
@@ -255,6 +258,11 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				serveStaleFields       []map[string]interface{}
 				cacheKeyFields         []map[string]interface{}
 				fromListFields         []map[string]interface{}
+				fromValueFields        []map[string]interface{}
+				autoMinifyFields       []map[string]interface{}
+				polishSetting          string
+				sslSetting             string
+				securityLevel          string
 			)
 			actionParameterRules := make(map[string]string)
 
@@ -278,10 +286,11 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				}
 
 				overrides = append(overrides, map[string]interface{}{
-					"categories": categoryBasedOverrides,
-					"rules":      idBasedOverrides,
-					"status":     apiEnabledToStatusFieldConversion(r.ActionParameters.Overrides.Enabled),
-					"action":     r.ActionParameters.Overrides.Action,
+					"categories":        categoryBasedOverrides,
+					"rules":             idBasedOverrides,
+					"status":            apiEnabledToStatusFieldConversion(r.ActionParameters.Overrides.Enabled),
+					"action":            r.ActionParameters.Overrides.Action,
+					"sensitivity_level": r.ActionParameters.Overrides.SensitivityLevel,
 				})
 			}
 
@@ -355,6 +364,12 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				origin = append(origin, map[string]interface{}{
 					"host": r.ActionParameters.Origin.Host,
 					"port": r.ActionParameters.Origin.Port,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.SNI).IsNil() {
+				sni = append(sni, map[string]interface{}{
+					"value": r.ActionParameters.SNI.Value,
 				})
 			}
 
@@ -491,10 +506,41 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			}
 
 			if !reflect.ValueOf(r.ActionParameters.FromList).IsNil() {
-				fromListFields = append(origin, map[string]interface{}{
+				fromListFields = append(fromListFields, map[string]interface{}{
 					"name": r.ActionParameters.FromList.Name,
 					"key":  r.ActionParameters.FromList.Key,
 				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.FromValue).IsNil() {
+				fromValueFields = append(fromValueFields, map[string]interface{}{
+					"status_code": r.ActionParameters.FromValue.StatusCode,
+					"target_url": []interface{}{map[string]interface{}{
+						"value":      r.ActionParameters.FromValue.TargetURL.Value,
+						"expression": r.ActionParameters.FromValue.TargetURL.Expression,
+					}},
+					"preserve_query_string": r.ActionParameters.FromValue.PreserveQueryString,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.AutoMinify).IsNil() {
+				autoMinifyFields = append(autoMinifyFields, map[string]interface{}{
+					"html": r.ActionParameters.AutoMinify.HTML,
+					"css":  r.ActionParameters.AutoMinify.CSS,
+					"js":   r.ActionParameters.AutoMinify.JS,
+				})
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.Polish).IsNil() {
+				polishSetting = r.ActionParameters.Polish.String()
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.SecurityLevel).IsNil() {
+				securityLevel = r.ActionParameters.SecurityLevel.String()
+			}
+
+			if !reflect.ValueOf(r.ActionParameters.SecurityLevel).IsNil() {
+				sslSetting = r.ActionParameters.SSL.String()
 			}
 
 			actionParameters = append(actionParameters, map[string]interface{}{
@@ -512,11 +558,12 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"response":                   response,
 				"version":                    r.ActionParameters.Version,
 				"host_header":                r.ActionParameters.HostHeader,
+				"sni":                        sni,
 				"origin":                     origin,
 				"request_fields":             requestFields,
 				"response_fields":            responseFields,
 				"cookie_fields":              cookieFields,
-				"bypass_cache":               r.ActionParameters.BypassCache,
+				"cache":                      r.ActionParameters.Cache,
 				"edge_ttl":                   edgeTTLFields,
 				"browser_ttl":                browserTTLFields,
 				"serve_stale":                serveStaleFields,
@@ -524,6 +571,26 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				"cache_key":                  cacheKeyFields,
 				"origin_error_page_passthru": r.ActionParameters.OriginErrorPagePassthru,
 				"from_list":                  fromListFields,
+				"from_value":                 fromValueFields,
+				"content":                    r.ActionParameters.Content,
+				"content_type":               r.ActionParameters.ContentType,
+				"status_code":                r.ActionParameters.StatusCode,
+				"automatic_https_rewrites":   r.ActionParameters.AutomaticHTTPSRewrites,
+				"autominify":                 autoMinifyFields,
+				"bic":                        r.ActionParameters.BrowserIntegrityCheck,
+				"disable_apps":               r.ActionParameters.DisableApps,
+				"disable_zaraz":              r.ActionParameters.DisableZaraz,
+				"disable_railgun":            r.ActionParameters.DisableRailgun,
+				"email_obfuscation":          r.ActionParameters.EmailObfuscation,
+				"mirage":                     r.ActionParameters.Mirage,
+				"opportunistic_encryption":   r.ActionParameters.OpportunisticEncryption,
+				"polish":                     polishSetting,
+				"rocket_loader":              r.ActionParameters.RocketLoader,
+				"security_level":             securityLevel,
+				"server_side_excludes":       r.ActionParameters.ServerSideExcludes,
+				"ssl":                        sslSetting,
+				"sxg":                        r.ActionParameters.SXG,
+				"hotlink_protection":         r.ActionParameters.HotLinkProtection,
 			})
 
 			rule["action_parameters"] = actionParameters
@@ -659,6 +726,10 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 								overrideConfiguration.Action = val.(string)
 							}
 
+							if val, ok := overrideParamValue.(map[string]interface{})["sensitivity_level"]; ok {
+								overrideConfiguration.SensitivityLevel = val.(string)
+							}
+
 							// Category based overrides
 							if val, ok := overrideParamValue.(map[string]interface{})["categories"]; ok {
 								for categoryCounter, category := range val.([]interface{}) {
@@ -761,6 +832,15 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 
 						rule.ActionParameters.Headers = headers
 
+					case "content":
+						rule.ActionParameters.Content = pValue.(string)
+
+					case "content_type":
+						rule.ActionParameters.ContentType = pValue.(string)
+
+					case "status_code":
+						rule.ActionParameters.StatusCode = uint16(pValue.(int))
+
 					case "host_header":
 						rule.ActionParameters.HostHeader = pValue.(string)
 
@@ -771,10 +851,87 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 								Port: uint16(pValue.([]interface{})[i].(map[string]interface{})["port"].(int)),
 							}
 						}
+					case "automatic_https_rewrites":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.automatic_https_rewrites", rulesCounter)); ok {
+							rule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(value.(bool))
+						}
+					case "autominify":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.AutoMinify = &cloudflare.RulesetRuleActionParametersAutoMinify{
+								HTML: pValue.([]interface{})[i].(map[string]interface{})["html"].(bool),
+								CSS:  pValue.([]interface{})[i].(map[string]interface{})["css"].(bool),
+								JS:   pValue.([]interface{})[i].(map[string]interface{})["js"].(bool),
+							}
+						}
 
-					case "bypass_cache":
-						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.bypass_cache", rulesCounter)); ok {
-							rule.ActionParameters.BypassCache = cloudflare.BoolPtr(value.(bool))
+					case "bic":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.bic", rulesCounter)); ok {
+							rule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(value.(bool))
+						}
+					case "disable_apps":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_apps", rulesCounter)); ok {
+							rule.ActionParameters.DisableApps = cloudflare.BoolPtr(value.(bool))
+						}
+					case "disable_zaraz":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_zaraz", rulesCounter)); ok {
+							rule.ActionParameters.DisableZaraz = cloudflare.BoolPtr(value.(bool))
+						}
+					case "disable_railgun":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_zaraz", rulesCounter)); ok {
+							rule.ActionParameters.DisableRailgun = cloudflare.BoolPtr(value.(bool))
+						}
+					case "email_obfuscation":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.email_obfuscation", rulesCounter)); ok {
+							rule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(value.(bool))
+						}
+					case "mirage":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.mirage", rulesCounter)); ok {
+							rule.ActionParameters.Mirage = cloudflare.BoolPtr(value.(bool))
+						}
+					case "opportunistic_encryption":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.opportunistic_encryption", rulesCounter)); ok {
+							rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(value.(bool))
+						}
+					case "polish":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.polish", rulesCounter)); ok {
+							p, _ := cloudflare.PolishFromString(value.(string))
+							rule.ActionParameters.Polish = p
+						}
+					case "rocket_loader":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.rocket_loader", rulesCounter)); ok {
+							rule.ActionParameters.RocketLoader = cloudflare.BoolPtr(value.(bool))
+						}
+					case "security_level":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.security_level", rulesCounter)); ok {
+							sl, _ := cloudflare.SecurityLevelFromString(value.(string))
+							rule.ActionParameters.SecurityLevel = sl
+						}
+					case "server_side_excludes":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.server_side_excludes", rulesCounter)); ok {
+							rule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(value.(bool))
+						}
+					case "ssl":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.ssl", rulesCounter)); ok {
+							ssl, _ := cloudflare.SSLFromString(value.(string))
+							rule.ActionParameters.SSL = ssl
+						}
+					case "sxg":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.sxg", rulesCounter)); ok {
+							rule.ActionParameters.SXG = cloudflare.BoolPtr(value.(bool))
+						}
+					case "hotlink_protection":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.hotlink_protection", rulesCounter)); ok {
+							rule.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(value.(bool))
+						}
+					case "sni":
+						for i := range pValue.([]interface{}) {
+							rule.ActionParameters.SNI = &cloudflare.RulesetRuleActionParametersSni{
+								Value: pValue.([]interface{})[i].(map[string]interface{})["value"].(string),
+							}
+						}
+					case "cache":
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache", rulesCounter)); ok {
+							rule.ActionParameters.Cache = cloudflare.BoolPtr(value.(bool))
 						}
 
 					case "edge_ttl":
@@ -1052,6 +1209,27 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.FromList = &cloudflare.RulesetRuleActionParametersFromList{
 								Name: pValue.([]interface{})[i].(map[string]interface{})["name"].(string),
 								Key:  pValue.([]interface{})[i].(map[string]interface{})["key"].(string),
+							}
+						}
+
+					case "from_value":
+						for i := range pValue.([]interface{}) {
+							var targetURL cloudflare.RulesetRuleActionParametersTargetURL
+							for _, pValue := range pValue.([]interface{})[i].(map[string]interface{})["target_url"].([]interface{}) {
+								for pKey, pValue := range pValue.(map[string]interface{}) {
+									switch pKey {
+									case "value":
+										targetURL.Value = pValue.(string)
+									case "expression":
+										targetURL.Expression = pValue.(string)
+									}
+								}
+							}
+
+							rule.ActionParameters.FromValue = &cloudflare.RulesetRuleActionParametersFromValue{
+								StatusCode:          uint16(pValue.([]interface{})[i].(map[string]interface{})["status_code"].(int)),
+								TargetURL:           targetURL,
+								PreserveQueryString: pValue.([]interface{})[i].(map[string]interface{})["preserve_query_string"].(bool),
 							}
 						}
 

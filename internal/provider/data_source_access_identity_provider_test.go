@@ -119,19 +119,20 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 
 func testAccCheckCloudflareAccessIdentityProviderDataSourceGitHub(accountID, name string) string {
 	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name = "%[1]s"
-}
-
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-  name = "%[1]s"
-  type = "github"
-  config {
-    client_id = "test"
-    client_secret = "secret"
+	resource "cloudflare_access_identity_provider" "%[1]s" {
+		account_id = "%[2]s"
+	  name = "%[1]s"
+	  type = "github"
+	  config {
+		client_id = "test"
+		client_secret = "secret"
+		}
 	}
-}
+
+	data "cloudflare_access_identity_provider" "%[1]s" {
+		account_id = "%[2]s"
+		name = "%[1]s"
+		depends_on = [cloudflare_access_identity_provider.%[1]s]
+	}
 	`, name, accountID)
 }

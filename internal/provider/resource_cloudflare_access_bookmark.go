@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,7 +23,12 @@ func resourceCloudflareAccessBookmark() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessBookmarkImport,
 		},
-		Description: "Provides a Cloudflare Access Bookmark resource. Access Bookmark applications are not protected behind Access but are displayed in the App Launcher.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Bookmark resource. Access Bookmark
+			applications are not protected behind Access but are displayed in
+			the App Launcher.
+		`),
+		DeprecationMessage: "This resource is deprecated in favor of the cloudflare_access_application resource: https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_application.",
 	}
 }
 
@@ -33,7 +39,7 @@ func resourceCloudflareAccessBookmarkCreate(ctx context.Context, d *schema.Resou
 		Name:               d.Get("name").(string),
 		Domain:             d.Get("domain").(string),
 		LogoURL:            d.Get("logo_url").(string),
-		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
+		AppLauncherVisible: cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Bookmark from struct: %+v", newAccessBookmark))
@@ -74,7 +80,8 @@ func resourceCloudflareAccessBookmarkRead(ctx context.Context, d *schema.Resourc
 	}
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Access Bookmark %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
@@ -98,7 +105,7 @@ func resourceCloudflareAccessBookmarkUpdate(ctx context.Context, d *schema.Resou
 		Name:               d.Get("name").(string),
 		Domain:             d.Get("domain").(string),
 		LogoURL:            d.Get("logo_url").(string),
-		AppLauncherVisible: d.Get("app_launcher_visible").(bool),
+		AppLauncherVisible: cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Bookmark from struct: %+v", updatedAccessBookmark))

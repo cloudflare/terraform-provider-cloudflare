@@ -2,12 +2,14 @@
 page_title: "cloudflare_list Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides Lists (IPs, Redirects) to be used in Edge Rules Engine across all zones within the same account.
+  Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
+  across all zones within the same account.
 ---
 
 # cloudflare_list (Resource)
 
-Provides Lists (IPs, Redirects) to be used in Edge Rules Engine across all zones within the same account.
+Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
+across all zones within the same account.
 
 ## Example Usage
 

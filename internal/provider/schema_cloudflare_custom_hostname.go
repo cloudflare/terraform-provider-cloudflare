@@ -155,5 +155,12 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 				Computed: true,
 			},
 		},
+		"wait_for_ssl_pending_validation": {
+			Type:        schema.TypeBool,
+			ForceNew:    true,
+			Optional:    true,
+			Default:     false,
+			Description: "Whether to wait for a custom hostname SSL sub-object to reach status `pending_validation` during creation.",
+		},
 	}
 }

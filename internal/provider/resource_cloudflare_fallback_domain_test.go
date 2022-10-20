@@ -29,7 +29,7 @@ func TestAccCloudflareFallbackDomain(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{

@@ -36,7 +36,7 @@ func testSweepCloudflareLoadBalancerMonitors(r string) error {
 	}
 
 	client.AccountID = accountID
-	monitors, err := client.ListLoadBalancerMonitors(ctx)
+	monitors, err := client.ListLoadBalancerMonitors(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.ListLoadBalancerMonitorParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancer Monitors: %s", err))
 	}
@@ -49,7 +49,7 @@ func testSweepCloudflareLoadBalancerMonitors(r string) error {
 	for _, monitor := range monitors {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Monitor ID: %s", monitor.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancerPool(ctx, monitor.ID)
+		client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(client.AccountID), monitor.ID)
 	}
 
 	return nil
@@ -273,6 +273,34 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 	})
 }
 
+func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *testing.T) {
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerMonitorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "header.0.header", "Host"),
+					resource.TestCheckResourceAttr(name, "header.0.values.0", domain),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, fmt.Sprintf("%s.%s", rnd, domain)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "header.0.header", "Host"),
+					resource.TestCheckResourceAttr(name, "header.0.values.0", fmt.Sprintf("%s.%s", rnd, domain)),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
@@ -281,7 +309,7 @@ func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error 
 			continue
 		}
 
-		_, err := client.LoadBalancerMonitorDetails(context.Background(), rs.Primary.ID)
+		_, err := client.GetLoadBalancerMonitor(context.Background(), cloudflare.AccountIdentifier(client.AccountID), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Load balancer monitor still exists")
 		}
@@ -302,7 +330,7 @@ func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancerMonitor, err := client.LoadBalancerMonitorDetails(context.Background(), rs.Primary.ID)
+		foundLoadBalancerMonitor, err := client.GetLoadBalancerMonitor(context.Background(), cloudflare.AccountIdentifier(client.AccountID), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -342,7 +370,7 @@ func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerMonitor.ID
-		err := client.DeleteLoadBalancerMonitor(context.Background(), loadBalancerMonitor.ID)
+		err := client.DeleteLoadBalancerMonitor(context.Background(), cloudflare.AccountIdentifier(client.AccountID), loadBalancerMonitor.ID)
 		if err != nil {
 			return err
 		}
@@ -377,6 +405,25 @@ resource "cloudflare_load_balancer_monitor" "test" {
     values = ["%[1]s"]
   }
 }`, zoneName)
+}
+
+func testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, hostname string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_monitor" "%[1]s" {
+  expected_body = "dead"
+  expected_codes = "5xx"
+  method = "HEAD"
+  timeout = 9
+  path = "/custom"
+  interval = 60
+  retries = 5
+  port = 8080
+  description = "this is a very weird load balancer"
+  header {
+    header = "Host"
+    values = ["%[2]s"]
+  }
+}`, rnd, hostname)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(resourceName string) string {

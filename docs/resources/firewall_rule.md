@@ -2,17 +2,23 @@
 page_title: "cloudflare_firewall_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Define Firewall rules using filter expressions for more control over how traffic is matched to the rule.
-  A filter expression permits selecting traffic by multiple criteria allowing greater freedom in rule creation.
-  Filter expressions needs to be created first before using Firewall Rule.
+  Define Firewall rules using filter expressions for more control over
+  how traffic is matched to the rule. A filter expression permits
+  selecting traffic by multiple criteria allowing greater freedom in
+  rule creation.
+  Filter expressions needs to be created first before using Firewall
+  Rule.
 ---
 
 # cloudflare_firewall_rule (Resource)
 
-Define Firewall rules using filter expressions for more control over how traffic is matched to the rule.
-A filter expression permits selecting traffic by multiple criteria allowing greater freedom in rule creation.
+Define Firewall rules using filter expressions for more control over
+how traffic is matched to the rule. A filter expression permits
+selecting traffic by multiple criteria allowing greater freedom in
+rule creation.
 
-Filter expressions needs to be created first before using Firewall Rule.
+Filter expressions needs to be created first before using Firewall
+Rule.
 
 ~> If you want to configure Custom Firewall rules, you need to use
 `cloudflare_ruleset`, because Custom Rules are built upon the

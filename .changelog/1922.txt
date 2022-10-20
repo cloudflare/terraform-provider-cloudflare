@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bumps actions/stale from 5 to 6
+```

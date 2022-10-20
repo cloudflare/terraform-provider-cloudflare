@@ -255,7 +255,6 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
 					testAccCheckCloudflarePageRuleRecreated(&before, &after),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/updated", target)),
-					resource.TestCheckResourceAttr(resourceName, "actions.0.always_online", "off"),
 					resource.TestCheckResourceAttr(resourceName, "actions.0.browser_check", "on"),
 					resource.TestCheckResourceAttr(resourceName, "actions.0.rocket_loader", "on"),
 					resource.TestCheckResourceAttr(resourceName, "actions.0.ssl", "strict"),
@@ -804,15 +803,6 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 		// this covers on/off attribute types and setting enum-type strings
 
 		actionMap := pageRuleActionsToMap(pageRule.Actions)
-
-		if val, ok := actionMap["always_online"]; ok {
-			if _, ok := val.(string); !ok || val != "on" { // lots of booleans get mapped to on/off at api
-				return fmt.Errorf("'always_online' not specified correctly at api, found: '%v'", val)
-			}
-		} else {
-			return fmt.Errorf("'always_online' not specified at api")
-		}
-
 		if val, ok := actionMap["ssl"]; ok {
 			if _, ok := val.(string); !ok || val != "flexible" {
 				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
@@ -821,7 +811,7 @@ func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule
 			return fmt.Errorf("'ssl' not specified at api")
 		}
 
-		if len(pageRule.Actions) != 2 {
+		if len(pageRule.Actions) != 1 {
 			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 2, len(pageRule.Actions), pageRule.Actions)
 		}
 
@@ -835,14 +825,6 @@ func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 
 		if _, ok := actionMap["disable_apps"]; ok {
 			return fmt.Errorf("'disable_apps' found at api, but we should have removed it")
-		}
-
-		if val, ok := actionMap["always_online"]; ok {
-			if _, ok := val.(string); !ok || val != "off" { // lots of booleans get mapped to on/off at api
-				return fmt.Errorf("'always_online' not specified correctly at api, found: '%v'", val)
-			}
-		} else {
-			return fmt.Errorf("'always_online' not specified at api")
 		}
 
 		if val, ok := actionMap["browser_check"]; ok {
@@ -869,7 +851,7 @@ func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRu
 			return fmt.Errorf("'rocket_loader' not specified at api")
 		}
 
-		if len(pageRule.Actions) != 4 {
+		if len(pageRule.Actions) != 3 {
 			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 4, len(pageRule.Actions), pageRule.Actions)
 		}
 
@@ -942,7 +924,6 @@ resource "cloudflare_page_rule" "%[3]s" {
 	zone_id = "%[1]s"
 	target = "%[2]s"
 	actions {
-		always_online = "on"
 		ssl = "flexible"
 	}
 }`, zoneID, target, rnd)
@@ -954,7 +935,6 @@ resource "cloudflare_page_rule" "%[3]s" {
 	zone_id = "%[1]s"
 	target = "%[2]s/updated"
 	actions {
-		always_online = "off"
 		browser_check = "on"
 		ssl = "strict"
 		rocket_loader = "on"
@@ -968,7 +948,6 @@ resource "cloudflare_page_rule" "%[3]s" {
 	zone_id = "%[1]s"
 	target = "%[2]s"
 	actions {
-		always_online = "on"
 		browser_check = "on"
 		browser_cache_ttl = 0
 		email_obfuscation = "on"
@@ -1031,7 +1010,6 @@ resource "cloudflare_page_rule" "%[3]s" {
 	zone_id = "%[1]s"
 	target = "%[2]s"
 	actions {
-		always_online = "on"
 		ssl = "flexible"
 		edge_cache_ttl = 10
 	}
@@ -1044,7 +1022,6 @@ resource "cloudflare_page_rule" "%[3]s" {
 	zone_id = "%[1]s"
 	target = "%[2]s"
 	actions {
-		always_online = "on"
 		edge_cache_ttl = 10
 	}
 }`, zoneID, target, rnd)

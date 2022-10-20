@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -109,7 +110,8 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 	case aopType == "per-zone":
 		record, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, certID)
 		if err != nil {
-			if strings.Contains(err.Error(), "HTTP status 404") {
+			var notFoundError *cloudflare.NotFoundError
+			if errors.As(err, &notFoundError) {
 				tflog.Info(ctx, fmt.Sprintf("Per-Zone Authenticated Origin Pull certificate %s no longer exists", d.Id()))
 				d.SetId("")
 				return nil
@@ -124,7 +126,8 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx context.Conte
 	case aopType == "per-hostname":
 		record, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, certID)
 		if err != nil {
-			if strings.Contains(err.Error(), "HTTP status 404") {
+			var notFoundError *cloudflare.NotFoundError
+			if errors.As(err, &notFoundError) {
 				tflog.Info(ctx, fmt.Sprintf("Per-Hostname Authenticated Origin Pull certificate %s no longer exists", d.Id()))
 				d.SetId("")
 				return nil

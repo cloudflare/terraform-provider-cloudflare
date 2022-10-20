@@ -2,12 +2,14 @@
 page_title: "cloudflare_certificate_pack Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare Certificate Pack resource that is used to provision managed TLS certificates.
+  Provides a Cloudflare Certificate Pack resource that is used to
+  provision managed TLS certificates.
 ---
 
 # cloudflare_certificate_pack (Resource)
 
-Provides a Cloudflare Certificate Pack resource that is used to provision managed TLS certificates.
+Provides a Cloudflare Certificate Pack resource that is used to
+provision managed TLS certificates.
 
 ~> Certificate packs are not able to be updated in place and if
 you require a zero downtime rotation, you need to use Terraform's meta-arguments

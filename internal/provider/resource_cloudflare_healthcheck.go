@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -29,7 +30,10 @@ func resourceCloudflareHealthcheck() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Second),
 		},
-		Description: "Standalone Health Checks provide a way to monitor origin servers without needing a Cloudflare Load Balancer.",
+		Description: heredoc.Doc(`
+			Standalone Health Checks provide a way to monitor origin servers
+			without needing a Cloudflare Load Balancer.
+		`),
 	}
 }
 

@@ -31,23 +31,28 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *sc
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
 
 	var checksum string
-	switch isEnabled, ok := d.GetOk("enabled"); ok {
+	isEnabled := false
+	if enabledVal, ok := d.GetOk("enabled"); ok {
+		// if enabled is not the zero val, use that
+		isEnabled = enabledVal.(bool)
+	}
+	switch {
 	case hostname != "" && aopCert != "":
 		// Per Hostname AOP
 		conf := []cloudflare.PerHostnameAuthenticatedOriginPullsConfig{{
 			CertID:   aopCert,
 			Hostname: hostname,
-			Enabled:  isEnabled.(bool),
+			Enabled:  isEnabled,
 		}}
 		_, err := client.EditPerHostnameAuthenticatedOriginPullsConfig(ctx, zoneID, conf)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error creating Per-Hostname Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
+			return diag.FromErr(fmt.Errorf("error creating Per-Hostname Authenticated Origin Pulls resource on zone %q for hostname %s: %w", zoneID, hostname, err))
 		}
 		checksum = stringChecksum(fmt.Sprintf("PerHostnameAOP/%s/%s/%s", zoneID, hostname, aopCert))
 
 	case aopCert != "":
 		// Per Zone AOP
-		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(ctx, zoneID, isEnabled.(bool))
+		_, err := client.SetPerZoneAuthenticatedOriginPullsStatus(ctx, zoneID, isEnabled)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error creating Per-Zone Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}
@@ -55,7 +60,7 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *sc
 
 	default:
 		// Global AOP
-		_, err := client.SetAuthenticatedOriginPullsStatus(ctx, zoneID, isEnabled.(bool))
+		_, err := client.SetAuthenticatedOriginPullsStatus(ctx, zoneID, isEnabled)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error creating Global Authenticated Origin Pulls resource on zone %q: %w", zoneID, err))
 		}

@@ -2,10 +2,12 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -32,7 +34,11 @@ func resourceCloudflareAccessRule() *schema.Resource {
 				Version: 0,
 			},
 		},
-		Description: "Provides a Cloudflare IP Firewall Access Rule resource. Access control can be applied on basis of IP addresses, IP ranges, AS numbers or countries.",
+		Description: heredoc.Doc(`
+			Provides a Cloudflare IP Firewall Access Rule resource. Access
+			control can be applied on basis of IP addresses, IP ranges, AS
+			numbers or countries.
+		`),
 	}
 }
 
@@ -99,7 +105,8 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 	tflog.Debug(ctx, fmt.Sprintf("accessRuleResponse error: %#v", err))
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Access Rule %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

@@ -2,12 +2,16 @@
 page_title: "cloudflare_access_identity_provider Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare Access Identity Provider resource. Identity Providers are used as an authentication or authorisation source within Access.
+  Provides a Cloudflare Access Identity Provider resource. Identity
+  Providers are used as an authentication or authorisation source
+  within Access.
 ---
 
 # cloudflare_access_identity_provider (Resource)
 
-Provides a Cloudflare Access Identity Provider resource. Identity Providers are used as an authentication or authorisation source within Access.
+Provides a Cloudflare Access Identity Provider resource. Identity
+Providers are used as an authentication or authorisation source
+within Access.
 
 ~> It's required that an `account_id` or `zone_id` is provided and in
 most cases using either is fine. However, if you're using a scoped

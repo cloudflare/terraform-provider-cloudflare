@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,16 +25,18 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareLogpushJobImport,
 		},
-		Description: `
-		Provides a resource which manages Cloudflare Logpush jobs. For Logpush jobs pushing to Amazon S3, Google Cloud Storage,
-Microsoft Azure or Sumo Logic, this resource cannot be automatically created. In order to have this automated, you must
-have:
+		Description: heredoc.Doc(`
+			Provides a resource which manages Cloudflare Logpush jobs. For
+			Logpush jobs pushing to Amazon S3, Google Cloud Storage, Microsoft
+			Azure or Sumo Logic, this resource cannot be automatically created.
+			In order to have this automated, you must have:
 
-- ` + "`cloudflare_logpush_ownership_challenge`" + `: Configured to generate the challenge
-  to confirm ownership of the destination.
-- Either manual inspection or another Terraform Provider to get the contents of
-  the ` + "`ownership_challenge_filename`" + ` value from the` + "`cloudflare_logpush_ownership_challenge`" + ` resource.
-- ` + "`cloudflare_logpush_job`" + `: Create and manage the Logpush Job itself.`,
+			- ` + "`cloudflare_logpush_ownership_challenge`" + `: Configured to generate the challenge
+			to confirm ownership of the destination.
+			- Either manual inspection or another Terraform Provider to get the contents of
+			the ` + "`ownership_challenge_filename`" + ` value from the` + "`cloudflare_logpush_ownership_challenge`" + ` resource.
+			- ` + "`cloudflare_logpush_job`" + `: Create and manage the Logpush Job itself.
+		`),
 	}
 }
 

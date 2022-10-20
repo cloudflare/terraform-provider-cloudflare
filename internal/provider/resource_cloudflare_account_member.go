@@ -2,9 +2,11 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -21,7 +23,9 @@ func resourceCloudflareAccountMember() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccountMemberImport,
 		},
-		Description: "Provides a resource which manages Cloudflare account members.",
+		Description: heredoc.Doc(`
+			Provides a resource which manages Cloudflare account members.
+		`),
 	}
 }
 
@@ -37,8 +41,8 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 
 	member, err := client.AccountMember(ctx, accountID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "Member not found") ||
-			strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Warn(ctx, fmt.Sprintf("Removing account member from state because it's not present in API"))
 			d.SetId("")
 			return nil
@@ -62,9 +66,16 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare account member ID: %s", d.Id()))
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare account member ID: %s", d.Id()))
 
-	err := client.DeleteAccountMember(ctx, client.AccountID, d.Id())
+	var accountID string
+	if d.Get("account_id").(string) != "" {
+		accountID = d.Get("account_id").(string)
+	} else {
+		accountID = client.AccountID
+	}
+
+	err := client.DeleteAccountMember(ctx, accountID, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare account member: %w", err))
 	}
@@ -83,7 +94,15 @@ func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.Resour
 		accountMemberRoleIDs = append(accountMemberRoleIDs, roleID.(string))
 	}
 
-	r, err := client.CreateAccountMember(ctx, client.AccountID, memberEmailAddress, accountMemberRoleIDs)
+	var accountID string
+	if d.Get("account_id").(string) != "" {
+		accountID = d.Get("account_id").(string)
+	} else {
+		accountID = client.AccountID
+	}
+
+	status := d.Get("status").(string)
+	r, err := client.CreateAccountMemberWithStatus(ctx, accountID, memberEmailAddress, accountMemberRoleIDs, status)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare account member: %w", err))
@@ -103,13 +122,20 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 	accountRoles := []cloudflare.AccountRole{}
 	memberRoles := d.Get("role_ids").(*schema.Set).List()
 
+	var accountID string
+	if d.Get("account_id").(string) != "" {
+		accountID = d.Get("account_id").(string)
+	} else {
+		accountID = client.AccountID
+	}
+
 	for _, r := range memberRoles {
-		accountRole, _ := client.AccountRole(ctx, client.AccountID, r.(string))
+		accountRole, _ := client.AccountRole(ctx, accountID, r.(string))
 		accountRoles = append(accountRoles, accountRole)
 	}
 
 	updatedAccountMember := cloudflare.AccountMember{Roles: accountRoles}
-	_, err := client.UpdateAccountMember(ctx, client.AccountID, d.Id(), updatedAccountMember)
+	_, err := client.UpdateAccountMember(ctx, accountID, d.Id(), updatedAccountMember)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to update Cloudflare account member: %w", err))
 	}
@@ -143,6 +169,7 @@ func resourceCloudflareAccountMemberImport(ctx context.Context, d *schema.Resour
 		memberIDs = append(memberIDs, role.ID)
 	}
 
+	d.Set("account_id", accountID)
 	d.Set("email_address", member.User.Email)
 	d.Set("role_ids", memberIDs)
 	d.SetId(accountMemberID)

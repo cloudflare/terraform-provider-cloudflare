@@ -131,45 +131,6 @@ resource "cloudflare_certificate_pack" "%[3]s" {
 }`, zoneID, domain, rnd, certType)
 }
 
-func TestAccCertificatePack_DedicatedCustom(t *testing.T) {
-	t.Skip("Pending investigation into ACM entitlements")
-
-	rnd := generateRandomResourceName()
-	name := "cloudflare_certificate_pack." + rnd
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCertificatePackAdvancedConfig(zoneID, domain, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
-					resource.TestCheckResourceAttr(name, "type", "advanced"),
-					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
-				),
-			},
-		},
-	})
-}
-
-func testAccCertificatePackAdvancedConfig(zoneID, domain, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_certificate_pack" "%[3]s" {
-  validity_days = 90,
-  certificate_authority = "lets_encrypt",
-  validation_method = "txt"
-  zone_id = "%[1]s"
-  type = "advanced"
-  hosts = [
-    "%[3]s.%[2]s",
-    "%[2]s"
-  ]
-}`, zoneID, domain, rnd)
-}
-
 func TestAccCertificatePack_WaitForActive(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd

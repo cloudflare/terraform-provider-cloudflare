@@ -33,7 +33,7 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	tunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.TunnelVirtualNetworksListParams{AccountID: accountID})
+	tunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.TunnelVirtualNetworksListParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Tunnel Virtual Networks: %s", err))
 	}
@@ -46,7 +46,7 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 	for _, vnet := range tunnelVirtualNetworks {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Tunnel Virtual Network %s", vnet.ID))
 		//nolint:errcheck
-		client.DeleteTunnelVirtualNetwork(context.Background(), cloudflare.TunnelVirtualNetworkDeleteParams{AccountID: accountID, VnetID: vnet.ID})
+		client.DeleteTunnelVirtualNetwork(context.Background(), cloudflare.AccountIdentifier(accountID), vnet.ID)
 	}
 
 	return nil
@@ -92,8 +92,7 @@ func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwor
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.TunnelVirtualNetworksListParams{
-			AccountID: rs.Primary.Attributes["account_id"],
+		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"]), cloudflare.TunnelVirtualNetworksListParams{
 			IsDeleted: cloudflare.BoolPtr(false),
 			ID:        rs.Primary.ID,
 		})

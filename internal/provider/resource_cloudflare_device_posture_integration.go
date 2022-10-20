@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -72,7 +73,8 @@ func devicePostureIntegrationReadHelper(ctx context.Context, d *schema.ResourceD
 
 	devicePostureIntegration, err := client.DevicePostureIntegration(ctx, accountID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Device posture integration %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

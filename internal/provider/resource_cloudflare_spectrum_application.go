@@ -73,7 +73,8 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 
 	application, err := client.SpectrumApplication(ctx, zoneID, applicationID)
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Spectrum application %s in zone %s not found", applicationID, zoneID))
 			d.SetId("")
 			return nil

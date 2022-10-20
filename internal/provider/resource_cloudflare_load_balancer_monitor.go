@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"time"
 
@@ -95,7 +94,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
-	r, err := client.CreateLoadBalancerMonitor(ctx, loadBalancerMonitor)
+	r, err := client.CreateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.CreateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer monitor"))
 	}
@@ -183,7 +182,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 
 	tflog.Debug(ctx, fmt.Sprintf("Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
-	_, err := client.ModifyLoadBalancerMonitor(ctx, loadBalancerMonitor)
+	_, err := client.UpdateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), cloudflare.UpdateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error modifying load balancer monitor"))
 	}
@@ -206,9 +205,10 @@ func expandLoadBalancerMonitorHeader(cfgSet interface{}) map[string][]string {
 func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	loadBalancerMonitor, err := client.LoadBalancerMonitorDetails(ctx, d.Id())
+	loadBalancerMonitor, err := client.GetLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer monitor %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
@@ -262,9 +262,10 @@ func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *sch
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Monitor: %s ", d.Id()))
 
-	err := client.DeleteLoadBalancerMonitor(ctx, d.Id())
+	err := client.DeleteLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(client.AccountID), d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Load balancer monitor %s no longer exists", d.Id()))
 			return nil
 		} else {

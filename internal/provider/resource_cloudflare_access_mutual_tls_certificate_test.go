@@ -77,6 +77,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},

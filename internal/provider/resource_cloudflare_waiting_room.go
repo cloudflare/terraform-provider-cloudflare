@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -75,7 +76,8 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 
 	waitingRoom, err := client.WaitingRoom(ctx, zoneID, waitingRoomID)
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Warn(ctx, fmt.Sprintf("Removing waiting room from state because it's not found in API"))
 			d.SetId("")
 			return nil

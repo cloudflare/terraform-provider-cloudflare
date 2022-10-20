@@ -31,8 +31,8 @@ func testSweepCloudflareManagedHeaders(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	managedHeaders, err := client.ListZoneManagedHeaders(context.Background(), cloudflare.ListManagedHeadersParams{
-		ZoneID: zoneID,
+	managedHeaders, err := client.ListZoneManagedHeaders(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
+		Status: "enabled",
 	})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Zone Managed Headers: %s", err))
@@ -51,12 +51,11 @@ func testSweepCloudflareManagedHeaders(r string) error {
 		responseHeaders = append(responseHeaders, h)
 	}
 
-	_, err = client.UpdateZoneManagedHeaders(context.Background(), cloudflare.UpdateManagedHeadersParams{
+	_, err = client.UpdateZoneManagedHeaders(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateManagedHeadersParams{
 		ManagedHeaders: cloudflare.ManagedHeaders{
 			ManagedRequestHeaders:  requestHeaders,
 			ManagedResponseHeaders: responseHeaders,
 		},
-		ZoneID: zoneID,
 	})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to disable Cloudflare Zone Managed Headers: %s", err))

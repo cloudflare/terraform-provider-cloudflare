@@ -28,13 +28,6 @@ func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				SchemaVersion: 1,
 				Schema: map[string]*schema.Schema{
-					// on/off options
-					"always_online": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-					},
-
 					// may get api errors trying to set this
 					"automatic_https_rewrites": {
 						Type:         schema.TypeString,

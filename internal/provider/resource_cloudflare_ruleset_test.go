@@ -776,6 +776,48 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_CustomErrors(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetCustomErrors(rnd, "example HTTP custom error response", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "example HTTP custom error response"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_custom_errors"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "serve_error"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.content", "my example error page"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.content_type", "text/plain"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.status_code", "530"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http custom error response"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -811,6 +853,7 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.port", "80"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sni.0.value", rnd+".terraform.cfapi.net"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
 				),
@@ -1215,6 +1258,50 @@ func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "4d21379b4f9f4bb088e0729962c8b3cf"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.id", "fdfdac75430c4c47a959592f0aa5e68a"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.rules.0.sensitivity_level", "low"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "override HTTP DDoS ruleset rule"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_ActionParametersOverrideAllRulesetRules(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRulesetRules(rnd, "overriding all ruleset rules sensitivity", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "overriding all ruleset rules sensitivity"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "ddos_l7"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "execute"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "4d21379b4f9f4bb088e0729962c8b3cf"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.action", "log"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.overrides.0.sensitivity_level", "low"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "override HTTP DDoS ruleset rule"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
@@ -1683,6 +1770,51 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_Config(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetConfigAllEnabled(rnd, "my basic config ruleset", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic config ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_config_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_config"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set config rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.automatic_https_rewrites", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.html", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.css", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.js", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.bic", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_apps", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_zaraz", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_railgun", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.email_obfuscation", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.mirage", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.opportunistic_encryption", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.polish", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.rocket_loader", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.security_level", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.server_side_excludes", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.ssl", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sxg", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.hotlink_protection", "true"),
+				),
+			},
+		},
+	})
+}
 func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 	t.Parallel()
 	rnd := generateRandomResourceName()
@@ -1705,6 +1837,37 @@ func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_list.0.name", "redirect_list_"+rnd),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_list.0.key", "http.request.full_uri"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetRedirectFromValue(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_dynamic_redirect"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "redirect"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.status_code", "301"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.target_url.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.target_url.0.expression", ""),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.target_url.0.value", "some_host.com"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.from_value.0.preserve_query_string", "true"),
 				),
 			},
 		},
@@ -2340,6 +2503,29 @@ func testAccCheckCloudflareRulesetManagedWAFPayloadLogging(rnd, name, zoneID, zo
   }`, rnd, name, zoneID, zoneName)
 }
 
+func testAccCheckCloudflareRulesetCustomErrors(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_custom_errors"
+
+    rules {
+      action = "serve_error"
+      action_parameters {
+        content = "my example error page"
+        content_type = "text/plain"
+        status_code = "530"
+      }
+      expression = "(http.request.uri.path matches \"^/api/\")"
+      description = "example http custom error response"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
+}
+
 func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -2356,6 +2542,9 @@ func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) str
         origin {
           host = "%[1]s.terraform.cfapi.net"
           port = 80
+        }
+        sni {
+          value = "%[1]s.terraform.cfapi.net"
         }
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
@@ -2961,6 +3150,46 @@ func testAccCloudflareRulesetCacheSettingsCustomKeyEmpty(rnd, accountID, zoneID 
   }`, rnd, accountID, zoneID)
 }
 
+func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_config_settings"
+
+    rules {
+      action = "set_config"
+      action_parameters {
+		automatic_https_rewrites = true
+		autominify {
+			html = true
+			css = true
+			js = true
+		}
+		bic = true
+		disable_apps = true
+		disable_zaraz = true
+		disable_railgun = true
+		email_obfuscation = true
+		mirage = true
+		opportunistic_encryption = true
+		polish = "off"
+		rocket_loader = true
+		security_level = "off"
+		server_side_excludes = true
+		ssl = "off"
+		sxg = true
+		hotlink_protection = true
+      }
+	  expression = "true"
+	  description = "%[1]s set config rule"
+	  enabled = true
+    }
+  }`, rnd, accountID, zoneID)
+}
+
 func testAccCloudflareRulesetRedirectFromList(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_list" "list-%[1]s" {
@@ -2990,4 +3219,56 @@ func testAccCloudflareRulesetRedirectFromList(rnd, accountID string) string {
       enabled = true
     }
   }`, rnd, accountID)
+}
+
+func testAccCloudflareRulesetRedirectFromValue(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_dynamic_redirect"
+
+    rules {
+      action = "redirect"
+      action_parameters {
+        from_value {
+		  status_code = 301
+		  target_url {
+			value = "some_host.com"
+		  }
+		  preserve_query_string = true
+        }
+      }
+      expression = "true"
+      description = "Apply redirect from value"
+      enabled = true
+    }
+  }`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRulesetRules(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "ddos_l7"
+
+    rules {
+      action = "execute"
+      action_parameters {
+        id = "4d21379b4f9f4bb088e0729962c8b3cf"
+        overrides {
+		  action            = "log"
+		  sensitivity_level = "low"
+        }
+      }
+      expression = "true"
+      description = "override HTTP DDoS ruleset rule"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
 }

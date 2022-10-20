@@ -2,9 +2,11 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -21,7 +23,11 @@ func resourceCloudflareFilter() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareFilterImport,
 		},
-		Description: "Filter expressions that can be referenced across multiple features, e.g. Firewall Rules. See [what is a filter](https://developers.cloudflare.com/firewall/api/cf-filters/what-is-a-filter/) for more details and available fields and operators.",
+		Description: heredoc.Doc(`
+			Filter expressions that can be referenced across multiple features,
+			e.g. Firewall Rules. See [what is a filter](https://developers.cloudflare.com/firewall/api/cf-filters/what-is-a-filter/)
+			for more details and available fields and operators.
+		`),
 	}
 }
 
@@ -31,7 +37,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	var err error
 
-	var newFilter cloudflare.Filter
+	var newFilter cloudflare.FilterCreateParams
 
 	if paused, ok := d.GetOk("paused"); ok {
 		newFilter.Paused = paused.(bool)
@@ -51,7 +57,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Filter from struct: %+v", newFilter))
 
-	r, err := client.CreateFilters(ctx, zoneID, []cloudflare.Filter{newFilter})
+	r, err := client.CreateFilters(ctx, cloudflare.ZoneIdentifier(zoneID), []cloudflare.FilterCreateParams{newFilter})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Filter for zone %q: %w", zoneID, err))
@@ -73,13 +79,14 @@ func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, m
 	zoneID := d.Get("zone_id").(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Getting a Filter record for zone %q, id %s", zoneID, d.Id()))
-	filter, err := client.Filter(ctx, zoneID, d.Id())
+	filter, err := client.Filter(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 
 	tflog.Debug(ctx, fmt.Sprintf("filter: %#v", filter))
 	tflog.Debug(ctx, fmt.Sprintf("filter error: %#v", err))
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Filter %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
@@ -101,7 +108,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	var newFilter cloudflare.Filter
+	var newFilter cloudflare.FilterUpdateParams
 	newFilter.ID = d.Id()
 
 	if paused, ok := d.GetOk("paused"); ok {
@@ -122,7 +129,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Filter from struct: %+v", newFilter))
 
-	r, err := client.UpdateFilter(ctx, zoneID, newFilter)
+	r, err := client.UpdateFilter(ctx, cloudflare.ZoneIdentifier(zoneID), newFilter)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Filter for zone %q: %w", zoneID, err))
@@ -141,7 +148,7 @@ func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID))
 
-	err := client.DeleteFilter(ctx, zoneID, d.Id())
+	err := client.DeleteFilter(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Filter: %w", err))

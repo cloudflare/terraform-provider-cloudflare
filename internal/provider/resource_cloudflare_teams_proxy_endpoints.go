@@ -30,7 +30,7 @@ func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.Res
 
 	endpoint, err := client.TeamsProxyEndpoint(ctx, accountID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 400") {
+		if strings.Contains(err.Error(), "Proxy Endpoint ID is invalid") {
 			tflog.Info(ctx, fmt.Sprintf("Teams Proxy Endpoint %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

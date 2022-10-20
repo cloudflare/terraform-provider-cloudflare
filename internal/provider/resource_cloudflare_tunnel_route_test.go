@@ -33,7 +33,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	tunnelRoutes, err := client.ListTunnelRoutes(context.Background(), cloudflare.TunnelRoutesListParams{AccountID: accountID})
+	tunnelRoutes, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.TunnelRoutesListParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Tunnel Routes: %s", err))
 	}
@@ -46,7 +46,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 	for _, tunnel := range tunnelRoutes {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Tunnel Route network: %s", tunnel.Network))
 		//nolint:errcheck
-		client.DeleteTunnelRoute(context.Background(), cloudflare.TunnelRoutesDeleteParams{AccountID: accountID, Network: tunnel.Network, VirtualNetworkID: tunnel.TunnelID})
+		client.DeleteTunnelRoute(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.TunnelRoutesDeleteParams{Network: tunnel.Network, VirtualNetworkID: tunnel.TunnelID})
 	}
 
 	return nil
@@ -93,8 +93,7 @@ func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.Tunn
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundTunnelRoute, err := client.ListTunnelRoutes(context.Background(), cloudflare.TunnelRoutesListParams{
-			AccountID:     rs.Primary.Attributes["account_id"],
+		foundTunnelRoute, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"]), cloudflare.TunnelRoutesListParams{
 			IsDeleted:     cloudflare.BoolPtr(false),
 			NetworkSubset: rs.Primary.ID,
 		})

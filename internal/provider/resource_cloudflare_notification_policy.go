@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +22,11 @@ func resourceCloudflareNotificationPolicy() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceNotificationPolicyImport,
 		},
-		Description: "Provides a resource, that manages a notification policy for Cloudflare's products. The delivery mechanisms supported are email, webhooks, and PagerDuty.",
+		Description: heredoc.Doc(`
+			Provides a resource, that manages a notification policy for
+			Cloudflare's products. The delivery mechanisms supported are email,
+			webhooks, and PagerDuty.
+		`),
 	}
 }
 

@@ -63,6 +63,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -104,6 +105,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -130,6 +132,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -166,6 +169,7 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},

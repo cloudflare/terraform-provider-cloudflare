@@ -2,12 +2,14 @@
 page_title: "cloudflare_access_service_token Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Access Service Tokens are used for service-to-service communication when an application is behind Cloudflare Access.
+  Access Service Tokens are used for service-to-service communication
+  when an application is behind Cloudflare Access.
 ---
 
 # cloudflare_access_service_token (Resource)
 
-Access Service Tokens are used for service-to-service communication when an application is behind Cloudflare Access.
+Access Service Tokens are used for service-to-service communication
+when an application is behind Cloudflare Access.
 
 ## Example Usage
 
@@ -42,7 +44,7 @@ resource "cloudflare_access_service_token" "my_app" {
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
-- `min_days_for_renewal` (Number) Regenerates the token if terraform is run within the specified amount of days before expiration. Defaults to `0`.
+- `min_days_for_renewal` (Number) Refresh the token if terraform is run within the specified amount of days before expiration. Defaults to `0`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
 ### Read-Only

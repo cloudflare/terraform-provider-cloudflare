@@ -73,12 +73,13 @@ var (
 	accessGroup cloudflare.AccessGroup
 )
 
-func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
+func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -92,10 +93,32 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
 				),
 			},
 		},
 	})
+}
+
+func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -111,6 +134,23 @@ func TestAccCloudflareAccessGroupConfig_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: ZoneType, Value: zoneID}, &accessGroup),
+					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
+					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
 				),
 			},
 		},
@@ -123,6 +163,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -136,6 +177,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.0", email),
 				),
 			},
@@ -149,6 +191,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -162,6 +205,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
 					resource.TestCheckResourceAttr(name, "require.0.email.0", email),
 				),
 			},
@@ -175,6 +219,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -188,6 +233,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.0", email),
 					resource.TestCheckResourceAttr(name, "require.0.email.0", email),
 				),
@@ -204,6 +250,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -232,6 +279,7 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -264,6 +312,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -286,6 +335,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s-updated", rnd)),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
 				),
 			},
 		},
@@ -299,7 +349,13 @@ resource "cloudflare_access_group" "%[1]s" {
   name     = "%[1]s"
 
   include {
+	any_valid_service_token = true
     email = ["%[2]s"]
+	email_domain = ["example.com"]
+	ip = [
+		"192.0.2.1/32",
+		"192.0.2.2/32"
+	]
   }
 }`, resourceName, email, identifier.Type, identifier.Value)
 }
@@ -312,6 +368,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
   include {
     email = ["%[3]s"]
+	email_domain = ["example.com"]
   }
 }`, resourceName, accountID, email)
 }
@@ -324,6 +381,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
   include {
     email = ["%[3]s"]
+	email_domain = ["example.com"]
   }
 
   exclude {
@@ -340,6 +398,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
   include {
     email = ["%[3]s"]
+	email_domain = ["example.com"]
   }
 
   require {
@@ -356,6 +415,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
   include {
     email = ["%[3]s"]
+	email_domain = ["example.com"]
   }
 
   require {

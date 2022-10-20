@@ -104,7 +104,6 @@ func resourceCloudflareLoadBalancerMonitorSchema() map[string]*schema.Schema {
 					},
 				},
 			},
-			Set: HashByMapKey("header"),
 		},
 
 		"path": {

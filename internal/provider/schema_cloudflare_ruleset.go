@@ -260,6 +260,12 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 												ValidateFunc: validation.StringInSlice(cloudflare.RulesetRuleActionValues(), false),
 												Description:  fmt.Sprintf("Action to perform in the rule-level override. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.RulesetRuleActionValues())),
 											},
+											"sensitivity_level": {
+												Type:         schema.TypeString,
+												Optional:     true,
+												ValidateFunc: validation.StringInSlice([]string{"default", "medium", "low", "eoff"}, false),
+												Description:  fmt.Sprintf("Sensitivity level to override for all ruleset rules. %s", renderAvailableDocumentationValuesStringSlice([]string{"default", "medium", "low", "eoff"})),
+											},
 											"categories": {
 												Type:        schema.TypeList,
 												Optional:    true,
@@ -378,6 +384,21 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"content": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Content of the custom error response",
+								},
+								"content_type": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Content-Type of the custom error response",
+								},
+								"status_code": {
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Description: "HTTP status code of the custom error response",
+								},
 								"host_header": {
 									Type:        schema.TypeString,
 									Optional:    true,
@@ -399,6 +420,21 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 												Type:        schema.TypeInt,
 												Optional:    true,
 												Description: "Origin Port where request is sent.",
+											},
+										},
+									},
+								},
+								"sni": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "List of properties to manange Server Name Indication.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"value": {
+												Type:        schema.TypeString,
+												Optional:    true,
+												Description: "Value to define for SNI.",
 											},
 										},
 									},
@@ -427,22 +463,121 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										Type: schema.TypeString,
 									},
 								},
-								"bypass_cache": {
+								"cache": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "Whether to bypass the cache if expression matches",
+									Description: "Whether to cache if expression matches.",
+								},
+								"automatic_https_rewrites": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off Cloudflare Automatic HTTPS rewrites.",
+								},
+								"autominify": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									Description: "Indicate which file extensions to minify automatically.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"html": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "HTML minification.",
+											},
+											"css": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "SSL minification.",
+											},
+											"js": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "JS minification.",
+											},
+										},
+									},
+								},
+								"bic": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Inspect the visitor's browser for headers commonly associated with spammers and certain bots.",
+								},
+								"disable_apps": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn off all active Cloudflare Apps.",
+								},
+								"disable_zaraz": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn off zaraz feature.",
+								},
+								"disable_railgun": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn off railgun feature of the Cloudflare Speed app.",
+								},
+								"email_obfuscation": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the Cloudflare Email Obfuscation feature of the Cloudflare Scrape Shield app.",
+								},
+								"mirage": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off Cloudflare Mirage of the Cloudflare Speed app.",
+								},
+								"opportunistic_encryption": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the Cloudflare Opportunistic Encryption feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.",
+								},
+								"polish": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Apply options from the Polish feature of the Cloudflare Speed app.",
+								},
+								"rocket_loader": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off Cloudflare Rocket Loader in the Cloudflare Speed app.",
+								},
+								"security_level": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Control options for the Security Level feature from the Security app.",
+								},
+								"server_side_excludes": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the Server Side Excludes feature of the Cloudflare Scrape Shield app.",
+								},
+								"ssl": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Control options for the SSL feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.",
+								},
+								"sxg": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the SXG feature.",
+								},
+								"hotlink_protection": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Turn on or off the hotlink protection feature.",
 								},
 								"edge_ttl": {
 									Type:        schema.TypeList,
 									Optional:    true,
 									MaxItems:    1,
-									Description: "List of edge TTL parameters to apply to the request",
+									Description: "List of edge TTL parameters to apply to the request.",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											"mode": {
 												Type:        schema.TypeString,
 												Required:    true,
-												Description: "Mode of the edge TTL",
+												Description: "Mode of the edge TTL.",
 											},
 											"default": {
 												Type:        schema.TypeInt,
@@ -452,7 +587,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 											"status_code_ttl": {
 												Type:        schema.TypeList,
 												Optional:    true,
-												Description: "Edge TTL for the status codes",
+												Description: "Edge TTL for the status codes.",
 												Elem: &schema.Resource{
 													Schema: map[string]*schema.Schema{
 														"status_code": {
@@ -469,12 +604,12 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 																	"from": {
 																		Type:        schema.TypeInt,
 																		Optional:    true,
-																		Description: "From status code",
+																		Description: "From status code.",
 																	},
 																	"to": {
 																		Type:        schema.TypeInt,
 																		Optional:    true,
-																		Description: "To status code",
+																		Description: "To status code.",
 																	},
 																},
 															},
@@ -482,7 +617,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 														"value": {
 															Type:        schema.TypeInt,
 															Required:    true,
-															Description: "Status code edge TTL value",
+															Description: "Status code edge TTL value.",
 														},
 													},
 												},
@@ -494,18 +629,18 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Type:        schema.TypeList,
 									Optional:    true,
 									MaxItems:    1,
-									Description: "List of browser TTL parameters to apply to the request",
+									Description: "List of browser TTL parameters to apply to the request.",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											"mode": {
 												Type:        schema.TypeString,
 												Required:    true,
-												Description: "Mode of the browser TTL",
+												Description: "Mode of the browser TTL.",
 											},
 											"default": {
 												Type:        schema.TypeInt,
 												Optional:    true,
-												Description: "Default browser TTL",
+												Description: "Default browser TTL.",
 											},
 										},
 									},
@@ -514,13 +649,13 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Type:        schema.TypeList,
 									Optional:    true,
 									MaxItems:    1,
-									Description: "List of serve stale parameters to apply to the request",
+									Description: "List of serve stale parameters to apply to the request.",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											"disable_stale_while_updating": {
 												Type:        schema.TypeBool,
 												Optional:    true,
-												Description: "Disable stale while updating",
+												Description: "Disable stale while updating.",
 											},
 										},
 									},
@@ -528,13 +663,13 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 								"respect_strong_etags": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "Respect strong ETags",
+									Description: "Respect strong ETags.",
 								},
 								"cache_key": {
 									Type:        schema.TypeList,
 									MaxItems:    1,
 									Optional:    true,
-									Description: "List of cache key parameters to apply to the request",
+									Description: "List of cache key parameters to apply to the request.",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											"cache_by_device_type": {
@@ -545,25 +680,25 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 											"ignore_query_strings_order": {
 												Type:        schema.TypeBool,
 												Optional:    true,
-												Description: "Ignore query strings order",
+												Description: "Ignore query strings order.",
 											},
 											"cache_deception_armor": {
 												Type:        schema.TypeBool,
 												Optional:    true,
-												Description: "Cache deception armor",
+												Description: "Cache deception armor.",
 											},
 											"custom_key": {
 												Type:        schema.TypeList,
 												Optional:    true,
 												MaxItems:    1,
-												Description: "Custom key parameters for the request",
+												Description: "Custom key parameters for the request.",
 												Elem: &schema.Resource{
 													Schema: map[string]*schema.Schema{
 														"query_string": {
 															Type:        schema.TypeList,
 															Optional:    true,
 															MaxItems:    1,
-															Description: "Query string parameters for the custom key",
+															Description: "Query string parameters for the custom key.",
 															Elem: &schema.Resource{
 																Schema: map[string]*schema.Schema{
 																	"include": {
@@ -589,13 +724,13 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 															Type:        schema.TypeList,
 															MaxItems:    1,
 															Optional:    true,
-															Description: "Header parameters for the custom key",
+															Description: "Header parameters for the custom key.",
 															Elem: &schema.Resource{
 																Schema: map[string]*schema.Schema{
 																	"include": {
 																		Type:        schema.TypeList,
 																		Optional:    true,
-																		Description: "List of headers to include in the custom key",
+																		Description: "List of headers to include in the custom key.",
 																		Elem: &schema.Schema{
 																			Type: schema.TypeString,
 																		},
@@ -603,7 +738,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 																	"check_presence": {
 																		Type:        schema.TypeList,
 																		Optional:    true,
-																		Description: "List of headers to check for presence in the custom key",
+																		Description: "List of headers to check for presence in the custom key.",
 																		Elem: &schema.Schema{
 																			Type: schema.TypeString,
 																		},
@@ -611,7 +746,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 																	"exclude_origin": {
 																		Type:        schema.TypeBool,
 																		Optional:    true,
-																		Description: "Exclude the origin header from the custom key",
+																		Description: "Exclude the origin header from the custom key.",
 																	},
 																},
 															},
@@ -620,13 +755,13 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 															Type:        schema.TypeList,
 															MaxItems:    1,
 															Optional:    true,
-															Description: "Cookie parameters for the custom key",
+															Description: "Cookie parameters for the custom key.",
 															Elem: &schema.Resource{
 																Schema: map[string]*schema.Schema{
 																	"include": {
 																		Type:        schema.TypeList,
 																		Optional:    true,
-																		Description: "List of cookies to include in the custom key",
+																		Description: "List of cookies to include in the custom key.",
 																		Elem: &schema.Schema{
 																			Type: schema.TypeString,
 																		},
@@ -634,7 +769,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 																	"check_presence": {
 																		Type:        schema.TypeList,
 																		Optional:    true,
-																		Description: "List of cookies to check for presence in the custom key",
+																		Description: "List of cookies to check for presence in the custom key.",
 																		Elem: &schema.Schema{
 																			Type: schema.TypeString,
 																		},
@@ -646,7 +781,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 															Type:        schema.TypeList,
 															MaxItems:    1,
 															Optional:    true,
-															Description: "User parameters for the custom key",
+															Description: "User parameters for the custom key.",
 															Elem: &schema.Resource{
 																Schema: map[string]*schema.Schema{
 																	"device_type": {
@@ -657,12 +792,12 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 																	"geo": {
 																		Type:        schema.TypeBool,
 																		Optional:    true,
-																		Description: "Add geo data to the custom key",
+																		Description: "Add geo data to the custom key.",
 																	},
 																	"lang": {
 																		Type:        schema.TypeBool,
 																		Optional:    true,
-																		Description: "Add language data to the custom key",
+																		Description: "Add language data to the custom key.",
 																	},
 																},
 															},
@@ -671,13 +806,13 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 															Type:        schema.TypeList,
 															MaxItems:    1,
 															Optional:    true,
-															Description: "Host parameters for the custom key",
+															Description: "Host parameters for the custom key.",
 															Elem: &schema.Resource{
 																Schema: map[string]*schema.Schema{
 																	"resolved": {
 																		Type:        schema.TypeBool,
 																		Optional:    true,
-																		Description: "Resolve hostname to IP address",
+																		Description: "Resolve hostname to IP address.",
 																	},
 																},
 															},
@@ -691,7 +826,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 								"origin_error_page_passthru": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "Pass-through error page for origin",
+									Description: "Pass-through error page for origin.",
 								},
 								"from_list": {
 									Type:        schema.TypeList,
@@ -709,6 +844,46 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 												Type:        schema.TypeString,
 												Description: "Expression to use for the list lookup.",
 												Required:    true,
+											},
+										},
+									},
+								},
+								"from_value": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									MaxItems:    1,
+									Description: "Use a value to lookup information for the action.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"status_code": {
+												Type:        schema.TypeInt,
+												Description: "Status code for redirect.",
+												Optional:    true,
+											},
+											"target_url": {
+												Type:        schema.TypeList,
+												Optional:    true,
+												MaxItems:    1,
+												Description: "Target URL for redirect.",
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														"value": {
+															Type:        schema.TypeString,
+															Optional:    true,
+															Description: "Static value to provide as the HTTP request header value. Conflicts with `\"expression\"`.",
+														},
+														"expression": {
+															Description: "Use a value dynamically determined by the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions. Conflicts with `\"value\"`.",
+															Type:        schema.TypeString,
+															Optional:    true,
+														},
+													},
+												},
+											},
+											"preserve_query_string": {
+												Type:        schema.TypeBool,
+												Description: "Preserve query string for redirect URL.",
+												Optional:    true,
 											},
 										},
 									},

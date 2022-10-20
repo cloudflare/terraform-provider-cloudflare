@@ -103,6 +103,9 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 			updateErr = true
 		} else {
 			tflog.Debug(ctx, fmt.Sprintf("Custom SSL set to: %s", res.ID))
+			if res.ID != certID {
+				d.SetId(res.ID)
+			}
 		}
 	}
 
@@ -272,7 +275,7 @@ func flattenCustomSSLOptions(sslopt cloudflare.ZoneCustomSSLOptions) map[string]
 		"type":          sslopt.Type,
 	}
 
-	if sslopt.GeoRestrictions.Label != "" && sslopt.GeoRestrictions.Label != "custom" {
+	if sslopt.GeoRestrictions != nil && sslopt.GeoRestrictions.Label != "" && sslopt.GeoRestrictions.Label != "custom" {
 		data["geo_restrictions"] = sslopt.GeoRestrictions.Label
 	}
 

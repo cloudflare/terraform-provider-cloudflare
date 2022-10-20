@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,10 +23,11 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessApplicationImport,
 		},
-		Description: `Provides a Cloudflare Access Application resource. Access
-Applications are used to restrict access to a whole application using an
-authorisation gateway managed by Cloudflare.
-		`,
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Application resource. Access
+			Applications are used to restrict access to a whole application using an
+			authorisation gateway managed by Cloudflare.
+		`),
 	}
 }
 
@@ -40,16 +42,16 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		Domain:                  d.Get("domain").(string),
 		Type:                    cloudflare.AccessApplicationType(appType),
 		SessionDuration:         d.Get("session_duration").(string),
-		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(bool),
-		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
+		AutoRedirectToIdentity:  cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
+		EnableBindingCookie:     cloudflare.BoolPtr(d.Get("enable_binding_cookie").(bool)),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
-		SkipInterstitial:        d.Get("skip_interstitial").(bool),
-		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
-		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
+		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
+		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
+		ServiceAuth401Redirect:  cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -62,6 +64,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 			return diag.FromErr(err)
 		}
 		newAccessApplication.CorsHeaders = CORSConfig
+	}
+
+	if _, ok := d.GetOk("saas_app"); ok {
+		newAccessApplication.SaasApplication = convertSaasSchemaToStruct(d)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
@@ -133,6 +139,11 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		return diag.FromErr(fmt.Errorf("error setting Access Application CORS header configuration: %w", corsConfigErr))
 	}
 
+	saasConfig := convertSaasStructToSchema(d, accessApplication.SaasApplication)
+	if saasConfigErr := d.Set("saas_app", saasConfig); saasConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Application SaaS app configuration: %w", saasConfigErr))
+	}
+
 	return nil
 }
 
@@ -148,16 +159,20 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		Domain:                  d.Get("domain").(string),
 		Type:                    cloudflare.AccessApplicationType(appType),
 		SessionDuration:         d.Get("session_duration").(string),
-		AutoRedirectToIdentity:  d.Get("auto_redirect_to_identity").(bool),
-		EnableBindingCookie:     d.Get("enable_binding_cookie").(bool),
+		AutoRedirectToIdentity:  cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
+		EnableBindingCookie:     cloudflare.BoolPtr(d.Get("enable_binding_cookie").(bool)),
 		CustomDenyMessage:       d.Get("custom_deny_message").(string),
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
 		LogoURL:                 d.Get("logo_url").(string),
-		SkipInterstitial:        d.Get("skip_interstitial").(bool),
-		AppLauncherVisible:      d.Get("app_launcher_visible").(bool),
-		ServiceAuth401Redirect:  d.Get("service_auth_401_redirect").(bool),
+		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
+		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
+		ServiceAuth401Redirect:  cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+	}
+
+	if appType != "saas" {
+		updatedAccessApplication.Domain = d.Get("domain").(string)
 	}
 
 	if len(allowedIDPList) > 0 {
@@ -170,6 +185,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 			return diag.FromErr(err)
 		}
 		updatedAccessApplication.CorsHeaders = CORSConfig
+	}
+
+	if _, ok := d.GetOk("saas_app"); ok {
+		saasConfig := convertSaasSchemaToStruct(d)
+		updatedAccessApplication.SaasApplication = saasConfig
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication))

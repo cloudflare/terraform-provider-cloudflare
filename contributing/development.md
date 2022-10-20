@@ -3,12 +3,12 @@
 ## Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) 0.14+ (to run acceptance tests)
-- [Go](https://golang.org/doc/install) 1.17 (to build the provider plugin)
+- [Go](https://golang.org/doc/install) 1.18 (to build the provider plugin)
 
 ## Quick Start
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org)
-installed on your machine (version 1.17+ is *required*). You'll also need to
+installed on your machine (version 1.18+ is _required_). You'll also need to
 correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well
 as adding `$GOPATH/bin` to your `$PATH`.
 
@@ -22,10 +22,18 @@ $ make test
 
 In order to run the full suite of Acceptance tests, run `make testacc`.
 
-*Note:* Acceptance tests create real resources, and often cost money to run.
+_Note:_ Acceptance tests create real resources, and often cost money to run.
 
 ```sh
 $ make testacc
+```
+
+To run a subset of the acceptance test suite, you can run
+
+```sh
+TESTARGS='-run "^<regex target of tests>" -count 1 -parallel 1' make testacc
+# Example
+# TESTARGS='-run "^TestAccTestPagesProject" -count 1 -parallel 1' make testacc
 ```
 
 You can also install other optional (but great to have tools) using `make tools`.
@@ -62,8 +70,8 @@ will use instead of the version from the remote registry.
 
 ## Pulling in unreleased changes from Go library (cloudflare-go)
 
-In some scenarios, you may be wanting to make changes in `cloudflare-go` and have 
-them reflected in the Terraform provider before they are released upstream. To do 
+In some scenarios, you may be wanting to make changes in `cloudflare-go` and have
+them reflected in the Terraform provider before they are released upstream. To do
 this, you can update the `go.mod` file locally (do not commit it) using `go mod replace`.
 
 ```

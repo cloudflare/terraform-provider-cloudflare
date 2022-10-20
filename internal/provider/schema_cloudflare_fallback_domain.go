@@ -13,7 +13,7 @@ func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 		},
 		"domains": {
 			Required: true,
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"suffix": {

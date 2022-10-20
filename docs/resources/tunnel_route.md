@@ -2,12 +2,16 @@
 page_title: "cloudflare_tunnel_route Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a resource, that manages Cloudflare tunnel routes for Zero Trust. Tunnel routes are used to direct IP traffic through Cloudflare Tunnels.
+  Provides a resource, that manages Cloudflare tunnel routes for Zero
+  Trust. Tunnel routes are used to direct IP traffic through
+  Cloudflare Tunnels.
 ---
 
 # cloudflare_tunnel_route (Resource)
 
-Provides a resource, that manages Cloudflare tunnel routes for Zero Trust. Tunnel routes are used to direct IP traffic through Cloudflare Tunnels.
+Provides a resource, that manages Cloudflare tunnel routes for Zero
+Trust. Tunnel routes are used to direct IP traffic through
+Cloudflare Tunnels.
 
 ## Example Usage
 

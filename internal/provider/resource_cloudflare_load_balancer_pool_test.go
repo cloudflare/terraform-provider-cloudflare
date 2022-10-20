@@ -36,7 +36,7 @@ func testSweepCloudflareLoadBalancerPool(r string) error {
 	}
 
 	client.AccountID = accountID
-	pools, err := client.ListLoadBalancerPools(ctx)
+	pools, err := client.ListLoadBalancerPools(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListLoadBalancerPoolParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancer Pools: %s", err))
 	}
@@ -49,7 +49,7 @@ func testSweepCloudflareLoadBalancerPool(r string) error {
 	for _, pool := range pools {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Pool ID: %s", pool.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancerPool(ctx, pool.ID)
+		client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), pool.ID)
 	}
 
 	return nil
@@ -182,7 +182,7 @@ func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.LoadBalancerPoolDetails(context.Background(), rs.Primary.ID)
+		_, err := client.GetLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Load balancer pool still exists")
 		}
@@ -203,7 +203,7 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancerPool, err := client.LoadBalancerPoolDetails(context.Background(), rs.Primary.ID)
+		foundLoadBalancerPool, err := client.GetLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -243,7 +243,7 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerPool.ID
-		err := client.DeleteLoadBalancerPool(context.Background(), loadBalancerPool.ID)
+		err := client.DeleteLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(client.AccountID), loadBalancerPool.ID)
 		if err != nil {
 			return err
 		}

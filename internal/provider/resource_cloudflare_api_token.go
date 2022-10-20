@@ -3,10 +3,11 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,11 +24,12 @@ func resourceCloudflareApiToken() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `
-Provides a resource which manages Cloudflare API tokens.
+		Description: heredoc.Doc(`
+			Provides a resource which manages Cloudflare API tokens.
 
-Read more about permission groups and their applicable scopes in the [developer documentation](https://developers.cloudflare.com/api/tokens/create/permissions).
-		`,
+			Read more about permission groups and their applicable scopes in the
+			[developer documentation](https://developers.cloudflare.com/api/tokens/create/permissions).
+		`),
 	}
 }
 
@@ -140,7 +142,8 @@ func resourceCloudflareApiTokenRead(ctx context.Context, d *schema.ResourceData,
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare API Token: %+v", t))
 
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Cloudflare API Token %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil

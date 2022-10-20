@@ -2,12 +2,14 @@
 page_title: "cloudflare_healthcheck Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Standalone Health Checks provide a way to monitor origin servers without needing a Cloudflare Load Balancer.
+  Standalone Health Checks provide a way to monitor origin servers
+  without needing a Cloudflare Load Balancer.
 ---
 
 # cloudflare_healthcheck (Resource)
 
-Standalone Health Checks provide a way to monitor origin servers without needing a Cloudflare Load Balancer.
+Standalone Health Checks provide a way to monitor origin servers
+without needing a Cloudflare Load Balancer.
 
 ## Example Usage
 

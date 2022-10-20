@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	"strings"
-
 	"time"
 
 	"reflect"
@@ -33,6 +31,7 @@ var fetchAsSingleSetting = []string{
 	"h2_prioritization",
 	"image_resizing",
 	"early_hints",
+	"origin_max_http_version",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -111,7 +110,8 @@ func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.R
 
 	zone, err := client.ZoneDetails(ctx, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "HTTP status 404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Zone %q not found", d.Id()))
 			d.SetId("")
 			return nil
@@ -230,8 +230,11 @@ func updateSingleZoneSettings(ctx context.Context, zoneSettings []cloudflare.Zon
 		}
 	}
 
+	offset := 0
 	for _, indexToCut := range indexesToCut {
-		zoneSettings = append(zoneSettings[:indexToCut], zoneSettings[indexToCut+1:]...)
+		adjustedIndexToCut := indexToCut - offset
+		zoneSettings = append(zoneSettings[:adjustedIndexToCut], zoneSettings[adjustedIndexToCut+1:]...)
+		offset += 1
 	}
 	return zoneSettings, nil
 }

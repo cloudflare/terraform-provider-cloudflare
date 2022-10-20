@@ -12,7 +12,6 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 		"account_id": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			ForceNew:    true,
 			Description: "Account ID to manage the zone resource in.",
 		},
 		"zone": {
@@ -25,7 +24,7 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 		"jump_start": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Wwhether to scan for DNS records on creation. Ignored after zone is created.",
+			Description: "Whether to scan for DNS records on creation. Ignored after zone is created.",
 		},
 		"paused": {
 			Type:        schema.TypeBool,

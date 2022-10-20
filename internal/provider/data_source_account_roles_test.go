@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -22,7 +23,7 @@ func TestAccCloudflareAccountRoles(t *testing.T) {
 				Config: testAccCloudflareAccountRolesConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCloudflareAccountRolesDataSourceId(name),
-					resource.TestCheckResourceAttr(name, "roles.#", "24"),
+					testAccCloudflareAccountRolesSize(name),
 				),
 			},
 		},
@@ -49,4 +50,26 @@ func testAccCloudflareAccountRolesConfig(name string, accountID string) string {
 	return fmt.Sprintf(`data "cloudflare_account_roles" "%[1]s" {
 		account_id = "%[2]s"
 	}`, name, accountID)
+}
+
+func testAccCloudflareAccountRolesSize(n string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		r := s.RootModule().Resources[n]
+		a := r.Primary.Attributes
+
+		var (
+			rolesSize int
+			err       error
+		)
+
+		if rolesSize, err = strconv.Atoi(a["roles.#"]); err != nil {
+			return err
+		}
+
+		if rolesSize < 20 {
+			return fmt.Errorf("role count seems suspiciously low: %d", rolesSize)
+		}
+
+		return nil
+	}
 }

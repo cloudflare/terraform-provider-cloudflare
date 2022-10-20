@@ -47,6 +47,7 @@ func TestAccCloudflareAccessBookmark_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
@@ -120,6 +121,7 @@ func TestAccCloudflareAccessBookmark_WithZoneID(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
