@@ -28,7 +28,7 @@ func resourceCloudflareTeamsList() *schema.Resource {
 func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	newTeamsList := cloudflare.TeamsList{
+	newTeamsList := cloudflare.CreateTeamsListParams{
 		Name:        d.Get("name").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -43,7 +43,7 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 
 	accountID := d.Get("account_id").(string)
 
-	list, err := client.CreateTeamsList(ctx, accountID, newTeamsList)
+	list, err := client.CreateTeamsList(ctx, cloudflare.AccountIdentifier(accountID), newTeamsList)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
 	}
@@ -57,7 +57,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 
-	list, err := client.TeamsList(ctx, accountID, d.Id())
+	list, err := client.GetTeamsList(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -72,32 +72,14 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	d.Set("type", list.Type)
 	d.Set("description", list.Description)
 
-	var allListItems []cloudflare.TeamsListItem
-
-	listItems, responseInfo, err := client.TeamsListItems(ctx, cloudflare.TeamsListItemsParams{
-		AccountID:         accountID,
-		ListID:            d.Id(),
-		PaginationOptions: cloudflare.PaginationOptions{PerPage: 1000},
+	listItems, _, err := client.ListTeamsListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListTeamsListItemsParams{
+		ListID: d.Id(),
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
 	}
 
-	allListItems = append(allListItems, listItems...)
-
-	for i := 2; i <= responseInfo.TotalPages; i++ {
-		listItems, _, err := client.TeamsListItems(ctx, cloudflare.TeamsListItemsParams{
-			AccountID:         accountID,
-			ListID:            d.Id(),
-			PaginationOptions: cloudflare.PaginationOptions{PerPage: 1000, Page: i},
-		})
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
-		}
-		allListItems = append(allListItems, listItems...)
-	}
-
-	d.Set("items", convertListItemsToSchema(allListItems))
+	d.Set("items", convertListItemsToSchema(listItems))
 
 	return nil
 }
@@ -105,7 +87,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	updatedTeamsList := cloudflare.TeamsList{
+	updatedTeamsList := cloudflare.UpdateTeamsListParams{
 		ID:          d.Id(),
 		Name:        d.Get("name").(string),
 		Type:        d.Get("type").(string),
@@ -116,7 +98,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 
 	accountID := d.Get("account_id").(string)
 
-	teamsList, err := client.UpdateTeamsList(ctx, accountID, updatedTeamsList)
+	teamsList, err := client.UpdateTeamsList(ctx, cloudflare.AccountIdentifier(accountID), updatedTeamsList)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
 	}
@@ -128,9 +110,10 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		oldItemsIface, newItemsIface := d.GetChange("items")
 		oldItems := oldItemsIface.(*schema.Set).List()
 		newItems := newItemsIface.(*schema.Set).List()
-		patchTeamsList := cloudflare.PatchTeamsList{ID: d.Id()}
+		patchTeamsList := cloudflare.PatchTeamsListParams{ID: d.Id()}
 		setListItemDiff(&patchTeamsList, oldItems, newItems)
-		l, err := client.PatchTeamsList(ctx, accountID, patchTeamsList)
+
+		l, err := client.PatchTeamsList(ctx, cloudflare.AccountIdentifier(accountID), patchTeamsList)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
 		}
@@ -148,7 +131,7 @@ func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceDa
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams List using ID: %s", appID))
 
-	err := client.DeleteTeamsList(ctx, accountID, appID)
+	err := client.DeleteTeamsList(ctx, cloudflare.AccountIdentifier(accountID), appID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Teams List for account %q: %w", accountID, err))
 	}
@@ -177,7 +160,7 @@ func resourceCloudflareTeamsListImport(ctx context.Context, d *schema.ResourceDa
 	return []*schema.ResourceData{d}, nil
 }
 
-func setListItemDiff(patchList *cloudflare.PatchTeamsList, oldItems, newItems []interface{}) {
+func setListItemDiff(patchList *cloudflare.PatchTeamsListParams, oldItems, newItems []interface{}) {
 	counts := make(map[string]int)
 	for _, val := range newItems {
 		counts[val.(string)] += 1

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -42,6 +44,42 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "items.#", "2"),
 					resource.TestCheckResourceAttr(name, "items.0", "asdf-1234"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		defer func(apiToken string) {
+			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
+		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
+		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_teams_list.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "SERIAL"),
+					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "items.#", "1000"),
 				),
 			},
 		},
@@ -91,6 +129,23 @@ resource "cloudflare_teams_list" "%[1]s" {
 `, rnd, accountID)
 }
 
+func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string {
+	items := []string{}
+	for i := 0; i < 1000; i++ {
+		items = append(items, `"example-`+strconv.Itoa(i)+`"`)
+	}
+
+	return fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+	account_id  = "%[2]s"
+	name        = "%[1]s"
+	description = "My description"
+	type        = "SERIAL"
+	items       = [%[3]s]
+}
+`, rnd, accountID, strings.Join(items, ","))
+}
+
 func testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_teams_list" "%[1]s" {
@@ -111,7 +166,7 @@ func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.TeamsList(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.GetTeamsList(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Teams List still exists")
 		}
