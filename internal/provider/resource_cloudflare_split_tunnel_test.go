@@ -14,10 +14,7 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -56,10 +53,7 @@ func TestAccCloudflareSplitTunnel_ConflictingTunnelProperties(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -110,10 +104,7 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
