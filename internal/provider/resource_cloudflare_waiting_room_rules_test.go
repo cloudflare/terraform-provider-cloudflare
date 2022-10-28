@@ -35,13 +35,13 @@ func TestAccCloudflareWaitingRoomRules_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.description", "ip bypass"),
 					resource.TestCheckResourceAttr(name, "rules.0.expression", "ip.src in {1.2.3.4}"),
 					resource.TestCheckResourceAttr(name, "rules.0.action", "bypass_waiting_room"),
-					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "rules.0.status", "enabled"),
 					resource.TestCheckResourceAttr(name, "rules.0.version", "1"),
 
 					resource.TestCheckResourceAttr(name, "rules.1.description", "query string bypass"),
 					resource.TestCheckResourceAttr(name, "rules.1.expression", "http.request.uri.query contains \"bypass=true\""),
 					resource.TestCheckResourceAttr(name, "rules.1.action", "bypass_waiting_room"),
-					resource.TestCheckResourceAttr(name, "rules.1.enabled", "false"),
+					resource.TestCheckResourceAttr(name, "rules.1.status", "disabled"),
 					resource.TestCheckResourceAttr(name, "rules.1.version", "1"),
 				),
 			},
@@ -98,14 +98,14 @@ resource "cloudflare_waiting_room_rules" "%[1]s" {
     action      = "bypass_waiting_room"
     expression  = "ip.src in {1.2.3.4}"
     description = "ip bypass"
-    enabled 	= true
+    status 	    = "enabled"
   }
 
   rules {
     action      = "bypass_waiting_room"
     expression 	= "http.request.uri.query contains \"bypass=true\""
     description = "query string bypass"
-    enabled 	= false
+    status 	    = "disabled"
   }
 }
 `, resourceName, zoneID, domain, waitingRoomName)

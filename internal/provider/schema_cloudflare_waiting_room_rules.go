@@ -44,7 +44,6 @@ func resourceCloudflareWaitingRoomRulesSchema() map[string]*schema.Schema {
 					"status": {
 						Type:         schema.TypeString,
 						Optional:     true,
-						Default:      "",
 						ValidateFunc: validation.StringInSlice([]string{"enabled", "disabled"}, false),
 						Description:  fmt.Sprintf("Whether the rule is enabled or disabled. %s", renderAvailableDocumentationValuesStringSlice([]string{"enabled", "disabled"})),
 					},
