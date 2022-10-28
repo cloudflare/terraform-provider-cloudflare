@@ -24,6 +24,7 @@ func TestAccCloudflareTeamsListBasic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -56,6 +57,7 @@ func TestAccCloudflareTeamsListReordered(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
