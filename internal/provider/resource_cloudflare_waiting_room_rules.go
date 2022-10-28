@@ -28,7 +28,6 @@ func resourceCloudflareWaitingRoomRules() *schema.Resource {
 }
 
 func expandWaitingRoomRules(d *schema.ResourceData) ([]cloudflare.WaitingRoomRule, error) {
-
 	var waitingRoomRules []cloudflare.WaitingRoomRule
 	rules, ok := d.Get("rules").([]interface{})
 	if !ok {
