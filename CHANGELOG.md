@@ -1,5 +1,25 @@
 ## 3.27.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_access_organization` ([#1961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1961))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: add support for `app_launcher`, `biso`, `dash_sso` and `warp` to the schema ([#1988](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1988))
+* resource/cloudflare_load_balancer_monitor: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
+* resource/cloudflare_load_balancer_pool: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
+* test: use `T.Setenv` to set env vars in provider tests ([#1985](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1985))
+
+BUG FIXES:
+
+* resource/cloudflare_access_group: fix issue where policy groups were always showing a diff during plans ([#1983](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1983))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.52.0 to 0.53.0 ([#1995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1995))
+* provider: bumps github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#1993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1993))
+
 ## 3.26.0 (19th October, 2022)
 
 ENHANCEMENTS:

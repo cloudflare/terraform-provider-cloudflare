@@ -1,0 +1,3 @@
+```release-note:enhancement
+test: use `T.Setenv` to set env vars in provider tests
+```

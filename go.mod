@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
-	github.com/cloudflare/cloudflare-go v0.52.0
+	github.com/cloudflare/cloudflare-go v0.53.0
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -36,7 +36,7 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-log v0.7.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 )
 
 require (

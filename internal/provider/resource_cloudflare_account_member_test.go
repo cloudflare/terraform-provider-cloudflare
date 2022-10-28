@@ -12,10 +12,7 @@ func TestAccCloudflareAccountMemberBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()

@@ -18,10 +18,7 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 	// overrides endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -71,10 +68,7 @@ func TestAccCloudflareWAFOverrideGroupOnly(t *testing.T) {
 	// overrides endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

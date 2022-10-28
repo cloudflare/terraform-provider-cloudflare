@@ -17,10 +17,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -67,10 +64,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -205,10 +199,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
