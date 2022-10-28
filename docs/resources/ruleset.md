@@ -709,6 +709,7 @@ Optional:
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
 - `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
+- `sensitivity_level` (String) Sensitivity level to override for all ruleset rules. Available values: `default`, `medium`, `low`, `eoff`.
 - `status` (String) Defines if the current ruleset-level override enables or disables the ruleset. Available values: `enabled`, `disabled`. Defaults to `""`.
 
 <a id="nestedblock--rules--action_parameters--overrides--categories"></a>
