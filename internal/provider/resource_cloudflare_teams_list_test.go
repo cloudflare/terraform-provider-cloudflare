@@ -24,6 +24,7 @@ func TestAccCloudflareTeamsListBasic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -56,6 +57,7 @@ func TestAccCloudflareTeamsListReordered(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
+			testAccPreCheck(t)
 			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
@@ -103,7 +105,8 @@ func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.TeamsList(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		identifier := cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"])
+		_, err := client.GetTeamsList(context.Background(), identifier, rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Teams List still exists")
 		}

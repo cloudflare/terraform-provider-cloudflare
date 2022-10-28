@@ -17,6 +17,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.52.0 to 0.53.0 ([#1995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1995))
 * provider: bumps github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#1993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1993))
 
 ## 3.26.0 (19th October, 2022)
