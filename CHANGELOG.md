@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Resource:** `cloudflare_access_organization` ([#1961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1961))
+* **New Resource:** `cloudflare_total_tls` ([#1979](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1979))
 * **New Resource:** `cloudflare_waiting_room_rules` ([#1957](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1957))
 
 ENHANCEMENTS:
