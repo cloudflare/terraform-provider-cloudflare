@@ -12,10 +12,9 @@ Provides a Cloudflare Waiting Room Rules resource.
 ## Example Usage
 
 ```terraform
-# Waiting Room Rules
 resource "cloudflare_waiting_room_rules" "example" {
-  zone_id              = "0da42c8d2132a9ddaf714f9e7c920711"
-  waiting_room_id      = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id         = "0da42c8d2132a9ddaf714f9e7c920711"
+  waiting_room_id = "d41d8cd98f00b204e9800998ecf8427e"
 
   rules {
     description = "bypass ip list"
@@ -59,7 +58,7 @@ Required:
 Optional:
 
 - `description` (String) Brief summary of the waiting room rule and its intended use.
-- `status` (String) Whether the rule is enabled or disabled. Available values: `enabled`, `disabled`. Defaults to `""`.
+- `status` (String) Whether the rule is enabled or disabled. Available values: `enabled`, `disabled`.
 
 Read-Only:
 
@@ -70,6 +69,5 @@ Read-Only:
 
 Import is supported using the following syntax:
 ```shell
-# Use the Zone ID and Waiting Room ID to import.
 $ terraform import cloudflare_waiting_room_event.default <zone_id>/<waiting_room_id>
 ```
