@@ -37,7 +37,7 @@ resource "cloudflare_waiting_room_rules" "example" {
 
 ### Required
 
-- `waiting_room_id` (String) The Waiting Room ID the event should apply to.
+- `waiting_room_id` (String) The Waiting Room ID the rules should apply to.
 - `zone_id` (String) The zone identifier to target for the resource.
 
 ### Optional

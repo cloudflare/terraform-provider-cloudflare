@@ -20,7 +20,7 @@ func resourceCloudflareWaitingRoomRulesSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 		"waiting_room_id": {
-			Description: "The Waiting Room ID the event should apply to.",
+			Description: "The Waiting Room ID the rules should apply to.",
 			Type:        schema.TypeString,
 			Required:    true,
 			ForceNew:    true,
