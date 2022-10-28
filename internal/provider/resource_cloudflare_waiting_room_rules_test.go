@@ -20,7 +20,9 @@ func TestAccCloudflareWaitingRoomRules_Create(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_waiting_room_rules.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareWaitingRoomRulesDestroy,
 		Steps: []resource.TestStep{
@@ -55,7 +57,7 @@ func testAccCheckCloudflareWaitingRoomRulesDestroy(s *terraform.State) error {
 			continue
 		}
 
-		waitingRoomRules, err := client.ListWaitingRoomRules(context.Background(), cloudflare.ResourceIdentifier(rs.Primary.Attributes["zone_id"]), cloudflare.ListWaitingRoomRuleParams{
+		waitingRoomRules, err := client.ListWaitingRoomRules(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), cloudflare.ListWaitingRoomRuleParams{
 			WaitingRoomID: rs.Primary.Attributes["waiting_room_id"],
 		})
 		if err == nil {
