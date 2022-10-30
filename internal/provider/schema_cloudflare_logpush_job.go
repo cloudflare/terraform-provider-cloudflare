@@ -42,8 +42,8 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"dataset": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"firewall_events", "http_requests", "spectrum_events", "nel_reports", "audit_logs", "gateway_dns", "gateway_http", "gateway_network", "dns_logs", "network_analytics_logs"}, false),
-			Description:  fmt.Sprintf("Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/reference/logpush-api-configuration#destination). %s", renderAvailableDocumentationValuesStringSlice([]string{"firewall_events", "http_requests", "spectrum_events", "nel_reports", "audit_logs", "gateway_dns", "gateway_http", "gateway_network", "dns_logs", "network_analytics_logs"})),
+			ValidateFunc: validation.StringInSlice([]string{"access_requests", "firewall_events", "http_requests", "spectrum_events", "nel_reports", "audit_logs", "gateway_dns", "gateway_http", "gateway_network", "dns_logs", "network_analytics_logs"}, false),
+			Description:  fmt.Sprintf("Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/reference/logpush-api-configuration#destination). %s", renderAvailableDocumentationValuesStringSlice([]string{"access_requests", "firewall_events", "http_requests", "spectrum_events", "nel_reports", "audit_logs", "gateway_dns", "gateway_http", "gateway_network", "dns_logs", "network_analytics_logs"})),
 		},
 		"logpull_options": {
 			Type:        schema.TypeString,
