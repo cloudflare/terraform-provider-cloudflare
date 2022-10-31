@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
 	"strings"
+
+	"github.com/cloudflare/cloudflare-go"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -24,7 +25,7 @@ func resourceCloudflareDLPProfile() *schema.Resource {
 			StateContext: resourceCloudflareDLPProfileImport,
 		},
 		Description: heredoc.Doc(`
-			Provides a Cloudflare DLP Profile resource. Data Loss Prevention profiles 
+			Provides a Cloudflare DLP Profile resource. Data Loss Prevention profiles
 			are a set of entries that can be matched in HTTP bodies or files.
 			They are referenced in Zero Trust Gateway rules.
 		`),
@@ -213,7 +214,6 @@ func resourceCloudflareDLPProfileImport(ctx context.Context, d *schema.ResourceD
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare DLP Profile: %q, ID %q", accountID, dlpProfileID))
 
-	//lintignore:R001
 	d.Set("account_id", accountID)
 	d.SetId(dlpProfileID)
 
