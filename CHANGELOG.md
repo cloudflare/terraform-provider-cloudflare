@@ -12,6 +12,7 @@ ENHANCEMENTS:
 * resource/cloudflare_load_balancer_monitor: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
 * resource/cloudflare_load_balancer_pool: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
 * resource/cloudflare_logpush_job: add support for "access_requests" dataset parameter ([#2001](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2001))
+* resource/cloudflare_teams_list: handle pagination for larger Team List accounts ([#1706](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1706))
 * test: use `T.Setenv` to set env vars in provider tests ([#1985](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1985))
 
 BUG FIXES:
