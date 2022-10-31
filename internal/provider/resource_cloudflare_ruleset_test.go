@@ -76,10 +76,7 @@ func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -114,10 +111,7 @@ func TestAccCloudflareRuleset_WAFManagedRuleset(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -155,10 +149,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASP(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -196,10 +187,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPBlockXSSWithAnomalyOver60(t 
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -248,10 +236,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPOnlyPL1(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -302,10 +287,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultiple(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -356,10 +338,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithSkip(t *testing
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -416,10 +395,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithTopSkipAndLastS
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -482,10 +458,7 @@ func TestAccCloudflareRuleset_SkipPhaseAndProducts(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -536,10 +509,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryAndRuleBasedOverrides
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -588,10 +558,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithIDBasedOverrides(t *testing.T
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -636,10 +603,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
@@ -688,10 +652,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithPayloadLogging(t *testing.T) 
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -731,10 +692,7 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -781,10 +739,7 @@ func TestAccCloudflareRuleset_CustomErrors(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -823,10 +778,7 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -867,10 +819,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIPath(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -906,10 +855,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIQuery(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -945,10 +891,7 @@ func TestAccCloudflareRuleset_TransformHTTPResponseHeaders(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -987,10 +930,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIPathAndQueryCombination(t *te
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1030,10 +970,7 @@ func TestAccCloudflareRuleset_TransformationRuleRequestHeaders(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1080,10 +1017,7 @@ func TestAccCloudflareRuleset_TransformationRuleResponseHeaders(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1130,10 +1064,7 @@ func TestAccCloudflareRuleset_ActionParametersMultipleSkips(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1180,10 +1111,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesAction(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1228,10 +1156,7 @@ func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1272,10 +1197,7 @@ func TestAccCloudflareRuleset_ActionParametersOverrideAllRulesetRules(t *testing
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1316,10 +1238,7 @@ func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1355,10 +1274,7 @@ func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1397,10 +1313,7 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1438,10 +1351,7 @@ func TestAccCloudflareRuleset_ConditionallySetActionParameterVersion(t *testing.
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1468,10 +1378,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithActionManagedChallenge(t *tes
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()
@@ -1576,10 +1483,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesThrashingStatus(t *testin
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	t.Parallel()

@@ -9,6 +9,12 @@ import (
 
 func resourceCloudflareLoadBalancerPoolSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"account_id": {
+			Description: "The account identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+
 		"name": {
 			Type:         schema.TypeString,
 			Required:     true,

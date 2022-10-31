@@ -35,7 +35,6 @@ func testSweepCloudflareLoadBalancerPool(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	client.AccountID = accountID
 	pools, err := client.ListLoadBalancerPools(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListLoadBalancerPoolParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancer Pools: %s", err))
@@ -243,7 +242,7 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancerPool.ID
-		err := client.DeleteLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(client.AccountID), loadBalancerPool.ID)
+		err := client.DeleteLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID")), loadBalancerPool.ID)
 		if err != nil {
 			return err
 		}

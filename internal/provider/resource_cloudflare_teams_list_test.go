@@ -18,10 +18,7 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -55,10 +52,7 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -166,7 +160,8 @@ func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.GetTeamsList(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"]), rs.Primary.ID)
+    identifier := cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"])
+		_, err := client.GetTeamsList(context.Background(), identifier, rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Teams List still exists")
 		}
