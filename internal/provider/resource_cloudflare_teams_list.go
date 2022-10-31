@@ -42,8 +42,8 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams List from struct: %+v", newTeamsList))
 
 	accountID := d.Get("account_id").(string)
-  
-  identifier := cloudflare.AccountIdentifier(accountID)
+
+	identifier := cloudflare.AccountIdentifier(accountID)
 	list, err := client.CreateTeamsList(ctx, identifier, newTeamsList)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
@@ -75,7 +75,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	d.Set("type", list.Type)
 	d.Set("description", list.Description)
 
-  listItems, _, err := client.ListTeamsListItems(ctx, identifier, cloudflare.ListTeamsListItemsParams{
+	listItems, _, err := client.ListTeamsListItems(ctx, identifier, cloudflare.ListTeamsListItemsParams{
 		ListID: d.Id(),
 	})
 	if err != nil {
@@ -101,7 +101,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 
 	accountID := d.Get("account_id").(string)
 
-  identifier := cloudflare.AccountIdentifier(accountID)
+	identifier := cloudflare.AccountIdentifier(accountID)
 	teamsList, err := client.UpdateTeamsList(ctx, identifier, updatedTeamsList)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
@@ -117,7 +117,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		patchTeamsList := cloudflare.PatchTeamsListParams{ID: d.Id()}
 		setListItemDiff(&patchTeamsList, oldItems, newItems)
 
-    l, err := client.PatchTeamsList(ctx, identifier, patchTeamsList)
+		l, err := client.PatchTeamsList(ctx, identifier, patchTeamsList)
 
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
@@ -136,7 +136,7 @@ func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceDa
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams List using ID: %s", appID))
 
-  identifier := cloudflare.AccountIdentifier(accountID)
+	identifier := cloudflare.AccountIdentifier(accountID)
 	err := client.DeleteTeamsList(ctx, identifier, appID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Teams List for account %q: %w", accountID, err))
