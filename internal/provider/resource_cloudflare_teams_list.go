@@ -60,6 +60,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 
 	identifier := cloudflare.AccountIdentifier(accountID)
 	list, err := client.GetTeamsList(ctx, identifier, d.Id())
+
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -80,6 +81,7 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
 	}
+
 	d.Set("items", convertListItemsToSchema(listItems))
 
 	return nil
@@ -114,7 +116,9 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 		newItems := newItemsIface.(*schema.Set).List()
 		patchTeamsList := cloudflare.PatchTeamsListParams{ID: d.Id()}
 		setListItemDiff(&patchTeamsList, oldItems, newItems)
+
 		l, err := client.PatchTeamsList(ctx, identifier, patchTeamsList)
+
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams List for account %q: %w", accountID, err))
 		}
