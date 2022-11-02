@@ -1,4 +1,6 @@
-## 3.27.0 (Unreleased)
+## 3.28.0 (Unreleased)
+
+## 3.27.0 (November 2nd, 2022)
 
 FEATURES:
 
