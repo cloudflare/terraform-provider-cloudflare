@@ -1,5 +1,9 @@
 ## 3.28.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/access_application: Fix issue where empty CORS headers state causes panics ([#2010](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2010))
+
 DEPENDENCIES:
 
 * provider: bumps dependabot/fetch-metadata from 1.3.4 to 1.3.5 ([#2008](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2008))
