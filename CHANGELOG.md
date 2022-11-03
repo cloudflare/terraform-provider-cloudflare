@@ -1,5 +1,9 @@
 ## 3.28.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.3.4 to 1.3.5 ([#2008](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2008))
+
 ## 3.27.0 (November 2nd, 2022)
 
 FEATURES:
