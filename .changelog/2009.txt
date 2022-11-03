@@ -1,0 +1,4 @@
+```release-note:bug
+resource/access_application: Fix issue where empty CORS headers state causes
+panics
+```

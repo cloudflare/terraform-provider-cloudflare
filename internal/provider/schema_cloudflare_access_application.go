@@ -274,6 +274,10 @@ func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.Acces
 		return []interface{}{}
 	}
 
+	if headers == nil {
+		return []interface{}{}
+	}
+
 	m := map[string]interface{}{
 		"allow_all_methods": headers.AllowAllMethods,
 		"allow_all_headers": headers.AllowAllHeaders,
