@@ -16,10 +16,7 @@ func TestAccCloudflareArgoTunnelCreate(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Argo Tunnel
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

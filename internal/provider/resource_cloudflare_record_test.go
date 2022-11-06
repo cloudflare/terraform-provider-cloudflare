@@ -199,10 +199,11 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRecordConfigSRV(zoneID, "tf-acctest-srv", rnd),
+				Config: testAccCheckCloudflareRecordConfigSRV(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
-					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("_xmpp-client._tcp.tf-acctest-srv.%s", domain)),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("_xmpp-client._tcp.%s", rnd)),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("_xmpp-client._tcp.%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, "value", "0	5222	talk.l.google.com"),
 					resource.TestCheckResourceAttr(resourceName, "proxiable", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.priority", "5"),
@@ -211,7 +212,7 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "data.0.target", "talk.l.google.com"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.service", "_xmpp-client"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.proto", "_tcp"),
-					resource.TestCheckResourceAttr(resourceName, "data.0.name", "tf-acctest-srv"),
+					resource.TestCheckResourceAttr(resourceName, "data.0.name", rnd+"."+domain),
 				),
 			},
 		},
@@ -526,7 +527,7 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "data.0.priority", "1"),
 					resource.TestCheckResourceAttr(name, "data.0.target", "."),
-					resource.TestCheckResourceAttr(name, "data.0.value", "alpn=h2"),
+					resource.TestCheckResourceAttr(name, "data.0.value", `alpn="h2"`),
 				),
 			},
 		},
@@ -688,11 +689,11 @@ resource "cloudflare_record" "%[3]s" {
 }`, zoneID, name, rnd)
 }
 
-func testAccCheckCloudflareRecordConfigSRV(zoneID, name, rnd string) string {
+func testAccCheckCloudflareRecordConfigSRV(zoneID, rnd, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
+resource "cloudflare_record" "%[2]s" {
   zone_id = "%[1]s"
-  name = "%[2]s"
+  name = "_xmpp-client._tcp.%[2]s"
   data {
     priority = 5
     weight = 0
@@ -700,11 +701,11 @@ resource "cloudflare_record" "%[3]s" {
     target = "talk.l.google.com"
     service = "_xmpp-client"
     proto = "_tcp"
-    name = "%[2]s"
+    name = "%[2]s.%[3]s"
   }
   type = "SRV"
   ttl = 3600
-}`, zoneID, name, rnd)
+}`, zoneID, rnd, domain)
 }
 
 func testAccCheckCloudflareRecordConfigCAA(resourceName, zoneID, name string, ttl int) string {
@@ -812,7 +813,7 @@ resource "cloudflare_record" "%[2]s" {
 	data {
 		priority = "1"
 		target   = "."
-		value    = "alpn=h2"
+		value    = "alpn=\"h2\""
 	}
 	ttl = 300
 }`, zoneID, rnd)

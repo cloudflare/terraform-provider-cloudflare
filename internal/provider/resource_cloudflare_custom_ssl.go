@@ -275,7 +275,7 @@ func flattenCustomSSLOptions(sslopt cloudflare.ZoneCustomSSLOptions) map[string]
 		"type":          sslopt.Type,
 	}
 
-	if sslopt.GeoRestrictions.Label != "" && sslopt.GeoRestrictions.Label != "custom" {
+	if sslopt.GeoRestrictions != nil && sslopt.GeoRestrictions.Label != "" && sslopt.GeoRestrictions.Label != "custom" {
 		data["geo_restrictions"] = sslopt.GeoRestrictions.Label
 	}
 

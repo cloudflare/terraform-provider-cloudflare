@@ -62,7 +62,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
     action_parameters {
       id = "efb7b8c949ac4650a09736fc376e9aee"
     }
-    expression  = "true"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
     enabled     = true
   }
@@ -95,7 +95,7 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
       }
     }
 
-    expression  = "true"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "overrides to only enable wordpress rules to block"
     enabled     = false
   }
@@ -143,7 +143,7 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
       }
     }
 
-    expression  = "true"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "URI transformation query example"
     enabled     = true
   }
@@ -178,7 +178,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
       }
     }
 
-    expression  = "true"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "example request header transform rule"
     enabled     = false
   }
@@ -261,7 +261,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
       ]
     }
 
-    expression  = "true"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "log custom fields rule"
     enabled     = true
   }
@@ -327,7 +327,7 @@ resource "cloudflare_ruleset" "cache_settings_example" {
       }
       origin_error_page_passthru = false
     }
-    expression  = "true"
+    expression  = "(http.host eq \"example.host.com\")"
     description = "set cache settings rule"
     enabled     = true
   }
@@ -357,7 +357,7 @@ resource "cloudflare_ruleset" "redirect_from_list_example" {
 
 # Dynamic Redirects from value resource
 resource "cloudflare_ruleset" "redirect_from_value_example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "redirects"
   description = "Redirect ruleset"
   kind        = "root"
@@ -374,7 +374,7 @@ resource "cloudflare_ruleset" "redirect_from_value_example" {
         preserve_query_string = true
       }
     }
-    expression  = "true"
+    expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "Apply redirect from value"
     enabled     = true
   }
@@ -396,6 +396,26 @@ resource "cloudflare_ruleset" "http_custom_error_example" {
     }
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "serve some error response"
+    enabled     = true
+  }
+}
+
+# Set Configuration Rules for an API route
+resource "cloudflare_ruleset" "http_config_rules_example" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  name        = "set config rules"
+  description = "set config rules for request"
+  kind        = "zone"
+  phase       = "http_config_settings"
+
+  rules {
+    action = "set_config"
+    action_parameters {
+      email_obfuscation = true
+      bic               = true
+    }
+    expression  = "(http.request.uri.path matches \"^/api/\")"
+    description = "set config rules for matching request"
     enabled     = true
   }
 }
@@ -689,6 +709,7 @@ Optional:
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
 - `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
+- `sensitivity_level` (String) Sensitivity level to override for all ruleset rules. Available values: `default`, `medium`, `low`, `eoff`.
 - `status` (String) Defines if the current ruleset-level override enables or disables the ruleset. Available values: `enabled`, `disabled`. Defaults to `""`.
 
 <a id="nestedblock--rules--action_parameters--overrides--categories"></a>

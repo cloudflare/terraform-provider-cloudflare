@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_device_posture_rule: Add chromeos and unique_client_id values
+```

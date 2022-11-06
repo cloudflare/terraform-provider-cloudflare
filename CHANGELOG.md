@@ -1,7 +1,96 @@
-## 3.24.0 (Unreleased)
+## 3.28.0 (Unreleased)
+
+BUG FIXES:
+
+* resource/access_application: Fix issue where empty CORS headers state causes panics ([#2010](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2010))
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.3.4 to 1.3.5 ([#2008](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2008))
+
+## 3.27.0 (November 2nd, 2022)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_access_organization` ([#1961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1961))
+* **New Resource:** `cloudflare_dlp_profile` ([#1984](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1984))
+* **New Resource:** `cloudflare_total_tls` ([#1979](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1979))
+* **New Resource:** `cloudflare_waiting_room_rules` ([#1957](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1957))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: add support for `app_launcher`, `biso`, `dash_sso` and `warp` to the schema ([#1988](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1988))
+* resource/cloudflare_load_balancer_monitor: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
+* resource/cloudflare_load_balancer_pool: support defining explicit `account_id` for resources ([#1986](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1986))
+* resource/cloudflare_logpush_job: add support for "access_requests" dataset parameter ([#2001](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2001))
+* resource/cloudflare_teams_list: handle pagination for larger Team List accounts ([#1706](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1706))
+* test: use `T.Setenv` to set env vars in provider tests ([#1985](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1985))
+
+BUG FIXES:
+
+* resource/cloudflare_access_group: fix issue where policy groups were always showing a diff during plans ([#1983](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1983))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.52.0 to 0.53.0 ([#1995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1995))
+* provider: bumps github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#1993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1993))
+
+## 3.26.0 (19th October, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_custom_hostname: Add `wait_for_ssl_pending_validation` attribute ([#1953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1953))
+* resource/cloudflare_device_posture_rule: Add chromeos and unique_client_id values ([#1950](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1950))
+* resource/cloudflare_load_balancer: Migrate to autogen docs, improve docs ([#1954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1954))
+* resource/cloudflare_pages_domain: add Pages project domain importer. ([#1973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1973))
+* resource/cloudflare_ruleset: add support for overriding sensitivity levels for ruleset rules ([#1965](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1965))
+
+BUG FIXES:
+
+* resource/cloudflare_byo_ip_prefix: set correct prefix ID for the byoip prefix during import. ([#1951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1951))
+* resource/cloudflare_custom_ssl: check GeoRestrictions is not nil before attempting to compare it ([#1964](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1964))
+* resource/cloudflare_pages_project: add defaults to Pages project deployment config ([#1973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1973))
+* resource/cloudflare_zone_settings_override: Fetch/modify `origin_max_http_version` as a single setting. ([#1805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1805))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.51.0 to 0.52.0 ([#1962](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1962))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.23.0 to 2.24.0 ([#1969](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1969))
+* provider: bumps goreleaser/goreleaser-action from 3.1.0 to 3.2.0 ([#1977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1977))
+
+## 3.25.0 (October 5th, 2022)
 
 NOTES:
 
+* resource/device_posture_rule: update device posture rule to reflect new linux posture fields ([#1842](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1842))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_account_member: permit setting status in terraform schema if desired ([#1920](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1920))
+* resource/cloudflare_email_routing_catch_all: switch to a dedicated scheme to allow type = "drop" ([#1947](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1947))
+* resource/cloudflare_load_balancer: Add support for adaptive_routing, location_strategy, random_steering, and zero_downtime_failover ([#1941](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1941))
+* resource/cloudflare_load_balancer: update internal method signatures to match upstream library ([#1932](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1932))
+* resource/cloudflare_load_balancer_monitor: update internal method signatures to match upstream library ([#1932](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1932))
+* resource/cloudflare_load_balancer_pool: update internal method signatures to match upstream library ([#1932](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1932))
+
+BUG FIXES:
+
+* provider: allow individual setting of x-auth-service-key ([#1923](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1923))
+* provider: fix versioning injection during release builds ([#1935](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1935))
+* resource/cloudflare_byo_ip_prefix: fix `Import` to set `account_id` ([#1930](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1930))
+* resource/cloudflare_record: update Read method to pull from remote API instead of local configuration which is empty during `Import` ([#1942](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1942))
+* resource/cloudflare_zone_settings_override: Fix array manipulation bug related to single zone settings ([#1925](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1925))
+
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 5 to 6 ([#1922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1922))
+* provider: bumps dependabot/fetch-metadata from 1.3.3 to 1.3.4 ([#1945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1945))
+
+## 3.24.0 (September 21st, 2022)
+
+NOTES:
+
+* resource/cloudflare_access_bookmark: Bookmark resource is deprecated in favor of using the `cloudflare_access_application` resource. ([#1914](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1914))
 * resource/cloudflare_email_routing_rule: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
 * resource/cloudflare_email_routing_rule_catch_all: Fix example resource to use correct syntax ([#1895](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1895))
 
@@ -9,6 +98,7 @@ FEATURES:
 
 * **New Data Source:** `cloudflare_accounts` ([#1899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1899))
 * **New Data Source:** `cloudflare_record` ([#1906](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1906))
+* **New Resource:** `cloudflare_account` ([#1902](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1902))
 * **New Resource:** `cloudflare_user_agent_blocking_rule` ([#1894](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1894))
 
 ENHANCEMENTS:

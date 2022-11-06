@@ -66,9 +66,9 @@ resource "cloudflare_access_rule" "office_network" {
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource. Must provide only one of `account_id`, `zone_id`.
+- `account_id` (String) The account identifier to target for the resource.
 - `notes` (String) A personal note about the rule. Typically used as a reminder or explanation for the rule.
-- `zone_id` (String) The zone identifier to target for the resource. Must provide only one of `account_id`, `zone_id`.
+- `zone_id` (String) The zone identifier to target for the resource.
 
 ### Read-Only
 
