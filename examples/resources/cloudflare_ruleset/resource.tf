@@ -186,7 +186,7 @@ resource "cloudflare_ruleset" "http_origin_example" {
     action = "route"
     action_parameters {
       host_header = "some.host"
-      origin = {
+      origin {
         host = "some.host"
         port = 80
       }
