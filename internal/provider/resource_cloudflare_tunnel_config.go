@@ -22,8 +22,8 @@ func resourceCloudflareTunnelConfig() *schema.Resource {
 
 func buildTunnelConfig(d *schema.ResourceData) cloudflare.TunnelConfiguration {
 	fmt.Println("Starting Tunnel config")
-	// config := d.Get("config").(*schema.Set).List()[0].(map[string]interface{})
-	// fmt.Printf("%#v\n", config["ingress_rule"].(map[string]interface{}))
+	config := d.Get("config").(*schema.Set).List()[0].(map[string]interface{})
+	fmt.Printf("%#v\n", config["ingress_rule"].(*schema.Set))
 	warpRouting := cloudflare.WarpRoutingConfig{}
 	if _, ok := d.GetOk("config.0.warp_routing"); ok {
 		if _, ok := d.GetOk("config.0.warp_routing.0.enabled"); ok {
@@ -33,41 +33,31 @@ func buildTunnelConfig(d *schema.ResourceData) cloudflare.TunnelConfiguration {
 	fmt.Println("Building origin")
 	originRequest := "config.0.origin_request.0"
 
-	connectTimeOut, _ := time.ParseDuration(d.Get(originRequest+".connect_timeout").(string))
-	tlsKeepAlive, _ := time.ParseDuration(d.Get(originRequest+".tls_timeout").(string))
-	tcpKeepAlive, _ := time.ParseDuration(d.Get(originRequest+".tcp_keep_alive").(string))
-	noHappyEyeballs := d.Get(originRequest+".no_happy_eyeballs").(bool)
-	keepAliveConnections := d.Get(originRequest+".keep_alive_connections").(int)
-	keepAliveTimeout, _ := time.ParseDuration(d.Get(originRequest+".keep_alive_timeout").(string))
-	httpHostHeader := d.Get(originRequest+".http_host_header").(string)
-	originServerName := d.Get(originRequest+".ca_pool").(string)
-	noTLSVerify := d.Get(originRequest+".no_tls_verify").(bool)
-	disableChuckedEncoding := d.Get(originRequest+".disable_chunked_encoding").(bool)
-	bastionMode := d.Get(originRequest+".bastion_mode").(bool)
-	proxyAddress := d.Get(originRequest+".proxy_address").(string)
-	proxyPort := uint(d.Get(originRequest+".proxy_port").(int))
-	proxyType := d.Get(originRequest+".proxy_type").(string)
+	connectTimeOut, _ := time.ParseDuration(d.Get(originRequest + ".connect_timeout").(string))
+	tlsKeepAlive, _ := time.ParseDuration(d.Get(originRequest + ".tls_timeout").(string))
+	tcpKeepAlive, _ := time.ParseDuration(d.Get(originRequest + ".tcp_keep_alive").(string))
+	keepAliveTimeout, _ := time.ParseDuration(d.Get(originRequest + ".keep_alive_timeout").(string))
 	// fmt.Printf("%s\n", connectTimeOut)
 	origin := cloudflare.OriginRequestConfig{
 		ConnectTimeout:         &connectTimeOut,
 		TLSTimeout:             &tlsKeepAlive,
 		TCPKeepAlive:           &tcpKeepAlive,
-		NoHappyEyeballs:        &noHappyEyeballs,
-		KeepAliveConnections:   &keepAliveConnections,
+		NoHappyEyeballs:        cloudflare.BoolPtr(d.Get(originRequest + ".no_happy_eyeballs").(bool)),
+		KeepAliveConnections:   cloudflare.IntPtr(d.Get(originRequest + ".keep_alive_connections").(int)),
 		KeepAliveTimeout:       &keepAliveTimeout,
-		HTTPHostHeader:         &httpHostHeader,
-		OriginServerName:       &originServerName,
-		NoTLSVerify:            &noTLSVerify,
-		DisableChunkedEncoding: &disableChuckedEncoding,
-		BastionMode:            &bastionMode,
-		ProxyAddress:           &proxyAddress,
-		ProxyPort:              &proxyPort,
-		ProxyType:              &proxyType,
+		HTTPHostHeader:         cloudflare.StringPtr(d.Get(originRequest + ".http_host_header").(string)),
+		OriginServerName:       cloudflare.StringPtr(d.Get(originRequest + ".origin_server_name").(string)),
+		CAPool:                 cloudflare.StringPtr(d.Get(originRequest + ".ca_pool").(string)),
+		NoTLSVerify:            cloudflare.BoolPtr(d.Get(originRequest + ".no_tls_verify").(bool)),
+		DisableChunkedEncoding: cloudflare.BoolPtr(d.Get(originRequest + ".disable_chunked_encoding").(bool)),
+		BastionMode:            cloudflare.BoolPtr(d.Get(originRequest + ".bastion_mode").(bool)),
+		ProxyAddress:           cloudflare.StringPtr(d.Get(originRequest + ".proxy_address").(string)),
+		ProxyPort:              cloudflare.UintPtr(uint(d.Get(originRequest + ".proxy_port").(int))),
+		ProxyType:              cloudflare.StringPtr(d.Get(originRequest + ".proxy_type").(string)),
 	}
 
-	
 	var ipRules []cloudflare.IngressIPRule
-	if items, ok := d.GetOk(originRequest+".ip_rules"); ok {
+	if items, ok := d.GetOk(originRequest + ".ip_rules"); ok {
 		fmt.Println("Building IP Rules")
 		for _, item := range items.(*schema.Set).List() {
 			rule := item.(map[string]interface{})
@@ -82,7 +72,6 @@ func buildTunnelConfig(d *schema.ResourceData) cloudflare.TunnelConfiguration {
 	}
 	origin.IPRules = ipRules
 
-	
 	var ingressRules []cloudflare.UnvalidatedIngressRule
 	if items, ok := d.GetOk("config.0.ingress_rule"); ok {
 		fmt.Println("Building Ingress Rules")
@@ -124,7 +113,6 @@ func resourceCloudflareTunnelConfigUpdate(ctx context.Context, d *schema.Resourc
 		TunnelID: tunnelID,
 		Config:   buildTunnelConfig(d),
 	}
-	// fmt.Printf("%#v\n", tunnel)
 	_, err := client.UpdateTunnelConfiguration(ctx, cloudflare.AccountIdentifier(accountID), tunnel)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating / updating tunnel config %q: %w", tunnelID, err))
@@ -135,13 +123,10 @@ func resourceCloudflareTunnelConfigUpdate(ctx context.Context, d *schema.Resourc
 func resourceCloudflareTunnelConfigDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	tunnel := cloudflare.TunnelConfigurationParams{
-		TunnelID: d.Id(),
-		Config:   cloudflare.TunnelConfiguration{},
-	}
-	_, err := client.UpdateTunnelConfiguration(ctx, cloudflare.AccountIdentifier(accountID), tunnel)
+	tunnelID := d.Get("tunnel_id").(string)
+	err := client.DeleteTunnel(ctx, cloudflare.AccountIdentifier(accountID), tunnelID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting tunnel config %q: %w", d.Id(), err))
 	}
-	return resourceCloudflareTunnelConfigRead(ctx, d, meta)
+	return nil
 }
