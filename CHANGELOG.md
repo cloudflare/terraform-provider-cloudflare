@@ -1,5 +1,9 @@
 ## 3.28.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_zone: add new plans for zone subscriptions ([#2023](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2023))
+
 BUG FIXES:
 
 * resource/access_application: Fix issue where empty CORS headers state causes panics ([#2010](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2010))
