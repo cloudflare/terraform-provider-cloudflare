@@ -12,6 +12,7 @@ DEPENDENCIES:
 
 * provider: bumps dependabot/fetch-metadata from 1.3.4 to 1.3.5 ([#2008](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2008))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.53.0 to 0.54.0 ([#2016](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2016))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.24.0 to 2.24.1 ([#2024](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2024))
 
 ## 3.27.0 (November 2nd, 2022)
 
