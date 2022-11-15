@@ -1,5 +1,7 @@
 ## 3.28.0 (Unreleased)
 
+## 3.28.0 (November 16th, 2022)
+
 ENHANCEMENTS:
 
 * resource/cloudflare_zone: add new plans for zone subscriptions ([#2023](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2023))
@@ -41,7 +43,7 @@ DEPENDENCIES:
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.52.0 to 0.53.0 ([#1995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1995))
 * provider: bumps github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#1993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1993))
 
-## 3.26.0 (19th October, 2022)
+## 3.26.0 (October 19th, 2022)
 
 ENHANCEMENTS:
 
