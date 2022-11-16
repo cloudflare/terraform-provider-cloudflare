@@ -1,7 +1,12 @@
 ## 3.29.0 (Unreleased)
 
+NOTES:
+
+* datasource/api_token_permission_groups: `permissions` attribute has been deprecated in favour of individual resource level attributes. ([#1960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1960))
+
 BUG FIXES:
 
+* datasource/api_token_permission_groups: add `user`, `account` and `zone` attributes to contain only those specific resource level permissions. ([#1960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1960))
 * resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation` ([#2027](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2027))
 
 ## 3.28.0 (November 16th, 2022)
