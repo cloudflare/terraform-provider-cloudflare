@@ -1,5 +1,9 @@
 ## 3.29.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation` ([#2027](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2027))
+
 ## 3.28.0 (November 16th, 2022)
 
 ENHANCEMENTS:
