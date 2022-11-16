@@ -75,7 +75,6 @@ func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *sc
 		default:
 			tflog.Warn(ctx, fmt.Sprintf("unknown permission scope found: %s", v.Scopes[0]))
 		}
-
 	}
 
 	if err = d.Set("account", accountScopes); err != nil {
