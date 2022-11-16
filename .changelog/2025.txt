@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_logpush_job: add support for `workers_trace_events`
+```
