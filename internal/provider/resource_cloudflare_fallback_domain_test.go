@@ -118,9 +118,21 @@ func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
 			continue
 		}
 
-		result, _ := client.ListFallbackDomains(context.Background(), rs.Primary.ID)
-		if len(result) == 0 {
-			return errors.New("deleted Fallback Domain resource has does not include default domains")
+		accountID, policyID := parseDevicePolicyID(rs.Primary.ID)
+
+		if policyID == "" {
+			// Deletion of fallback domains should result in a reset to the default fallback domains.
+			// Default device settings policies, and their fallback domains, cannot be deleted - only reset to default.
+			result, _ := client.ListFallbackDomains(context.Background(), rs.Primary.ID)
+			if len(result) == 0 {
+				return errors.New("deleted Fallback Domain resource has does not include default domains")
+			}
+		} else {
+			// For fallback domains on a non-default device settings policy, only need to check for the deletion of the policy.
+			_, err := client.GetDeviceSettingsPolicy(context.Background(), accountID, policyID)
+			if err == nil {
+				return fmt.Errorf("Device Posture Integration still exists")
+			}
 		}
 	}
 

@@ -26,17 +26,11 @@ func resourceCloudflareFallbackDomain() *schema.Resource {
 func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	policyID := d.Get("policy_id").(string)
-	var err error
-	if policyID != "" {
-		accountID, policyID, err = parseDeviceSettingsID(d.Get("policy_id").(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
 	var domain []cloudflare.FallbackDomain
-	if policyID == "default" || policyID == "" {
+	var err error
+	if policyID == "" {
 		domain, err = client.ListFallbackDomains(ctx, accountID)
 	} else {
 		domain, err = client.ListFallbackDomainsDeviceSettingsPolicy(ctx, accountID, policyID)
@@ -55,22 +49,17 @@ func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.Resourc
 func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	policyID := d.Get("policy_id").(string)
-	var err error
-	if policyID != "" {
-		accountID, policyID, err = parseDeviceSettingsID(d.Get("policy_id").(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
 	domainList := expandFallbackDomains(d.Get("domains").(*schema.Set))
 
 	var newFallbackDomains []cloudflare.FallbackDomain
-	if policyID == "default" || policyID == "" {
+	var err error
+	if policyID == "" {
+		d.SetId(accountID)
 		newFallbackDomains, err = client.UpdateFallbackDomain(ctx, accountID, domainList)
-		policyID = "default"
 	} else {
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
 		newFallbackDomains, err = client.UpdateFallbackDomainDeviceSettingsPolicy(ctx, accountID, policyID, domainList)
 	}
 	if err != nil {
@@ -81,24 +70,16 @@ func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.Resou
 		return diag.FromErr(fmt.Errorf("error setting domain attribute: %w", err))
 	}
 
-	d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
-
 	return resourceCloudflareFallbackDomainRead(ctx, d, meta)
 }
 
 func resourceCloudflareFallbackDomainDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	policyID := d.Get("policy_id").(string)
-	var err error
-	if policyID != "" {
-		accountID, policyID, err = parseDeviceSettingsID(d.Get("policy_id").(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
-	if policyID == "default" || policyID == "" {
+	var err error
+	if policyID == "" {
 		err = client.RestoreFallbackDomainDefaults(ctx, accountID)
 	} else {
 		err = client.RestoreFallbackDomainDefaultsDeviceSettingsPolicy(ctx, accountID, policyID)
@@ -112,25 +93,23 @@ func resourceCloudflareFallbackDomainDelete(ctx context.Context, d *schema.Resou
 }
 
 func resourceCloudflareFallbackDomainImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 2)
-
-	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/policyID\"", d.Id())
+	accountID, policyID, err := parseDeviceSettingsIDImport(d.Id())
+	if err != nil {
+		return nil, err
 	}
-
-	accountID, policyID := attributes[0], attributes[1]
 
 	if accountID == "" {
 		return nil, fmt.Errorf("must provide account ID")
 	}
 
-	if policyID == "" {
-		return nil, fmt.Errorf("must provide policy ID ('default' for default policy for the given account)")
-	}
-
 	d.Set("account_id", accountID)
-	d.Set("policy_id", fmt.Sprintf("%s/%s", accountID, policyID))
-	d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	if policyID == "default" {
+		d.Set("policy_id", accountID)
+		d.SetId(accountID)
+	} else {
+		d.Set("policy_id", fmt.Sprintf("%s/%s", accountID, policyID))
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	}
 
 	resourceCloudflareFallbackDomainRead(ctx, d, meta)
 
@@ -167,4 +146,16 @@ func expandFallbackDomains(domains *schema.Set) []cloudflare.FallbackDomain {
 	}
 
 	return domainList
+}
+
+// parsePolicyID parses the account ID and policy ID from the ID with format
+// `<accountTag>` or `<accountTag>/<policyID>` and returns (account id, policy id).
+func parseDevicePolicyID(id string) (string, string) {
+	attributes := strings.Split(id, "/")
+
+	if len(attributes) == 1 {
+		return attributes[0], ""
+	}
+
+	return attributes[0], attributes[1]
 }

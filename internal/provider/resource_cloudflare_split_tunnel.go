@@ -28,20 +28,12 @@ func resourceCloudflareSplitTunnelRead(ctx context.Context, d *schema.ResourceDa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
-	policyID := d.Get("policy_id").(string)
-	if policyID != "" {
-		var err error
-		accountID, policyID, err = parseDeviceSettingsID(d.Get("policy_id").(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
 	var splitTunnel []cloudflare.SplitTunnel
 	var err error
-	if policyID == "default" || policyID == "" {
+	if policyID == "" {
 		splitTunnel, err = client.ListSplitTunnels(ctx, accountID, mode)
-		policyID = "default"
 	} else {
 		splitTunnel, err = client.ListSplitTunnelsDeviceSettingsPolicy(ctx, accountID, policyID, mode)
 	}
@@ -61,14 +53,7 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
-	policyID := d.Get("policy_id").(string)
-	if policyID != "" {
-		var err error
-		accountID, policyID, err = parseDeviceSettingsID(d.Get("policy_id").(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
 	tunnelList, err := expandSplitTunnels(d.Get("tunnels").([]interface{}))
 	if err != nil {
@@ -76,10 +61,11 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 	}
 
 	var newSplitTunnels []cloudflare.SplitTunnel
-	if policyID == "default" || policyID == "" {
+	if policyID == "" {
+		d.SetId(accountID)
 		newSplitTunnels, err = client.UpdateSplitTunnel(ctx, accountID, mode, tunnelList)
-		policyID = "default"
 	} else {
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
 		newSplitTunnels, err = client.UpdateSplitTunnelDeviceSettingsPolicy(ctx, accountID, policyID, mode, tunnelList)
 	}
 	if err != nil {
@@ -90,8 +76,6 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("error setting %q tunnels attribute: %w", mode, err))
 	}
 
-	d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
-
 	return resourceCloudflareSplitTunnelRead(ctx, d, meta)
 }
 
@@ -99,16 +83,10 @@ func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
-	policyID := d.Get("policy_id").(string)
-	var err error
-	if policyID != "" {
-		accountID, policyID, err = parseDeviceSettingsID(d.Get("policy_id").(string))
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
-	if policyID == "default" || policyID == "" {
+	var err error
+	if policyID == "" {
 		_, err = client.UpdateSplitTunnel(ctx, accountID, mode, nil)
 	} else {
 		_, err = client.UpdateSplitTunnelDeviceSettingsPolicy(ctx, accountID, policyID, mode, nil)
@@ -130,12 +108,15 @@ func resourceCloudflareSplitTunnelImport(ctx context.Context, d *schema.Resource
 
 	accountID, policyID, mode := attributes[0], attributes[1], attributes[2]
 
-	d.Set("mode", mode)
 	d.Set("account_id", accountID)
-	// we re-write policy_id to avoid having to parse out the policyID from accountID/policyID
-	// which is how the ID is defined in the device_policy resource
-	d.Set("policy_id", fmt.Sprintf("%s/%s", accountID, policyID))
-	d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	d.Set("mode", mode)
+	if policyID == "default" {
+		d.Set("policy_id", accountID)
+		d.SetId(accountID)
+	} else {
+		d.Set("policy_id", fmt.Sprintf("%s/%s", accountID, policyID))
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	}
 
 	resourceCloudflareSplitTunnelRead(ctx, d, meta)
 

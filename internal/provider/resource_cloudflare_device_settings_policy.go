@@ -32,7 +32,7 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare device settings policy: accountID=%s default=%t", accountID, defaultPolicy))
 
 	if defaultPolicy {
-		d.SetId(fmt.Sprintf("%s/default", accountID))
+		d.SetId(accountID)
 		return resourceCloudflareDeviceSettingsPolicyUpdate(ctx, d, meta)
 	}
 
@@ -55,10 +55,8 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 
 func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID, policyID, err := parseDeviceSettingsID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	accountID := d.Get("account_id").(string)
+	_, policyID := parseDevicePolicyID(d.Id())
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare device settings policy: accountID=%s policyID=%s", accountID, policyID))
 
@@ -67,7 +65,7 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy request: %q: %w", accountID, err))
 	}
 
-	if policyID == "default" {
+	if policyID == "" {
 		_, err = client.UpdateDefaultDeviceSettingsPolicy(ctx, accountID, req)
 	} else {
 		_, err = client.UpdateDeviceSettingsPolicy(ctx, accountID, policyID, req)
@@ -81,13 +79,12 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 
 func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID, policyID, err := parseDeviceSettingsID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	accountID := d.Get("account_id").(string)
+	_, policyID := parseDevicePolicyID(d.Id())
 
 	var policy cloudflare.DeviceSettingsPolicyResponse
-	if policyID == "default" {
+	var err error
+	if policyID == "" {
 		policy, err = client.GetDefaultDeviceSettingsPolicy(ctx, accountID)
 	} else {
 		policy, err = client.GetDeviceSettingsPolicy(ctx, accountID, policyID)
@@ -156,7 +153,7 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 }
 
 func resourceCloudflareDeviceSettingsPolicyImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	accountID, policyID, err := parseDeviceSettingsID(d.Id())
+	accountID, policyID, err := parseDeviceSettingsIDImport(d.Id())
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +161,11 @@ func resourceCloudflareDeviceSettingsPolicyImport(ctx context.Context, d *schema
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare device settings policy: id %s for account %s", policyID, accountID))
 
 	d.Set("account_id", accountID)
-	d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	if policyID == "default" {
+		d.SetId(accountID)
+	} else {
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	}
 
 	resourceCloudflareDeviceSettingsPolicyRead(ctx, d, meta)
 
@@ -172,13 +173,11 @@ func resourceCloudflareDeviceSettingsPolicyImport(ctx context.Context, d *schema
 }
 
 func resourceCloudflareDeviceSettingsPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID, policyID, err := parseDeviceSettingsID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	accountID := d.Get("account_id").(string)
+	_, policyID := parseDevicePolicyID(d.Id())
 
 	client := meta.(*cloudflare.API)
-	if policyID == "default" {
+	if policyID == "" {
 		d.SetId("")
 		return diag.Diagnostics{diag.Diagnostic{
 			Severity: diag.Warning,
@@ -196,7 +195,7 @@ func resourceCloudflareDeviceSettingsPolicyDelete(ctx context.Context, d *schema
 }
 
 func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.DeviceSettingsPolicyRequest, error) {
-	defaultPolicy := (d.Get("default").(bool) || d.Id() == fmt.Sprintf("%s/default", d.Get("account_id").(string)))
+	defaultPolicy := (d.Get("default").(bool) || d.Id() == d.Get("account_id").(string))
 
 	req := cloudflare.DeviceSettingsPolicyRequest{
 		DisableAutoFallback: cloudflare.BoolPtr(d.Get("disable_auto_fallback").(bool)),
@@ -250,7 +249,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 	return req, nil
 }
 
-func parseDeviceSettingsID(id string) (string, string, error) {
+func parseDeviceSettingsIDImport(id string) (string, string, error) {
 	attributes := strings.SplitN(id, "/", 2)
 
 	if len(attributes) != 2 {

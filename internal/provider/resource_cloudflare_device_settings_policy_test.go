@@ -59,7 +59,7 @@ func TestAccCloudflareDeviceSettingsPolicyCreate(t *testing.T) {
 			{
 				Config: testAccCloudflareDefaultDeviceSettingsPolicy(defaultRnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(defaultName, "id", accountID+"/default"),
+					resource.TestCheckResourceAttr(defaultName, "id", accountID),
 					resource.TestCheckResourceAttr(defaultName, "account_id", accountID),
 					resource.TestCheckResourceAttr(defaultName, "allow_mode_switch", "true"),
 					resource.TestCheckResourceAttr(defaultName, "allow_updates", "true"),
@@ -151,12 +151,14 @@ func testAccCheckCloudflareDeviceSettingsPolicyDestroy(s *terraform.State) error
 			continue
 		}
 
-		_, policyId, err := parseDeviceSettingsID(rs.Primary.ID)
-		if err != nil {
-			return err
+		_, policyID := parseDevicePolicyID(rs.Primary.ID)
+
+		// cannot delete the default device setting policy
+		if policyID == "" {
+			return nil
 		}
 
-		_, err = client.GetDeviceSettingsPolicy(context.Background(), rs.Primary.Attributes["account_id"], policyId)
+		_, err := client.GetDeviceSettingsPolicy(context.Background(), rs.Primary.Attributes["account_id"], policyID)
 		if err == nil {
 			return fmt.Errorf("Device Posture Integration still exists")
 		}
