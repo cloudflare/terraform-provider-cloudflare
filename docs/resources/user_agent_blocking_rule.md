@@ -43,7 +43,7 @@ resource "cloudflare_user_agent_blocking_rule" "example_2" {
 - `description` (String) An informative summary of the rule.
 - `mode` (String) The action to apply to a matched request. Available values: `block`, `challenge`, `js_challenge`, `managed_challenge`.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

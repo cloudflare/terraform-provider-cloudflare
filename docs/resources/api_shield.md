@@ -26,7 +26,7 @@ resource "cloudflare_api_shield" "example" {
 ### Required
 
 - `auth_id_characteristics` (Block List, Min: 1) Characteristics define properties across which auth-ids can be computed in a privacy-preserving manner. (see [below for nested schema](#nestedblock--auth_id_characteristics))
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

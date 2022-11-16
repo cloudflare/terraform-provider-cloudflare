@@ -61,14 +61,14 @@ resource "cloudflare_access_rule" "office_network" {
 
 ### Required
 
-- `configuration` (Block List, Min: 1, Max: 1) Rule configuration to apply to a matched request. (see [below for nested schema](#nestedblock--configuration))
+- `configuration` (Block List, Min: 1, Max: 1) Rule configuration to apply to a matched request. **Modifying this attribute will force creation of a new resource.** (see [below for nested schema](#nestedblock--configuration))
 - `mode` (String) The action to apply to a matched request. Available values: `block`, `challenge`, `whitelist`, `js_challenge`, `managed_challenge`.
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource.
+- `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 - `notes` (String) A personal note about the rule. Typically used as a reminder or explanation for the rule.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 
@@ -79,8 +79,8 @@ resource "cloudflare_access_rule" "office_network" {
 
 Required:
 
-- `target` (String) The request property to target. Available values: `ip`, `ip6`, `ip_range`, `asn`, `country`.
-- `value` (String) The value to target. Depends on target's type.
+- `target` (String) The request property to target. Available values: `ip`, `ip6`, `ip_range`, `asn`, `country`. **Modifying this attribute will force creation of a new resource.**
+- `value` (String) The value to target. Depends on target's type. **Modifying this attribute will force creation of a new resource.**
 
 ## Import
 

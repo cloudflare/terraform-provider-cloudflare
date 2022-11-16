@@ -70,6 +70,10 @@ func init() {
 			desc += fmt.Sprintf(" Must provide at least one of %s.", strings.Join(atLeastOneOfs, ", "))
 		}
 
+		if s.ForceNew {
+			desc += " **Modifying this attribute will force creation of a new resource.**"
+		}
+
 		return strings.TrimSpace(desc)
 	}
 }

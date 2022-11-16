@@ -76,7 +76,7 @@ resource "cloudflare_list" "example" {
 
 - `account_id` (String) The account identifier to target for the resource.
 - `kind` (String) The type of items the list will contain.
-- `name` (String) The name of the list.
+- `name` (String) The name of the list. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

@@ -58,7 +58,7 @@ resource "cloudflare_access_group" "test_group" {
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
+- `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`. **Modifying this attribute will force creation of a new resource.**
 - `exclude` (Block List) (see [below for nested schema](#nestedblock--exclude))
 - `require` (Block List) (see [below for nested schema](#nestedblock--require))
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
