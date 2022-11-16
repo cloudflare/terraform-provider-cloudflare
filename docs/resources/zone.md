@@ -29,7 +29,7 @@ resource "cloudflare_zone" "example" {
 
 ### Required
 
-- `zone` (String) The DNS zone name which will be added.
+- `zone` (String) The DNS zone name which will be added. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

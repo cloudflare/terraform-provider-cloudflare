@@ -25,8 +25,8 @@ resource "cloudflare_custom_hostname" "example" {
 
 ### Required
 
-- `hostname` (String) Hostname you intend to request a certificate for.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `hostname` (String) Hostname you intend to request a certificate for. **Modifying this attribute will force creation of a new resource.**
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

@@ -52,18 +52,18 @@ resource "cloudflare_certificate_pack" "example" {
 
 ### Required
 
-- `certificate_authority` (String) Which certificate authority to issue the certificate pack. Available values: `digicert`, `lets_encrypt`, `google`.
-- `hosts` (Set of String) List of hostnames to provision the certificate pack for. The zone name must be included as a host. Note: If using Let's Encrypt, you cannot use individual subdomains and only a wildcard for subdomain is available.
-- `type` (String) Certificate pack configuration type. Available values: `advanced`.
-- `validation_method` (String) Which validation method to use in order to prove domain ownership. Available values: `txt`, `http`, `email`.
-- `validity_days` (Number) How long the certificate is valid for. Note: If using Let's Encrypt, this value can only be 90 days. Available values: `14`, `30`, `90`, `365`.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `certificate_authority` (String) Which certificate authority to issue the certificate pack. Available values: `digicert`, `lets_encrypt`, `google`. **Modifying this attribute will force creation of a new resource.**
+- `hosts` (Set of String) List of hostnames to provision the certificate pack for. The zone name must be included as a host. Note: If using Let's Encrypt, you cannot use individual subdomains and only a wildcard for subdomain is available. **Modifying this attribute will force creation of a new resource.**
+- `type` (String) Certificate pack configuration type. Available values: `advanced`. **Modifying this attribute will force creation of a new resource.**
+- `validation_method` (String) Which validation method to use in order to prove domain ownership. Available values: `txt`, `http`, `email`. **Modifying this attribute will force creation of a new resource.**
+- `validity_days` (Number) How long the certificate is valid for. Note: If using Let's Encrypt, this value can only be 90 days. Available values: `14`, `30`, `90`, `365`. **Modifying this attribute will force creation of a new resource.**
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
-- `cloudflare_branding` (Boolean) Whether or not to include Cloudflare branding. This will add `sni.cloudflaressl.com` as the Common Name if set to `true`.
+- `cloudflare_branding` (Boolean) Whether or not to include Cloudflare branding. This will add `sni.cloudflaressl.com` as the Common Name if set to `true`. **Modifying this attribute will force creation of a new resource.**
 - `validation_records` (Block List) (see [below for nested schema](#nestedblock--validation_records))
-- `wait_for_active_status` (Boolean) Whether or not to wait for a certificate pack to reach status `active` during creation. Defaults to `false`.
+- `wait_for_active_status` (Boolean) Whether or not to wait for a certificate pack to reach status `active` during creation. Defaults to `false`. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 
