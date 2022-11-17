@@ -262,29 +262,28 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, domain, rnd, `"172.65.64.13", "172.65.64.14"`),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, domain, rnd, `"172.65.64.13", "172.65.64.49"`),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "edge_ips.#", "2"),
 					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.13"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.14"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.49"),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, domain, rnd, `"172.65.64.14", "172.65.64.13"`),
+				Config: testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, domain, rnd, `"172.65.64.49", "172.65.64.13"`),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "edge_ips.#", "2"),
 					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.13"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.14"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.49"),
 				),
 			},
 		},
 	})
 }
-
 
 func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *cloudflare.SpectrumApplication) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
