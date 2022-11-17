@@ -11,6 +11,8 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * datasource/api_token_permission_groups: add `user`, `account` and `zone` attributes to contain only those specific resource level permissions. ([#1960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1960))
+* resource/access_policy: Fix issue where only last SAML rule group was applied in
+Access policy ([#2033](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2033))
 * resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation` ([#2027](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2027))
 
 ## 3.28.0 (November 16th, 2022)
