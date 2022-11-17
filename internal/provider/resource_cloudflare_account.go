@@ -86,7 +86,9 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Account: id %s", accountID))
 
-	updatedAcc := cloudflare.Account{}
+	updatedAcc := cloudflare.Account{
+		Settings: &cloudflare.AccountSettings{},
+	}
 	if accountName, ok := d.GetOk("name"); ok {
 		updatedAcc.Name = accountName.(string)
 	}
