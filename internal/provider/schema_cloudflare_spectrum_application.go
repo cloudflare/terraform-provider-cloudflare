@@ -118,9 +118,9 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 		},
 
 		"edge_ips": {
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
-			Elem:     &schema.Schema{Type: schema.TypeSet},
+			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 
 		"edge_ip_connectivity": {

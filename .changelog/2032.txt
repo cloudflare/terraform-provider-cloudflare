@@ -1,3 +1,3 @@
 ```release-note:bug
-resource/cloudflare_spectrum_application: Keep order of edge IPs to be same 
+resource/cloudflare_spectrum_application: ignore ordering of `edge_ips`
 ```
