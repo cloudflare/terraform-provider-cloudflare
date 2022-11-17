@@ -1,0 +1,4 @@
+```release-note:bug
+resource/access_policy: Fix issue where only last SAML rule group was applied in
+Access policy
+```

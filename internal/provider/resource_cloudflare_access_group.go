@@ -402,8 +402,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	githubID := ""
 	azureID := ""
 	azureIDs := []string{}
-	samlAttrName := ""
-	samlAttrValue := ""
+	samlGroups := []map[string]string{}
 	externalEvaluationURL := ""
 	externalEvaluationKeysURL := ""
 	devicePostureRuleIDs := []string{}
@@ -470,8 +469,10 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				azureIDs = append(azureIDs, azureCfg["id"].(string))
 			case "saml":
 				samlCfg := groupValue.(map[string]interface{})
-				samlAttrName = samlCfg["attribute_name"].(string)
-				samlAttrValue = samlCfg["attribute_value"].(string)
+				samlAttrName := samlCfg["attribute_name"].(string)
+				samlAttrValue := samlCfg["attribute_value"].(string)
+				s := map[string]string{"attribute_name": samlAttrName, "attribute_value": samlAttrValue}
+				samlGroups = append(samlGroups, s)
 			case "external_evaluation":
 				eeCfg := groupValue.(map[string]interface{})
 				externalEvaluationURL = eeCfg["evaluate_url"].(string)
@@ -573,13 +574,8 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 		}
 	}
 
-	if samlAttrName != "" && samlAttrValue != "" {
-		groupMap["saml"] = []interface{}{
-			map[string]interface{}{
-				"attribute_name":  samlAttrName,
-				"attribute_value": samlAttrValue,
-			},
-		}
+	if len(samlGroups) > 0 {
+		groupMap["saml"] = samlGroups
 	}
 
 	if externalEvaluationURL != "" && externalEvaluationKeysURL != "" {
