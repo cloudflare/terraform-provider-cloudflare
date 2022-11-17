@@ -138,6 +138,10 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_name", "Name1"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_value", "Value1"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_name", "Name2"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_value", "Value2"),
 				),
 			},
 			{
@@ -151,6 +155,10 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_name", "Name1"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_value", "Value1"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_name", "Name2"),
+					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_value", "Value2"),
 				),
 			},
 		},
@@ -349,13 +357,21 @@ resource "cloudflare_access_group" "%[1]s" {
   name     = "%[1]s"
 
   include {
-	any_valid_service_token = true
+    any_valid_service_token = true
     email = ["%[2]s"]
-	email_domain = ["example.com"]
-	ip = [
-		"192.0.2.1/32",
-		"192.0.2.2/32"
-	]
+    email_domain = ["example.com"]
+    ip = [
+      "192.0.2.1/32",
+      "192.0.2.2/32"
+    ]
+    saml {
+      attribute_name = "Name1"
+      attribute_value = "Value1"
+    }
+    saml {
+      attribute_name = "Name2"
+      attribute_value = "Value2"
+    }
   }
 }`, resourceName, email, identifier.Type, identifier.Value)
 }
