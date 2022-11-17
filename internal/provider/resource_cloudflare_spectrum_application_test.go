@@ -250,6 +250,42 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsWithoutConnectivity(t *testing.
 	})
 }
 
+func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
+	var spectrumApp cloudflare.SpectrumApplication
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_spectrum_application." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, domain, rnd, `"172.65.64.13", "172.65.64.14"`),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "edge_ips.#", "2"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.13"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.14"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, domain, rnd, `"172.65.64.14", "172.65.64.13"`),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+					resource.TestCheckResourceAttr(name, "edge_ips.#", "2"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.13"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.14"),
+				),
+			},
+		},
+	})
+}
+
+
 func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *cloudflare.SpectrumApplication) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -431,4 +467,21 @@ resource "cloudflare_spectrum_application" "%[3]s" {
   origin_port   = 22
   edge_ips = ["172.65.64.13"]
 }`, zoneID, zoneName, ID)
+}
+
+func testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, zoneName, ID, IPs string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_spectrum_application" "%[3]s" {
+  zone_id  = "%[1]s"
+  protocol = "tcp/22"
+
+  dns {
+    type = "ADDRESS"
+    name = "%[3]s.%[2]s"
+  }
+
+  origin_direct = ["tcp://128.66.0.4:23"]
+  origin_port   = 22
+  edge_ips = [%[4]s]
+}`, zoneID, zoneName, ID, IPs)
 }
