@@ -1,0 +1,11 @@
+```release-note:new-resource
+cloudflare_device_settings_policy
+```
+
+```release-note:enhancement
+resource/cloudflare_split_tunnel: Add configuring split tunnel for device policies
+```
+
+```release-note:enhancement
+resource/cloudflare_fallback_domain: Add creating fallback domains for device policies
+```
