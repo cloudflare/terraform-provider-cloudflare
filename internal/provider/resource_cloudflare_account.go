@@ -38,12 +38,16 @@ func resourceCloudflareAccountCreate(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	accountName := d.Get("name").(string)
 	accountType := d.Get("type").(string)
+	twoFactor := d.Get("enforce_twofactor").(bool)
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Account: name %s", accountName))
 
 	account := cloudflare.Account{
 		Name: accountName,
 		Type: accountType,
+		Settings: &cloudflare.AccountSettings{
+			EnforceTwoFactor: twoFactor,
+		},
 	}
 	acc, err := client.CreateAccount(ctx, account)
 
@@ -84,17 +88,16 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 	accountID := d.Id()
 
+	accountName := d.Get("name").(string)
+	twoFactor := d.Get("enforce_twofactor").(bool)
+
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Account: id %s", accountID))
 
-	updatedAcc := cloudflare.Account{}
-	if accountName, ok := d.GetOk("name"); ok {
-		updatedAcc.Name = accountName.(string)
-	}
-
-	if enforce_twofactor, ok := d.GetOk("enforce_twofactor"); ok {
-		updatedAcc.Settings = &cloudflare.AccountSettings{
-			EnforceTwoFactor: enforce_twofactor.(bool),
-		}
+	updatedAcc := cloudflare.Account{
+		Name: accountName,
+		Settings: &cloudflare.AccountSettings{
+			EnforceTwoFactor: twoFactor,
+		},
 	}
 
 	_, err := client.UpdateAccount(ctx, accountID, updatedAcc)
