@@ -1,5 +1,5 @@
 ```release-note:new-resource
-cloudflare_device_policy
+cloudflare_device_settings_policy
 ```
 
 ```release-note:enhancement
