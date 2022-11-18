@@ -288,7 +288,7 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 			Type: cloudflare.SpectrumEdgeTypeStatic,
 		}
 		// connectivity = cloudflare.SpectrumConnectivityStatic
-		for _, value := range edgeIPs.([]interface{}) {
+		for _, value := range edgeIPs.(*schema.Set).List() {
 			application.EdgeIPs.IPs = append(application.EdgeIPs.IPs, net.ParseIP(value.(string)))
 		}
 	}
