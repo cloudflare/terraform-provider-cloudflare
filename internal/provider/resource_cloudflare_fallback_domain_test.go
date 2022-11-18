@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func TestAccCloudflareFallbackDomain(t *testing.T) {
+func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -41,6 +41,28 @@ func TestAccCloudflareFallbackDomain(t *testing.T) {
 					resource.TestCheckNoResourceAttr(name, "policy_id"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDefaultFallbackDomain(rnd, accountID, "second example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
@@ -52,6 +74,39 @@ func TestAccCloudflareFallbackDomain(t *testing.T) {
 					resource.TestCheckNoResourceAttr(name, "policy_id"),
 				),
 			},
+			{
+				Config: testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "domains.#", "1"),
+					resource.TestCheckResourceAttr(name, "domains.0.description", "third example domain"),
+					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
+					resource.TestCheckResourceAttr(name, "domains.0.dns_server.0", "1.1.1.1"),
+					resource.TestCheckResourceAttrSet(name, "policy_id"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
@@ -131,7 +186,7 @@ func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
 			// For fallback domains on a non-default device settings policy, only need to check for the deletion of the policy.
 			_, err := client.GetDeviceSettingsPolicy(context.Background(), accountID, policyID)
 			if err == nil {
-				return fmt.Errorf("Device Posture Integration still exists")
+				return fmt.Errorf("device settings policy still exists")
 			}
 		}
 	}
