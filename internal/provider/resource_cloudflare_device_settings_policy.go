@@ -21,6 +21,7 @@ func resourceCloudflareDeviceSettingsPolicy() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDeviceSettingsPolicyImport,
 		},
+		Description: "Provides a Cloudflare Device Policy resource. Device policies configure settings applied to WARP devices.",
 	}
 }
 
