@@ -86,15 +86,15 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Account: id %s", accountID))
 
-	updatedAcc := cloudflare.Account{
-		Settings: &cloudflare.AccountSettings{},
-	}
+	updatedAcc := cloudflare.Account{}
 	if accountName, ok := d.GetOk("name"); ok {
 		updatedAcc.Name = accountName.(string)
 	}
 
 	if enforce_twofactor, ok := d.GetOk("enforce_twofactor"); ok {
-		updatedAcc.Settings.EnforceTwoFactor = enforce_twofactor.(bool)
+		updatedAcc.Settings = &cloudflare.AccountSettings{
+			EnforceTwoFactor: enforce_twofactor.(bool),
+		}
 	}
 
 	_, err := client.UpdateAccount(ctx, accountID, updatedAcc)
