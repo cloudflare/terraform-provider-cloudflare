@@ -92,7 +92,9 @@ func resourceCloudflareAccountUpdate(ctx context.Context, d *schema.ResourceData
 	}
 
 	if enforce_twofactor, ok := d.GetOk("enforce_twofactor"); ok {
-		updatedAcc.Settings.EnforceTwoFactor = enforce_twofactor.(bool)
+		updatedAcc.Settings = &cloudflare.AccountSettings{
+			EnforceTwoFactor: enforce_twofactor.(bool),
+		}
 	}
 
 	_, err := client.UpdateAccount(ctx, accountID, updatedAcc)
