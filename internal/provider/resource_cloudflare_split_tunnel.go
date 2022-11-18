@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,6 +22,10 @@ func resourceCloudflareSplitTunnel() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareSplitTunnelImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Split Tunnel resource. Split tunnels are used to either
+			include or exclude lists of routes from the WARP client's tunnel.
+		`),
 	}
 }
 

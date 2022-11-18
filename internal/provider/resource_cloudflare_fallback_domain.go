@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,6 +21,12 @@ func resourceCloudflareFallbackDomain() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareFallbackDomainImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Fallback Domain resource. Fallback domains are
+			used to ignore DNS requests to a given list of domains. These DNS
+			requests will be passed back to other DNS servers configured on
+			existing network interfaces on the device.
+		`),
 	}
 }
 
