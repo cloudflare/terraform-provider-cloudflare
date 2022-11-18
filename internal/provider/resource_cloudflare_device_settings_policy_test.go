@@ -24,7 +24,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 	}
 
 	rnd, defaultRnd := generateRandomResourceName(), generateRandomResourceName()
-	name, defaultName := fmt.Sprintf("cloudflare_device_policy.%s", rnd), fmt.Sprintf("cloudflare_device_policy.%s", defaultRnd)
+	name, defaultName := fmt.Sprintf("cloudflare_device_settings_policy.%s", rnd), fmt.Sprintf("cloudflare_device_settings_policy.%s", defaultRnd)
 	precedence := uint64(10)
 
 	resource.Test(t, resource.TestCase{
@@ -86,7 +86,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 
 func testAccCloudflareDeviceSettingsPolicy(rnd, accountID string, precedence uint64) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_policy" "%[1]s" {
+resource "cloudflare_device_settings_policy" "%[1]s" {
 	account_id                = "%[2]s"
 	allow_mode_switch         = true
 	allow_updates             = true
@@ -106,7 +106,7 @@ resource "cloudflare_device_policy" "%[1]s" {
 
 func testAccCloudflareDefaultDeviceSettingsPolicy(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_policy" "%[1]s" {
+resource "cloudflare_device_settings_policy" "%[1]s" {
 	account_id                = "%[2]s"
 	default                   = true
 	name                      = "%[1]s"
@@ -126,7 +126,7 @@ resource "cloudflare_device_policy" "%[1]s" {
 // invalid configuration - not allowed to set match for default policies.
 func testAccCloudflareInvalidDefaultDeviceSettingsPolicy(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_policy" "%[1]s" {
+resource "cloudflare_device_settings_policy" "%[1]s" {
 	account_id                = "%[2]s"
 	default                   = true
 	name                      = "%[1]s"
@@ -147,7 +147,7 @@ func testAccCheckCloudflareDeviceSettingsPolicyDestroy(s *terraform.State) error
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_device_policy" {
+		if rs.Type != "cloudflare_device_settings_policy" {
 			continue
 		}
 

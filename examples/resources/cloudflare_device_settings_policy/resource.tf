@@ -1,4 +1,4 @@
-resource "cloudflare_device_policy" "developer_warp_policy" {
+resource "cloudflare_device_settings_policy" "developer_warp_policy" {
   account_id            = "f037e56e89293a057740de681ac9abbe"
   name                  = "Developers WARP settings policy"
   precedence            = 10

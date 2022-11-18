@@ -137,7 +137,7 @@ resource "cloudflare_fallback_domain" "%[1]s" {
 
 func testAccCloudflareFallbackDomain(rnd, accountID, description string, suffix string, dns_server string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_policy" "%[1]s" {
+resource "cloudflare_device_settings_policy" "%[1]s" {
 	account_id                = "%[2]s"
 	allow_mode_switch         = true
 	allow_updates             = true
@@ -160,7 +160,7 @@ resource "cloudflare_fallback_domain" "%[1]s" {
     suffix      = "%[4]s"
     dns_server  = ["%[5]s"]
   }
-	policy_id = "${cloudflare_device_policy.%[1]s.id}"
+	policy_id = "${cloudflare_device_settings_policy.%[1]s.id}"
 }
 `, rnd, accountID, description, suffix, dns_server)
 }

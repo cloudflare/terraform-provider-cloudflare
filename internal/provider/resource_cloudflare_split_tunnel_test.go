@@ -89,7 +89,7 @@ resource "cloudflare_split_tunnel" "%[1]s" {
 
 func testAccCloudflareSplitTunnelInclude(rnd, accountID string, description string, host string, mode string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_policy" "%[1]s" {
+resource "cloudflare_device_settings_policy" "%[1]s" {
 	account_id                = "%[2]s"
 	allow_mode_switch         = true
 	allow_updates             = true

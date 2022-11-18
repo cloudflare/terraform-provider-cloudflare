@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_device_policy Resource - Cloudflare"
+page_title: "cloudflare_device_settings_policy Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Cloudflare Device Policy resource. Device policies configure settings applied to WARP devices.
+  Provides a Cloudflare Device Settings Policy resource. Device policies configure settings applied to WARP devices.
 ---
 
-# cloudflare_device_policy (Resource)
+# cloudflare_device_settings_policy (Resource)
 
-Provides a Cloudflare Device Policy resource. Device policies configure settings applied to WARP devices.
+Provides a Cloudflare Device Settings Policy resource. Device policies configure settings applied to WARP devices.
 
 ## Example Usage
 
 ```terraform
-resource "cloudflare_device_policy" "developer_warp_policy" {
+resource "cloudflare_device_settings_policy" "developer_warp_policy" {
   account_id            = "f037e56e89293a057740de681ac9abbe"
   name                  = "Developers WARP settings policy"
   precedence            = 10
@@ -64,6 +64,6 @@ resource "cloudflare_device_policy" "developer_warp_policy" {
 
 Import is supported using the following syntax:
 ```shell
-# You can use "default" as the device policy ID when using the default.
-$ terraform import cloudflare_device_policy.example <account_id>/<device_policy_id>
+# For default device settings policies you must use "default" as the policy ID.
+$ terraform import cloudflare_device_settings_policy.example <account_id>/<device_policy_id>
 ```
