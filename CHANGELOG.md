@@ -14,6 +14,7 @@ BUG FIXES:
 * resource/access_policy: Fix issue where only last SAML rule group was applied in
 Access policy ([#2033](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2033))
 * resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation` ([#2027](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2027))
+* resource/cloudflare_spectrum_application: ignore ordering of `edge_ips` ([#2032](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2032))
 
 ## 3.28.0 (November 16th, 2022)
 
