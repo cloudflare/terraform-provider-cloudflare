@@ -210,6 +210,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_authenticated_origin_pulls":             resourceCloudflareAuthenticatedOriginPulls(),
 				"cloudflare_byo_ip_prefix":                          resourceCloudflareBYOIPPrefix(),
 				"cloudflare_certificate_pack":                       resourceCloudflareCertificatePack(),
+				"cloudflare_challenge_widget":                       resourceCloudflareChallengeWidget(),
 				"cloudflare_custom_hostname_fallback_origin":        resourceCloudflareCustomHostnameFallbackOrigin(),
 				"cloudflare_custom_hostname":                        resourceCloudflareCustomHostname(),
 				"cloudflare_custom_pages":                           resourceCloudflareCustomPages(),
