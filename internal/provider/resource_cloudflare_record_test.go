@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func init() {
@@ -532,6 +533,31 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestSuppressTrailingDots(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		old      string
+		new      string
+		expected bool
+	}{
+		{"", "", true},
+		{"", "example.com", false},
+		{"", "example.com.", false},
+		{"", ".", false}, // single dot is used for Null MX record
+		{"example.com", "example.com", true},
+		{"example.com", "example.com.", true},
+		{"example.com", "sub.example.com", false},
+		{"sub.example.com", "sub.example.com.", true},
+		{".", ".", true},
+	}
+
+	for _, c := range cases {
+		got := suppressTrailingDots("", c.old, c.new, nil)
+		assert.Equal(t, c.expected, got)
+	}
 }
 
 func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
