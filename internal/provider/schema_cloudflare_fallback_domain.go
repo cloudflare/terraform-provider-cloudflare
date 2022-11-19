@@ -37,5 +37,10 @@ func resourceCloudflareFallbackDomainSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"policy_id": {
+			Optional:    true,
+			Type:        schema.TypeString,
+			Description: "The settings policy for which to configure this fallback domain policy.",
+		},
 	}
 }

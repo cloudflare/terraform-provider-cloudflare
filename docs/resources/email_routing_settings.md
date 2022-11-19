@@ -22,8 +22,8 @@ resource "cloudflare_email_routing_settings" "my_zone" {
 
 ### Required
 
-- `enabled` (Boolean) State of the zone settings for Email Routing.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `enabled` (Boolean) State of the zone settings for Email Routing. **Modifying this attribute will force creation of a new resource.**
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

@@ -48,7 +48,7 @@ resource "cloudflare_firewall_rule" "wordpress" {
 
 - `action` (String) The action to apply to a matched request. Available values: `block`, `challenge`, `allow`, `js_challenge`, `managed_challenge`, `log`, `bypass`.
 - `filter_id` (String) The identifier of the Filter to use for determining if the Firewall Rule should be triggered.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

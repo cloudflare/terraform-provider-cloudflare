@@ -63,7 +63,7 @@ resource "cloudflare_worker_script" "my_script" {
 ### Required
 
 - `content` (String) The script content.
-- `name` (String) The name for the script.
+- `name` (String) The name for the script. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

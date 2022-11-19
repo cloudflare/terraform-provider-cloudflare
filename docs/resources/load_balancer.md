@@ -78,7 +78,7 @@ resource "cloudflare_load_balancer_pool" "example" {
 - `default_pool_ids` (List of String) A list of pool IDs ordered by their failover priority. Used whenever [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) are not defined.
 - `fallback_pool_id` (String) The pool ID to use when all other pools are detected as unhealthy.
 - `name` (String) The DNS hostname to associate with your load balancer. If this hostname already exists as a DNS record in Cloudflare's DNS, the load balancer will take precedence and the DNS record will not be used.
-- `zone_id` (String) The zone ID to add the load balancer to.
+- `zone_id` (String) The zone ID to add the load balancer to. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

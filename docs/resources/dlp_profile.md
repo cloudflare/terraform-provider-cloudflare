@@ -9,7 +9,7 @@ description: |-
 
 # cloudflare_dlp_profile (Resource)
 
-Provides a Cloudflare DLP Profile resource. Data Loss Prevention profiles 
+Provides a Cloudflare DLP Profile resource. Data Loss Prevention profiles
 are a set of entries that can be matched in HTTP bodies or files.
 They are referenced in Zero Trust Gateway rules.
 
@@ -64,10 +64,10 @@ resource "cloudflare_dlp_profile" "example_custom" {
 
 ### Required
 
-- `account_id` (String) The account identifier to target for the resource.
+- `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 - `entry` (Block Set, Min: 1) List of entries to apply to the profile. (see [below for nested schema](#nestedblock--entry))
-- `name` (String) Name of the profile.
-- `type` (String) The type of the profile. Available values: `custom`, `predefined`.
+- `name` (String) Name of the profile. **Modifying this attribute will force creation of a new resource.**
+- `type` (String) The type of the profile. Available values: `custom`, `predefined`. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

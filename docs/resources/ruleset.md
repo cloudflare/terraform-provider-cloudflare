@@ -222,7 +222,7 @@ resource "cloudflare_ruleset" "http_origin_example" {
     action = "route"
     action_parameters {
       host_header = "some.host"
-      origin = {
+      origin {
         host = "some.host"
         port = 80
       }
@@ -427,7 +427,7 @@ resource "cloudflare_ruleset" "http_config_rules_example" {
 ### Required
 
 - `kind` (String) Type of Ruleset to create. Available values: `custom`, `managed`, `root`, `schema`, `zone`.
-- `name` (String) Name of the ruleset.
+- `name` (String) Name of the ruleset. **Modifying this attribute will force creation of a new resource.**
 - `phase` (String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_custom_errors`, `http_log_custom_fields`, `http_request_cache_settings`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_late_transform_managed`, `http_request_main`, `http_request_origin`, `http_request_dynamic_redirect`, `http_request_redirect`, `http_request_sanitize`, `http_request_transform`, `http_response_firewall_managed`, `http_response_headers_transform`, `http_response_headers_transform_managed`, `magic_transit`, `http_ratelimit`, `http_request_sbfm`, `http_config_settings`.
 
 ### Optional

@@ -70,6 +70,10 @@ func init() {
 			desc += fmt.Sprintf(" Must provide at least one of %s.", strings.Join(atLeastOneOfs, ", "))
 		}
 
+		if s.ForceNew {
+			desc += " **Modifying this attribute will force creation of a new resource.**"
+		}
+
 		return strings.TrimSpace(desc)
 	}
 }
@@ -214,6 +218,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_custom_hostname":                        resourceCloudflareCustomHostname(),
 				"cloudflare_custom_pages":                           resourceCloudflareCustomPages(),
 				"cloudflare_custom_ssl":                             resourceCloudflareCustomSsl(),
+				"cloudflare_device_settings_policy":                 resourceCloudflareDeviceSettingsPolicy(),
 				"cloudflare_device_policy_certificates":             resourceCloudflareDevicePolicyCertificates(),
 				"cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
 				"cloudflare_device_posture_rule":                    resourceCloudflareDevicePostureRule(),

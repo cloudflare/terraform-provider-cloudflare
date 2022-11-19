@@ -23,9 +23,9 @@ resource "cloudflare_pages_domain" "my-domain" {
 
 ### Required
 
-- `account_id` (String) The account identifier to target for the resource.
-- `domain` (String) Custom domain.
-- `project_name` (String) Name of the Pages Project.
+- `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+- `domain` (String) Custom domain. **Modifying this attribute will force creation of a new resource.**
+- `project_name` (String) Name of the Pages Project. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 
