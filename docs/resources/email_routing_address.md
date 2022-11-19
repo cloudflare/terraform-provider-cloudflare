@@ -22,8 +22,8 @@ resource "cloudflare_email_routing_address" "example" {
 
 ### Required
 
-- `account_id` (String) The account identifier to target for the resource.
-- `email` (String) The contact email address of the user.
+- `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+- `email` (String) The contact email address of the user. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

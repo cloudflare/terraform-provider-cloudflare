@@ -29,7 +29,7 @@ resource "cloudflare_tunnel_virtual_network" "example" {
 
 ### Required
 
-- `account_id` (String) The account identifier to target for the resource.
+- `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 - `name` (String) A user-friendly name chosen when the virtual network is created.
 
 ### Optional

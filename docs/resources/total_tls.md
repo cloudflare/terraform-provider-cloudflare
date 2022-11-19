@@ -24,7 +24,7 @@ resource "cloudflare_total_tls" "example" {
 ### Required
 
 - `enabled` (Boolean) Enable Total TLS for the zone.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 

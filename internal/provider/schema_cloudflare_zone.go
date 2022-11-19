@@ -46,7 +46,9 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 			Computed: true,
 			ValidateFunc: validation.StringInSlice([]string{
 				planIDFree,
+				planIDLite,
 				planIDPro,
+				planIDProPlus,
 				planIDBusiness,
 				planIDEnterprise,
 				planIDPartnerFree,
@@ -56,7 +58,9 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 			}, false),
 			Description: fmt.Sprintf("The name of the commercial plan to apply to the zone. %s", renderAvailableDocumentationValuesStringSlice([]string{
 				planIDFree,
+				planIDLite,
 				planIDPro,
+				planIDProPlus,
 				planIDBusiness,
 				planIDEnterprise,
 				planIDPartnerFree,

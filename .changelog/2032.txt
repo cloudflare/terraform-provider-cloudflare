@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_spectrum_application: ignore ordering of `edge_ips`
+```

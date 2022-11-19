@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -15,12 +17,13 @@ func resourceCloudflareSplitTunnelSchema() map[string]*schema.Schema {
 		"mode": {
 			Type:         schema.TypeString,
 			Required:     true,
-			Description:  "The mode of the split tunnel policy. Either 'include' or 'exclude'.",
+			Description:  fmt.Sprintf("The mode of the split tunnel policy. %s", renderAvailableDocumentationValuesStringSlice([]string{"include", "exclude"})),
 			ValidateFunc: validation.StringInSlice([]string{"include", "exclude"}, false),
 		},
 		"tunnels": {
-			Required: true,
-			Type:     schema.TypeList,
+			Required:    true,
+			Type:        schema.TypeList,
+			Description: "The value of the tunnel attributes.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"address": {
@@ -40,6 +43,11 @@ func resourceCloudflareSplitTunnelSchema() map[string]*schema.Schema {
 					},
 				},
 			},
+		},
+		"policy_id": {
+			Optional:    true,
+			Type:        schema.TypeString,
+			Description: "The settings policy for which to configure this split tunnel policy.",
 		},
 	}
 }

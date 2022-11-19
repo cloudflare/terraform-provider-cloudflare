@@ -1,4 +1,33 @@
-## 3.28.0 (Unreleased)
+## 3.29.0 (Unreleased)
+
+NOTES:
+
+* datasource/api_token_permission_groups: `permissions` attribute has been deprecated in favour of individual resource level attributes. ([#1960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1960))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_device_settings_policy` ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_fallback_domain: Add creating fallback domains for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
+* resource/cloudflare_logpush_job: add support for `workers_trace_events` ([#2025](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2025))
+* resource/cloudflare_split_tunnel: Add configuring split tunnel for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
+
+BUG FIXES:
+
+* datasource/api_token_permission_groups: add `user`, `account` and `zone` attributes to contain only those specific resource level permissions. ([#1960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1960))
+* resource/access_policy: Fix issue where only last SAML rule group was applied in
+Access policy ([#2033](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2033))
+* resource/cloudflare_account: Fix uninitialized cloudflare.Account.Settings ([#2034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2034))
+* resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation` ([#2027](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2027))
+* resource/cloudflare_spectrum_application: ignore ordering of `edge_ips` ([#2032](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2032))
+
+## 3.28.0 (November 16th, 2022)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_zone: add new plans for zone subscriptions ([#2023](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2023))
 
 BUG FIXES:
 
@@ -7,6 +36,8 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bumps dependabot/fetch-metadata from 1.3.4 to 1.3.5 ([#2008](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2008))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.53.0 to 0.54.0 ([#2016](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2016))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.24.0 to 2.24.1 ([#2024](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2024))
 
 ## 3.27.0 (November 2nd, 2022)
 
@@ -35,7 +66,7 @@ DEPENDENCIES:
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.52.0 to 0.53.0 ([#1995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1995))
 * provider: bumps github.com/stretchr/testify from 1.8.0 to 1.8.1 ([#1993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1993))
 
-## 3.26.0 (19th October, 2022)
+## 3.26.0 (October 19th, 2022)
 
 ENHANCEMENTS:
 

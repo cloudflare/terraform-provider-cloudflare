@@ -78,9 +78,9 @@ resource "cloudflare_access_identity_provider" "okta" {
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
+- `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`. **Modifying this attribute will force creation of a new resource.**
 - `config` (Block List) Provider configuration from the [developer documentation](https://developers.cloudflare.com/access/configuring-identity-providers/). (see [below for nested schema](#nestedblock--config))
-- `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
+- `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

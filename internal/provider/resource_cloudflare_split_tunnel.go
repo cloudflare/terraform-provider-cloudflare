@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,6 +22,10 @@ func resourceCloudflareSplitTunnel() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareSplitTunnelImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Split Tunnel resource. Split tunnels are used to either
+			include or exclude lists of routes from the WARP client's tunnel.
+		`),
 	}
 }
 
@@ -28,8 +33,16 @@ func resourceCloudflareSplitTunnelRead(ctx context.Context, d *schema.ResourceDa
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
-	splitTunnel, err := client.ListSplitTunnels(ctx, accountID, mode)
+	var splitTunnel []cloudflare.SplitTunnel
+	var err error
+	if policyID == "" {
+		splitTunnel, err = client.ListSplitTunnels(ctx, accountID, mode)
+	} else {
+		splitTunnel, err = client.ListSplitTunnelsDeviceSettingsPolicy(ctx, accountID, policyID, mode)
+	}
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding %q Split Tunnels: %w", mode, err))
 	}
@@ -45,13 +58,21 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
 	tunnelList, err := expandSplitTunnels(d.Get("tunnels").([]interface{}))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating %q Split Tunnels: %w", mode, err))
 	}
 
-	newSplitTunnels, err := client.UpdateSplitTunnel(ctx, accountID, mode, tunnelList)
+	var newSplitTunnels []cloudflare.SplitTunnel
+	if policyID == "" {
+		d.SetId(accountID)
+		newSplitTunnels, err = client.UpdateSplitTunnel(ctx, accountID, mode, tunnelList)
+	} else {
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+		newSplitTunnels, err = client.UpdateSplitTunnelDeviceSettingsPolicy(ctx, accountID, policyID, mode, tunnelList)
+	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating %q Split Tunnels: %w", mode, err))
 	}
@@ -60,8 +81,6 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(fmt.Errorf("error setting %q tunnels attribute: %w", mode, err))
 	}
 
-	d.SetId(accountID)
-
 	return resourceCloudflareSplitTunnelRead(ctx, d, meta)
 }
 
@@ -69,8 +88,14 @@ func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	mode := d.Get("mode").(string)
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
-	_, err := client.UpdateSplitTunnel(ctx, accountID, mode, nil)
+	var err error
+	if policyID == "" {
+		_, err = client.UpdateSplitTunnel(ctx, accountID, mode, nil)
+	} else {
+		_, err = client.UpdateSplitTunnelDeviceSettingsPolicy(ctx, accountID, policyID, mode, nil)
+	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -80,17 +105,23 @@ func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.Resource
 }
 
 func resourceCloudflareSplitTunnelImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 2)
+	attributes := strings.SplitN(d.Id(), "/", 3)
 
-	if len(attributes) != 2 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/mode\"", d.Id())
+	if len(attributes) != 3 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/policyID/mode\"", d.Id())
 	}
 
-	accountID, mode := attributes[0], attributes[1]
+	accountID, policyID, mode := attributes[0], attributes[1], attributes[2]
 
-	d.Set("mode", mode)
 	d.Set("account_id", accountID)
-	d.SetId(accountID)
+	d.Set("mode", mode)
+	if policyID == "default" {
+		d.Set("policy_id", accountID)
+		d.SetId(accountID)
+	} else {
+		d.Set("policy_id", fmt.Sprintf("%s/%s", accountID, policyID))
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	}
 
 	resourceCloudflareSplitTunnelRead(ctx, d, meta)
 

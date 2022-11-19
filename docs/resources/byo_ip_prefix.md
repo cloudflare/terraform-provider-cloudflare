@@ -27,7 +27,7 @@ resource "cloudflare_byo_ip_prefix" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `prefix_id` (String) The assigned Bring-Your-Own-IP prefix ID.
+- `prefix_id` (String) The assigned Bring-Your-Own-IP prefix ID. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
