@@ -21,24 +21,24 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 		"config": {
 			Type:     schema.TypeSet,
 			MaxItems: 1,
-			Optional: true,
+			Required: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"warp_routing": {
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"enabled": {
 									Type:     schema.TypeBool,
-									Required: true,
+									Optional: true,
 								},
 							},
 						},
 					},
 					"origin_request": {
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -46,57 +46,68 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 								"connect_timeout": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "HTTP proxy timeout for establishing a new connection",
+									Description: "Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by tlsTimeout.",
+									Default:     "30s",
 								},
 								"tls_timeout": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "HTTP proxy timeout for completing a TLS handshake",
+									Description: "Timeout for completing a TLS handshake to your origin server, if you have chosen to connect Tunnel to an HTTPS server.",
+									Default:     "10s",
 								},
 								"tcp_keep_alive": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "HTTP proxy TCP keepalive duration",
+									Description: "The timeout after which a TCP keepalive packet is sent on a connection between Tunnel and the origin server.",
+									Default:     "30s",
 								},
 								"no_happy_eyeballs": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "HTTP proxy should disable 'happy eyeballs' for IPv4/v6 fallback",
+									Description: "Disable the “happy eyeballs” algorithm for IPv4/IPv6 fallback if your local network has misconfigured one of the protocols.",
+									Default:     false,
 								},
 								"keep_alive_connections": {
 									Type:        schema.TypeInt,
 									Optional:    true,
-									Description: "HTTP proxy maximum keepalive connection pool size",
+									Description: "Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections.",
+									Default:     100,
 								},
 								"keep_alive_timeout": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "HTTP proxy timeout for closing an idle connection",
+									Description: "Timeout after which an idle keepalive connection can be discarded.",
+									Default:     "1m30s",
 								},
 								"http_host_header": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "Sets the HTTP Host header for the local webserver.",
+									Description: "Sets the HTTP Host header on requests sent to the local service.",
+									Default:     "",
 								},
 								"origin_server_name": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "Hostname on the origin server certificate.",
+									Description: "Hostname that cloudflared should expect from your origin server certificate.",
+									Default:     "",
 								},
 								"ca_pool": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "Path to the CA for the certificate of your origin. This option should be used only if your certificate is not signed by Cloudflare.",
+									Description: "Path to the certificate authority (CA) for the certificate of your origin. This option should be used only if your certificate is not signed by Cloudflare.",
+									Default:     "",
 								},
 								"no_tls_verify": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "Disables TLS verification of the certificate presented by your origin.",
+									Description: "Disables TLS verification of the certificate presented by your origin. Will allow any certificate from the origin to be accepted.",
+									Default:     false,
 								},
 								"disable_chunked_encoding": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "Disables chunked transfer encoding.",
+									Description: "Disables chunked transfer encoding. Useful if you are running a Web Server Gateway Interface (WSGI) server.",
+									Default:     false,
 								},
 								"bastion_mode": {
 									Type:        schema.TypeBool,
@@ -106,37 +117,40 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 								"proxy_address": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "Listen address for the proxy.",
+									Description: "cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures the listen address for that proxy.",
+									Default:     "127.0.0.1",
 								},
 								"proxy_port": {
 									Type:        schema.TypeInt,
 									Optional:    true,
-									Description: "Listen port for the proxy.",
+									Description: "cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures the listen port for that proxy. If set to zero, an unused port will randomly be chosen.",
+									Default:     0,
 								},
 								"proxy_type": {
 									Type:         schema.TypeString,
 									Optional:     true,
-									Description:  "Valid options are 'socks' or empty.",
+									Description:  "cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are:.",
 									ValidateFunc: validation.StringInSlice([]string{"", "socks"}, false),
+									Default:      "",
 								},
 								"ip_rules": {
-									Type:        schema.TypeSet,
+									Type:        schema.TypeList,
 									Optional:    true,
 									Description: "IP rules for the proxy service",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											"prefix": {
 												Type:     schema.TypeString,
-												Required: true,
+												Optional: true,
 											},
 											"ports": {
-												Type:     schema.TypeSet,
-												Required: true,
+												Type:     schema.TypeList,
+												Optional: true,
 												Elem:     &schema.Schema{Type: schema.TypeInt},
 											},
 											"allow": {
 												Type:     schema.TypeBool,
-												Required: true,
+												Optional: true,
 											},
 										},
 									},
@@ -145,8 +159,9 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 						},
 					},
 					"ingress_rule": {
-						Type:     schema.TypeList,
-						Optional: true,
+						Type:        schema.TypeList,
+						Description: "Each incoming request received by cloudflared causes cloudflared to send a request to a local service. This section configures the rules that determine which requests are sent to which local services.",
+						Required:    true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"hostname": {Type: schema.TypeString, Optional: true},

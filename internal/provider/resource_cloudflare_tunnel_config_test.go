@@ -60,6 +60,27 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 		`, resourceID, accountID, tunnelSecret)
 }
 
+func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_argo_tunnel" "%[1]s" {
+		  account_id = "%[2]s"
+		  name       = "%[1]s"
+		  secret     = "%[3]s"
+		}
+		
+		resource "cloudflare_tunnel_config" "%[1]s" {
+		  account_id         = "%[2]s"
+		  tunnel_id          = cloudflare_argo_tunnel.%[1]s.id
+		
+		  config {
+			ingress_rule {
+				service = "https://127.0.0.1:8081"
+			  }
+		  }
+		}
+		`, resourceID, accountID, tunnelSecret)
+}
+
 func TestAccCloudflareTunnelConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
@@ -108,6 +129,13 @@ func TestAccCloudflareTunnelConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.hostname", ""),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.path", ""),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "https://127.0.0.1:8081"),
+				),
+			},
+			{
+				Config: testTunnelConfigShort(rnd, zoneID, tunnelSecret),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "1"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://127.0.0.1:8081"),
 				),
 			},
 		},
