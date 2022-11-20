@@ -99,10 +99,7 @@ func buildTunnelConfig(d *schema.ResourceData) cloudflare.TunnelConfiguration {
 	}
 
 	var ingressRules []cloudflare.UnvalidatedIngressRule
-	ingressRuleConfig := d.Get("config.0.ingress_rule")
-	fmt.Printf("ingress_rule: %#v", ingressRuleConfig)
-	for _, ingressRule := range ingressRuleConfig.([]interface{}) {
-		fmt.Printf("ingress_rule: %#v", ingressRule)
+	for _, ingressRule := range d.Get("config.0.ingress_rule").([]interface{}) {
 		ingressRuleConfig := ingressRule.(map[string]interface{})
 		ingressRule := cloudflare.UnvalidatedIngressRule{
 			Service:  ingressRuleConfig["service"].(string),

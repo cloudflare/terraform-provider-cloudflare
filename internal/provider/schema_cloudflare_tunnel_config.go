@@ -19,7 +19,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 		},
 
 		"config": {
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			MaxItems: 1,
 			Required: true,
 			Elem: &schema.Resource{
