@@ -440,3 +440,14 @@ func suppressPriority(k, old, new string, d *schema.ResourceData) bool {
 	}
 	return false
 }
+
+func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
+	newTrimmed := strings.TrimSuffix(new, ".")
+
+	// Ensure to distinguish values consists of dots only.
+	if newTrimmed == "" {
+		return old == new
+	}
+
+	return strings.TrimSuffix(old, ".") == newTrimmed
+}

@@ -38,13 +38,11 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 		},
 
 		"value": {
-			Type:          schema.TypeString,
-			Optional:      true,
-			Computed:      true,
-			ConflictsWith: []string{"data"},
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				return strings.TrimSuffix(old, ".") == strings.TrimSuffix(new, ".")
-			},
+			Type:             schema.TypeString,
+			Optional:         true,
+			Computed:         true,
+			ConflictsWith:    []string{"data"},
+			DiffSuppressFunc: suppressTrailingDots,
 		},
 
 		"data": {

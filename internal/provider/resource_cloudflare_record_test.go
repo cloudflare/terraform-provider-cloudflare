@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func init() {
@@ -534,6 +535,54 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_MXNull(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordNullMX(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "value", "."),
+					resource.TestCheckResourceAttr(name, "priority", "0"),
+				),
+			},
+		},
+	})
+}
+
+func TestSuppressTrailingDots(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		old      string
+		new      string
+		expected bool
+	}{
+		{"", "", true},
+		{"", "example.com", false},
+		{"", "example.com.", false},
+		{"", ".", false}, // single dot is used for Null MX record
+		{"example.com", "example.com", true},
+		{"example.com", "example.com.", true},
+		{"example.com", "sub.example.com", false},
+		{"sub.example.com", "sub.example.com.", true},
+		{".", ".", true},
+	}
+
+	for _, c := range cases {
+		got := suppressTrailingDots("", c.old, c.new, nil)
+		assert.Equal(t, c.expected, got)
+	}
+}
+
 func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
@@ -817,4 +866,16 @@ resource "cloudflare_record" "%[2]s" {
 	}
 	ttl = 300
 }`, zoneID, rnd)
+}
+
+func testAccCheckCloudflareRecordNullMX(zoneID, rnd string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_record" "%[1]s" {
+		zone_id  = "%[2]s"
+		type     = "MX"
+		name     = "%[1]s"
+		value    = "."
+		priority = 0
+	  }
+	`, rnd, zoneID)
 }
