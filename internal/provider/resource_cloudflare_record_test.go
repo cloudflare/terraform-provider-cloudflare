@@ -535,6 +535,29 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_MXNull(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordNullMX(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "value", "."),
+					resource.TestCheckResourceAttr(name, "priority", "0"),
+				),
+			},
+		},
+	})
+}
+
 func TestSuppressTrailingDots(t *testing.T) {
 	t.Parallel()
 
@@ -843,4 +866,16 @@ resource "cloudflare_record" "%[2]s" {
 	}
 	ttl = 300
 }`, zoneID, rnd)
+}
+
+func testAccCheckCloudflareRecordNullMX(zoneID, rnd string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_record" "%[1]s" {
+		zone_id  = "%[2]s"
+		type     = "MX"
+		name     = "%[1]s"
+		value    = "."
+		priority = 0
+	  }
+	`, rnd, zoneID)
 }
