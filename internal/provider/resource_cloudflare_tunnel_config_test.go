@@ -50,19 +50,17 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 			ingress_rule {
 			  hostname = "foo"
 			  path = "/bar"
-			  service = "127.0.0.1:8080"
+			  service = "http://127.0.0.1:8080"
 			}
 			ingress_rule {
-			  hostname = "bar"
-			  path = ""
-			  service = "127.0.0.1:8081"
-			}
+				service = "https://127.0.0.1:8081"
+			  }
 		  }
 		}
 		`, resourceID, accountID, tunnelSecret)
 }
 
-func TestAccTestTunnelConfig(t *testing.T) {
+func TestAccCloudflareTunnelConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -93,9 +91,9 @@ func TestAccTestTunnelConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.no_tls_verify", "false"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.disable_chunked_encoding", "false"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.bastion_mode", "false"),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_address", ""),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_port", ""),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_type", ""),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_address", "127.0.0.1"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_port", "8123"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_type", "socks"),
 
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.ip_rules.0.prefix", "/web"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.ip_rules.0.ports.#", "2"),
@@ -106,10 +104,10 @@ func TestAccTestTunnelConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "2"),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.hostname", "foo"),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.path", "/bar"),
-					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "127.0.0.1:8080"),
-					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.hostname", "bar"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "http://127.0.0.1:8080"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.hostname", ""),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.path", ""),
-					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "127.0.0.1:8081"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "https://127.0.0.1:8081"),
 				),
 			},
 		},

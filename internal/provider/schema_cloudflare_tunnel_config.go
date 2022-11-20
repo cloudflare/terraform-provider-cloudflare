@@ -25,7 +25,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"warp_routing": {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -38,7 +38,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 						},
 					},
 					"origin_request": {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -120,7 +120,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 									ValidateFunc: validation.StringInSlice([]string{"", "socks"}, false),
 								},
 								"ip_rules": {
-									Type:        schema.TypeList,
+									Type:        schema.TypeSet,
 									Optional:    true,
 									Description: "IP rules for the proxy service",
 									Elem: &schema.Resource{
@@ -130,7 +130,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 												Required: true,
 											},
 											"ports": {
-												Type:     schema.TypeList,
+												Type:     schema.TypeSet,
 												Required: true,
 												Elem:     &schema.Schema{Type: schema.TypeInt},
 											},
@@ -145,12 +145,12 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 						},
 					},
 					"ingress_rule": {
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								"hostname": {Type: schema.TypeString, Required: true},
-								"path":     {Type: schema.TypeString, Required: true},
+								"hostname": {Type: schema.TypeString, Optional: true},
+								"path":     {Type: schema.TypeString, Optional: true},
 								"service":  {Type: schema.TypeString, Required: true},
 							},
 						},
