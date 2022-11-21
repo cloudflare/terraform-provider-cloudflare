@@ -31,9 +31,9 @@ resource "cloudflare_workers_kv" "example" {
 
 ### Required
 
-- `key` (String) **Modifying this attribute will force creation of a new resource.**
-- `namespace_id` (String) **Modifying this attribute will force creation of a new resource.**
-- `value` (String)
+- `key` (String) Name of the KV pair. **Modifying this attribute will force creation of a new resource.**
+- `namespace_id` (String) The ID of the Workers KV namespace in which you want to create the KV pair. **Modifying this attribute will force creation of a new resource.**
+- `value` (String) Value of the KV pair.
 
 ### Read-Only
 
