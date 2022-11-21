@@ -6,6 +6,7 @@ func resourceCloudflareWorkerKVSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"key": {
 			Type:     schema.TypeString,
+			ForceNew: true,
 			Required: true,
 		},
 		"namespace_id": {
