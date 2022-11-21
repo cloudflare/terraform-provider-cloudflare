@@ -19,7 +19,10 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	resourceName := "cloudflare_workers_kv." + name
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
@@ -31,6 +34,45 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 						resourceName, "value", value,
 					),
 				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
+	t.Parallel()
+	var kvPair cloudflare.WorkersKVPair
+	name := generateRandomResourceName()
+	key := generateRandomResourceName()
+	value := generateRandomResourceName()
+	resourceName := "cloudflare_workers_kv." + name
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareWorkersKV(name, key, value),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
+					resource.TestCheckResourceAttr(
+						resourceName, "value", value,
+					),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareWorkersKV(name, key+"-updated", value),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
+					resource.TestCheckResourceAttr(
+						resourceName, "value", value,
+					),
+				),
+				ExpectNonEmptyPlan: false,
 			},
 		},
 	})

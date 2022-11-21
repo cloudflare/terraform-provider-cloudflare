@@ -22,6 +22,7 @@ func resourceCloudflareWorkerKV() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareWorkersKVImport,
 		},
+		Description: "Provides a Workers KV Pair.",
 	}
 }
 
