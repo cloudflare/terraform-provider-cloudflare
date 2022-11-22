@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_origin_ca_certificate: Trigger a replacement when the validity is changed
+```
