@@ -26,12 +26,12 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 			  enabled = true
 			}
 			origin_request {
-			  connect_timeout = "60s"
-			  tls_timeout = "60s"
-			  tcp_keep_alive = "60s"
+			  connect_timeout = "1m0s"
+			  tls_timeout = "1m0s"
+			  tcp_keep_alive = "1m0s"
 			  no_happy_eyeballs = false
 			  keep_alive_connections = 1024
-			  keep_alive_timeout = "60s"
+			  keep_alive_timeout = "1m0s"
 			  http_host_header = "baz"
 			  origin_server_name = "foobar"
 			  ca_pool = "/path/to/unsigned/ca/pool"
@@ -73,6 +73,8 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 		  tunnel_id          = cloudflare_argo_tunnel.%[1]s.id
 		
 		  config {
+			warp_routing {}
+			origin_request {}
 			ingress_rule {
 				service = "https://127.0.0.1:8081"
 			  }
@@ -81,7 +83,7 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 		`, resourceID, accountID, tunnelSecret)
 }
 
-func TestAccCloudflareTunnelConfig(t *testing.T) {
+func TestAccCloudflareTunnelConfigFull(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -100,12 +102,12 @@ func TestAccCloudflareTunnelConfig(t *testing.T) {
 				Config: testTunnelConfig(rnd, zoneID, tunnelSecret),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "config.0.warp_routing.0.enabled", "true"),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.connect_timeout", "60s"),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.tls_timeout", "60s"),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.tcp_keep_alive", "60s"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.connect_timeout", "1m0s"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.tls_timeout", "1m0s"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.tcp_keep_alive", "1m0s"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.no_happy_eyeballs", "false"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.keep_alive_connections", "1024"),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.keep_alive_timeout", "60s"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.keep_alive_timeout", "1m0s"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.http_host_header", "baz"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.origin_server_name", "foobar"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.ca_pool", "/path/to/unsigned/ca/pool"),
@@ -131,6 +133,25 @@ func TestAccCloudflareTunnelConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "https://127.0.0.1:8081"),
 				),
 			},
+		},
+	})
+}
+
+func TestAccCloudflareTunnelConfigShort(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_tunnel_config." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
+
+	//resourceCloudflareTunnelConfig
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheckEmail(t)
+			testAccPreCheckApiKey(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
 			{
 				Config: testTunnelConfigShort(rnd, zoneID, tunnelSecret),
 				Check: resource.ComposeTestCheckFunc(

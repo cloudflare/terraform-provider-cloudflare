@@ -26,7 +26,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 				Schema: map[string]*schema.Schema{
 					"warp_routing": {
 						Type:     schema.TypeList,
-						Optional: true,
+						Required: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
@@ -39,7 +39,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 					},
 					"origin_request": {
 						Type:     schema.TypeList,
-						Optional: true,
+						Required: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
