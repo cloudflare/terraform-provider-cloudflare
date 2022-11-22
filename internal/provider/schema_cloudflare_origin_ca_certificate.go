@@ -40,5 +40,14 @@ func resourceCloudflareOriginCACertificateSchema() map[string]*schema.Schema {
 			Computed:     true,
 			ValidateFunc: validation.IntInSlice([]int{7, 30, 90, 365, 730, 1095, 5475}),
 		},
+		"early_renewal_days": {
+			Type:     schema.TypeInt,
+			Optional: true,			
+		},
+		"requires_renew": {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Computed: true,
+		},
 	}
 }

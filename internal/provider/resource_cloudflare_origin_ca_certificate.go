@@ -13,6 +13,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
+	
 )
 
 func resourceCloudflareOriginCACertificate() *schema.Resource {
@@ -25,7 +27,29 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		CustomizeDiff: customdiff.Sequence(
+			customdiff.ForceNewIf("requires_renew", mustRenew),
+		),
 	}
+}
+
+func mustRenew(_ context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+	// Check when the cert will expire
+	expiresonRaw := d.Get("expires_on")	
+	if expiresonRaw == nil {
+		return false
+	}	
+	expireson, _ := time.Parse(time.RFC3339, expiresonRaw.(string))
+
+	// Calculate when we should renew
+	earlyExpiration := expireson.AddDate( 0, 0, -1 * d.Get("early_renewal_days").(int) )
+
+	if time.Now().After(earlyExpiration) {
+		d.SetNew("requires_renew", true)
+		return true
+	} 
+
+	return false
 }
 
 func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -93,6 +117,8 @@ func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.Re
 	d.Set("expires_on", cert.ExpiresOn.Format(time.RFC3339))
 	d.Set("hostnames", hostnames)
 	d.Set("request_type", cert.RequestType)
+
+	d.Set("requires_renew", false)
 
 	certBlock, _ := pem.Decode([]byte(cert.Certificate))
 	if certBlock == nil {
