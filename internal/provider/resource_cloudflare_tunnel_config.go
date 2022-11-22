@@ -32,7 +32,6 @@ func buildTunnelConfig(d *schema.ResourceData) cloudflare.TunnelConfiguration {
 	originConfig := cloudflare.OriginRequestConfig{}
 	if item, ok := d.GetOk("config.0.origin_request.0"); ok {
 		originRequest := item.(map[string]interface{})
-		fmt.Printf("%#v\n", d.Get("config.0.origin_request.0.connect_timeout"))
 		if v, ok := originRequest["connect_timeout"]; ok {
 			timeout, _ := time.ParseDuration(v.(string))
 			originConfig.ConnectTimeout = &timeout
@@ -135,23 +134,22 @@ func resourceCloudflareTunnelConfigRead(ctx context.Context, d *schema.ResourceD
 			"enabled": config.WarpRouting.Enabled,
 		},
 	}
-	fmt.Printf("Happy Eyeballs %#v\n", config.OriginRequest.NoHappyEyeballs)
 	originRequestConfig := []map[string]interface{}{
 		{
-			"connect_timeout":          optDateDurationToString(config.OriginRequest.ConnectTimeout),
-			"tls_timeout":              optDateDurationToString(config.OriginRequest.TLSTimeout),
-			"tcp_keep_alive":           optDateDurationToString(config.OriginRequest.TCPKeepAlive),
-			"no_happy_eyeballs":        optBoolToString(config.OriginRequest.NoHappyEyeballs),
-			"keep_alive_connections":   optIntToString(config.OriginRequest.KeepAliveConnections),
-			"keep_alive_timeout":       optDateDurationToString(config.OriginRequest.KeepAliveTimeout),
+			"connect_timeout":          config.OriginRequest.ConnectTimeout.String(),
+			"tls_timeout":              config.OriginRequest.TLSTimeout.String(),
+			"tcp_keep_alive":           config.OriginRequest.TCPKeepAlive.String(),
+			"no_happy_eyeballs":        cloudflare.Bool(config.OriginRequest.NoHappyEyeballs),
+			"keep_alive_connections":   cloudflare.Int(config.OriginRequest.KeepAliveConnections),
+			"keep_alive_timeout":       config.OriginRequest.KeepAliveTimeout.String(),
 			"http_host_header":         cloudflare.String(config.OriginRequest.HTTPHostHeader),
 			"origin_server_name":       cloudflare.String(config.OriginRequest.OriginServerName),
 			"ca_pool":                  cloudflare.String(config.OriginRequest.CAPool),
-			"no_tls_verify":            optBoolToString(config.OriginRequest.NoTLSVerify),
-			"disable_chunked_encoding": optBoolToString(config.OriginRequest.DisableChunkedEncoding),
-			"bastion_mode":             optBoolToString(config.OriginRequest.BastionMode),
+			"no_tls_verify":            cloudflare.Bool(config.OriginRequest.NoTLSVerify),
+			"disable_chunked_encoding": cloudflare.Bool(config.OriginRequest.DisableChunkedEncoding),
+			"bastion_mode":             cloudflare.Bool(config.OriginRequest.BastionMode),
 			"proxy_address":            cloudflare.String(config.OriginRequest.ProxyAddress),
-			"proxy_port":               optUintToString(config.OriginRequest.ProxyPort),
+			"proxy_port":               int(cloudflare.Uint(config.OriginRequest.ProxyPort)),
 			"proxy_type":               cloudflare.String(config.OriginRequest.ProxyType),
 		},
 	}
@@ -210,33 +208,4 @@ func resourceCloudflareTunnelConfigDelete(ctx context.Context, d *schema.Resourc
 	}
 
 	return nil
-}
-
-func optBoolToString(b *bool) bool {
-	if b != nil {
-		fmt.Printf("optBoolToString %#v\n", *b)
-		return *b
-	}
-	fmt.Println("optBoolToString was null")
-	return false
-}
-
-func optIntToString(i *int) interface{} {
-	if i != nil {
-		return cloudflare.Int(i)
-	}
-	return nil
-}
-func optUintToString(u *uint) interface{} {
-	if u != nil {
-		return cloudflare.Uint(u)
-	}
-	return nil
-}
-
-func optDateDurationToString(d *time.Duration) string {
-	if d != nil {
-		return d.String()
-	}
-	return ""
 }
