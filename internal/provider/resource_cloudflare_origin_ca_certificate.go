@@ -47,7 +47,7 @@ func mustRenew(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bo
 	if time.Now().After(earlyExpiration) {
 		err := d.SetNew("requires_renew", true)
 		if err != nil {
-			tflog.Warn(ctx, fmt.Sprintf("error creating origin certificate: %w", err))
+			tflog.Warn(ctx, fmt.Sprintf("error creating origin certificate: %s", err))
 			return false
 		}
 		return true
