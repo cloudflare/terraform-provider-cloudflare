@@ -9,9 +9,8 @@ description: |-
 
 {{ .Description | trimspace }}
 
-~> This resource uses the Cloudflare account APIs. This requires setting the
-`CLOUDFLARE_ACCOUNT_ID` environment variable or `account_id` provider argument
-if you do not explicitly set the resource level `account_id` value.
+~> This resource requires you use your Origin CA Key as the
+[`api_user_service_key`](../index.html#api_user_service_key) value.
 
 ## Example Usage
 

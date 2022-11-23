@@ -2,24 +2,27 @@
 page_title: "cloudflare_workers_kv Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a Workers KV Pair.
+  Provides a resource to manage a Cloudflare Workers KV Pair.
 ---
 
 # cloudflare_workers_kv (Resource)
 
-Provides a Workers KV Pair.
+Provides a resource to manage a Cloudflare Workers KV Pair.
 
 ~> This resource uses the Cloudflare account APIs. This requires setting the
-`CLOUDFLARE_ACCOUNT_ID` environment variable or `account_id` provider argument.
+`CLOUDFLARE_ACCOUNT_ID` environment variable or `account_id` provider argument
+if you do not explicitly set the resource level `account_id` value.
 
 ## Example Usage
 
 ```terraform
 resource "cloudflare_workers_kv_namespace" "example_ns" {
-  title = "test-namespace"
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  title      = "test-namespace"
 }
 
 resource "cloudflare_workers_kv" "example" {
+  account_id   = "f037e56e89293a057740de681ac9abbe"
   namespace_id = cloudflare_workers_kv_namespace.example_ns.id
   key          = "test-key"
   value        = "test value"
@@ -34,6 +37,10 @@ resource "cloudflare_workers_kv" "example" {
 - `key` (String) Name of the KV pair. **Modifying this attribute will force creation of a new resource.**
 - `namespace_id` (String) The ID of the Workers KV namespace in which you want to create the KV pair. **Modifying this attribute will force creation of a new resource.**
 - `value` (String) Value of the KV pair.
+
+### Optional
+
+- `account_id` (String) The account identifier to target for the resource.
 
 ### Read-Only
 
