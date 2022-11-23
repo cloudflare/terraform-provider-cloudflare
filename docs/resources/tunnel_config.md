@@ -41,7 +41,7 @@ resource "cloudflare_tunnel_config" "example_config" {
       no_tls_verify            = false
       disable_chunked_encoding = false
       bastion_mode             = false
-      proxy_address            = "127.0.0.1"
+      proxy_address            = "10.0.0.1"
       proxy_port               = "8123"
       proxy_type               = "socks"
       ip_rules {
@@ -53,10 +53,10 @@ resource "cloudflare_tunnel_config" "example_config" {
     ingress_rule {
       hostname = "foo"
       path     = "/bar"
-      service  = "http://127.0.0.1:8080"
+      service  = "http://10.0.0.2:8080"
     }
     ingress_rule {
-      service = "https://127.0.0.1:8081"
+      service = "https://10.0.0.3:8081"
     }
   }
 }
