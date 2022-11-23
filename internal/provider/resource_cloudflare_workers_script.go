@@ -112,6 +112,13 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			BucketName: data["bucket_name"].(string),
 		}
 	}
+
+	for _, rawData := range d.Get("analytics_engine_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerAnalyticsEngineBinding{
+			Dataset: data["dataset"].(string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -192,6 +199,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	webAssemblyBindings := &schema.Set{F: schema.HashResource(webAssemblyBindingResource)}
 	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
 	r2BucketBindings := &schema.Set{F: schema.HashResource(r2BucketBindingResource)}
+	analyticsEngineBindings := &schema.Set{F: schema.HashResource(analyticsEngineBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -235,6 +243,11 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"name":        name,
 				"bucket_name": v.BucketName,
 			})
+		case cloudflare.WorkerAnalyticsEngineBinding:
+			analyticsEngineBindings.Add(map[string]interface{}{
+				"name":    name,
+				"dataset": v.Dataset,
+			})
 		}
 	}
 
@@ -264,6 +277,10 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 
 	if err := d.Set("r2_bucket_binding", r2BucketBindings); err != nil {
 		return diag.FromErr(fmt.Errorf("cannot set r2 bucket bindings (%s): %w", d.Id(), err))
+	}
+
+	if err := d.Set("analytics_engine_binding", analyticsEngineBindings); err != nil {
+		return diag.FromErr(fmt.Errorf("cannot set analytics engine bindings (%s): %w", d.Id(), err))
 	}
 
 	return nil
