@@ -51,7 +51,7 @@ func resourceCloudflareOriginCACertificateSchema() map[string]*schema.Schema {
 		},
 		"early_renewal_days": {
 			Type:     schema.TypeInt,
-			Optional: true,			
+			Optional: true,
 		},
 		"requires_renew": {
 			Type:     schema.TypeBool,
