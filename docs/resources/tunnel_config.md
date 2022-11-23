@@ -9,7 +9,7 @@ description: |-
 
 Provides a Cloudflare Tunnel configuration resource.
 
-~> When you delete a tunnel configuration, the tunnel will be deleted. You need to make sure that the tunnel is not in use before deleting the configuration.
+!> When you delete a tunnel configuration, the tunnel will be deleted. You need to make sure that the tunnel is not in use before deleting the configuration.
 
 ## Example Usage
 
@@ -21,7 +21,7 @@ resource "cloudflare_argo_tunnel" "example_tunnel" {
 }
 
 resource "cloudflare_tunnel_config" "example_config" {
-  account_id         = "%[2]s"
+  account_id         = "f037e56e89293a057740de681ac9abbe"
   tunnel_id          = cloudflare_argo_tunnel.example_tunnel.id
 
   config {
