@@ -33,7 +33,7 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 	}
 }
 
-func mustRenew(_ context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+func mustRenew(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
 	// Check when the cert will expire
 	expiresonRaw := d.Get("expires_on")
 	if expiresonRaw == nil {
@@ -47,7 +47,8 @@ func mustRenew(_ context.Context, d *schema.ResourceDiff, meta interface{}) bool
 	if time.Now().After(earlyExpiration) {
 		err := d.SetNew("requires_renew", true)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("error setting to renew a certificte about to expire: %w", err))
+			tflog.Warn(ctx, fmt.Sprintf("error creating origin certificate: %w", err))
+			return false
 		}
 		return true
 	}
