@@ -22,7 +22,7 @@ func resourceCloudflareWorkerKV() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareWorkersKVImport,
 		},
-		Description: "Provides a Workers KV Pair.",
+		Description: "Provides a resource to manage a Cloudflare Workers KV Pair.",
 	}
 }
 
@@ -33,7 +33,15 @@ func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 
-	value, err := client.ReadWorkersKV(ctx, namespaceID, key)
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		accountID = client.AccountID
+	}
+
+	value, err := client.GetWorkersKV(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetWorkersKVParams{
+		NamespaceID: namespaceID,
+		Key:         key,
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error reading workers kv"))
 	}
@@ -43,6 +51,7 @@ func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData
 		return nil
 	}
 
+	d.Set("account_id", accountID)
 	d.Set("value", string(value))
 	return nil
 }
@@ -53,7 +62,16 @@ func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceDa
 	key := d.Get("key").(string)
 	value := d.Get("value").(string)
 
-	_, err := client.WriteWorkersKV(ctx, namespaceID, key, []byte(value))
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		accountID = client.AccountID
+	}
+
+	_, err := client.WriteWorkersKVEntry(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.WriteWorkersKVEntryParams{
+		NamespaceID: namespaceID,
+		Key:         key,
+		Value:       []byte(value),
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating workers kv"))
 	}
@@ -72,9 +90,17 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		accountID = client.AccountID
+	}
+
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers KV with id: %+v", d.Id()))
 
-	_, err = client.DeleteWorkersKV(ctx, namespaceID, key)
+	_, err = client.DeleteWorkersKVEntry(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.DeleteWorkersKVEntryParams{
+		NamespaceID: namespaceID,
+		Key:         key,
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error deleting workers kv"))
 	}
