@@ -20,14 +20,14 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 	return &schema.Resource{
 		Schema:        resourceCloudflareOriginCACertificateSchema(),
 		CreateContext: resourceCloudflareOriginCACertificateCreate,
-		UpdateContext: resourceCloudflareOriginCACertificateCreate,
+		UpdateContext: resourceCloudflareOriginCACertificateRead,
 		ReadContext:   resourceCloudflareOriginCACertificateRead,
 		DeleteContext: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		CustomizeDiff: customdiff.Sequence(
-			customdiff.ForceNewIf("requires_renew", mustRenew),
+			customdiff.ForceNewIf("expires_on", mustRenew),
 		),
 		Description: "Provides a Cloudflare Origin CA certificate used to protect traffic to your origin without involving a third party Certificate Authority.",
 	}
@@ -36,7 +36,7 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 func mustRenew(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
 	// Check when the cert will expire
 	expiresonRaw := d.Get("expires_on")
-	if expiresonRaw == nil {
+	if (expiresonRaw == nil) || (expiresonRaw == "") {
 		return false
 	}
 	expireson, _ := time.Parse(time.RFC3339, expiresonRaw.(string))
@@ -45,9 +45,10 @@ func mustRenew(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bo
 	earlyExpiration := expireson.AddDate(0, 0, -1*d.Get("early_renewal_days").(int))
 
 	if time.Now().After(earlyExpiration) {
-		err := d.SetNew("requires_renew", true)
+		tflog.Info(ctx, fmt.Sprintf("We will renew the certificate as we passed the expected date (%s)", earlyExpiration))
+		err := d.SetNewComputed("expires_on")
 		if err != nil {
-			tflog.Warn(ctx, fmt.Sprintf("error creating origin certificate: %s", err))
+			tflog.Warn(ctx, fmt.Sprintf("error setting to renew the certificate: %s", err))
 			return false
 		}
 		return true
@@ -121,8 +122,6 @@ func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.Re
 	d.Set("expires_on", cert.ExpiresOn.Format(time.RFC3339))
 	d.Set("hostnames", hostnames)
 	d.Set("request_type", cert.RequestType)
-
-	d.Set("requires_renew", false)
 
 	certBlock, _ := pem.Decode([]byte(cert.Certificate))
 	if certBlock == nil {
