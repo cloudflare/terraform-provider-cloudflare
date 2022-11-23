@@ -25,6 +25,7 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Provides a Cloudflare Origin CA certificate used to protect traffic to your origin without involving a third party Certificate Authority.",
 	}
 }
 
