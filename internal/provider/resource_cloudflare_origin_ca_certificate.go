@@ -12,9 +12,8 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
-	
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareOriginCACertificate() *schema.Resource {
@@ -36,19 +35,22 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 
 func mustRenew(_ context.Context, d *schema.ResourceDiff, meta interface{}) bool {
 	// Check when the cert will expire
-	expiresonRaw := d.Get("expires_on")	
+	expiresonRaw := d.Get("expires_on")
 	if expiresonRaw == nil {
 		return false
-	}	
+	}
 	expireson, _ := time.Parse(time.RFC3339, expiresonRaw.(string))
 
 	// Calculate when we should renew
-	earlyExpiration := expireson.AddDate( 0, 0, -1 * d.Get("early_renewal_days").(int) )
+	earlyExpiration := expireson.AddDate(0, 0, -1*d.Get("early_renewal_days").(int))
 
 	if time.Now().After(earlyExpiration) {
-		d.SetNew("requires_renew", true)
+		err := d.SetNew("requires_renew", true)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("error setting to renew a certificte about to expire: %w", err))
+		}
 		return true
-	} 
+	}
 
 	return false
 }
