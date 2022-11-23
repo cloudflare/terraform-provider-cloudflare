@@ -5,7 +5,7 @@ resource "cloudflare_argo_tunnel" "example_tunnel" {
 }
 
 resource "cloudflare_tunnel_config" "example_config" {
-  account_id         = "%[2]s"
+  account_id         = "f037e56e89293a057740de681ac9abbe"
   tunnel_id          = cloudflare_argo_tunnel.example_tunnel.id
 
   config {
