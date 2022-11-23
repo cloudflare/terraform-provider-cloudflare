@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"time"
 
@@ -18,6 +19,9 @@ func resourceCloudflareTunnelConfig() *schema.Resource {
 		CreateContext: resourceCloudflareTunnelConfigUpdate,
 		UpdateContext: resourceCloudflareTunnelConfigUpdate,
 		DeleteContext: resourceCloudflareTunnelConfigDelete,
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Tunnel configuration resource.
+		`),
 	}
 }
 
