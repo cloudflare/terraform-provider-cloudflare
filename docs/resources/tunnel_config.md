@@ -21,39 +21,39 @@ resource "cloudflare_argo_tunnel" "example_tunnel" {
 }
 
 resource "cloudflare_tunnel_config" "example_config" {
-  account_id         = "f037e56e89293a057740de681ac9abbe"
-  tunnel_id          = cloudflare_argo_tunnel.example_tunnel.id
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  tunnel_id  = cloudflare_argo_tunnel.example_tunnel.id
 
   config {
     warp_routing {
       enabled = true
     }
     origin_request {
-      connect_timeout = "1m0s"
-      tls_timeout = "1m0s"
-      tcp_keep_alive = "1m0s"
-      no_happy_eyeballs = false
-      keep_alive_connections = 1024
-      keep_alive_timeout = "1m0s"
-      http_host_header = "baz"
-      origin_server_name = "foobar"
-      ca_pool = "/path/to/unsigned/ca/pool"
-      no_tls_verify = false
+      connect_timeout          = "1m0s"
+      tls_timeout              = "1m0s"
+      tcp_keep_alive           = "1m0s"
+      no_happy_eyeballs        = false
+      keep_alive_connections   = 1024
+      keep_alive_timeout       = "1m0s"
+      http_host_header         = "baz"
+      origin_server_name       = "foobar"
+      ca_pool                  = "/path/to/unsigned/ca/pool"
+      no_tls_verify            = false
       disable_chunked_encoding = false
-      bastion_mode = false
-      proxy_address = "127.0.0.1"
-      proxy_port = "8123"
-      proxy_type = "socks"
+      bastion_mode             = false
+      proxy_address            = "127.0.0.1"
+      proxy_port               = "8123"
+      proxy_type               = "socks"
       ip_rules {
         prefix = "/web"
-        ports = [80, 443]
-        allow = false
+        ports  = [80, 443]
+        allow  = false
       }
     }
     ingress_rule {
       hostname = "foo"
-      path = "/bar"
-      service = "http://127.0.0.1:8080"
+      path     = "/bar"
+      service  = "http://127.0.0.1:8080"
     }
     ingress_rule {
       service = "https://127.0.0.1:8081"
@@ -67,9 +67,9 @@ resource "cloudflare_tunnel_config" "example_config" {
 
 ### Required
 
-- `account_id` (String) Cloudflare Account ID.
+- `account_id` (String) The account identifier to target for the resource.
 - `config` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--config))
-- `tunnel_id` (String) ID of the tunnel.
+- `tunnel_id` (String) Identifier of the Tunnel to target for this configuration.
 
 ### Read-Only
 
@@ -80,7 +80,7 @@ resource "cloudflare_tunnel_config" "example_config" {
 
 Required:
 
-- `ingress_rule` (Block List, Min: 1) Each incoming request received by cloudflared causes cloudflared to send a request to a local service. This section configures the rules that determine which requests are sent to which local services. (see [below for nested schema](#nestedblock--config--ingress_rule))
+- `ingress_rule` (Block List, Min: 1) Each incoming request received by cloudflared causes cloudflared to send a request to a local service. This section configures the rules that determine which requests are sent to which local services. [Read more](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/local/local-management/ingress/). (see [below for nested schema](#nestedblock--config--ingress_rule))
 - `origin_request` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--config--origin_request))
 - `warp_routing` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--config--warp_routing))
 
@@ -89,12 +89,12 @@ Required:
 
 Required:
 
-- `service` (String)
+- `service` (String) Name of the service to which the request will be sent.
 
 Optional:
 
-- `hostname` (String)
-- `path` (String)
+- `hostname` (String) Hostname to match the incoming request with. If the hostname matches, the request will be sent to the service.
+- `path` (String) Path of the incoming request. If the path matches, the request will be sent to the local service.
 
 
 <a id="nestedblock--config--origin_request"></a>
@@ -107,7 +107,7 @@ Optional:
 - `connect_timeout` (String) Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by tlsTimeout. Defaults to `30s`.
 - `disable_chunked_encoding` (Boolean) Disables chunked transfer encoding. Useful if you are running a Web Server Gateway Interface (WSGI) server. Defaults to `false`.
 - `http_host_header` (String) Sets the HTTP Host header on requests sent to the local service. Defaults to `""`.
-- `ip_rules` (Block List) IP rules for the proxy service. (see [below for nested schema](#nestedblock--config--origin_request--ip_rules))
+- `ip_rules` (Block Set) IP rules for the proxy service. (see [below for nested schema](#nestedblock--config--origin_request--ip_rules))
 - `keep_alive_connections` (Number) Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections. Defaults to `100`.
 - `keep_alive_timeout` (String) Timeout after which an idle keepalive connection can be discarded. Defaults to `1m30s`.
 - `no_happy_eyeballs` (Boolean) Disable the “happy eyeballs” algorithm for IPv4/IPv6 fallback if your local network has misconfigured one of the protocols. Defaults to `false`.
@@ -115,7 +115,7 @@ Optional:
 - `origin_server_name` (String) Hostname that cloudflared should expect from your origin server certificate. Defaults to `""`.
 - `proxy_address` (String) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures the listen address for that proxy. Defaults to `127.0.0.1`.
 - `proxy_port` (Number) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures the listen port for that proxy. If set to zero, an unused port will randomly be chosen. Defaults to `0`.
-- `proxy_type` (String) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are:. Defaults to `""`.
+- `proxy_type` (String) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Available values: ``, `socks`. Defaults to `""`.
 - `tcp_keep_alive` (String) The timeout after which a TCP keepalive packet is sent on a connection between Tunnel and the origin server. Defaults to `30s`.
 - `tls_timeout` (String) Timeout for completing a TLS handshake to your origin server, if you have chosen to connect Tunnel to an HTTPS server. Defaults to `10s`.
 

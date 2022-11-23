@@ -88,7 +88,7 @@ func buildTunnelConfig(d *schema.ResourceData) cloudflare.TunnelConfiguration {
 
 		var ipRules []cloudflare.IngressIPRule
 		if v, ok := originRequest["ip_rules"]; ok {
-			for _, ingressRule := range v.([]interface{}) {
+			for _, ingressRule := range v.(*schema.Set).List() {
 				ingressRuleConfig := ingressRule.(map[string]interface{})
 				ipRule := cloudflare.IngressIPRule{
 					Prefix: cloudflare.StringPtr(ingressRuleConfig["prefix"].(string)),
@@ -211,5 +211,6 @@ func resourceCloudflareTunnelConfigDelete(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("error deleting tunnel config %q: %w", d.Id(), err))
 	}
 
+	d.SetId("")
 	return nil
 }

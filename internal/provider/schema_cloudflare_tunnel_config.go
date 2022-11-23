@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -10,12 +11,12 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 		"tunnel_id": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "ID of the tunnel",
+			Description: "Identifier of the Tunnel to target for this configuration.",
 		},
 		"account_id": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "Cloudflare Account ID",
+			Description: "The account identifier to target for the resource.",
 		},
 
 		"config": {
@@ -129,12 +130,12 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 								"proxy_type": {
 									Type:         schema.TypeString,
 									Optional:     true,
-									Description:  "cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Valid options are:.",
+									Description:  fmt.Sprintf("cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. %s", renderAvailableDocumentationValuesStringSlice([]string{"", "socks"})),
 									ValidateFunc: validation.StringInSlice([]string{"", "socks"}, false),
 									Default:      "",
 								},
 								"ip_rules": {
-									Type:        schema.TypeList,
+									Type:        schema.TypeSet,
 									Optional:    true,
 									Description: "IP rules for the proxy service",
 									Elem: &schema.Resource{
@@ -160,13 +161,13 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 					},
 					"ingress_rule": {
 						Type:        schema.TypeList,
-						Description: "Each incoming request received by cloudflared causes cloudflared to send a request to a local service. This section configures the rules that determine which requests are sent to which local services.",
+						Description: "Each incoming request received by cloudflared causes cloudflared to send a request to a local service. This section configures the rules that determine which requests are sent to which local services. [Read more](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/local/local-management/ingress/)",
 						Required:    true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								"hostname": {Type: schema.TypeString, Optional: true},
-								"path":     {Type: schema.TypeString, Optional: true},
-								"service":  {Type: schema.TypeString, Required: true},
+								"hostname": {Type: schema.TypeString, Optional: true, Description: "Hostname to match the incoming request with. If the hostname matches, the request will be sent to the service."},
+								"path":     {Type: schema.TypeString, Optional: true, Description: "Path of the incoming request. If the path matches, the request will be sent to the local service."},
+								"service":  {Type: schema.TypeString, Required: true, Description: "Name of the service to which the request will be sent."},
 							},
 						},
 					},

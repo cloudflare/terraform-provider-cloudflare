@@ -38,7 +38,7 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 			  no_tls_verify = false
 			  disable_chunked_encoding = false
 			  bastion_mode = false
-			  proxy_address = "127.0.0.1"
+			  proxy_address = "10.0.0.1"
 			  proxy_port = "8123"
 			  proxy_type = "socks"
 			  ip_rules {
@@ -50,10 +50,10 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 			ingress_rule {
 			  hostname = "foo"
 			  path = "/bar"
-			  service = "http://127.0.0.1:8080"
+			  service = "http://10.0.0.2:8080"
 			}
 			ingress_rule {
-				service = "https://127.0.0.1:8081"
+				service = "https://127.0.0.3:8081"
 			  }
 		  }
 		}
@@ -76,7 +76,7 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 			warp_routing {}
 			origin_request {}
 			ingress_rule {
-				service = "https://127.0.0.1:8081"
+				service = "https://10.0.0.0:8081"
 			  }
 		  }
 		}
@@ -89,11 +89,9 @@ func TestAccCloudflareTunnelConfigFull(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
 
-	//resourceCloudflareTunnelConfig
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckEmail(t)
-			testAccPreCheckApiKey(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -114,7 +112,7 @@ func TestAccCloudflareTunnelConfigFull(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.no_tls_verify", "false"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.disable_chunked_encoding", "false"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.bastion_mode", "false"),
-					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_address", "127.0.0.1"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_address", "10.0.0.1"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_port", "8123"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.proxy_type", "socks"),
 
@@ -127,10 +125,10 @@ func TestAccCloudflareTunnelConfigFull(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "2"),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.hostname", "foo"),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.path", "/bar"),
-					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "http://127.0.0.1:8080"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "http://10.0.0.2:8080"),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.hostname", ""),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.path", ""),
-					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "https://127.0.0.1:8081"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "https://10.0.0.3:8081"),
 				),
 			},
 		},
@@ -143,11 +141,9 @@ func TestAccCloudflareTunnelConfigShort(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
 
-	//resourceCloudflareTunnelConfig
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckEmail(t)
-			testAccPreCheckApiKey(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -156,7 +152,7 @@ func TestAccCloudflareTunnelConfigShort(t *testing.T) {
 				Config: testTunnelConfigShort(rnd, zoneID, tunnelSecret),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "1"),
-					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://127.0.0.1:8081"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://10.0.0.0:8081"),
 				),
 			},
 		},
