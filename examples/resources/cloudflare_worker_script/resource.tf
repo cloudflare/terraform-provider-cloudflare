@@ -37,4 +37,7 @@ resource "cloudflare_worker_script" "my_script" {
     name        = "MY_BUCKET"
     bucket_name = "MY_BUCKET_NAME"
   }
+  "analytics_engine_binding": {
+    name = "MY_ANALYTICS_ENGINE"
+  }
 }
