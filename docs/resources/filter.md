@@ -43,6 +43,7 @@ resource "cloudflare_filter" "wordpress" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_filter.example <zone_id>/<filter_id>
 ```
