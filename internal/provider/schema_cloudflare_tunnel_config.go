@@ -26,9 +26,10 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"warp_routing": {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
+						Type:        schema.TypeList,
+						Optional:    true,
+						MaxItems:    1,
+						Description: "If you’re exposing a [private network](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/), you need to add the warp-routing key and set it to true",
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"enabled": {

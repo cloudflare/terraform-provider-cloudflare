@@ -85,7 +85,7 @@ Required:
 Optional:
 
 - `origin_request` (Block List, Max: 1) (see [below for nested schema](#nestedblock--config--origin_request))
-- `warp_routing` (Block List, Max: 1) (see [below for nested schema](#nestedblock--config--warp_routing))
+- `warp_routing` (Block List, Max: 1) If you’re exposing a [private network](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/), you need to add the warp-routing key and set it to true. (see [below for nested schema](#nestedblock--config--warp_routing))
 
 <a id="nestedblock--config--ingress_rule"></a>
 ### Nested Schema for `config.ingress_rule`
