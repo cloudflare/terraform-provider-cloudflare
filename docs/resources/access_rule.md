@@ -85,6 +85,7 @@ Required:
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 # User level access rule import.
 $ terraform import cloudflare_access_rule.default user/<user_id>/<rule_id>

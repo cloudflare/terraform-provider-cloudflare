@@ -41,6 +41,7 @@ resource "cloudflare_byo_ip_prefix" "example" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_byo_ip_prefix.example <account_id>/<prefix_id>
 ```
