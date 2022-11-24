@@ -13,6 +13,7 @@ func resourceCloudflareOriginCACertificateSchema() map[string]*schema.Schema {
 		},
 		"csr": {
 			Type:         schema.TypeString,
+			ForceNew:     true,
 			Optional:     true,
 			ValidateFunc: validateCSR,
 		},
