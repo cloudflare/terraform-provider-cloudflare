@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"reflect"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -129,17 +130,24 @@ func resourceCloudflareTunnelConfigRead(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error getting tunnel config %q: %w", d.Id(), err))
 	}
+
 	d.SetId(result.TunnelID)
 	config := result.Config
 	var configMap []map[string]interface{}
 
-	warpConfig := []map[string]interface{}{
-		{
+	var warpConfigMap []map[string]interface{}
+
+	emptyWarpRouting := cloudflare.WarpRoutingConfig{}
+	if !reflect.DeepEqual(config.WarpRouting, &emptyWarpRouting) {
+		warpConfigMap = append(warpConfigMap, map[string]interface{}{
 			"enabled": config.WarpRouting.Enabled,
-		},
+		})
 	}
-	originRequestConfig := []map[string]interface{}{
-		{
+
+	var originRequestMap []map[string]interface{}
+	emptyOriginRequest := cloudflare.OriginRequestConfig{}
+	if !reflect.DeepEqual(config.OriginRequest, emptyOriginRequest) {
+		originRequestMap = append(originRequestMap, map[string]interface{}{
 			"connect_timeout":          config.OriginRequest.ConnectTimeout.String(),
 			"tls_timeout":              config.OriginRequest.TLSTimeout.String(),
 			"tcp_keep_alive":           config.OriginRequest.TCPKeepAlive.String(),
@@ -155,18 +163,17 @@ func resourceCloudflareTunnelConfigRead(ctx context.Context, d *schema.ResourceD
 			"proxy_address":            cloudflare.String(config.OriginRequest.ProxyAddress),
 			"proxy_port":               int(cloudflare.Uint(config.OriginRequest.ProxyPort)),
 			"proxy_type":               cloudflare.String(config.OriginRequest.ProxyType),
-		},
-	}
-
-	var ipRules []map[string]interface{}
-	for _, ipRule := range config.OriginRequest.IPRules {
-		ipRules = append(ipRules, map[string]interface{}{
-			"prefix": ipRule.Prefix,
-			"allow":  ipRule.Allow,
-			"ports":  ipRule.Ports,
 		})
+		var ipRules []map[string]interface{}
+		for _, ipRule := range config.OriginRequest.IPRules {
+			ipRules = append(ipRules, map[string]interface{}{
+				"prefix": ipRule.Prefix,
+				"allow":  ipRule.Allow,
+				"ports":  ipRule.Ports,
+			})
+		}
+		originRequestMap[0]["ip_rules"] = ipRules
 	}
-	originRequestConfig[0]["ip_rules"] = ipRules
 
 	var ingressRules []map[string]interface{}
 	for _, ingressRule := range config.Ingress {
@@ -177,8 +184,8 @@ func resourceCloudflareTunnelConfigRead(ctx context.Context, d *schema.ResourceD
 		})
 	}
 	configMap = append(configMap, map[string]interface{}{
-		"warp_routing":   warpConfig,
-		"origin_request": originRequestConfig,
+		"warp_routing":   warpConfigMap,
+		"origin_request": originRequestMap,
 		"ingress_rule":   ingressRules,
 	})
 	d.Set("config", configMap)

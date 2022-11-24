@@ -53,7 +53,7 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 			  service = "http://10.0.0.2:8080"
 			}
 			ingress_rule {
-				service = "https://127.0.0.3:8081"
+				service = "https://10.0.0.3:8081"
 			  }
 		  }
 		}
@@ -73,10 +73,8 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 		  tunnel_id          = cloudflare_argo_tunnel.%[1]s.id
 		
 		  config {
-			warp_routing {}
-			origin_request {}
 			ingress_rule {
-				service = "https://10.0.0.0:8081"
+				service = "https://10.0.0.1:8081"
 			  }
 		  }
 		}
@@ -152,7 +150,7 @@ func TestAccCloudflareTunnelConfigShort(t *testing.T) {
 				Config: testTunnelConfigShort(rnd, zoneID, tunnelSecret),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "1"),
-					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://10.0.0.0:8081"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://10.0.0.1:8081"),
 				),
 			},
 		},
