@@ -13,6 +13,7 @@ ENHANCEMENTS:
 * resource/cloudflare_fallback_domain: Add creating fallback domains for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
 * resource/cloudflare_logpush_job: add support for `workers_trace_events` ([#2025](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2025))
 * resource/cloudflare_origin_ca_certificate: trigger a replacement when `validity` is changed ([#2046](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2046))
+* resource/cloudflare_ruleset: add support for importing existing resources ([#2054](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2054))
 * resource/cloudflare_split_tunnel: Add configuring split tunnel for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
 * resource/cloudflare_workers_kv: add support for explicitly setting `account_id` on the resource ([#2049](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2049))
 * resource/cloudflare_workers_kv_namespace: add support for explicitly setting `account_id` on the resource ([#2049](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2049))
