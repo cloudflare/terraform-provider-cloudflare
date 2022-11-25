@@ -9,18 +9,10 @@ description: |-
 
 {{ .Description | trimspace }}
 
-{{ if .HasExample -}}
+!> When you delete a tunnel configuration, the tunnel will be deleted. You need to make sure that the tunnel is not in use before deleting the configuration.
+
 ## Example Usage
 
-{{ printf "{{tffile %q}}" .ExampleFile }}
-{{- end }}
+{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
 
 {{ .SchemaMarkdown | trimspace }}
-
-{{ if .HasImport -}}
-## Import
-
-Import is supported using the following syntax:
-
-{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
-{{- end }}

@@ -39,6 +39,7 @@ resource "cloudflare_argo" "example" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_argo.example <zone_id>
 ```

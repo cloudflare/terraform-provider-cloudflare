@@ -132,6 +132,7 @@ resource "cloudflare_logpush_job" "example_job" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 # Import an account-scoped job.
 $ terraform import cloudflare_logpush_job.example account/<account_id>/<job_id>

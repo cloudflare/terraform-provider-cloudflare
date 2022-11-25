@@ -57,6 +57,7 @@ resource "cloudflare_access_service_token" "my_app" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 # If you are importing an Access Service Token you will not have the
 # client_secret available in the state for use. The client_secret is only
