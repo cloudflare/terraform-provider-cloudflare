@@ -57,6 +57,7 @@ resource "cloudflare_ipsec_tunnel" "example" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_ipsec_tunnel.example <account_id>/<tunnel_id>
 ```

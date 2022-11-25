@@ -40,6 +40,7 @@ resource "cloudflare_account_member" "example_user" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_account_member.example <account_id>/<member_id>
 ```
