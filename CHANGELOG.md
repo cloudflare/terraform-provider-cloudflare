@@ -7,6 +7,7 @@ NOTES:
 FEATURES:
 
 * **New Resource:** `cloudflare_device_settings_policy` ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
+* **New Resource:** `cloudflare_tunnel_config` ([#2041](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2041))
 
 ENHANCEMENTS:
 
