@@ -37,4 +37,9 @@ resource "cloudflare_worker_script" "my_script" {
     name        = "MY_BUCKET"
     bucket_name = "MY_BUCKET_NAME"
   }
+
+  durable_object_binding {
+    name       = "MY_DURABLE_OBJECT"
+    class_name = "MyDurableObject"
+  }
 }
