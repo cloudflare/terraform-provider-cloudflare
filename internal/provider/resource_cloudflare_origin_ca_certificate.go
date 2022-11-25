@@ -21,6 +21,7 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 		Schema:        resourceCloudflareOriginCACertificateSchema(),
 		CreateContext: resourceCloudflareOriginCACertificateCreate,
 		ReadContext:   resourceCloudflareOriginCACertificateRead,
+		UpdateContext: resourceCloudflareOriginCACertificateRead,
 		DeleteContext: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
