@@ -68,7 +68,7 @@ resource "cloudflare_tunnel_config" "example_config" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `config` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--config))
+- `config` (Block List, Min: 1, Max: 1) Configuration block for Tunnel Configuration. (see [below for nested schema](#nestedblock--config))
 - `tunnel_id` (String) Identifier of the Tunnel to target for this configuration.
 
 ### Read-Only
@@ -85,7 +85,7 @@ Required:
 Optional:
 
 - `origin_request` (Block List, Max: 1) (see [below for nested schema](#nestedblock--config--origin_request))
-- `warp_routing` (Block List, Max: 1) If you’re exposing a [private network](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/), you need to add the warp-routing key and set it to true. (see [below for nested schema](#nestedblock--config--warp_routing))
+- `warp_routing` (Block List, Max: 1) If you're exposing a [private network](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/), you need to add the `warp-routing` key and set it to `true`. (see [below for nested schema](#nestedblock--config--warp_routing))
 
 <a id="nestedblock--config--ingress_rule"></a>
 ### Nested Schema for `config.ingress_rule`
@@ -107,7 +107,7 @@ Optional:
 
 - `bastion_mode` (Boolean) Runs as jump host.
 - `ca_pool` (String) Path to the certificate authority (CA) for the certificate of your origin. This option should be used only if your certificate is not signed by Cloudflare. Defaults to `""`.
-- `connect_timeout` (String) Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by tlsTimeout. Defaults to `30s`.
+- `connect_timeout` (String) Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by `tlsTimeout`. Defaults to `30s`.
 - `disable_chunked_encoding` (Boolean) Disables chunked transfer encoding. Useful if you are running a Web Server Gateway Interface (WSGI) server. Defaults to `false`.
 - `http_host_header` (String) Sets the HTTP Host header on requests sent to the local service. Defaults to `""`.
 - `ip_rules` (Block Set) IP rules for the proxy service. (see [below for nested schema](#nestedblock--config--origin_request--ip_rules))
@@ -127,9 +127,9 @@ Optional:
 
 Optional:
 
-- `allow` (Boolean)
-- `ports` (List of Number)
-- `prefix` (String)
+- `allow` (Boolean) Whether to allow the IP prefix.
+- `ports` (List of Number) Ports to use within the IP rule.
+- `prefix` (String) IP rule prefix.
 
 
 
@@ -138,4 +138,4 @@ Optional:
 
 Optional:
 
-- `enabled` (Boolean)
+- `enabled` (Boolean) Whether WARP routing is enabled.

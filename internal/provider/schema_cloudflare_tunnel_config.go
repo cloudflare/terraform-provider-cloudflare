@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -20,21 +21,23 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 		},
 
 		"config": {
-			Type:     schema.TypeList,
-			MaxItems: 1,
-			Required: true,
+			Type:        schema.TypeList,
+			MaxItems:    1,
+			Required:    true,
+			Description: "Configuration block for Tunnel Configuration.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"warp_routing": {
 						Type:        schema.TypeList,
 						Optional:    true,
 						MaxItems:    1,
-						Description: "If you’re exposing a [private network](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/), you need to add the warp-routing key and set it to true",
+						Description: "If you're exposing a [private network](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/private-net/), you need to add the `warp-routing` key and set it to `true`.",
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"enabled": {
-									Type:     schema.TypeBool,
-									Optional: true,
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Whether WARP routing is enabled.",
 								},
 							},
 						},
@@ -48,7 +51,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 								"connect_timeout": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by tlsTimeout.",
+									Description: "Timeout for establishing a new TCP connection to your origin server. This excludes the time taken to establish TLS, which is controlled by `tlsTimeout`.",
 									Default:     "30s",
 								},
 								"tls_timeout": {
@@ -114,7 +117,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 								"bastion_mode": {
 									Type:        schema.TypeBool,
 									Optional:    true,
-									Description: "Runs as jump host",
+									Description: "Runs as jump host.",
 								},
 								"proxy_address": {
 									Type:        schema.TypeString,
@@ -138,21 +141,24 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 								"ip_rules": {
 									Type:        schema.TypeSet,
 									Optional:    true,
-									Description: "IP rules for the proxy service",
+									Description: "IP rules for the proxy service.",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											"prefix": {
-												Type:     schema.TypeString,
-												Optional: true,
+												Type:        schema.TypeString,
+												Optional:    true,
+												Description: "IP rule prefix.",
 											},
 											"ports": {
-												Type:     schema.TypeList,
-												Optional: true,
-												Elem:     &schema.Schema{Type: schema.TypeInt},
+												Type:        schema.TypeList,
+												Optional:    true,
+												Elem:        &schema.Schema{Type: schema.TypeInt},
+												Description: "Ports to use within the IP rule.",
 											},
 											"allow": {
-												Type:     schema.TypeBool,
-												Optional: true,
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Whether to allow the IP prefix.",
 											},
 										},
 									},
@@ -166,9 +172,21 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 						Required:    true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								"hostname": {Type: schema.TypeString, Optional: true, Description: "Hostname to match the incoming request with. If the hostname matches, the request will be sent to the service."},
-								"path":     {Type: schema.TypeString, Optional: true, Description: "Path of the incoming request. If the path matches, the request will be sent to the local service."},
-								"service":  {Type: schema.TypeString, Required: true, Description: "Name of the service to which the request will be sent."},
+								"hostname": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Hostname to match the incoming request with. If the hostname matches, the request will be sent to the service.",
+								},
+								"path": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Path of the incoming request. If the path matches, the request will be sent to the local service.",
+								},
+								"service": {
+									Type:        schema.TypeString,
+									Required:    true,
+									Description: "Name of the service to which the request will be sent.",
+								},
 							},
 						},
 					},

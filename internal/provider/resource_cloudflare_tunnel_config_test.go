@@ -16,11 +16,11 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 		  name       = "%[1]s"
 		  secret     = "%[3]s"
 		}
-		
+
 		resource "cloudflare_tunnel_config" "%[1]s" {
 		  account_id         = "%[2]s"
 		  tunnel_id          = cloudflare_argo_tunnel.%[1]s.id
-		
+
 		  config {
 			warp_routing {
 			  enabled = true
@@ -67,11 +67,11 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 		  name       = "%[1]s"
 		  secret     = "%[3]s"
 		}
-		
+
 		resource "cloudflare_tunnel_config" "%[1]s" {
 		  account_id         = "%[2]s"
 		  tunnel_id          = cloudflare_argo_tunnel.%[1]s.id
-		
+
 		  config {
 			ingress_rule {
 				service = "https://10.0.0.1:8081"
@@ -81,7 +81,7 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 		`, resourceID, accountID, tunnelSecret)
 }
 
-func TestAccCloudflareTunnelConfigFull(t *testing.T) {
+func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -133,7 +133,7 @@ func TestAccCloudflareTunnelConfigFull(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareTunnelConfigShort(t *testing.T) {
+func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
