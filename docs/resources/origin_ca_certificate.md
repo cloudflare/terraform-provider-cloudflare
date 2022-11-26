@@ -48,7 +48,7 @@ resource "cloudflare_origin_ca_certificate" "example" {
 
 ### Optional
 
-- `csr` (String) The Certificate Signing Request. Must be newline-encoded.
+- `csr` (String) The Certificate Signing Request. Must be newline-encoded. **Modifying this attribute will force creation of a new resource.**
 - `requested_validity` (Number) The number of days for which the certificate should be valid. Available values: `7`, `30`, `90`, `365`, `730`, `1095`, `5475`. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only

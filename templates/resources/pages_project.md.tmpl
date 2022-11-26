@@ -1,0 +1,19 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+-> If you are using the source section, you must already have your GitHub or Cloudflare account connected to Cloudflare.
+Connect [GitHub](https://dash.cloudflare.com/?to=/:account/pages/new/provider/github) or [GitLab](https://dash.cloudflare.com/?to=/:account/pages/new/provider/gitlab)
+
+## Example Usage
+
+{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
+
+{{ .SchemaMarkdown | trimspace }}
