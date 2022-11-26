@@ -112,6 +112,14 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			BucketName: data["bucket_name"].(string),
 		}
 	}
+
+	for _, rawData := range d.Get("durable_object_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerDurableObjectBinding{
+			ScriptName: d.Get("name").(string),
+			ClassName:  data["class_name"].(string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
