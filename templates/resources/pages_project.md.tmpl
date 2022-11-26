@@ -17,3 +17,9 @@ Connect [GitHub](https://dash.cloudflare.com/?to=/:account/pages/new/provider/gi
 {{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
 
 {{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
