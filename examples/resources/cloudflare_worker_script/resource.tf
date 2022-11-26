@@ -40,6 +40,6 @@ resource "cloudflare_worker_script" "my_script" {
 
   durable_object_binding {
     name       = "MY_DURABLE_OBJECT"
-    class_name = "MyDurableObject"
+    class_name = "DurableObjectExample"
   }
 }
