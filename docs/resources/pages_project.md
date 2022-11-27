@@ -206,3 +206,11 @@ Optional:
 - `preview_deployment_setting` (String) Preview Deployment Setting. Defaults to `all`.
 - `production_deployment_enabled` (Boolean) Enable production deployments. Defaults to `true`.
 - `repo_name` (String) Project repository name.
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_pages_project.example <account_id>/<project_name>
+```

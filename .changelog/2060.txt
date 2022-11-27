@@ -1,3 +1,4 @@
 ```release-note:enhancement
 resource/pages_project: add note about linking git accounts to Cloudflare account.
+resource/pages_domain: add note about needing to make a separate `cloudflare_record`.
 ```
