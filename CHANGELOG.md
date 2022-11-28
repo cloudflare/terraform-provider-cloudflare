@@ -13,6 +13,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_fallback_domain: Add creating fallback domains for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
 * resource/cloudflare_logpush_job: add support for `workers_trace_events` ([#2025](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2025))
+* resource/cloudflare_origin_ca_certificate: add logic to renew certificate and add a new flag to set if we should renew earlier ([#2048](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2048))
 * resource/cloudflare_origin_ca_certificate: trigger a replacement when `csr` is changed ([#2055](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2055))
 * resource/cloudflare_origin_ca_certificate: trigger a replacement when `validity` is changed ([#2046](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2046))
 * resource/cloudflare_ruleset: add support for importing existing resources ([#2054](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2054))
