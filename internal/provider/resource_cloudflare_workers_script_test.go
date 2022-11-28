@@ -14,7 +14,7 @@ import (
 const (
 	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
 	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
-	scriptContent3 = `export class DurableObjectExample {constructor(state, env) {} async fetch(request) {return new Response("Hello World");}}`
+	scriptContent3 = `export class MyDurableObject {constructor(state, env) {} async fetch(request) {return new Response("Hello World");}}`
 	moduleContent  = `export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm    = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 )
