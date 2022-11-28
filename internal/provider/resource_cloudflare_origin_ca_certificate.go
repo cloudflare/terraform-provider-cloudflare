@@ -42,7 +42,7 @@ func mustRenew(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bo
 	expireson, _ := time.Parse(time.RFC3339, expiresonRaw.(string))
 
 	// Calculate when we should renew
-	earlyExpiration := expireson.AddDate(0, 0, -1*d.Get("early_renewal_days").(int))
+	earlyExpiration := expireson.AddDate(0, 0, -1*d.Get("min_days_for_renewal").(int))
 
 	if time.Now().After(earlyExpiration) {
 		tflog.Info(ctx, fmt.Sprintf("We will renew the certificate as we passed the expected date (%s)", earlyExpiration))
