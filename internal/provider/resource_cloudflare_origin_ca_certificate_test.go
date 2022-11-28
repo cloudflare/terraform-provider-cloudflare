@@ -33,7 +33,6 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
 			testAccPreCheckApiUserServiceKey(t)
 		},
 		ProviderFactories: providerFactories,

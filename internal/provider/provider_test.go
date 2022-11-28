@@ -125,6 +125,11 @@ func testAccPreCheckApiUserServiceKey(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_API_USER_SERVICE_KEY"); v == "" {
 		t.Fatal("CLOUDFLARE_API_USER_SERVICE_KEY must be set for acceptance tests")
 	}
+
+	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func testAccPreCheckDomain(t *testing.T) {
