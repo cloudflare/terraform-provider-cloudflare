@@ -9,8 +9,9 @@ description: |-
 
 Provides a resource which manages Cloudflare Pages projects.
 
--> If you are using the source section, you must already have your GitHub or Cloudflare account connected to Cloudflare.
-Connect [GitHub](https://dash.cloudflare.com/?to=/:account/pages/new/provider/github) or [GitLab](https://dash.cloudflare.com/?to=/:account/pages/new/provider/gitlab)
+-> If you are using a `source` block configuration, you must first have a
+connected GitHub or GitLab account connected to Cloudflare. See the
+[Getting Started with Pages] documentation on how to link your accounts.
 
 ## Example Usage
 
@@ -214,3 +215,5 @@ Import is supported using the following syntax:
 ```shell
 $ terraform import cloudflare_pages_project.example <account_id>/<project_name>
 ```
+
+[Getting Started with Pages]: https://developers.cloudflare.com/pages/get-started/#connect-your-git-provider-to-pages
