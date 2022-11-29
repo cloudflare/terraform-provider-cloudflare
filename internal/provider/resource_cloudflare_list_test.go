@@ -185,15 +185,15 @@ func TestAccCloudflareList_Update(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareList_UpdateUnordered(t *testing.T) {
+func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
+	rnd := generateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	config := testAccCheckCloudflareListIPUpdateUnordered(accountID)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -201,8 +201,91 @@ func TestAccCloudflareList_UpdateUnordered(t *testing.T) {
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
-		Steps:             []resource.TestStep{{Config: config}},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareListIPListOrdered(rnd, rnd, rnd, accountID),
+			},
+			{
+				Config: testAccCheckCloudflareListIPListUnordered(rnd, rnd, rnd, accountID),
+			},
+		},
 	})
+}
+
+func testAccCheckCloudflareListIPListOrdered(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "ip"
+
+    item {
+      value {
+        ip = "192.0.2.0"
+      }
+      comment = "one"
+    }
+
+    item {
+      value {
+        ip = "192.0.2.1"
+      }
+      comment = "two"
+    }
+
+	item {
+	  value {
+		ip = "192.0.2.2"
+	  }
+	  comment = "three"
+	}
+
+	item {
+	  value {
+	    ip = "192.0.2.3"
+	  }
+	  comment = "four"
+	}
+  }`, ID, name, description, accountID)
+}
+
+func testAccCheckCloudflareListIPListUnordered(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "ip"
+
+    item {
+	  value {
+	    ip = "192.0.2.2"
+	  }
+	  comment = "three"
+	}
+
+	item {
+      value {
+        ip = "192.0.2.0"
+      }
+      comment = "one"
+    }
+
+	item {
+	  value {
+		ip = "192.0.2.3"
+	  }
+	  comment = "four"
+	}
+
+    item {
+      value {
+        ip = "192.0.2.1"
+      }
+      comment = "two"
+    }
+  }`, ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.TestCheckFunc {
@@ -261,38 +344,6 @@ func testAccCheckCloudflareListIPUpdate(ID, name, description, accountID string)
       comment = "two"
     }
   }`, ID, name, description, accountID)
-}
-
-func testAccCheckCloudflareListIPUpdateUnordered(accountID string) string {
-	return fmt.Sprintf(`
-  variable "cloudflare_test_allowlist" {
-    description = "Temp Testing IP list"
-    type        = map(string)
-    default = {
-      "73.98.124.7"  = "ip_address_01"
-      "73.98.124.8"  = "ip_address_02"
-      "73.98.124.9"  = "ip_address_03"
-      "73.98.124.10" = "ip_address_04"
-      "73.98.124.11" = "ip_address_05"
-    }
-  }
-
-  resource "cloudflare_list" "test_allowlist" {
-    account_id  = "%s"
-    name        = "test_allowlist"
-    kind        = "ip"
-    description = "Testing IP list"
-
-    dynamic "item" {
-      for_each = var.cloudflare_test_allowlist
-      content {
-	value {
-	  ip = item.key
-	}
-	comment = item.value
-      }
-    }
-  }`, accountID)
 }
 
 func testAccCheckCloudflareListRedirectUpdate(ID, name, description, accountID string) string {
