@@ -34,7 +34,7 @@ func resourceCloudflareListSchema() map[string]*schema.Schema {
 			Required:     true,
 		},
 		"item": {
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     listItemElem,
 		},
