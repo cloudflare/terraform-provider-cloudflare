@@ -1,5 +1,9 @@
 ## 3.30.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_split_tunnel: handle nested attribute changes and ignore ordering ([#2066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2066))
+
 ## 3.29.0 (November 30th, 2022)
 
 NOTES:
