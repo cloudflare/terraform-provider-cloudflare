@@ -160,6 +160,32 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareSplitTunnel_IncludeTunnelOrdering(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDefaultSplitTunnelIncludeMultiplesOrdered(rnd, accountID),
+			},
+			{
+				Config: testAccCloudflareDefaultSplitTunnelIncludeMultiplesFlippedOrder(rnd, accountID),
+			},
+		},
+	})
+}
+
 func testAccCloudflareSplitTunnelExclude(rnd, accountID string, description string, host string, mode string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_split_tunnel" "%[1]s" {
@@ -171,4 +197,45 @@ resource "cloudflare_split_tunnel" "%[1]s" {
   }
 }
 `, rnd, accountID, description, host, mode)
+}
+
+func testAccCloudflareDefaultSplitTunnelIncludeMultiplesOrdered(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_split_tunnel" "%[1]s" {
+  account_id = "%[2]s"
+  mode = "include"
+  tunnels {
+    description = "example 1"
+    host = "*.example.com"
+  }
+
+  tunnels {
+    description = "example 2"
+    host = "*.example.net"
+  }
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareDefaultSplitTunnelIncludeMultiplesFlippedOrder(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_split_tunnel" "%[1]s" {
+  account_id = "%[2]s"
+  mode = "include"
+  tunnels {
+    description = "example 1"
+    host = "*.example.com"
+  }
+
+  tunnels {
+    description = "example 3"
+    host = "*.example.org"
+  }
+
+  tunnels {
+    description = "example 2"
+    host = "*.example.net"
+  }
+}
+`, rnd, accountID)
 }
