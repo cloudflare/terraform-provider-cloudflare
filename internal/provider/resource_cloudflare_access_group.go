@@ -344,6 +344,10 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					group = append(group, cloudflare.AccessGroupIP{IP: struct {
 						IP string `json:"ip"`
 					}{IP: value.(string)}})
+				case "ip_list":
+					group = append(group, cloudflare.AccessGroupIPList{IPList: struct {
+						ID string `json:"id"`
+					}{ID: value.(string)}})
 				case "service_token":
 					group = append(group, cloudflare.AccessGroupServiceToken{ServiceToken: struct {
 						ID string `json:"token_id"`
@@ -387,6 +391,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	emails := []string{}
 	emailDomains := []string{}
 	ips := []string{}
+	ipList := []string{}
 	serviceTokens := []string{}
 	groups := []string{}
 	commonName := ""
@@ -427,6 +432,10 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 			case "ip":
 				for _, ip := range groupValue.(map[string]interface{}) {
 					ips = append(ips, ip.(string))
+				}
+			case "ip_list":
+				for _, ipListID := range groupValue.(map[string]interface{}) {
+					ipList = append(ipList, ipListID.(string))
 				}
 			case "service_token":
 				for _, serviceToken := range groupValue.(map[string]interface{}) {
@@ -515,6 +524,10 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 
 	if len(ips) > 0 {
 		groupMap["ip"] = ips
+	}
+
+	if len(ipList) > 0 {
+		groupMap["ip_list"] = ipList
 	}
 
 	if len(serviceTokens) > 0 {

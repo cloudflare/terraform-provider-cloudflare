@@ -97,6 +97,8 @@ func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.0", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.1", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
 				),
 			},
 			{
@@ -110,6 +112,8 @@ func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.0", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.1", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
 				),
 			},
 		},
@@ -138,6 +142,8 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.0", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.1", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_name", "Name1"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_value", "Value1"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_name", "Name2"),
@@ -155,6 +161,8 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.0", "192.0.2.1/32"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.1", "192.0.2.2/32"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.0", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "include.0.ip_list.1", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_name", "Name1"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_value", "Value1"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_name", "Name2"),
@@ -363,6 +371,10 @@ resource "cloudflare_access_group" "%[1]s" {
     ip = [
       "192.0.2.1/32",
       "192.0.2.2/32"
+    ]
+    ip_list = [
+      "e3a0f205-c525-4e48-a293-ba5d1f00e638",
+      "5d54cd30-ce52-46e4-9a46-a47887e1a167"
     ]
     saml {
       attribute_name = "Name1"
