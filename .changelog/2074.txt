@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_ruleset: add 'ignore' option to cache rules query_string element
+```
