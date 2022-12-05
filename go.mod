@@ -5,9 +5,7 @@ go 1.17
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
-	github.com/bflad/tfproviderlint v0.28.1
-	github.com/client9/misspell v0.3.4
-	github.com/cloudflare/cloudflare-go v0.49.0
+	github.com/cloudflare/cloudflare-go v0.56.0
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/golangci/golangci-lint v1.49.0
 	github.com/google/go-github v17.0.0+incompatible
