@@ -711,6 +711,11 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 																			Type: schema.TypeString,
 																		},
 																	},
+																	"ignore": {
+																		Type:        schema.TypeBool,
+																		Optional:    true,
+																		Description: "Boolean to ignore all query strings.",
+																	},
 																},
 															},
 														},
