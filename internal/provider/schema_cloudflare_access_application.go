@@ -53,6 +53,16 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Optional: true,
 			Default:  "24h",
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				appType := d.Get("type").(string)
+				// Suppress the diff if it's a bookmark app type. Bookmarks don't have a session duration
+				// field which always creates a diff because of the default '24h' value.
+				if appType == "bookmark" {
+					return true
+				}
+
+				return oldValue == newValue
+			},
 			ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
 				v := val.(string)
 				_, err := time.ParseDuration(v)
