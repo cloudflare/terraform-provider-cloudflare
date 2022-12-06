@@ -445,7 +445,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 							for _, v := range r.ActionParameters.CacheKey.CustomKey.Query.Include.List {
 								query["include"] = append(query["include"].([]interface{}), v)
 							}
-							if r.ActionParameters.CacheKey.CustomKey.Query.Include.All {
+							if r.ActionParameters.CacheKey.CustomKey.Query.Include.All || *r.ActionParameters.CacheKey.CustomKey.Query.Ignore == false {
 								query["include"] = append(query["include"].([]interface{}), "*")
 							}
 						}
@@ -454,7 +454,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 							for _, v := range r.ActionParameters.CacheKey.CustomKey.Query.Exclude.List {
 								query["exclude"] = append(query["exclude"].([]interface{}), v)
 							}
-							if r.ActionParameters.CacheKey.CustomKey.Query.Exclude.All {
+							if r.ActionParameters.CacheKey.CustomKey.Query.Exclude.All || *r.ActionParameters.CacheKey.CustomKey.Query.Ignore == true {
 								query["exclude"] = append(query["exclude"].([]interface{}), "*")
 							}
 						}
