@@ -4,6 +4,10 @@ BUG FIXES:
 
 * resource/cloudflare_split_tunnel: handle nested attribute changes and ignore ordering ([#2066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2066))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.55.0 to 0.56.0 ([#2075](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2075))
+
 ## 3.29.0 (November 30th, 2022)
 
 NOTES:
