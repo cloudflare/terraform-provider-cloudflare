@@ -50,5 +50,10 @@ func resourceCloudflareOriginCACertificateSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.IntInSlice([]int{7, 30, 90, 365, 730, 1095, 5475}),
 			Description:  fmt.Sprintf("The number of days for which the certificate should be valid. %s", renderAvailableDocumentationValuesIntSlice([]int{7, 30, 90, 365, 730, 1095, 5475})),
 		},
+		"min_days_for_renewal": {
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Description: "Number of days prior to the expiry to trigger a renewal of the certificate if a Terraform operation is run.",
+		},
 	}
 }

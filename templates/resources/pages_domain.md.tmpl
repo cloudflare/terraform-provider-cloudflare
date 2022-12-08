@@ -1,0 +1,24 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+-> A DNS record for the domain is not automatically created. You need to create a `cloudflare_record` resource for the domain you want to use.
+
+## Example Usage
+
+{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}

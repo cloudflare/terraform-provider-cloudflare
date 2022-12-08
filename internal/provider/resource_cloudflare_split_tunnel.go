@@ -60,7 +60,7 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 	mode := d.Get("mode").(string)
 	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
-	tunnelList, err := expandSplitTunnels(d.Get("tunnels").([]interface{}))
+	tunnelList, err := expandSplitTunnels(d.Get("tunnels").(*schema.Set).List())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating %q Split Tunnels: %w", mode, err))
 	}
@@ -130,11 +130,10 @@ func resourceCloudflareSplitTunnelImport(ctx context.Context, d *schema.Resource
 
 // flattenSplitTunnels accepts the cloudflare.SplitTunnel struct and returns the
 // schema representation for use in Terraform state.
-func flattenSplitTunnels(tunnels []cloudflare.SplitTunnel) []interface{} {
-	schemaTunnels := make([]interface{}, 0)
-
+func flattenSplitTunnels(tunnels []cloudflare.SplitTunnel) *schema.Set {
+	schemaTunnels := &schema.Set{F: schema.HashResource(tunnelSetResource)}
 	for _, t := range tunnels {
-		schemaTunnels = append(schemaTunnels, map[string]interface{}{
+		schemaTunnels.Add(map[string]interface{}{
 			"address":     t.Address,
 			"host":        t.Host,
 			"description": t.Description,

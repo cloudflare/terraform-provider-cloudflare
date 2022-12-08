@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_list: Do not reapply changes if only list order changed.
+```

@@ -1,4 +1,14 @@
-## 3.29.0 (Unreleased)
+## 3.30.0 (Unreleased)
+
+BUG FIXES:
+
+* resource/cloudflare_split_tunnel: handle nested attribute changes and ignore ordering ([#2066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2066))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.55.0 to 0.56.0 ([#2075](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2075))
+
+## 3.29.0 (November 30th, 2022)
 
 NOTES:
 
@@ -13,8 +23,11 @@ ENHANCEMENTS:
 
 * resource/cloudflare_fallback_domain: Add creating fallback domains for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
 * resource/cloudflare_logpush_job: add support for `workers_trace_events` ([#2025](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2025))
+* resource/cloudflare_origin_ca_certificate: add logic to renew certificate and add a new flag to set if we should renew earlier ([#2048](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2048))
 * resource/cloudflare_origin_ca_certificate: trigger a replacement when `csr` is changed ([#2055](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2055))
 * resource/cloudflare_origin_ca_certificate: trigger a replacement when `validity` is changed ([#2046](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2046))
+* resource/cloudflare_pages_domain: add note about needing to make a separate `cloudflare_record`. ([#2060](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2060))
+* resource/cloudflare_pages_project: add note about linking git accounts to Cloudflare account. ([#2060](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2060))
 * resource/cloudflare_ruleset: add support for importing existing resources ([#2054](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2054))
 * resource/cloudflare_split_tunnel: Add configuring split tunnel for device policies ([#1926](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1926))
 * resource/cloudflare_workers_kv: add support for explicitly setting `account_id` on the resource ([#2049](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2049))
@@ -28,6 +41,7 @@ BUG FIXES:
 Access policy ([#2033](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2033))
 * resource/cloudflare_account: Fix uninitialized cloudflare.Account.Settings ([#2034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2034))
 * resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation` ([#2027](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2027))
+* resource/cloudflare_list: Do not reapply changes if only list order changed. ([#2063](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2063))
 * resource/cloudflare_record: Fix null MX record creation ([#2038](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2038))
 * resource/cloudflare_spectrum_application: ignore ordering of `edge_ips` ([#2032](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2032))
 * resource/cloudflare_workers_kv: `key` changes force creation of a new resource ([#2044](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2044))
