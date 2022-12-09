@@ -61,6 +61,9 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				environment_variables = {
 					ENVIRONMENT = "preview"
 				}
+				secrets = {
+					SECRET = "preview-secret"
+				}
 				kv_namespaces = {
 					KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
 				}
@@ -75,11 +78,17 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				}
 				compatibility_date = "2022-08-15"
 				compatibility_flags = ["preview_flag"]
+				fail_open = true
+				always_use_latest_compatibility_date = true
+				usage_model = "unbound"
 			}
         	production {
 				environment_variables = {
 					ENVIRONMENT = "production"
 					OTHER_VALUE = "other value"
+				}
+				secrets = {
+					SECRET = "production-secret"
 				}
 				kv_namespaces = {
 					KV_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
@@ -99,6 +108,9 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				}
 				compatibility_date = "2022-08-16"
 				compatibility_flags = ["production_flag", "second flag"]
+				fail_open = false
+				always_use_latest_compatibility_date = false
+				usage_model = "bundled"
       		}
 		}
 		}
@@ -284,6 +296,9 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.r2_buckets.%", "1"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.r2_buckets.R2_BINDING", "some-bucket"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.fail_open", "true"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.always_use_latest_compatibility_date", "true"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.usage_model", "unbound"),
 
 					// Production
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.%", "2"),
@@ -310,6 +325,9 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.#", "2"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.0", "production_flag"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.1", "second flag"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.fail_open", "false"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.always_use_latest_compatibility_date", "false"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.usage_model", "bundled"),
 				),
 			},
 		},

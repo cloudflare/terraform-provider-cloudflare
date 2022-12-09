@@ -119,6 +119,11 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Description: "Environment variables for Pages Functions.",
 				Optional:    true,
 			},
+			"secrets": {
+				Type:        schema.TypeMap,
+				Description: "Secrets for Pages Functions.",
+				Optional: true,
+			},
 			"kv_namespaces": {
 				Type:        schema.TypeMap,
 				Description: "KV namespaces used for Pages Functions.",
@@ -153,6 +158,27 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 					Type: schema.TypeString,
 				},
 				Computed: true,
+			},
+			"services": {
+				Type:        schema.TypeMap,
+				Description: "Services used for Pages Functions.",
+				Optional:    true,
+			},
+			"fail_open": {
+				Type:        schema.TypeBool,
+				Description: "Fail open used for Pages Functions.",
+				Optional:    true,
+			},
+			"always_use_latest_compatibility_date": {
+				Type:        schema.TypeBool,
+				Description: "Use latest compatibility date for Pages Functions.",
+				Optional:    true,
+			},
+			"usage_model": {
+				Type:        schema.TypeString,
+				Description: "Usage model used for Pages Functions.",
+				Optional:    true,
+				ValidateFunc: validation.StringInSlice([]string{"unbound", "bound"}, false),
 			},
 		},
 	}
