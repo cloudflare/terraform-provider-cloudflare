@@ -1,4 +1,4 @@
-package cloudflare
+package provider
 
 import (
 	"context"
