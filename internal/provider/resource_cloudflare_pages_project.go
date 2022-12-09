@@ -37,10 +37,10 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 	for key, value := range parsed {
 		switch key {
 		case "environment_variables":
-			deploymentVariables := make(map[string]cloudflare.PagesProjectDeploymentVar)
+			deploymentVariables := cloudflare.EnvironmentVariableMap{}
 			variables := value.(map[string]interface{})
 			for i, variable := range variables {
-				deploymentVariables[i] = cloudflare.PagesProjectDeploymentVar{Value: variable.(string)}
+				deploymentVariables[i] = &cloudflare.EnvironmentVariable{Value: variable.(string)}
 			}
 			config.EnvVars = deploymentVariables
 			break
