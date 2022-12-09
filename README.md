@@ -1,17 +1,13 @@
-<a href="https://terraform.io">
-    <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" alt="Terraform logo" title="Terraform" align="right" height="50" />
-</a>
-
 # Cloudflare Terraform Provider
 
 ## Quickstarts
 
 - [Getting started with Cloudflare and Terraform](https://developers.cloudflare.com/terraform/installing)
-- [Developing the provider](docs/development.md)
+- [Developing the provider](contributing/development.md)
 
 ## Documentation
 
-Full, comprehensive documentation is available on the [Terraform Registry](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs). [API documentation](https://api.cloudflare.com) and [Developer documentation](https://developers.cloudflare.com) is also available 
+Full, comprehensive documentation is available on the [Terraform Registry](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs). [API documentation](https://api.cloudflare.com) and [Developer documentation](https://developers.cloudflare.com) is also available
 for non-Terraform or service specific information.
 
 ## Migrating to Terraform from using the Dashboard
@@ -23,7 +19,7 @@ import them into Terraform.
 
 ## Contributing
 
-To contribute, please read the [contribution guidelines](docs/contributing.md).
+To contribute, please read the [contribution guidelines](contributing/README.md).
 
 ## Feedback
 

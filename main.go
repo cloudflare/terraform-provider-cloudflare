@@ -1,12 +1,16 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/cloudflare"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+)
+
+var (
+	version string = "dev"
+	commit  string = ""
 )
 
 func main() {
@@ -16,16 +20,14 @@ func main() {
 	flag.Parse()
 
 	opts := &plugin.ServeOpts{
-		ProviderFunc: cloudflare.Provider,
+		ProviderFunc: provider.New(version),
+		ProviderAddr: "registry.terraform.io/cloudflare/cloudflare",
+		Debug:        debugMode,
 	}
 
-	if debugMode {
-		err := plugin.Debug(context.Background(), "registry.terraform.io/cloudflare/cloudflare", opts)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		return
-	}
+	logFlags := log.Flags()
+	logFlags = logFlags &^ (log.Ldate | log.Ltime)
+	log.SetFlags(logFlags)
 
 	plugin.Serve(opts)
 }

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_application: add support for `app_launcher_visible` to the schema
+```

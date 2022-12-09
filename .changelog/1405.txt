@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: fix handling of `false` values for category/rule overrides
+```

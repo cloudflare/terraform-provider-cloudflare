@@ -42,7 +42,10 @@ body:
   attributes:
     label: Terraform configuration files
     description: |
-      No need for code block backticks, this will be rendered as HCL automatically.
+      No need for code block backticks, this will be rendered as HCL automatically. 
+      Avoid using `for` loops, dynamics or data sources in your examples as they 
+      do not make for a good reproduction test case and may contain bugs in the 
+      expressions used.
     placeholder: |
       resource "example_resource" "my_resource" {
         # ..
@@ -50,14 +53,19 @@ body:
     render: hcl
   validations:
     required: true
-- type: textarea
+- type: input
   attributes:
-    label: Debug output
+    label: Link to debug output
     description: |
-      The output provided from prepending `TF_LOG=DEBUG` to your Terraform apply or plan. 
-      **Do not truncate or trim the output as the surrounding context is useful for debugging**. 
+      A link to the output (https://gist.github.com) provided from prepending `TF_LOG=DEBUG` to your 
+      Terraform apply or plan.  **Do not truncate or trim the output as the surrounding context 
+      is useful for debugging and without it, maintainers are restricted in what assistance and 
+      diagnosis they can provide**. 
+      
       Be sure to redact or sanitise any sensitive information (such as API keys or tokens) in 
-      your logs.
+      your logs. https://jacobbednarz.com/tf-log-redactor/ is an online tool that will handle
+      redacting the sensitive Cloudflare details from your log output for you if you don't want
+      to manually do it.
   validations:
     required: true
 - type: textarea

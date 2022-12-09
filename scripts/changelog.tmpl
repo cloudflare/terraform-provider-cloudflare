@@ -44,3 +44,11 @@ BUG FIXES:
 {{ template "note" . }}
 {{ end -}}
 {{- end -}}
+
+{{- if .NotesByType.dependency }}
+DEPENDENCIES:
+
+{{range .NotesByType.dependency | sort -}}
+{{ template "note" . }}
+{{ end -}}
+{{- end -}}

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resources/worker_script: add support for r2_bucket_binding
+```

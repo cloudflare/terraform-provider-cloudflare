@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: handle `Update`s for records with `data` blocks
+```

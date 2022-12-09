@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: don't attempt to upgrade ratelimit if it isn't set
+```

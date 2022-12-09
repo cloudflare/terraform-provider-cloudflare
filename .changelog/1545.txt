@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_api_token: ignore ordering changes in `permission_groups`
+```

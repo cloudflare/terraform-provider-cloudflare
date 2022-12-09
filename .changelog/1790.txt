@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_access_rule: add support for `account_id`
+```
+
+```release-note:note
+resource/cloudflare_access_rule: this resource now supports an explicit `account_id` instead of the implied one from the client configuration. You should update your configuration to include `account_id` and remove permadiffs.
+```

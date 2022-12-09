@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_split_tunnel: handle nested attribute changes and ignore ordering
+```

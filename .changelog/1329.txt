@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_argo_tunnel: fix import mechanism
+```
