@@ -13,11 +13,11 @@ import (
 
 func dataSourceCloudflareLoadBalancerPools() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCloudflareLoadBalancerPoolsRead,
-
+		Read:        dataSourceCloudflareLoadBalancerPoolsRead,
+		Description: "A datasource to find Load Balancer Pools.",
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "The account identifier to target for the resource.",
+				Description: "The account identifier to target for the datasource lookups.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
