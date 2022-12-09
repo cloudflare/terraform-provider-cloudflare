@@ -2,6 +2,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -10,15 +11,16 @@ import (
 func TestAccCloudflareLoadBalancerPools(t *testing.T) {
 	t.Parallel()
 
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_load_balancer_pools.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareLoadBalancerPoolsConfig(rnd),
+				Config: testAccCloudflareLoadBalancerPoolsConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "pools.#", "2"),
 				),
@@ -27,15 +29,17 @@ func TestAccCloudflareLoadBalancerPools(t *testing.T) {
 	})
 }
 
-func testAccCloudflareLoadBalancerPoolsConfig(name string) string {
+func testAccCloudflareLoadBalancerPoolsConfig(name, accountID string) string {
 	return fmt.Sprintf(`
 data "cloudflare_load_balancer_pools" "%[1]s" {
+	account_id = "%[2]s"
 }
 
-%[2]s`, name, testPools)
+%[3]s`, name, accountID, testPools)
 }
 
-const testPools = `resource "cloudflare_load_balancer_pool" "pool1" {
+var testPools = fmt.Sprintf(`resource "cloudflare_load_balancer_pool" "pool1" {
+	account_id = "%[1]s"
 	name = "pool1"
 	origins {
 	  name = "example-1"
@@ -70,6 +74,7 @@ const testPools = `resource "cloudflare_load_balancer_pool" "pool1" {
 }
 
 resource "cloudflare_load_balancer_pool" "pool2" {
+	account_id = "%[1]s"
 	name = "pool2"
 	origins {
 	  name = "example-3"
@@ -101,4 +106,4 @@ resource "cloudflare_load_balancer_pool" "pool2" {
 	  session_policy = "hash"
 	}
   }
-}`
+}`, os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
