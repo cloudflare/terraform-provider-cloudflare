@@ -119,11 +119,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Description: "Environment variables for Pages Functions.",
 				Optional:    true,
 			},
-			"secrets": {
-				Type:        schema.TypeMap,
-				Description: "Secrets for Pages Functions.",
-				Optional: true,
-			},
 			"kv_namespaces": {
 				Type:        schema.TypeMap,
 				Description: "KV namespaces used for Pages Functions.",
@@ -159,26 +154,36 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				},
 				Computed: true,
 			},
-			"services": {
-				Type:        schema.TypeMap,
+			"service_binding": {
+				Type:        schema.TypeSet,
 				Description: "Services used for Pages Functions.",
 				Optional:    true,
+				Elem:        serviceBindingResource,
 			},
 			"fail_open": {
 				Type:        schema.TypeBool,
 				Description: "Fail open used for Pages Functions.",
 				Optional:    true,
+				Default:     false,
 			},
 			"always_use_latest_compatibility_date": {
 				Type:        schema.TypeBool,
 				Description: "Use latest compatibility date for Pages Functions.",
 				Optional:    true,
+				Default:     false,
 			},
 			"usage_model": {
-				Type:        schema.TypeString,
-				Description: "Usage model used for Pages Functions.",
+				Type:         schema.TypeString,
+				Description:  "Usage model used for Pages Functions.",
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled"}, false),
+				Default:      "bundled",
+			},
+			"secret": {
+				Type:        schema.TypeSet,
+				Description: "Secrets for Pages Functions.",
 				Optional:    true,
-				ValidateFunc: validation.StringInSlice([]string{"unbound", "bound"}, false),
+				Elem:        secretTextBindingResource,
 			},
 		},
 	}
@@ -241,14 +246,14 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 					"preview": {
 						Description: "Configuration for preview deploys.",
 						Type:        schema.TypeList,
-						Optional:    true,
+						Required:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},
 					"production": {
 						Description: "Configuration for production deploys.",
 						Type:        schema.TypeList,
-						Optional:    true,
+						Required:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},

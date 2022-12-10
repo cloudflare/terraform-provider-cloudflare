@@ -8,11 +8,28 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+const testPagesProjectEmptyDeploymentConfig = `
+deployment_configs {
+	preview {
+		compatibility_date = "2022-08-15"
+		compatibility_flags = []
+		always_use_latest_compatibility_date = false
+		usage_model = "unbound"
+	}
+	production {
+		compatibility_date = "2022-08-15"
+		compatibility_flags = []
+		always_use_latest_compatibility_date = false
+		usage_model = "unbound"
+	}
+}
+`
+
 func testPagesProjectSource(resourceID, accountID, projectName, repoOwner, repoName string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_pages_project" "%[1]s" {
 		  account_id = "%[2]s"
-		  name = "%[3]s"
+		  name = "%[1]s"
 		  production_branch = "main"
 		  source {
 			type = "github"
@@ -26,18 +43,18 @@ func testPagesProjectSource(resourceID, accountID, projectName, repoOwner, repoN
 				preview_deployment_setting = "custom"
 				preview_branch_includes = ["dev","preview"]
 				preview_branch_excludes = ["main", "prod"]
-
 			}
 		  }
+		  %[6]s
 		}
-		`, resourceID, accountID, projectName, repoOwner, repoName)
+		`, resourceID, accountID, projectName, repoOwner, repoName, testPagesProjectEmptyDeploymentConfig)
 }
 
-func testPagesProjectBuildConfig(resourceID, accountID, projectName, repoOwner, repoName string) string {
+func testPagesProjectBuildConfig(resourceID, accountID string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_pages_project" "%[1]s" {
 		  account_id = "%[2]s"
-		  name = "%[3]s"
+		  name = "%[1]s"
 		  production_branch = "main"
 		  build_config {
 			build_command = "npm run build"
@@ -46,8 +63,9 @@ func testPagesProjectBuildConfig(resourceID, accountID, projectName, repoOwner, 
 			web_analytics_tag = "cee1c73f6e4743d0b5e6bb1a0bcaabcc"
 			web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
 		  }
+		  %[4]s	
 		}
-		`, resourceID, accountID, projectName, repoOwner, repoName)
+		`, resourceID, accountID, resourceID, testPagesProjectEmptyDeploymentConfig)
 }
 
 func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string) string {
@@ -61,8 +79,9 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				environment_variables = {
 					ENVIRONMENT = "preview"
 				}
-				secrets = {
-					SECRET = "preview-secret"
+				secret {
+					name = "SECRET"
+					text = "%[1]s"
 				}
 				kv_namespaces = {
 					KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
@@ -76,6 +95,11 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				d1_databases = {
 					D1_BINDING = "445e2955-951a-4358-a35b-a4d0c813f63"
 				}
+				service_binding {
+					name = "MY_SERVICE_BINDING"
+					service = "my-service"
+					environment = "preview"
+				}
 				compatibility_date = "2022-08-15"
 				compatibility_flags = ["preview_flag"]
 				fail_open = true
@@ -86,9 +110,6 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				environment_variables = {
 					ENVIRONMENT = "production"
 					OTHER_VALUE = "other value"
-				}
-				secrets = {
-					SECRET = "production-secret"
 				}
 				kv_namespaces = {
 					KV_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
@@ -106,9 +127,22 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 					D1_BINDING_1 = "445e2955-951a-4358-a35b-a4d0c813f63"
 					D1_BINDING_2 = "a399414b-c697-409a-a688-377db6433cd9"
 				}
+				service_binding {
+					name = "MY_SERVICE_BINDING"
+					service = "my-service"
+					environment = "production"
+				}
+				secret {
+					name = "SECRET1"
+					text = "%[1]s"
+				}
+				secret {
+					name = "SECRET2"
+					text = "%[1]s-2"
+				}
 				compatibility_date = "2022-08-16"
 				compatibility_flags = ["production_flag", "second flag"]
-				fail_open = false
+				fail_open = true
 				always_use_latest_compatibility_date = false
 				usage_model = "bundled"
       		}
@@ -123,70 +157,9 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  production_branch = "main"
+		 %[3]s	
 		}
-		`, resourceID, accountID)
-}
-
-func testPagesProjectPreviewOnly(resourceID, accountID, projectName string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_pages_project" "%[1]s" {
-		  account_id = "%[2]s"
-		  name = "%[3]s"
-		  production_branch = "main"
-		  deployment_configs {
-			preview {
-			   environment_variables = {
-				   ENVIRONMENT = "preview"
-			   }
-			   kv_namespaces = {
-				   KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-			   }
-			   durable_object_namespaces = {
-				   DO_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-			   }
-			   r2_buckets = {
-				   R2_BINDING = "some-bucket"
-			   }
-			   d1_databases = {
-				   D1_BINDING = "445e2955-951a-4358-a35b-a4d0c813f63"
-			   }
-			   compatibility_date = "2022-08-15"
-			   compatibility_flags = ["preview_flag"]
-		   }
-		}
-	}
-		`, resourceID, accountID, projectName)
-}
-
-func testPagesProjectProductionOnly(resourceID, accountID, projectName string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_pages_project" "%[1]s" {
-		  account_id = "%[2]s"
-		  name = "%[3]s"
-		  production_branch = "main"
-		  deployment_configs {
-			production {
-			   environment_variables = {
-				   ENVIRONMENT = "preview"
-			   }
-			   kv_namespaces = {
-				   KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-			   }
-			   durable_object_namespaces = {
-				   DO_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
-			   }
-			   r2_buckets = {
-				   R2_BINDING = "some-bucket"
-			   }
-			   d1_databases = {
-				   D1_BINDING = "445e2955-951a-4358-a35b-a4d0c813f63"
-			   }
-			   compatibility_date = "2022-08-15"
-			   compatibility_flags = ["preview_flag"]
-		   }
-		}
-	}
-		`, resourceID, accountID, projectName)
+		`, resourceID, accountID, testPagesProjectEmptyDeploymentConfig)
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
@@ -234,8 +207,6 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
-	pagesRepo := os.Getenv("CLOUDFLARE_PAGES_REPO")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -245,7 +216,7 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testPagesProjectBuildConfig(rnd, accountID, rnd, pagesOwner, pagesRepo),
+				Config: testPagesProjectBuildConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
@@ -325,9 +296,10 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.#", "2"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.0", "production_flag"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.1", "second flag"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.fail_open", "false"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.always_use_latest_compatibility_date", "false"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.usage_model", "bundled"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.fail_open", "true"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.always_use_latest_compatibility_date", "false"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.usage_model", "bundled"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secret.#", "2"),
 				),
 			},
 		},
@@ -351,90 +323,6 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "production_branch", "main"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflarePagesProject_PreviewOnly(t *testing.T) {
-	rnd := generateRandomResourceName()
-	name := "cloudflare_pages_project." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckPages(t)
-		},
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testPagesProjectPreviewOnly(rnd, accountID, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "production_branch", "main"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.compatibility_date", "2022-08-15"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.compatibility_flags.#", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.compatibility_flags.0", "preview_flag"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.environment_variables.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.environment_variables.ENVIRONMENT", "preview"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.kv_namespaces.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.kv_namespaces.KV_BINDING", "5eb63bbbe01eeed093cb22bb8f5acdc3"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.durable_object_namespaces.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.durable_object_namespaces.DO_BINDING", "5eb63bbbe01eeed093cb22bb8f5acdc3"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.d1_databases.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.d1_databases.D1_BINDING", "445e2955-951a-4358-a35b-a4d0c813f63"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.r2_buckets.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.r2_buckets.R2_BINDING", "some-bucket"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflarePagesProject_ProductionOnly(t *testing.T) {
-	rnd := generateRandomResourceName()
-	name := "cloudflare_pages_project." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckPages(t)
-		},
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testPagesProjectProductionOnly(rnd, accountID, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
-					resource.TestCheckResourceAttr(name, "production_branch", "main"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_date", "2022-08-15"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.#", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.compatibility_flags.0", "preview_flag"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.ENVIRONMENT", "preview"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.kv_namespaces.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.kv_namespaces.KV_BINDING", "5eb63bbbe01eeed093cb22bb8f5acdc3"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.durable_object_namespaces.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.durable_object_namespaces.DO_BINDING", "5eb63bbbe01eeed093cb22bb8f5acdc3"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.d1_databases.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.d1_databases.D1_BINDING", "445e2955-951a-4358-a35b-a4d0c813f63"),
-
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.r2_buckets.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.r2_buckets.R2_BINDING", "some-bucket"),
 				),
 			},
 		},

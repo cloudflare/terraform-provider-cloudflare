@@ -42,20 +42,19 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 			for i, variable := range variables {
 				envVar := cloudflare.EnvironmentVariable{
 					Value: variable.(string),
-					Type: cloudflare.PlainText,
+					Type:  cloudflare.PlainText,
 				}
 				deploymentVariables[i] = &envVar
 			}
-			config.EnvVars = deploymentVariables
 			break
-		case "secrets":
-			variables := value.(map[string]interface{})
-			for i, variable := range variables {
+		case "secret":
+			for _, variable := range value.(*schema.Set).List() {
+				data := variable.(map[string]interface{})
 				envVar := cloudflare.EnvironmentVariable{
-					Value: variable.(string),
-					Type: cloudflare.SecretText,
+					Value: data["text"].(string),
+					Type:  cloudflare.SecretText,
 				}
-				deploymentVariables[i] = &envVar
+				deploymentVariables[data["name"].(string)] = &envVar
 			}
 			break
 		case "kv_namespaces":
@@ -114,16 +113,17 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 				break
 			}
 			break
-		case "services":
+		case "service_binding":
 			serviceMap := cloudflare.ServiceBindingMap{}
-			variables := value.(map[string]interface{})
-			for i, item := range variables {
-				service := item.(map[string]interface{})
-				serviceMap[i] = &cloudflare.ServiceBinding{
-					Service: service["service"].(string),
-					Environment: service["environment"].(string),
+			for _, item := range value.(*schema.Set).List() {
+				data := item.(map[string]interface{})
+				serviceMap[data["name"].(string)] = &cloudflare.ServiceBinding{
+					Service:     data["service"].(string),
+					Environment: data["environment"].(string),
 				}
 			}
+			config.ServiceBindings = serviceMap
+			break
 		}
 	}
 	config.EnvVars = deploymentVariables
@@ -141,10 +141,19 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 	config["usage_model"] = deployment.UsageModel
 
 	deploymentVars := map[string]string{}
+	secretsBinding := &schema.Set{F: schema.HashResource(secretTextBindingResource)}
 	for key, value := range deployment.EnvVars {
-		deploymentVars[key] = value.Value
+		if value.Type == cloudflare.PlainText {
+			deploymentVars[key] = value.Value
+		} else {
+			secretsBinding.Add(map[string]interface{}{
+				"name": key,
+				"text": value.Value,
+			})
+		}
 	}
 	config["environment_variables"] = deploymentVars
+	config["secret"] = secretsBinding
 
 	deploymentVars = map[string]string{}
 	for key, value := range deployment.KvNamespaces {
@@ -169,6 +178,16 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 		deploymentVars[key] = value.ID
 	}
 	config["d1_databases"] = deploymentVars
+
+	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
+	for key, value := range deployment.ServiceBindings {
+		serviceBindings.Add(map[string]interface{}{
+			"name":        key,
+			"service":     value.Service,
+			"environment": value.Environment,
+		})
+	}
+	config["service_binding"] = serviceBindings
 
 	returnValue = append(returnValue, config)
 	return

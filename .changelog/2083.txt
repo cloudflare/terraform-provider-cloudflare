@@ -1,0 +1,3 @@
+```release-note:
+resource/cloudflare_pages_project: Updates Pages project resource to support API changes
+```
