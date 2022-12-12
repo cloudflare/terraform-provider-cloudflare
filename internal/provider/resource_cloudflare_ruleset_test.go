@@ -1672,6 +1672,50 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			},
 		},
 	})
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsOptionalsEmpty(rnd, "my basic cache settings ruleset -- ignore query_string", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.ignore", "true"),
+				),
+			},
+		},
+	})
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsOptionalsEmpty(rnd, "my basic cache settings ruleset -- allow all query_string", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.ignore", "false"),
+				),
+			},
+		},
+	})
 }
 
 func TestAccCloudflareRuleset_Config(t *testing.T) {
