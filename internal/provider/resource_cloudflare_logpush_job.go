@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -109,7 +110,8 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 		job, err = client.GetZoneLogpushJob(ctx, identifier.Value, jobID)
 	}
 	if err != nil {
-		if strings.Contains(err.Error(), "404") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("Could not find LogpushJob for %s with id: %q", identifier, jobID))
 			d.SetId("")
 			return nil

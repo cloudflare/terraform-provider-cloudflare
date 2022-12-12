@@ -12,6 +12,7 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -19,13 +20,41 @@ func resourceCloudflareOriginCACertificate() *schema.Resource {
 	return &schema.Resource{
 		Schema:        resourceCloudflareOriginCACertificateSchema(),
 		CreateContext: resourceCloudflareOriginCACertificateCreate,
-		UpdateContext: resourceCloudflareOriginCACertificateCreate,
 		ReadContext:   resourceCloudflareOriginCACertificateRead,
+		UpdateContext: resourceCloudflareOriginCACertificateRead,
 		DeleteContext: resourceCloudflareOriginCACertificateDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		CustomizeDiff: customdiff.Sequence(
+			customdiff.ForceNewIf("expires_on", mustRenew),
+		),
+		Description: "Provides a Cloudflare Origin CA certificate used to protect traffic to your origin without involving a third party Certificate Authority.",
 	}
+}
+
+func mustRenew(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+	// Check when the cert will expire
+	expiresonRaw := d.Get("expires_on")
+	if (expiresonRaw == nil) || (expiresonRaw == "") {
+		return false
+	}
+	expireson, _ := time.Parse(time.RFC3339, expiresonRaw.(string))
+
+	// Calculate when we should renew
+	earlyExpiration := expireson.AddDate(0, 0, -1*d.Get("min_days_for_renewal").(int))
+
+	if time.Now().After(earlyExpiration) {
+		tflog.Info(ctx, fmt.Sprintf("We will renew the certificate as we passed the expected date (%s)", earlyExpiration))
+		err := d.SetNewComputed("expires_on")
+		if err != nil {
+			tflog.Warn(ctx, fmt.Sprintf("error setting to renew the certificate: %s", err))
+			return false
+		}
+		return true
+	}
+
+	return false
 }
 
 func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

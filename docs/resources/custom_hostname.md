@@ -25,14 +25,15 @@ resource "cloudflare_custom_hostname" "example" {
 
 ### Required
 
-- `hostname` (String) Hostname you intend to request a certificate for.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `hostname` (String) Hostname you intend to request a certificate for. **Modifying this attribute will force creation of a new resource.**
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
 - `custom_origin_server` (String) The custom origin server used for certificates.
 - `custom_origin_sni` (String) The [custom origin SNI](https://developers.cloudflare.com/ssl/ssl-for-saas/hostname-specific-behavior/custom-origin) used for certificates.
 - `ssl` (Block List) SSL configuration of the certificate. (see [below for nested schema](#nestedblock--ssl))
+- `wait_for_ssl_pending_validation` (Boolean) Whether to wait for a custom hostname SSL sub-object to reach status `pending_validation` during creation. Defaults to `false`.
 
 ### Read-Only
 
@@ -96,6 +97,7 @@ Read-Only:
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_custom_hostname.example 1d5fdc9e88c8a8c4518b068cd94331fe/0d89c70d-ad9f-4843-b99f-6cc0252067e9
 ```

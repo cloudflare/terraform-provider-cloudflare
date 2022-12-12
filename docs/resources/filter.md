@@ -28,7 +28,7 @@ resource "cloudflare_filter" "wordpress" {
 ### Required
 
 - `expression` (String) The filter expression to be used.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
@@ -43,6 +43,7 @@ resource "cloudflare_filter" "wordpress" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_filter.example <zone_id>/<filter_id>
 ```

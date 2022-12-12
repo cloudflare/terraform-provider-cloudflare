@@ -149,6 +149,7 @@ Read-Only:
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 $ terraform import cloudflare_notification_policy.example <account_id>/<policy_id>
 ```

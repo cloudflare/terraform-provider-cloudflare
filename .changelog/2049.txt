@@ -1,0 +1,15 @@
+```release-note:dependency
+provider: bumps github.com/cloudflare/cloudflare-go from 0.54.0 to 0.55.0
+```
+
+```release-note:enhancement
+resource/cloudflare_workers_kv: add support for explicitly setting `account_id` on the resource
+```
+
+```release-note:enhancement
+resource/cloudflare_workers_kv_namespace: add support for explicitly setting `account_id` on the resource
+```
+
+```release-note:enhancement
+resource/cloudflare_workers_kv_namespace: swap internals to use new method signatures from cloudflare-go release
+```

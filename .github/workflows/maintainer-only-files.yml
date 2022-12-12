@@ -14,9 +14,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: ^1.17
+          go-version: ^1.18
       - run: make tools
-      - run: go run tools/cmd/maintainer-only-file-check/main.go ${{ github.event.pull_request.number }}
+      - run: go run cmd/maintainer-only-file-check/main.go ${{ github.event.pull_request.number }}
+        working-directory: ./tools
         env:
           GITHUB_OWNER: cloudflare
           GITHUB_REPO: terraform-provider-cloudflare

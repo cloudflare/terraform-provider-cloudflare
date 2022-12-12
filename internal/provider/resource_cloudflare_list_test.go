@@ -15,10 +15,7 @@ func TestAccCloudflareList_Exists(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -50,10 +47,7 @@ func TestAccCloudflareList_UpdateDescription(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -102,10 +96,7 @@ func TestAccCloudflareList_Update(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rndIP := generateRandomResourceName()
@@ -192,6 +183,109 @@ func TestAccCloudflareList_Update(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
+	// endpoint does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareListIPListOrdered(rnd, rnd, rnd, accountID),
+			},
+			{
+				Config: testAccCheckCloudflareListIPListUnordered(rnd, rnd, rnd, accountID),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareListIPListOrdered(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "ip"
+
+    item {
+      value {
+        ip = "192.0.2.0"
+      }
+      comment = "one"
+    }
+
+    item {
+      value {
+        ip = "192.0.2.1"
+      }
+      comment = "two"
+    }
+
+	item {
+	  value {
+		ip = "192.0.2.2"
+	  }
+	  comment = "three"
+	}
+
+	item {
+	  value {
+	    ip = "192.0.2.3"
+	  }
+	  comment = "four"
+	}
+  }`, ID, name, description, accountID)
+}
+
+func testAccCheckCloudflareListIPListUnordered(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "ip"
+
+    item {
+	  value {
+	    ip = "192.0.2.2"
+	  }
+	  comment = "three"
+	}
+
+	item {
+      value {
+        ip = "192.0.2.0"
+      }
+      comment = "one"
+    }
+
+	item {
+	  value {
+		ip = "192.0.2.3"
+	  }
+	  comment = "four"
+	}
+
+    item {
+      value {
+        ip = "192.0.2.1"
+      }
+      comment = "two"
+    }
+  }`, ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.TestCheckFunc {

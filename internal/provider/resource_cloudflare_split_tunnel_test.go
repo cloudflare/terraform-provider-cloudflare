@@ -14,10 +14,7 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -30,21 +27,23 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareSplitTunnelInclude(rnd, accountID, "example domain", "*.example.com", "include"),
+				Config: testAccCloudflareDefaultSplitTunnelInclude(rnd, accountID, "example domain", "*.example.com", "include"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "mode", "include"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.host", "*.example.com"),
+					resource.TestCheckNoResourceAttr(name, "policy_id"),
 				),
 			},
 			{
-				Config: testAccCloudflareSplitTunnelInclude(rnd, accountID, "example domain", "test.example.com", "include"),
+				Config: testAccCloudflareDefaultSplitTunnelInclude(rnd, accountID, "example domain", "test.example.com", "include"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "mode", "include"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.host", "test.example.com"),
+					resource.TestCheckNoResourceAttr(name, "policy_id"),
 				),
 			},
 		},
@@ -56,10 +55,7 @@ func TestAccCloudflareSplitTunnel_ConflictingTunnelProperties(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -78,8 +74,37 @@ func TestAccCloudflareSplitTunnel_ConflictingTunnelProperties(t *testing.T) {
 	})
 }
 
+func testAccCloudflareDefaultSplitTunnelInclude(rnd, accountID string, description string, host string, mode string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_split_tunnel" "%[1]s" {
+  account_id = "%[2]s"
+  mode = "%[5]s"
+  tunnels {
+    description = "%[3]s"
+    host = "%[4]s"
+  }
+}
+`, rnd, accountID, description, host, mode)
+}
+
 func testAccCloudflareSplitTunnelInclude(rnd, accountID string, description string, host string, mode string) string {
 	return fmt.Sprintf(`
+resource "cloudflare_device_settings_policy" "%[1]s" {
+	account_id                = "%[2]s"
+	allow_mode_switch         = true
+	allow_updates             = true
+	allowed_to_leave          = true
+	auto_connect              = 0
+	captive_portal            = 5
+	disable_auto_fallback     = true
+	enabled                   = true
+	match                     = "identity.email == \"foo@example.com\""
+	name                      = "%[1]s"
+	precedence                = 10
+	support_url               = "https://cloudflare.com"
+	switch_locked             = true
+}
+
 resource "cloudflare_split_tunnel" "%[1]s" {
   account_id = "%[2]s"
   mode = "%[5]s"
@@ -110,10 +135,7 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -138,6 +160,32 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareSplitTunnel_IncludeTunnelOrdering(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccessAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDefaultSplitTunnelIncludeMultiplesOrdered(rnd, accountID),
+			},
+			{
+				Config: testAccCloudflareDefaultSplitTunnelIncludeMultiplesFlippedOrder(rnd, accountID),
+			},
+		},
+	})
+}
+
 func testAccCloudflareSplitTunnelExclude(rnd, accountID string, description string, host string, mode string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_split_tunnel" "%[1]s" {
@@ -149,4 +197,45 @@ resource "cloudflare_split_tunnel" "%[1]s" {
   }
 }
 `, rnd, accountID, description, host, mode)
+}
+
+func testAccCloudflareDefaultSplitTunnelIncludeMultiplesOrdered(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_split_tunnel" "%[1]s" {
+  account_id = "%[2]s"
+  mode = "include"
+  tunnels {
+    description = "example 1"
+    host = "*.example.com"
+  }
+
+  tunnels {
+    description = "example 2"
+    host = "*.example.net"
+  }
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareDefaultSplitTunnelIncludeMultiplesFlippedOrder(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_split_tunnel" "%[1]s" {
+  account_id = "%[2]s"
+  mode = "include"
+  tunnels {
+    description = "example 1"
+    host = "*.example.com"
+  }
+
+  tunnels {
+    description = "example 3"
+    host = "*.example.org"
+  }
+
+  tunnels {
+    description = "example 2"
+    host = "*.example.net"
+  }
+}
+`, rnd, accountID)
 }

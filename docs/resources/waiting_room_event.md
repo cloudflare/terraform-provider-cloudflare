@@ -26,11 +26,11 @@ resource "cloudflare_waiting_room_event" "example" {
 
 ### Required
 
-- `event_end_time` (String) ISO 8601 timestamp that marks the end of the event.
-- `event_start_time` (String) ISO 8601 timestamp that marks the start of the event. Must occur at least 1 minute before `event_end_time`.
-- `name` (String) A unique name to identify the event. Only alphanumeric characters, hyphens, and underscores are allowed.
-- `waiting_room_id` (String) The Waiting Room ID the event should apply to.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `event_end_time` (String) ISO 8601 timestamp that marks the end of the event. **Modifying this attribute will force creation of a new resource.**
+- `event_start_time` (String) ISO 8601 timestamp that marks the start of the event. Must occur at least 1 minute before `event_end_time`. **Modifying this attribute will force creation of a new resource.**
+- `name` (String) A unique name to identify the event. Only alphanumeric characters, hyphens, and underscores are allowed. **Modifying this attribute will force creation of a new resource.**
+- `waiting_room_id` (String) The Waiting Room ID the event should apply to. **Modifying this attribute will force creation of a new resource.**
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
@@ -54,6 +54,7 @@ resource "cloudflare_waiting_room_event" "example" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 # Use the Zone ID, Waiting Room ID, and Event ID to import.
 $ terraform import cloudflare_waiting_room_event.default <zone_id>/<waiting_room_id>/<waiting_room_event_id>

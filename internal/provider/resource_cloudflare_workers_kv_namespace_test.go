@@ -24,9 +24,7 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 				Config: testAccCheckCloudflareWorkersKVNamespace(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVNamespaceExists(rnd, &namespace),
-					resource.TestCheckResourceAttr(
-						resourceName, "title", rnd,
-					),
+					resource.TestCheckResourceAttr(resourceName, "title", rnd),
 				),
 			},
 		},
@@ -41,15 +39,19 @@ func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		resp, err := client.ListWorkersKVNamespaces(context.Background())
+		accountID := rs.Primary.Attributes["account_id"]
+		if accountID == "" {
+			accountID = client.AccountID
+		}
 
+		resp, _, err := client.ListWorkersKVNamespaces(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 		if err == nil {
 			return err
 		}
 
 		for _, n := range resp {
 			if n.ID == rs.Primary.ID {
-				return fmt.Errorf("Namespace still exists")
+				return fmt.Errorf("namespace still exists but should not")
 			}
 		}
 	}
@@ -67,7 +69,16 @@ resource "cloudflare_workers_kv_namespace" "%[1]s" {
 func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *cloudflare.WorkersKVNamespace) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
-		resp, err := client.ListWorkersKVNamespaces(context.Background())
+
+		rs, ok := s.RootModule().Resources["cloudflare_workers_kv_namespace."+title]
+		if !ok {
+			return fmt.Errorf("not found: %s", title)
+		}
+		accountID := rs.Primary.Attributes["account_id"]
+		if accountID == "" {
+			accountID = client.AccountID
+		}
+		resp, _, err := client.ListWorkersKVNamespaces(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 		if err != nil {
 			return err
 		}

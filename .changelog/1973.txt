@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_pages_domain: add Pages project domain importer.
+```
+
+```release-note:bug
+resource/cloudflare_pages_project: add defaults to Pages project deployment config
+```

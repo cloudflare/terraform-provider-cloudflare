@@ -9,7 +9,6 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -23,36 +22,11 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAccessServiceTokenImport,
 		},
-
-		CustomizeDiff: customdiff.ComputedIf("expires_at", resourceCloudflareAccessServiceTokenExpireDiff),
 		Description: heredoc.Doc(`
 			Access Service Tokens are used for service-to-service communication
 			when an application is behind Cloudflare Access.
 		`),
 	}
-}
-
-func resourceCloudflareAccessServiceTokenExpireDiff(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
-	mindays := d.Get("min_days_for_renewal").(int)
-	if mindays > 0 {
-		expires_at := d.Get("expires_at").(string)
-
-		if expires_at != "" {
-			expected_expiration_date, _ := time.Parse(time.RFC3339, expires_at)
-
-			expiration_date := time.Now().Add(time.Duration(mindays) * 24 * time.Hour)
-
-			if expiration_date.After(expected_expiration_date) {
-				err := d.SetNewComputed("client_secret")
-				if err != nil {
-					return false
-				}
-				return true
-			}
-		}
-	}
-
-	return false
 }
 
 func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -77,6 +51,35 @@ func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.Res
 	}
 	for _, token := range serviceTokens {
 		if token.ID == d.Id() {
+			zoneID := d.Get("zone_id").(string)
+			accountID := d.Get("account_id").(string)
+			mindays := d.Get("min_days_for_renewal").(int)
+			if mindays > 0 {
+				expires_at := d.Get("expires_at").(string)
+
+				if expires_at != "" {
+					expected_expiration_date, _ := time.Parse(time.RFC3339, expires_at)
+
+					expiration_date := time.Now().Add(time.Duration(mindays) * 24 * time.Hour)
+
+					if expiration_date.After(expected_expiration_date) {
+						var refreshedToken cloudflare.AccessServiceTokenRefreshResponse
+						var err error
+
+						if accountID != "" {
+							refreshedToken, err = client.RefreshAccessServiceToken(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
+						} else {
+							refreshedToken, err = client.RefreshAccessServiceToken(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
+						}
+
+						if err != nil {
+							return diag.FromErr(fmt.Errorf("failed to automatically refresh token %q: %w", d.Id(), err))
+						}
+
+						token.ExpiresAt = refreshedToken.ExpiresAt
+					}
+				}
+			}
 			d.Set("name", token.Name)
 			d.Set("client_id", token.ClientID)
 			d.Set("expires_at", token.ExpiresAt.Format(time.RFC3339))

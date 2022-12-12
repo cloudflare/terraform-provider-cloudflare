@@ -66,7 +66,7 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare account member ID: %s", d.Id()))
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare account member ID: %s", d.Id()))
 
 	var accountID string
 	if d.Get("account_id").(string) != "" {
@@ -101,7 +101,8 @@ func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.Resour
 		accountID = client.AccountID
 	}
 
-	r, err := client.CreateAccountMember(ctx, accountID, memberEmailAddress, accountMemberRoleIDs)
+	status := d.Get("status").(string)
+	r, err := client.CreateAccountMemberWithStatus(ctx, accountID, memberEmailAddress, accountMemberRoleIDs, status)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare account member: %w", err))
