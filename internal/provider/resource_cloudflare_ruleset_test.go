@@ -1577,8 +1577,7 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.respect_strong_etags", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.ignore_query_strings_order", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.cache_deception_armor", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.exclude.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.exclude.0", "*"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.ignore", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.include.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.include.0", "habc"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.include.1", "hdef"),
@@ -1677,7 +1676,7 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareRulesetCacheSettingsOptionalsEmpty(rnd, "my basic cache settings ruleset -- ignore query_string", zoneID),
+				Config: testAccCloudflareRulesetCacheSettingsQueryStringIgnoreTrue(rnd, "my basic cache settings ruleset -- ignore query_string", zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
@@ -1699,7 +1698,7 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareRulesetCacheSettingsOptionalsEmpty(rnd, "my basic cache settings ruleset -- allow all query_string", zoneID),
+				Config: testAccCloudflareRulesetCacheSettingsQueryStringIgnoreFalse(rnd, "my basic cache settings ruleset -- allow all query_string", zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
@@ -3084,6 +3083,68 @@ func testAccCloudflareRulesetCacheSettingsCustomKeyEmpty(rnd, accountID, zoneID 
 		cache_key {
 			custom_key {
 				query_string {}
+				header {}
+				cookie {}
+				user {}
+				host {}
+			}
+		}
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreTrue(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		cache_key {
+			custom_key {
+				query_string {
+					ignore = true
+				}
+				header {}
+				cookie {}
+				user {}
+				host {}
+			}
+		}
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreFalse(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		cache_key {
+			custom_key {
+				query_string {
+					ignore = true
+				}
 				header {}
 				cookie {}
 				user {}
