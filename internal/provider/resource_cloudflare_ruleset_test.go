@@ -3011,7 +3011,7 @@ func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID stri
 			cache_deception_armor = true
 			custom_key {
 				query_string {
-					exclude = ["*"]
+					ignore = true
 				}
 				header {
 					include = ["habc", "hdef"]
