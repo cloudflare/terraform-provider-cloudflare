@@ -104,14 +104,7 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 			config.AlwaysUseLatestCompatibilityDate = value.(bool)
 			break
 		case "usage_model":
-			switch value.(string) {
-			case "bundled":
-				config.UsageModel = cloudflare.Bundled
-				break
-			case "unbound":
-				config.UsageModel = cloudflare.Unbound
-				break
-			}
+			config.UsageModel = cloudflare.UsageModel(value.(string))
 			break
 		case "service_binding":
 			serviceMap := cloudflare.ServiceBindingMap{}
