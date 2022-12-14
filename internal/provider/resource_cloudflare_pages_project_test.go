@@ -13,7 +13,7 @@ deployment_configs {
 	preview {
 		compatibility_date = "2022-08-15"
 		compatibility_flags = []
-		always_use_latest_compatibility_date = false
+		always_use_latest_compatibility_date = true
 		usage_model = "unbound"
 	}
 	production {
@@ -270,6 +270,7 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.fail_open", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.always_use_latest_compatibility_date", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.usage_model", "unbound"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.secret.#", "1"),
 
 					// Production
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.%", "2"),

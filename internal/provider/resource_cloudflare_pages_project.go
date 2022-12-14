@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"strings"
 	"time"
 
@@ -318,21 +317,12 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 		d.Set("build_config", buildConfig)
 	}
 
-	emptyDeploymentConfig := cloudflare.PagesProjectDeploymentConfigs{}
-	if !reflect.DeepEqual(project.DeploymentConfigs, emptyDeploymentConfig) {
-		var deploymentConfigs []map[string]interface{}
-		deploymentConfig := make(map[string]interface{})
-		emptyDeploymentEnvironment := cloudflare.PagesProjectDeploymentConfigEnvironment{}
-		if !reflect.DeepEqual(project.DeploymentConfigs.Preview, emptyDeploymentEnvironment) {
-			deploymentConfig["preview"] = parseDeploymentConfig(project.DeploymentConfigs.Preview)
-		}
-
-		if !reflect.DeepEqual(project.DeploymentConfigs.Production, emptyDeploymentEnvironment) {
-			deploymentConfig["production"] = parseDeploymentConfig(project.DeploymentConfigs.Production)
-		}
-		deploymentConfigs = append(deploymentConfigs, deploymentConfig)
-		d.Set("deployment_configs", deploymentConfigs)
-	}
+	var deploymentConfigs []map[string]interface{}
+	deploymentConfig := make(map[string]interface{})
+	deploymentConfig["preview"] = parseDeploymentConfig(project.DeploymentConfigs.Preview)
+	deploymentConfig["production"] = parseDeploymentConfig(project.DeploymentConfigs.Production)
+	deploymentConfigs = append(deploymentConfigs, deploymentConfig)
+	d.Set("deployment_configs", deploymentConfigs)
 
 	return nil
 }
