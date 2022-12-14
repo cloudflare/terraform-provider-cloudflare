@@ -558,7 +558,7 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 				securityLevel = r.ActionParameters.SecurityLevel.String()
 			}
 
-			if !reflect.ValueOf(r.ActionParameters.SecurityLevel).IsNil() {
+			if !reflect.ValueOf(r.ActionParameters.SSL).IsNil() {
 				sslSetting = r.ActionParameters.SSL.String()
 			}
 

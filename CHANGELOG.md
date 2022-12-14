@@ -1,5 +1,14 @@
 ## 3.30.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_load_balancer_pools` ([#1228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1228))
+* **New Resource:** `cloudflare_url_normalization_settings` ([#1878](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1878))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_workers_script: add support for `analytics_engine_binding` bindings ([#2051](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2051))
+
 BUG FIXES:
 
 * resource/access_application: fix issue where session_duration always showed a diff for bookmark apps ([#2076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2076))
@@ -8,6 +17,7 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.55.0 to 0.56.0 ([#2075](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2075))
+* provider: bumps goreleaser/goreleaser-action from 3.2.0 to 4.1.0 ([#2087](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2087))
 
 ## 3.29.0 (November 30th, 2022)
 
