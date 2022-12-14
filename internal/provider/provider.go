@@ -265,6 +265,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_total_tls":                              resourceCloudflareTotalTLS(),
 				"cloudflare_tunnel_route":                           resourceCloudflareTunnelRoute(),
 				"cloudflare_tunnel_virtual_network":                 resourceCloudflareTunnelVirtualNetwork(),
+				"cloudflare_url_normalization_settings":             resourceCloudflareURLNormalizationSettings(),
 				"cloudflare_user_agent_blocking_rule":               resourceCloudflareUserAgentBlockingRules(),
 				"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
 				"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
