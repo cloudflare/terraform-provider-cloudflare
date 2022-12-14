@@ -1,5 +1,9 @@
 ## 3.30.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_workers_script: add support for `analytics_engine_binding` bindings ([#2051](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2051))
+
 BUG FIXES:
 
 * resource/access_application: fix issue where session_duration always showed a diff for bookmark apps ([#2076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2076))
