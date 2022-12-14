@@ -1,0 +1,3 @@
+```release-note:new-data-source
+cloudflare_load_balancer_pools
+```

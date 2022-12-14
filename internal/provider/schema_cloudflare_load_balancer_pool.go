@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -104,8 +105,9 @@ func resourceCloudflareLoadBalancerPoolSchema() map[string]*schema.Schema {
 var originsElem = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "A human-identifiable name for the origin.",
 		},
 
 		"address": {
@@ -115,6 +117,7 @@ var originsElem = &schema.Resource{
 				Type:         schema.TypeString,
 				ValidateFunc: validateStringIP,
 			},
+			Description: "The IP address (IPv4 or IPv6) of the origin, or the publicly addressable hostname.",
 		},
 
 		"weight": {
@@ -122,22 +125,26 @@ var originsElem = &schema.Resource{
 			Optional:     true,
 			Default:      1.0,
 			ValidateFunc: validation.FloatBetween(0.0, 1.0),
+			Description:  "The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked.",
 		},
 
 		"enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+			Description: "Whether this origin is enabled. Disabled origins will not receive traffic and are excluded from health checks.",
 		},
 
 		"header": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "HTTP request headers.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"header": {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "HTTP Header name.",
 					},
 					"values": {
 						Type:     schema.TypeSet,
@@ -145,6 +152,7 @@ var originsElem = &schema.Resource{
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
+						Description: "Values for the HTTP headers.",
 					},
 				},
 			},
@@ -160,6 +168,7 @@ var loadShedElem = &schema.Resource{
 			Default:      0,
 			Optional:     true,
 			ValidateFunc: validation.FloatBetween(0, 100),
+			Description:  "Percent of traffic to shed 0 - 100.",
 		},
 
 		"default_policy": {
@@ -167,6 +176,7 @@ var loadShedElem = &schema.Resource{
 			Default:      "",
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"", "hash", "random"}, false),
+			Description:  fmt.Sprintf("Method of shedding traffic. %s", renderAvailableDocumentationValuesStringSlice([]string{"", "hash", "random"})),
 		},
 
 		"session_percent": {
@@ -174,6 +184,7 @@ var loadShedElem = &schema.Resource{
 			Default:      0,
 			Optional:     true,
 			ValidateFunc: validation.FloatBetween(0, 100),
+			Description:  "Percent of session traffic to shed 0 - 100.",
 		},
 
 		"session_policy": {
@@ -181,6 +192,7 @@ var loadShedElem = &schema.Resource{
 			Default:      "",
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"", "hash"}, false),
+			Description:  fmt.Sprintf("Method of shedding traffic. %s", renderAvailableDocumentationValuesStringSlice([]string{"", "hash"})),
 		},
 	},
 }
@@ -192,6 +204,7 @@ var originSteeringElem = &schema.Resource{
 			Default:      "random",
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"", "hash", "random"}, false),
+			Description:  fmt.Sprintf("Origin steering policy to be used. %s", renderAvailableDocumentationValuesStringSlice([]string{"", "hash", "random"})),
 		},
 	},
 }
