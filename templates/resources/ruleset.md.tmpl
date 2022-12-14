@@ -20,12 +20,18 @@ already exists to prevent blindly overwriting changes.
 `status`. You should swap over to ensure that your configuration doesn't
 have inconsistent operations and inadvertently disable rulesets.
 
+{{ if .HasExample -}}
 ## Example Usage
 
 {{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
+{{- end }}
 
 {{ .SchemaMarkdown | trimspace }}
 
+{{ if .HasImport -}}
 ## Import
 
-Import is not supported for this resource.
+Import is supported using the following syntax:
+
+{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
+{{- end }}

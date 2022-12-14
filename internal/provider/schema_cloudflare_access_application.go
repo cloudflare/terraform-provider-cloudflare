@@ -46,18 +46,28 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file"}, false),
-			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"self_hosted", "saas", "ssh", "vnc", "file"})),
+			ValidateFunc: validation.StringInSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"}, false),
+			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"})),
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
 			Optional: true,
 			Default:  "24h",
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				appType := d.Get("type").(string)
+				// Suppress the diff if it's a bookmark app type. Bookmarks don't have a session duration
+				// field which always creates a diff because of the default '24h' value.
+				if appType == "bookmark" {
+					return true
+				}
+
+				return oldValue == newValue
+			},
 			ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
 				v := val.(string)
 				_, err := time.ParseDuration(v)
 				if err != nil {
-					errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units.`, key))
+					errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`, key))
 				}
 				return
 			},
@@ -271,6 +281,10 @@ func convertCORSSchemaToStruct(d *schema.ResourceData) (*cloudflare.AccessApplic
 
 func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.AccessApplicationCorsHeaders) []interface{} {
 	if _, ok := d.GetOk("cors_headers"); !ok {
+		return []interface{}{}
+	}
+
+	if headers == nil {
 		return []interface{}{}
 	}
 

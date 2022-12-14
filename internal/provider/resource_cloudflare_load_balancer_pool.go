@@ -72,7 +72,12 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
-	r, err := client.CreateLoadBalancerPool(ctx, loadBalancerPool)
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		accountID = client.AccountID
+	}
+
+	r, err := client.CreateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateLoadBalancerPoolParams{LoadBalancerPool: loadBalancerPool})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer pool"))
 	}
@@ -134,7 +139,11 @@ func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.Res
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
-	_, err := client.ModifyLoadBalancerPool(ctx, loadBalancerPool)
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		accountID = client.AccountID
+	}
+	_, err := client.UpdateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateLoadBalancerPoolParams{LoadBalancer: loadBalancerPool})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating load balancer pool"))
 	}
@@ -215,7 +224,12 @@ func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.Load
 func resourceCloudflareLoadBalancerPoolRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	loadBalancerPool, err := client.LoadBalancerPoolDetails(ctx, d.Id())
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		accountID = client.AccountID
+	}
+
+	loadBalancerPool, err := client.GetLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -308,7 +322,11 @@ func resourceCloudflareLoadBalancerPoolDelete(ctx context.Context, d *schema.Res
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Pool: %s ", d.Id()))
 
-	err := client.DeleteLoadBalancerPool(ctx, d.Id())
+	accountID := d.Get("account_id").(string)
+	if accountID == "" {
+		accountID = client.AccountID
+	}
+	err := client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error deleting Cloudflare Load Balancer Pool"))
 	}

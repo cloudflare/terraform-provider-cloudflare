@@ -45,14 +45,14 @@ resource "cloudflare_tunnel_route" "example" {
 
 ### Required
 
-- `account_id` (String) The account identifier to target for the resource.
+- `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 - `network` (String) The IPv4 or IPv6 network that should use this tunnel route, in CIDR notation.
 - `tunnel_id` (String) The ID of the tunnel that will service the tunnel route.
 
 ### Optional
 
 - `comment` (String) Description of the tunnel route.
-- `virtual_network_id` (String) The ID of the virtual network for which this route is being added; uses the default virtual network of the account if none is provided.
+- `virtual_network_id` (String) The ID of the virtual network for which this route is being added; uses the default virtual network of the account if none is provided. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 
@@ -61,7 +61,7 @@ resource "cloudflare_tunnel_route" "example" {
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
-# Use account ID, network CIDR and virtual network ID.
-$ terraform import cloudflare_tunnel_route.example <account_id/<network_cidr>/<virtual_network_id>
+$ terraform import cloudflare_tunnel_route.example <account_id>/<network_cidr>/<virtual_network_id>
 ```

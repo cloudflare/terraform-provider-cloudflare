@@ -76,7 +76,7 @@ resource "cloudflare_healthcheck" "tcp_health_check" {
 - `address` (String) The hostname or IP address of the origin server to run health checks on.
 - `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens, and underscores are allowed.
 - `type` (String) The protocol to use for the health check. Available values: `TCP`, `HTTP`, `HTTPS`.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
@@ -123,6 +123,7 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 # Use the Zone ID and Healthcheck ID to import.
 $ terraform import cloudflare_healthcheck.example <zone_id>/<healthcheck_id>

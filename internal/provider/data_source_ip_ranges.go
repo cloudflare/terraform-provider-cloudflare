@@ -12,11 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const (
-	urlIPV4s = "https://www.cloudflare.com/ips-v4"
-	urlIPV6s = "https://www.cloudflare.com/ips-v6"
-)
-
 func dataSourceCloudflareIPRanges() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceCloudflareIPRangesRead,

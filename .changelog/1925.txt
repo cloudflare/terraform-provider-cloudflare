@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zone_settings_override: Fix array manipulation bug related to single zone settings
+```

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_email_routing_catch_all: switch to a dedicated scheme to allow type = "drop"
+```

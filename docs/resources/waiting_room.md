@@ -28,10 +28,10 @@ resource "cloudflare_waiting_room" "example" {
 ### Required
 
 - `host` (String) Host name for which the waiting room will be applied (no wildcards).
-- `name` (String) A unique name to identify the waiting room.
+- `name` (String) A unique name to identify the waiting room. **Modifying this attribute will force creation of a new resource.**
 - `new_users_per_minute` (Number) The number of new users that will be let into the route every minute.
 - `total_active_users` (Number) The total number of active user sessions on the route at a point in time.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
@@ -62,6 +62,7 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
 ```shell
 # Use the Zone ID and Waiting Room ID to import.
 $ terraform import cloudflare_waiting_room.default <zone_id>/<waiting_room_id>

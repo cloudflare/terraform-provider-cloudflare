@@ -35,7 +35,6 @@ func resourceCloudflareListCreate(ctx context.Context, d *schema.ResourceData, m
 	accountID := d.Get("account_id").(string)
 
 	list, err := client.CreateList(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListCreateParams{
-
 		Name:        d.Get("name").(string),
 		Description: d.Get("description").(string),
 		Kind:        d.Get("kind").(string),
@@ -46,8 +45,8 @@ func resourceCloudflareListCreate(ctx context.Context, d *schema.ResourceData, m
 
 	d.SetId(list.ID)
 
-	if items, ok := d.GetOk("item"); ok {
-		items := buildListItemsCreateRequest(d, items.([]interface{}))
+	if itemData, ok := d.GetOk("item"); ok {
+		items := buildListItemsCreateRequest(itemData.(*schema.Set).List())
 		_, err = client.CreateListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListCreateItemsParams{
 			ID:    d.Id(),
 			Items: items,
@@ -163,8 +162,8 @@ func resourceCloudflareListUpdate(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error updating List description")))
 	}
 
-	if items, ok := d.GetOk("item"); ok {
-		items := buildListItemsCreateRequest(d, items.([]interface{}))
+	if itemData, ok := d.GetOk("item"); ok {
+		items := buildListItemsCreateRequest(itemData.(*schema.Set).List())
 		_, err = client.ReplaceListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListReplaceItemsParams{
 			ID:    d.Id(),
 			Items: items,
@@ -189,26 +188,32 @@ func resourceCloudflareListDelete(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func buildListItemsCreateRequest(resource *schema.ResourceData, items []interface{}) []cloudflare.ListItemCreateRequest {
+func buildListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreateRequest {
 	var listItems []cloudflare.ListItemCreateRequest
 
-	for i, item := range items {
+	for _, item := range items {
 		value := item.(map[string]interface{})["value"].([]interface{})[0].(map[string]interface{})
 
-		_, hasIP := resource.GetOk(fmt.Sprintf("item.%d.value.0.ip", i))
-
 		var ip *string = nil
-		if hasIP {
-			maybeIP := value["ip"].(string)
-			ip = &maybeIP
+
+		if field, ok := value["ip"]; ok {
+			if field, ok := field.(string); ok {
+				ip = &field
+			}
 		}
 
-		_, hasRedirect := resource.GetOk(fmt.Sprintf("item.%d.value.0.redirect", i))
-
 		var redirect *cloudflare.Redirect = nil
-		if hasRedirect {
-			r := value["redirect"].([]interface{})[0].(map[string]interface{})
+		var r map[string]interface{} = nil
 
+		if field, ok := value["redirect"]; ok {
+			if field, ok := field.([]interface{}); ok && len(field) > 0 {
+				if field, ok := field[0].(map[string]interface{}); ok {
+					r = field
+				}
+			}
+		}
+
+		if r != nil {
 			sourceUrl := r["source_url"].(string)
 			targetUrl := r["target_url"].(string)
 

@@ -271,7 +271,7 @@ func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData
 			return nil
 		} else {
 			return diag.FromErr(errors.Wrap(err,
-				fmt.Sprintf("Error reading rate limit resource from API for resource %s in zone %s", zoneID, rateLimitId)))
+				fmt.Sprintf("Error reading rate limit resource from API for resource %s in zone %s", rateLimitId, zoneID)))
 		}
 	}
 	tflog.Debug(ctx, fmt.Sprintf("Read Cloudflare Rate Limit from API as struct: %+v", rateLimit))

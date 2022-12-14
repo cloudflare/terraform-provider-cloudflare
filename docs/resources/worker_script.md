@@ -54,6 +54,11 @@ resource "cloudflare_worker_script" "my_script" {
     name        = "MY_BUCKET"
     bucket_name = "MY_BUCKET_NAME"
   }
+
+  analytics_engine_binding {
+    name    = "MY_DATASET"
+    dataset = "dataset1"
+  }
 }
 ```
 
@@ -63,10 +68,11 @@ resource "cloudflare_worker_script" "my_script" {
 ### Required
 
 - `content` (String) The script content.
-- `name` (String) The name for the script.
+- `name` (String) The name for the script. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
+- `analytics_engine_binding` (Block Set) (see [below for nested schema](#nestedblock--analytics_engine_binding))
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `module` (Boolean) Whether to upload Worker as a module.
 - `plain_text_binding` (Block Set) (see [below for nested schema](#nestedblock--plain_text_binding))
@@ -78,6 +84,15 @@ resource "cloudflare_worker_script" "my_script" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--analytics_engine_binding"></a>
+### Nested Schema for `analytics_engine_binding`
+
+Required:
+
+- `dataset` (String) The name of the Analytics Engine dataset to write to.
+- `name` (String) The global variable for the binding in your Worker code.
+
 
 <a id="nestedblock--kv_namespace_binding"></a>
 ### Nested Schema for `kv_namespace_binding`

@@ -19,7 +19,9 @@ import (
 // we enforce the use of the Cloudflare API 'legacy_id' field until the mapping of plan is fixed in cloudflare-go.
 const (
 	planIDFree       = "free"
+	planIDLite       = "lite"
 	planIDPro        = "pro"
+	planIDProPlus    = "pro_plus"
 	planIDBusiness   = "business"
 	planIDEnterprise = "enterprise"
 
@@ -39,10 +41,20 @@ var ratePlans = map[string]subscriptionData{
 		ID:          planIDFree,
 		Description: "Free Website",
 	},
+	planIDLite: {
+		Name:        "CF_LITE",
+		ID:          planIDLite,
+		Description: "Lite Website",
+	},
 	planIDPro: {
 		Name:        "CF_PRO_20_20",
 		ID:          planIDPro,
 		Description: "Pro Website",
+	},
+	planIDProPlus: {
+		Name:        "CF_PRO_PLUS",
+		ID:          planIDProPlus,
+		Description: "Pro Plus Website",
 	},
 	planIDBusiness: {
 		Name:        "CF_BIZ",

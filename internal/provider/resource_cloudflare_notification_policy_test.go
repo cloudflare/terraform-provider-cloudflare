@@ -15,10 +15,7 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()
@@ -91,10 +88,7 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
 	rnd := generateRandomResourceName()

@@ -8,11 +8,11 @@ import (
 
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 )
 
@@ -37,205 +37,15 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 				Version: 0,
 			},
 		},
+
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Load Balancer resource. This sits in front of
+			a number of defined pools of origins and provides various options
+			for geographically-aware load balancing. Note that the load balancing
+			feature must be enabled in your Cloudflare account before you can use
+			this resource.
+		`),
 	}
-}
-
-var rulesElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": {
-			Type:         schema.TypeString,
-			Required:     true,
-			ValidateFunc: validation.StringLenBetween(1, 200),
-		},
-
-		"priority": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Computed: true,
-		},
-
-		"disabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-
-		"condition": {
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-
-		"terminates": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Computed: true,
-		},
-
-		"overrides": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-
-					"session_affinity": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"", "none", "cookie", "ip_cookie"}, false),
-					},
-
-					"session_affinity_ttl": {
-						Type:         schema.TypeInt,
-						Optional:     true,
-						ValidateFunc: validation.IntBetween(1800, 604800),
-					},
-
-					"session_affinity_attributes": {
-						Type:     schema.TypeMap,
-						Optional: true,
-						Elem: &schema.Schema{
-							Type: schema.TypeString,
-						},
-					},
-
-					"ttl": {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-
-					"steering_policy": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", ""}, false),
-					},
-
-					"fallback_pool": {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-
-					"default_pools": {
-						Type:     schema.TypeList,
-						Optional: true,
-						Elem: &schema.Schema{
-							Type: schema.TypeString,
-						},
-					},
-
-					"pop_pools": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     popPoolElem,
-					},
-
-					"country_pools": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     countryPoolElem,
-					},
-
-					"region_pools": {
-						Type:     schema.TypeSet,
-						Optional: true,
-						Elem:     regionPoolElem,
-					},
-				},
-			},
-		},
-
-		"fixed_response": {
-			Type:     schema.TypeList,
-			MaxItems: 1,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"message_body": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringLenBetween(0, 1024),
-					},
-
-					"status_code": {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-
-					"content_type": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringLenBetween(0, 32),
-					},
-
-					"location": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringLenBetween(0, 2048),
-					},
-				},
-			},
-		},
-	},
-}
-
-var popPoolElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"pop": {
-			Type:     schema.TypeString,
-			Required: true,
-			// let the api handle validating pops
-		},
-
-		"pool_ids": {
-			Type:     schema.TypeList,
-			Required: true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-			},
-		},
-	},
-}
-
-var countryPoolElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"country": {
-			Type:     schema.TypeString,
-			Required: true,
-			// let the api handle validating countries
-		},
-
-		"pool_ids": {
-			Type:     schema.TypeList,
-			Required: true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-			},
-		},
-	},
-}
-
-var regionPoolElem = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"region": {
-			Type:     schema.TypeString,
-			Required: true,
-			// let the api handle validating regions
-		},
-
-		"pool_ids": {
-			Type:     schema.TypeList,
-			Required: true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringLenBetween(1, 32),
-			},
-		},
-	},
-}
-
-var localPoolElems = map[string]*schema.Resource{
-	"pop":     popPoolElem,
-	"region":  regionPoolElem,
-	"country": countryPoolElem,
 }
 
 func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -299,6 +109,18 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 		newLoadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
 
+	if adaptiveRouting, ok := d.GetOk("adaptive_routing"); ok {
+		newLoadBalancer.AdaptiveRouting = expandAdaptiveRouting(adaptiveRouting)
+	}
+
+	if locationStrategy, ok := d.GetOk("location_strategy"); ok {
+		newLoadBalancer.LocationStrategy = expandLocationStrategy(locationStrategy)
+	}
+
+	if randomSteering, ok := d.GetOk("random_steering"); ok {
+		newLoadBalancer.RandomSteering = expandRandomSteering(randomSteering)
+	}
+
 	if rules, ok := d.GetOk("rules"); ok {
 		v, err := expandRules(rules)
 		if err != nil {
@@ -309,7 +131,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer from struct: %+v", newLoadBalancer))
 
-	r, err := client.CreateLoadBalancer(ctx, zoneID, newLoadBalancer)
+	r, err := client.CreateLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.CreateLoadBalancerParams{LoadBalancer: newLoadBalancer})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
 	}
@@ -382,6 +204,18 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 		loadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
 	}
 
+	if adaptiveRouting, ok := d.GetOk("adaptive_routing"); ok {
+		loadBalancer.AdaptiveRouting = expandAdaptiveRouting(adaptiveRouting)
+	}
+
+	if locationStrategy, ok := d.GetOk("location_strategy"); ok {
+		loadBalancer.LocationStrategy = expandLocationStrategy(locationStrategy)
+	}
+
+	if randomSteering, ok := d.GetOk("random_steering"); ok {
+		loadBalancer.RandomSteering = expandRandomSteering(randomSteering)
+	}
+
 	if rules, ok := d.GetOk("rules"); ok {
 		v, err := expandRules(rules)
 		if err != nil {
@@ -392,9 +226,9 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer from struct: %+v", loadBalancer))
 
-	_, err := client.ModifyLoadBalancer(ctx, zoneID, loadBalancer)
+	_, err := client.UpdateLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateLoadBalancerParams{LoadBalancer: loadBalancer})
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, "error creating load balancer for zone"))
+		return diag.FromErr(errors.Wrap(err, "error updating load balancer for zone"))
 	}
 
 	return resourceCloudflareLoadBalancerRead(ctx, d, meta)
@@ -421,7 +255,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	zoneID := d.Get("zone_id").(string)
 	loadBalancerID := d.Id()
 
-	loadBalancer, err := client.LoadBalancerDetails(ctx, zoneID, loadBalancerID)
+	loadBalancer, err := client.GetLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), loadBalancerID)
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -451,6 +285,24 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
+	if _, adaptiveRoutingOk := d.GetOk("adaptive_routing"); adaptiveRoutingOk {
+		if err := d.Set("adaptive_routing", flattenAdaptiveRouting(loadBalancer.AdaptiveRouting)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set adaptive_routing: %w", err))
+		}
+	}
+
+	if _, locationStrategyOk := d.GetOk("location_strategy"); locationStrategyOk {
+		if err := d.Set("location_strategy", flattenLocationStrategy(loadBalancer.LocationStrategy)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set location_strategy: %w", err))
+		}
+	}
+
+	if _, randomSteeringOk := d.GetOk("random_steering"); randomSteeringOk {
+		if err := d.Set("random_steering", flattenRandomSteering(loadBalancer.RandomSteering)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set random_steering: %w", err))
+		}
+	}
+
 	if len(loadBalancer.Rules) > 0 {
 		fr, err := flattenRules(d, loadBalancer.Rules)
 		if err != nil {
@@ -465,15 +317,15 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 		tflog.Warn(ctx, fmt.Sprintf("Error setting default_pool_ids on load balancer %q: %s", d.Id(), err))
 	}
 
-	if err := d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop")); err != nil {
+	if err := d.Set("pop_pools", flattenGeoPools(loadBalancer.PopPools, "pop", loadBalancerLocalPoolElems)); err != nil {
 		tflog.Warn(ctx, fmt.Sprintf("Error setting pop_pools on load balancer %q: %s", d.Id(), err))
 	}
 
-	if err := d.Set("country_pools", flattenGeoPools(loadBalancer.CountryPools, "country")); err != nil {
+	if err := d.Set("country_pools", flattenGeoPools(loadBalancer.CountryPools, "country", loadBalancerLocalPoolElems)); err != nil {
 		tflog.Warn(ctx, fmt.Sprintf("Error setting country_pools on load balancer %q: %s", d.Id(), err))
 	}
 
-	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region")); err != nil {
+	if err := d.Set("region_pools", flattenGeoPools(loadBalancer.RegionPools, "region", loadBalancerLocalPoolElems)); err != nil {
 		tflog.Warn(ctx, fmt.Sprintf("Error setting region_pools on load balancer %q: %s", d.Id(), err))
 	}
 
@@ -484,7 +336,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
+func flattenGeoPools(pools map[string][]string, geoType string, hashResourceMap map[string]*schema.Resource) *schema.Set {
 	flattened := make([]interface{}, 0)
 	for k, v := range pools {
 		geoConf := map[string]interface{}{
@@ -493,15 +345,49 @@ func flattenGeoPools(pools map[string][]string, geoType string) *schema.Set {
 		}
 		flattened = append(flattened, geoConf)
 	}
-	return schema.NewSet(schema.HashResource(localPoolElems[geoType]), flattened)
+	return schema.NewSet(schema.HashResource(hashResourceMap[geoType]), flattened)
 }
 
 func flattenSessionAffinityAttrs(attrs *cloudflare.SessionAffinityAttributes) map[string]interface{} {
 	return map[string]interface{}{
-		"drain_duration": strconv.Itoa(attrs.DrainDuration),
-		"samesite":       attrs.SameSite,
-		"secure":         attrs.Secure,
+		"drain_duration":         strconv.Itoa(attrs.DrainDuration),
+		"samesite":               attrs.SameSite,
+		"secure":                 attrs.Secure,
+		"zero_downtime_failover": attrs.ZeroDowntimeFailover,
 	}
+}
+
+func flattenAdaptiveRouting(properties *cloudflare.AdaptiveRouting) *schema.Set {
+	flattened := []interface{}{
+		map[string]interface{}{
+			"failover_across_pools": bool(properties.FailoverAcrossPools != nil && *properties.FailoverAcrossPools),
+		},
+	}
+	return schema.NewSet(schema.HashResource(loadBalancerAdaptiveRoutingElem), flattened)
+}
+
+func flattenLocationStrategy(properties *cloudflare.LocationStrategy) *schema.Set {
+	flattened := []interface{}{
+		map[string]interface{}{
+			"prefer_ecs": properties.PreferECS,
+			"mode":       properties.Mode,
+		},
+	}
+	return schema.NewSet(schema.HashResource(loadBalancerLocationStrategyElem), flattened)
+}
+
+func flattenRandomSteering(properties *cloudflare.RandomSteering) *schema.Set {
+	poolWeights := make(map[string]interface{})
+	for poolID, poolWeight := range properties.PoolWeights {
+		poolWeights[poolID] = poolWeight
+	}
+	flattened := []interface{}{
+		map[string]interface{}{
+			"pool_weights":   poolWeights,
+			"default_weight": properties.DefaultWeight,
+		},
+	}
+	return schema.NewSet(schema.HashResource(loadBalancerRandomSteeringElem), flattened)
 }
 
 func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -511,7 +397,7 @@ func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID))
 
-	err := client.DeleteLoadBalancer(ctx, zoneID, loadBalancerID)
+	err := client.DeleteLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), loadBalancerID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Load Balancer: %w", err))
 	}
@@ -608,15 +494,15 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.pop_pools", idx)); ok {
-				om["pop_pools"] = flattenGeoPools(o.PoPPools, "pop")
+				om["pop_pools"] = flattenGeoPools(o.PoPPools, "pop", loadBalancerOverridesLocalPoolElems)
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.country_pools", idx)); ok {
-				om["country_pools"] = flattenGeoPools(o.CountryPools, "country")
+				om["country_pools"] = flattenGeoPools(o.CountryPools, "country", loadBalancerOverridesLocalPoolElems)
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.region_pools", idx)); ok {
-				om["region_pools"] = flattenGeoPools(o.RegionPools, "region")
+				om["region_pools"] = flattenGeoPools(o.RegionPools, "region", loadBalancerOverridesLocalPoolElems)
 				m["overrides"] = []interface{}{om}
 			}
 			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes", idx)); o.SessionAffinityAttrs != nil && ok {
@@ -629,6 +515,59 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 				if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes.secure", idx)); ok {
 					saa["secure"] = o.SessionAffinityAttrs.Secure
 				}
+				if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes.zero_downtime_failover", idx)); ok {
+					saa["zero_downtime_failover"] = o.SessionAffinityAttrs.ZeroDowntimeFailover
+				}
+			}
+			if arOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.adaptive_routing", idx)); o.AdaptiveRouting != nil && ok {
+				ar := map[string]interface{}{}
+				if l := arOk.(*schema.Set).List(); len(l) > 0 {
+					for k := range l[0].(map[string]interface{}) {
+						switch k {
+						case "failover_across_pools":
+							ar[k] = bool(o.AdaptiveRouting.FailoverAcrossPools != nil && *o.AdaptiveRouting.FailoverAcrossPools)
+						}
+					}
+				}
+				flattened := []interface{}{ar}
+				om["adaptive_routing"] = schema.NewSet(schema.HashResource(loadBalancerOverridesAdaptiveRoutingElem), flattened)
+				m["overrides"] = []interface{}{om}
+			}
+			if lsOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.location_strategy", idx)); o.LocationStrategy != nil && ok {
+				ls := map[string]interface{}{}
+				if l := lsOk.(*schema.Set).List(); len(l) > 0 {
+					for k := range l[0].(map[string]interface{}) {
+						switch k {
+						case "prefer_ecs":
+							ls[k] = o.LocationStrategy.PreferECS
+						case "mode":
+							ls[k] = o.LocationStrategy.Mode
+						}
+					}
+				}
+				flattened := []interface{}{ls}
+				om["location_strategy"] = schema.NewSet(schema.HashResource(loadBalancerOverridesLocationStrategyElem), flattened)
+				m["overrides"] = []interface{}{om}
+			}
+			if rsOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.random_steering", idx)); o.RandomSteering != nil && ok {
+				rs := map[string]interface{}{}
+				if l := rsOk.(*schema.Set).List(); len(l) > 0 {
+					for k := range l[0].(map[string]interface{}) {
+						switch k {
+						case "pool_weights":
+							poolWeights := make(map[string]interface{})
+							for poolID, poolWeight := range o.RandomSteering.PoolWeights {
+								poolWeights[poolID] = poolWeight
+							}
+							rs[k] = poolWeights
+						case "default_weight":
+							rs[k] = o.RandomSteering.DefaultWeight
+						}
+					}
+				}
+				flattened := []interface{}{rs}
+				om["random_steering"] = schema.NewSet(schema.HashResource(loadBalancerOverridesRandomSteeringElem), flattened)
+				m["overrides"] = []interface{}{om}
 			}
 		}
 
@@ -684,6 +623,59 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 				if sec, ok := attr["secure"]; ok {
 					v.Secure = sec.(string)
 					lbr.Overrides.SessionAffinityAttrs = v
+				}
+				if zdf, ok := attr["zero_downtime_failover"]; ok {
+					v.ZeroDowntimeFailover = zdf.(string)
+					lbr.Overrides.SessionAffinityAttrs = v
+				}
+			}
+
+			if ar, ok := ov["adaptive_routing"]; ok {
+				if l := ar.(*schema.Set).List(); len(l) > 0 {
+					arOverride := &cloudflare.AdaptiveRouting{}
+					for k, v := range l[0].(map[string]interface{}) {
+						switch k {
+						case "failover_across_pools":
+							arOverride.FailoverAcrossPools = cloudflare.BoolPtr(v.(bool))
+							lbr.Overrides.AdaptiveRouting = arOverride
+						}
+					}
+				}
+			}
+
+			if ls, ok := ov["location_strategy"]; ok {
+				if l := ls.(*schema.Set).List(); len(l) > 0 {
+					lsOverride := &cloudflare.LocationStrategy{}
+					for k, v := range l[0].(map[string]interface{}) {
+						switch k {
+						case "prefer_ecs":
+							lsOverride.PreferECS = v.(string)
+							lbr.Overrides.LocationStrategy = lsOverride
+						case "mode":
+							lsOverride.Mode = v.(string)
+							lbr.Overrides.LocationStrategy = lsOverride
+						}
+					}
+				}
+			}
+
+			if rs, ok := ov["random_steering"]; ok {
+				if l := rs.(*schema.Set).List(); len(l) > 0 {
+					rsOverride := &cloudflare.RandomSteering{}
+					for k, v := range l[0].(map[string]interface{}) {
+						switch k {
+						case "pool_weights":
+							poolWeights := make(map[string]float64)
+							for poolID, poolWeight := range v.(map[string]interface{}) {
+								poolWeights[poolID] = poolWeight.(float64)
+							}
+							rsOverride.PoolWeights = poolWeights
+							lbr.Overrides.RandomSteering = rsOverride
+						case "default_weight":
+							rsOverride.DefaultWeight = v.(float64)
+							lbr.Overrides.RandomSteering = rsOverride
+						}
+					}
 				}
 			}
 
@@ -771,8 +763,63 @@ func expandSessionAffinityAttrs(attrs interface{}) (*cloudflare.SessionAffinityA
 			if cfSessionAffinityAttrs.DrainDuration, err = strconv.Atoi(v.(string)); err != nil {
 				return nil, err
 			}
+		case "zero_downtime_failover":
+			cfSessionAffinityAttrs.ZeroDowntimeFailover = v.(string)
 		}
 	}
 
 	return &cfSessionAffinityAttrs, nil
+}
+
+func expandAdaptiveRouting(set interface{}) *cloudflare.AdaptiveRouting {
+	var cfAdaptiveRouting cloudflare.AdaptiveRouting
+
+	if l := set.(*schema.Set).List(); len(l) > 0 {
+		for k, v := range l[0].(map[string]interface{}) {
+			switch k {
+			case "failover_across_pools":
+				cfAdaptiveRouting.FailoverAcrossPools = cloudflare.BoolPtr(v.(bool))
+			}
+		}
+	}
+
+	return &cfAdaptiveRouting
+}
+
+func expandLocationStrategy(set interface{}) *cloudflare.LocationStrategy {
+	var cfLocationStrategy cloudflare.LocationStrategy
+
+	if l := set.(*schema.Set).List(); len(l) > 0 {
+		for k, v := range l[0].(map[string]interface{}) {
+			switch k {
+			case "prefer_ecs":
+				cfLocationStrategy.PreferECS = v.(string)
+			case "mode":
+				cfLocationStrategy.Mode = v.(string)
+			}
+		}
+	}
+
+	return &cfLocationStrategy
+}
+
+func expandRandomSteering(set interface{}) *cloudflare.RandomSteering {
+	var cfRandomSteering cloudflare.RandomSteering
+
+	if l := set.(*schema.Set).List(); len(l) > 0 {
+		for k, v := range l[0].(map[string]interface{}) {
+			switch k {
+			case "pool_weights":
+				poolWeights := make(map[string]float64)
+				for poolID, poolWeight := range v.(map[string]interface{}) {
+					poolWeights[poolID] = poolWeight.(float64)
+				}
+				cfRandomSteering.PoolWeights = poolWeights
+			case "default_weight":
+				cfRandomSteering.DefaultWeight = v.(float64)
+			}
+		}
+	}
+
+	return &cfRandomSteering
 }

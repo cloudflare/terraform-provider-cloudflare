@@ -38,7 +38,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	lbs, err := client.ListLoadBalancers(ctx, zoneID)
+	lbs, err := client.ListLoadBalancers(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListLoadBalancerParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancers: %s", err))
 	}
@@ -51,7 +51,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 	for _, lb := range lbs {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer ID: %s", lb.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancer(ctx, zoneID, lb.ID)
+		client.DeleteLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), lb.ID)
 	}
 
 	return nil
@@ -117,6 +117,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.drain_duration", "60"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.zero_downtime_failover", "sticky"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
@@ -142,6 +143,105 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					// session_affinity_ttl should not be present as it isn't set
 					resource.TestCheckNoResourceAttr(name, "session_affinity_ttl"),
 					resource.TestCheckNoResourceAttr(name, "session_affinity_attributes"),
+					// dont check that other specified values are set, this will be evident by lack
+					// of plan diff some values will get empty values
+					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigAdaptiveRouting(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// explicitly verify that adaptive_routing has been set
+					resource.TestCheckResourceAttr(name, "adaptive_routing.#", "1"),
+					resource.TestCheckResourceAttr(name, "adaptive_routing.0.failover_across_pools", "true"),
+					// dont check that other specified values are set, this will be evident by lack
+					// of plan diff some values will get empty values
+					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancer_LocationStrategy(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigLocationStrategy(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// explicitly verify that location_strategy has been set
+					resource.TestCheckResourceAttr(name, "location_strategy.#", "1"),
+					resource.TestCheckResourceAttr(name, "location_strategy.0.prefer_ecs", "proximity"),
+					resource.TestCheckResourceAttr(name, "location_strategy.0.mode", "pop"),
+					// dont check that other specified values are set, this will be evident by lack
+					// of plan diff some values will get empty values
+					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigRandomSteering(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// explicitly verify that random_steering has been set
+					resource.TestCheckResourceAttr(name, "random_steering.#", "1"),                     // random_steering appears once
+					resource.TestCheckResourceAttr(name, "random_steering.0.pool_weights.%", "1"),      // one pool configured
+					resource.TestCheckTypeSetElemAttr(name, "random_steering.0.pool_weights.*", "0.3"), // pool weight of 0.3
+					resource.TestCheckResourceAttr(name, "random_steering.0.default_weight", "0.9"),    // default weight of 0.9
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
@@ -240,6 +340,16 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.steering_policy", "geo"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.secure", "Auto"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.session_affinity_attributes.zero_downtime_failover", "sticky"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.adaptive_routing.#", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.adaptive_routing.0.failover_across_pools", "true"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.location_strategy.#", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.location_strategy.0.prefer_ecs", "always"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.location_strategy.0.mode", "resolver_ip"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.random_steering.#", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.random_steering.0.pool_weights.%", "1"),
+					resource.TestCheckTypeSetElemAttr(name, "rules.0.overrides.0.random_steering.0.pool_weights.*", "0.4"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.random_steering.0.default_weight", "0.2"),
 					resource.TestCheckResourceAttr(name, "rules.#", "3"),
 					resource.TestCheckResourceAttr(name, "rules.1.fixed_response.0.message_body", "hello"),
 					resource.TestCheckResourceAttr(name, "rules.2.overrides.0.region_pools.#", "1"),
@@ -268,10 +378,6 @@ func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 	})
 }
 
-/**
-Any change to a load balancer  results in a new resource
-Although the API client contains a modify method, this always results in 405 status.
-*/
 func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
@@ -362,7 +468,7 @@ func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.LoadBalancerDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("load balancer still exists: %s", rs.Primary.ID)
 		}
@@ -383,7 +489,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancer, err := client.LoadBalancerDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundLoadBalancer, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -447,7 +553,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancer.ID
-		err := client.DeleteLoadBalancer(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeleteLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -473,13 +579,14 @@ resource "cloudflare_load_balancer" "%[3]s" {
   name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-	session_affinity = "cookie"
-	session_affinity_ttl = 1800
-	session_affinity_attributes = {
+  session_affinity = "cookie"
+  session_affinity_ttl = 1800
+  session_affinity_attributes = {
     samesite = "Auto"
     secure = "Auto"
     drain_duration = 60
-	}
+    zero_downtime_failover = "sticky"
+  }
 }`, zoneID, zone, id)
 }
 
@@ -491,6 +598,49 @@ resource "cloudflare_load_balancer" "%[3]s" {
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
 	session_affinity = "ip_cookie"
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigAdaptiveRouting(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-adaptive-routing-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  adaptive_routing {
+    failover_across_pools = true
+  }
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigLocationStrategy(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-location-strategy-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  location_strategy {
+    prefer_ecs = "proximity"
+    mode = "pop"
+  }
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigRandomSteering(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-random-steering-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  random_steering {
+    pool_weights = {
+      "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.3
+    }
+    default_weight = 0.9
+  }
 }`, zoneID, zone, id)
 }
 
@@ -567,6 +717,20 @@ resource "cloudflare_load_balancer" "%[3]s" {
       session_affinity_attributes = {
         samesite = "Auto"
         secure = "Auto"
+        zero_downtime_failover = "sticky"
+      }
+      adaptive_routing {
+        failover_across_pools = true
+      }
+      location_strategy {
+        prefer_ecs = "always"
+        mode = "resolver_ip"
+      }
+      random_steering {
+        pool_weights = {
+          "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.4
+        }
+        default_weight = 0.2
       }
     }
   }

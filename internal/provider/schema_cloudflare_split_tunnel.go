@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -15,31 +17,39 @@ func resourceCloudflareSplitTunnelSchema() map[string]*schema.Schema {
 		"mode": {
 			Type:         schema.TypeString,
 			Required:     true,
-			Description:  "The mode of the split tunnel policy. Either 'include' or 'exclude'.",
+			Description:  fmt.Sprintf("The mode of the split tunnel policy. %s", renderAvailableDocumentationValuesStringSlice([]string{"include", "exclude"})),
 			ValidateFunc: validation.StringInSlice([]string{"include", "exclude"}, false),
 		},
 		"tunnels": {
-			Required: true,
-			Type:     schema.TypeList,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"address": {
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "The address for the tunnel.",
-					},
-					"host": {
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "The domain name for the tunnel.",
-					},
-					"description": {
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "A description for the tunnel.",
-					},
-				},
-			},
+			Required:    true,
+			Type:        schema.TypeSet,
+			Description: "The value of the tunnel attributes.",
+			Elem:        tunnelSetResource,
+		},
+		"policy_id": {
+			Optional:    true,
+			Type:        schema.TypeString,
+			Description: "The settings policy for which to configure this split tunnel policy.",
 		},
 	}
+}
+
+var tunnelSetResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"address": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The address for the tunnel.",
+		},
+		"host": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The domain name for the tunnel.",
+		},
+		"description": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "A description for the tunnel.",
+		},
+	},
 }

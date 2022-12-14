@@ -34,17 +34,15 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.StringInSlice([]string{"A", "AAAA", "CAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"A", "AAAA", "CAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR", "HTTPS"}, false),
 		},
 
 		"value": {
-			Type:          schema.TypeString,
-			Optional:      true,
-			Computed:      true,
-			ConflictsWith: []string{"data"},
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				return strings.TrimSuffix(old, ".") == strings.TrimSuffix(new, ".")
-			},
+			Type:             schema.TypeString,
+			Optional:         true,
+			Computed:         true,
+			ConflictsWith:    []string{"data"},
+			DiffSuppressFunc: suppressTrailingDots,
 		},
 
 		"data": {

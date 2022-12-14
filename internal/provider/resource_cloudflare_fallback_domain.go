@@ -3,7 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,14 +21,27 @@ func resourceCloudflareFallbackDomain() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareFallbackDomainImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Fallback Domain resource. Fallback domains are
+			used to ignore DNS requests to a given list of domains. These DNS
+			requests will be passed back to other DNS servers configured on
+			existing network interfaces on the device.
+		`),
 	}
 }
 
 func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
-	domain, err := client.ListFallbackDomains(ctx, accountID)
+	var domain []cloudflare.FallbackDomain
+	var err error
+	if policyID == "" {
+		domain, err = client.ListFallbackDomains(ctx, accountID)
+	} else {
+		domain, err = client.ListFallbackDomainsDeviceSettingsPolicy(ctx, accountID, policyID)
+	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Fallback Domains: %w", err))
 	}
@@ -41,10 +56,19 @@ func resourceCloudflareFallbackDomainRead(ctx context.Context, d *schema.Resourc
 func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
 	domainList := expandFallbackDomains(d.Get("domains").(*schema.Set))
 
-	newFallbackDomains, err := client.UpdateFallbackDomain(ctx, accountID, domainList)
+	var newFallbackDomains []cloudflare.FallbackDomain
+	var err error
+	if policyID == "" {
+		d.SetId(accountID)
+		newFallbackDomains, err = client.UpdateFallbackDomain(ctx, accountID, domainList)
+	} else {
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+		newFallbackDomains, err = client.UpdateFallbackDomainDeviceSettingsPolicy(ctx, accountID, policyID, domainList)
+	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Fallback Domains: %w", err))
 	}
@@ -53,16 +77,20 @@ func resourceCloudflareFallbackDomainUpdate(ctx context.Context, d *schema.Resou
 		return diag.FromErr(fmt.Errorf("error setting domain attribute: %w", err))
 	}
 
-	d.SetId(accountID)
-
 	return resourceCloudflareFallbackDomainRead(ctx, d, meta)
 }
 
 func resourceCloudflareFallbackDomainDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
+	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
-	err := client.RestoreFallbackDomainDefaults(ctx, accountID)
+	var err error
+	if policyID == "" {
+		err = client.RestoreFallbackDomainDefaults(ctx, accountID)
+	} else {
+		err = client.RestoreFallbackDomainDefaultsDeviceSettingsPolicy(ctx, accountID, policyID)
+	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -72,14 +100,23 @@ func resourceCloudflareFallbackDomainDelete(ctx context.Context, d *schema.Resou
 }
 
 func resourceCloudflareFallbackDomainImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	accountID := d.Id()
+	accountID, policyID, err := parseDeviceSettingsIDImport(d.Id())
+	if err != nil {
+		return nil, err
+	}
 
 	if accountID == "" {
 		return nil, fmt.Errorf("must provide account ID")
 	}
 
 	d.Set("account_id", accountID)
-	d.SetId(accountID)
+	if policyID == "default" {
+		d.Set("policy_id", accountID)
+		d.SetId(accountID)
+	} else {
+		d.Set("policy_id", fmt.Sprintf("%s/%s", accountID, policyID))
+		d.SetId(fmt.Sprintf("%s/%s", accountID, policyID))
+	}
 
 	resourceCloudflareFallbackDomainRead(ctx, d, meta)
 
@@ -116,4 +153,16 @@ func expandFallbackDomains(domains *schema.Set) []cloudflare.FallbackDomain {
 	}
 
 	return domainList
+}
+
+// parsePolicyID parses the account ID and policy ID from the ID with format
+// `<accountTag>` or `<accountTag>/<policyID>` and returns (account id, policy id).
+func parseDevicePolicyID(id string) (string, string) {
+	attributes := strings.Split(id, "/")
+
+	if len(attributes) == 1 {
+		return attributes[0], ""
+	}
+
+	return attributes[0], attributes[1]
 }
