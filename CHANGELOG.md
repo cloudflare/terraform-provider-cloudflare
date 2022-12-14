@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Data Source:** `cloudflare_load_balancer_pools` ([#1228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1228))
+* **New Resource:** `cloudflare_url_normalization_settings` ([#1878](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1878))
 
 ENHANCEMENTS:
 
