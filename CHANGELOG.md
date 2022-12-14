@@ -1,4 +1,6 @@
-## 3.30.0 (Unreleased)
+## 3.31.0 (Unreleased)
+
+## 3.30.0 (December 14th, 2022)
 
 FEATURES:
 
