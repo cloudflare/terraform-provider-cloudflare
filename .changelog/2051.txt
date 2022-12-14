@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_workers_script: add support for `analytics_engine_binding` bindings
+```
