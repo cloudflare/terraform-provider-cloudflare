@@ -12,6 +12,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/access_application: fix issue where session_duration always showed a diff for bookmark apps ([#2076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2076))
+* resource/cloudflare_ruleset: fix issue where SSL setting is based of security level ([#2088](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2088))
 * resource/cloudflare_split_tunnel: handle nested attribute changes and ignore ordering ([#2066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2066))
 
 DEPENDENCIES:
