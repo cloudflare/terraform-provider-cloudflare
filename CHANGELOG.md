@@ -1,5 +1,9 @@
 ## 3.30.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_load_balancer_pools` ([#1228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1228))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_workers_script: add support for `analytics_engine_binding` bindings ([#2051](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2051))
