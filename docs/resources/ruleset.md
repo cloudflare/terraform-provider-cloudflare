@@ -594,7 +594,7 @@ Optional:
 Optional:
 
 - `exclude` (List of String) List of query string parameters to exclude from the custom key. Conflicts with "include".
-- `ignore` (Boolean) Boolean to ignore all query strings.
+- `ignore` (Boolean) Whether to ignore all query strings.
 - `include` (List of String) List of query string parameters to include in the custom key. Conflicts with "exclude".
 
 
