@@ -1542,7 +1542,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesThrashingStatus(t *testin
 	})
 }
 
-func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
+func TestAccCloudflareRuleset_CacheSettingsFull(t *testing.T) {
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1599,6 +1599,14 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsOptionalsEmpty(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -1631,6 +1639,14 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsOptionalCacheKeys(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -1671,6 +1687,14 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsQueryStringIgnoreTrue(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -1678,7 +1702,7 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			{
 				Config: testAccCloudflareRulesetCacheSettingsQueryStringIgnoreTrue(rnd, "my basic cache settings ruleset -- ignore query_string", zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset -- ignore query_string"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
 					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
@@ -1693,6 +1717,14 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsIgnoreQueryStringFalse(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -1700,7 +1732,7 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			{
 				Config: testAccCloudflareRulesetCacheSettingsQueryStringIgnoreFalse(rnd, "my basic cache settings ruleset -- allow all query_string", zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset -- allow all query_string"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
 					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
@@ -3097,7 +3129,7 @@ func testAccCloudflareRulesetCacheSettingsCustomKeyEmpty(rnd, accountID, zoneID 
   }`, rnd, accountID, zoneID)
 }
 
-func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreTrue(rnd, accountID, zoneID string) string {
+func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreTrue(rnd, name, zoneID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
 	zone_id     = "%[3]s"
@@ -3125,10 +3157,10 @@ func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreTrue(rnd, accountID, 
 	  description = "%[1]s set cache settings rule"
 	  enabled = true
     }
-  }`, rnd, accountID, zoneID)
+  }`, rnd, name, zoneID)
 }
 
-func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreFalse(rnd, accountID, zoneID string) string {
+func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreFalse(rnd, name, zoneID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
 	zone_id     = "%[3]s"
@@ -3156,7 +3188,7 @@ func testAccCloudflareRulesetCacheSettingsQueryStringIgnoreFalse(rnd, accountID,
 	  description = "%[1]s set cache settings rule"
 	  enabled = true
     }
-  }`, rnd, accountID, zoneID)
+  }`, rnd, name, zoneID)
 }
 
 func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) string {
