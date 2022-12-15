@@ -33,12 +33,12 @@ func resourceCloudflareAPIShieldCreate(ctx context.Context, d *schema.ResourceDa
 
 	as, err := buildAPIShieldConfiguration(d)
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create API Shield Configuration")))
+		return diag.FromErr(errors.Wrap(err, "failed to create API Shield Configuration"))
 	}
 
 	_, err = client.UpdateAPIShieldConfiguration(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateAPIShieldParams{AuthIdCharacteristics: as.AuthIdCharacteristics})
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create API Shield Configuration")))
+		return diag.FromErr(errors.Wrap(err, "failed to create API Shield Configuration"))
 	}
 
 	return resourceCloudflareAPIShieldRead(ctx, d, meta)
@@ -97,9 +97,14 @@ func buildAPIShieldConfiguration(d *schema.ResourceData) (cloudflare.APIShield, 
 	if !ok {
 		return cloudflare.APIShield{}, errors.New("unable to create interface map type assertion for rule")
 	}
-
-	for i := 0; i < len(configs); i++ {
-		as.AuthIdCharacteristics = append(as.AuthIdCharacteristics, cloudflare.AuthIdCharacteristics{Name: configs[i].(map[string]interface{})["name"].(string), Type: configs[i].(map[string]interface{})["type"].(string)})
+	if len(configs) == 0 {
+		as.AuthIdCharacteristics = make([]cloudflare.AuthIdCharacteristics, 0)
+	} else {
+		for i := 0; i < len(configs); i++ {
+			if ok = configs != nil; ok {
+				as.AuthIdCharacteristics = append(as.AuthIdCharacteristics, cloudflare.AuthIdCharacteristics{Name: configs[i].(map[string]interface{})["name"].(string), Type: configs[i].(map[string]interface{})["type"].(string)})
+			}
+		}
 	}
 
 	return as, nil
