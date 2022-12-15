@@ -40,7 +40,7 @@ func TestAccAPIShield_Basic(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPIShieldEmptyAuthIdCharacteristics(rnd, zoneID, cloudflare.AuthIdCharacteristics{Name: "test-header", Type: "header"}),
+				Config: testAccCloudflareAPIShieldEmptyAuthIdCharacteristics(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "zone_id", zoneID),
 				),
@@ -61,7 +61,7 @@ func testAccCloudflareAPIShieldSingleEntry(resourceName, rnd string, authChar cl
 `, resourceName, rnd, authChar.Name, authChar.Type)
 }
 
-func testAccCloudflareAPIShieldEmptyAuthIdCharacteristics(resourceName, rnd string, authChar cloudflare.AuthIdCharacteristics) string {
+func testAccCloudflareAPIShieldEmptyAuthIdCharacteristics(resourceName, rnd string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_api_shield" "%[1]s" {
 		zone_id = "%[2]s"
