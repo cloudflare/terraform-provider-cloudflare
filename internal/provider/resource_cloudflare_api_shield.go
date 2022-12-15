@@ -97,14 +97,15 @@ func buildAPIShieldConfiguration(d *schema.ResourceData) (cloudflare.APIShield, 
 	if !ok {
 		return cloudflare.APIShield{}, errors.New("unable to create interface map type assertion for rule")
 	}
-	if len(configs) == 0 {
-		as.AuthIdCharacteristics = make([]cloudflare.AuthIdCharacteristics, 0)
-	} else {
-		for i := 0; i < len(configs); i++ {
-			if ok = configs != nil; ok {
-				as.AuthIdCharacteristics = append(as.AuthIdCharacteristics, cloudflare.AuthIdCharacteristics{Name: configs[i].(map[string]interface{})["name"].(string), Type: configs[i].(map[string]interface{})["type"].(string)})
-			}
+
+	for i := 0; i < len(configs); i++ {
+		if ok = (configs[i] != interface{}(nil)); ok {
+			as.AuthIdCharacteristics = append(as.AuthIdCharacteristics, cloudflare.AuthIdCharacteristics{Name: configs[i].(map[string]interface{})["name"].(string), Type: configs[i].(map[string]interface{})["type"].(string)})
 		}
+	}
+
+	if len(as.AuthIdCharacteristics) == 0 {
+		as.AuthIdCharacteristics = make([]cloudflare.AuthIdCharacteristics, 0)
 	}
 
 	return as, nil
