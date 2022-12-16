@@ -162,7 +162,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Description: "Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional \"binding\" cookie on requests.",
 		},
 		"allowed_idps": {
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
