@@ -4,7 +4,7 @@ page_title: "Cloudflare: cloudflare_zone_dnssec"
 description: Provides a Cloudflare resource to create and modify zone DNSSEC settings.
 ---
 
-# cloudflare_zone
+# cloudflare_zone_dnssec
 
 Provides a Cloudflare Zone DNSSEC resource.
 
