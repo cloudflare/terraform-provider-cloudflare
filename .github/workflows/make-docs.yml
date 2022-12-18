@@ -16,6 +16,6 @@ jobs:
             git config --local user.email docsbot@cloudflare.com
             git config --local user.name docsbot
             git add docs/
-            git commit -m "`make docs`"
+            git commit -m "build registry documentation"
             git push
           fi
