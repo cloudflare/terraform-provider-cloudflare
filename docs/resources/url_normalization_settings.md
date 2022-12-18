@@ -25,7 +25,7 @@ resource "cloudflare_url_normalization_settings" "example" {
 
 - `scope` (String) The scope of the URL normalization.
 - `type` (String) The type of URL normalization performed by Cloudflare.
-- `zone_id` (String) The zone identifier to target for the resource.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 
