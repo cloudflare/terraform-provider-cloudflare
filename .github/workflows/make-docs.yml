@@ -1,0 +1,21 @@
+
+name: Generate registry documentation
+on:
+  pull_request_target:
+    types: [closed]
+  workflow_dispatch:
+jobs:
+  make-docs:
+    if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make docs
+      - run: |
+          if [[ `git status --porcelain` ]]; then
+            git config --local user.email docsbot@cloudflare.com
+            git config --local user.name docsbot
+            git add docs/
+            git commit -m "build registry documentation"
+            git push
+          fi

@@ -72,7 +72,7 @@ resource "cloudflare_split_tunnel" "example_split_tunnel_include" {
 
 - `account_id` (String) The account identifier to target for the resource.
 - `mode` (String) The mode of the split tunnel policy. Available values: `include`, `exclude`.
-- `tunnels` (Block List, Min: 1) The value of the tunnel attributes. (see [below for nested schema](#nestedblock--tunnels))
+- `tunnels` (Block Set, Min: 1) The value of the tunnel attributes. (see [below for nested schema](#nestedblock--tunnels))
 
 ### Optional
 
