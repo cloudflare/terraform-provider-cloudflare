@@ -17,19 +17,19 @@ func resourceCloudflareAPIShieldSchema() map[string]*schema.Schema {
 		},
 		"auth_id_characteristics": {
 			Description: "Characteristics define properties across which auth-ids can be computed in a privacy-preserving manner.",
-			Required:    true,
+			Optional:    true,
 			Type:        schema.TypeList,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
 						Description:  fmt.Sprintf("The type of characteristic. %s", renderAvailableDocumentationValuesStringSlice([]string{"header", "cookie"})),
-						Required:     true,
+						Optional:     true,
 						Type:         schema.TypeString,
 						ValidateFunc: validation.StringInSlice([]string{"header", "cookie"}, false),
 					},
 					"name": {
 						Description: "The name of the characteristic.",
-						Required:    true,
+						Optional:    true,
 						Type:        schema.TypeString,
 					},
 				},
