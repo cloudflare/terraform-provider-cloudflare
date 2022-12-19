@@ -35,6 +35,19 @@ func TestAccAPIShield_Basic(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccAPIShield_EmptyAuthIdCharacteristics(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
+	// endpoint does not yet support the API tokens without an explicit scope.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	resourceID := "cloudflare_api_shield." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -43,6 +56,7 @@ func TestAccAPIShield_Basic(t *testing.T) {
 				Config: testAccCloudflareAPIShieldEmptyAuthIdCharacteristics(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.#", "0"),
 				),
 			},
 		},
