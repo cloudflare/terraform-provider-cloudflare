@@ -90,22 +90,15 @@ func resourceCloudflareAPIShieldDelete(ctx context.Context, d *schema.ResourceDa
 }
 
 func buildAPIShieldConfiguration(d *schema.ResourceData) (cloudflare.APIShield, error) {
-	var as cloudflare.APIShield
-
+	as := cloudflare.APIShield{}
 	configs, ok := d.Get("auth_id_characteristics").([]interface{})
-
 	if !ok {
 		return cloudflare.APIShield{}, errors.New("unable to create interface map type assertion for rule")
 	}
 
+	as.AuthIdCharacteristics = []cloudflare.AuthIdCharacteristics{}
 	for i := 0; i < len(configs); i++ {
-		if ok = (configs[i] != interface{}(nil)); ok {
-			as.AuthIdCharacteristics = append(as.AuthIdCharacteristics, cloudflare.AuthIdCharacteristics{Name: configs[i].(map[string]interface{})["name"].(string), Type: configs[i].(map[string]interface{})["type"].(string)})
-		}
-	}
-
-	if len(as.AuthIdCharacteristics) == 0 {
-		as.AuthIdCharacteristics = make([]cloudflare.AuthIdCharacteristics, 0)
+		as.AuthIdCharacteristics = append(as.AuthIdCharacteristics, cloudflare.AuthIdCharacteristics{Name: configs[i].(map[string]interface{})["name"].(string), Type: configs[i].(map[string]interface{})["type"].(string)})
 	}
 
 	return as, nil
