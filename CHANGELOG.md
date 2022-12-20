@@ -1,5 +1,9 @@
 ## 3.31.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_api_shield: allow for empty auth_id_characteristics ([#2091](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2091))
+
 ## 3.30.0 (December 14th, 2022)
 
 FEATURES:
