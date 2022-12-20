@@ -7,7 +7,6 @@ on:
     workflows: [Generate registry documentation]
     types:
       - completed
-
   workflow_dispatch:
 jobs:
   GenerateChangelog:
