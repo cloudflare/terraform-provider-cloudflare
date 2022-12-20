@@ -614,11 +614,11 @@ Optional:
 
 Required:
 
-- `default` (Number) Default edge TTL.
 - `mode` (String) Mode of the edge TTL.
 
 Optional:
 
+- `default` (Number) Default edge TTL.
 - `status_code_ttl` (Block List) Edge TTL for the status codes. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl--status_code_ttl))
 
 <a id="nestedblock--rules--action_parameters--edge_ttl--status_code_ttl"></a>
