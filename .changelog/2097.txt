@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: allow edge_ttl -> default to be optional
+```
