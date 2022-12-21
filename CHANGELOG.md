@@ -5,6 +5,10 @@ BUG FIXES:
 * resource/cloudflare_api_shield: allow for empty auth_id_characteristics ([#2091](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2091))
 * resource/cloudflare_ruleset: allow edge_ttl -> default to be optional ([#2097](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2097))
 
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 6 to 7 ([#2098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2098))
+
 ## 3.30.0 (December 14th, 2022)
 
 FEATURES:
