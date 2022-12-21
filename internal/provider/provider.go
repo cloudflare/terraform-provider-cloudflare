@@ -260,6 +260,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_teams_list":                             resourceCloudflareTeamsList(),
 				"cloudflare_teams_location":                         resourceCloudflareTeamsLocation(),
 				"cloudflare_teams_proxy_endpoint":                   resourceCloudflareTeamsProxyEndpoint(),
+				"cloudflare_tiered_cache":                           resourceCloudflareTieredCache(),
 				"cloudflare_tunnel_config":                          resourceCloudflareTunnelConfig(),
 				"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
 				"cloudflare_total_tls":                              resourceCloudflareTotalTLS(),
