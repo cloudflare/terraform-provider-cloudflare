@@ -23,6 +23,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			StateFunc: func(i interface{}) string {
 				return strings.ToLower(i.(string))
 			},
+			Description: "DNS record name (or @ for the zone apex).",
 		},
 
 		"hostname": {
@@ -35,6 +36,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Required:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.StringInSlice([]string{"A", "AAAA", "CAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR", "HTTPS"}, false),
+			Description:  "DNS record type.",
 		},
 
 		"value": {
@@ -43,6 +45,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Computed:         true,
 			ConflictsWith:    []string{"data"},
 			DiffSuppressFunc: suppressTrailingDots,
+			Description:      "DNS record value.",
 		},
 
 		"data": {
@@ -50,6 +53,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			MaxItems:      1,
 			Optional:      true,
 			ConflictsWith: []string{"value"},
+			Description:   "Metadata about the record.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					// Properties present in several record types
@@ -231,25 +235,29 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 		},
 
 		"ttl": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Computed: true,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Computed:    true,
+			Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
 		},
 
 		"priority": {
 			Type:             schema.TypeInt,
 			Optional:         true,
 			DiffSuppressFunc: suppressPriority,
+			Description:      "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
 		},
 
 		"proxied": {
-			Optional: true,
-			Type:     schema.TypeBool,
+			Optional:    true,
+			Type:        schema.TypeBool,
+			Description: "Whether the record is receiving the performance and security benefits of Cloudflare's network.",
 		},
 
 		"created_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "When the record was created.",
 		},
 
 		"metadata": {
@@ -258,18 +266,34 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 		},
 
 		"modified_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The date and time the record was last modified.",
 		},
 
 		"proxiable": {
-			Type:     schema.TypeBool,
-			Computed: true,
+			Type:        schema.TypeBool,
+			Computed:    true,
+			Description: "Whether the record can be proxied by Cloudflare or not.",
 		},
+
 		"allow_overwrite": {
 			Type:     schema.TypeBool,
 			Optional: true,
 			Default:  false,
+		},
+
+		"comment": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+		},
+
+		"tags": {
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+			Description: "Custom tags for the DNS record.",
 		},
 	}
 }
