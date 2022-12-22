@@ -4,11 +4,21 @@ PKG_NAME=cloudflare
 VERSION?=$(shell git describe --tags --always)
 DEV_VERSION=99.0.0
 CLOUDFLARE_GO_VERSION?=master
+INCLUDE_VERSION_IN_FILENAME?=false
 
 default: build
 
-build: vet fmtcheck
+install: vet fmtcheck
 	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/main.version=$(VERSION)"
+
+build: vet fmtcheck
+	@if $(INCLUDE_VERSION_IN_FILENAME); then \
+	    go build -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/main.version=$(VERSION)" -o terraform-provider-cloudflare_$(VERSION); \
+		echo "==> Successfully built terraform-provider-cloudflare_$(VERSION)"; \
+	else \
+		go build -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/main.version=$(VERSION)" -o terraform-provider-cloudflare; \
+		echo "==> Successfully built terraform-provider-cloudflare"; \
+	fi
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
