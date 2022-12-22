@@ -49,7 +49,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		ZoneID: d.Get("zone_id").(string),
 	}
 
-	proxied, proxiedOk := d.GetOkExists("proxied")
+	proxied, proxiedOk := d.GetOk("proxied")
 	if proxiedOk {
 		newRecord.Proxied = cloudflare.BoolPtr(proxied.(bool))
 	}
@@ -85,7 +85,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 			valueOk, dataOk))
 	}
 
-	if priority, ok := d.GetOkExists("priority"); ok {
+	if priority, ok := d.GetOk("priority"); ok {
 		p := uint16(priority.(int))
 		newRecord.Priority = &p
 	}
@@ -140,7 +140,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 							Type: d.Get("type").(string),
 						}
 					}
-					rs, _, _ := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(d.Get("zone_id").(string)), r, cloudflare.DNSListParameters{})
+					rs, _, _ := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(d.Get("zone_id").(string)), r, cloudflare.ListDNSParameters{})
 
 					if len(rs) != 1 {
 						return resource.RetryableError(fmt.Errorf("attempted to override existing record however didn't find an exact match"))
@@ -166,7 +166,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		// In the event that the API returns an empty DNS Record, we verify that the
 		// ID returned is not the default ""
 		if r.Result.ID == "" {
-			return resource.NonRetryableError(fmt.Errorf("Failed to find record in Create response; Record was empty"))
+			return resource.NonRetryableError(fmt.Errorf("failed to find record in Create response; Record was empty"))
 		}
 
 		d.SetId(r.Result.ID)
