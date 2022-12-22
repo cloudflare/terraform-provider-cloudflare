@@ -2,7 +2,7 @@ TEST?=$$(go list ./...)
 GOFMT_FILES?=$$(find . -name '*.go')
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=cloudflare
-VERSION=$(shell git describe --tags --always)
+VERSION?=$(shell git describe --tags --always)
 DEV_VERSION=99.0.0
 CLOUDFLARE_GO_VERSION?=master
 
