@@ -145,7 +145,7 @@ func getRouteFromApi(zoneID, routeId string) (cloudflare.WorkerRoute, error) {
 	}
 
 	client := testAccProvider.Meta().(*cloudflare.API)
-	resp, err := client.ListWorkerRoutes(context.Background(), zoneID)
+	resp, err := client.ListWorkerRoutes(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListWorkerRoutesParams{})
 	if err != nil {
 		return cloudflare.WorkerRoute{}, err
 	}

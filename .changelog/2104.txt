@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bumps cloudflare/cloudflare-go from 0.56.0 to 0.57.0
+```

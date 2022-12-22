@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -178,16 +179,10 @@ resource "cloudflare_worker_script" "%[1]s" {
 }`, rnd, moduleContent)
 }
 
-func getRequestParamsFromResource(rs *terraform.ResourceState) cloudflare.WorkerRequestParams {
-	params := cloudflare.WorkerRequestParams{
-		ScriptName: rs.Primary.Attributes["name"],
-	}
-
-	return params
-}
-
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("not found: %s", n)
@@ -198,8 +193,8 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		params := getRequestParamsFromResource(rs)
-		r, err := client.DownloadWorker(context.Background(), &params)
+
+		r, err := client.GetWorker(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.Attributes["name"])
 		if err != nil {
 			return err
 		}
@@ -209,7 +204,7 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 		}
 
 		name := strings.Replace(n, "cloudflare_worker_script.", "", -1)
-		foundBindings, err := getWorkerScriptBindings(context.Background(), name, client)
+		foundBindings, err := getWorkerScriptBindings(context.Background(), accountID, name, client)
 		if err != nil {
 			return fmt.Errorf("cannot list script bindings: %w", err)
 		}
@@ -226,14 +221,15 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 }
 
 func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_worker_script" {
 			continue
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		params := getRequestParamsFromResource(rs)
-		r, _ := client.DownloadWorker(context.Background(), &params)
+		r, _ := client.GetWorker(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.Attributes["name"])
 
 		if r.Script != "" {
 			return fmt.Errorf("worker script with id %s still exists", rs.Primary.ID)
