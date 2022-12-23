@@ -25,6 +25,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	var script cloudflare.WorkerScript
 	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -36,7 +37,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd),
+				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -44,7 +45,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd),
+				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -52,7 +53,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd),
+				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -79,7 +80,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd),
+				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -106,34 +107,39 @@ func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 	})
 }
 
-func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd string) string {
+func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[1]s" {
+  account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
-}`, rnd, scriptContent1)
+}`, rnd, scriptContent1, accountID)
 }
 
-func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd string) string {
+func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[1]s" {
+  account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
-}`, rnd, scriptContent2)
+}`, rnd, scriptContent2, accountID)
 }
 
-func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd string) string {
+func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_workers_kv_namespace" "%[1]s" {
-  title = "%[1]s"
+	account_id = "%[4]s"
+	title = "%[1]s"
 }
 
 resource "cloudflare_worker_script" "%[1]s-service" {
+	account_id = "%[4]s"
 	name    = "%[1]s-service"
 	content = "%[2]s"
 }
 
 resource "cloudflare_worker_script" "%[1]s" {
+  account_id = "%[4]s"
   name    = "%[1]s"
   content = "%[2]s"
 
@@ -167,16 +173,17 @@ resource "cloudflare_worker_script" "%[1]s" {
     service = cloudflare_worker_script.%[1]s-service.name
     environment = "production"
   }
-}`, rnd, scriptContent2, encodedWasm)
+}`, rnd, scriptContent2, encodedWasm, accountID)
 }
 
-func testAccCheckCloudflareWorkerScriptUploadModule(rnd string) string {
+func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[1]s" {
+  account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
   module = true
-}`, rnd, moduleContent)
+}`, rnd, moduleContent, accountID)
 }
 
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {

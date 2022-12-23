@@ -292,6 +292,8 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("cannot set analytics engine bindings (%s): %w", d.Id(), err))
 	}
 
+	d.SetId(scriptData.ID)
+
 	return nil
 }
 
@@ -373,15 +375,8 @@ func resourceCloudflareWorkerScriptImport(ctx context.Context, d *schema.Resourc
 
 	accountID, scriptName := attributes[0], attributes[1]
 
-	client := meta.(*cloudflare.API)
-	worker, err := client.GetWorker(ctx, cloudflare.AccountIdentifier(accountID), scriptName)
-	if err != nil {
-		return nil, errors.New("failed to fetch Worker details")
-	}
-
 	d.Set("name", scriptName)
 	d.Set("account_id", accountID)
-	d.SetId(worker.ID)
 
 	resourceCloudflareWorkerScriptRead(ctx, d, meta)
 
