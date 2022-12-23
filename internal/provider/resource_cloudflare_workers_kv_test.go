@@ -68,7 +68,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkersKV(name, key+"-updated", value),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
+					testAccCheckCloudflareWorkersKVExists(key+"-updated", &kvPair),
 					resource.TestCheckResourceAttr(
 						resourceName, "value", value,
 					),

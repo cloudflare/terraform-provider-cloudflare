@@ -1,1 +1,1 @@
-$ terraform import cloudflare_worker_script.example <script_name>
+$ terraform import cloudflare_worker_script.example <account_id>/<script_name>
