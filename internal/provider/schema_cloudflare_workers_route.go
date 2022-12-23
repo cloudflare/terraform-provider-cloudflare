@@ -12,13 +12,15 @@ func resourceCloudflareWorkerRouteSchema() map[string]*schema.Schema {
 		},
 
 		"pattern": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The [route pattern](https://developers.cloudflare.com/workers/about/routes/) to associate the Worker with.",
 		},
 
 		"script_name": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Worker script name to invoke for requests that match the route pattern.",
 		},
 	}
 }

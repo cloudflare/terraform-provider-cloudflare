@@ -10,13 +10,15 @@ func resourceCloudflareWorkerCronTriggerSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"script_name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Worker script to target for the schedules.",
 		},
 		"schedules": {
-			Type:     schema.TypeSet,
-			Required: true,
-			MinItems: 1,
+			Type:        schema.TypeSet,
+			Required:    true,
+			MinItems:    1,
+			Description: "Cron expressions to execute the Worker script.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
