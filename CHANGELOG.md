@@ -8,6 +8,7 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bumps actions/stale from 6 to 7 ([#2098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2098))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.56.0 to 0.57.0 ([#2102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2102))
 
 ## 3.30.0 (December 14th, 2022)
 
