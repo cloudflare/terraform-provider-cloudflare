@@ -134,6 +134,14 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"custom_metadata": {
+			Type:        schema.TypeMap,
+			Optional:    true,
+			Description: "Custom metadata associated with custom hostname. Only supports string values.",
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"status": {
 			Type:        schema.TypeString,
 			Computed:    true,

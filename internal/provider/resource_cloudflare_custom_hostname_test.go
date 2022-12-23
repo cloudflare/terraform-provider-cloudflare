@@ -477,3 +477,52 @@ func testAccCheckCloudflareCustomHostnameExists(n string, customHostname *cloudf
 		return nil
 	}
 }
+
+func TestAccCloudflareCustomHostname_WithCustomMetadata(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_custom_hostname." + rnd
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareCustomHostnameWithCustomMetadata(zoneID, rnd, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.0.wildcard", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification_http.http_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification_http.http_body"),
+					resource.TestCheckResourceAttr(resourceName, "custom_metadata.customer_id", "12345"),
+					resource.TestCheckResourceAttr(resourceName, "custom_metadata.redirect_to_https", "true"),
+					resource.TestCheckResourceAttr(resourceName, "custom_metadata.security_tag", "low"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareCustomHostnameWithCustomMetadata(zoneID, rnd, domain string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_custom_hostname" "%[2]s" {
+		zone_id = "%[1]s"
+		hostname = "%[2]s.%[3]s"
+		ssl {
+			method = "txt"
+			wildcard = true
+		}
+		custom_metadata = {
+			"customer_id" = 12345
+			"redirect_to_https" = true
+			"security_tag" = "low"
+		}
+	}
+	`, zoneID, rnd, domain)
+}
