@@ -8,16 +8,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func testTieredCacheConfig(rnd, zoneId, cacheType string) string {
+func testTieredCacheConfig(rnd, zoneID, cacheType string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_tiered_cache" "%[1]s" {
 	zone_id = "%[2]s"
-	cache_type "%[3]s"
+	cache_type = "%[3]s"
 }
 `, rnd, zoneID, cacheType)
 }
 
-func TestCloudflareSmartTieredCache(t *testing.T) {
+func TestCloudflareTieredCache_Smart(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tiered_cache." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -37,7 +37,7 @@ func TestCloudflareSmartTieredCache(t *testing.T) {
 	})
 }
 
-func TestCloudflareGenericTieredCache(t *testing.T) {
+func TestCloudflareTieredCache_Generic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tiered_cache." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
