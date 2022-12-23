@@ -15,7 +15,7 @@ const (
 	defaultScriptContent = "addEventListener('fetch', event => {event.respondWith(fetch(event.request))})"
 )
 
-func TestAccCloudflareWorkerRoute_MultiScriptEnt(t *testing.T) {
+func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -145,7 +145,7 @@ func getRouteFromApi(zoneID, routeId string) (cloudflare.WorkerRoute, error) {
 	}
 
 	client := testAccProvider.Meta().(*cloudflare.API)
-	resp, err := client.ListWorkerRoutes(context.Background(), zoneID)
+	resp, err := client.ListWorkerRoutes(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListWorkerRoutesParams{})
 	if err != nil {
 		return cloudflare.WorkerRoute{}, err
 	}

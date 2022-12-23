@@ -1,5 +1,13 @@
 ## 3.31.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_worker_script: supports explicit `account_id` instead of inheriting global values ([#2102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2102))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_tiered_cache` ([#2101](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2101))
+
 BUG FIXES:
 
 * resource/cloudflare_api_shield: allow for empty auth_id_characteristics ([#2091](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2091))
@@ -8,6 +16,7 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bumps actions/stale from 6 to 7 ([#2098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2098))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.56.0 to 0.57.0 ([#2102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2102))
 
 ## 3.30.0 (December 14th, 2022)
 
