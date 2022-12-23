@@ -26,7 +26,7 @@ resource "cloudflare_workers_kv_namespace" "example" {
 
 ### Required
 
-- `title` (String)
+- `title` (String) Title value of the Worker KV Namespace.
 
 ### Optional
 
