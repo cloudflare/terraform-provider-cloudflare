@@ -19,7 +19,7 @@ func resourceCloudflareTieredCache() *schema.Resource {
 		DeleteContext: resourceCloudflareTieredCacheDelete,
 		Description: heredoc.Doc(`
 			Provides a resource, that manages Cloudflare Tiered Cache settings.
-			This allows you to adjust topologies between Off, Smart and Generic for your zone.
+			This allows you to adjust topologies for your zone.
 		`),
 	}
 }
