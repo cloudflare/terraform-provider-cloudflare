@@ -17,7 +17,7 @@ resource "cloudflare_tiered_cache" "%[1]s" {
 `, rnd, zoneID, cacheType)
 }
 
-func TestCloudflareTieredCache_Smart(t *testing.T) {
+func TestAccCloudflareTieredCache_Smart(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tiered_cache." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -37,7 +37,7 @@ func TestCloudflareTieredCache_Smart(t *testing.T) {
 	})
 }
 
-func TestCloudflareTieredCache_Generic(t *testing.T) {
+func TestAccCloudflareTieredCache_Generic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tiered_cache." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
