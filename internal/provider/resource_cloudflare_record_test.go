@@ -37,7 +37,7 @@ func testSweepCloudflareRecord(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	records, _, err := client.ListDNSRecords(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.DNSRecord{}, cloudflare.DNSListParameters{})
+	records, _, err := client.ListDNSRecords(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.DNSRecord{}, cloudflare.ListDNSParameters{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
 	}
