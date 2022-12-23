@@ -52,8 +52,6 @@ func testAccCheckCloudflareAccountName(rnd, name string) string {
 }
 
 func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
-	t.Parallel()
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_account.%s", rnd)
 
