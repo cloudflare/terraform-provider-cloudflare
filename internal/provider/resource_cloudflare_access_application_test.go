@@ -255,6 +255,30 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) {
+	rnd := generateRandomResourceName()
+	idp1 := generateRandomResourceName()
+	idp2 := generateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheck(t)
+			testAccessAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2),
+			},
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdpsReordered(rnd, zoneID, domain, accountID, idp1, idp2),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
@@ -537,6 +561,68 @@ resource "cloudflare_access_application" "%[1]s" {
   allowed_idps              = [cloudflare_access_identity_provider.%[1]s.id]
 }
 `, rnd, zoneID, domain, accountID)
+}
+
+func testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2 string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[5]s" {
+  account_id = "%[4]s"
+  name = "%[5]s"
+  type = "onetimepin"
+}
+resource "cloudflare_access_identity_provider" "%[6]s" {
+  account_id = "%[4]s"
+  name = "%[6]s"
+  type = "github"
+  config {
+    client_id = "test"
+    client_secret = "secret"
+  }
+}
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  auto_redirect_to_identity = true
+  allowed_idps              = [
+    cloudflare_access_identity_provider.%[5]s.id,
+    cloudflare_access_identity_provider.%[6]s.id,
+  ]
+}
+`, rnd, zoneID, domain, accountID, idp1, idp2)
+}
+
+func testAccCloudflareAccessApplicationConfigWithMultipleIdpsReordered(rnd, zoneID, domain, accountID, idp1, idp2 string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[5]s" {
+  account_id = "%[4]s"
+  name = "%[5]s"
+  type = "onetimepin"
+}
+resource "cloudflare_access_identity_provider" "%[6]s" {
+  account_id = "%[4]s"
+  name = "%[6]s"
+  type = "github"
+  config {
+    client_id = "test"
+    client_secret = "secret"
+  }
+}
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  auto_redirect_to_identity = true
+  allowed_idps              = [
+    cloudflare_access_identity_provider.%[6]s.id,
+    cloudflare_access_identity_provider.%[5]s.id,
+  ]
+}
+`, rnd, zoneID, domain, accountID, idp1, idp2)
 }
 
 func testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain string) string {
