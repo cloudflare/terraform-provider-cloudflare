@@ -8,6 +8,10 @@ FEATURES:
 
 * **New Resource:** `cloudflare_tiered_cache` ([#2101](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2101))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: makes allowed_idps type to set ([#2094](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2094))
+
 BUG FIXES:
 
 * resource/cloudflare_api_shield: allow for empty auth_id_characteristics ([#2091](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2091))
