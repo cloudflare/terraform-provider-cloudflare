@@ -30,6 +30,7 @@ resource "cloudflare_custom_hostname" "example" {
 
 ### Optional
 
+- `custom_metadata` (Map of String) Custom metadata associated with custom hostname. Only supports primitive string values, all other values are accessible via the API directly.
 - `custom_origin_server` (String) The custom origin server used for certificates.
 - `custom_origin_sni` (String) The [custom origin SNI](https://developers.cloudflare.com/ssl/ssl-for-saas/hostname-specific-behavior/custom-origin) used for certificates.
 - `ssl` (Block List) SSL configuration of the certificate. (see [below for nested schema](#nestedblock--ssl))
