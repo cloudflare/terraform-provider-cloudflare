@@ -16,7 +16,7 @@ import (
 func init() {
 	resource.AddTestSweepers("cloudflare_access_group", &resource.Sweeper{
 		Name: "cloudflare_access_group",
-		F:    testSweepCloudflareAccessGroups,
+		F:    testSweepCloudflareAccessApplications,
 	})
 }
 

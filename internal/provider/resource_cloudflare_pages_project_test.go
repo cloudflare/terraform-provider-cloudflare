@@ -221,6 +221,8 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
+	t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
+
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
