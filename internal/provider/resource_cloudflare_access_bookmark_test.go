@@ -24,7 +24,7 @@ func TestAccCloudflareAccessBookmark_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessBookmarkDestroy,
@@ -45,7 +45,6 @@ func TestAccCloudflareAccessBookmark_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -116,7 +115,6 @@ func TestAccCloudflareAccessBookmark_WithZoneID(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,

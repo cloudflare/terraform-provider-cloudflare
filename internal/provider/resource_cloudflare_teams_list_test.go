@@ -27,7 +27,6 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
@@ -61,7 +60,6 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
@@ -93,7 +91,6 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,

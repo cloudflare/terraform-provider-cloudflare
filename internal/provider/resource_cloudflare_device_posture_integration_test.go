@@ -29,7 +29,7 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckWorkspaceOne(t)
 		},
 		ProviderFactories: providerFactories,

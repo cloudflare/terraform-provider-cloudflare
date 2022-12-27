@@ -3,15 +3,71 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_access_application", &resource.Sweeper{
+		Name: "cloudflare_access_application",
+		F:    testSweepCloudflareAccessApplicatons,
+	})
+}
+
+func testSweepCloudflareAccessApplicatons(r string) error {
+	ctx := context.Background()
+
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	// Zone level Access Applications.
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneAccessApps, _, err := client.ZoneLevelAccessApplications(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Applications: %s", err))
+	}
+
+	if len(zoneAccessApps) == 0 {
+		log.Print("[DEBUG] No Cloudflare zone level Access Applications to sweep")
+		return nil
+	}
+
+	for _, accessApp := range zoneAccessApps {
+		if err := client.DeleteZoneLevelAccessApplication(context.Background(), zoneID, accessApp.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Application %s", accessApp.ID))
+		}
+	}
+
+	// Account level Access Applications.
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountAccessApps, _, err := client.AccessApplications(context.Background(), accountID, cloudflare.PaginationOptions{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Applications: %s", err))
+	}
+
+	if len(accountAccessApps) == 0 {
+		log.Print("[DEBUG] No Cloudflare account level Access Applications to sweep")
+		return nil
+	}
+
+	for _, accessApp := range accountAccessApps {
+		if err := client.DeleteAccessApplication(context.Background(), accountID, accessApp.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Application %s", accessApp.ID))
+		}
+	}
+
+	return nil
+}
 
 var (
 	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -25,8 +81,6 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -55,7 +109,6 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -85,8 +138,6 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -118,8 +169,6 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -148,8 +197,6 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -176,8 +223,6 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -204,8 +249,6 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -233,8 +276,6 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -255,6 +296,28 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) {
+	rnd := generateRandomResourceName()
+	idp1 := generateRandomResourceName()
+	idp2 := generateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2),
+			},
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
@@ -262,8 +325,6 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -290,8 +351,6 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -318,8 +377,6 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -346,8 +403,6 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -374,8 +429,6 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -402,8 +455,6 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -539,6 +590,38 @@ resource "cloudflare_access_application" "%[1]s" {
 `, rnd, zoneID, domain, accountID)
 }
 
+func testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2 string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[5]s" {
+  account_id = "%[4]s"
+  name = "%[5]s"
+  type = "onetimepin"
+}
+
+resource "cloudflare_access_identity_provider" "%[6]s" {
+  account_id = "%[4]s"
+  name = "%[6]s"
+  type = "github"
+  config {
+    client_id = "test"
+    client_secret = "secret"
+  }
+}
+
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  allowed_idps              = [
+    cloudflare_access_identity_provider.%[5]s.id,
+    cloudflare_access_identity_provider.%[6]s.id,
+  ]
+}
+`, rnd, zoneID, domain, accountID, idp1, idp2)
+}
+
 func testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
@@ -654,7 +737,7 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -684,7 +767,7 @@ func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -704,7 +787,7 @@ func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -724,7 +807,7 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -744,7 +827,7 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOr
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -764,7 +847,7 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildc
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
