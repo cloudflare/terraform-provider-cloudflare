@@ -79,18 +79,6 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
-func testAccessAccPreCheck(t *testing.T) {
-	testAccPreCheckEmail(t)
-	testAccPreCheckApiKey(t)
-	testAccPreCheckDomain(t)
-
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	if zoneID == "" && accountID == "" {
-		t.Fatal("CLOUDFLARE_ZONE_ID or CLOUDFLARE_ACCOUNT_ID must be set for this acceptance test")
-	}
-}
-
 func testAccPreCheckAltDomain(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ALT_DOMAIN"); v == "" {
 		t.Fatal("CLOUDFLARE_ALT_DOMAIN must be set for this acceptance test")

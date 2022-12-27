@@ -24,7 +24,6 @@ func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -50,7 +49,6 @@ func TestAccCloudflareAccessPolicy_AnyServiceToken(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -75,7 +73,7 @@ func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
@@ -205,7 +203,6 @@ func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -263,7 +260,6 @@ func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -312,7 +308,6 @@ func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -361,7 +356,6 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -410,7 +404,6 @@ func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -461,7 +454,6 @@ func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -510,7 +502,6 @@ func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -561,7 +552,6 @@ func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -610,7 +600,6 @@ func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -661,7 +650,6 @@ func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -715,7 +703,6 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -766,7 +753,6 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -835,7 +821,6 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,

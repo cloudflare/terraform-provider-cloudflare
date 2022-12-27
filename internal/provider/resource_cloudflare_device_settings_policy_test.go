@@ -30,7 +30,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDeviceSettingsPolicyDestroy,

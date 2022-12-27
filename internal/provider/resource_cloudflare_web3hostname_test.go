@@ -38,7 +38,7 @@ func TestAccCloudflareWeb3HostnameEthereum(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -61,7 +61,7 @@ func TestAccCloudflareWeb3Hostname(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{

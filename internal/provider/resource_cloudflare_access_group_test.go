@@ -80,7 +80,6 @@ func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -122,7 +121,7 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
@@ -172,7 +171,6 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -200,7 +198,6 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -228,7 +225,6 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -259,7 +255,6 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -288,7 +283,6 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -321,7 +315,6 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,

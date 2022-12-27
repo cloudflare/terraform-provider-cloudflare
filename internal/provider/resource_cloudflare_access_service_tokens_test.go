@@ -25,7 +25,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -42,7 +42,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -73,7 +73,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -94,7 +94,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -132,7 +132,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 // 	expirationTime := 365
 
 // 	resource.Test(t, resource.TestCase{
-// 		PreCheck:  func() { testAccessAccPreCheck(t) },
+// 		PreCheck:  func() { testAccPreCheck(t) },
 // 		ProviderFactories: providerFactories,
 // 		Steps: []resource.TestStep{
 // 			{
@@ -208,7 +208,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -228,7 +228,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccessAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{

@@ -61,7 +61,7 @@ func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
@@ -100,7 +100,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 	name := "data.cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
