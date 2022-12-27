@@ -11,6 +11,7 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_access_application: makes allowed_idps type to set ([#2094](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2094))
+* resource/cloudflare_custom_hostname: add support for defining custom metadata ([#2107](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2107))
 
 BUG FIXES:
 
