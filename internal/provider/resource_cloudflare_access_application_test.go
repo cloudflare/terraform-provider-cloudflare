@@ -18,11 +18,11 @@ import (
 func init() {
 	resource.AddTestSweepers("cloudflare_access_application", &resource.Sweeper{
 		Name: "cloudflare_access_application",
-		F:    testSweepCloudflareAccessApplicatons,
+		F:    testSweepCloudflareAccessApplications,
 	})
 }
 
-func testSweepCloudflareAccessApplicatons(r string) error {
+func testSweepCloudflareAccessApplications(r string) error {
 	ctx := context.Background()
 
 	client, clientErr := sharedClient()
@@ -210,6 +210,7 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "true"),
+					resource.TestCheckResourceAttr(name, "allowed_idps.#", "1"),
 				),
 			},
 		},
@@ -538,6 +539,7 @@ resource "cloudflare_access_application" "%[1]s" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = true
+  allowed_idps              = [cloudflare_access_identity_provider.%[1]s.id]
 
   depends_on = ["cloudflare_access_identity_provider.%[1]s"]
 }
