@@ -3,15 +3,71 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_access_application", &resource.Sweeper{
+		Name: "cloudflare_access_application",
+		F:    testSweepCloudflareAccessApplicatons,
+	})
+}
+
+func testSweepCloudflareAccessApplicatons(r string) error {
+	ctx := context.Background()
+
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	// Zone level Access Applications.
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneAccessApps, _, err := client.ZoneLevelAccessApplications(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Applications: %s", err))
+	}
+
+	if len(zoneAccessApps) == 0 {
+		log.Print("[DEBUG] No Cloudflare zone level Access Applications to sweep")
+		return nil
+	}
+
+	for _, accessApp := range zoneAccessApps {
+		if err := client.DeleteZoneLevelAccessApplication(context.Background(), zoneID, accessApp.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Application %s", accessApp.ID))
+		}
+	}
+
+	// Account level Access Applications.
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountAccessApps, _, err := client.AccessApplications(context.Background(), accountID, cloudflare.PaginationOptions{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Applications: %s", err))
+	}
+
+	if len(accountAccessApps) == 0 {
+		log.Print("[DEBUG] No Cloudflare account level Access Applications to sweep")
+		return nil
+	}
+
+	for _, accessApp := range accountAccessApps {
+		if err := client.DeleteAccessApplication(context.Background(), accountID, accessApp.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Application %s", accessApp.ID))
+		}
+	}
+
+	return nil
+}
 
 var (
 	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -256,7 +312,7 @@ func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) 
 				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2),
 			},
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdpsReordered(rnd, zoneID, domain, accountID, idp1, idp2),
+				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp2, idp1),
 			},
 		},
 	})
@@ -541,6 +597,7 @@ resource "cloudflare_access_identity_provider" "%[5]s" {
   name = "%[5]s"
   type = "onetimepin"
 }
+
 resource "cloudflare_access_identity_provider" "%[6]s" {
   account_id = "%[4]s"
   name = "%[6]s"
@@ -549,48 +606,17 @@ resource "cloudflare_access_identity_provider" "%[6]s" {
     client_id = "test"
     client_secret = "secret"
   }
-}
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  auto_redirect_to_identity = true
-  allowed_idps              = [
-    cloudflare_access_identity_provider.%[5]s.id,
-    cloudflare_access_identity_provider.%[6]s.id,
-  ]
-}
-`, rnd, zoneID, domain, accountID, idp1, idp2)
 }
 
-func testAccCloudflareAccessApplicationConfigWithMultipleIdpsReordered(rnd, zoneID, domain, accountID, idp1, idp2 string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[5]s" {
-  account_id = "%[4]s"
-  name = "%[5]s"
-  type = "onetimepin"
-}
-resource "cloudflare_access_identity_provider" "%[6]s" {
-  account_id = "%[4]s"
-  name = "%[6]s"
-  type = "github"
-  config {
-    client_id = "test"
-    client_secret = "secret"
-  }
-}
 resource "cloudflare_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
   type                      = "self_hosted"
   session_duration          = "24h"
-  auto_redirect_to_identity = true
   allowed_idps              = [
-    cloudflare_access_identity_provider.%[6]s.id,
     cloudflare_access_identity_provider.%[5]s.id,
+    cloudflare_access_identity_provider.%[6]s.id,
   ]
 }
 `, rnd, zoneID, domain, accountID, idp1, idp2)
