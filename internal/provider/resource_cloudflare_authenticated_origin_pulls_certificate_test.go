@@ -68,6 +68,8 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
+	t.Skip("Skipping zone level AOP pending investigation into correct test setup for reproducibility")
+
 	var perZoneAOP cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()

@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,12 +24,14 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			StateFunc: func(i interface{}) string {
 				return strings.ToLower(i.(string))
 			},
-			Description: "DNS record name (or @ for the zone apex).",
+
+			Description: "The name of the record.",
 		},
 
 		"hostname": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The FQDN of the record.",
 		},
 
 		"type": {
@@ -36,7 +39,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Required:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.StringInSlice([]string{"A", "AAAA", "CAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR", "HTTPS"}, false),
-			Description:  "DNS record type.",
+			Description:  fmt.Sprintf("The type of the record. %s", renderAvailableDocumentationValuesStringSlice([]string{"A", "AAAA", "CAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR", "HTTPS"})),
 		},
 
 		"value": {
@@ -45,7 +48,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Computed:         true,
 			ConflictsWith:    []string{"data"},
 			DiffSuppressFunc: suppressTrailingDots,
-			Description:      "DNS record value.",
+			Description:      "The value of the record.",
 		},
 
 		"data": {
@@ -53,7 +56,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			MaxItems:      1,
 			Optional:      true,
 			ConflictsWith: []string{"value"},
-			Description:   "Metadata about the record.",
+			Description:   "Map of attributes that constitute the record value.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					// Properties present in several record types
@@ -238,49 +241,51 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Type:        schema.TypeInt,
 			Optional:    true,
 			Computed:    true,
-			Description: "Time to live, in seconds, of the DNS record. Must be between 60 and 86400, or 1 for 'automatic'.",
+			Description: "The TTL of the record.",
 		},
 
 		"priority": {
 			Type:             schema.TypeInt,
 			Optional:         true,
 			DiffSuppressFunc: suppressPriority,
-			Description:      "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
+			Description:      "The priority of the record.",
 		},
 
 		"proxied": {
 			Optional:    true,
 			Type:        schema.TypeBool,
-			Description: "Whether the record is receiving the performance and security benefits of Cloudflare's network.",
+			Description: "Whether the record gets Cloudflare's origin protection.",
 		},
 
 		"created_on": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			Description: "When the record was created.",
+			Description: "The RFC3339 timestamp of when the record was created.",
 		},
 
 		"metadata": {
-			Type:     schema.TypeMap,
-			Computed: true,
+			Type:        schema.TypeMap,
+			Computed:    true,
+			Description: "A key-value map of string metadata Cloudflare associates with the record.",
 		},
 
 		"modified_on": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			Description: "The date and time the record was last modified.",
+			Description: "The RFC3339 timestamp of when the record was last modified.",
 		},
 
 		"proxiable": {
 			Type:        schema.TypeBool,
 			Computed:    true,
-			Description: "Whether the record can be proxied by Cloudflare or not.",
+			Description: "Shows whether this record can be proxied.",
 		},
 
 		"allow_overwrite": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Allow creation of this record in Terraform to overwrite an existing record, if any. This does not affect the ability to update the record in Terraform and does not prevent other resources within Terraform or manual changes outside Terraform from overwriting this record. **This configuration is not recommended for most environments**",
 		},
 
 		"comment": {

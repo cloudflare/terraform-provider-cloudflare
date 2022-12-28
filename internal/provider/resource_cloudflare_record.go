@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,7 +24,7 @@ func resourceCloudflareRecord() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareRecordImport,
 		},
-
+		Description:   heredoc.Doc(`Provides a Cloudflare record resource.`),
 		SchemaVersion: 2,
 		Schema:        resourceCloudflareRecordSchema(),
 		Timeouts: &schema.ResourceTimeout{

@@ -1,4 +1,6 @@
-## 3.31.0 (Unreleased)
+## 3.32.0 (Unreleased)
+
+## 3.31.0 (December 28th, 2022)
 
 NOTES:
 
@@ -7,6 +9,11 @@ NOTES:
 FEATURES:
 
 * **New Resource:** `cloudflare_tiered_cache` ([#2101](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2101))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: makes allowed_idps type to set ([#2094](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2094))
+* resource/cloudflare_custom_hostname: add support for defining custom metadata ([#2107](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2107))
 
 BUG FIXES:
 
