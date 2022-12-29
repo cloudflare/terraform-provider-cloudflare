@@ -81,7 +81,7 @@ resource "cloudflare_list" "example" {
 ### Optional
 
 - `description` (String) An optional description of the list.
-- `item` (Block List) (see [below for nested schema](#nestedblock--item))
+- `item` (Block Set) (see [below for nested schema](#nestedblock--item))
 
 ### Read-Only
 

@@ -1,11 +1,13 @@
 resource "cloudflare_workers_kv_namespace" "my_namespace" {
-  title = "example"
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  title      = "example"
 }
 
 # Sets the script with the name "script_1"
 resource "cloudflare_worker_script" "my_script" {
-  name    = "script_1"
-  content = file("script.js")
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "script_1"
+  content    = file("script.js")
 
   kv_namespace_binding {
     name         = "MY_EXAMPLE_KV_NAMESPACE"
@@ -36,5 +38,10 @@ resource "cloudflare_worker_script" "my_script" {
   r2_bucket_binding {
     name        = "MY_BUCKET"
     bucket_name = "MY_BUCKET_NAME"
+  }
+
+  analytics_engine_binding {
+    name    = "MY_DATASET"
+    dataset = "dataset1"
   }
 }

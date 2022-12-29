@@ -34,7 +34,6 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
 	appType := d.Get("type").(string)
 
 	newAccessApplication := cloudflare.AccessApplication{
@@ -54,8 +53,8 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		ServiceAuth401Redirect:  cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
 	}
 
-	if len(allowedIDPList) > 0 {
-		newAccessApplication.AllowedIdps = allowedIDPList
+	if value, ok := d.GetOk("allowed_idps"); ok {
+		newAccessApplication.AllowedIdps = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
@@ -150,7 +149,6 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	allowedIDPList := expandInterfaceToStringList(d.Get("allowed_idps"))
 	appType := d.Get("type").(string)
 
 	updatedAccessApplication := cloudflare.AccessApplication{
@@ -175,8 +173,8 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		updatedAccessApplication.Domain = d.Get("domain").(string)
 	}
 
-	if len(allowedIDPList) > 0 {
-		updatedAccessApplication.AllowedIdps = allowedIDPList
+	if value, ok := d.GetOk("allowed_idps"); ok {
+		updatedAccessApplication.AllowedIdps = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {

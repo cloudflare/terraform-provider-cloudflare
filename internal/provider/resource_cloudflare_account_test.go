@@ -8,6 +8,7 @@ import (
 )
 
 func TestAccCloudflareAccount_Basic(t *testing.T) {
+	t.Skip("Skipping until PT-792 is addressed")
 	t.Parallel()
 
 	rnd := generateRandomResourceName()
@@ -52,7 +53,7 @@ func testAccCheckCloudflareAccountName(rnd, name string) string {
 }
 
 func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
-	t.Parallel()
+	t.Skip("Skipping until PT-792 is addressed")
 
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_account.%s", rnd)

@@ -1,8 +1,45 @@
-## 3.30.0 (Unreleased)
+## 3.32.0 (Unreleased)
+
+## 3.31.0 (December 28th, 2022)
+
+NOTES:
+
+* resource/cloudflare_worker_script: supports explicit `account_id` instead of inheriting global values ([#2102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2102))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_tiered_cache` ([#2101](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2101))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: makes allowed_idps type to set ([#2094](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2094))
+* resource/cloudflare_custom_hostname: add support for defining custom metadata ([#2107](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2107))
+
+BUG FIXES:
+
+* resource/cloudflare_api_shield: allow for empty auth_id_characteristics ([#2091](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2091))
+* resource/cloudflare_ruleset: allow edge_ttl -> default to be optional ([#2097](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2097))
+
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 6 to 7 ([#2098](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2098))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.56.0 to 0.57.0 ([#2102](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2102))
+
+## 3.30.0 (December 14th, 2022)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_load_balancer_pools` ([#1228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1228))
+* **New Resource:** `cloudflare_url_normalization_settings` ([#1878](https://github.com/cloudflare/terraform-provider-cloudflare/issues/1878))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_workers_script: add support for `analytics_engine_binding` bindings ([#2051](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2051))
 
 BUG FIXES:
 
 * resource/access_application: fix issue where session_duration always showed a diff for bookmark apps ([#2076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2076))
+* resource/cloudflare_ruleset: fix issue where SSL setting is based of security level ([#2088](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2088))
 * resource/cloudflare_split_tunnel: handle nested attribute changes and ignore ordering ([#2066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2066))
 
 DEPENDENCIES:

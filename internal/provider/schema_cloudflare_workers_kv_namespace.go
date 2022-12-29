@@ -11,8 +11,9 @@ func resourceCloudflareWorkersKVNamespaceSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"title": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Title value of the Worker KV Namespace.",
 		},
 	}
 }

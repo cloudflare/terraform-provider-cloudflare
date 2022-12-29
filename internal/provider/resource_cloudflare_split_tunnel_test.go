@@ -22,7 +22,7 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
@@ -62,7 +62,7 @@ func TestAccCloudflareSplitTunnel_ConflictingTunnelProperties(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
@@ -143,7 +143,7 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
@@ -172,7 +172,7 @@ func TestAccCloudflareSplitTunnel_IncludeTunnelOrdering(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{

@@ -98,8 +98,28 @@ var r2BucketBindingResource = &schema.Resource{
 	},
 }
 
+var analyticsEngineBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"name": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
+		},
+		"dataset": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the Analytics Engine dataset to write to.",
+		},
+	},
+}
+
 func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"account_id": {
+			Description: "The account identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
 		"name": {
 			Type:        schema.TypeString,
 			Required:    true,
@@ -145,6 +165,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     r2BucketBindingResource,
+		},
+		"analytics_engine_binding": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     analyticsEngineBindingResource,
 		},
 	}
 }

@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: fix issue where SSL setting is based of security level
+```

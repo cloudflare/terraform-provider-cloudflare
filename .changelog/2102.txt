@@ -1,0 +1,7 @@
+```release-note:dependency
+provider: bumps github.com/cloudflare/cloudflare-go from 0.56.0 to 0.57.0
+```
+
+```release-note:note
+resource/cloudflare_worker_script: supports explicit `account_id` instead of inheriting global values
+```

@@ -16,13 +16,15 @@ Provides a Cloudflare worker script resource. In order for a script to be active
 
 ```terraform
 resource "cloudflare_workers_kv_namespace" "my_namespace" {
-  title = "example"
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  title      = "example"
 }
 
 # Sets the script with the name "script_1"
 resource "cloudflare_worker_script" "my_script" {
-  name    = "script_1"
-  content = file("script.js")
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "script_1"
+  content    = file("script.js")
 
   kv_namespace_binding {
     name         = "MY_EXAMPLE_KV_NAMESPACE"
@@ -54,6 +56,11 @@ resource "cloudflare_worker_script" "my_script" {
     name        = "MY_BUCKET"
     bucket_name = "MY_BUCKET_NAME"
   }
+
+  analytics_engine_binding {
+    name    = "MY_DATASET"
+    dataset = "dataset1"
+  }
 }
 ```
 
@@ -67,6 +74,8 @@ resource "cloudflare_worker_script" "my_script" {
 
 ### Optional
 
+- `account_id` (String) The account identifier to target for the resource.
+- `analytics_engine_binding` (Block Set) (see [below for nested schema](#nestedblock--analytics_engine_binding))
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `module` (Boolean) Whether to upload Worker as a module.
 - `plain_text_binding` (Block Set) (see [below for nested schema](#nestedblock--plain_text_binding))
@@ -78,6 +87,15 @@ resource "cloudflare_worker_script" "my_script" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--analytics_engine_binding"></a>
+### Nested Schema for `analytics_engine_binding`
+
+Required:
+
+- `dataset` (String) The name of the Analytics Engine dataset to write to.
+- `name` (String) The global variable for the binding in your Worker code.
+
 
 <a id="nestedblock--kv_namespace_binding"></a>
 ### Nested Schema for `kv_namespace_binding`
@@ -141,5 +159,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_worker_script.example <script_name>
+$ terraform import cloudflare_worker_script.example <account_id>/<script_name>
 ```

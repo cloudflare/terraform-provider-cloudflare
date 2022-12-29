@@ -53,8 +53,8 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 
 type ScriptBindings map[string]cloudflare.WorkerBinding
 
-func getWorkerScriptBindings(ctx context.Context, scriptName string, client *cloudflare.API) (ScriptBindings, error) {
-	resp, err := client.ListWorkerBindings(ctx, &cloudflare.WorkerRequestParams{ScriptName: scriptName})
+func getWorkerScriptBindings(ctx context.Context, accountId, scriptName string, client *cloudflare.API) (ScriptBindings, error) {
+	resp, err := client.ListWorkerBindings(ctx, cloudflare.AccountIdentifier(accountId), cloudflare.ListWorkerBindingsParams{ScriptName: scriptName})
 	if err != nil {
 		return nil, fmt.Errorf("cannot list script bindings: %w", err)
 	}
@@ -112,10 +112,22 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			BucketName: data["bucket_name"].(string),
 		}
 	}
+
+	for _, rawData := range d.Get("analytics_engine_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerAnalyticsEngineBinding{
+			Dataset: data["dataset"].(string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
+
+	if accountID == "" {
+		accountID = client.AccountID
+	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -123,7 +135,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 	}
 
 	// make sure that the worker does not already exist
-	r, _ := client.DownloadWorker(ctx, &scriptData.Params)
+	r, _ := client.GetWorker(ctx, cloudflare.AccountIdentifier(accountID), scriptData.Params.ScriptName)
 	if r.WorkerScript.Script != "" {
 		return diag.FromErr(fmt.Errorf("script already exists"))
 	}
@@ -139,13 +151,12 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
-	scriptParams := cloudflare.WorkerScriptParams{
-		Script:   scriptBody,
-		Module:   d.Get("module").(bool),
-		Bindings: bindings,
-	}
-
-	_, err = client.UploadWorkerWithBindings(ctx, &scriptData.Params, &scriptParams)
+	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
+		ScriptName: scriptData.Params.ScriptName,
+		Script:     scriptBody,
+		Module:     d.Get("module").(bool),
+		Bindings:   bindings,
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
 	}
@@ -157,13 +168,18 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
+
+	if accountID == "" {
+		accountID = client.AccountID
+	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	r, err := client.DownloadWorker(ctx, &scriptData.Params)
+	r, err := client.GetWorker(ctx, cloudflare.AccountIdentifier(accountID), scriptData.Params.ScriptName)
 	if err != nil {
 		// If the resource is deleted, we should set the ID to "" and not
 		// return an error according to the terraform spec
@@ -181,7 +197,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 
 	parseWorkerBindings(d, existingBindings)
 
-	bindings, err := getWorkerScriptBindings(ctx, d.Get("name").(string), client)
+	bindings, err := getWorkerScriptBindings(ctx, accountID, d.Get("name").(string), client)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -192,6 +208,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	webAssemblyBindings := &schema.Set{F: schema.HashResource(webAssemblyBindingResource)}
 	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
 	r2BucketBindings := &schema.Set{F: schema.HashResource(r2BucketBindingResource)}
+	analyticsEngineBindings := &schema.Set{F: schema.HashResource(analyticsEngineBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -235,6 +252,11 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"name":        name,
 				"bucket_name": v.BucketName,
 			})
+		case cloudflare.WorkerAnalyticsEngineBinding:
+			analyticsEngineBindings.Add(map[string]interface{}{
+				"name":    name,
+				"dataset": v.Dataset,
+			})
 		}
 	}
 
@@ -266,11 +288,22 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("cannot set r2 bucket bindings (%s): %w", d.Id(), err))
 	}
 
+	if err := d.Set("analytics_engine_binding", analyticsEngineBindings); err != nil {
+		return diag.FromErr(fmt.Errorf("cannot set analytics engine bindings (%s): %w", d.Id(), err))
+	}
+
+	d.SetId(scriptData.ID)
+
 	return nil
 }
 
 func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
+
+	if accountID == "" {
+		accountID = client.AccountID
+	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -288,13 +321,12 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
-	scriptParams := cloudflare.WorkerScriptParams{
-		Script:   scriptBody,
-		Module:   d.Get("module").(bool),
-		Bindings: bindings,
-	}
-
-	_, err = client.UploadWorkerWithBindings(ctx, &scriptData.Params, &scriptParams)
+	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
+		ScriptName: scriptData.Params.ScriptName,
+		Script:     scriptBody,
+		Module:     d.Get("module").(bool),
+		Bindings:   bindings,
+	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating worker script"))
 	}
@@ -304,6 +336,11 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
+	accountID := d.Get("account_id").(string)
+
+	if accountID == "" {
+		accountID = client.AccountID
+	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -312,7 +349,9 @@ func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
-	_, err = client.DeleteWorker(ctx, &scriptData.Params)
+	err = client.DeleteWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.DeleteWorkerParams{
+		ScriptName: scriptData.Params.ScriptName,
+	})
 	if err != nil {
 		// If the resource is already deleted, we should return without an error
 		// according to the terraform spec
@@ -328,10 +367,18 @@ func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.Resourc
 }
 
 func resourceCloudflareWorkerScriptImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	scriptID := d.Id()
-	_ = d.Set("name", scriptID)
+	attributes := strings.SplitN(d.Id(), "/", 2)
 
-	_ = resourceCloudflareWorkerScriptRead(ctx, d, meta)
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/scriptName"`, d.Id())
+	}
+
+	accountID, scriptName := attributes[0], attributes[1]
+
+	d.Set("name", scriptName)
+	d.Set("account_id", accountID)
+
+	resourceCloudflareWorkerScriptRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

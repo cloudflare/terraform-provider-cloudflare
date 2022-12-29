@@ -68,6 +68,8 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
+	t.Skip("Skipping zone level AOP pending investigation into correct test setup for reproducibility")
+
 	var perZoneAOP cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -94,6 +96,8 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.T) {
+	t.Skip("Skipping hostname level AOP pending investigation into correct test setup for reproducibility")
+
 	var perZoneAOP cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()

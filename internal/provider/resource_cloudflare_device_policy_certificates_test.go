@@ -21,7 +21,7 @@ func TestAccCloudflareDevicePolicyCertificatesCreate(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccessAccPreCheck(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDevicePostureIntegrationDestroy,

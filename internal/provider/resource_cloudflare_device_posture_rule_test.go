@@ -25,7 +25,6 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
@@ -59,7 +58,6 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
@@ -94,7 +92,6 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
@@ -130,7 +127,6 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
@@ -164,7 +160,6 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
@@ -200,7 +195,6 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,

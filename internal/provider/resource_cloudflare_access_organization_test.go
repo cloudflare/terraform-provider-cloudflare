@@ -16,7 +16,6 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 			testAccPreCheck(t)
-			testAccessAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
