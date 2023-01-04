@@ -1,5 +1,9 @@
 ## 3.32.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.57.1 to 0.58.1 ([#2122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2122))
+
 ## 3.31.0 (December 28th, 2022)
 
 NOTES:
