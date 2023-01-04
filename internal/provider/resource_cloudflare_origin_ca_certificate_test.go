@@ -33,7 +33,7 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckApiUserServiceKey(t)
+			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareOriginCACertificateDestroy,
@@ -111,7 +111,7 @@ func testAccCheckCloudflareOriginCACertificateDestroy(s *terraform.State) error 
 			continue
 		}
 
-		cert, err := client.OriginCertificate(context.Background(), rs.Primary.ID)
+		cert, err := client.GetOriginCACertificate(context.Background(), rs.Primary.ID)
 		if err == nil && cert.RevokedAt == (time.Time{}) {
 			return fmt.Errorf("Origin CA Certificate still exists: %s", rs.Primary.ID)
 		}
@@ -132,7 +132,7 @@ func testAccCheckCloudflareOriginCACertificateExists(name string, cert *cloudfla
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundOriginCACertificate, err := client.OriginCertificate(context.Background(), rs.Primary.ID)
+		foundOriginCACertificate, err := client.GetOriginCACertificate(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
