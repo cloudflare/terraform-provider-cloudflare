@@ -72,7 +72,7 @@ These can be specified as "on" or "off" string. Similar to boolean values, but h
 - `http3` (default: `off`)
 - `ip_geolocation` (default: `on`)
 - `ipv6` (default: `off`)
-- `log_to_cloudflare` (default: `off`)
+- `log_to_cloudflare` (default: `off`). Note that it should be provided only if China Network has been enabled for the zone
 - `mirage` (default: `off`)
 - `opportunistic_encryption` (default value depends on the zone's plan level)
 - `opportunistic_onion` (default: `off`)
