@@ -79,7 +79,7 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	searchRecord := cloudflare.DNSRecord{
+	searchRecord := cloudflare.ListDNSRecordsParams{
 		Name: d.Get("hostname").(string),
 		Type: d.Get("type").(string),
 	}
@@ -88,7 +88,7 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 		searchRecord.Priority = cloudflare.Uint16Ptr(p)
 	}
 
-	records, err := client.DNSRecords(ctx, zoneID, searchRecord)
+	records, _, err := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(zoneID), searchRecord)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing DNS records: %w", err))
 	}
