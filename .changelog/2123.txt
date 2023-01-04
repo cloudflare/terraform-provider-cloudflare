@@ -1,0 +1,7 @@
+```release-note:enhancement
+provider: use inbuilt cloudflare-go logger for HTTP interactions
+```
+
+```release-note:enhancement
+provider: `X-Auth-Email`, `X-Auth-Key`, `X-Auth-User-Service-Key` and `Authorization` values are now automatically redacted from debug logs
+```
