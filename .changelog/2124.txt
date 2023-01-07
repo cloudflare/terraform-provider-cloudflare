@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_origin_ca: support all authentication schemes
+```
