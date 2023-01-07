@@ -79,10 +79,6 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				environment_variables = {
 					ENVIRONMENT = "preview"
 				}
-				secret {
-					name = "SECRET"
-					text = "%[1]s"
-				}
 				kv_namespaces = {
 					KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
 				}
@@ -132,14 +128,6 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 					service = "my-service"
 					environment = "production"
 				}
-				secret {
-					name = "SECRET1"
-					text = "%[1]s"
-				}
-				secret {
-					name = "SECRET2"
-					text = "%[1]s-2"
-				}
 				compatibility_date = "2022-08-16"
 				compatibility_flags = ["production_flag", "second flag"]
 				fail_open = true
@@ -163,7 +151,7 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
+	//t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
@@ -276,7 +264,6 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.fail_open", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.always_use_latest_compatibility_date", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.usage_model", "unbound"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.secret.#", "1"),
 
 					// Production
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.%", "2"),
@@ -306,7 +293,6 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.fail_open", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.always_use_latest_compatibility_date", "false"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.usage_model", "bundled"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secret.#", "2"),
 				),
 			},
 		},

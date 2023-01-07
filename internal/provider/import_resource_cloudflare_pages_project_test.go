@@ -41,10 +41,6 @@ func testPagesProjectFull(resourceID, accountID, projectName, repoOwner, repoNam
 				environment_variables = {
 					ENVIRONMENT = "preview"
 				}
-				secret {
-					name = "SECRET"
-					text =	"secret"
-				}
 				kv_namespaces = {
 					KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
 				}
@@ -64,10 +60,6 @@ func testPagesProjectFull(resourceID, accountID, projectName, repoOwner, repoNam
 				environment_variables = {
 					ENVIRONMENT = "production"
 					OTHER_VALUE = "other value"
-				}
-				secret {
-					name = "SECRET1"
-					text =	"secret1"
 				}
 				kv_namespaces = {
 					KV_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
