@@ -298,6 +298,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record update configuration: %#v", updateRecord))
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
+		updateRecord.ID = d.Id()
 		err := client.UpdateDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), updateRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
