@@ -220,6 +220,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_device_policy_certificates":             resourceCloudflareDevicePolicyCertificates(),
 				"cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
 				"cloudflare_device_posture_rule":                    resourceCloudflareDevicePostureRule(),
+				"cloudflare_device_managed_networks":                resourceCloudflareDeviceManagedNetworks(),
 				"cloudflare_dlp_profile":                            resourceCloudflareDLPProfile(),
 				"cloudflare_email_routing_address":                  resourceCloudflareEmailRoutingAddress(),
 				"cloudflare_email_routing_catch_all":                resourceCloudflareEmailRoutingCatchAll(),
