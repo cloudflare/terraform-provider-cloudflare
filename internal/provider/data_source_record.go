@@ -83,10 +83,6 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 		Name: d.Get("hostname").(string),
 		Type: d.Get("type").(string),
 	}
-	if priority, ok := d.GetOkExists("priority"); ok {
-		p := uint16(priority.(int))
-		searchRecord.Priority = cloudflare.Uint16Ptr(p)
-	}
 
 	records, _, err := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(zoneID), searchRecord)
 	if err != nil {
@@ -100,8 +96,12 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	if len(records) != 1 && !contains([]string{"MX", "URI"}, searchRecord.Type) {
 		return diag.Errorf("only wanted 1 DNS record. Got %d records", len(records))
 	} else {
+		var p uint16
+		if priority, ok := d.GetOkExists("priority"); ok {
+			p = uint16(priority.(int))
+		}
 		for _, record := range records {
-			if cloudflare.Uint16(record.Priority) == cloudflare.Uint16(searchRecord.Priority) {
+			if cloudflare.Uint16(record.Priority) == p {
 				records = []cloudflare.DNSRecord{record}
 				break
 			}

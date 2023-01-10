@@ -167,7 +167,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		// In the event that the API returns an empty DNS Record, we verify that the
 		// ID returned is not the default ""
 		if r.Result.ID == "" {
-			return resource.NonRetryableError(fmt.Errorf("Failed to find record in Create response; Record was empty"))
+			return resource.NonRetryableError(fmt.Errorf("failed to find record in Create response; Record was empty"))
 		}
 
 		d.SetId(r.Result.ID)
@@ -233,6 +233,8 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 		tflog.Warn(ctx, fmt.Sprintf("Error setting metadata: %s", err))
 	}
 	d.Set("proxiable", record.Proxiable)
+	d.Set("comment", record.Comment)
+	d.Set("tags", record.Tags)
 
 	if record.Priority != nil {
 		priority := record.Priority

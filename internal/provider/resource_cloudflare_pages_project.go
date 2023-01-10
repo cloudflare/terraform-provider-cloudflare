@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"strings"
 	"time"
 
@@ -34,15 +33,19 @@ func resourceCloudflarePagesProject() *schema.Resource {
 func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeploymentConfigEnvironment {
 	config := cloudflare.PagesProjectDeploymentConfigEnvironment{}
 	parsed := environment.(map[string]interface{})
+	deploymentVariables := cloudflare.EnvironmentVariableMap{}
 	for key, value := range parsed {
 		switch key {
 		case "environment_variables":
-			deploymentVariables := cloudflare.EnvironmentVariableMap{}
 			variables := value.(map[string]interface{})
 			for i, variable := range variables {
-				deploymentVariables[i] = &cloudflare.EnvironmentVariable{Value: variable.(string)}
+				envVar := cloudflare.EnvironmentVariable{
+					Value: variable.(string),
+					Type:  cloudflare.PlainText,
+				}
+				deploymentVariables[i] = &envVar
 			}
-			config.EnvVars = deploymentVariables
+
 			break
 		case "kv_namespaces":
 			namespace := cloudflare.NamespaceBindingMap{}
@@ -84,21 +87,47 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 				config.CompatibilityFlags = append(config.CompatibilityFlags, item.(string))
 			}
 			break
+		case "fail_open":
+			config.FailOpen = value.(bool)
+			break
+		case "always_use_latest_compatibility_date":
+			config.AlwaysUseLatestCompatibilityDate = value.(bool)
+			break
+		case "usage_model":
+			config.UsageModel = cloudflare.UsageModel(value.(string))
+			break
+		case "service_binding":
+			serviceMap := cloudflare.ServiceBindingMap{}
+			for _, item := range value.(*schema.Set).List() {
+				data := item.(map[string]interface{})
+				serviceMap[data["name"].(string)] = &cloudflare.ServiceBinding{
+					Service:     data["service"].(string),
+					Environment: data["environment"].(string),
+				}
+			}
+			config.ServiceBindings = serviceMap
+			break
 		}
 	}
-
+	config.EnvVars = deploymentVariables
 	return config
 }
 
-func parseDeployementConfig(deployment cloudflare.PagesProjectDeploymentConfigEnvironment) (returnValue []map[string]interface{}) {
+func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnvironment) (returnValue []map[string]interface{}) {
 	config := make(map[string]interface{})
 
 	config["compatibility_date"] = deployment.CompatibilityDate
 	config["compatibility_flags"] = deployment.CompatibilityFlags
 
+	config["fail_open"] = deployment.FailOpen
+	config["always_use_latest_compatibility_date"] = deployment.AlwaysUseLatestCompatibilityDate
+	config["usage_model"] = deployment.UsageModel
+
 	deploymentVars := map[string]string{}
 	for key, value := range deployment.EnvVars {
-		deploymentVars[key] = value.Value
+		if value.Type == cloudflare.PlainText {
+			deploymentVars[key] = value.Value
+		}
 	}
 	config["environment_variables"] = deploymentVars
 
@@ -125,6 +154,16 @@ func parseDeployementConfig(deployment cloudflare.PagesProjectDeploymentConfigEn
 		deploymentVars[key] = value.ID
 	}
 	config["d1_databases"] = deploymentVars
+
+	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
+	for key, value := range deployment.ServiceBindings {
+		serviceBindings.Add(map[string]interface{}{
+			"name":        key,
+			"service":     value.Service,
+			"environment": value.Environment,
+		})
+	}
+	config["service_binding"] = serviceBindings
 
 	returnValue = append(returnValue, config)
 	return
@@ -228,7 +267,7 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	d.Set("created_on", project.CreatedOn.Format(time.RFC3339))
 
 	if project.Source != nil {
-		source := []map[string]interface{}{}
+		var source []map[string]interface{}
 		source = append(source, map[string]interface{}{
 			"type": project.Source.Type,
 			"config": []map[string]interface{}{
@@ -250,7 +289,7 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	}
 	emptyProjectBuildConfig := cloudflare.PagesProjectBuildConfig{}
 	if project.BuildConfig != emptyProjectBuildConfig {
-		buildConfig := []map[string]interface{}{}
+		var buildConfig []map[string]interface{}
 		buildConfig = append(buildConfig, map[string]interface{}{
 			"build_command":       project.BuildConfig.BuildCommand,
 			"destination_dir":     project.BuildConfig.DestinationDir,
@@ -262,21 +301,12 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 		d.Set("build_config", buildConfig)
 	}
 
-	emptyDeploymentConfig := cloudflare.PagesProjectDeploymentConfigs{}
-	if !reflect.DeepEqual(project.DeploymentConfigs, emptyDeploymentConfig) {
-		deploymentConfigs := []map[string]interface{}{}
-		deploymentConfig := make(map[string]interface{})
-		emptyDeploymentEnviroment := cloudflare.PagesProjectDeploymentConfigEnvironment{}
-		if !reflect.DeepEqual(project.DeploymentConfigs.Preview, emptyDeploymentEnviroment) {
-			deploymentConfig["preview"] = parseDeployementConfig(project.DeploymentConfigs.Preview)
-		}
-
-		if !reflect.DeepEqual(project.DeploymentConfigs.Production, emptyDeploymentEnviroment) {
-			deploymentConfig["production"] = parseDeployementConfig(project.DeploymentConfigs.Production)
-		}
-		deploymentConfigs = append(deploymentConfigs, deploymentConfig)
-		d.Set("deployment_configs", deploymentConfigs)
-	}
+	var deploymentConfigs []map[string]interface{}
+	deploymentConfig := make(map[string]interface{})
+	deploymentConfig["preview"] = parseDeploymentConfig(project.DeploymentConfigs.Preview)
+	deploymentConfig["production"] = parseDeploymentConfig(project.DeploymentConfigs.Production)
+	deploymentConfigs = append(deploymentConfigs, deploymentConfig)
+	d.Set("deployment_configs", deploymentConfigs)
 
 	return nil
 }
