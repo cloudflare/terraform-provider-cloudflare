@@ -1778,6 +1778,33 @@ func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ConfigurationRulesSingleFalseValue(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetConfigurationRuleSingleKeyFalseValue(rnd, "test configuration rule", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test configuration rule"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_config_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_config"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.automatic_https_rewrites", "false"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -3175,4 +3202,24 @@ func testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRules
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetConfigurationRuleSingleKeyFalseValue(rnd, name, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "%[1]s" {
+		zone_id 		= "%[3]s"
+		name     		= "%[2]s"
+		description = "%[2]s ruleset description"
+		kind 				= "zone"
+		phase   		= "http_config_settings"
+		rules {
+			action      = "set_config"
+			description = "ssss"
+			enabled     = true
+			expression  = "(http.cookie eq \"s\")"
+			action_parameters {
+				automatic_https_rewrites = false
+			}
+		}
+	}`, rnd, name, zoneID)
 }
