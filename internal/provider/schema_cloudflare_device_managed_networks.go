@@ -29,6 +29,7 @@ func resourceCloudflareDeviceManagedNetworksSchema() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			Required:    true,
 			Description: "The configuration containing information for the WARP client to detect the managed network.",
+			MaxItems:    1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"tls_sockaddr": {
