@@ -8,6 +8,7 @@ ENHANCEMENTS:
 
 * provider: `X-Auth-Email`, `X-Auth-Key`, `X-Auth-User-Service-Key` and `Authorization` values are now automatically redacted from debug logs ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
 * provider: use inbuilt cloudflare-go logger for HTTP interactions ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
+* resource/cloudflare_device_posture_rule: add ability to create crowdstrike s2s posture rule creation ([#2128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2128))
 * resource/cloudflare_origin_ca: support all authentication schemes ([#2124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2124))
 * resource/cloudflare_pages_project: adds support for `always_use_latest_compatibility_date`, `fail_open`, `service_binding` and `usage_model` ([#2083](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2083))
 * resource/cloudflare_record: add support for tags and comments. ([#2105](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2105))
