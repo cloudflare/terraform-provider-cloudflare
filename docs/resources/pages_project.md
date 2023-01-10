@@ -148,23 +148,40 @@ Optional:
 <a id="nestedblock--deployment_configs"></a>
 ### Nested Schema for `deployment_configs`
 
-Optional:
+Required:
 
-- `preview` (Block List, Max: 1) Configuration for preview deploys. (see [below for nested schema](#nestedblock--deployment_configs--preview))
-- `production` (Block List, Max: 1) Configuration for production deploys. (see [below for nested schema](#nestedblock--deployment_configs--production))
+- `preview` (Block List, Min: 1, Max: 1) Configuration for preview deploys. (see [below for nested schema](#nestedblock--deployment_configs--preview))
+- `production` (Block List, Min: 1, Max: 1) Configuration for production deploys. (see [below for nested schema](#nestedblock--deployment_configs--production))
 
 <a id="nestedblock--deployment_configs--preview"></a>
 ### Nested Schema for `deployment_configs.preview`
 
 Optional:
 
+- `always_use_latest_compatibility_date` (Boolean) Use latest compatibility date for Pages Functions. Defaults to `false`.
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Map of String) D1 Databases used for Pages Functions.
 - `durable_object_namespaces` (Map of String) Durable Object namespaces used for Pages Functions.
 - `environment_variables` (Map of String) Environment variables for Pages Functions.
+- `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
+- `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--preview--service_binding))
+- `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
+
+<a id="nestedblock--deployment_configs--preview--service_binding"></a>
+### Nested Schema for `deployment_configs.preview.service_binding`
+
+Required:
+
+- `name` (String) The global variable for the binding in your Worker code.
+- `service` (String) The name of the Worker to bind to.
+
+Optional:
+
+- `environment` (String) The name of the Worker environment to bind to.
+
 
 
 <a id="nestedblock--deployment_configs--production"></a>
@@ -172,13 +189,30 @@ Optional:
 
 Optional:
 
+- `always_use_latest_compatibility_date` (Boolean) Use latest compatibility date for Pages Functions. Defaults to `false`.
 - `compatibility_date` (String) Compatibility date used for Pages Functions.
 - `compatibility_flags` (List of String) Compatibility flags used for Pages Functions.
 - `d1_databases` (Map of String) D1 Databases used for Pages Functions.
 - `durable_object_namespaces` (Map of String) Durable Object namespaces used for Pages Functions.
 - `environment_variables` (Map of String) Environment variables for Pages Functions.
+- `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
+- `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--production--service_binding))
+- `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
+
+<a id="nestedblock--deployment_configs--production--service_binding"></a>
+### Nested Schema for `deployment_configs.production.service_binding`
+
+Required:
+
+- `name` (String) The global variable for the binding in your Worker code.
+- `service` (String) The name of the Worker to bind to.
+
+Optional:
+
+- `environment` (String) The name of the Worker environment to bind to.
+
 
 
 

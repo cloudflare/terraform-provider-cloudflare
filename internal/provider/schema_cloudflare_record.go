@@ -24,6 +24,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			StateFunc: func(i interface{}) string {
 				return strings.ToLower(i.(string))
 			},
+
 			Description: "The name of the record.",
 		},
 
@@ -279,11 +280,25 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Computed:    true,
 			Description: "Shows whether this record can be proxied.",
 		},
+
 		"allow_overwrite": {
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Default:     false,
 			Description: "Allow creation of this record in Terraform to overwrite an existing record, if any. This does not affect the ability to update the record in Terraform and does not prevent other resources within Terraform or manual changes outside Terraform from overwriting this record. **This configuration is not recommended for most environments**",
+		},
+
+		"comment": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+		},
+
+		"tags": {
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+			Description: "Custom tags for the DNS record.",
 		},
 	}
 }

@@ -4,13 +4,10 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
@@ -223,6 +220,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_device_policy_certificates":             resourceCloudflareDevicePolicyCertificates(),
 				"cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
 				"cloudflare_device_posture_rule":                    resourceCloudflareDevicePostureRule(),
+				"cloudflare_device_managed_networks":                resourceCloudflareDeviceManagedNetworks(),
 				"cloudflare_dlp_profile":                            resourceCloudflareDLPProfile(),
 				"cloudflare_email_routing_address":                  resourceCloudflareEmailRoutingAddress(),
 				"cloudflare_email_routing_catch_all":                resourceCloudflareEmailRoutingCatchAll(),
@@ -296,7 +294,6 @@ func New(version string) func() *schema.Provider {
 }
 
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
-
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		var diags diag.Diagnostics
 
@@ -307,13 +304,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		retryOpt := cloudflare.UsingRetryPolicy(d.Get("retries").(int), d.Get("min_backoff").(int), d.Get("max_backoff").(int))
 		options := []cloudflare.Option{limitOpt, retryOpt, baseURL}
 
-		if d.Get("api_client_logging").(bool) {
-			options = append(options, cloudflare.UsingLogger(log.New(os.Stderr, "", log.LstdFlags)))
-		}
-
-		c := cleanhttp.DefaultClient()
-		c.Transport = logging.NewTransport("Cloudflare", c.Transport)
-		options = append(options, cloudflare.HTTPClient(c))
+		options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
 		ua := fmt.Sprintf("terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s", p.TerraformVersion, meta.SDKVersionString(), version)
 		options = append(options, cloudflare.UserAgent(ua))

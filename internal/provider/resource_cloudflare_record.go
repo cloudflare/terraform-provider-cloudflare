@@ -44,7 +44,7 @@ func resourceCloudflareRecord() *schema.Resource {
 func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	newRecord := cloudflare.DNSRecord{
+	newRecord := cloudflare.CreateDNSRecordParams{
 		Type:   d.Get("type").(string),
 		Name:   d.Get("name").(string),
 		ZoneID: d.Get("zone_id").(string),
@@ -123,25 +123,25 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record create configuration: %#v", newRecord))
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-		r, err := client.CreateDNSRecord(ctx, newRecord.ZoneID, newRecord)
+		r, err := client.CreateDNSRecord(ctx, cloudflare.ZoneIdentifier(newRecord.ZoneID), newRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				if d.Get("allow_overwrite").(bool) {
-					var r cloudflare.DNSRecord
+					var r cloudflare.ListDNSRecordsParams
 					tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record already exists however we are overwriting it"))
 					zone, _ := client.ZoneDetails(ctx, d.Get("zone_id").(string))
 					if d.Get("name").(string) == "@" || d.Get("name").(string) == zone.Name {
-						r = cloudflare.DNSRecord{
+						r = cloudflare.ListDNSRecordsParams{
 							Name: zone.Name,
 							Type: d.Get("type").(string),
 						}
 					} else {
-						r = cloudflare.DNSRecord{
+						r = cloudflare.ListDNSRecordsParams{
 							Name: d.Get("name").(string) + "." + zone.Name,
 							Type: d.Get("type").(string),
 						}
 					}
-					rs, _ := client.DNSRecords(ctx, d.Get("zone_id").(string), r)
+					rs, _, _ := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(d.Get("zone_id").(string)), r)
 
 					if len(rs) != 1 {
 						return resource.RetryableError(fmt.Errorf("attempted to override existing record however didn't find an exact match"))
@@ -167,7 +167,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		// In the event that the API returns an empty DNS Record, we verify that the
 		// ID returned is not the default ""
 		if r.Result.ID == "" {
-			return resource.NonRetryableError(fmt.Errorf("Failed to find record in Create response; Record was empty"))
+			return resource.NonRetryableError(fmt.Errorf("failed to find record in Create response; Record was empty"))
 		}
 
 		d.SetId(r.Result.ID)
@@ -188,7 +188,7 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	record, err := client.DNSRecord(ctx, zoneID, d.Id())
+	record, err := client.GetDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -233,6 +233,8 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 		tflog.Warn(ctx, fmt.Sprintf("Error setting metadata: %s", err))
 	}
 	d.Set("proxiable", record.Proxiable)
+	d.Set("comment", record.Comment)
+	d.Set("tags", record.Tags)
 
 	if record.Priority != nil {
 		priority := record.Priority
@@ -247,7 +249,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get("zone_id").(string)
 
-	updateRecord := cloudflare.DNSRecord{
+	updateRecord := cloudflare.UpdateDNSRecordParams{
 		ID:      d.Id(),
 		Type:    d.Get("type").(string),
 		Name:    d.Get("name").(string),
@@ -296,7 +298,8 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record update configuration: %#v", updateRecord))
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
-		err := client.UpdateDNSRecord(ctx, zoneID, d.Id(), updateRecord)
+		updateRecord.ID = d.Id()
+		err := client.UpdateDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), updateRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
@@ -322,7 +325,7 @@ func resourceCloudflareRecordDelete(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Record: %s, %s", zoneID, d.Id()))
 
-	err := client.DeleteDNSRecord(ctx, zoneID, d.Id())
+	err := client.DeleteDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Record: %w", err))
 	}
@@ -358,7 +361,7 @@ func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData,
 		return nil, fmt.Errorf("invalid id %q specified, should be in format \"zoneID/recordID\" for import", d.Id())
 	}
 
-	record, err := client.DNSRecord(ctx, zoneID, recordID)
+	record, err := client.GetDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), recordID)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to find record with ID %q: %w", d.Id(), err)
 	}

@@ -1,5 +1,21 @@
 ## 3.32.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_device_managed_networks` ([#2126](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2126))
+
+ENHANCEMENTS:
+
+* provider: `X-Auth-Email`, `X-Auth-Key`, `X-Auth-User-Service-Key` and `Authorization` values are now automatically redacted from debug logs ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
+* provider: use inbuilt cloudflare-go logger for HTTP interactions ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
+* resource/cloudflare_origin_ca: support all authentication schemes ([#2124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2124))
+* resource/cloudflare_pages_project: adds support for `always_use_latest_compatibility_date`, `fail_open`, `service_binding` and `usage_model` ([#2083](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2083))
+* resource/cloudflare_record: add support for tags and comments. ([#2105](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2105))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.57.1 to 0.58.1 ([#2122](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2122))
+
 ## 3.31.0 (December 28th, 2022)
 
 NOTES:
