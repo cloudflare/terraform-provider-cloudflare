@@ -47,8 +47,6 @@ func resourceCloudflareDeviceManagedNetworksRead(ctx context.Context, d *schema.
 	d.Set("type", managedNetwork.Type)
 	d.Set("config", convertDeviceManagedNetworkConfigToSchema(managedNetwork.Config))
 
-	// TODO add config
-
 	return nil
 }
 
