@@ -235,7 +235,7 @@ func TestAccCloudflareDevicePostureRule_CrowdstrikeS2S(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryption(rnd, accountID),
+				Config: testAccCloudflareDevicePostureRuleConfigCrowdstrikeS2S(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -347,6 +347,29 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	}
 	input {
 		require_all = true
+	}
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareDevicePostureRuleConfigCrowdstrikeS2S(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_device_posture_rule" "%[1]s" {
+	account_id                = "%[2]s"
+	name                      = "%[1]s"
+	type                      = "crowdstrike_s2s"
+	description               = "My description"
+	schedule                  = "24h"
+	expiration                = "24h"
+
+	match {
+		platform = "mac"
+	}
+
+	input {
+		connection_id = "af8d87a7-1272-4932-92b8-208ffbead88e"
+		version_operator = "<>"
+		version = true
 	}
 }
 `, rnd, accountID)
