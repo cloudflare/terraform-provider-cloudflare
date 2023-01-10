@@ -216,6 +216,43 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareDevicePostureRule_CrowdstrikeS2S(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryption(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "crowdstrike_s2s"),
+					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "schedule", "24h"),
+					resource.TestCheckResourceAttr(name, "expiration", "24h"),
+					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
+					resource.TestCheckResourceAttr(name, "input.0.connection_id", "af8d87a7-1272-4932-92b8-208ffbead88e"),
+					resource.TestCheckResourceAttr(name, "input.0.version_operator", "<>"),
+					resource.TestCheckResourceAttr(name, "input.0.version", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_device_posture_rule" "%[1]s" {

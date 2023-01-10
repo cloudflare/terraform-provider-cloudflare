@@ -39,7 +39,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`.
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`.
 
 ### Optional
 
@@ -74,6 +74,11 @@ Optional:
 - `sha256` (String) The sha256 hash of the file.
 - `thumbprint` (String) The thumbprint of the file certificate.
 - `version` (String) The operating system semantic version.
+- `os` (String) OS signal score from Crowdstrike. (1 to 100.).
+- `overall` (String) Overall ZTA score from Crowdstrike. (1 to 100.)
+- `sensor_config` (String) Sensor signal score from Crowdstrike. (1 to 100.)
+- `version_operator` The version comparison operator for crowdstrike.  (">", ">=", "<", "<=", "==")
+
 
 
 <a id="nestedblock--match"></a>

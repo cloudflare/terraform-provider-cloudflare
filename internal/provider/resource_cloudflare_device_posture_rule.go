@@ -203,6 +203,18 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if osDistroRevision, ok := d.GetOk("input.0.os_distro_revision"); ok {
 			input.OsDistroRevision = osDistroRevision.(string)
 		}
+		if os, ok := d.GetOk("input.0.os"); ok {
+			input.Os = os.(string)
+		}
+		if overall, ok := d.GetOk("input.0.overall"); ok {
+			input.Overall = overall.(string)
+		}
+		if sensorConfig, ok := d.GetOk("input.0.sensor_config"); ok {
+			input.SensorConfig = sensorConfig.(string)
+		}
+		if versionOperator, ok := d.GetOk("input.0.version_operator"); ok {
+			input.VersionOperator = versionOperator.(string)
+		}
 		rule.Input = input
 	}
 }
@@ -255,6 +267,10 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"domain":             input.Domain,
 		"compliance_status":  input.ComplianceStatus,
 		"connection_id":      input.ConnectionID,
+		"os":                 input.Os,
+		"overall":            input.Overall,
+		"sensor_config":      input.SensorConfig,
+		"version_operator":   input.VersionOperator,
 	}
 
 	return []map[string]interface{}{m}
