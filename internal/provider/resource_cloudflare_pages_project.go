@@ -124,7 +124,6 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 	config["usage_model"] = deployment.UsageModel
 
 	deploymentVars := map[string]string{}
-	//secretsBinding := &schema.Set{F: schema.HashResource(secretTextBindingResource)}
 	for key, value := range deployment.EnvVars {
 		if value.Type == cloudflare.PlainText {
 			deploymentVars[key] = value.Value
