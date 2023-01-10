@@ -912,7 +912,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(value.(bool))
 						}
 					case "polish":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.polish", rulesCounter)); ok {
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.polish", rulesCounter)); ok {
 							p, _ := cloudflare.PolishFromString(value.(string))
 							rule.ActionParameters.Polish = p
 						}
@@ -921,7 +921,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.RocketLoader = cloudflare.BoolPtr(value.(bool))
 						}
 					case "security_level":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.security_level", rulesCounter)); ok {
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.security_level", rulesCounter)); ok {
 							sl, _ := cloudflare.SecurityLevelFromString(value.(string))
 							rule.ActionParameters.SecurityLevel = sl
 						}
@@ -930,7 +930,7 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(value.(bool))
 						}
 					case "ssl":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.ssl", rulesCounter)); ok {
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.ssl", rulesCounter)); ok {
 							ssl, _ := cloudflare.SSLFromString(value.(string))
 							rule.ActionParameters.SSL = ssl
 						}
