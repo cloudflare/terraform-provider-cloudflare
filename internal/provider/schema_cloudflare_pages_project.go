@@ -119,12 +119,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Description: "Environment variables for Pages Functions.",
 				Optional:    true,
 			},
-			//"secret": {
-			//	Type:        schema.TypeSet,
-			//	Description: "Secrets for Pages Functions.",
-			//	Optional:    true,
-			//	Elem:        secretTextBindingResource,
-			//},
 			"kv_namespaces": {
 				Type:        schema.TypeMap,
 				Description: "KV namespaces used for Pages Functions.",

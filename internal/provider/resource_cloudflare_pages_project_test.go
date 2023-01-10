@@ -63,7 +63,7 @@ func testPagesProjectBuildConfig(resourceID, accountID string) string {
 			web_analytics_tag = "cee1c73f6e4743d0b5e6bb1a0bcaabcc"
 			web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
 		  }
-		  %[4]s	
+		  %[4]s
 		}
 		`, resourceID, accountID, resourceID, testPagesProjectEmptyDeploymentConfig)
 }
@@ -145,13 +145,13 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  production_branch = "main"
-		 %[3]s	
+		 %[3]s
 		}
 		`, resourceID, accountID, testPagesProjectEmptyDeploymentConfig)
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	//t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
+	t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
