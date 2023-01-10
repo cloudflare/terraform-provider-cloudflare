@@ -154,6 +154,31 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				},
 				Computed: true,
 			},
+			"service_binding": {
+				Type:        schema.TypeSet,
+				Description: "Services used for Pages Functions.",
+				Optional:    true,
+				Elem:        serviceBindingResource,
+			},
+			"fail_open": {
+				Type:        schema.TypeBool,
+				Description: "Fail open used for Pages Functions.",
+				Optional:    true,
+				Default:     false,
+			},
+			"always_use_latest_compatibility_date": {
+				Type:        schema.TypeBool,
+				Description: "Use latest compatibility date for Pages Functions.",
+				Optional:    true,
+				Default:     false,
+			},
+			"usage_model": {
+				Type:         schema.TypeString,
+				Description:  "Usage model used for Pages Functions.",
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled"}, false),
+				Default:      "bundled",
+			},
 		},
 	}
 
@@ -215,14 +240,14 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 					"preview": {
 						Description: "Configuration for preview deploys.",
 						Type:        schema.TypeList,
-						Optional:    true,
+						Required:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},
 					"production": {
 						Description: "Configuration for production deploys.",
 						Type:        schema.TypeList,
-						Optional:    true,
+						Required:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},
