@@ -2,7 +2,11 @@ name: TF_LOG=DEBUG check
 on:
   issues:
     types: [opened, labeled, edited]
-
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: The issue to target
+        required: true
 jobs:
   tf-log-check:
     runs-on: ${{ matrix.os }}
@@ -16,7 +20,14 @@ jobs:
         with:
           go-version: ^1.18
       - run: make tools
-      - run: go run cmd/tf-log-check/main.go ${{ github.event.issue.number }}
+      - name: Set the issue number to test
+        run: |
+          if [ -z "${{ github.event.inputs.issue_number }}" ]; then
+              echo "issue_number=${{ github.event.inputs.issue_number }}" >> $GITHUB_ENV
+          else
+              echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_ENV
+          fi
+      - run: go run cmd/tf-log-check/main.go ${{ env.issue_number }}
         working-directory: ./tools
         env:
           GITHUB_OWNER: cloudflare
