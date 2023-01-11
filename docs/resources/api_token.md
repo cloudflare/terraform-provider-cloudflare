@@ -32,9 +32,10 @@ resource "cloudflare_api_token" "api_token_create" {
     resources = {
       "com.cloudflare.api.user.${var.user_id}" = "*"
     }
-    not_before = "2018-07-01T05:20:00Z"
-    expires_on = "2020-01-01T00:00:00Z"
   }
+
+  not_before = "2018-07-01T05:20:00Z"
+  expires_on = "2020-01-01T00:00:00Z"
 
   condition {
     request_ip {
