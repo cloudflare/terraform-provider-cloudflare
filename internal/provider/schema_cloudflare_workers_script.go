@@ -113,6 +113,21 @@ var analyticsEngineBindingResource = &schema.Resource{
 	},
 }
 
+var queueBindingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"binding": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the global variable for the binding in your Worker code.",
+		},
+		"queue": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Name of the queue you want to use.",
+		},
+	},
+}
+
 func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
@@ -170,6 +185,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     analyticsEngineBindingResource,
+		},
+		"queue_binding": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     queueBindingResource,
 		},
 	}
 }

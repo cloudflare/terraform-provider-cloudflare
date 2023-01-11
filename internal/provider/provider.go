@@ -279,6 +279,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_worker_script":                          resourceCloudflareWorkerScript(),
 				"cloudflare_workers_kv_namespace":                   resourceCloudflareWorkersKVNamespace(),
 				"cloudflare_workers_kv":                             resourceCloudflareWorkerKV(),
+				"cloudflare_workers_queue":                          resourceCloudflareWorkersQueue(),
 				"cloudflare_zone_cache_variants":                    resourceCloudflareZoneCacheVariants(),
 				"cloudflare_zone_dnssec":                            resourceCloudflareZoneDNSSEC(),
 				"cloudflare_zone_lockdown":                          resourceCloudflareZoneLockdown(),

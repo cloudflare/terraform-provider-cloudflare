@@ -119,6 +119,14 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			Dataset: data["dataset"].(string),
 		}
 	}
+
+	for _, rawData := range d.Get("queue_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		bindings[data["name"].(string)] = cloudflare.WorkerQueueBinding{
+			Name:      data["name"].(string),
+			QueueName: data["queue_name"].(string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -209,6 +217,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
 	r2BucketBindings := &schema.Set{F: schema.HashResource(r2BucketBindingResource)}
 	analyticsEngineBindings := &schema.Set{F: schema.HashResource(analyticsEngineBindingResource)}
+	queueBindings := &schema.Set{F: schema.HashResource(queueBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -257,6 +266,11 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"name":    name,
 				"dataset": v.Dataset,
 			})
+		case cloudflare.WorkerQueueBinding:
+			queueBindings.Add(map[string]interface{}{
+				"name":       name,
+				"queue_name": v.QueueName,
+			})
 		}
 	}
 
@@ -290,6 +304,10 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 
 	if err := d.Set("analytics_engine_binding", analyticsEngineBindings); err != nil {
 		return diag.FromErr(fmt.Errorf("cannot set analytics engine bindings (%s): %w", d.Id(), err))
+	}
+
+	if err := d.Set("queue_binding", queueBindings); err != nil {
+		return diag.FromErr(fmt.Errorf("cannot set queue bindings (%s): %w", d.Id(), err))
 	}
 
 	d.SetId(scriptData.ID)
