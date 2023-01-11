@@ -22,7 +22,7 @@ jobs:
       - run: make tools
       - name: Set the issue number to test
         run: |
-          if [ -z "${{ github.event.inputs.issue_number }}" ]; then
+          if [ -n "${{ github.event.inputs.issue_number }}" ]; then
               echo "issue_number=${{ github.event.inputs.issue_number }}" >> $GITHUB_ENV
           else
               echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_ENV
