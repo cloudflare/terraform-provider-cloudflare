@@ -1719,6 +1719,51 @@ func TestAccCloudflareRuleset_Config(t *testing.T) {
 		},
 	})
 }
+func TestAccCloudflareRuleset_ConfigDisabled(t *testing.T) {
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetConfigAllDisabled(rnd, "my basic config ruleset", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic config ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_config_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_config"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set config rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.automatic_https_rewrites", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.html", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.css", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.autominify.0.js", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.bic", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_apps", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_zaraz", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_railgun", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.email_obfuscation", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.mirage", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.opportunistic_encryption", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.polish", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.rocket_loader", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.security_level", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.server_side_excludes", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.ssl", "off"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sxg", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.hotlink_protection", "false"),
+				),
+			},
+		},
+	})
+}
 func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 	t.Parallel()
 	rnd := generateRandomResourceName()
@@ -1789,9 +1834,9 @@ func TestAccCloudflareRuleset_ConfigurationRulesSingleFalseValue(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRulesetConfigurationRuleSingleKeyFalseValue(rnd, "test configuration rule", zoneID),
+				Config: testAccCheckCloudflareRulesetConfigurationRuleSingleKeyFalseValue(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "test configuration rule"),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_config_settings"),
 
@@ -3093,26 +3138,66 @@ func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) str
     rules {
       action = "set_config"
       action_parameters {
-		automatic_https_rewrites = true
-		autominify {
-			html = true
-			css = true
-			js = true
-		}
-		bic = true
-		disable_apps = true
-		disable_zaraz = true
-		disable_railgun = true
-		email_obfuscation = true
-		mirage = true
-		opportunistic_encryption = true
-		polish = "off"
-		rocket_loader = true
-		security_level = "off"
-		server_side_excludes = true
-		ssl = "off"
-		sxg = true
-		hotlink_protection = true
+				automatic_https_rewrites = true
+				autominify {
+					html = true
+					css = true
+					js = true
+				}
+				bic = true
+				disable_apps = true
+				disable_zaraz = true
+				disable_railgun = true
+				email_obfuscation = true
+				mirage = true
+				opportunistic_encryption = true
+				polish = "off"
+				rocket_loader = true
+				security_level = "off"
+				server_side_excludes = true
+				ssl = "off"
+				sxg = true
+				hotlink_protection = true
+      }
+	  expression = "true"
+	  description = "%[1]s set config rule"
+	  enabled = true
+    }
+  }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetConfigAllDisabled(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_config_settings"
+
+    rules {
+      action = "set_config"
+      action_parameters {
+				automatic_https_rewrites = false
+				autominify {
+					html = false
+					css = false
+					js = false
+				}
+				bic = false
+				disable_apps = false
+				disable_zaraz = false
+				disable_railgun = false
+				email_obfuscation = false
+				mirage = false
+				opportunistic_encryption = false
+				polish = "off"
+				rocket_loader = false
+				security_level = "off"
+				server_side_excludes = false
+				ssl = "off"
+				sxg = false
+				hotlink_protection = false
       }
 	  expression = "true"
 	  description = "%[1]s set config rule"
@@ -3204,12 +3289,12 @@ func testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRules
   }`, rnd, name, zoneID, zoneName)
 }
 
-func testAccCheckCloudflareRulesetConfigurationRuleSingleKeyFalseValue(rnd, name, zoneID string) string {
+func testAccCheckCloudflareRulesetConfigurationRuleSingleKeyFalseValue(rnd, zoneID string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id 		= "%[3]s"
-		name     		= "%[2]s"
-		description = "%[2]s ruleset description"
+		zone_id 		= "%[2]s"
+		name     		= "%[1]s"
+		description = "%[1]s ruleset description"
 		kind 				= "zone"
 		phase   		= "http_config_settings"
 		rules {
@@ -3221,5 +3306,5 @@ func testAccCheckCloudflareRulesetConfigurationRuleSingleKeyFalseValue(rnd, name
 				automatic_https_rewrites = false
 			}
 		}
-	}`, rnd, name, zoneID)
+	}`, rnd, zoneID)
 }

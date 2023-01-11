@@ -871,8 +871,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							}
 						}
 					case "automatic_https_rewrites":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.automatic_https_rewrites", rulesCounter)); ok {
-							rule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "autominify":
 						for i := range pValue.([]interface{}) {
@@ -884,32 +884,32 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						}
 
 					case "bic":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.bic", rulesCounter)); ok {
-							rule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "disable_apps":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.disable_apps", rulesCounter)); ok {
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_apps", rulesCounter)); ok {
 							rule.ActionParameters.DisableApps = cloudflare.BoolPtr(value.(bool))
 						}
 					case "disable_zaraz":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.disable_zaraz", rulesCounter)); ok {
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_zaraz", rulesCounter)); ok {
 							rule.ActionParameters.DisableZaraz = cloudflare.BoolPtr(value.(bool))
 						}
 					case "disable_railgun":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.disable_zaraz", rulesCounter)); ok {
+						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.disable_railgun", rulesCounter)); ok {
 							rule.ActionParameters.DisableRailgun = cloudflare.BoolPtr(value.(bool))
 						}
 					case "email_obfuscation":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.email_obfuscation", rulesCounter)); ok {
-							rule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "mirage":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.mirage", rulesCounter)); ok {
-							rule.ActionParameters.Mirage = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.Mirage = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "opportunistic_encryption":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.opportunistic_encryption", rulesCounter)); ok {
-							rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "polish":
 						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.polish", rulesCounter)); ok {
@@ -917,8 +917,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.Polish = p
 						}
 					case "rocket_loader":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.rocket_loader", rulesCounter)); ok {
-							rule.ActionParameters.RocketLoader = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.RocketLoader = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "security_level":
 						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.security_level", rulesCounter)); ok {
@@ -926,8 +926,8 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.SecurityLevel = sl
 						}
 					case "server_side_excludes":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.server_side_excludes", rulesCounter)); ok {
-							rule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "ssl":
 						if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.ssl", rulesCounter)); ok {
@@ -935,12 +935,12 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							rule.ActionParameters.SSL = ssl
 						}
 					case "sxg":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.sxg", rulesCounter)); ok {
-							rule.ActionParameters.SXG = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.SXG = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "hotlink_protection":
-						if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.hotlink_protection", rulesCounter)); ok {
-							rule.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(value.(bool))
+						if ok := verifyActionParameterRootAttributeExists(d, pKey, rulesCounter); ok {
+							rule.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(pValue.(bool))
 						}
 					case "sni":
 						for i := range pValue.([]interface{}) {
@@ -1362,4 +1362,14 @@ func apiEnabledToStatusFieldConversion(s *bool) string {
 	} else {
 		return ""
 	}
+}
+
+func verifyActionParameterRootAttributeExists(d *schema.ResourceData, pKey string, rulesCounter int) bool {
+	if rules := d.GetRawConfig().GetAttr("rules"); !rules.IsNull() {
+		keyExists := rules.AsValueSlice()[rulesCounter].GetAttr("action_parameters").AsValueSlice()[0].GetAttr(pKey)
+		if !keyExists.IsNull() {
+			return true
+		}
+	}
+	return false
 }
