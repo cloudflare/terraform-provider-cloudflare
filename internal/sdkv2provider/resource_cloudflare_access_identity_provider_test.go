@@ -188,6 +188,36 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_access_identity_provider." + rnd
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "type", "azureAD"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.directory_id", "directory"),
+					resource.TestCheckResourceAttr(resourceName, "scim_config.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scim_config.0.user_deprovision", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scim_config.0.seat_deprovision", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scim_config.0.group_member_deprovision", "true"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[1]s" {
@@ -236,5 +266,27 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
     sign_request = false
     idp_public_cert = "MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEG\nA1UEC…..GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"
 	}
+}`, accountID, name)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[2]s" {
+  account_id = "%[1]s"
+  name = "%[2]s"
+  type = "azureAD"
+  config {
+    client_id      = "test"
+		client_secret = "test"
+    directory_id   = "directory"
+    redirect_url   = "https://test.cloudflareaccess.com/cdn-cgi/access/callback"
+    support_groups = true
+	}
+	scim_config {
+    enabled                  = true
+    group_member_deprovision = true
+    seat_deprovision         = true
+    user_deprovision         = true
+  }
 }`, accountID, name)
 }

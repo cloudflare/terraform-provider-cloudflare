@@ -159,5 +159,34 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 				},
 			},
 		},
+		"scim_config": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "configuration for SCIM settings for a given IDP",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"enabled": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"secret": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"user_deprovision": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"seat_deprovision": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"group_member_deprovision": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
 	}
 }
