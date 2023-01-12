@@ -66,7 +66,6 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWAFRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/*", "ip", "198.51.100.4"),
