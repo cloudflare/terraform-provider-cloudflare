@@ -1,5 +1,9 @@
 ## 3.33.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_record: fix issue with DNS comments and tags not being set for new records ([#2148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2148))
+
 ## 3.32.0 (January 11th, 2023)
 
 FEATURES:
