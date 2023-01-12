@@ -23,6 +23,7 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 		ReadContext:   resourceCloudflareZoneSettingsOverrideRead,
 		UpdateContext: resourceCloudflareZoneSettingsOverrideUpdate,
 		DeleteContext: resourceCloudflareZoneSettingsOverrideDelete,
+		Description:   "Provides a resource which customizes Cloudflare zone settings.",
 	}
 }
 
