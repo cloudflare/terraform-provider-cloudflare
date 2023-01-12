@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,6 +23,10 @@ func resourceCloudflareTeamsAccount() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTeamsAccountImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams Account resource. The Teams Account
+			resource defines configuration for secure web gateway.
+		`),
 	}
 }
 
