@@ -1,5 +1,5 @@
 resource "cloudflare_zone_cache_variants" "example" {
-  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   avif    = ["image/avif", "image/webp"]
   bmp     = ["image/bmp", "image/webp"]
   gif     = ["image/gif", "image/webp"]
