@@ -13,7 +13,7 @@ Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gatew
 
 ```terraform
 resource "cloudflare_teams_rule" "example" {
-  account_id  = "d57c3de47a013c03ca7e237dd3e61d7d"
+  account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "office"
   description = "desc"
   precedence  = 1

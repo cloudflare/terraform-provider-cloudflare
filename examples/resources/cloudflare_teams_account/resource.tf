@@ -1,5 +1,5 @@
 resource "cloudflare_teams_account" "example" {
-  account_id          = "1d5fdc9e88c8a8c4518b068cd94331fe"
+  account_id          = "f037e56e89293a057740de681ac9abbe"
   tls_decrypt_enabled = true
 
   block_page {
