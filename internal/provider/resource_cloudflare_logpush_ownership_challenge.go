@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,6 +18,12 @@ func resourceCloudflareLogpushOwnershipChallenge() *schema.Resource {
 		UpdateContext: resourceCloudflareLogpushOwnershipChallengeCreate,
 		ReadContext:   resourceCloudflareLogpushOwnershipChallengeNoop,
 		DeleteContext: resourceCloudflareLogpushOwnershipChallengeNoop,
+		Description: heredoc.Doc(`
+			Provides a resource which manages Cloudflare Logpush ownership
+			challenges to use in a Logpush Job. On it's own, doesn't do much
+			however this resource should be used in conjunction to create
+			Logpush jobs.
+		`),
 	}
 }
 
