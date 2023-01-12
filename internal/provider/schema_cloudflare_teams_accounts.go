@@ -10,9 +10,10 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"block_page": {
-			Type:     schema.TypeList,
-			MaxItems: 1,
-			Optional: true,
+			Type:        schema.TypeList,
+			MaxItems:    1,
+			Optional:    true,
+			Description: "Configuration for a custom block page.",
 			Elem: &schema.Resource{
 				Schema: blockPageSchema,
 			},
@@ -24,6 +25,7 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: fipsSchema,
 			},
+			Description: "Configure compliance with Federal Information Processing Standards.",
 		},
 		"antivirus": {
 			Type:     schema.TypeList,
@@ -32,18 +34,22 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: antivirusSchema,
 			},
+			Description: "Configuration block for antivirus traffic scanning.",
 		},
 		"tls_decrypt_enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Indicator that decryption of TLS traffic is enabled.",
 		},
 		"activity_log_enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Whether to enable the activity log.",
 		},
 		"url_browser_isolation_enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Safely browse websites in Browser Isolation through a URL.",
 		},
 		"logging": {
 			Type:     schema.TypeList,
@@ -60,97 +66,114 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: proxySchema,
 			},
+			Description: "Configuration block for specifying which protocols are proxied.",
 		},
 	}
 }
 
 var fipsSchema = map[string]*schema.Schema{
 	"tls": {
-		Type:     schema.TypeBool,
-		Optional: true,
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Only allow FIPS-compliant TLS configuration.",
 	},
 }
 
 var blockPageSchema = map[string]*schema.Schema{
 	"enabled": {
-		Type:     schema.TypeBool,
-		Optional: true,
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Indicator of enablement.",
 	},
 	"footer_text": {
-		Type:     schema.TypeString,
-		Optional: true,
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Block page footer text.",
 	},
 	"header_text": {
-		Type:     schema.TypeString,
-		Optional: true,
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Block page header text.",
 	},
 	"logo_path": {
-		Type:     schema.TypeString,
-		Optional: true,
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "URL of block page logo.",
 	},
 	"background_color": {
-		Type:     schema.TypeString,
-		Optional: true,
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Hex code of block page background color.",
 	},
 	"name": {
-		Type:     schema.TypeString,
-		Optional: true,
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Name of block page configuration.",
 	},
 }
 
 var antivirusSchema = map[string]*schema.Schema{
 	"enabled_download_phase": {
-		Type:     schema.TypeBool,
-		Required: true,
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Scan on file download.",
 	},
 	"enabled_upload_phase": {
-		Type:     schema.TypeBool,
-		Required: true,
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Scan on file upload.",
 	},
 	"fail_closed": {
-		Type:     schema.TypeBool,
-		Required: true,
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Block requests for files that cannot be scanned.",
 	},
 }
 
 var proxySchema = map[string]*schema.Schema{
 	"tcp": {
-		Type:     schema.TypeBool,
-		Required: true,
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether gateway proxy is enabled on gateway devices for TCP traffic.",
 	},
 	"udp": {
-		Type:     schema.TypeBool,
-		Required: true,
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether gateway proxy is enabled on gateway devices for UDP traffic.",
 	},
 }
 
 var loggingSchema = map[string]*schema.Schema{
 	"settings_by_rule_type": {
-		Type:     schema.TypeList,
-		MaxItems: 1,
-		Required: true,
+		Type:        schema.TypeList,
+		MaxItems:    1,
+		Required:    true,
+		Description: "Represents whether all requests are logged or only the blocked requests are slogged in DNS, HTTP and L4 filters.",
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"dns": {
-					Type:     schema.TypeList,
-					MaxItems: 1,
-					Required: true,
+					Type:        schema.TypeList,
+					MaxItems:    1,
+					Required:    true,
+					Description: "Logging configuration for DNS requests.",
 					Elem: &schema.Resource{
 						Schema: loggingEnabledSchema,
 					},
 				},
 				"http": {
-					Type:     schema.TypeList,
-					MaxItems: 1,
-					Required: true,
+					Type:        schema.TypeList,
+					MaxItems:    1,
+					Required:    true,
+					Description: "Logging configuration for HTTP requests.",
 					Elem: &schema.Resource{
 						Schema: loggingEnabledSchema,
 					},
 				},
 				"l4": {
-					Type:     schema.TypeList,
-					MaxItems: 1,
-					Required: true,
+					Type:        schema.TypeList,
+					MaxItems:    1,
+					Required:    true,
+					Description: "Logging configuration for layer 4 requests.",
 					Elem: &schema.Resource{
 						Schema: loggingEnabledSchema,
 					},
@@ -159,15 +182,17 @@ var loggingSchema = map[string]*schema.Schema{
 		},
 	},
 	"redact_pii": {
-		Type:     schema.TypeBool,
-		Required: true,
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Redact personally identifiable information from activity logging (PII fields are: source IP, user email, user ID, device ID, URL, referrer, user agent).",
 	},
 }
 
 var loggingEnabledSchema = map[string]*schema.Schema{
 	"log_all": {
-		Type:     schema.TypeBool,
-		Required: true,
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether to log all activity.",
 	},
 	"log_blocks": {
 		Type:     schema.TypeBool,

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,6 +23,11 @@ func resourceCloudflareTeamsList() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTeamsListImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams List resource. Teams lists are
+			referenced when creating secure web gateway policies or device
+			posture rules.
+		`),
 	}
 }
 

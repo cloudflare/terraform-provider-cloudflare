@@ -18,6 +18,7 @@ func resourceCloudflareZoneCacheVariants() *schema.Resource {
 		ReadContext:   resourceCloudflareZoneCacheVariantsRead,
 		UpdateContext: resourceCloudflareZoneCacheVariantsUpdate,
 		DeleteContext: resourceCloudflareZoneCacheVariantsDelete,
+		Description:   "Provides a resource which customizes Cloudflare zone cache variants.",
 	}
 }
 

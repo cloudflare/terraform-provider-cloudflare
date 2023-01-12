@@ -1,10 +1,12 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceCloudflareZoneCacheVariantsExtensionSchema() *schema.Schema {
+func resourceCloudflareZoneCacheVariantsExtensionSchema(ext string) *schema.Schema {
 	return &schema.Schema{
 		MinItems: 1,
 		Optional: true,
@@ -12,6 +14,7 @@ func resourceCloudflareZoneCacheVariantsExtensionSchema() *schema.Schema {
 		Elem: &schema.Schema{
 			Type: schema.TypeString,
 		},
+		Description: fmt.Sprintf("List of strings with the MIME types of all the variants that should be served for %s", ext),
 	}
 }
 
@@ -23,16 +26,16 @@ func resourceCloudflareZoneCacheVariantsSchema() map[string]*schema.Schema {
 			Required:    true,
 			ForceNew:    true,
 		},
-		"avif": resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"bmp":  resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"gif":  resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"jpeg": resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"jpg":  resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"jpg2": resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"jp2":  resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"png":  resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"tiff": resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"tif":  resourceCloudflareZoneCacheVariantsExtensionSchema(),
-		"webp": resourceCloudflareZoneCacheVariantsExtensionSchema(),
+		"avif": resourceCloudflareZoneCacheVariantsExtensionSchema("avif"),
+		"bmp":  resourceCloudflareZoneCacheVariantsExtensionSchema("bmp"),
+		"gif":  resourceCloudflareZoneCacheVariantsExtensionSchema("gif"),
+		"jpeg": resourceCloudflareZoneCacheVariantsExtensionSchema("jpeg"),
+		"jpg":  resourceCloudflareZoneCacheVariantsExtensionSchema("jpg"),
+		"jpg2": resourceCloudflareZoneCacheVariantsExtensionSchema("jpg2"),
+		"jp2":  resourceCloudflareZoneCacheVariantsExtensionSchema("jp2"),
+		"png":  resourceCloudflareZoneCacheVariantsExtensionSchema("png"),
+		"tiff": resourceCloudflareZoneCacheVariantsExtensionSchema("tiff"),
+		"tif":  resourceCloudflareZoneCacheVariantsExtensionSchema("tif"),
+		"webp": resourceCloudflareZoneCacheVariantsExtensionSchema("webp"),
 	}
 }
