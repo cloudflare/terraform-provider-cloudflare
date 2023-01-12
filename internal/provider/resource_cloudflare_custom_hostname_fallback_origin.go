@@ -23,6 +23,7 @@ func resourceCloudflareCustomHostnameFallbackOrigin() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareCustomHostnameFallbackOriginImport,
 		},
+		Description: "Provides a Cloudflare custom hostname fallback origin resource.",
 	}
 }
 
