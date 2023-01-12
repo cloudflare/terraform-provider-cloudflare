@@ -305,6 +305,16 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 		updateRecord.TTL = ttl.(int)
 	}
 
+	if comment, ok := d.GetOk("comment"); ok {
+		updateRecord.Comment = comment.(string)
+	}
+
+	if tags, ok := d.GetOk("tags"); ok {
+		for _, tag := range tags.(*schema.Set).List() {
+			updateRecord.Tags = append(updateRecord.Tags, tag.(string))
+		}
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record update configuration: %#v", updateRecord))
 
 	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
