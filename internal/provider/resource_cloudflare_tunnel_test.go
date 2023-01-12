@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareArgoTunnelCreate(t *testing.T) {
+func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Argo Tunnel
 	// endpoint does not yet support the API tokens.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -21,17 +21,17 @@ func TestAccCloudflareArgoTunnelCreate(t *testing.T) {
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_argo_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareArgoTunnelDestroy,
+		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareArgoTunnelBasic(accID, rnd),
+				Config: testAccCheckCloudflareTunnelBasic(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
@@ -42,25 +42,25 @@ func TestAccCloudflareArgoTunnelCreate(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareArgoTunnelBasic(accID, name string) string {
+func testAccCheckCloudflareTunnelBasic(accID, name string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_argo_tunnel" "%[2]s" {
+	resource "cloudflare_tunnel" "%[2]s" {
 		account_id = "%[1]s"
 		name       = "%[2]s"
 		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
 	}`, accID, name)
 }
 
-func testAccCheckCloudflareArgoTunnelDestroy(s *terraform.State) error {
+func testAccCheckCloudflareTunnelDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_argo_tunnel" {
+		if rs.Type != "cloudflare_tunnel" {
 			continue
 		}
 
 		accountID := rs.Primary.Attributes["account_id"]
 		tunnelID := rs.Primary.ID
 		client := testAccProvider.Meta().(*cloudflare.API)
-		tunnel, err := client.ArgoTunnel(context.Background(), accountID, tunnelID)
+		tunnel, err := client.Tunnel(context.Background(), cloudflare.AccountIdentifier(accountID), tunnelID)
 
 		if err != nil {
 			return err
