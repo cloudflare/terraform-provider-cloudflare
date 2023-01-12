@@ -8,6 +8,6 @@ resource "cloudflare_zone_lockdown" "example" {
   ]
   configurations {
     target = "ip_range"
-    value  = "198.51.100.0/16"
+    value  = "192.0.2.0/24"
   }
 }

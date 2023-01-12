@@ -27,7 +27,7 @@ resource "cloudflare_spectrum_application" "example" {
   }
 
   origin_direct = [
-    "tcp://109.151.40.129:22"
+    "tcp://192.0.2.1:22"
   ]
 }
 ```
