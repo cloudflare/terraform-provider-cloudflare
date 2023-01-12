@@ -77,7 +77,6 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 			Type:          schema.TypeInt,
 			Optional:      true,
 			ConflictsWith: []string{"origin_port_range"},
-			RequiredWith:  []string{"origin_dns"},
 			ValidateFunc:  validation.IntBetween(0, 65535),
 			Description:   "Origin port to proxy traffice to.",
 		},
@@ -87,7 +86,6 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 			Optional:      true,
 			MaxItems:      1,
 			ConflictsWith: []string{"origin_port"},
-			RequiredWith:  []string{"origin_dns"},
 			Description:   "Origin port range to proxy traffice to. When using a range, the protocol field must also specify a range, e.g. `tcp/22-23`.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
