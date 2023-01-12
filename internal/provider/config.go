@@ -18,10 +18,9 @@ type Config struct {
 }
 
 // Client returns a new client for accessing cloudflare.
-func (c *Config) Client() (*cloudflare.API, error) {
+func (c *Config) Client(ctx context.Context) (*cloudflare.API, error) {
 	var err error
 	var client *cloudflare.API
-	ctx := context.Background()
 
 	if c.APIUserServiceKey != "" {
 		client, err = cloudflare.NewWithUserServiceKey(c.APIUserServiceKey, c.Options...)

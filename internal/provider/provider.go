@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -147,14 +146,6 @@ func New(version string) func() *schema.Provider {
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_CLIENT_LOGGING", false),
 					Description: "Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `CLOUDFLARE_API_CLIENT_LOGGING` environment variable.",
-				},
-
-				"account_id": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
-					Description: "Configure API client to always use a specific account. Alternatively, can be configured using the `CLOUDFLARE_ACCOUNT_ID` environment variable.",
-					Deprecated:  "Use resource specific `account_id` attributes instead.",
 				},
 
 				"api_hostname": {
@@ -333,21 +324,9 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			config.APIUserServiceKey = v.(string)
 		}
 
-		client, err := config.Client()
-		if err != nil {
-			return nil, diag.FromErr(err)
-		}
-
-		if accountID, ok := d.GetOk("account_id"); ok {
-			tflog.Info(ctx, fmt.Sprintf("using specified account id %s in Cloudflare provider", accountID.(string)))
-			options = append(options, cloudflare.UsingAccount(accountID.(string)))
-		} else {
-			return client, diag.FromErr(err)
-		}
-
 		config.Options = options
 
-		client, err = config.Client()
+		client, err := config.Client(ctx)
 		if err != nil {
 			return nil, diag.FromErr(err)
 		}

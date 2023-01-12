@@ -53,7 +53,6 @@ resource "cloudflare_page_rule" "www" {
 
 ### Optional
 
-- `account_id` (String, Deprecated) Configure API client to always use a specific account. Alternatively, can be configured using the `CLOUDFLARE_ACCOUNT_ID` environment variable.
 - `api_base_path` (String) Configure the base path used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_BASE_PATH` environment variable.
 - `api_client_logging` (Boolean) Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `CLOUDFLARE_API_CLIENT_LOGGING` environment variable.
 - `api_hostname` (String) Configure the hostname used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_HOSTNAME` environment variable.
