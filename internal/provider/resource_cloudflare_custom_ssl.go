@@ -37,6 +37,8 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 				Version: 0,
 			},
 		},
+
+		Description: "Provides a Cloudflare custom SSL resource.",
 	}
 }
 
