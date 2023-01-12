@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -14,39 +15,44 @@ import (
 
 const argoTunnelCNAME = "cfargotunnel.com"
 
-func resourceCloudflareArgoTunnel() *schema.Resource {
+func resourceCloudflareTunnel() *schema.Resource {
 	return &schema.Resource{
-		Schema:        resourceCloudflareArgoTunnelSchema(),
-		CreateContext: resourceCloudflareArgoTunnelCreate,
-		ReadContext:   resourceCloudflareArgoTunnelRead,
-		DeleteContext: resourceCloudflareArgoTunnelDelete,
+		Schema:        resourceCloudflareTunnelSchema(),
+		CreateContext: resourceCloudflareTunnelCreate,
+		ReadContext:   resourceCloudflareTunnelRead,
+		DeleteContext: resourceCloudflareTunnelDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: resourceCloudflareArgoTunnelImport,
+			StateContext: resourceCloudflareTunnelImport,
 		},
+		Description: heredoc.Doc(`
+			Tunnel exposes applications running on your local web server on any
+			network with an internet connection without manually adding DNS
+			records or configuring a firewall or router.
+		`),
 	}
 }
 
-func resourceCloudflareArgoTunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareTunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 	name := d.Get("name").(string)
 	secret := d.Get("secret").(string)
 
-	tunnel, err := client.CreateArgoTunnel(ctx, accID, name, secret)
+	tunnel, err := client.CreateTunnel(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelCreateParams{Name: name, Secret: secret})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Argo Tunnel")))
 	}
 
 	d.SetId(tunnel.ID)
 
-	return resourceCloudflareArgoTunnelRead(ctx, d, meta)
+	return resourceCloudflareTunnelRead(ctx, d, meta)
 }
 
-func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 
-	tunnel, err := client.ArgoTunnel(ctx, accID, d.Id())
+	tunnel, err := client.Tunnel(ctx, cloudflare.AccountIdentifier(accID), d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to fetch Argo Tunnel: %w", err))
 	}
@@ -65,16 +71,16 @@ func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceCloudflareArgoTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accID := d.Get("account_id").(string)
 
-	cleanupErr := client.CleanupArgoTunnelConnections(ctx, accID, d.Id())
+	cleanupErr := client.CleanupTunnelConnections(ctx, cloudflare.AccountIdentifier(accID), d.Id())
 	if cleanupErr != nil {
 		return diag.FromErr(errors.Wrap(cleanupErr, fmt.Sprintf("failed to clean up Argo Tunnel connections")))
 	}
 
-	deleteErr := client.DeleteArgoTunnel(ctx, accID, d.Id())
+	deleteErr := client.DeleteTunnel(ctx, cloudflare.AccountIdentifier(accID), d.Id())
 	if deleteErr != nil {
 		return diag.FromErr(errors.Wrap(deleteErr, fmt.Sprintf("failed to delete Argo Tunnel")))
 	}
@@ -84,7 +90,7 @@ func resourceCloudflareArgoTunnelDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceCloudflareArgoTunnelImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareTunnelImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	client := meta.(*cloudflare.API)
 	attributes := strings.Split(d.Id(), "/")
 
@@ -94,7 +100,7 @@ func resourceCloudflareArgoTunnelImport(ctx context.Context, d *schema.ResourceD
 
 	accID, tunnelID := attributes[0], attributes[1]
 
-	tunnel, err := client.ArgoTunnel(ctx, accID, tunnelID)
+	tunnel, err := client.Tunnel(ctx, cloudflare.AccountIdentifier(accID), tunnelID)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch Argo Tunnel %s", tunnelID))
 	}
@@ -103,7 +109,7 @@ func resourceCloudflareArgoTunnelImport(ctx context.Context, d *schema.ResourceD
 	d.Set("name", tunnel.Name)
 	d.SetId(tunnel.ID)
 
-	resourceCloudflareArgoTunnelRead(ctx, d, meta)
+	resourceCloudflareTunnelRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
