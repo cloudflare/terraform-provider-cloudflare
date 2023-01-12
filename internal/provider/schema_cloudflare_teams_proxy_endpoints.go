@@ -10,17 +10,20 @@ func resourceCloudflareTeamsProxyEndpointSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Name of the teams proxy endpoint.",
 		},
 		"subdomain": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The FQDN that proxy clients should be pointed at.",
 		},
 		"ips": {
-			Type:     schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Required: true,
+			Type:        schema.TypeSet,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+			Required:    true,
+			Description: "The networks CIDRs that will be allowed to initiate proxy connections.",
 		},
 	}
 }
