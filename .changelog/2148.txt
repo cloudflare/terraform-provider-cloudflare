@@ -1,0 +1,3 @@
+```release-note:bug
+fix issue with DNS comments and tags not being set
+```

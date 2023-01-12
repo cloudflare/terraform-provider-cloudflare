@@ -115,6 +115,16 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		proxiedVal = cloudflare.BoolPtr(false)
 	}
 
+	if comment, ok := d.GetOk("comment"); ok {
+		newRecord.Comment = comment.(string)
+	}
+
+	if tags, ok := d.GetOk("tags"); ok {
+		for _, tag := range tags.(*schema.Set).List() {
+			newRecord.Tags = append(newRecord.Tags, tag.(string))
+		}
+	}
+
 	// Validate type
 	if err := validateRecordType(newRecord.Type, *proxiedVal); err != nil {
 		return diag.FromErr(fmt.Errorf("error validating record type %q: %w", newRecord.Type, err))
