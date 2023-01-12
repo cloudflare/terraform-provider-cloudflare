@@ -1,5 +1,9 @@
 ## 3.33.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_argo_tunnel: resource has been renamed to `cloudflare_tunnel` ([#2135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2135))
+
 ## 3.32.0 (January 11th, 2023)
 
 FEATURES:
