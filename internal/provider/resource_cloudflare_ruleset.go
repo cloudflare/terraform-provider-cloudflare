@@ -959,7 +959,9 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 							for pKey, pValue := range pValue.([]interface{})[i].(map[string]interface{}) {
 								switch pKey {
 								case "default":
-									rule.ActionParameters.EdgeTTL.Default = cloudflare.UintPtr(uint(pValue.(int)))
+									if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.edge_ttl.0.default", rulesCounter)); ok {
+										rule.ActionParameters.EdgeTTL.Default = cloudflare.UintPtr(uint(value.(int)))
+									}
 								case "mode":
 									rule.ActionParameters.EdgeTTL.Mode = pValue.(string)
 								case "status_code_ttl":
