@@ -18,7 +18,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: ^1.18
+          go-version-file: 'tools/go.mod'
       - run: make tools
       - name: Set the issue number to test
         run: |
