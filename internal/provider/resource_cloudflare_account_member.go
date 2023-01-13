@@ -58,6 +58,7 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 	d.Set("account_id", accountID)
 	d.Set("email_address", member.User.Email)
 	d.Set("role_ids", memberIDs)
+	d.Set("status", member.Status)
 	d.SetId(d.Id())
 
 	return nil
@@ -172,6 +173,7 @@ func resourceCloudflareAccountMemberImport(ctx context.Context, d *schema.Resour
 	d.Set("account_id", accountID)
 	d.Set("email_address", member.User.Email)
 	d.Set("role_ids", memberIDs)
+	d.Set("status", member.Status)
 	d.SetId(accountMemberID)
 
 	return []*schema.ResourceData{d}, nil
