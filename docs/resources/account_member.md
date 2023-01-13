@@ -25,12 +25,12 @@ resource "cloudflare_account_member" "example_user" {
 
 ### Required
 
+- `account_id` (String) Account ID to create the account member in.
 - `email_address` (String) The email address of the user who you wish to manage. Following creation, this field becomes read only via the API and cannot be updated.
 - `role_ids` (Set of String) List of account role IDs that you want to assign to a member.
 
 ### Optional
 
-- `account_id` (String) Account ID to create the account member in.
 - `status` (String) A member's status in the account. Available values: `accepted`, `pending`.
 
 ### Read-Only

@@ -11,7 +11,7 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
 			Type:        schema.TypeString,
-			Optional:    true,
+			Required:    true,
 			Description: "Account ID to manage the zone resource in.",
 		},
 		"zone": {
