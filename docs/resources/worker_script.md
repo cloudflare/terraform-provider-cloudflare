@@ -69,12 +69,12 @@ resource "cloudflare_worker_script" "my_script" {
 
 ### Required
 
+- `account_id` (String) The account identifier to target for the resource.
 - `content` (String) The script content.
 - `name` (String) The name for the script. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource.
 - `analytics_engine_binding` (Block Set) (see [below for nested schema](#nestedblock--analytics_engine_binding))
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `module` (Boolean) Whether to upload Worker as a module.

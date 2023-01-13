@@ -10,7 +10,7 @@ func resourceCloudflareAccountMemberSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
 			Type:        schema.TypeString,
-			Optional:    true,
+			Required:    true,
 			Description: "Account ID to create the account member in.",
 		},
 		"email_address": {
