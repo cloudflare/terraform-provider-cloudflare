@@ -108,12 +108,7 @@ func resourceCloudflareZone() *schema.Resource {
 
 func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
-	} else {
-		accountID = client.AccountID
-	}
+	accountID := d.Get("account_id").(string)
 	zoneName := d.Get("zone").(string)
 	jumpstart := d.Get("jump_start").(bool)
 	zoneType := d.Get("type").(string)

@@ -102,9 +102,6 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 	r, err := client.CreateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer monitor"))
@@ -194,9 +191,6 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 	tflog.Debug(ctx, fmt.Sprintf("Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 	_, err := client.UpdateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error modifying load balancer monitor"))
@@ -221,9 +215,6 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schem
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 	loadBalancerMonitor, err := client.GetLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -282,9 +273,6 @@ func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *sch
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Monitor: %s ", d.Id()))
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 	err := client.DeleteLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError

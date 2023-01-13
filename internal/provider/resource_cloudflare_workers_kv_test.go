@@ -120,9 +120,6 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 		key := rs.Primary.Attributes["key"]
 
 		accountID := rs.Primary.Attributes["account_id"]
-		if accountID == "" {
-			accountID = client.AccountID
-		}
 
 		_, err := client.GetWorkersKV(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetWorkersKVParams{NamespaceID: namespaceID, Key: key})
 

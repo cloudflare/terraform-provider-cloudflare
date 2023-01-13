@@ -34,9 +34,6 @@ func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData
 	}
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	value, err := client.GetWorkersKV(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetWorkersKVParams{
 		NamespaceID: namespaceID,
@@ -63,9 +60,6 @@ func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceDa
 	value := d.Get("value").(string)
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	_, err := client.WriteWorkersKVEntry(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.WriteWorkersKVEntryParams{
 		NamespaceID: namespaceID,
@@ -91,9 +85,6 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 	}
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers KV with id: %+v", d.Id()))
 
