@@ -10,41 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudflareAccountRoles() *schema.Resource {
-	return &schema.Resource{
-		ReadContext: dataSourceCloudflareAccountRolesRead,
-
-		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Description: "The account identifier to target for the resource.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-
-			"roles": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-		},
-	}
-}
-
 func dataSourceCloudflareAccountRolesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
