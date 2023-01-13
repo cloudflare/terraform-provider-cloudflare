@@ -40,9 +40,6 @@ func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
 		}
 
 		accountID := rs.Primary.Attributes["account_id"]
-		if accountID == "" {
-			accountID = client.AccountID
-		}
 
 		resp, _, err := client.ListWorkersKVNamespaces(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 		if err == nil {
@@ -75,9 +72,7 @@ func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *clo
 			return fmt.Errorf("not found: %s", title)
 		}
 		accountID := rs.Primary.Attributes["account_id"]
-		if accountID == "" {
-			accountID = client.AccountID
-		}
+
 		resp, _, err := client.ListWorkersKVNamespaces(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 		if err != nil {
 			return err

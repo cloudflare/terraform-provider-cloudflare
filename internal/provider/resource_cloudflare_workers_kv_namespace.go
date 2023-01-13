@@ -30,9 +30,6 @@ func resourceCloudflareWorkersKVNamespaceCreate(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	req := cloudflare.CreateWorkersKVNamespaceParams{
 		Title: d.Get("title").(string),
@@ -61,9 +58,6 @@ func resourceCloudflareWorkersKVNamespaceRead(ctx context.Context, d *schema.Res
 	namespaceID := d.Id()
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	resp, _, err := client.ListWorkersKVNamespaces(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 	if err != nil {
@@ -92,9 +86,6 @@ func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	_, err := client.UpdateWorkersKVNamespace(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateWorkersKVNamespaceParams{
 		NamespaceID: d.Id(),
@@ -110,9 +101,6 @@ func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.R
 func resourceCloudflareWorkersKVNamespaceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers KV Namespace with id: %+v", d.Id()))
 

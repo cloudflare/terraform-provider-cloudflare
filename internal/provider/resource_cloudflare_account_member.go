@@ -31,13 +31,7 @@ func resourceCloudflareAccountMember() *schema.Resource {
 
 func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-
-	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
-	} else {
-		accountID = client.AccountID
-	}
+	accountID := d.Get("account_id").(string)
 
 	member, err := client.AccountMember(ctx, accountID, d.Id())
 	if err != nil {
@@ -65,15 +59,8 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-
+	accountID := d.Get("account_id").(string)
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare account member ID: %s", d.Id()))
-
-	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
-	} else {
-		accountID = client.AccountID
-	}
 
 	err := client.DeleteAccountMember(ctx, accountID, d.Id())
 	if err != nil {
@@ -86,19 +73,12 @@ func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.Resour
 func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	memberEmailAddress := d.Get("email_address").(string)
 	requestedMemberRoles := d.Get("role_ids").(*schema.Set).List()
-
+	accountID := d.Get("account_id").(string)
 	client := meta.(*cloudflare.API)
 
 	var accountMemberRoleIDs []string
 	for _, roleID := range requestedMemberRoles {
 		accountMemberRoleIDs = append(accountMemberRoleIDs, roleID.(string))
-	}
-
-	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
-	} else {
-		accountID = client.AccountID
 	}
 
 	status := d.Get("status").(string)
@@ -121,13 +101,7 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 	client := meta.(*cloudflare.API)
 	accountRoles := []cloudflare.AccountRole{}
 	memberRoles := d.Get("role_ids").(*schema.Set).List()
-
-	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
-	} else {
-		accountID = client.AccountID
-	}
+	accountID := d.Get("account_id").(string)
 
 	for _, r := range memberRoles {
 		accountRole, _ := client.AccountRole(ctx, accountID, r.(string))
