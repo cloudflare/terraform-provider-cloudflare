@@ -6,6 +6,7 @@ import (
 
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,6 +24,12 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: heredoc.Doc(`
+			If Cloudflare's Load Balancing to load-balance across multiple
+			origin servers or data centers, you configure one of these Monitors
+			to actively check the availability of those servers over HTTP(S) or
+			TCP.
+		`),
 	}
 }
 

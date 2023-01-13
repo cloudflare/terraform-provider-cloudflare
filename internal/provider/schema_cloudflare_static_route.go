@@ -11,27 +11,32 @@ func resourceCloudflareStaticRouteSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 		"description": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Description of the static route.",
 		},
 		"prefix": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Your network prefix using CIDR notation.",
 		},
 		"nexthop": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The nexthop IP address where traffic will be routed to.",
 		},
 		"priority": {
-			Type:     schema.TypeInt,
-			Required: true,
+			Type:        schema.TypeInt,
+			Required:    true,
+			Description: "The priority for the static route.",
 		},
 		"weight": {
 			Type:     schema.TypeInt,
 			Optional: true,
 			// API does not allow to reset weights when attribute isn't send. To avoid generating unnecessary changes
 			// we will trigger a re-create when weights change
-			ForceNew: true,
+			ForceNew:    true,
+			Description: "The optional weight for ECMP routes.",
 		},
 		"colo_regions": {
 			Type:     schema.TypeList,
@@ -39,6 +44,7 @@ func resourceCloudflareStaticRouteSchema() map[string]*schema.Schema {
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "List of Cloudflare colocation names for this static route.",
 		},
 		"colo_names": {
 			Type:     schema.TypeList,
@@ -46,6 +52,7 @@ func resourceCloudflareStaticRouteSchema() map[string]*schema.Schema {
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "List of Cloudflare colocation regions for this static route.",
 		},
 	}
 }

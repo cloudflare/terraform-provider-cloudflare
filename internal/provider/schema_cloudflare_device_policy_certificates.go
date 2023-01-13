@@ -12,8 +12,9 @@ func resourceCloudflareDevicePolicyCertificatesSchema() map[string]*schema.Schem
 			Required:    true,
 		},
 		"enabled": {
-			Type:     schema.TypeBool,
-			Required: true,
+			Type:        schema.TypeBool,
+			Required:    true,
+			Description: "`true` if certificate generation is enabled.",
 		},
 	}
 }

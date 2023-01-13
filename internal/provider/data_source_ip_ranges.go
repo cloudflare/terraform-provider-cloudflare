@@ -15,34 +15,39 @@ import (
 func dataSourceCloudflareIPRanges() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceCloudflareIPRangesRead,
-
 		Schema: map[string]*schema.Schema{
 			"cidr_blocks": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The lexically ordered list of all non-China CIDR blocks.",
 			},
 			"ipv4_cidr_blocks": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The lexically ordered list of only the IPv4 CIDR blocks.",
 			},
 			"ipv6_cidr_blocks": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The lexically ordered list of only the IPv6 CIDR blocks.",
 			},
 			"china_ipv4_cidr_blocks": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The lexically ordered list of only the IPv4 China CIDR blocks.",
 			},
 			"china_ipv6_cidr_blocks": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The lexically ordered list of only the IPv6 China CIDR blocks.",
 			},
 		},
+		Description: "Use this data source to get the [IP ranges](https://www.cloudflare.com/ips/) of Cloudflare network.",
 	}
 }
 

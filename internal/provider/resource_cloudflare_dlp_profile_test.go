@@ -52,15 +52,19 @@ func TestAccCloudflareDLPProfile_Custom_MultipleEntries(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "custom profile 2"),
 					resource.TestCheckResourceAttr(name, "type", "custom"),
 
-					resource.TestCheckResourceAttr(name, "entry.0.name", fmt.Sprintf("%s_entry2", rnd)),
-					resource.TestCheckResourceAttr(name, "entry.0.enabled", "true"),
-					resource.TestCheckResourceAttr(name, "entry.0.pattern.0.regex", "^3[0-9]"),
-					resource.TestCheckResourceAttr(name, "entry.0.pattern.0.validation", "luhn"),
+					resource.TestCheckTypeSetElemNestedAttrs(name, "entry.*", map[string]string{
+						"name":                 fmt.Sprintf("%s_entry2", rnd),
+						"enabled":              "true",
+						"pattern.0.regex":      "^3[0-9]",
+						"pattern.0.validation": "luhn",
+					}),
 
-					resource.TestCheckResourceAttr(name, "entry.1.name", fmt.Sprintf("%s_entry1", rnd)),
-					resource.TestCheckResourceAttr(name, "entry.1.enabled", "true"),
-					resource.TestCheckResourceAttr(name, "entry.1.pattern.0.regex", "^4[0-9]"),
-					resource.TestCheckResourceAttr(name, "entry.1.pattern.0.validation", "luhn"),
+					resource.TestCheckTypeSetElemNestedAttrs(name, "entry.*", map[string]string{
+						"name":                 fmt.Sprintf("%s_entry1", rnd),
+						"enabled":              "true",
+						"pattern.0.regex":      "^4[0-9]",
+						"pattern.0.validation": "luhn",
+					}),
 				),
 			},
 		},

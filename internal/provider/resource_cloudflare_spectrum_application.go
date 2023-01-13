@@ -6,6 +6,7 @@ import (
 	"net"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,6 +24,11 @@ func resourceCloudflareSpectrumApplication() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareSpectrumApplicationImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Spectrum Application. You can extend the power
+			of Cloudflare's DDoS, TLS, and IP Firewall to your other TCP-based
+			services.
+		`),
 	}
 }
 

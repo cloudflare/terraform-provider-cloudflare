@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -14,15 +16,17 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateSchema() map[string]*s
 			ForceNew:    true,
 		},
 		"certificate": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "The public client certificate.",
 		},
 		"private_key": {
-			Type:      schema.TypeString,
-			Required:  true,
-			Sensitive: true,
-			ForceNew:  true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Sensitive:   true,
+			ForceNew:    true,
+			Description: "The private key of the client certificate.",
 		},
 		"issuer": {
 			Type:     schema.TypeString,
@@ -59,6 +63,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateSchema() map[string]*s
 			ValidateFunc: validation.StringInSlice([]string{"per-zone", "per-hostname"}, false),
 			Required:     true,
 			ForceNew:     true,
+			Description:  fmt.Sprintf("The form of Authenticated Origin Pulls to upload the certificate to. %s", renderAvailableDocumentationValuesStringSlice([]string{"per-zone", "per-hostname"})),
 		},
 	}
 }
