@@ -13,7 +13,7 @@ Use this data source to lookup [Devices](https://api.cloudflare.com/#devices-lis
 
 ```terraform
 data "cloudflare_devices" "example" {
-  account_id = "c68973221045fe805dfb9aa520153148"
+  account_id = "f037e56e89293a057740de681ac9abbe"
 }
 ```
 
