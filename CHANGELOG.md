@@ -2,6 +2,7 @@
 
 BREAKING CHANGES:
 
+* resource/cloudflare_access_bookmark: resource has been removed in favour of configuration on `cloudflare_access_application` ([#2136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2136))
 * resource/cloudflare_argo_tunnel: resource has been renamed to `cloudflare_tunnel` ([#2135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2135))
 
 ## 3.32.0 (January 11th, 2023)
