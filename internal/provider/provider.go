@@ -192,7 +192,6 @@ func New(version string) func() *schema.Provider {
 
 			ResourcesMap: map[string]*schema.Resource{
 				"cloudflare_access_application":                     resourceCloudflareAccessApplication(),
-				"cloudflare_access_bookmark":                        resourceCloudflareAccessBookmark(),
 				"cloudflare_access_ca_certificate":                  resourceCloudflareAccessCACertificate(),
 				"cloudflare_access_group":                           resourceCloudflareAccessGroup(),
 				"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
