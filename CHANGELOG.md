@@ -4,6 +4,7 @@ BREAKING CHANGES:
 
 * provider: `account_id` is no longer available as a global configuration option. Instead, use the resource specific attributes. ([#2139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2139))
 * resource/cloudflare_access_bookmark: resource has been removed in favour of configuration on `cloudflare_access_application` ([#2136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2136))
+* resource/cloudflare_access_rule: require explicit `zone_id` or `account_id` and remove implicit fallback to user level rules ([#2157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2157))
 * resource/cloudflare_account_member: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
 * resource/cloudflare_account_member: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
 * resource/cloudflare_argo_tunnel: resource has been renamed to `cloudflare_tunnel` ([#2135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2135))
