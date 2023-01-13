@@ -140,6 +140,33 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "Disable DNSSEC validation (must be Allow rule).",
 	},
+	"egress": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: egressSettings,
+		},
+		Description: "Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs.",
+	},
+}
+
+var egressSettings = map[string]*schema.Schema{
+	"ipv6": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "The IPv6 range to be used for egress.",
+	},
+	"ipv4": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "The IPv4 address to be used for egress.",
+	},
+	"ipv4_fallback": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The IPv4 address to be used for egress in the event of an error egressing with the primary IPv4. Can be '0.0.0.0' to indicate local egreass via Warp IPs.",
+	},
 }
 
 var teamsL4OverrideSettings = map[string]*schema.Schema{
