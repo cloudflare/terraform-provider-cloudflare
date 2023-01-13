@@ -1,5 +1,9 @@
 ## 3.33.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: do not let edge_ttl: default be zero ([#2143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2143))
+
 BUG FIXES:
 
 * resource/cloudflare_record: fix issue with DNS comments and tags not being set for new records ([#2148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2148))
