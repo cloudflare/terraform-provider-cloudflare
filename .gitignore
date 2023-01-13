@@ -32,3 +32,4 @@ website/vendor
 
 terraform-provider-cloudflare
 dist/*
+.envrc
