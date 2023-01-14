@@ -3,6 +3,7 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_ruleset: do not let edge_ttl: default be zero ([#2143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2143))
+* resource/cloudflare_teams_accounts: adds support for `mailto_address` and `mailto_subject` blockpage settings ([#2146](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2146))
 
 BUG FIXES:
 
