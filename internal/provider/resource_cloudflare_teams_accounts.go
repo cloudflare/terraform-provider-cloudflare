@@ -174,6 +174,8 @@ func flattenBlockPageConfig(blockPage *cloudflare.TeamsBlockPage) []interface{} 
 		"logo_path":        blockPage.LogoPath,
 		"background_color": blockPage.BackgroundColor,
 		"name":             blockPage.Name,
+		"mailto_address":   blockPage.MailtoAddress,
+		"mailto_subject":   blockPage.MailtoSubject,
 	}}
 }
 
@@ -214,6 +216,8 @@ func inflateBlockPageConfig(blockPage interface{}) *cloudflare.TeamsBlockPage {
 		LogoPath:        blockPageMap["logo_path"].(string),
 		BackgroundColor: blockPageMap["background_color"].(string),
 		Name:            blockPageMap["name"].(string),
+		MailtoSubject:   blockPageMap["mailto_subject"].(string),
+		MailtoAddress:   blockPageMap["mailto_address"].(string),
 	}
 }
 
