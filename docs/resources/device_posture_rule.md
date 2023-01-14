@@ -39,7 +39,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`.
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`.
 
 ### Optional
 
@@ -59,21 +59,25 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 
 Optional:
 
-- `compliance_status` (String) The workspace one device compliance status.
+- `compliance_status` (String) The workspace one device compliance status. Available values: `compliant`, `noncompliant`.
 - `connection_id` (String) The workspace one connection id.
 - `domain` (String) The domain that the client must join.
 - `enabled` (Boolean) True if the firewall must be enabled.
 - `exists` (Boolean) Checks if the file should exist.
 - `id` (String) The Teams List id.
-- `operator` (String) The version comparison operator.
+- `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
+- `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
 - `os_distro_name` (String) The operating system excluding version information.
 - `os_distro_revision` (String) The operating system version excluding OS name information or release name.
+- `overall` (String) Overall ZTA score from Crowdstrike. Value must be between 1 and 100.
 - `path` (String) The path to the file.
 - `require_all` (Boolean) True if all drives must be encrypted.
 - `running` (Boolean) Checks if the application should be running.
+- `sensor_config` (String) Sensor signal score from Crowdstrike. Value must be between 1 and 100.
 - `sha256` (String) The sha256 hash of the file.
 - `thumbprint` (String) The thumbprint of the file certificate.
 - `version` (String) The operating system semantic version.
+- `version_operator` (String) The version comparison operator for crowdstrike. Available values: `>`, `>=`, `<`, `<=`, `==`.
 
 
 <a id="nestedblock--match"></a>

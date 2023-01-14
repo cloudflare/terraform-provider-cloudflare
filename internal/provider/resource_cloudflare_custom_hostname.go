@@ -220,5 +220,11 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 		}
 	}
 
+	// only supports a map with string values
+	if val, ok := d.GetOk("custom_metadata"); ok {
+		cm := val.(map[string]interface{})
+		ch.CustomMetadata = (*cloudflare.CustomMetadata)(&cm)
+	}
+
 	return ch
 }

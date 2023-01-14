@@ -37,7 +37,7 @@ func testSweepCloudflareRecord(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	records, err := client.DNSRecords(context.Background(), zoneID, cloudflare.DNSRecord{})
+	records, _, err := client.ListDNSRecords(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListDNSRecordsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
 	}
@@ -50,7 +50,7 @@ func testSweepCloudflareRecord(r string) error {
 	for _, record := range records {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare DNS record ID: %s", record.ID))
 		//nolint:errcheck
-		client.DeleteDNSRecord(context.Background(), zoneID, record.ID)
+		client.DeleteDNSRecord(context.Background(), cloudflare.ZoneIdentifier(zoneID), record.ID)
 	}
 
 	return nil
@@ -84,6 +84,10 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.%", "4"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.auto_added", "false"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1", "tag2"),
+					resource.TestCheckResourceAttr(resourceName, "comment", "this is a comment"),
 				),
 			},
 		},
@@ -600,7 +604,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.DNSRecord(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Record still exists")
 		}
@@ -612,7 +616,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
-		err := client.DeleteDNSRecord(context.Background(), record.ZoneID, record.ID)
+		err := client.DeleteDNSRecord(context.Background(), cloudflare.ZoneIdentifier(record.ZoneID), record.ID)
 		if err != nil {
 			return err
 		}
@@ -677,7 +681,7 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundRecord, err := client.DNSRecord(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundRecord, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -700,6 +704,8 @@ resource "cloudflare_record" "%[3]s" {
 	value = "192.168.0.10"
 	type = "A"
 	ttl = 3600
+	tags = ["tag1", "tag2"]
+    comment = "this is a comment"
 }`, zoneID, name, rnd)
 }
 
@@ -791,6 +797,8 @@ resource "cloudflare_record" "%[3]s" {
 	value = "192.168.0.11"
 	type = "A"
 	ttl = 3600
+	tags = ["updated_tag1", "updated_tag2"]
+    comment = "this is am updated comment"
 }`, zoneID, name, rnd)
 }
 

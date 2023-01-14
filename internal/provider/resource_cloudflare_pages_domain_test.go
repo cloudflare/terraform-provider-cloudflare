@@ -24,6 +24,8 @@ func testPagesDomainConfig(resourceID, accountID, projectName, domain string) st
 }
 
 func TestAccTestPagesDomain(t *testing.T) {
+	t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
+
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_domain." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

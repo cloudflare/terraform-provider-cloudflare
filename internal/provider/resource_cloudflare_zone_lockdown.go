@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,6 +23,13 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareZoneLockdownImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Zone Lockdown resource. Zone Lockdown allows
+			you to define one or more URLs (with wildcard matching on the domain
+			or path) that will only permit access if the request originates
+			from an IP address that matches a safelist of one or more IP
+			addresses and/or IP ranges.
+		`),
 	}
 }
 

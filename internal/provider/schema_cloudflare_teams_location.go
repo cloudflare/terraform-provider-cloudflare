@@ -10,12 +10,14 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Name of the teams location.",
 		},
 		"networks": {
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "The networks CIDRs that comprise the location.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"id": {
@@ -23,15 +25,17 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 						Computed: true,
 					},
 					"network": {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "CIDR notation representation of the network IP.",
 					},
 				},
 			},
 		},
 		"client_default": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Indicator that this is the default location.",
 		},
 		"policy_ids": {
 			Type:     schema.TypeList,
@@ -39,20 +43,24 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 			Computed: true,
 		},
 		"ip": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Client IP address.",
 		},
 		"doh_subdomain": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The FQDN that DoH clients should be pointed at.",
 		},
 		"anonymized_logs_enabled": {
-			Type:     schema.TypeBool,
-			Computed: true,
+			Type:        schema.TypeBool,
+			Computed:    true,
+			Description: "Indicator that anonymized logs are enabled.",
 		},
 		"ipv4_destination": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "IP to direct all IPv4 DNS queries to.",
 		},
 	}
 }

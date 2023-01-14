@@ -9,8 +9,9 @@ description: |-
 
 Provides a Cloudflare Origin CA certificate used to protect traffic to your origin without involving a third party Certificate Authority.
 
-~> This resource requires you use your Origin CA Key as the
-[`api_user_service_key`](../index.html#api_user_service_key) value.
+~> Since [v3.32.0](https://github.com/cloudflare/terraform-provider-cloudflare/releases/tag/v3.32.0)
+  all authentication schemes are supported for managing Origin CA certificates.
+  Versions prior to v3.32.0 will still need to use [`api_user_service_key`](../index.html#api_user_service_key).
 
 ## Example Usage
 

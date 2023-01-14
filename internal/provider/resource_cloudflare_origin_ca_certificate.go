@@ -66,7 +66,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 		hostnames = append(hostnames, h.(string))
 	}
 
-	certInput := cloudflare.OriginCACertificate{
+	certInput := cloudflare.CreateOriginCertificateParams{
 		Hostnames:   hostnames,
 		RequestType: d.Get("request_type").(string),
 	}
@@ -80,7 +80,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 	}
 
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare OriginCACertificate: %#v", certInput))
-	cert, err := client.CreateOriginCertificate(ctx, certInput)
+	cert, err := client.CreateOriginCACertificate(ctx, certInput)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating origin certificate: %w", err))
@@ -94,7 +94,7 @@ func resourceCloudflareOriginCACertificateCreate(ctx context.Context, d *schema.
 func resourceCloudflareOriginCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	certID := d.Id()
-	cert, err := client.OriginCertificate(ctx, certID)
+	cert, err := client.GetOriginCACertificate(ctx, certID)
 
 	tflog.Debug(ctx, fmt.Sprintf("OriginCACertificate: %#v", cert))
 
@@ -143,7 +143,7 @@ func resourceCloudflareOriginCACertificateDelete(ctx context.Context, d *schema.
 
 	tflog.Info(ctx, fmt.Sprintf("Revoking Cloudflare OriginCACertificate: id %s", certID))
 
-	_, err := client.RevokeOriginCertificate(ctx, certID)
+	_, err := client.RevokeOriginCACertificate(ctx, certID)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error revoking Cloudflare OriginCACertificate: %w", err))

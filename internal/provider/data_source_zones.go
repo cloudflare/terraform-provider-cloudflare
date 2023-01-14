@@ -18,9 +18,10 @@ func dataSourceCloudflareZones() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"filter": {
-				Type:     schema.TypeList,
-				Required: true,
-				MaxItems: 1,
+				Type:        schema.TypeList,
+				Required:    true,
+				MaxItems:    1,
+				Description: "One or more values used to look up zone records. If more than one value is given all values must match in order to be included.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"account_id": {
@@ -29,48 +30,57 @@ func dataSourceCloudflareZones() *schema.Resource {
 							Optional:    true,
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "A string value to search for.",
 						},
 						"match": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "A RE2 compatible regular expression to filter the	results. This is performed client side whereas the `name` and `lookup_type`	are performed on the Cloudflare server side.",
 						},
 						"lookup_type": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"contains", "exact"}, false),
+							Description:  fmt.Sprintf("The type of search to perform for the `name` value when querying the zone API. %s", renderAvailableDocumentationValuesStringSlice([]string{"contains", "exact"})),
 							Default:      "exact",
 						},
 						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Status of the zone to lookup.",
 						},
 						"paused": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: "Paused status of the zone to lookup.",
 						},
 					},
 				},
 			},
 			"zones": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "A list of zone objects.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The zone ID.",
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Zone name.",
 						},
 					},
 				},
 			},
 		},
+		Description: "Use this data source to look up Zone results for use in other resources.",
 	}
 }
 

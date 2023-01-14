@@ -20,36 +20,42 @@ func resourceCloudflareLoadBalancerPoolSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringMatch(regexp.MustCompile("[-_a-zA-Z0-9]+"), "Only alphanumeric characters, hyphens and underscores are allowed."),
+			Description:  "A short name (tag) for the pool.",
 		},
 
 		"origins": {
-			Type:     schema.TypeSet,
-			Required: true,
-			Elem:     originsElem,
+			Type:        schema.TypeSet,
+			Required:    true,
+			Elem:        originsElem,
+			Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
 		},
 
 		"enabled": {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+			Description: "Whether to enable (the default) this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
 		},
 
 		"minimum_origins": {
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  1,
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     1,
+			Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.",
 		},
 
 		"latitude": {
 			Type:         schema.TypeFloat,
 			Optional:     true,
 			ValidateFunc: validation.FloatBetween(-90, 90),
+			Description:  "The latitude this pool is physically located at; used for proximity steering.",
 		},
 
 		"longitude": {
 			Type:         schema.TypeFloat,
 			Optional:     true,
 			ValidateFunc: validation.FloatBetween(-180, 180),
+			Description:  "The longitude this pool is physically located at; used for proximity steering.",
 		},
 
 		"check_regions": {
@@ -59,45 +65,53 @@ func resourceCloudflareLoadBalancerPoolSchema() map[string]*schema.Schema {
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
+			Description: "A list of regions (specified by region code) from which to run health checks. Empty means every Cloudflare data center (the default), but requires an Enterprise plan. Region codes can be found [here](https://developers.cloudflare.com/load-balancing/reference/region-mapping-api).",
 		},
 
 		"description": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringLenBetween(0, 1024),
+			Description:  "Free text description.",
 		},
 
 		"monitor": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringLenBetween(0, 32),
+			Description:  "The ID of the Monitor to use for health checking origins within this pool.",
 		},
 
 		"notification_email": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
 		},
 
 		"load_shedding": {
-			Type:     schema.TypeSet,
-			Optional: true,
-			Elem:     loadShedElem,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Elem:        loadShedElem,
+			Description: "Setting for controlling load shedding for this pool.",
 		},
 
 		"origin_steering": {
-			Type:     schema.TypeSet,
-			Optional: true,
-			Elem:     originSteeringElem,
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Elem:        originSteeringElem,
+			Description: "Set an origin steering policy to control origin selection within a pool.",
 		},
 
 		"created_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The RFC3339 timestamp of when the load balancer was created.",
 		},
 
 		"modified_on": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "The RFC3339 timestamp of when the load balancer was last modified.",
 		},
 	}
 }

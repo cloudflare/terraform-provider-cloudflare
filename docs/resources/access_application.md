@@ -57,7 +57,7 @@ resource "cloudflare_access_application" "staging_app" {
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
-- `allowed_idps` (List of String) The identity providers selected for the application.
+- `allowed_idps` (Set of String) The identity providers selected for the application.
 - `app_launcher_visible` (Boolean) Option to show/hide applications in App Launcher. Defaults to `true`.
 - `auto_redirect_to_identity` (Boolean) Option to skip identity provider selection if only one is configured in `allowed_idps`. Defaults to `false`.
 - `cors_headers` (Block List) CORS configuration for the Access Application. See below for reference structure. (see [below for nested schema](#nestedblock--cors_headers))

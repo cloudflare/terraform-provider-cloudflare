@@ -581,7 +581,7 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 											},
 											"default": {
 												Type:        schema.TypeInt,
-												Required:    true,
+												Optional:    true,
 												Description: "Default edge TTL",
 											},
 											"status_code_ttl": {

@@ -2,9 +2,11 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,6 +22,12 @@ func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareWorkerCronTriggerImport,
 		},
+		Description: heredoc.Doc(fmt.Sprintf(`
+			Worker Cron Triggers allow users to map a cron expression to a Worker script
+			using a %s listener that enables Workers to be executed on a
+			schedule. Worker Cron Triggers are ideal for running periodic jobs for
+			maintenance or calling third-party APIs to collect up-to-date data.
+		`, "`ScheduledEvent`")),
 	}
 }
 
@@ -28,10 +36,13 @@ func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 func resourceCloudflareWorkerCronTriggerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
-
 	scriptName := d.Get("script_name").(string)
 
-	_, err := client.UpdateWorkerCronTriggers(ctx, accountID, scriptName, transformSchemaToWorkerCronTriggerStruct(d))
+	crons := transformSchemaToWorkerCronTriggerStruct(d)
+	_, err := client.UpdateWorkerCronTriggers(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateWorkerCronTriggersParams{
+		ScriptName: scriptName,
+		Crons:      crons,
+	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to update Worker Cron Trigger: %w", err))
 	}
@@ -46,10 +57,14 @@ func resourceCloudflareWorkerCronTriggerRead(ctx context.Context, d *schema.Reso
 	scriptName := d.Get("script_name").(string)
 	accountID := d.Get("account_id").(string)
 
-	s, err := client.ListWorkerCronTriggers(ctx, accountID, scriptName)
+	params := cloudflare.ListWorkerCronTriggersParams{
+		ScriptName: scriptName,
+	}
+
+	s, err := client.ListWorkerCronTriggers(ctx, cloudflare.AccountIdentifier(accountID), params)
 	if err != nil {
-		// If the script is removed, we also need to remove the triggers.
-		if strings.Contains(err.Error(), "workers.api.error.script_not_found") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			d.SetId("")
 			return nil
 		}
@@ -69,7 +84,10 @@ func resourceCloudflareWorkerCronTriggerDelete(ctx context.Context, d *schema.Re
 	scriptName := d.Get("script_name").(string)
 	accountID := d.Get("account_id").(string)
 
-	_, err := client.UpdateWorkerCronTriggers(ctx, accountID, scriptName, []cloudflare.WorkerCronTrigger{})
+	_, err := client.UpdateWorkerCronTriggers(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateWorkerCronTriggersParams{
+		ScriptName: scriptName,
+		Crons:      []cloudflare.WorkerCronTrigger{},
+	})
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -80,7 +98,17 @@ func resourceCloudflareWorkerCronTriggerDelete(ctx context.Context, d *schema.Re
 }
 
 func resourceCloudflareWorkerCronTriggerImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	d.SetId(stringChecksum(d.Id()))
+	attributes := strings.SplitN(d.Id(), "/", 2)
+
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/scriptName"`, d.Id())
+	}
+
+	accountID, scriptName := attributes[0], attributes[1]
+
+	d.Set("script_name", scriptName)
+	d.Set("account_id", accountID)
+	d.SetId(stringChecksum(scriptName))
 
 	resourceCloudflareWorkerCronTriggerRead(ctx, d, meta)
 

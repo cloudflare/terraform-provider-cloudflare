@@ -9,6 +9,8 @@ import (
 )
 
 func TestAccCloudflareAccountMemberBasic(t *testing.T) {
+	t.Skip("Skipping account member tests pending DSR stability improvements")
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
