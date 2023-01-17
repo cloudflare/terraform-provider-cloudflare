@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,6 +23,11 @@ func resourceCloudflareStaticRoute() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareStaticRouteImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a resource, that manages Cloudflare static routes for Magic
+			Transit or Magic WAN. Static routes are used to route traffic
+			through GRE tunnels.
+		`),
 	}
 }
 

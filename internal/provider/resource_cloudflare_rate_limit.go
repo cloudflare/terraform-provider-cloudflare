@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,6 +23,11 @@ func resourceCloudflareRateLimit() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareRateLimitImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare rate limit resource for a given zone. This can
+			be used to limit the traffic you receive zone-wide, or matching more
+			specific types of requests/responses.
+		`),
 	}
 }
 

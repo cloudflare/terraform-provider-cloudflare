@@ -102,14 +102,14 @@ func main() {
 	}
 
 	if res.StatusCode != 200 {
-		log.Fatalf("failed to fetch remote link: %s, status %d", link, res.StatusCode)
+		log.Printf("failed to fetch remote link: %s, status %d", link, res.StatusCode)
 		postMissingLogPayload(ctx, client, owner, repo, issueNumber)
 		os.Exit(1)
 	}
 
 	resBody, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatalf("could not ready response: %s", err)
+		log.Printf("could not ready response: %s", err)
 		postMissingLogPayload(ctx, client, owner, repo, issueNumber)
 		os.Exit(1)
 	}

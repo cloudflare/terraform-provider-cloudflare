@@ -19,12 +19,14 @@ func dataSourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schem
 			ExactlyOneOf: []string{"zone_id", "account_id"},
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Access Identity Provider name to search for.",
 		},
 		"type": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Access Identity Provider Type.",
 		},
 	}
 }

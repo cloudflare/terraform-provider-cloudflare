@@ -11,8 +11,9 @@ func resourceCloudflareLogpullRetentionSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 		"enabled": {
-			Type:     schema.TypeBool,
-			Required: true,
+			Type:        schema.TypeBool,
+			Required:    true,
+			Description: "Whether you wish to retain logs or not.",
 		},
 	}
 }

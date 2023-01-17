@@ -2,7 +2,7 @@ package provider
 
 import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-func resourceCloudflareNotificationPolicyWebhooksSchema() map[string]*schema.Schema {
+func resourceCloudflareNotificationPolicyWebhookSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
 			Description: "The account identifier to target for the resource.",
@@ -10,32 +10,38 @@ func resourceCloudflareNotificationPolicyWebhooksSchema() map[string]*schema.Sch
 			Required:    true,
 		},
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The name of the webhook destination.",
 		},
 		"url": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The URL of the webhook destinations.",
 		},
 		"secret": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "An optional secret can be provided that will be passed in the `cf-webhook-auth` header when dispatching a webhook notification. Secrets are not returned in any API response body. Refer to the [documentation](https://api.cloudflare.com/#notification-webhooks-create-webhook) for more details.",
 		},
 		"type": {
 			Type:     schema.TypeString,
 			Computed: true,
 		},
 		"created_at": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Timestamp of when the notification webhook was created.",
 		},
 		"last_success": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Timestamp of when the notification webhook was last successful.",
 		},
 		"last_failure": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Timestamp of when the notification webhook last faiuled.",
 		},
 	}
 }

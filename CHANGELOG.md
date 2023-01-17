@@ -1,4 +1,19 @@
-## 3.32.0 (Unreleased)
+## 3.33.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: do not let edge_ttl: default be zero ([#2143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2143))
+* resource/cloudflare_teams_accounts: adds support for `mailto_address` and `mailto_subject` blockpage settings ([#2146](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2146))
+
+BUG FIXES:
+
+* resource/cloudflare_record: fix issue with DNS comments and tags not being set for new records ([#2148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2148))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.58.1 to 0.59.0 ([#2166](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2166))
+
+## 3.32.0 (January 11th, 2023)
 
 FEATURES:
 
@@ -8,6 +23,7 @@ ENHANCEMENTS:
 
 * provider: `X-Auth-Email`, `X-Auth-Key`, `X-Auth-User-Service-Key` and `Authorization` values are now automatically redacted from debug logs ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
 * provider: use inbuilt cloudflare-go logger for HTTP interactions ([#2123](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2123))
+* resource/cloudflare_device_posture_rule: add ability to create crowdstrike s2s posture rule creation ([#2128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2128))
 * resource/cloudflare_origin_ca: support all authentication schemes ([#2124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2124))
 * resource/cloudflare_pages_project: adds support for `always_use_latest_compatibility_date`, `fail_open`, `service_binding` and `usage_model` ([#2083](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2083))
 * resource/cloudflare_record: add support for tags and comments. ([#2105](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2105))

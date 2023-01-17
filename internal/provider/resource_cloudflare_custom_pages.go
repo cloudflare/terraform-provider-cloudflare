@@ -22,6 +22,7 @@ func resourceCloudflareCustomPages() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareCustomPagesImport,
 		},
+		Description: "Provides a resource which manages Cloudflare custom error pages.",
 	}
 }
 

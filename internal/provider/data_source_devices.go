@@ -13,6 +13,7 @@ func dataSourceCloudflareDevices() *schema.Resource {
 	return &schema.Resource{
 		Schema:      resoureceCloudflareDevicesSchema(),
 		ReadContext: dataResourceCloudflareDevicesRead,
+		Description: "Use this data source to lookup [Devices](https://api.cloudflare.com/#devices-list-devices).",
 	}
 }
 

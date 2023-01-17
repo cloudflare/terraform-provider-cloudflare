@@ -17,7 +17,7 @@ across all zones within the same account.
 # IP list
 resource "cloudflare_list" "example" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "example list"
+  name        = "example_list"
   description = "example IPs for a list"
   kind        = "ip"
 
@@ -39,7 +39,7 @@ resource "cloudflare_list" "example" {
 # Redirect list
 resource "cloudflare_list" "example" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "example list"
+  name        = "example_list"
   description = "example redirects for a list"
   kind        = "redirect"
 

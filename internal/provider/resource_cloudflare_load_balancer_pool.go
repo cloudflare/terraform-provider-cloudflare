@@ -7,6 +7,7 @@ import (
 
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,6 +25,10 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Load Balancer pool resource. This provides a
+			pool of origins that can be used by a Cloudflare Load Balancer.
+		`),
 	}
 }
 

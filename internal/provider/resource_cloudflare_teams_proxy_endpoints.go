@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -21,6 +22,11 @@ func resourceCloudflareTeamsProxyEndpoint() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTeamsProxyEndpointImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams Proxy Endpoint resource. Teams Proxy
+			Endpoints are used for pointing proxy clients at Cloudflare Secure
+			Gateway.
+		`),
 	}
 }
 
