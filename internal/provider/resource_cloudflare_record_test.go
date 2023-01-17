@@ -84,6 +84,10 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.%", "4"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.auto_added", "false"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1", "tag2"),
+					resource.TestCheckResourceAttr(resourceName, "comment", "this is a comment"),
 				),
 			},
 		},
@@ -700,6 +704,8 @@ resource "cloudflare_record" "%[3]s" {
 	value = "192.168.0.10"
 	type = "A"
 	ttl = 3600
+	tags = ["tag1", "tag2"]
+    comment = "this is a comment"
 }`, zoneID, name, rnd)
 }
 
@@ -791,6 +797,8 @@ resource "cloudflare_record" "%[3]s" {
 	value = "192.168.0.11"
 	type = "A"
 	ttl = 3600
+	tags = ["updated_tag1", "updated_tag2"]
+    comment = "this is am updated comment"
 }`, zoneID, name, rnd)
 }
 

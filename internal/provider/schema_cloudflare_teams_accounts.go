@@ -110,6 +110,16 @@ var blockPageSchema = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "Name of block page configuration.",
 	},
+	"mailto_address": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Admin email for users to contact.",
+	},
+	"mailto_subject": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Subject line for emails created from block page.",
+	},
 }
 
 var antivirusSchema = map[string]*schema.Schema{

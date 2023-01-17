@@ -13,6 +13,7 @@ func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
 		Schema:      dataSourceCloudflareAccessIdentityProviderSchema(),
 		ReadContext: dataSourceCloudflareAccessIdentityProviderRead,
+		Description: "Use this data source to lookup a single [Access Identity Provider](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration) by name.",
 	}
 }
 

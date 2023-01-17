@@ -48,8 +48,8 @@ resource "cloudflare_spectrum_application" "example" {
 - `ip_firewall` (Boolean) Enables the IP Firewall for this application. Defaults to `true`.
 - `origin_direct` (List of String) A list of destination addresses to the origin. e.g. `tcp://192.0.2.1:22`.
 - `origin_dns` (Block List, Max: 1) A destination DNS addresses to the origin. (see [below for nested schema](#nestedblock--origin_dns))
-- `origin_port` (Number) Origin port to proxy traffice to. Required when using `origin_dns`. Conflicts with `origin_port_range`.
-- `origin_port_range` (Block List, Max: 1) Origin port range to proxy traffice to. When using a range, the protocol field must also specify a range, e.g. `tcp/22-23`. Required when using `origin_dns`. Conflicts with `origin_port`. (see [below for nested schema](#nestedblock--origin_port_range))
+- `origin_port` (Number) Origin port to proxy traffice to. Conflicts with `origin_port_range`.
+- `origin_port_range` (Block List, Max: 1) Origin port range to proxy traffice to. When using a range, the protocol field must also specify a range, e.g. `tcp/22-23`. Conflicts with `origin_port`. (see [below for nested schema](#nestedblock--origin_port_range))
 - `proxy_protocol` (String) Enables a proxy protocol to the origin. Available values: `off`, `v1`, `v2`, `simple`. Defaults to `off`.
 - `tls` (String) TLS configuration option for Cloudflare to connect to your origin. Available values: `off`, `flexible`, `full`, `strict`. Defaults to `off`.
 - `traffic_type` (String) Sets application type. Available values: `direct`, `http`, `https`. Defaults to `direct`.

@@ -12,7 +12,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: ^1.18
+          go-version-file: 'tools/go.mod'
       - run: make tools
       - run: go run cmd/changelog-check/main.go ${{ github.event.pull_request.number }}
         working-directory: ./tools
