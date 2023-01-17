@@ -9,6 +9,10 @@ BUG FIXES:
 
 * resource/cloudflare_record: fix issue with DNS comments and tags not being set for new records ([#2148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2148))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.58.1 to 0.59.0 ([#2166](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2166))
+
 ## 3.32.0 (January 11th, 2023)
 
 FEATURES:
