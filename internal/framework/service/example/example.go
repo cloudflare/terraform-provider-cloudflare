@@ -1,10 +1,11 @@
-package framework
+package example
 
 import (
 	"context"
 	"fmt"
 	"net/http"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/modifiers/defaults"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -46,6 +47,9 @@ func (r *ExampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"configurable_attribute": schema.StringAttribute{
 				MarkdownDescription: "Example configurable attribute",
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					defaults.DefaultString("foo"),
+				},
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,

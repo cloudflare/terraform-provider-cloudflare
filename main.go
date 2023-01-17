@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework"
+	framework "github.com/cloudflare/terraform-provider-cloudflare/internal/framework/provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
