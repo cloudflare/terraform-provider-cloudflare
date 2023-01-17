@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -81,96 +82,81 @@ func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
-				"email": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// DefaultFunc:   schema.EnvDefaultFunc("CLOUDFLARE_EMAIL", nil),
-					Description:   "A registered Cloudflare email address. Alternatively, can be configured using the `CLOUDFLARE_EMAIL` environment variable.",
-					ConflictsWith: []string{"api_token"},
-					RequiredWith:  []string{"api_key"},
+				consts.EmailSchemaKey: {
+					Type:          schema.TypeString,
+					Optional:      true,
+					Description:   fmt.Sprintf("A registered Cloudflare email address. Alternatively, can be configured using the `%s` environment variable.", consts.EmailEnvVarKey),
+					ConflictsWith: []string{consts.APITokenSchemaKey},
+					RequiredWith:  []string{consts.APIKeySchemaKey},
 				},
 
-				"api_key": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_KEY", nil),
-					Description:  "The API key for operations. Alternatively, can be configured using the `CLOUDFLARE_API_KEY` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead.",
-					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
+				consts.APIKeySchemaKey: {
+					Type:         schema.TypeString,
+					Optional:     true,
+					Description:  fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead.", consts.APIKeyEnvVarKey),
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)"),
 				},
 
-				"api_token": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_TOKEN", nil),
-					Description:  "The API Token for operations. Alternatively, can be configured using the `CLOUDFLARE_API_TOKEN` environment variable.",
-					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
+				consts.APITokenSchemaKey: {
+					Type:         schema.TypeString,
+					Optional:     true,
+					Description:  fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable.", consts.APITokenEnvVarKey),
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
 				},
 
-				"api_user_service_key": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// DefaultFunc:  schema.EnvDefaultFunc("CLOUDFLARE_API_USER_SERVICE_KEY", nil),
-					ExactlyOneOf: []string{"api_key", "api_token", "api_user_service_key"},
-					Description:  "A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `CLOUDFLARE_API_USER_SERVICE_KEY` environment variable.",
+				consts.APIUserServiceKeySchemaKey: {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable.", consts.APIUserServiceKeyEnvVarKey),
 				},
 
-				"rps": {
-					Type:     schema.TypeInt,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_RPS", 4),
-					Description: "RPS limit to apply when making calls to the API. Alternatively, can be configured using the `CLOUDFLARE_RPS` environment variable.",
+				consts.RPSSchemaKey: {
+					Type:        schema.TypeInt,
+					Optional:    true,
+					Description: fmt.Sprintf("RPS limit to apply when making calls to the API. Alternatively, can be configured using the `%s` environment variable.", consts.RPSEnvVarKey),
 				},
 
-				"retries": {
-					Type:     schema.TypeInt,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_RETRIES", 3),
-					Description: "Maximum number of retries to perform when an API request fails. Alternatively, can be configured using the `CLOUDFLARE_RETRIES` environment variable.",
+				consts.RetriesSchemaKey: {
+					Type:        schema.TypeInt,
+					Optional:    true,
+					Description: fmt.Sprintf("Maximum number of retries to perform when an API request fails. Alternatively, can be configured using the `%s` environment variable.", consts.RetriesEnvVarKey),
 				},
 
-				"min_backoff": {
-					Type:     schema.TypeInt,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_MIN_BACKOFF", 1),
-					Description: "Minimum backoff period in seconds after failed API calls. Alternatively, can be configured using the `CLOUDFLARE_MIN_BACKOFF` environment variable.",
+				consts.MinimumBackoffSchemaKey: {
+					Type:        schema.TypeInt,
+					Optional:    true,
+					Description: fmt.Sprintf("Minimum backoff period in seconds after failed API calls. Alternatively, can be configured using the `%s` environment variable.", consts.MinimumBackoffEnvVar),
 				},
 
-				"max_backoff": {
-					Type:     schema.TypeInt,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_MAX_BACKOFF", 30),
-					Description: "Maximum backoff period in seconds after failed API calls. Alternatively, can be configured using the `CLOUDFLARE_MAX_BACKOFF` environment variable.",
+				consts.MaximumBackoffSchemaKey: {
+					Type:        schema.TypeInt,
+					Optional:    true,
+					Description: fmt.Sprintf("Maximum backoff period in seconds after failed API calls. Alternatively, can be configured using the `%s` environment variable.", consts.MaximumBackoffEnvVarKey),
 				},
 
-				"api_client_logging": {
-					Type:     schema.TypeBool,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_CLIENT_LOGGING", false),
-					Description: "Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `CLOUDFLARE_API_CLIENT_LOGGING` environment variable.",
+				consts.APIClientLoggingSchemaKey: {
+					Type:        schema.TypeBool,
+					Optional:    true,
+					Description: fmt.Sprintf("Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `%s` environment variable.", consts.APIClientLoggingEnvVarKey),
 				},
 
-				"account_id": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_ACCOUNT_ID", nil),
-					Description: "Configure API client to always use a specific account. Alternatively, can be configured using the `CLOUDFLARE_ACCOUNT_ID` environment variable.",
+				consts.AccountIDSchemaKey: {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: fmt.Sprintf("Configure API client to always use a specific account. Alternatively, can be configured using the `%s` environment variable.", consts.AccountIDEnvVarKey),
 					Deprecated:  "Use resource specific `account_id` attributes instead.",
 				},
 
-				"api_hostname": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_HOSTNAME", "api.cloudflare.com"),
-					Description: "Configure the hostname used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_HOSTNAME` environment variable.",
+				consts.APIHostnameSchemaKey: {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: fmt.Sprintf("Configure the hostname used by the API client. Alternatively, can be configured using the `%s` environment variable.", consts.APIHostnameEnvVarKey),
 				},
 
-				"api_base_path": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_BASE_PATH", "/client/v4"),
-					Description: "Configure the base path used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_BASE_PATH` environment variable.",
+				consts.APIBasePathSchemaKey: {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: fmt.Sprintf("Configure the base path used by the API client. Alternatively, can be configured using the `%s` environment variable.", consts.APIBasePathEnvVarKey),
 				},
 			},
 
@@ -313,45 +299,45 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			basePath          string
 		)
 
-		if d.Get("api_hostname").(string) != "" {
-			baseHostname = d.Get("api_hostname").(string)
+		if d.Get(consts.APIHostnameSchemaKey).(string) != "" {
+			baseHostname = d.Get(consts.APIHostnameSchemaKey).(string)
 		} else {
-			baseHostname = utils.GetDefaultFromEnv("CLOUDFLARE_API_HOSTNAME", "api.cloudflare.com")
+			baseHostname = utils.GetDefaultFromEnv(consts.APIHostnameEnvVarKey, consts.APIHostnameDefault)
 		}
 
-		if d.Get("api_base_path").(string) != "" {
-			basePath = d.Get("api_base_apth").(string)
+		if d.Get(consts.APIBasePathSchemaKey).(string) != "" {
+			basePath = d.Get(consts.APIBasePathSchemaKey).(string)
 		} else {
-			basePath = utils.GetDefaultFromEnv("CLOUDFLARE_API_BASE_PATH", "/client/v4")
+			basePath = utils.GetDefaultFromEnv(consts.APIBasePathEnvVarKey, consts.APIBasePathDefault)
 		}
 		baseURL := cloudflare.BaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath))
 
-		if _, ok := d.GetOk("rps"); ok {
-			rps = int64(d.Get("rps").(int))
+		if _, ok := d.GetOk(consts.RPSSchemaKey); ok {
+			rps = int64(d.Get(consts.RPSSchemaKey).(int))
 		} else {
-			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv("CLOUDFLARE_RPS", "4"), 10, 64)
+			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv(consts.RPSEnvVarKey, consts.RPSDefault), 10, 64)
 			rps = i
 		}
 		limitOpt := cloudflare.UsingRateLimit(float64(rps))
 
-		if _, ok := d.GetOk("retries"); ok {
-			retries = int64(d.Get("retries").(int))
+		if _, ok := d.GetOk(consts.RetriesSchemaKey); ok {
+			retries = int64(d.Get(consts.RetriesSchemaKey).(int))
 		} else {
-			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv("CLOUDFLARE_RETRIES", "4"), 10, 64)
+			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv(consts.RetriesEnvVarKey, consts.RetriesDefault), 10, 64)
 			retries = i
 		}
 
-		if _, ok := d.GetOk("min_back_off"); ok {
-			minBackOff = int64(d.Get("min_back_off").(int))
+		if _, ok := d.GetOk(consts.MinimumBackoffSchemaKey); ok {
+			minBackOff = int64(d.Get(consts.MinimumBackoffSchemaKey).(int))
 		} else {
-			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv("CLOUDFLARE_MIN_BACKOFF", "1"), 10, 64)
+			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv(consts.MinimumBackoffEnvVar, consts.MinimumBackoffDefault), 10, 64)
 			minBackOff = i
 		}
 
-		if _, ok := d.GetOk("max_backoff"); ok {
-			maxBackOff = int64(d.Get("max_backoff").(int))
+		if _, ok := d.GetOk(consts.MaximumBackoffSchemaKey); ok {
+			maxBackOff = int64(d.Get(consts.MaximumBackoffSchemaKey).(int))
 		} else {
-			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv("CLOUDFLARE_MAX_BACKOFF", "30"), 10, 64)
+			i, _ := strconv.ParseInt(utils.GetDefaultFromEnv(consts.MaximumBackoffEnvVarKey, consts.MaximumBackoffDefault), 10, 64)
 			maxBackOff = i
 		}
 
@@ -360,38 +346,40 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 
 		options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
-		ua := fmt.Sprintf("terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s", p.TerraformVersion, meta.SDKVersionString(), version)
+		ua := fmt.Sprintf(consts.UserAgentDefault, p.TerraformVersion, meta.SDKVersionString(), version)
 		options = append(options, cloudflare.UserAgent(ua))
 
 		config := Config{Options: options}
 
-		if v, ok := d.GetOk("api_token"); ok {
+		if v, ok := d.GetOk(consts.APITokenSchemaKey); ok {
 			apiToken = v.(string)
 		} else {
-			apiToken = utils.GetDefaultFromEnv("CLOUDFLARE_API_TOKEN", "")
+			apiToken = utils.GetDefaultFromEnv(consts.APITokenEnvVarKey, "")
 		}
+
 		if apiToken != "" {
 			config.APIToken = apiToken
 		}
 
-		if v, ok := d.GetOk("api_key"); ok {
+		if v, ok := d.GetOk(consts.APIKeySchemaKey); ok {
 			apiKey = v.(string)
 		} else {
-			apiKey = utils.GetDefaultFromEnv("CLOUDFLARE_API_KEY", "")
+			apiKey = utils.GetDefaultFromEnv(consts.APIKeyEnvVarKey, "")
 		}
+
 		if apiKey != "" {
 			config.APIKey = apiKey
 
-			if v, ok := d.GetOk("email"); ok {
+			if v, ok := d.GetOk(consts.EmailSchemaKey); ok {
 				email = v.(string)
 			} else {
-				email = utils.GetDefaultFromEnv("CLOUDFLARE_EMAIL", "")
+				email = utils.GetDefaultFromEnv(consts.EmailEnvVarKey, "")
 			}
 
 			if email == "" {
 				diags = append(diags, diag.Diagnostic{
 					Severity: diag.Error,
-					Summary:  "email is not set correctly",
+					Summary:  fmt.Sprintf("%q is not set correctly", consts.EmailSchemaKey),
 				})
 
 				return nil, diags
@@ -402,20 +390,28 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			}
 		}
 
-		if v, ok := d.GetOk("api_user_service_key"); ok {
+		if v, ok := d.GetOk(consts.APIUserServiceKeySchemaKey); ok {
 			apiUserServiceKey = v.(string)
 		} else {
-			apiUserServiceKey = utils.GetDefaultFromEnv("CLOUDFLARE_API_USER_SERVICE_KEY", "")
+			apiUserServiceKey = utils.GetDefaultFromEnv(consts.APIUserServiceKeyEnvVarKey, "")
 		}
 
 		if apiUserServiceKey != "" {
 			config.APIUserServiceKey = apiUserServiceKey
 		}
 
-		if v, ok := d.GetOk("account_id"); ok {
+		if apiKey == "" && apiToken == "" && apiUserServiceKey == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("must provide one of %q, %q or %q.", consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey),
+			})
+			return nil, diags
+		}
+
+		if v, ok := d.GetOk(consts.AccountIDSchemaKey); ok {
 			accountID = v.(string)
 		} else {
-			accountID = utils.GetDefaultFromEnv("CLOUDFLARE_ACCOUNT_ID", "")
+			accountID = utils.GetDefaultFromEnv(consts.AccountIDEnvVarKey, "")
 		}
 
 		if accountID != "" {
