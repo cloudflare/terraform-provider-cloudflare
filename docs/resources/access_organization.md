@@ -13,10 +13,11 @@ A Zero Trust organization defines the user login experience.
 
 ```terraform
 resource "cloudflare_access_organization" "example" {
-  account_id      = "f037e56e89293a057740de681ac9abbe"
-  name            = "example.cloudflareaccess.com"
-  auth_domain     = "example.cloudflareaccess.com"
-  is_ui_read_only = false
+  account_id                         = "f037e56e89293a057740de681ac9abbe"
+  name                               = "example.cloudflareaccess.com"
+  auth_domain                        = "example.cloudflareaccess.com"
+  is_ui_read_only                    = false
+  user_seat_expiration_inactive_time = "720h"
 
   login_design {
     background_color = "#ffffff"
@@ -40,6 +41,7 @@ resource "cloudflare_access_organization" "example" {
 - `is_ui_read_only` (Boolean) When set to true, this will disable all editing of Access resources via the Zero Trust Dashboard.
 - `login_design` (Block List) (see [below for nested schema](#nestedblock--login_design))
 - `name` (String) The name of your Zero Trust organization.
+- `user_seat_expiration_inactive_time` (String) The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count. Must be in the format `300ms` or `2h45m`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
 ### Read-Only
