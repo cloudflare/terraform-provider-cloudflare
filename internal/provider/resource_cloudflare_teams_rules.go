@@ -23,6 +23,7 @@ func resourceCloudflareTeamsRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTeamsRuleImport,
 		},
+		Description: "Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gateway policies.",
 	}
 }
 

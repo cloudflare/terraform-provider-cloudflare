@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -20,6 +21,11 @@ func resourceCloudflareDevicePolicyCertificates() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDevicePolicyCertificateImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare device policy certificates resource. Device
+			policy certificate resources enable client device certificate
+			generation.
+		`),
 	}
 }
 

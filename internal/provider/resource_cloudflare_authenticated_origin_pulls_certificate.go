@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -28,6 +29,11 @@ func resourceCloudflareAuthenticatedOriginPullsCertificate() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Minute),
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Authenticated Origin Pulls certificate
+			resource. An uploaded client certificate is required to use Per-Zone
+			 or Per-Hostname Authenticated Origin Pulls.
+		`),
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,6 +22,10 @@ func resourceCloudflareAuthenticatedOriginPulls() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareAuthenticatedOriginPullsImport,
 		},
+		Description: heredoc.Doc(fmt.Sprintf(`
+			Provides a Cloudflare Authenticated Origin Pulls resource. A %s
+			resource is required to use Per-Zone or Per-Hostname Authenticated
+			Origin Pulls.`, "`cloudflare_authenticated_origin_pulls`")),
 	}
 }
 

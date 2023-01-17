@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -33,34 +34,44 @@ func dataSourceCloudflareZone() *schema.Resource {
 				Optional:     true,
 				Computed:     true,
 				ExactlyOneOf: []string{"zone_id", "name"},
+				Description:  "The name of the zone.",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of the zone.",
 			},
 			"paused": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether the zone is paused on Cloudflare.",
 			},
 			"plan": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The name of the plan associated with the zone.",
 			},
 			"name_servers": {
 				Type: schema.TypeList,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Computed: true,
+				Computed:    true,
+				Description: "Cloudflare assigned name servers. This is only populated for zones that use Cloudflare DNS.",
 			},
 			"vanity_name_servers": {
 				Type: schema.TypeList,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Computed: true,
+				Computed:    true,
+				Description: "List of Vanity Nameservers (if set).",
 			},
 		},
+		Description: heredoc.Doc(fmt.Sprintf(`
+			Use this data source to look up [zone](https://api.cloudflare.com/#zone-properties)
+			info. This is the singular alternative to %s.
+		`, "`cloudflare_zones`")),
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -22,6 +23,10 @@ func resourceCloudflareTeamsAccount() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTeamsAccountImport,
 		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams Account resource. The Teams Account
+			resource defines configuration for secure web gateway.
+		`),
 	}
 }
 
@@ -169,6 +174,8 @@ func flattenBlockPageConfig(blockPage *cloudflare.TeamsBlockPage) []interface{} 
 		"logo_path":        blockPage.LogoPath,
 		"background_color": blockPage.BackgroundColor,
 		"name":             blockPage.Name,
+		"mailto_address":   blockPage.MailtoAddress,
+		"mailto_subject":   blockPage.MailtoSubject,
 	}}
 }
 
@@ -209,6 +216,8 @@ func inflateBlockPageConfig(blockPage interface{}) *cloudflare.TeamsBlockPage {
 		LogoPath:        blockPageMap["logo_path"].(string),
 		BackgroundColor: blockPageMap["background_color"].(string),
 		Name:            blockPageMap["name"].(string),
+		MailtoSubject:   blockPageMap["mailto_subject"].(string),
+		MailtoAddress:   blockPageMap["mailto_address"].(string),
 	}
 }
 

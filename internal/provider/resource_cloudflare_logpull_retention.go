@@ -20,6 +20,7 @@ func resourceCloudflareLogpullRetention() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareLogpullRetentionImport,
 		},
+		Description: "Allows management of the Logpull Retention settings used to control whether or not to retain HTTP request logs.",
 	}
 }
 

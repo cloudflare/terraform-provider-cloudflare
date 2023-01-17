@@ -10,13 +10,13 @@ jobs:
     name: golangci-lint
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: ^1.18
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # needed for `only-new-issues` to compare diffs
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'tools/go.mod'
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -35,5 +35,5 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: ^1.18
+          go-version-file: 'tools/go.mod'
       - run: make terraform-provider-lint

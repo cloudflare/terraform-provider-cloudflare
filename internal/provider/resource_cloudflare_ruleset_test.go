@@ -1672,6 +1672,31 @@ func TestAccCloudflareRuleset_CacheSettings(t *testing.T) {
 			},
 		},
 	})
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsEdgeTTLRespectOrigin(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.0.value", "5"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.mode", "respect_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache", "true"),
+				),
+			},
+		},
+	})
 }
 
 func TestAccCloudflareRuleset_Config(t *testing.T) {
@@ -3052,6 +3077,37 @@ func testAccCloudflareRulesetCacheSettingsCustomKeyEmpty(rnd, accountID, zoneID 
 	  enabled = true
     }
   }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsEdgeTTLRespectOrigin(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "%[1]s" {
+		zone_id     = "%[2]s"
+		name        = "%[1]s"
+		description = "%[1]s ruleset description"
+		kind        = "zone"
+		phase       = "http_request_cache_settings"
+
+		rules {
+			action = "set_cache_settings"
+			action_parameters {
+				edge_ttl {
+					status_code_ttl {
+						status_code_range {
+							from = 201
+							to = 300
+						}
+						value = 5
+					}
+					mode = "respect_origin"
+				}
+				cache = true
+			}
+			expression = "true"
+			description = "%[1]s set cache settings rule"
+			enabled = true
+		}
+	}`, rnd, zoneID)
 }
 
 func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) string {

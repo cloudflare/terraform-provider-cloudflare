@@ -22,6 +22,7 @@ func resourceCloudflareGRETunnel() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareGRETunnelImport,
 		},
+		Description: "Provides a resource, that manages GRE tunnels for Magic Transit.",
 	}
 }
 

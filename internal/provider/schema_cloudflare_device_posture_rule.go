@@ -17,8 +17,8 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id"}, false),
-			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id"})),
+			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id", "crowdstrike_s2s"}, false),
+			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id", "crowdstrike_s2s"})),
 		},
 		"name": {
 			Type:        schema.TypeString,
@@ -113,7 +113,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Type:         schema.TypeString,
 						Optional:     true,
 						ValidateFunc: validation.StringInSlice([]string{">", ">=", "<", "<=", "=="}, true),
-						Description:  "The version comparison operator.",
+						Description:  fmt.Sprintf("The version comparison operator. %s", renderAvailableDocumentationValuesStringSlice([]string{">", ">=", "<", "<=", "=="})),
 					},
 					"domain": {
 						Type:        schema.TypeString,
@@ -129,7 +129,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Type:         schema.TypeString,
 						Optional:     true,
 						ValidateFunc: validation.StringInSlice([]string{"compliant", "noncompliant"}, true),
-						Description:  "The workspace one device compliance status.",
+						Description:  fmt.Sprintf("The workspace one device compliance status. %s", renderAvailableDocumentationValuesStringSlice([]string{"compliant", "noncompliant"})),
 					},
 					"os_distro_name": {
 						Type:        schema.TypeString,
@@ -140,6 +140,27 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "The operating system version excluding OS name information or release name.",
+					},
+					"os": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "OS signal score from Crowdstrike. Value must be between 1 and 100.",
+					},
+					"overall": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "Overall ZTA score from Crowdstrike. Value must be between 1 and 100.",
+					},
+					"sensor_config": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "Sensor signal score from Crowdstrike. Value must be between 1 and 100.",
+					},
+					"version_operator": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{">", ">=", "<", "<=", "=="}, true),
+						Description:  fmt.Sprintf("The version comparison operator for crowdstrike. %s", renderAvailableDocumentationValuesStringSlice([]string{">", ">=", "<", "<=", "=="})),
 					},
 				},
 			},
