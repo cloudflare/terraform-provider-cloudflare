@@ -32,7 +32,7 @@ resource "cloudflare_teams_rule" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `action` (String) The action executed by matched teams rule. Available values: `allow`, `block`, `safesearch`, `ytrestricted`, `on`, `off`, `scan`, `noscan`, `isolate`, `noisolate`, `override`, `l4_override`.
+- `action` (String) The action executed by matched teams rule. Available values: `allow`, `block`, `safesearch`, `ytrestricted`, `on`, `off`, `scan`, `noscan`, `isolate`, `noisolate`, `override`, `l4_override`, `egress`.
 - `description` (String) The description of the teams rule.
 - `name` (String) The name of the teams rule.
 - `precedence` (Number) The evaluation precedence of the teams rule.
@@ -61,6 +61,7 @@ Optional:
 - `block_page_enabled` (Boolean) Indicator of block page enablement.
 - `block_page_reason` (String) The displayed reason for a user being blocked.
 - `check_session` (Block List, Max: 1) Configure how session check behaves. (see [below for nested schema](#nestedblock--rule_settings--check_session))
+- `egress` (Block List, Max: 1) Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs. (see [below for nested schema](#nestedblock--rule_settings--egress))
 - `insecure_disable_dnssec_validation` (Boolean) Disable DNSSEC validation (must be Allow rule).
 - `l4override` (Block List, Max: 1) Settings to forward layer 4 traffic. (see [below for nested schema](#nestedblock--rule_settings--l4override))
 - `override_host` (String) The host to override matching DNS queries with.
@@ -85,6 +86,19 @@ Required:
 
 - `duration` (String) Configure how fresh the session needs to be to be considered valid.
 - `enforce` (Boolean) Enable session enforcement for this rule.
+
+
+<a id="nestedblock--rule_settings--egress"></a>
+### Nested Schema for `rule_settings.egress`
+
+Required:
+
+- `ipv4` (String) The IPv4 address to be used for egress.
+- `ipv6` (String) The IPv6 range to be used for egress.
+
+Optional:
+
+- `ipv4_fallback` (String) The IPv4 address to be used for egress in the event of an error egressing with the primary IPv4. Can be '0.0.0.0' to indicate local egreass via Warp IPs.
 
 
 <a id="nestedblock--rule_settings--l4override"></a>
