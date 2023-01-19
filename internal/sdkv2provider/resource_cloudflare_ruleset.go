@@ -1322,11 +1322,10 @@ func buildRule(d *schema.ResourceData, resourceRule map[string]interface{}, rule
 	return rule
 }
 
-// receives the resource config and builds a ruleset rule array.
-func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.RulesetRule, error) {
+func buildRules(d *schema.ResourceData, value interface{}) ([]cloudflare.RulesetRule, error) {
 	var rulesetRules []cloudflare.RulesetRule
 
-	rules, ok := d.Get("rules").([]interface{})
+	rules, ok := value.([]interface{})
 	if !ok {
 		return nil, errors.New("unable to create interface array type assertion")
 	}
@@ -1343,6 +1342,13 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 	}
 
 	return rulesetRules, nil
+}
+
+// receives the resource config and builds a ruleset rule array.
+func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.RulesetRule, error) {
+	value := d.Get("rules")
+
+	return buildRules(d, value)
 }
 
 // statusToAPIEnabledFieldConversion takes the "status" field from the Terraform
