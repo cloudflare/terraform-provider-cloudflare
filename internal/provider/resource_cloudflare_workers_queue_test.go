@@ -45,7 +45,7 @@ func testAccCloudflareWorkersQueueDestroy(s *terraform.State) error {
 		}
 
 		resp, _, err := client.ListQueues(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListQueuesParams{})
-		if err == nil {
+		if err != nil {
 			return err
 		}
 
