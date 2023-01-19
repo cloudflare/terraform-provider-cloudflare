@@ -265,7 +265,6 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 		Type:    d.Get("type").(string),
 		Name:    d.Get("name").(string),
 		Content: d.Get("value").(string),
-		ZoneID:  zoneID,
 	}
 
 	data, dataOk := d.GetOk("data")

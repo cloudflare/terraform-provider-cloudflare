@@ -206,6 +206,7 @@ func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interfac
 		"check_session":                      flattenTeamsCheckSessionSettings(settings.CheckSession),
 		"add_headers":                        flattenTeamsAddHeaders(settings.AddHeaders),
 		"insecure_disable_dnssec_validation": settings.InsecureDisableDNSSECValidation,
+		"egress":                             flattenTeamsEgressSettings(settings.EgressSettings),
 	}}
 }
 
@@ -231,6 +232,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 	checkSessionSettings := inflateTeamsCheckSessionSettings(settingsMap["check_session"].([]interface{}))
 	addHeaders := inflateTeamsAddHeaders(settingsMap["add_headers"].(map[string]interface{}))
 	insecureDisableDNSSECValidation := settingsMap["insecure_disable_dnssec_validation"].(bool)
+	egressSettings := inflateTeamsEgressSettings(settingsMap["egress"].([]interface{}))
 
 	return &cloudflare.TeamsRuleSettings{
 		BlockPageEnabled:                enabled,
@@ -242,6 +244,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 		CheckSession:                    checkSessionSettings,
 		AddHeaders:                      addHeaders,
 		InsecureDisableDNSSECValidation: insecureDisableDNSSECValidation,
+		EgressSettings:                  egressSettings,
 	}
 }
 
@@ -361,6 +364,33 @@ func inflateTeamsL4Override(settings interface{}) *cloudflare.TeamsL4OverrideSet
 	return &cloudflare.TeamsL4OverrideSettings{
 		IP:   ip,
 		Port: port,
+	}
+}
+
+func flattenTeamsEgressSettings(settings *cloudflare.EgressSettings) []interface{} {
+	if settings == nil {
+		return nil
+	}
+	return []interface{}{map[string]interface{}{
+		"ipv4":          settings.Ipv4,
+		"ipv6":          settings.Ipv6Range,
+		"ipv4_fallback": settings.Ipv4Fallback,
+	}}
+}
+
+func inflateTeamsEgressSettings(settings interface{}) *cloudflare.EgressSettings {
+	settingsList := settings.([]interface{})
+	if len(settingsList) != 1 {
+		return nil
+	}
+	settingsMap := settingsList[0].(map[string]interface{})
+	ipv4 := settingsMap["ipv4"].(string)
+	ipv6 := settingsMap["ipv6"].(string)
+	ipv4Fallback := settingsMap["ipv4_fallback"].(string)
+	return &cloudflare.EgressSettings{
+		Ipv4:         ipv4,
+		Ipv6Range:    ipv6,
+		Ipv4Fallback: ipv4Fallback,
 	}
 }
 

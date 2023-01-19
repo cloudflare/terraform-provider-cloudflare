@@ -43,6 +43,8 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "false"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_reason", "cuz"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.insecure_disable_dnssec_validation", "false"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv4", "203.0.113.1"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv6", "2001:db8::/32"),
 				),
 			},
 		},
@@ -63,6 +65,10 @@ resource "cloudflare_teams_rule" "%[1]s" {
     block_page_enabled = false
     block_page_reason = "cuz"
     insecure_disable_dnssec_validation = false
+	egress {
+		ipv4 = "203.0.113.1"
+		ipv6 = "2001:db8::/32"
+	}
   }
 }
 `, rnd, accountID)
