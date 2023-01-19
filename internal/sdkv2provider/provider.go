@@ -30,49 +30,49 @@ func init() {
 			desc += "."
 		}
 
-		// if s.Default != nil {
-		// 	if s.Default == "" {
-		// 		desc += " Defaults to `\"\"`."
-		// 	} else {
-		// 		desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
-		// 	}
-		// }
+		if s.Default != nil {
+			if s.Default == "" {
+				desc += " Defaults to `\"\"`."
+			} else {
+				desc += fmt.Sprintf(" Defaults to `%v`.", s.Default)
+			}
+		}
 
-		// if s.RequiredWith != nil && len(s.RequiredWith) > 0 {
-		// 	requiredWith := make([]string, len(s.RequiredWith))
-		// 	for i, c := range s.RequiredWith {
-		// 		requiredWith[i] = fmt.Sprintf("`%s`", c)
-		// 	}
-		// 	desc += fmt.Sprintf(" Required when using %s.", strings.Join(requiredWith, ", "))
-		// }
+		if s.RequiredWith != nil && len(s.RequiredWith) > 0 && !contains(s.RequiredWith, consts.APIKeySchemaKey) {
+			requiredWith := make([]string, len(s.RequiredWith))
+			for i, c := range s.RequiredWith {
+				requiredWith[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Required when using %s.", strings.Join(requiredWith, ", "))
+		}
 
-		// if s.ConflictsWith != nil && len(s.ConflictsWith) > 0 {
-		// 	conflicts := make([]string, len(s.ConflictsWith))
-		// 	for i, c := range s.ConflictsWith {
-		// 		conflicts[i] = fmt.Sprintf("`%s`", c)
-		// 	}
-		// 	desc += fmt.Sprintf(" Conflicts with %s.", strings.Join(conflicts, ", "))
-		// }
+		if s.ConflictsWith != nil && len(s.ConflictsWith) > 0 && !contains(s.ConflictsWith, consts.APITokenSchemaKey) {
+			conflicts := make([]string, len(s.ConflictsWith))
+			for i, c := range s.ConflictsWith {
+				conflicts[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Conflicts with %s.", strings.Join(conflicts, ", "))
+		}
 
-		// if s.ExactlyOneOf != nil && len(s.ExactlyOneOf) > 0 {
-		// 	exactlyOneOfs := make([]string, len(s.ExactlyOneOf))
-		// 	for i, c := range s.ExactlyOneOf {
-		// 		exactlyOneOfs[i] = fmt.Sprintf("`%s`", c)
-		// 	}
-		// 	desc += fmt.Sprintf(" Must provide only one of %s.", strings.Join(exactlyOneOfs, ", "))
-		// }
+		if s.ExactlyOneOf != nil && len(s.ExactlyOneOf) > 0 && (!contains(s.ExactlyOneOf, consts.APIKeySchemaKey) || !contains(s.ExactlyOneOf, consts.APITokenSchemaKey) || !contains(s.ExactlyOneOf, consts.APIUserServiceKeySchemaKey)) {
+			exactlyOneOfs := make([]string, len(s.ExactlyOneOf))
+			for i, c := range s.ExactlyOneOf {
+				exactlyOneOfs[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Must provide only one of %s.", strings.Join(exactlyOneOfs, ", "))
+		}
 
-		// if s.AtLeastOneOf != nil && len(s.AtLeastOneOf) > 0 {
-		// 	atLeastOneOfs := make([]string, len(s.AtLeastOneOf))
-		// 	for i, c := range s.AtLeastOneOf {
-		// 		atLeastOneOfs[i] = fmt.Sprintf("`%s`", c)
-		// 	}
-		// 	desc += fmt.Sprintf(" Must provide at least one of %s.", strings.Join(atLeastOneOfs, ", "))
-		// }
+		if s.AtLeastOneOf != nil && len(s.AtLeastOneOf) > 0 {
+			atLeastOneOfs := make([]string, len(s.AtLeastOneOf))
+			for i, c := range s.AtLeastOneOf {
+				atLeastOneOfs[i] = fmt.Sprintf("`%s`", c)
+			}
+			desc += fmt.Sprintf(" Must provide at least one of %s.", strings.Join(atLeastOneOfs, ", "))
+		}
 
-		// if s.ForceNew {
-		// 	desc += " **Modifying this attribute will force creation of a new resource.**"
-		// }
+		if s.ForceNew {
+			desc += " **Modifying this attribute will force creation of a new resource.**"
+		}
 
 		return strings.TrimSpace(desc)
 	}
@@ -85,7 +85,7 @@ func New(version string) func() *schema.Provider {
 				consts.EmailSchemaKey: {
 					Type:          schema.TypeString,
 					Optional:      true,
-					Description:   fmt.Sprintf("A registered Cloudflare email address. Alternatively, can be configured using the `%s` environment variable.", consts.EmailEnvVarKey),
+					Description:   fmt.Sprintf("A registered Cloudflare email address. Alternatively, can be configured using the `%s` environment variable. Required when using `api_key`. Conflicts with `api_token`.", consts.EmailEnvVarKey),
 					ConflictsWith: []string{consts.APITokenSchemaKey},
 					RequiredWith:  []string{consts.APIKeySchemaKey},
 				},
@@ -93,21 +93,21 @@ func New(version string) func() *schema.Provider {
 				consts.APIKeySchemaKey: {
 					Type:         schema.TypeString,
 					Optional:     true,
-					Description:  fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead.", consts.APIKeyEnvVarKey),
+					Description:  fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)"),
 				},
 
 				consts.APITokenSchemaKey: {
 					Type:         schema.TypeString,
 					Optional:     true,
-					Description:  fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable.", consts.APITokenEnvVarKey),
+					Description:  fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
 				},
 
 				consts.APIUserServiceKeySchemaKey: {
 					Type:        schema.TypeString,
 					Optional:    true,
-					Description: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable.", consts.APIUserServiceKeyEnvVarKey),
+					Description: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
 				},
 
 				consts.RPSSchemaKey: {

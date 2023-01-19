@@ -62,13 +62,13 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 		Attributes: map[string]schema.Attribute{
 			consts.EmailSchemaKey: schema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: fmt.Sprintf("A registered Cloudflare email address. Alternatively, can be configured using the `%s` environment variable.", consts.EmailEnvVarKey),
+				MarkdownDescription: fmt.Sprintf("A registered Cloudflare email address. Alternatively, can be configured using the `%s` environment variable. Required when using `api_key`. Conflicts with `api_token`.", consts.EmailEnvVarKey),
 				Validators:          []validator.String{},
 			},
 
 			consts.APIKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead.", consts.APIKeyEnvVarKey),
+				MarkdownDescription: fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
 						regexp.MustCompile(`[0-9a-f]{37}`),
@@ -87,7 +87,7 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 
 			consts.APITokenSchemaKey: schema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable.", consts.APITokenEnvVarKey),
+				MarkdownDescription: fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
 						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
@@ -103,7 +103,7 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 
 			consts.APIUserServiceKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
-				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable.", consts.APIUserServiceKeyEnvVarKey),
+				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
 				Validators: []validator.String{
 					stringvalidator.ExactlyOneOf(path.Expressions{
 						path.MatchRoot(consts.APIKeySchemaKey),
@@ -340,7 +340,7 @@ var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 }
 
 func TestAccPreCheck(t *testing.T) {
-	// // You can add code here to run prior to any test case execution, for example assertions
-	// // about the appropriate environment variables being set are common to see in a pre-check
-	// // function.
+	// You can add code here to run prior to any test case execution, for example assertions
+	// about the appropriate environment variables being set are common to see in a pre-check
+	// function.
 }
