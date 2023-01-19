@@ -221,6 +221,30 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		maxBackOff = i
 	}
 
+	if retries > strconv.IntSize {
+		resp.Diagnostics.AddError(
+			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
+			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
+		)
+		return
+	}
+
+	if minBackOff > strconv.IntSize {
+		resp.Diagnostics.AddError(
+			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
+			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
+		)
+		return
+	}
+
+	if maxBackOff > strconv.IntSize {
+		resp.Diagnostics.AddError(
+			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
+			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
+		)
+		return
+	}
+
 	retryOpt := cloudflare.UsingRetryPolicy(int(retries), int(minBackOff), int(maxBackOff))
 	options := []cloudflare.Option{limitOpt, retryOpt, baseURL}
 

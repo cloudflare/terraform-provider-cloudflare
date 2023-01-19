@@ -341,6 +341,33 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			maxBackOff = i
 		}
 
+		if retries > strconv.IntSize {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
+			})
+
+			return nil, diags
+		}
+
+		if minBackOff > strconv.IntSize {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
+			})
+
+			return nil, diags
+		}
+
+		if maxBackOff > strconv.IntSize {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
+			})
+
+			return nil, diags
+		}
+
 		retryOpt := cloudflare.UsingRetryPolicy(int(retries), int(minBackOff), int(maxBackOff))
 		options := []cloudflare.Option{limitOpt, retryOpt, baseURL}
 
