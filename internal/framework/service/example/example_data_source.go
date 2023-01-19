@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// Ensure provider defined types fully satisfy framework interfaces
+// Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &ExampleDataSource{}
 
 func NewExampleDataSource() datasource.DataSource {
@@ -93,10 +93,10 @@ func (d *ExampleDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	// save into the Terraform state.
 	data.Id = types.StringValue("example-id")
 
-	// Write logs using the tflog package
+	// Write logs using the tflog package.
 	// Documentation: https://terraform.io/plugin/log
 	tflog.Trace(ctx, "read a data source")
 
-	// Save data into Terraform state
+	// Save data into Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
