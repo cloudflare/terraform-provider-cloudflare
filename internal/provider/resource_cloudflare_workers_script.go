@@ -122,9 +122,10 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 
 	for _, rawData := range d.Get("queue_binding").(*schema.Set).List() {
 		data := rawData.(map[string]interface{})
-		bindings[data["name"].(string)] = cloudflare.WorkerQueueBinding{
-			Name:      data["name"].(string),
-			QueueName: data["queue_name"].(string),
+
+		bindings[data["binding"].(string)] = cloudflare.WorkerQueueBinding{
+			Binding: data["binding"].(string),
+			Queue:   data["queue"].(string),
 		}
 	}
 }
@@ -268,8 +269,8 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 			})
 		case cloudflare.WorkerQueueBinding:
 			queueBindings.Add(map[string]interface{}{
-				"name":       name,
-				"queue_name": v.QueueName,
+				"binding": name,
+				"queue":   v.Queue,
 			})
 		}
 	}
