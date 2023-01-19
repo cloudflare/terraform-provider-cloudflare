@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
@@ -1319,6 +1320,19 @@ func buildRule(d *schema.ResourceData, resourceRule map[string]interface{}, rule
 		rule.Description = resourceRule["description"].(string)
 	}
 
+	// Rule IDs are only reliable for the old values of rules (those stored
+	// in Terraform state after a GET). For new values (those actually sent
+	// with a POST or PUT request), IDs may be empty or, worse, assigned
+	// based on position. Assigning IDs based on position is wrong when the
+	// user reorders rules and when the user inserts or removes rules "in
+	// the middle". We fix this in two steps: First, we use the IDs of old
+	// rules to build a lookup table (see ruleIDs). Second, we rewrite the
+	// IDs for new rules based on that lookup table. We don't attempt to
+	// guess the ID of modified rules--those get reset to the empty string.
+	if resourceRule["id"] != nil {
+		rule.ID = resourceRule["id"].(string)
+	}
+
 	return rule
 }
 
@@ -1344,11 +1358,115 @@ func buildRules(d *schema.ResourceData, value interface{}) ([]cloudflare.Ruleset
 	return rulesetRules, nil
 }
 
+// ruleIDs is a lookup table for rule IDs with two operations, add and pop. We
+// use add to populate the table from the old value of rules. We use pop to look
+// up the ID for the new value of a rule (and remove it from the table).
+// Internally, both operations serialize the rule to JSON and use the resulting
+// string as the lookup key; the ID itself is excluded from the JSON. If a
+// ruleset has multiple copies of the same rule, the copies have a single lookup
+// key associated with multiple IDs; we preserve order when adding and popping
+// the IDs.
+type ruleIDs struct {
+	ids map[string][]string
+}
+
+// add stores an ID for the given rule.
+func (r *ruleIDs) add(rule cloudflare.RulesetRule) error {
+	if rule.ID == "" {
+		// This is unexpected. We only invoke this function for the old
+		// values of rules, which have their IDs populated.
+		return errors.New("unable to determine ID of existing rule")
+	}
+
+	id := rule.ID
+	rule.ID = ""
+
+	data, err := json.Marshal(rule)
+	if err != nil {
+		return err
+	}
+
+	key := string(data[:])
+
+	r.ids[key] = append(r.ids[key], id)
+	return nil
+}
+
+// pop removes an ID for the given rule and returns it. Multiple IDs are
+// returned in the order they were added. If no ID was found for the rule, pop
+// returns an empty string.
+func (r *ruleIDs) pop(rule cloudflare.RulesetRule) (string, error) {
+	rule.ID = ""
+
+	data, err := json.Marshal(rule)
+	if err != nil {
+		return "", err
+	}
+
+	key := string(data[:])
+	ids := r.ids[key]
+	if len(ids) == 0 {
+		return "", nil
+	}
+
+	id, ids := ids[0], ids[1:]
+	r.ids[key] = ids
+
+	return id, nil
+}
+
+// empty returns true if the store does not contain any rule IDs.
+func (r *ruleIDs) empty() bool {
+	return len(r.ids) == 0
+}
+
+func newRuleIDs(rulesetRules []cloudflare.RulesetRule) (ruleIDs, error) {
+	r := ruleIDs{make(map[string][]string)}
+
+	for _, rule := range rulesetRules {
+		err := r.add(rule)
+		if err != nil {
+			return ruleIDs{}, err
+		}
+	}
+
+	return r, nil
+}
+
 // receives the resource config and builds a ruleset rule array.
 func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.RulesetRule, error) {
-	value := d.Get("rules")
+	oldValue, newValue := d.GetChange("rules")
 
-	return buildRules(d, value)
+	oldRules, err := buildRules(d, oldValue)
+	if err != nil {
+		return nil, err
+	}
+
+	newRules, err := buildRules(d, newValue)
+	if err != nil {
+		return nil, err
+	}
+
+	ids, err := newRuleIDs(oldRules)
+	if err != nil {
+		return nil, err
+	}
+
+	if ids.empty() {
+		// There are no rule IDs when the ruleset is first created.
+		return newRules, nil
+	}
+
+	for i := range newRules {
+		rule := &newRules[i]
+		rule.ID, err = ids.pop(*rule)
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return newRules, nil
 }
 
 // statusToAPIEnabledFieldConversion takes the "status" field from the Terraform
