@@ -298,7 +298,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	}
 
 	config.Options = options
-	client, err := config.Client()
+	client, err := config.Client(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to initialize a new client",

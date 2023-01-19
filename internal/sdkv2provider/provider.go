@@ -420,7 +420,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		}
 
 		config.Options = options
-		client, err := config.Client()
+		client, err := config.Client(ctx)
 		if err != nil {
 			return nil, diag.FromErr(err)
 		}
