@@ -54,9 +54,9 @@ jobs:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
     - name: Pre-Sweeper
-      run: go test ./internal/provider -v -sweep="1"
+      run: go test ./internal/... -v -sweep="1"
     - name: Run acceptance tests
       run: make testacc
     - name: Post-Sweeper
       if: ${{ always() }}
-      run: go test ./internal/provider -v -sweep="1"
+      run: go test ./internal/... -v -sweep="1"
