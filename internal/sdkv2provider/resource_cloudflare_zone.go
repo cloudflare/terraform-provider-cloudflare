@@ -10,6 +10,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -109,8 +110,8 @@ func resourceCloudflareZone() *schema.Resource {
 func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
+	if d.Get(consts.AccountIDSchemaKey).(string) != "" {
+		accountID = d.Get(consts.AccountIDSchemaKey).(string)
 	} else {
 		accountID = client.AccountID
 	}

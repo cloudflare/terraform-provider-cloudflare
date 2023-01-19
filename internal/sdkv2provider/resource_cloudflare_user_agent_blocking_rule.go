@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -31,7 +32,7 @@ func resourceCloudflareUserAgentBlockingRules() *schema.Resource {
 
 func resourceCloudflareUserAgentBlockingRulesCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	newRule := buildUserAgentBlockingRules(d)
 
@@ -47,7 +48,7 @@ func resourceCloudflareUserAgentBlockingRulesCreate(ctx context.Context, d *sche
 
 func resourceCloudflareUserAgentBlockingRulesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	ua, err := client.UserAgentRule(ctx, zoneID, d.Id())
 	if err != nil {
@@ -70,7 +71,7 @@ func resourceCloudflareUserAgentBlockingRulesRead(ctx context.Context, d *schema
 
 func resourceCloudflareUserAgentBlockingRulesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	ua := buildUserAgentBlockingRules(d)
 
@@ -84,7 +85,7 @@ func resourceCloudflareUserAgentBlockingRulesUpdate(ctx context.Context, d *sche
 
 func resourceCloudflareUserAgentBlockingRulesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	_, err := client.DeleteUserAgentRule(ctx, zoneID, d.Id())
 	if err != nil {

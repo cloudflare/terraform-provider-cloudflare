@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,7 +32,7 @@ func resourceCloudflareArgo() *schema.Resource {
 
 func resourceCloudflareArgoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	tieredCaching := d.Get("tiered_caching").(string)
 	smartRouting := d.Get("smart_routing").(string)
 
@@ -64,7 +65,7 @@ func resourceCloudflareArgoRead(ctx context.Context, d *schema.ResourceData, met
 
 func resourceCloudflareArgoUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	tieredCaching := d.Get("tiered_caching").(string)
 	smartRouting := d.Get("smart_routing").(string)
 
@@ -89,7 +90,7 @@ func resourceCloudflareArgoUpdate(ctx context.Context, d *schema.ResourceData, m
 
 func resourceCloudflareArgoDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Resetting Argo values to 'off'"))
 

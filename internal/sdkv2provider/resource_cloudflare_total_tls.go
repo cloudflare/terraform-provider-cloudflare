@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -25,7 +26,7 @@ func resourceCloudflareTotalTLS() *schema.Resource {
 
 func resourceCloudflareTotalSSLUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	settings := cloudflare.TotalTLS{
 		Enabled: cloudflare.BoolPtr(d.Get("enabled").(bool)),
 	}
@@ -42,7 +43,7 @@ func resourceCloudflareTotalSSLUpdate(ctx context.Context, d *schema.ResourceDat
 
 func resourceCloudflareTotalSSLRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	result, err := client.GetTotalTLS(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {
@@ -56,7 +57,7 @@ func resourceCloudflareTotalSSLRead(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflareTotalSSLDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	_, err := client.SetTotalTLS(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.TotalTLS{Enabled: cloudflare.BoolPtr(false)})
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -29,7 +30,7 @@ func resourceCloudflareWAFRuleRead(ctx context.Context, d *schema.ResourceData, 
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	packageID := d.Get("package_id").(string)
 
 	rule, err := client.WAFRule(ctx, zoneID, packageID, ruleID)
@@ -54,7 +55,7 @@ func resourceCloudflareWAFRuleRead(ctx context.Context, d *schema.ResourceData, 
 func resourceCloudflareWAFRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	ruleID := d.Get("rule_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	packageID := d.Get("package_id").(string)
 	mode := d.Get("mode").(string)
 
@@ -102,7 +103,7 @@ func resourceCloudflareWAFRuleDelete(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	packageID := d.Get("package_id").(string)
 
 	rule, err := client.WAFRule(ctx, zoneID, packageID, ruleID)
@@ -131,7 +132,7 @@ func resourceCloudflareWAFRuleUpdate(ctx context.Context, d *schema.ResourceData
 	client := meta.(*cloudflare.API)
 
 	ruleID := d.Get("rule_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	mode := d.Get("mode").(string)
 	packageID := d.Get("package_id").(string)
 

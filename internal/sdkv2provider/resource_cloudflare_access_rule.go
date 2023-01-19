@@ -9,6 +9,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -44,8 +45,8 @@ func resourceCloudflareAccessRule() *schema.Resource {
 
 func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
-	accountID := d.Get("account_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	newRule := cloudflare.AccessRule{
 		Notes: d.Get("notes").(string),
@@ -87,8 +88,8 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
-	accountID := d.Get("account_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	var accessRuleResponse *cloudflare.AccessRuleResponse
 	var err error
@@ -134,8 +135,8 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 
 func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
-	accountID := d.Get("account_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	updatedRule := cloudflare.AccessRule{
 		Notes: d.Get("notes").(string),
@@ -170,8 +171,8 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
-	accountID := d.Get("account_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Access Rule: id %s", d.Id()))
 

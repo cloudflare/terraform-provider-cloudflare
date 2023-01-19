@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -88,7 +89,7 @@ func dlpEntryToAPI(entryType string, entryMap map[string]interface{}) cloudflare
 func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 	dlpProfile, err := client.GetDLPProfile(ctx, identifier, d.Id())
 	var notFoundError *cloudflare.NotFoundError
 	if errors.As(err, &notFoundError) {
@@ -118,7 +119,7 @@ func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceDat
 
 func resourceCloudflareDLPProfileCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
 	newDLPProfile := cloudflare.DLPProfile{
 		Name:        d.Get("name").(string),
@@ -168,7 +169,7 @@ func resourceCloudflareDLPProfileUpdate(ctx context.Context, d *schema.ResourceD
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare DLP Profile from struct: %+v", updatedDLPProfile))
 
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 	dlpProfile, err := client.UpdateDLPProfile(ctx, identifier, cloudflare.UpdateDLPProfileParams{
 		ProfileID: updatedDLPProfile.ID,
 		Profile:   updatedDLPProfile,
@@ -192,7 +193,7 @@ func resourceCloudflareDLPProfileDelete(ctx context.Context, d *schema.ResourceD
 	if profileType != DLPProfileTypeCustom {
 		return diag.FromErr(fmt.Errorf("error deleting DLP Profile: can only delete custom profiles"))
 	}
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 	if err := client.DeleteDLPProfile(ctx, identifier, d.Id()); err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting DLP Profile for ID %q: %w", d.Id(), err))
 	}

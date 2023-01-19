@@ -8,6 +8,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,7 +54,7 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 
 func resourceCloudflareWaitingRoomCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	newWaitingRoom := buildWaitingRoom(d)
 
@@ -72,7 +73,7 @@ func resourceCloudflareWaitingRoomCreate(ctx context.Context, d *schema.Resource
 func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Id()
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	waitingRoom, err := client.WaitingRoom(ctx, zoneID, waitingRoomID)
 	if err != nil {
@@ -106,7 +107,7 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 func resourceCloudflareWaitingRoomUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Id()
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	waitingRoom := buildWaitingRoom(d)
 
@@ -123,7 +124,7 @@ func resourceCloudflareWaitingRoomUpdate(ctx context.Context, d *schema.Resource
 func resourceCloudflareWaitingRoomDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Id()
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	err := client.DeleteWaitingRoom(ctx, zoneID, waitingRoomID)
 

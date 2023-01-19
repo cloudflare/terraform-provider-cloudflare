@@ -1,6 +1,7 @@
 package sdkv2provider
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -183,7 +184,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 	}
 
 	return map[string]*schema.Schema{
-		"account_id": {
+		consts.AccountIDSchemaKey: {
 			Description: "The account identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,

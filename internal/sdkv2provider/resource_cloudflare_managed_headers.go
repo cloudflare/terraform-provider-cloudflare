@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -28,14 +29,14 @@ func resourceCloudflareManagedHeaders() *schema.Resource {
 }
 
 func resourceCloudflareManagedHeadersCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	d.SetId(zoneID)
 	return resourceCloudflareManagedHeadersUpdate(ctx, d, meta)
 }
 
 func resourceCloudflareManagedHeadersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
 		Status: "enabled",
@@ -68,7 +69,7 @@ func buildResourceFromManagedHeaders(headers []cloudflare.ManagedHeader) interfa
 
 func resourceCloudflareManagedHeadersUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	mh, err := buildManagedHeadersFromResource(d)
 	if err != nil {
@@ -136,7 +137,7 @@ func buildManagedHeadersListFromResource(resource *schema.Set) ([]cloudflare.Man
 
 func resourceCloudflareManagedHeadersDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
 		Status: "enabled",

@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -33,7 +34,7 @@ func resourceCloudflareFilter() *schema.Resource {
 
 func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var err error
 
@@ -76,7 +77,7 @@ func resourceCloudflareFilterCreate(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Getting a Filter record for zone %q, id %s", zoneID, d.Id()))
 	filter, err := client.Filter(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
@@ -106,7 +107,7 @@ func resourceCloudflareFilterRead(ctx context.Context, d *schema.ResourceData, m
 
 func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var newFilter cloudflare.FilterUpdateParams
 	newFilter.ID = d.Id()
@@ -144,7 +145,7 @@ func resourceCloudflareFilterUpdate(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflareFilterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Filter: id %s for zone %s", d.Id(), zoneID))
 

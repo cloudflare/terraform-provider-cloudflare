@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -36,7 +37,7 @@ func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.
 	client := meta.(*cloudflare.API)
 
 	newSpectrumApp := applicationFromResource(d)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Spectrum Application from struct: %+v", newSpectrumApp))
 
@@ -58,7 +59,7 @@ func resourceCloudflareSpectrumApplicationCreate(ctx context.Context, d *schema.
 
 func resourceCloudflareSpectrumApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	application := applicationFromResource(d)
 
@@ -74,7 +75,7 @@ func resourceCloudflareSpectrumApplicationUpdate(ctx context.Context, d *schema.
 
 func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	applicationID := d.Id()
 
 	application, err := client.SpectrumApplication(ctx, zoneID, applicationID)
@@ -140,7 +141,7 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 
 func resourceCloudflareSpectrumApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	applicationID := d.Id()
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Spectrum Application: %s in zone: %s", applicationID, zoneID))

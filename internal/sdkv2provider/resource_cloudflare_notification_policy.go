@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -32,7 +33,7 @@ func resourceCloudflareNotificationPolicy() *schema.Resource {
 
 func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	notificationPolicy := buildNotificationPolicy(d)
 
@@ -49,7 +50,7 @@ func resourceCloudflareNotificationPolicyCreate(ctx context.Context, d *schema.R
 func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	policy, err := client.GetNotificationPolicy(ctx, accountID, policyID)
 
@@ -89,7 +90,7 @@ func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.Res
 func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	notificationPolicy := buildNotificationPolicy(d)
 	notificationPolicy.ID = policyID
@@ -106,7 +107,7 @@ func resourceCloudflareNotificationPolicyUpdate(ctx context.Context, d *schema.R
 func resourceCloudflareNotificationPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	policyID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	_, err := client.DeleteNotificationPolicy(ctx, accountID, policyID)
 

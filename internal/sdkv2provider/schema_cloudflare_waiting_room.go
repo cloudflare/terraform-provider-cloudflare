@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -34,7 +35,7 @@ var waitingRoomQueueingMethod = []string{
 
 func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"zone_id": {
+		consts.ZoneIDSchemaKey: {
 			Description: "The zone identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,

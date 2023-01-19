@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -37,7 +38,7 @@ func resourceCloudflareZoneDNSSEC() *schema.Resource {
 func resourceCloudflareZoneDNSSECCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Creating Cloudflare Zone DNSSEC: name %s", zoneID))
 
@@ -61,7 +62,7 @@ func resourceCloudflareZoneDNSSECCreate(ctx context.Context, d *schema.ResourceD
 func resourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	// In the event zoneID isn't populated at this point, we're likely to be
 	// performing an import so set the zoneID to the d.Id() from the passthrough.
@@ -102,7 +103,7 @@ func resourceCloudflareZoneDNSSECUpdate(ctx context.Context, d *schema.ResourceD
 func resourceCloudflareZoneDNSSECDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Zone DNSSEC: id %s", zoneID))
 

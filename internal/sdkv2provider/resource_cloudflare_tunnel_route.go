@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -33,7 +34,7 @@ func resourceCloudflareTunnelRoute() *schema.Resource {
 
 func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	network := d.Get("network").(string)
 	virtualNetworkID := d.Get("virtual_network_id").(string)
 
@@ -77,7 +78,7 @@ func resourceCloudflareTunnelRouteRead(ctx context.Context, d *schema.ResourceDa
 func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	virtualNetworkID := d.Get("virtual_network_id").(string)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	resource := cloudflare.TunnelRoutesCreateParams{
 		TunnelID:         d.Get("tunnel_id").(string),
@@ -106,7 +107,7 @@ func resourceCloudflareTunnelRouteCreate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	resource := cloudflare.TunnelRoutesUpdateParams{
 		TunnelID:         d.Get("tunnel_id").(string),
@@ -130,7 +131,7 @@ func resourceCloudflareTunnelRouteUpdate(ctx context.Context, d *schema.Resource
 func resourceCloudflareTunnelRouteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	network := d.Get("network").(string)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	resource := cloudflare.TunnelRoutesDeleteParams{
 		Network:          network,

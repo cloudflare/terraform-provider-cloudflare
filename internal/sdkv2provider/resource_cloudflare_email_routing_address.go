@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -25,7 +26,7 @@ func resourceCloudflareEmailRoutingAddress() *schema.Resource {
 
 func resourceCloudflareEmailRoutingAddressRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	res, err := client.GetEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 
@@ -45,7 +46,7 @@ func resourceCloudflareEmailRoutingAddressRead(ctx context.Context, d *schema.Re
 
 func resourceCloudflareEmailRoutingAddressCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	email := d.Get("email").(string)
 
 	createParams := cloudflare.CreateEmailRoutingAddressParameters{
@@ -62,7 +63,7 @@ func resourceCloudflareEmailRoutingAddressCreate(ctx context.Context, d *schema.
 
 func resourceCloudflareEmailRoutingAddressDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	_, err := client.DeleteEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {

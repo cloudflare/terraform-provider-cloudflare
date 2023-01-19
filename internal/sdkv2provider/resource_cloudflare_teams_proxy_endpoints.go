@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -32,7 +33,7 @@ func resourceCloudflareTeamsProxyEndpoint() *schema.Resource {
 
 func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	endpoint, err := client.TeamsProxyEndpoint(ctx, accountID, d.Id())
 	if err != nil {
@@ -62,7 +63,7 @@ func resourceCloudflareTeamsProxyEndpointRead(ctx context.Context, d *schema.Res
 func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	newProxyEndpoint := cloudflare.TeamsProxyEndpoint{
 		Name: d.Get("name").(string),
 		IPs:  expandInterfaceToStringList(d.Get("ips").(*schema.Set).List()),
@@ -81,7 +82,7 @@ func resourceCloudflareTeamsProxyEndpointCreate(ctx context.Context, d *schema.R
 
 func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	updatedProxyEndpoint := cloudflare.TeamsProxyEndpoint{
 		ID:   d.Id(),
 		Name: d.Get("name").(string),
@@ -105,7 +106,7 @@ func resourceCloudflareTeamsProxyEndpointUpdate(ctx context.Context, d *schema.R
 func resourceCloudflareTeamsProxyEndpointDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	id := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams Proxy Endpoint using ID: %s", id))
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -28,8 +29,8 @@ func resourceCloudflareCustomPages() *schema.Resource {
 
 func resourceCloudflareCustomPagesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
-	accountID := d.Get("account_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	pageType := d.Get("type").(string)
 
 	if accountID == "" && zoneID == "" {
@@ -75,8 +76,8 @@ func resourceCloudflareCustomPagesRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareCustomPagesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var pageOptions cloudflare.CustomPageOptions
 	if accountID != "" {
@@ -100,8 +101,8 @@ func resourceCloudflareCustomPagesUpdate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareCustomPagesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var pageOptions cloudflare.CustomPageOptions
 	if accountID != "" {

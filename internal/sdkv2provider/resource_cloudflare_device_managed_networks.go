@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -28,7 +29,7 @@ func resourceCloudflareDeviceManagedNetworks() *schema.Resource {
 
 func resourceCloudflareDeviceManagedNetworksRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 	tflog.Debug(ctx, fmt.Sprintf("Reading Cloudflare Device Managed Network for Id: %+v", d.Id()))
 
 	managedNetwork, err := client.GetDeviceManagedNetwork(ctx, identifier, d.Id())
@@ -52,7 +53,7 @@ func resourceCloudflareDeviceManagedNetworksRead(ctx context.Context, d *schema.
 
 func resourceCloudflareDeviceManagedNetworksCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
 	params := cloudflare.CreateDeviceManagedNetworkParams{
 		Name: d.Get("name").(string),
@@ -78,7 +79,7 @@ func resourceCloudflareDeviceManagedNetworksCreate(ctx context.Context, d *schem
 
 func resourceCloudflareDeviceManagedNetworksUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
 	updatedDeviceManagedNetworkParams := cloudflare.UpdateDeviceManagedNetworkParams{
 		NetworkID: d.Id(),
@@ -106,7 +107,7 @@ func resourceCloudflareDeviceManagedNetworksUpdate(ctx context.Context, d *schem
 
 func resourceCloudflareDeviceManagedNetworksDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	identifier := cloudflare.AccountIdentifier(d.Get("account_id").(string))
+	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Device Managed Network using ID: %s", d.Id()))
 
 	if _, err := client.DeleteManagedNetworks(ctx, identifier, d.Id()); err != nil {

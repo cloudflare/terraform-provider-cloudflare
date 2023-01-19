@@ -3,12 +3,13 @@ package sdkv2provider
 import (
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudflareAccountMemberSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"account_id": {
+		consts.AccountIDSchemaKey: {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Account ID to create the account member in.",

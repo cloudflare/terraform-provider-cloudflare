@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -35,7 +36,7 @@ func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 // Worker Cron Triggers as the remote API endpoint is shared uses HTTP PUT.
 func resourceCloudflareWorkerCronTriggerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	scriptName := d.Get("script_name").(string)
 
 	crons := transformSchemaToWorkerCronTriggerStruct(d)
@@ -55,7 +56,7 @@ func resourceCloudflareWorkerCronTriggerUpdate(ctx context.Context, d *schema.Re
 func resourceCloudflareWorkerCronTriggerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	scriptName := d.Get("script_name").(string)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	params := cloudflare.ListWorkerCronTriggersParams{
 		ScriptName: scriptName,
@@ -82,7 +83,7 @@ func resourceCloudflareWorkerCronTriggerRead(ctx context.Context, d *schema.Reso
 func resourceCloudflareWorkerCronTriggerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	scriptName := d.Get("script_name").(string)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	_, err := client.UpdateWorkerCronTriggers(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateWorkerCronTriggersParams{
 		ScriptName: scriptName,

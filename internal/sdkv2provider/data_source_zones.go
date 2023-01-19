@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -24,7 +25,7 @@ func dataSourceCloudflareZones() *schema.Resource {
 				Description: "One or more values used to look up zone records. If more than one value is given all values must match in order to be included.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"account_id": {
+						consts.AccountIDSchemaKey: {
 							Description: "The account identifier to target for the resource.",
 							Type:        schema.TypeString,
 							Optional:    true,

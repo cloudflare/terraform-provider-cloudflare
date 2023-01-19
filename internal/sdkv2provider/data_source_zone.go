@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,14 +17,14 @@ func dataSourceCloudflareZone() *schema.Resource {
 		ReadContext: dataSourceCloudflareZoneRead,
 
 		Schema: map[string]*schema.Schema{
-			"zone_id": {
+			consts.ZoneIDSchemaKey: {
 				Description:  "The zone identifier to target for the resource.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
 				ExactlyOneOf: []string{"zone_id", "name"},
 			},
-			"account_id": {
+			consts.AccountIDSchemaKey: {
 				Description: "The account identifier to target for the resource.",
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -78,9 +79,9 @@ func dataSourceCloudflareZone() *schema.Resource {
 func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	tflog.Debug(ctx, fmt.Sprintf("Reading Zones"))
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	name := d.Get("name").(string)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	var zone cloudflare.Zone
 	if name != "" && zoneID == "" {

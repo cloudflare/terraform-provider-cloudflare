@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -39,7 +40,7 @@ func resourceCloudflareHealthcheck() *schema.Resource {
 
 func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	healthcheck, err := client.Healthcheck(ctx, zoneID, d.Id())
 	if err != nil {
@@ -88,7 +89,7 @@ func resourceCloudflareHealthcheckRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareHealthcheckCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	healthcheck, err := healthcheckSetStruct(d)
 	if err != nil {
@@ -120,7 +121,7 @@ func resourceCloudflareHealthcheckCreate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareHealthcheckUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	healthcheck, err := healthcheckSetStruct(d)
 	if err != nil {
@@ -137,7 +138,7 @@ func resourceCloudflareHealthcheckUpdate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareHealthcheckDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	err := client.DeleteHealthcheck(ctx, zoneID, d.Id())
 	if err != nil {

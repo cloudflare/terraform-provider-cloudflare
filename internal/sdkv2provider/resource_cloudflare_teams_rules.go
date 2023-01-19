@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,7 +32,7 @@ const rulePrecedenceFactor int64 = 1000
 
 func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	rule, err := client.TeamsRule(ctx, accountID, d.Id())
 	if err != nil {
@@ -81,7 +82,7 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	settings := inflateTeamsRuleSettings(d.Get("rule_settings"))
 
 	var filters []cloudflare.TeamsFilterType
@@ -121,7 +122,7 @@ func resourceCloudflareTeamsRuleCreate(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	settings := inflateTeamsRuleSettings(d.Get("rule_settings"))
 
 	var filters []cloudflare.TeamsFilterType
@@ -163,7 +164,7 @@ func resourceCloudflareTeamsRuleUpdate(ctx context.Context, d *schema.ResourceDa
 func resourceCloudflareTeamsRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	id := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams Rule using ID: %s", id))
 

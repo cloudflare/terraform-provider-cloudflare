@@ -10,6 +10,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -51,7 +52,7 @@ func resourceCloudflareLoadBalancer() *schema.Resource {
 func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	enabled := d.Get("enabled").(bool)
 	newLoadBalancer := cloudflare.LoadBalancer{
@@ -149,7 +150,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	enabled := d.Get("enabled").(bool)
 	loadBalancer := cloudflare.LoadBalancer{
@@ -252,7 +253,7 @@ func expandGeoPools(pool interface{}, geoType string) (map[string][]string, erro
 
 func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	loadBalancerID := d.Id()
 
 	loadBalancer, err := client.GetLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), loadBalancerID)
@@ -392,7 +393,7 @@ func flattenRandomSteering(properties *cloudflare.RandomSteering) *schema.Set {
 
 func resourceCloudflareLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	loadBalancerID := d.Id()
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer: %s in zone: %s", loadBalancerID, zoneID))

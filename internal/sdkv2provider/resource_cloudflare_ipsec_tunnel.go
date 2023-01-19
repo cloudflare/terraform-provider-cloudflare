@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -30,7 +31,7 @@ func resourceCloudflareIPsecTunnel() *schema.Resource {
 }
 
 func resourceCloudflareIPsecTunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 
 	newTunnel, err := client.CreateMagicTransitIPsecTunnels(ctx, accountID, []cloudflare.MagicTransitIPsecTunnel{
@@ -79,7 +80,7 @@ func resourceCloudflareIPsecTunnelImport(ctx context.Context, d *schema.Resource
 }
 
 func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 
 	tunnel, err := client.GetMagicTransitIPsecTunnel(ctx, accountID, d.Id())
@@ -115,7 +116,7 @@ func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceCloudflareIPsecTunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 	_, err := client.UpdateMagicTransitIPsecTunnel(ctx, accountID, d.Id(), IPsecTunnelFromResource(d))
 	if err != nil {
@@ -139,7 +140,7 @@ func resourceCloudflareIPsecTunnelUpdate(ctx context.Context, d *schema.Resource
 }
 
 func resourceCloudflareIPsecTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting IPsec tunnel:  %s", d.Id()))

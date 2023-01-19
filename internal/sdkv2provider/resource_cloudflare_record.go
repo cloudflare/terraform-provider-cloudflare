@@ -9,6 +9,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -47,7 +48,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 	newRecord := cloudflare.CreateDNSRecordParams{
 		Type:   d.Get("type").(string),
 		Name:   d.Get("name").(string),
-		ZoneID: d.Get("zone_id").(string),
+		ZoneID: d.Get(consts.ZoneIDSchemaKey).(string),
 	}
 
 	proxied, proxiedOk := d.GetOkExists("proxied")
@@ -139,7 +140,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 				if d.Get("allow_overwrite").(bool) {
 					var r cloudflare.ListDNSRecordsParams
 					tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record already exists however we are overwriting it"))
-					zone, _ := client.ZoneDetails(ctx, d.Get("zone_id").(string))
+					zone, _ := client.ZoneDetails(ctx, d.Get(consts.ZoneIDSchemaKey).(string))
 					if d.Get("name").(string) == "@" || d.Get("name").(string) == zone.Name {
 						r = cloudflare.ListDNSRecordsParams{
 							Name: zone.Name,
@@ -151,7 +152,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 							Type: d.Get("type").(string),
 						}
 					}
-					rs, _, _ := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(d.Get("zone_id").(string)), r)
+					rs, _, _ := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(d.Get(consts.ZoneIDSchemaKey).(string)), r)
 
 					if len(rs) != 1 {
 						return resource.RetryableError(fmt.Errorf("attempted to override existing record however didn't find an exact match"))
@@ -196,7 +197,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	record, err := client.GetDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 	if err != nil {
@@ -257,7 +258,7 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 
 func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	updateRecord := cloudflare.UpdateDNSRecordParams{
 		ID:      d.Id(),
@@ -341,7 +342,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflareRecordDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Record: %s, %s", zoneID, d.Id()))
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -40,7 +41,7 @@ func resourceCloudflareDevicePostureIntegration() *schema.Resource {
 
 func resourceCloudflareDevicePostureIntegrationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	newDevicePostureIntegration := cloudflare.DevicePostureIntegration{
 		Name:     d.Get("name").(string),
@@ -75,7 +76,7 @@ func resourceCloudflareDevicePostureIntegrationRead(ctx context.Context, d *sche
 
 func devicePostureIntegrationReadHelper(ctx context.Context, d *schema.ResourceData, meta interface{}, secret string) error {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	devicePostureIntegration, err := client.DevicePostureIntegration(ctx, accountID, d.Id())
 	if err != nil {
@@ -99,7 +100,7 @@ func devicePostureIntegrationReadHelper(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	updatedDevicePostureIntegration := cloudflare.DevicePostureIntegration{
 		IntegrationID: d.Id(),
@@ -130,7 +131,7 @@ func resourceCloudflareDevicePostureIntegrationUpdate(ctx context.Context, d *sc
 func resourceCloudflareDevicePostureIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare device posture integration using ID: %s", appID))
 

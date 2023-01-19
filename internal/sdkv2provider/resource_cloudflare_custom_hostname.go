@@ -9,6 +9,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -34,7 +35,7 @@ func resourceCloudflareCustomHostname() *schema.Resource {
 
 func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	hostnameID := d.Id()
 
 	customHostname, err := client.CustomHostname(ctx, zoneID, hostnameID)
@@ -116,7 +117,7 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflareCustomHostnameDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	hostnameID := d.Id()
 
 	err := client.DeleteCustomHostname(ctx, zoneID, hostnameID)
@@ -129,7 +130,7 @@ func resourceCloudflareCustomHostnameDelete(ctx context.Context, d *schema.Resou
 
 func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	certificate := buildCustomHostname(d)
 
@@ -164,7 +165,7 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 
 func resourceCloudflareCustomHostnameUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	hostnameID := d.Id()
 	certificate := buildCustomHostname(d)
 

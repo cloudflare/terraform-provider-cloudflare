@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,7 +32,7 @@ func resourceCloudflareDevicePolicyCertificates() *schema.Resource {
 
 func resourceCloudflareDevicePolicyCertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	enabled := d.Get("enabled").(bool)
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare device policy certificate: zoneID=%s enabled=%t", zoneID, enabled))
@@ -47,7 +48,7 @@ func resourceCloudflareDevicePolicyCertificateUpdate(ctx context.Context, d *sch
 
 func resourceCloudflareDevicePolicyCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	enabled, err := client.GetDeviceClientCertificatesZone(ctx, zoneID)
 	if err != nil {

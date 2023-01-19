@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -34,7 +35,7 @@ func resourceCloudflareRateLimit() *schema.Resource {
 func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	rateLimitAction, err := expandRateLimitAction(ctx, d)
 	if err != nil {
@@ -94,7 +95,7 @@ func resourceCloudflareRateLimitCreate(ctx context.Context, d *schema.ResourceDa
 func resourceCloudflareRateLimitUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// since api only supports replace, update looks a lot like create...
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	rateLimitId := d.Id()
 
 	rateLimitAction, err := expandRateLimitAction(ctx, d)
@@ -265,7 +266,7 @@ func expandRateLimitBypass(bypassUrlPatterns *schema.Set) []cloudflare.RateLimit
 
 func resourceCloudflareRateLimitRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	rateLimitId := d.Id()
 
 	rateLimit, err := client.RateLimit(ctx, zoneID, rateLimitId)
@@ -390,7 +391,7 @@ func flattenRateLimitCorrelate(cfg cloudflare.RateLimitCorrelate) []map[string]i
 
 func resourceCloudflareRateLimitDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	rateLimitId := d.Id()
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Rate Limit: %s for zone: %s", rateLimitId, zoneID))

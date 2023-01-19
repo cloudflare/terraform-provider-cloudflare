@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -34,7 +35,7 @@ func resourceCloudflareURLNormalizationSettingsCreate(ctx context.Context, d *sc
 func resourceCloudflareURLNormalizationSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	settings, err := client.URLNormalizationSettings(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {
@@ -54,7 +55,7 @@ func resourceCloudflareURLNormalizationSettingsUpdate(ctx context.Context, d *sc
 
 	_type := d.Get("type").(string)
 	scope := d.Get("scope").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	params := cloudflare.URLNormalizationSettingsUpdateParams{
 		Type:  _type,

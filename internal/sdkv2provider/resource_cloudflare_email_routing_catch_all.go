@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -25,7 +26,7 @@ func resourceCloudflareEmailRoutingCatchAll() *schema.Resource {
 
 func resourceCloudflareEmailRoutingCatchAllRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	res, err := client.GetEmailRoutingCatchAllRule(ctx, cloudflare.AccountIdentifier(zoneID))
 	if err != nil {
@@ -41,7 +42,7 @@ func resourceCloudflareEmailRoutingCatchAllRead(ctx context.Context, d *schema.R
 
 func resourceCloudflareEmailRoutingCatchAllUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	updateParams := cloudflare.EmailRoutingCatchAllRule{
 		Name:    d.Get("name").(string),
@@ -60,7 +61,7 @@ func resourceCloudflareEmailRoutingCatchAllUpdate(ctx context.Context, d *schema
 
 func resourceCloudflareEmailRoutingCatchAllDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	deleteParams := cloudflare.EmailRoutingCatchAllRule{
 		Name:    d.Get("name").(string),

@@ -9,6 +9,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -34,7 +35,7 @@ func resourceCloudflareCertificatePack() *schema.Resource {
 
 func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	certificatePackType := d.Get("type").(string)
 	certificateHostSet := d.Get("hosts").(*schema.Set)
 	certificatePackID := ""
@@ -99,7 +100,7 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 
 func resourceCloudflareCertificatePackRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	certificatePack, err := client.CertificatePack(ctx, zoneID, d.Id())
 	if err != nil {
@@ -138,7 +139,7 @@ func resourceCloudflareCertificatePackRead(ctx context.Context, d *schema.Resour
 
 func resourceCloudflareCertificatePackDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	err := client.DeleteCertificatePack(ctx, zoneID, d.Id())
 	if err != nil {

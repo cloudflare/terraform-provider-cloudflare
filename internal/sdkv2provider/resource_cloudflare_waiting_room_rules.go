@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -83,7 +84,7 @@ func flattenWaitingRoomRules(rules []cloudflare.WaitingRoomRule) interface{} {
 func resourceCloudflareWaitingRoomRulesCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	waitingRoomRules, err := expandWaitingRoomRules(d)
 
 	if err != nil {
@@ -107,7 +108,7 @@ func resourceCloudflareWaitingRoomRulesCreate(ctx context.Context, d *schema.Res
 func resourceCloudflareWaitingRoomRulesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	waitingRoomRules, err := client.ListWaitingRoomRules(ctx, cloudflare.ResourceIdentifier(zoneID), cloudflare.ListWaitingRoomRuleParams{
 		WaitingRoomID: waitingRoomID,
@@ -132,7 +133,7 @@ func resourceCloudflareWaitingRoomRulesRead(ctx context.Context, d *schema.Resou
 func resourceCloudflareWaitingRoomRulesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	waitingRoomRules, err := expandWaitingRoomRules(d)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error building waiting room rules%q: %w", waitingRoomID, err))
@@ -153,7 +154,7 @@ func resourceCloudflareWaitingRoomRulesUpdate(ctx context.Context, d *schema.Res
 func resourceCloudflareWaitingRoomRulesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	_, err := client.ReplaceWaitingRoomRules(ctx, cloudflare.ResourceIdentifier(zoneID), cloudflare.ReplaceWaitingRoomRuleParams{
 		WaitingRoomID: waitingRoomID,

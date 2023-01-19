@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -28,7 +29,7 @@ func resourceCloudflareNotificationPolicyWebhook() *schema.Resource {
 
 func resourceCloudflareNotificationPolicyWebhookCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	notificationWebhooks := buildNotificationPolicyWebhooks(d)
 
@@ -50,7 +51,7 @@ func resourceCloudflareNotificationPolicyWebhookCreate(ctx context.Context, d *s
 func resourceCloudflareNotificationPolicyWebhookRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	webhooksDestinationID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	notificationWebhooks, err := client.GetNotificationWebhooks(ctx, accountID, webhooksDestinationID)
 
@@ -77,7 +78,7 @@ func resourceCloudflareNotificationPolicyWebhookRead(ctx context.Context, d *sch
 func resourceCloudflareNotificationPolicyWebhookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	webhooksID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	notificationWebhooks := buildNotificationPolicyWebhooks(d)
 
@@ -93,7 +94,7 @@ func resourceCloudflareNotificationPolicyWebhookUpdate(ctx context.Context, d *s
 func resourceCloudflareNotificationPolicyWebhookDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	webhooksID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	_, err := client.DeleteNotificationWebhooks(ctx, accountID, webhooksID)
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -29,7 +30,7 @@ func resourceCloudflareCustomHostnameFallbackOrigin() *schema.Resource {
 
 func resourceCloudflareCustomHostnameFallbackOriginRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	customHostnameFallbackOrigin, err := client.CustomHostnameFallbackOrigin(ctx, zoneID)
 	if err != nil {
@@ -44,7 +45,7 @@ func resourceCloudflareCustomHostnameFallbackOriginRead(ctx context.Context, d *
 
 func resourceCloudflareCustomHostnameFallbackOriginDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	err := client.DeleteCustomHostnameFallbackOrigin(ctx, zoneID)
 	if err != nil {
@@ -56,7 +57,7 @@ func resourceCloudflareCustomHostnameFallbackOriginDelete(ctx context.Context, d
 
 func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	origin := d.Get("origin").(string)
 
 	fallbackOrigin := cloudflare.CustomHostnameFallbackOrigin{
@@ -103,7 +104,7 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d
 
 func resourceCloudflareCustomHostnameFallbackOriginUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	origin := d.Get("origin").(string)
 
 	fallbackOrigin := cloudflare.CustomHostnameFallbackOrigin{

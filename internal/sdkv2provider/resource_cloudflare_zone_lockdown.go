@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -35,7 +36,7 @@ func resourceCloudflareZoneLockdown() *schema.Resource {
 
 func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var err error
 
@@ -84,7 +85,7 @@ func resourceCloudflareZoneLockdownCreate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	zoneLockdownResponse, err := client.ZoneLockdown(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 
@@ -128,7 +129,7 @@ func resourceCloudflareZoneLockdownRead(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var newZoneLockdown cloudflare.ZoneLockdownUpdateParams
 
@@ -174,7 +175,7 @@ func resourceCloudflareZoneLockdownUpdate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflareZoneLockdownDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Zone Lockdown: id %s for zone %s", d.Id(), zoneID))
 

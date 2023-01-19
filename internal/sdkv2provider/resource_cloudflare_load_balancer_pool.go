@@ -9,6 +9,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -77,7 +78,7 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	if accountID == "" {
 		accountID = client.AccountID
 	}
@@ -144,7 +145,7 @@ func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.Res
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	if accountID == "" {
 		accountID = client.AccountID
 	}
@@ -229,7 +230,7 @@ func expandLoadBalancerOrigins(originSet *schema.Set) (origins []cloudflare.Load
 func resourceCloudflareLoadBalancerPoolRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	if accountID == "" {
 		accountID = client.AccountID
 	}
@@ -327,7 +328,7 @@ func resourceCloudflareLoadBalancerPoolDelete(ctx context.Context, d *schema.Res
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Pool: %s ", d.Id()))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	if accountID == "" {
 		accountID = client.AccountID
 	}

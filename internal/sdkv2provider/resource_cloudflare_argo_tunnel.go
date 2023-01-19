@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -28,7 +29,7 @@ func resourceCloudflareArgoTunnel() *schema.Resource {
 
 func resourceCloudflareArgoTunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accID := d.Get("account_id").(string)
+	accID := d.Get(consts.AccountIDSchemaKey).(string)
 	name := d.Get("name").(string)
 	secret := d.Get("secret").(string)
 
@@ -44,7 +45,7 @@ func resourceCloudflareArgoTunnelCreate(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accID := d.Get("account_id").(string)
+	accID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tunnel, err := client.ArgoTunnel(ctx, accID, d.Id())
 	if err != nil {
@@ -67,7 +68,7 @@ func resourceCloudflareArgoTunnelRead(ctx context.Context, d *schema.ResourceDat
 
 func resourceCloudflareArgoTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accID := d.Get("account_id").(string)
+	accID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	cleanupErr := client.CleanupArgoTunnelConnections(ctx, accID, d.Id())
 	if cleanupErr != nil {

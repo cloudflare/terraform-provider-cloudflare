@@ -8,6 +8,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -73,7 +74,7 @@ func expandWaitingRoomEvent(d *schema.ResourceData) (cloudflare.WaitingRoomEvent
 func resourceCloudflareWaitingRoomEventCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	waitingRoomEventName := d.Get("name").(string)
 	newWaitingRoomEvent, err := expandWaitingRoomEvent(d)
 
@@ -95,7 +96,7 @@ func resourceCloudflareWaitingRoomEventCreate(ctx context.Context, d *schema.Res
 func resourceCloudflareWaitingRoomEventRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	waitingRoomEvent, err := client.WaitingRoomEvent(ctx, zoneID, waitingRoomID, d.Id())
 	if err != nil {
@@ -151,7 +152,7 @@ func resourceCloudflareWaitingRoomEventUpdate(ctx context.Context, d *schema.Res
 	client := meta.(*cloudflare.API)
 	waitingRoomEventID := d.Id()
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	waitingRoomEventName := d.Get("name").(string)
 	waitingRoomEvent, err := expandWaitingRoomEvent(d)
 	if err != nil {
@@ -172,7 +173,7 @@ func resourceCloudflareWaitingRoomEventDelete(ctx context.Context, d *schema.Res
 	client := meta.(*cloudflare.API)
 	waitingRoomEventID := d.Id()
 	waitingRoomID := d.Get("waiting_room_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	err := client.DeleteWaitingRoomEvent(ctx, zoneID, waitingRoomID, waitingRoomEventID)
 

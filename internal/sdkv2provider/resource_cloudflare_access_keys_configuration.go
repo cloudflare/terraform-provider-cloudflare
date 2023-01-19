@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,7 +32,7 @@ func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 
 func resourceCloudflareAccessKeysConfigurationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	keysConfig, err := client.AccessKeysConfig(ctx, accountID)
 	if err != nil {
@@ -65,7 +66,7 @@ func resourceCloudflareAccessKeysConfigurationCreate(ctx context.Context, d *sch
 
 func resourceCloudflareAccessKeysConfigurationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	keysConfigUpdateReq := cloudflare.AccessKeysConfigUpdateRequest{
 		KeyRotationIntervalDays: d.Get("key_rotation_interval_days").(int),

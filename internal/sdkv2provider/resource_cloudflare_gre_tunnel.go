@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +28,7 @@ func resourceCloudflareGRETunnel() *schema.Resource {
 }
 
 func resourceCloudflareGRETunnelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 
 	newTunnel, err := client.CreateMagicTransitGRETunnels(ctx, accountID, []cloudflare.MagicTransitGRETunnel{
@@ -63,7 +64,7 @@ func resourceCloudflareGRETunnelImport(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceCloudflareGRETunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 
 	tunnel, err := client.GetMagicTransitGRETunnel(ctx, accountID, d.Id())
@@ -94,7 +95,7 @@ func resourceCloudflareGRETunnelRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceCloudflareGRETunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 
 	_, err := client.UpdateMagicTransitGRETunnel(ctx, accountID, d.Id(), GRETunnelFromResource(d))
@@ -106,7 +107,7 @@ func resourceCloudflareGRETunnelUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceCloudflareGRETunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	client := meta.(*cloudflare.API)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting GRE tunnel:  %s", d.Id()))

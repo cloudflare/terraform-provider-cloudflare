@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -25,7 +26,7 @@ func resourceCloudflareEmailRoutingSettings() *schema.Resource {
 
 func resourceCloudflareEmailRoutingSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	res, err := client.GetEmailRoutingSettings(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {
@@ -45,7 +46,7 @@ func resourceCloudflareEmailRoutingSettingsRead(ctx context.Context, d *schema.R
 
 func resourceCloudflareEmailRoutingSettingsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	_, err := client.EnableEmailRouting(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {
@@ -57,7 +58,7 @@ func resourceCloudflareEmailRoutingSettingsCreate(ctx context.Context, d *schema
 
 func resourceCloudflareEmailRoutingSettingsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	_, err := client.DisableEmailRouting(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {

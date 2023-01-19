@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -29,7 +30,7 @@ func resourceCloudflareWAFGroupRead(ctx context.Context, d *schema.ResourceData,
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	packageID := d.Get("package_id").(string)
 
 	group, err := client.WAFGroup(ctx, zoneID, packageID, groupID)
@@ -53,7 +54,7 @@ func resourceCloudflareWAFGroupRead(ctx context.Context, d *schema.ResourceData,
 func resourceCloudflareWAFGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	groupID := d.Get("group_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	packageID := d.Get("package_id").(string)
 	mode := d.Get("mode").(string)
 
@@ -100,7 +101,7 @@ func resourceCloudflareWAFGroupDelete(ctx context.Context, d *schema.ResourceDat
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	packageID := d.Get("package_id").(string)
 
 	group, err := client.WAFGroup(ctx, zoneID, packageID, groupID)
@@ -126,7 +127,7 @@ func resourceCloudflareWAFGroupUpdate(ctx context.Context, d *schema.ResourceDat
 	client := meta.(*cloudflare.API)
 
 	groupID := d.Get("group_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	mode := d.Get("mode").(string)
 	packageID := d.Get("package_id").(string)
 

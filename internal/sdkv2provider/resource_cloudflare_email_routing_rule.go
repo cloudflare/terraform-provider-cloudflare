@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -57,7 +58,7 @@ func buildMatchersAndActions(d *schema.ResourceData) (matchers []cloudflare.Emai
 
 func resourceCloudflareEmailRoutingRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	res, err := client.GetEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 	if err != nil {
@@ -73,7 +74,7 @@ func resourceCloudflareEmailRoutingRuleRead(ctx context.Context, d *schema.Resou
 
 func resourceCloudflareEmailRoutingRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	createParams := cloudflare.CreateEmailRoutingRuleParameters{
 		Name:     d.Get("name").(string),
@@ -94,7 +95,7 @@ func resourceCloudflareEmailRoutingRuleCreate(ctx context.Context, d *schema.Res
 
 func resourceCloudflareEmailRoutingRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	updateParams := cloudflare.UpdateEmailRoutingRuleParameters{
 		RuleID:   d.Id(),
@@ -115,7 +116,7 @@ func resourceCloudflareEmailRoutingRuleUpdate(ctx context.Context, d *schema.Res
 
 func resourceCloudflareEmailRoutingRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	_, err := client.DeleteEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), d.Id())
 	if err != nil {

@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -14,7 +15,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 			Required:    true,
 			Description: "Identifier of the Tunnel to target for this configuration.",
 		},
-		"account_id": {
+		consts.AccountIDSchemaKey: {
 			Type:        schema.TypeString,
 			Required:    true,
 			Description: "The account identifier to target for the resource.",

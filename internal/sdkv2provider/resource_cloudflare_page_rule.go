@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -38,7 +39,7 @@ func suppressEquivalentURLs(k, old, new string, d *schema.ResourceData) bool {
 
 func resourceCloudflarePageRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	newPageRuleTargets := []cloudflare.PageRuleTarget{
 		{
@@ -106,7 +107,7 @@ func pageRuleActionsToMap(vs []cloudflare.PageRuleAction) map[string]interface{}
 
 func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	pageRule, err := client.PageRule(ctx, zoneID, d.Id())
 	if err != nil {
@@ -148,7 +149,7 @@ func resourceCloudflarePageRuleRead(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	updatePageRule := cloudflare.PageRule{}
 
@@ -205,7 +206,7 @@ func resourceCloudflarePageRuleUpdate(ctx context.Context, d *schema.ResourceDat
 
 func resourceCloudflarePageRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Page Rule: %s, %s", zoneID, d.Id())
 

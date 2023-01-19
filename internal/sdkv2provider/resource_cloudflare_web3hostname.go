@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -27,7 +28,7 @@ func resourceCloudflareWeb3HostnameCreate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 
 	hostname, err := client.CreateWeb3Hostname(ctx, cloudflare.Web3HostnameCreateParameters{
-		ZoneID:      d.Get("zone_id").(string),
+		ZoneID:      d.Get(consts.ZoneIDSchemaKey).(string),
 		Name:        d.Get("name").(string),
 		Target:      d.Get("target").(string),
 		Description: d.Get("description").(string),
@@ -47,7 +48,7 @@ func resourceCloudflareWeb3HostnameRead(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 
 	hostname, err := client.GetWeb3Hostname(ctx, cloudflare.Web3HostnameDetailsParameters{
-		ZoneID:     d.Get("zone_id").(string),
+		ZoneID:     d.Get(consts.ZoneIDSchemaKey).(string),
 		Identifier: d.Id(),
 	})
 
@@ -62,7 +63,7 @@ func resourceCloudflareWeb3HostnameRead(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflareWeb3HostnameUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	hostname, err := client.UpdateWeb3Hostname(ctx, cloudflare.Web3HostnameUpdateParameters{
 		ZoneID:      zoneID,
@@ -84,7 +85,7 @@ func resourceCloudflareWeb3HostnameDelete(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 
 	_, err := client.DeleteWeb3Hostname(ctx, cloudflare.Web3HostnameDetailsParameters{
-		ZoneID:     d.Get("zone_id").(string),
+		ZoneID:     d.Get(consts.ZoneIDSchemaKey).(string),
 		Identifier: d.Id(),
 	})
 

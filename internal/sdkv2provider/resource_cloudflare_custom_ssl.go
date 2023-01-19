@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -44,7 +45,7 @@ func resourceCloudflareCustomSsl() *schema.Resource {
 
 func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	tflog.Debug(ctx, fmt.Sprintf("zone ID: %s", zoneID))
 	zcso, err := expandToZoneCustomSSLOptions(ctx, d)
 	if err != nil {
@@ -85,7 +86,7 @@ func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	certID := d.Id()
 	var uErr error
 	var reErr error
@@ -135,7 +136,7 @@ func resourceCloudflareCustomSslUpdate(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	certID := d.Id()
 
 	// update all possible schema attributes with fields from api response
@@ -169,7 +170,7 @@ func resourceCloudflareCustomSslRead(ctx context.Context, d *schema.ResourceData
 
 func resourceCloudflareCustomSslDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	certID := d.Id()
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting SSL cert %s for zone %s", certID, zoneID))

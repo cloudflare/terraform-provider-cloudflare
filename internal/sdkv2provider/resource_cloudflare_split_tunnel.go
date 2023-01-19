@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -31,7 +32,7 @@ func resourceCloudflareSplitTunnel() *schema.Resource {
 
 func resourceCloudflareSplitTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	mode := d.Get("mode").(string)
 	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
@@ -56,7 +57,7 @@ func resourceCloudflareSplitTunnelRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	mode := d.Get("mode").(string)
 	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 
@@ -86,7 +87,7 @@ func resourceCloudflareSplitTunnelUpdate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareSplitTunnelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	mode := d.Get("mode").(string)
 	_, policyID := parseDevicePolicyID(d.Get("policy_id").(string))
 

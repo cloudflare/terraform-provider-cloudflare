@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -51,8 +52,8 @@ func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.Res
 	}
 	for _, token := range serviceTokens {
 		if token.ID == d.Id() {
-			zoneID := d.Get("zone_id").(string)
-			accountID := d.Get("account_id").(string)
+			zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+			accountID := d.Get(consts.AccountIDSchemaKey).(string)
 			mindays := d.Get("min_days_for_renewal").(int)
 			if mindays > 0 {
 				expires_at := d.Get("expires_at").(string)

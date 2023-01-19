@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -20,7 +21,7 @@ func resourceCloudflareZoneCacheVariantsExtensionSchema(ext string) *schema.Sche
 
 func resourceCloudflareZoneCacheVariantsSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"zone_id": {
+		consts.ZoneIDSchemaKey: {
 			Description: "The zone identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,

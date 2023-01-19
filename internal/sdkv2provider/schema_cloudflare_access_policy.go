@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -14,14 +15,14 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Required:    true,
 			Description: "The ID of the application the policy is associated with.",
 		},
-		"account_id": {
+		consts.AccountIDSchemaKey: {
 			Description:   "The account identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
 			ConflictsWith: []string{"zone_id"},
 		},
-		"zone_id": {
+		consts.ZoneIDSchemaKey: {
 			Description:   "The zone identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,

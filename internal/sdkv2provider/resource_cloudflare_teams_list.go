@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,7 +48,7 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams List from struct: %+v", newTeamsList))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	identifier := cloudflare.AccountIdentifier(accountID)
 	list, err := client.CreateTeamsList(ctx, identifier, newTeamsList)
@@ -62,7 +63,7 @@ func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	identifier := cloudflare.AccountIdentifier(accountID)
 	list, err := client.GetTeamsList(ctx, identifier, d.Id())
@@ -105,7 +106,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams List from struct: %+v", updatedTeamsList))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	identifier := cloudflare.AccountIdentifier(accountID)
 	teamsList, err := client.UpdateTeamsList(ctx, identifier, updatedTeamsList)
@@ -138,7 +139,7 @@ func resourceCloudflareTeamsListUpdate(ctx context.Context, d *schema.ResourceDa
 func resourceCloudflareTeamsListDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Teams List using ID: %s", appID))
 

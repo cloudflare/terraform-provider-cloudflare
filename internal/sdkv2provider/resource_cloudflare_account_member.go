@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -33,8 +34,8 @@ func resourceCloudflareAccountMemberRead(ctx context.Context, d *schema.Resource
 	client := meta.(*cloudflare.API)
 
 	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
+	if d.Get(consts.AccountIDSchemaKey).(string) != "" {
+		accountID = d.Get(consts.AccountIDSchemaKey).(string)
 	} else {
 		accountID = client.AccountID
 	}
@@ -70,8 +71,8 @@ func resourceCloudflareAccountMemberDelete(ctx context.Context, d *schema.Resour
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare account member ID: %s", d.Id()))
 
 	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
+	if d.Get(consts.AccountIDSchemaKey).(string) != "" {
+		accountID = d.Get(consts.AccountIDSchemaKey).(string)
 	} else {
 		accountID = client.AccountID
 	}
@@ -96,8 +97,8 @@ func resourceCloudflareAccountMemberCreate(ctx context.Context, d *schema.Resour
 	}
 
 	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
+	if d.Get(consts.AccountIDSchemaKey).(string) != "" {
+		accountID = d.Get(consts.AccountIDSchemaKey).(string)
 	} else {
 		accountID = client.AccountID
 	}
@@ -124,8 +125,8 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 	memberRoles := d.Get("role_ids").(*schema.Set).List()
 
 	var accountID string
-	if d.Get("account_id").(string) != "" {
-		accountID = d.Get("account_id").(string)
+	if d.Get(consts.AccountIDSchemaKey).(string) != "" {
+		accountID = d.Get(consts.AccountIDSchemaKey).(string)
 	} else {
 		accountID = client.AccountID
 	}

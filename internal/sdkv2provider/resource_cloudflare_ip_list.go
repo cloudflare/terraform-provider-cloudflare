@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,7 +32,7 @@ func resourceCloudflareIPList() *schema.Resource {
 
 func resourceCloudflareIPListCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	list, err := client.CreateList(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListCreateParams{
 		Name:        d.Get("name").(string),
@@ -76,7 +77,7 @@ func resourceCloudflareIPListImport(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflareIPListRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	list, err := client.GetList(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
@@ -117,7 +118,7 @@ func resourceCloudflareIPListRead(ctx context.Context, d *schema.ResourceData, m
 
 func resourceCloudflareIPListUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	_, err := client.UpdateList(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListUpdateParams{
 		ID:          d.Id(),
@@ -143,7 +144,7 @@ func resourceCloudflareIPListUpdate(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudflareIPListDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	_, err := client.DeleteList(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {

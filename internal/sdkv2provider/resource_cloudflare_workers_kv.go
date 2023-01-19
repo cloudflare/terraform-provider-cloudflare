@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -33,7 +34,7 @@ func resourceCloudflareWorkersKVRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	if accountID == "" {
 		accountID = client.AccountID
 	}
@@ -62,7 +63,7 @@ func resourceCloudflareWorkersKVUpdate(ctx context.Context, d *schema.ResourceDa
 	key := d.Get("key").(string)
 	value := d.Get("value").(string)
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	if accountID == "" {
 		accountID = client.AccountID
 	}
@@ -90,7 +91,7 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	if accountID == "" {
 		accountID = client.AccountID
 	}

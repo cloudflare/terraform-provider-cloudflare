@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -34,7 +35,7 @@ func resourceCloudflareTunnelVirtualNetwork() *schema.Resource {
 
 func resourceCloudflareTunnelVirtualNetworkRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.TunnelVirtualNetworksListParams{
 		IsDeleted: cloudflare.BoolPtr(false),
@@ -66,7 +67,7 @@ func resourceCloudflareTunnelVirtualNetworkRead(ctx context.Context, d *schema.R
 func resourceCloudflareTunnelVirtualNetworkCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	name := d.Get("name").(string)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	resource := cloudflare.TunnelVirtualNetworkCreateParams{
 		Name:      name,
@@ -89,7 +90,7 @@ func resourceCloudflareTunnelVirtualNetworkCreate(ctx context.Context, d *schema
 
 func resourceCloudflareTunnelVirtualNetworkUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	resource := cloudflare.TunnelVirtualNetworkUpdateParams{
 		Name:             d.Get("name").(string),
@@ -111,7 +112,7 @@ func resourceCloudflareTunnelVirtualNetworkUpdate(ctx context.Context, d *schema
 
 func resourceCloudflareTunnelVirtualNetworkDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	err := client.DeleteTunnelVirtualNetwork(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {

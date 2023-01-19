@@ -9,6 +9,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -32,7 +33,7 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 
 func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	newDevicePostureRule := cloudflare.DevicePostureRule{
 		Name:        d.Get("name").(string),
@@ -62,7 +63,7 @@ func resourceCloudflareDevicePostureRuleCreate(ctx context.Context, d *schema.Re
 
 func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	devicePostureRule, err := client.DevicePostureRule(ctx, accountID, d.Id())
 	if err != nil {
@@ -88,7 +89,7 @@ func resourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.Reso
 
 func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	updatedDevicePostureRule := cloudflare.DevicePostureRule{
 		ID:          d.Id(),
@@ -122,7 +123,7 @@ func resourceCloudflareDevicePostureRuleUpdate(ctx context.Context, d *schema.Re
 func resourceCloudflareDevicePostureRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Id()
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Device Posture Rule using ID: %s", appID))
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -28,7 +29,7 @@ func resourceCloudflareMagicFirewallRuleset() *schema.Resource {
 
 func resourceCloudflareMagicFirewallRulesetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	rules, err := buildMagicFirewallRulesetRulesFromResource(d.Get("rules"))
 	if err != nil {
@@ -68,7 +69,7 @@ func resourceCloudflareMagicFirewallRulesetImport(ctx context.Context, d *schema
 
 func resourceCloudflareMagicFirewallRulesetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	ruleset, err := client.GetMagicFirewallRuleset(ctx, accountID, d.Id())
 	if err != nil {
@@ -89,7 +90,7 @@ func resourceCloudflareMagicFirewallRulesetRead(ctx context.Context, d *schema.R
 
 func resourceCloudflareMagicFirewallRulesetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	rules, err := buildMagicFirewallRulesetRulesFromResource(d.Get("rules"))
 	if err != nil {
@@ -106,7 +107,7 @@ func resourceCloudflareMagicFirewallRulesetUpdate(ctx context.Context, d *schema
 
 func resourceCloudflareMagicFirewallRulesetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	err := client.DeleteMagicFirewallRuleset(ctx, accountID, d.Id())
 	if err != nil {

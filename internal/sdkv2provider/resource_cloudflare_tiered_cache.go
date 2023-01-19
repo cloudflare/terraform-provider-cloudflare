@@ -6,6 +6,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -26,7 +27,7 @@ func resourceCloudflareTieredCache() *schema.Resource {
 
 func resourceCloudflareTieredCacheUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var cacheType cloudflare.TieredCacheType
 	switch d.Get("cache_type").(string) {
@@ -53,7 +54,7 @@ func resourceCloudflareTieredCacheUpdate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareTieredCacheRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	result, err := client.GetTieredCache(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {
@@ -67,7 +68,7 @@ func resourceCloudflareTieredCacheRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareTieredCacheDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	_, err := client.DeleteTieredCache(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {

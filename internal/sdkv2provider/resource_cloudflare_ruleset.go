@@ -11,6 +11,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -54,8 +55,8 @@ func resourceCloudflareRuleset() *schema.Resource {
 
 func resourceCloudflareRulesetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	rulesetPhase := d.Get("phase").(string)
 
 	var ruleset cloudflare.Ruleset
@@ -165,8 +166,8 @@ func resourceCloudflareRulesetImport(ctx context.Context, d *schema.ResourceData
 
 func resourceCloudflareRulesetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	var ruleset cloudflare.Ruleset
 	var err error
@@ -200,8 +201,8 @@ func resourceCloudflareRulesetRead(ctx context.Context, d *schema.ResourceData, 
 
 func resourceCloudflareRulesetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	rules, err := buildRulesetRulesFromResource(d)
 	if err != nil {
@@ -224,8 +225,8 @@ func resourceCloudflareRulesetUpdate(ctx context.Context, d *schema.ResourceData
 
 func resourceCloudflareRulesetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	var err error
 
 	if accountID != "" {

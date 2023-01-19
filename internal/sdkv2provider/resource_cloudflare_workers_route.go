@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -30,7 +31,7 @@ func resourceCloudflareWorkerRoute() *schema.Resource {
 
 func resourceCloudflareWorkerRouteCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	params := cloudflare.CreateWorkerRouteParams{
 		Pattern: d.Get("pattern").(string),
@@ -57,7 +58,7 @@ func resourceCloudflareWorkerRouteCreate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareWorkerRouteRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	routeID := d.Id()
 
 	// There isn't a dedicated endpoint for retrieving a specific route, so we
@@ -91,7 +92,7 @@ func resourceCloudflareWorkerRouteRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareWorkerRouteUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	params := cloudflare.UpdateWorkerRouteParams{
 		ID:      d.Id(),
 		Pattern: d.Get("pattern").(string),
@@ -110,7 +111,7 @@ func resourceCloudflareWorkerRouteUpdate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareWorkerRouteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	log.Printf("[INFO] Deleting Cloudflare Worker Route from zone %+v with id: %+v", zoneID, d.Id())
 

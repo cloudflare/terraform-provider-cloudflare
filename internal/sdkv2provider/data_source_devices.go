@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -19,7 +20,7 @@ func dataSourceCloudflareDevices() *schema.Resource {
 
 func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	d.SetId(accountID)
 
 	devices, err := client.ListTeamsDevices(ctx, accountID)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -60,7 +61,7 @@ func resourceCloudflareBYOIPPrefixImport(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareBYOIPPrefixRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	prefix, err := client.GetPrefix(ctx, accountID, d.Id())
 	if err != nil {
@@ -81,7 +82,7 @@ func resourceCloudflareBYOIPPrefixRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareBYOIPPrefixUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	if _, ok := d.GetOk("description"); ok && d.HasChange("description") {
 		if _, err := client.UpdatePrefixDescription(ctx, accountID, d.Id(), d.Get("description").(string)); err != nil {

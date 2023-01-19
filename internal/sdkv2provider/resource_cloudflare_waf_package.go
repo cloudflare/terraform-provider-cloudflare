@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -29,7 +30,7 @@ func resourceCloudflareWAFPackageRead(ctx context.Context, d *schema.ResourceDat
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	pkg, err := client.WAFPackage(ctx, zoneID, packageID)
 	if err != nil {
@@ -53,7 +54,7 @@ func resourceCloudflareWAFPackageCreate(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	sensitivity := d.Get("sensitivity").(string)
 	actionMode := d.Get("action_mode").(string)
 
@@ -89,7 +90,7 @@ func resourceCloudflareWAFPackageDelete(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	pkg, err := client.WAFPackage(ctx, zoneID, packageID)
 	if err != nil {
@@ -120,7 +121,7 @@ func resourceCloudflareWAFPackageUpdate(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 
 	packageID := d.Get("package_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	sensitivity := d.Get("sensitivity").(string)
 	actionMode := d.Get("action_mode").(string)
 

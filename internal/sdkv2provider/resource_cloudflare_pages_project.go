@@ -10,6 +10,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -252,7 +253,7 @@ func buildPagesProject(d *schema.ResourceData) cloudflare.PagesProject {
 
 func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	project, err := client.PagesProject(ctx, accountID, d.Id())
 	if err != nil {
@@ -313,7 +314,7 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflarePagesProjectCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	pageProject := buildPagesProject(d)
 
 	project, err := client.CreatePagesProject(ctx, accountID, pageProject)
@@ -327,7 +328,7 @@ func resourceCloudflarePagesProjectCreate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflarePagesProjectUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	pageProject := buildPagesProject(d)
 
@@ -341,7 +342,7 @@ func resourceCloudflarePagesProjectUpdate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflarePagesProjectDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	err := client.DeletePagesProject(ctx, accountID, d.Id())
 	if err != nil {

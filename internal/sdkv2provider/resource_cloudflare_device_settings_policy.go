@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +28,7 @@ func resourceCloudflareDeviceSettingsPolicy() *schema.Resource {
 
 func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	defaultPolicy := d.Get("default").(bool)
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare device settings policy: accountID=%s default=%t", accountID, defaultPolicy))
@@ -56,7 +57,7 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 
 func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	_, policyID := parseDevicePolicyID(d.Id())
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare device settings policy: accountID=%s policyID=%s", accountID, policyID))
@@ -80,7 +81,7 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 
 func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	_, policyID := parseDevicePolicyID(d.Id())
 
 	var policy cloudflare.DeviceSettingsPolicyResponse
@@ -174,7 +175,7 @@ func resourceCloudflareDeviceSettingsPolicyImport(ctx context.Context, d *schema
 }
 
 func resourceCloudflareDeviceSettingsPolicyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	_, policyID := parseDevicePolicyID(d.Id())
 
 	client := meta.(*cloudflare.API)
@@ -196,7 +197,7 @@ func resourceCloudflareDeviceSettingsPolicyDelete(ctx context.Context, d *schema
 }
 
 func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.DeviceSettingsPolicyRequest, error) {
-	defaultPolicy := (d.Get("default").(bool) || d.Id() == d.Get("account_id").(string))
+	defaultPolicy := (d.Get("default").(bool) || d.Id() == d.Get(consts.AccountIDSchemaKey).(string))
 
 	req := cloudflare.DeviceSettingsPolicyRequest{
 		DisableAutoFallback: cloudflare.BoolPtr(d.Get("disable_auto_fallback").(bool)),

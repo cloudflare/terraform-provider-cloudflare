@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -31,7 +32,7 @@ func resourceCloudflareAuthenticatedOriginPulls() *schema.Resource {
 
 func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	hostname := d.Get("hostname").(string)
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
 
@@ -78,7 +79,7 @@ func resourceCloudflareAuthenticatedOriginPullsCreate(ctx context.Context, d *sc
 
 func resourceCloudflareAuthenticatedOriginPullsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	hostname := d.Get("hostname").(string)
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
 
@@ -113,7 +114,7 @@ func resourceCloudflareAuthenticatedOriginPullsRead(ctx context.Context, d *sche
 
 func resourceCloudflareAuthenticatedOriginPullsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	hostname := d.Get("hostname").(string)
 	aopCert := d.Get("authenticated_origin_pulls_certificate").(string)
 

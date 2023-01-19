@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -158,8 +159,8 @@ const (
 )
 
 func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
-	accountID := d.Get("account_id").(string)
-	zoneID := d.Get("zone_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	if accountID == "" && zoneID == "" {
 		return nil, fmt.Errorf("error creating Access resource: zone_id or account_id required")
 	}

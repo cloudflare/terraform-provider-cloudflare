@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -16,7 +17,7 @@ func dataSourceCloudflareLoadBalancerPools() *schema.Resource {
 		Read:        dataSourceCloudflareLoadBalancerPoolsRead,
 		Description: "A datasource to find Load Balancer Pools.",
 		Schema: map[string]*schema.Schema{
-			"account_id": {
+			consts.AccountIDSchemaKey: {
 				Description: "The account identifier to target for the datasource lookups.",
 				Type:        schema.TypeString,
 				Required:    true,
@@ -146,7 +147,7 @@ func dataSourceCloudflareLoadBalancerPoolsRead(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	poolsObj, err := client.ListLoadBalancerPools(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListLoadBalancerPoolParams{})
 	if err != nil {
 		return fmt.Errorf("error listing load balancer pools: %w", err)

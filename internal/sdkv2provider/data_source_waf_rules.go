@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,7 +17,7 @@ func dataSourceCloudflareWAFRules() *schema.Resource {
 		ReadContext: dataSourceCloudflareWAFRulesRead,
 
 		Schema: map[string]*schema.Schema{
-			"zone_id": {
+			consts.ZoneIDSchemaKey: {
 				Description: "The zone identifier to target for the resource.",
 				Type:        schema.TypeString,
 				Required:    true,
@@ -102,7 +103,7 @@ func dataSourceCloudflareWAFRules() *schema.Resource {
 
 func dataSourceCloudflareWAFRulesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id").(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	// Prepare the filters to be applied to the search
 	filter, err := expandFilterWAFRules(d.Get("filter"))
