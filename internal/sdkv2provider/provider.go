@@ -108,7 +108,6 @@ func New(version string) func() *schema.Provider {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_HOSTNAME", "api.cloudflare.com"),
-					Description: "Configure the hostname used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_HOSTNAME` environment variable.",
 					Description: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
 				},
 
@@ -124,7 +123,6 @@ func New(version string) func() *schema.Provider {
 					Description: fmt.Sprintf("Maximum number of retries to perform when an API request fails. Alternatively, can be configured using the `%s` environment variable.", consts.RetriesEnvVarKey),
 				},
 
-				"api_base_path": {
 				consts.MinimumBackoffSchemaKey: {
 					Type:        schema.TypeInt,
 					Optional:    true,
@@ -141,13 +139,6 @@ func New(version string) func() *schema.Provider {
 					Type:        schema.TypeBool,
 					Optional:    true,
 					Description: fmt.Sprintf("Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `%s` environment variable.", consts.APIClientLoggingEnvVarKey),
-				},
-
-				consts.AccountIDSchemaKey: {
-					Type:        schema.TypeString,
-					Optional:    true,
-					Description: fmt.Sprintf("Configure API client to always use a specific account. Alternatively, can be configured using the `%s` environment variable.", consts.AccountIDEnvVarKey),
-					Deprecated:  "Use resource specific `account_id` attributes instead.",
 				},
 
 				consts.APIHostnameSchemaKey: {
