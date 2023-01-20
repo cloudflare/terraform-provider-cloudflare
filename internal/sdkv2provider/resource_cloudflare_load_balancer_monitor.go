@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"time"
 
@@ -23,7 +24,7 @@ func resourceCloudflareLoadBalancerMonitor() *schema.Resource {
 		UpdateContext: resourceCloudflareLoadBalancerPoolMonitorUpdate,
 		DeleteContext: resourceCloudflareLoadBalancerPoolMonitorDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceCloudflareLoadBalancerPoolMonitorImport,
 		},
 		Description: heredoc.Doc(`
 			If Cloudflare's Load Balancing to load-balance across multiple
@@ -286,4 +287,24 @@ func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *sch
 	}
 
 	return nil
+}
+
+func resourceCloudflareLoadBalancerPoolMonitorImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var accountID string
+	var lbMonitorID string
+	if len(idAttr) == 2 {
+		accountID = idAttr[0]
+		lbMonitorID = idAttr[1]
+	} else {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/loadBalancerMonitorID\"", d.Id())
+	}
+
+	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.SetId(lbMonitorID)
+
+	resourceCloudflareLoadBalancerPoolMonitorRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }

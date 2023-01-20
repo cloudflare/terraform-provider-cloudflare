@@ -563,7 +563,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 }
 
 func testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-%[3]s.%[2]s"
@@ -574,7 +574,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
@@ -592,7 +592,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigSessionAffinityIPCookie(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
@@ -603,7 +603,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigAdaptiveRouting(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-adaptive-routing-%[3]s.%[2]s"
@@ -616,7 +616,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigLocationStrategy(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-location-strategy-%[3]s.%[2]s"
@@ -630,7 +630,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigRandomSteering(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-random-steering-%[3]s.%[2]s"
@@ -646,7 +646,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-%[3]s.%[2]s"
@@ -671,7 +671,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigProximityBalanced(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-%[3]s.%[2]s"
@@ -684,7 +684,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-%[3]s.%[2]s"
@@ -702,7 +702,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
 }
 
 func testAccCheckCloudflareLoadBalancerConfigRules(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id) + fmt.Sprintf(`
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
 resource "cloudflare_load_balancer" "%[3]s" {
   zone_id = "%[1]s"
   name = "tf-testacc-lb-%[3]s.%[2]s"

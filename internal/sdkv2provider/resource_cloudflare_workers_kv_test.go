@@ -29,7 +29,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersKV(name, key, value),
+				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
 					resource.TestCheckResourceAttr(
@@ -58,7 +58,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersKV(name, key, value),
+				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
 					resource.TestCheckResourceAttr(
@@ -67,7 +67,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWorkersKV(name, key+"-updated", value),
+				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key+"-updated", value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key+"-updated", &kvPair),
 					resource.TestCheckResourceAttr(
@@ -132,17 +132,18 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWorkersKV(rName string, key string, value string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName) + fmt.Sprintf(`
+func testAccCheckCloudflareWorkersKV(rName, key, value, accountID string) string {
+	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + fmt.Sprintf(`
 resource "cloudflare_workers_kv" "%[1]s" {
+	account_id = "%[4]s"
 	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
 	key = "%[2]s"
 	value = "%[3]s"
-}`, rName, key, value)
+}`, rName, key, value, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVWithAccount(rName string, key string, value string, accountID string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName) + fmt.Sprintf(`
+	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + fmt.Sprintf(`
 resource "cloudflare_workers_kv" "%[1]s" {
 	account_id = "%[4]s"
 	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id

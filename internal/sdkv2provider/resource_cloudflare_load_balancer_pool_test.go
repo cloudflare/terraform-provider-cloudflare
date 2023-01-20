@@ -61,6 +61,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -68,7 +69,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// dont check that specified values are set, this will be evident by lack of plan diff
@@ -89,6 +90,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	headerValue := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -96,7 +98,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd, headerValue),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd, headerValue, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// checking our overrides of default values worked
@@ -143,6 +145,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	var initialId string
 	rnd := generateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -150,7 +153,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					testAccManuallyDeleteLoadBalancerPool(name, &loadBalancerPool, &initialId),
@@ -158,7 +161,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd),
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					func(state *terraform.State) error {
@@ -251,9 +254,10 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 }
 
 // using IPs from 192.0.2.0/24 as per RFC5737.
-func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id string) string {
+func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
+  account_id = "%[2]s"
   name = "my-tf-pool-basic-%[1]s"
   latitude = 12.3
   longitude = 55
@@ -262,14 +266,14 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     address = "192.0.2.1"
     enabled = true
   }
-}`, id)
+}`, id, accountID)
 }
 
-func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id string, headerValue string) string {
+func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id, headerValue, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
-
+  account_id = "%[3]s"
   origins {
     name = "example-1"
     address = "192.0.2.1"
@@ -311,6 +315,6 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   minimum_origins = 2
   // monitor = abcd TODO: monitor resource
   notification_email = "someone@example.com"
-}`, id, headerValue)
+}`, id, headerValue, accountID)
 	// TODO add field to config after creating monitor resource
 }

@@ -11,7 +11,7 @@ import (
 
 func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_argo_tunnel" "%[1]s" {
+		resource "cloudflare_tunnel" "%[1]s" {
 		  account_id = "%[2]s"
 		  name       = "%[1]s"
 		  secret     = "%[3]s"
@@ -19,7 +19,7 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 
 		resource "cloudflare_tunnel_config" "%[1]s" {
 		  account_id         = "%[2]s"
-		  tunnel_id          = cloudflare_argo_tunnel.%[1]s.id
+		  tunnel_id          = cloudflare_tunnel.%[1]s.id
 
 		  config {
 			warp_routing {
@@ -62,7 +62,7 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 
 func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_argo_tunnel" "%[1]s" {
+		resource "cloudflare_tunnel" "%[1]s" {
 		  account_id = "%[2]s"
 		  name       = "%[1]s"
 		  secret     = "%[3]s"
@@ -70,7 +70,7 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 
 		resource "cloudflare_tunnel_config" "%[1]s" {
 		  account_id         = "%[2]s"
-		  tunnel_id          = cloudflare_argo_tunnel.%[1]s.id
+		  tunnel_id          = cloudflare_tunnel.%[1]s.id
 
 		  config {
 			ingress_rule {

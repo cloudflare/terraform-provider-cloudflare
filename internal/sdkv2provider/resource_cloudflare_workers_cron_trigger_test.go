@@ -33,6 +33,7 @@ func TestAccCloudflareWorkerCronTrigger_Basic(t *testing.T) {
 func testAccCloudflareWorkerCronTriggerConfigBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_worker_script" "%[1]s" {
+	account_id  = "%[2]s"
 	name = "%[1]s"
 	content = "addEventListener('fetch', event => {event.respondWith(new Response('test'))});"
 }

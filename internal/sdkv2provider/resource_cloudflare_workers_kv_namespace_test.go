@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -16,13 +17,15 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	var namespace cloudflare.WorkersKVNamespace
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_workers_kv_namespace." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCloudflareWorkersKVNamespaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersKVNamespace(rnd),
+				Config: testAccCheckCloudflareWorkersKVNamespace(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVNamespaceExists(rnd, &namespace),
 					resource.TestCheckResourceAttr(resourceName, "title", rnd),
@@ -57,11 +60,12 @@ func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWorkersKVNamespace(rName string) string {
+func testAccCheckCloudflareWorkersKVNamespace(rName, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_workers_kv_namespace" "%[1]s" {
+	account_id = "%[2]s"
 	title = "%[1]s"
-}`, rName)
+}`, rName, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *cloudflare.WorkersKVNamespace) resource.TestCheckFunc {

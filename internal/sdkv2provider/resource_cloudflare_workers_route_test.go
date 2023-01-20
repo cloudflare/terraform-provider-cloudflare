@@ -27,6 +27,7 @@ func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 	var route cloudflare.WorkerRoute
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	routeRnd := generateRandomResourceName()
 	routeName := "cloudflare_worker_route." + routeRnd
 	pattern1 := fmt.Sprintf("%s/%s", zoneName, generateRandomResourceName())
@@ -45,7 +46,7 @@ func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, routeRnd, scriptRnd, pattern1),
+				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, accountID, routeRnd, scriptRnd, pattern1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerRouteExists(routeName, &route),
 					resource.TestCheckResourceAttr(routeName, consts.ZoneIDSchemaKey, zoneID),
@@ -54,7 +55,7 @@ func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, routeRnd, scriptRnd, pattern2),
+				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, accountID, routeRnd, scriptRnd, pattern2),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerRouteExists(routeName, &route),
 					resource.TestCheckResourceAttr(routeName, consts.ZoneIDSchemaKey, zoneID),
@@ -66,31 +67,33 @@ func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, routeRnd, scriptRnd, pattern string) string {
+func testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, accountID, routeRnd, scriptRnd, pattern string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_worker_route" "%[2]s" {
+resource "cloudflare_worker_route" "%[3]s" {
   zone_id = "%[1]s"
-  pattern = "%[4]s"
-  script_name = "${cloudflare_worker_script.%[3]s.name}"
+  pattern = "%[5]s"
+  script_name = "${cloudflare_worker_script.%[4]s.name}"
 }
 
-resource "cloudflare_worker_script" "%[3]s" {
-  name = "%[3]s"
-  content = "%[5]s"
-}`, zoneID, routeRnd, scriptRnd, pattern, defaultScriptContent)
+resource "cloudflare_worker_script" "%[4]s" {
+  account_id = "%[2]s"
+  name = "%[4]s"
+  content = "%[6]s"
+}`, zoneID, accountID, routeRnd, scriptRnd, pattern, defaultScriptContent)
 }
 
-func testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, routeRnd, scriptRnd, pattern string) string {
+func testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, accountID, routeRnd, scriptRnd, pattern string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_worker_route" "%[2]s" {
+resource "cloudflare_worker_route" "%[3]s" {
   zone_id = "%[1]s"
-  pattern = "%[4]s"
+  pattern = "%[5]s"
 }
 
-resource "cloudflare_worker_script" "%[3]s" {
-  name = "%[3]s"
-  content = "%[5]s"
-}`, zoneID, routeRnd, scriptRnd, pattern, defaultScriptContent)
+resource "cloudflare_worker_script" "%[4]s" {
+  account_id = "%[2]s"
+  name = "%[4]s"
+  content = "%[6]s"
+}`, zoneID, accountID, routeRnd, scriptRnd, pattern, defaultScriptContent)
 }
 
 func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {

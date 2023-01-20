@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"strings"
 
 	"time"
 
@@ -24,7 +25,7 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 		ReadContext:   resourceCloudflareLoadBalancerPoolRead,
 		DeleteContext: resourceCloudflareLoadBalancerPoolDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceCloudflareLoadBalancerPoolImport,
 		},
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Load Balancer pool resource. This provides a
@@ -326,4 +327,24 @@ func resourceCloudflareLoadBalancerPoolDelete(ctx context.Context, d *schema.Res
 	}
 
 	return nil
+}
+
+func resourceCloudflareLoadBalancerPoolImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var accountID string
+	var lbPoolID string
+	if len(idAttr) == 2 {
+		accountID = idAttr[0]
+		lbPoolID = idAttr[1]
+	} else {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/loadBalancerPoolID\"", d.Id())
+	}
+
+	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.SetId(lbPoolID)
+
+	resourceCloudflareLoadBalancerPoolRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
