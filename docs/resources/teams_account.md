@@ -103,6 +103,8 @@ Optional:
 - `footer_text` (String) Block page footer text.
 - `header_text` (String) Block page header text.
 - `logo_path` (String) URL of block page logo.
+- `mailto_address` (String) Admin email for users to contact.
+- `mailto_subject` (String) Subject line for emails created from block page.
 - `name` (String) Name of block page configuration.
 
 
