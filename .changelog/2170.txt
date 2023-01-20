@@ -1,0 +1,3 @@
+```release-note:enhancement
+provider: mux `terraform-plugin-sdk/v2` and `terraform-plugin-framework`
+```

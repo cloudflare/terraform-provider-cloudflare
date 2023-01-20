@@ -55,7 +55,7 @@ terraform-provider-lint: tools
 	 -XR004=false \
 	 -XS001=false \
 	 -XS002=false \
-	 ./internal/provider/
+	 ./...
 
 vet:
 	@echo "==> Running go vet ."
