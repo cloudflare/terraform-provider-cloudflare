@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -29,11 +30,11 @@ func TestAccCloudflareWaitingRoomRules_Create(t *testing.T) {
 			{
 				Config: testAccCloudflareWaitingRoomRules(rnd, zoneID, domain, waitingRoomName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "waiting_room_id"),
 
 					resource.TestCheckResourceAttr(name, "rules.0.description", "ip bypass"),
-					resource.TestCheckResourceAttr(name, "rules.0.expression", "ip.src in {1.2.3.4}"),
+					resource.TestCheckResourceAttr(name, "rules.0.expression", "ip.src in {192.0.2.1}"),
 					resource.TestCheckResourceAttr(name, "rules.0.action", "bypass_waiting_room"),
 					resource.TestCheckResourceAttr(name, "rules.0.status", "enabled"),
 					resource.TestCheckResourceAttr(name, "rules.0.version", "1"),
@@ -57,7 +58,7 @@ func testAccCheckCloudflareWaitingRoomRulesDestroy(s *terraform.State) error {
 			continue
 		}
 
-		waitingRoomRules, err := client.ListWaitingRoomRules(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), cloudflare.ListWaitingRoomRuleParams{
+		waitingRoomRules, err := client.ListWaitingRoomRules(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), cloudflare.ListWaitingRoomRuleParams{
 			WaitingRoomID: rs.Primary.Attributes["waiting_room_id"],
 		})
 		if err == nil {
@@ -96,7 +97,7 @@ resource "cloudflare_waiting_room_rules" "%[1]s" {
 
   rules {
     action      = "bypass_waiting_room"
-    expression  = "ip.src in {1.2.3.4}"
+    expression  = "ip.src in {192.0.2.1}"
     description = "ip bypass"
     status 	    = "enabled"
   }

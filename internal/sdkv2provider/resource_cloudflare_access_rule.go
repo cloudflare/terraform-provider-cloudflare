@@ -113,7 +113,7 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Access Rule read configuration: %#v", accessRuleResponse))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("mode", accessRuleResponse.Result.Mode)
 	d.Set("notes", accessRuleResponse.Result.Notes)
 	tflog.Debug(ctx, fmt.Sprintf("read configuration: %#v", d.Get("configuration")))
@@ -204,9 +204,9 @@ func resourceCloudflareAccessRuleImport(ctx context.Context, d *schema.ResourceD
 
 	switch accessRuleType {
 	case "account":
-		d.Set("account_id", accessRuleTypeIdentifier)
+		d.Set(consts.AccountIDSchemaKey, accessRuleTypeIdentifier)
 	case "zone":
-		d.Set("zone_id", accessRuleTypeIdentifier)
+		d.Set(consts.ZoneIDSchemaKey, accessRuleTypeIdentifier)
 	}
 
 	resourceCloudflareAccessRuleRead(ctx, d, meta)

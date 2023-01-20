@@ -153,9 +153,9 @@ func resourceCloudflareRulesetImport(ctx context.Context, d *schema.ResourceData
 	resourceType, resourceTypeID, rulesetID := attributes[0], attributes[1], attributes[2]
 
 	if resourceType == "account" {
-		d.Set("account_id", resourceTypeID)
+		d.Set(consts.AccountIDSchemaKey, resourceTypeID)
 	} else {
-		d.Set("zone_id", resourceTypeID)
+		d.Set(consts.ZoneIDSchemaKey, resourceTypeID)
 	}
 	d.SetId(rulesetID)
 

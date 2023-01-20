@@ -22,7 +22,7 @@ func dataSourceCloudflareZone() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				ExactlyOneOf: []string{"zone_id", "name"},
+				ExactlyOneOf: []string{consts.ZoneIDSchemaKey, "name"},
 			},
 			consts.AccountIDSchemaKey: {
 				Description: "The account identifier to target for the resource.",
@@ -34,7 +34,7 @@ func dataSourceCloudflareZone() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				ExactlyOneOf: []string{"zone_id", "name"},
+				ExactlyOneOf: []string{consts.ZoneIDSchemaKey, "name"},
 				Description:  "The name of the zone.",
 			},
 			"status": {
@@ -110,8 +110,8 @@ func dataSourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	d.SetId(zone.ID)
-	d.Set("zone_id", zone.ID)
-	d.Set("account_id", zone.Account.ID)
+	d.Set(consts.ZoneIDSchemaKey, zone.ID)
+	d.Set(consts.AccountIDSchemaKey, zone.Account.ID)
 	d.Set("name", zone.Name)
 	d.Set("status", zone.Status)
 	d.Set("paused", zone.Paused)

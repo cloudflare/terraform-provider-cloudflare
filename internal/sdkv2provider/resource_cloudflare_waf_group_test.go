@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -33,7 +34,7 @@ func TestAccCloudflareWAFGroup_CreateThenUpdate(t *testing.T) {
 				Config: testAccCheckCloudflareWAFGroupConfig(zoneID, groupID, "on", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "group_id", groupID),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttr(name, "mode", "on"),
 				),
@@ -42,7 +43,7 @@ func TestAccCloudflareWAFGroup_CreateThenUpdate(t *testing.T) {
 				Config: testAccCheckCloudflareWAFGroupConfig(zoneID, groupID, "off", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "group_id", groupID),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttr(name, "mode", "off"),
 				),
@@ -90,7 +91,7 @@ func testAccCheckCloudflareWAFGroupDestroy(s *terraform.State) error {
 			continue
 		}
 
-		group, err := client.WAFGroup(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["package_id"], rs.Primary.ID)
+		group, err := client.WAFGroup(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.Attributes["package_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

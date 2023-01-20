@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -39,7 +40,7 @@ func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error 
 		expectedValue string
 	}{
 		{field: "ID", stateValue: state.ID, expectedValue: accountID},
-		{field: "account_id", stateValue: attrs["account_id"], expectedValue: accountID},
+		{field: consts.AccountIDSchemaKey, stateValue: attrs[consts.AccountIDSchemaKey], expectedValue: accountID},
 		{field: "name", stateValue: attrs["name"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
 		{field: "auth_domain", stateValue: attrs["auth_domain"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},

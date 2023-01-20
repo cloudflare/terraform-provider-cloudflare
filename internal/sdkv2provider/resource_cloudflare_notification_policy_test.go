@@ -6,6 +6,7 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -37,7 +38,7 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "universal_ssl_event_type"),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 				),
 			},
 			{
@@ -47,7 +48,7 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", updatedPolicyDesc),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "universal_ssl_event_type"),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 				),
 			},
 		},
@@ -110,7 +111,7 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "billing_usage_alert"),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.product.*", "worker_requests"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.limit.*", "100"),
 				),
@@ -122,7 +123,7 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", updatedPolicyDesc),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "billing_usage_alert"),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.product.*", "worker_requests"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.limit.*", "100"),
 				),

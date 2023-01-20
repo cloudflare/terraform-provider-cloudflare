@@ -114,7 +114,7 @@ func resourceCloudflareSplitTunnelImport(ctx context.Context, d *schema.Resource
 
 	accountID, policyID, mode := attributes[0], attributes[1], attributes[2]
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.Set("mode", mode)
 	if policyID == "default" {
 		d.Set("policy_id", accountID)

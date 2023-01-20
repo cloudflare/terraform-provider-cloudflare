@@ -10,6 +10,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -77,10 +78,10 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					testAccCheckCloudflareRecordAttributes(&record),
 					testAccCheckCloudflareRecordDates(resourceName, &record, testStartTime),
 					resource.TestCheckResourceAttr(resourceName, "name", "tf-acctest-basic"),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.10"),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("tf-acctest-basic.%s", zoneName)),
-					resource.TestMatchResourceAttr(resourceName, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
 					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.%", "4"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.auto_added", "false"),
@@ -145,7 +146,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
 					resource.TestCheckResourceAttr(resourceName, "name", "@"),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.10"),
 				),
 			},
@@ -604,7 +605,7 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
+		_, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Record still exists")
 		}
@@ -681,7 +682,7 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundRecord, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
+		foundRecord, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}

@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -194,7 +195,7 @@ func testAccCheckCloudflareSpectrumApplicationDestroy(s *terraform.State) error 
 			continue
 		}
 
-		_, err := client.SpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.SpectrumApplication(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("spectrum application still exists: %s", rs.Primary.ID)
 		}
@@ -297,7 +298,7 @@ func testAccCheckCloudflareSpectrumApplicationExists(n string, spectrumApp *clou
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundSpectrumApplication, err := client.SpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundSpectrumApplication, err := client.SpectrumApplication(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -323,7 +324,7 @@ func testAccCheckCloudflareSpectrumApplicationIDIsValid(n string) resource.TestC
 			return fmt.Errorf("invalid id %q, should be a string of length 32", rs.Primary.ID)
 		}
 
-		if zoneID, ok := rs.Primary.Attributes["zone_id"]; !ok || len(zoneID) < 1 {
+		if zoneID, ok := rs.Primary.Attributes[consts.ZoneIDSchemaKey]; !ok || len(zoneID) < 1 {
 			return errors.New("zone_id is unset, should always be set with id")
 		}
 		return nil
@@ -335,7 +336,7 @@ func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudfla
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = spectrumApp.ID
-		err := client.DeleteSpectrumApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeleteSpectrumApplication(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

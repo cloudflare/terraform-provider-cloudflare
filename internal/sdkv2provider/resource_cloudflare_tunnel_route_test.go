@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -70,7 +71,7 @@ func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
 				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "10.0.0.20/32"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareTunnelRouteExists(name, &TunnelRoute),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "tunnel_id"),
 					resource.TestCheckResourceAttr(name, "network", "10.0.0.20/32"),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
@@ -93,7 +94,7 @@ func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.Tunn
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundTunnelRoute, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"]), cloudflare.TunnelRoutesListParams{
+		foundTunnelRoute, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.TunnelRoutesListParams{
 			IsDeleted:     cloudflare.BoolPtr(false),
 			NetworkSubset: rs.Primary.ID,
 		})

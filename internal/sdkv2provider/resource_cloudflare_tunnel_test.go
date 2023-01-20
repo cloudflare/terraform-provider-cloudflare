@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -57,7 +58,7 @@ func testAccCheckCloudflareTunnelDestroy(s *terraform.State) error {
 			continue
 		}
 
-		accountID := rs.Primary.Attributes["account_id"]
+		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 		tunnelID := rs.Primary.ID
 		client := testAccProvider.Meta().(*cloudflare.API)
 		tunnel, err := client.Tunnel(context.Background(), cloudflare.AccountIdentifier(accountID), tunnelID)

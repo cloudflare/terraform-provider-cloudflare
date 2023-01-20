@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -101,7 +102,7 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	r, err := client.CreateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating load balancer monitor"))
@@ -190,7 +191,7 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 
 	tflog.Debug(ctx, fmt.Sprintf("Update Cloudflare Load Balancer Monitor from struct: %+v", loadBalancerMonitor))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	_, err := client.UpdateLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateLoadBalancerMonitorParams{LoadBalancerMonitor: loadBalancerMonitor})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error modifying load balancer monitor"))
@@ -214,7 +215,7 @@ func expandLoadBalancerMonitorHeader(cfgSet interface{}) map[string][]string {
 func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	loadBalancerMonitor, err := client.GetLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -272,7 +273,7 @@ func resourceCloudflareLoadBalancerPoolMonitorDelete(ctx context.Context, d *sch
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Monitor: %s ", d.Id()))
 
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	err := client.DeleteLoadBalancerMonitor(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError

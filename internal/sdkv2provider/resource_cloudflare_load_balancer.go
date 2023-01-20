@@ -418,7 +418,7 @@ func resourceCloudflareLoadBalancerImport(ctx context.Context, d *schema.Resourc
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/loadBalancerID\"", d.Id())
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(loadBalancerID)
 
 	resourceCloudflareLoadBalancerRead(ctx, d, meta)

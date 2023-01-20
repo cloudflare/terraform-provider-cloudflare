@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -83,7 +84,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 			{
 				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: AccountType, Value: accountID}, cert, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.0", domain),
@@ -92,7 +93,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 			{
 				Config: testAccessMutualTLSCertificateUpdated(rnd, AccessIdentifier{Type: AccountType, Value: accountID}, cert),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "0"),
@@ -125,7 +126,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 			{
 				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}, cert, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.0", domain),
@@ -134,7 +135,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 			{
 				Config: testAccessMutualTLSCertificateUpdated(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}, cert),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttrSet(name, "certificate"),
 					resource.TestCheckResourceAttr(name, "associated_hostnames.#", "0"),
@@ -152,15 +153,15 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 			continue
 		}
 
-		if rs.Primary.Attributes["zone_id"] != "" {
-			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
+			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("AccessMutualTLSCertificate still exists")
 			}
 		}
 
-		if rs.Primary.Attributes["account_id"] != "" {
-			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
+			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("AccessMutualTLSCertificate still exists")
 			}

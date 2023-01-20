@@ -88,7 +88,7 @@ func dataSourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error finding Zone DNSSEC %q: %w", zoneID, err))
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("status", dnssec.Status)
 	d.Set("flags", dnssec.Flags)
 	d.Set("algorithm", dnssec.Algorithm)

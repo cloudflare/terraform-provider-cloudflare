@@ -165,7 +165,7 @@ func resourceCloudflareTeamsListImport(ctx context.Context, d *schema.ResourceDa
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams List: id %s for account %s", teamsListID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(teamsListID)
 
 	resourceCloudflareTeamsListRead(ctx, d, meta)

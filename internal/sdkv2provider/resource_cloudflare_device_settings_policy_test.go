@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -38,7 +39,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 			{
 				Config: testAccCloudflareDeviceSettingsPolicy(rnd, accountID, precedence),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "allow_mode_switch", "true"),
 					resource.TestCheckResourceAttr(name, "allow_updates", "true"),
 					resource.TestCheckResourceAttr(name, "allowed_to_leave", "true"),
@@ -60,7 +61,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 				Config: testAccCloudflareDefaultDeviceSettingsPolicy(defaultRnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(defaultName, "id", accountID),
-					resource.TestCheckResourceAttr(defaultName, "account_id", accountID),
+					resource.TestCheckResourceAttr(defaultName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(defaultName, "allow_mode_switch", "true"),
 					resource.TestCheckResourceAttr(defaultName, "allow_updates", "true"),
 					resource.TestCheckResourceAttr(defaultName, "allowed_to_leave", "true"),
@@ -158,7 +159,7 @@ func testAccCheckCloudflareDeviceSettingsPolicyDestroy(s *terraform.State) error
 			return nil
 		}
 
-		_, err := client.GetDeviceSettingsPolicy(context.Background(), rs.Primary.Attributes["account_id"], policyID)
+		_, err := client.GetDeviceSettingsPolicy(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], policyID)
 		if err == nil {
 			return fmt.Errorf("Device Posture Integration still exists")
 		}

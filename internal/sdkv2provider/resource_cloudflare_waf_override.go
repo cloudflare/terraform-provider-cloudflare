@@ -39,7 +39,7 @@ func resourceCloudflareWAFOverrideRead(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("failed to find WAF override %s: %w", d.Id(), err))
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("urls", override.URLs)
 	d.Set("paused", override.Paused)
 	d.Set("description", override.Description)
@@ -115,7 +115,7 @@ func resourceCloudflareWAFOverrideImport(ctx context.Context, d *schema.Resource
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing WAF override: id %s for zone %s", WAFOverrideID, zoneID))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("override_id", WAFOverrideID)
 	d.SetId(WAFOverrideID)
 

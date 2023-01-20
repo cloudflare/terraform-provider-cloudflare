@@ -153,7 +153,7 @@ func resourceCloudflareAuthenticatedOriginPullsImport(ctx context.Context, d *sc
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/certID/hostname\"", d.Id())
 	}
 	zoneID, certID, hostname := idAttr[0], idAttr[1], idAttr[2]
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 
 	// Set attributes based on inputs which informs which form of AOP to use
 	var checksum string

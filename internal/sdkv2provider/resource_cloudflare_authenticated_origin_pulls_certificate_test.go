@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -87,7 +88,7 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(name, &perZoneAOP),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "type", aopType),
 				),
 			},
@@ -115,7 +116,7 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(name, &perZoneAOP),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "type", aopType),
 				),
 			},
@@ -133,7 +134,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n st
 			return fmt.Errorf("No cert ID is set")
 		}
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -155,7 +156,7 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(
 			return fmt.Errorf("No cert ID is set")
 		}
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -181,12 +182,12 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terrafo
 	client := testAccProvider.Meta().(*cloudflare.API)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Primary.Attributes["type"] == "per-zone" {
-			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %w", zoneID, err)
 			}
 		} else if rs.Primary.Attributes["type"] == "per-hostname" {
-			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("error deleting Per-Zone AOP certificate on zone %q: %w", zoneID, err)
 			}

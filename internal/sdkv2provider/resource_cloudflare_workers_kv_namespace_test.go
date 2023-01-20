@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -39,7 +40,7 @@ func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		accountID := rs.Primary.Attributes["account_id"]
+		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 
 		resp, _, err := client.ListWorkersKVNamespaces(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 		if err == nil {
@@ -71,7 +72,7 @@ func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *clo
 		if !ok {
 			return fmt.Errorf("not found: %s", title)
 		}
-		accountID := rs.Primary.Attributes["account_id"]
+		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 
 		resp, _, err := client.ListWorkersKVNamespaces(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 		if err != nil {

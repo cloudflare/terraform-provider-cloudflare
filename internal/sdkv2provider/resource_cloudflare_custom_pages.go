@@ -134,9 +134,9 @@ func resourceCloudflareCustomPagesImport(ctx context.Context, d *schema.Resource
 	d.Set("type", pageType)
 
 	if requestType == "account" {
-		d.Set("account_id", identifier)
+		d.Set(consts.AccountIDSchemaKey, identifier)
 	} else {
-		d.Set("zone_id", identifier)
+		d.Set(consts.ZoneIDSchemaKey, identifier)
 	}
 
 	checksum := stringChecksum(fmt.Sprintf("%s/%s", identifier, pageType))

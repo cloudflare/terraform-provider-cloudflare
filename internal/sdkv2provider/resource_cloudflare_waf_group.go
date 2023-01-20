@@ -80,7 +80,7 @@ func resourceCloudflareWAFGroupCreate(ctx context.Context, d *schema.ResourceDat
 		}
 
 		d.Set("group_id", group.ID)
-		d.Set("zone_id", zoneID)
+		d.Set(consts.ZoneIDSchemaKey, zoneID)
 		d.Set("package_id", pkg.ID)
 
 		if group.Mode != mode {
@@ -166,7 +166,7 @@ func resourceCloudflareWAFGroupImport(ctx context.Context, d *schema.ResourceDat
 		}
 
 		d.Set("group_id", group.ID)
-		d.Set("zone_id", zoneID)
+		d.Set(consts.ZoneIDSchemaKey, zoneID)
 		d.Set("package_id", pkg.ID)
 		d.Set("mode", group.Mode)
 

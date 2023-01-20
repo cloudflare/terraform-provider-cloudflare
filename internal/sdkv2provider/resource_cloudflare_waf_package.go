@@ -63,7 +63,7 @@ func resourceCloudflareWAFPackageCreate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("unable to find WAF Package %s", packageID))
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("package_id", packageID)
 	d.Set("sensitivity", sensitivity)
 	d.Set("action_mode", actionMode)
@@ -158,7 +158,7 @@ func resourceCloudflareWAFPackageImport(ctx context.Context, d *schema.ResourceD
 	}
 
 	d.Set("package_id", pkg.ID)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("sensitivity", pkg.Sensitivity)
 	d.Set("action_mode", pkg.ActionMode)
 

@@ -13,6 +13,7 @@ import (
 	"regexp"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -468,7 +469,7 @@ func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
+		_, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("load balancer still exists: %s", rs.Primary.ID)
 		}
@@ -489,7 +490,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundLoadBalancer, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
+		foundLoadBalancer, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -515,8 +516,8 @@ func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZoneID string) resou
 			return fmt.Errorf("invalid id %q, should be a string of length 32", rs.Primary.ID)
 		}
 
-		if rs.Primary.Attributes["zone_id"] != expectedZoneID {
-			return fmt.Errorf("zoneID attribute %q doesn't match the expected value %q", rs.Primary.Attributes["zone_id"], expectedZoneID)
+		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != expectedZoneID {
+			return fmt.Errorf("zoneID attribute %q doesn't match the expected value %q", rs.Primary.Attributes[consts.ZoneIDSchemaKey], expectedZoneID)
 		}
 
 		return nil
@@ -553,7 +554,7 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 		rs, _ := s.RootModule().Resources[name]
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialId = loadBalancer.ID
-		err := client.DeleteLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]), rs.Primary.ID)
+		err := client.DeleteLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}

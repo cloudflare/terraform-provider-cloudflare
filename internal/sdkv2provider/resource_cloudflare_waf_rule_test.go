@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -29,7 +30,7 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "simulate", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttrSet(name, "group_id"),
 					resource.TestCheckResourceAttr(name, "mode", "simulate"),
@@ -39,7 +40,7 @@ func TestAccCloudflareWAFRule_CreateThenUpdate(t *testing.T) {
 				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "challenge", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttrSet(name, "group_id"),
 					resource.TestCheckResourceAttr(name, "mode", "challenge"),
@@ -67,7 +68,7 @@ func TestAccCloudflareWAFRule_CreateThenUpdate_SimpleModes(t *testing.T) {
 				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "on", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttrSet(name, "group_id"),
 					resource.TestCheckResourceAttr(name, "mode", "on"),
@@ -77,7 +78,7 @@ func TestAccCloudflareWAFRule_CreateThenUpdate_SimpleModes(t *testing.T) {
 				Config: testAccCheckCloudflareWAFRuleConfig(zoneID, ruleID, "off", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "rule_id", ruleID),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "package_id"),
 					resource.TestCheckResourceAttrSet(name, "group_id"),
 					resource.TestCheckResourceAttr(name, "mode", "off"),
@@ -95,7 +96,7 @@ func testAccCheckCloudflareWAFRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		rule, err := client.WAFRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["package_id"], rs.Primary.ID)
+		rule, err := client.WAFRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.Attributes["package_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

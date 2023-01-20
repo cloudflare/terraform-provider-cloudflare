@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -88,7 +89,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -117,7 +118,7 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -145,7 +146,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -176,7 +177,7 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "saas"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
@@ -204,7 +205,7 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -231,7 +232,7 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -257,7 +258,7 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -284,7 +285,7 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -333,7 +334,7 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -359,7 +360,7 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -385,7 +386,7 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 			{
 				Config: testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -411,7 +412,7 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -437,7 +438,7 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -463,7 +464,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
@@ -711,15 +712,15 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 		}
 
 		var notFoundError *cloudflare.NotFoundError
-		if rs.Primary.Attributes["zone_id"] != "" {
-			_, err := client.ZoneLevelAccessApplication(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
+			_, err := client.ZoneLevelAccessApplication(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 			if !errors.As(err, &notFoundError) {
 				return fmt.Errorf("AccessApplication still exists")
 			}
 		}
 
-		if rs.Primary.Attributes["account_id"] != "" {
-			_, err := client.AccessApplication(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
+			_, err := client.AccessApplication(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 			if !errors.As(err, &notFoundError) {
 				return fmt.Errorf("AccessApplication still exists")
 			}
@@ -748,14 +749,14 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 				Config: testAccessApplicationWithZoneID(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 				),
 			},
 			{
 				Config: testAccessApplicationWithZoneIDUpdated(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", updatedName),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 				),
 			},
 		},

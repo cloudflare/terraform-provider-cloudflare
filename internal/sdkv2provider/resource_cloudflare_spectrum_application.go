@@ -166,7 +166,7 @@ func resourceCloudflareSpectrumApplicationImport(ctx context.Context, d *schema.
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/applicationID\"", d.Id())
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(applicationID)
 
 	resourceCloudflareSpectrumApplicationRead(ctx, d, meta)

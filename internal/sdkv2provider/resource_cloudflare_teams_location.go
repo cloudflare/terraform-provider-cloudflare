@@ -147,7 +147,7 @@ func resourceCloudflareTeamsLocationImport(ctx context.Context, d *schema.Resour
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams Location: id %s for account %s", teamsLocationID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(teamsLocationID)
 
 	resourceCloudflareTeamsLocationRead(ctx, d, meta)

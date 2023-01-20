@@ -106,7 +106,7 @@ func resourceCloudflareTunnelImport(ctx context.Context, d *schema.ResourceData,
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch Argo Tunnel %s", tunnelID))
 	}
 
-	d.Set("account_id", accID)
+	d.Set(consts.AccountIDSchemaKey, accID)
 	d.Set("name", tunnel.Name)
 	d.SetId(tunnel.ID)
 

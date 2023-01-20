@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -33,7 +34,7 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsRuleConfigBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", "desc"),
 					resource.TestCheckResourceAttr(name, "precedence", "12302"),
@@ -82,7 +83,7 @@ func testAccCheckCloudflareTeamsRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.TeamsRule(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.TeamsRule(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("teams rule still exists")
 		}

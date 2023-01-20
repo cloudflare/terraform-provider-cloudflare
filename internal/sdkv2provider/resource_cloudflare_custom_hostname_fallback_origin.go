@@ -143,7 +143,7 @@ func resourceCloudflareCustomHostnameFallbackOriginImport(ctx context.Context, d
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Custom Hostname Fallback Origin: origin %s for zone %s", origin, zoneID))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("origin", origin)
 
 	id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))

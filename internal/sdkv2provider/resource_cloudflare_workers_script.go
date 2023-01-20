@@ -361,7 +361,7 @@ func resourceCloudflareWorkerScriptImport(ctx context.Context, d *schema.Resourc
 	accountID, scriptName := attributes[0], attributes[1]
 
 	d.Set("name", scriptName)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareWorkerScriptRead(ctx, d, meta)
 

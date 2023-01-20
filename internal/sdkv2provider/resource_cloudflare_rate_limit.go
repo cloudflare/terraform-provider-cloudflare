@@ -416,7 +416,7 @@ func resourceCloudflareRateLimitImport(ctx context.Context, d *schema.ResourceDa
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/rateLimitId\" for import", d.Id())
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(rateLimitId)
 
 	resourceCloudflareRateLimitRead(ctx, d, meta)

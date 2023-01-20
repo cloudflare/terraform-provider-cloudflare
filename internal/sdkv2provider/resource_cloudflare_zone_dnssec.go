@@ -79,7 +79,7 @@ func resourceCloudflareZoneDNSSECRead(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("zone DNSSEC %q: already disabled", zoneID))
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("status", dnssec.Status)
 	d.Set("flags", dnssec.Flags)
 	d.Set("algorithm", dnssec.Algorithm)

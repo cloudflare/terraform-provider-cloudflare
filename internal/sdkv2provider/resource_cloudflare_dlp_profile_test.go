@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -20,7 +21,7 @@ func TestAccCloudflareDLPProfile_Custom(t *testing.T) {
 			{
 				Config: testAccCloudflareDLPProfileConfigCustom(accountID, rnd, "custom profile"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", "custom profile"),
 					resource.TestCheckResourceAttr(name, "type", "custom"),
@@ -47,7 +48,7 @@ func TestAccCloudflareDLPProfile_Custom_MultipleEntries(t *testing.T) {
 			{
 				Config: testAccCloudflareDLPProfileConfigCustomMultipleEntries(accountID, rnd, "custom profile 2"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", "custom profile 2"),
 					resource.TestCheckResourceAttr(name, "type", "custom"),

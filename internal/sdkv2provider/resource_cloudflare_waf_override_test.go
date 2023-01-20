@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -35,7 +36,7 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWAFOverrideBasicConfig(zoneID, zoneName, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "urls.#", "2"),
 					resource.TestCheckResourceAttr(name, "urls.0", fmt.Sprintf("%s/basic-waf-override", zoneName)),
 					resource.TestCheckResourceAttr(name, "urls.1", fmt.Sprintf("%s/another-basic-waf-override", zoneName)),
@@ -48,7 +49,7 @@ func TestAccCloudflareWAFOverrideCreateAndUpdate(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWAFOverrideBasicConfigUpdated(zoneID, zoneName, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "urls.#", "1"),
 					resource.TestCheckResourceAttr(name, "urls.0", fmt.Sprintf("%s/basic-waf-override", zoneName)),
 					resource.TestCheckResourceAttr(name, "rules.100015", "disable"),
@@ -85,7 +86,7 @@ func TestAccCloudflareWAFOverrideGroupOnly(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWAFOverrideGroupsOnlyConfig(zoneID, zoneName, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "urls.#", "1"),
 					resource.TestCheckResourceAttr(name, "urls.0", fmt.Sprintf("%s/group-only-override", zoneName)),
 					resource.TestCheckResourceAttr(name, "groups.ea8687e59929c1fd05ba97574ad43f77", "default"),
@@ -157,7 +158,7 @@ func testAccCheckCloudflareWAFOverrideDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.WAFOverride(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.WAFOverride(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("WAFOverride still exists")
 		}

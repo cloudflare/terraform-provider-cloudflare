@@ -173,7 +173,7 @@ func expandFilter(d interface{}) (*searchFilter, error) {
 		filter.status = status.(string)
 	}
 
-	accountID, ok := m["account_id"]
+	accountID, ok := m[consts.AccountIDSchemaKey]
 	if ok {
 		filter.accountID = accountID.(string)
 	}

@@ -113,7 +113,7 @@ func resourceCloudflarePagesDomainImport(ctx context.Context, d *schema.Resource
 	tflog.Info(ctx, fmt.Sprintf("Found domain: %+v", domain))
 
 	d.SetId(domain.ID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.Set("project_name", projectName)
 	d.Set("domain", domain.Name)
 	resourceCloudflarePagesDomainRead(ctx, d, meta)

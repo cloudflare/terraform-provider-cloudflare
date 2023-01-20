@@ -122,7 +122,7 @@ func resourceCloudflareZoneSettingsOverrideRead(ctx context.Context, d *schema.R
 		}
 	}
 
-	d.Set("zone_id", d.Id())
+	d.Set(consts.ZoneIDSchemaKey, d.Id())
 
 	// not all settings are visible to all users, so this might be a subset
 	// assume (for now) that user can see/do everything

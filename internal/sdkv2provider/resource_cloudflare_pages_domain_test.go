@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -42,7 +43,7 @@ func TestAccTestPagesDomain(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "project_name", rnd),
 					resource.TestCheckResourceAttr(name, "domain", rnd+"."+domain),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 				),
 			},
 		},

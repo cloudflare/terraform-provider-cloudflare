@@ -81,7 +81,7 @@ func resourceCloudflareWAFRuleCreate(ctx context.Context, d *schema.ResourceData
 		}
 
 		d.Set("rule_id", rule.ID)
-		d.Set("zone_id", zoneID)
+		d.Set(consts.ZoneIDSchemaKey, zoneID)
 		d.Set("group_id", rule.Group.ID)
 		d.Set("package_id", pkg.ID)
 
@@ -168,7 +168,7 @@ func resourceCloudflareWAFRuleImport(ctx context.Context, d *schema.ResourceData
 		rule, err := client.WAFRule(ctx, zoneID, p.ID, WAFID)
 		if err == nil {
 			d.Set("rule_id", rule.ID)
-			d.Set("zone_id", zoneID)
+			d.Set(consts.ZoneIDSchemaKey, zoneID)
 			d.Set("package_id", rule.PackageID)
 			d.Set("group_id", rule.Group.ID)
 			d.Set("mode", rule.Mode)
