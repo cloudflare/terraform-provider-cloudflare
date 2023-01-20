@@ -67,7 +67,7 @@ func resourceCloudflareWorkersQueueRead(ctx context.Context, d *schema.ResourceD
 
 	resp, _, err := client.ListQueues(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListQueuesParams{})
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, "error reading workers "))
+		return diag.FromErr(errors.Wrap(err, "error reading queues"))
 	}
 
 	var queue cloudflare.Queue
@@ -125,7 +125,7 @@ func resourceCloudflareWorkersQueueDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-// TODO(now) is this needed?
 func resourceCloudflareWorkersQueueImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	resourceCloudflareWorkersQueueRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }
