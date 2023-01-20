@@ -20,7 +20,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 )
@@ -43,7 +42,6 @@ type CloudflareProviderModel struct {
 	Email             types.String `tfsdk:"email"`
 	MinBackOff        types.Int64  `tfsdk:"min_backoff"`
 	RPS               types.Int64  `tfsdk:"rps"`
-	AccountID         types.String `tfsdk:"account_id"`
 	APIBasePath       types.String `tfsdk:"api_base_path"`
 	APIToken          types.String `tfsdk:"api_token"`
 	Retries           types.Int64  `tfsdk:"retries"`
@@ -138,12 +136,6 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 				MarkdownDescription: fmt.Sprintf("Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `%s` environment variable.", consts.APIClientLoggingEnvVarKey),
 			},
 
-			consts.AccountIDSchemaKey: schema.StringAttribute{
-				Optional:            true,
-				MarkdownDescription: fmt.Sprintf("Configure API client to always use a specific account. Alternatively, can be configured using the `%s` environment variable.", consts.AccountIDEnvVarKey),
-				DeprecationMessage:  "Use resource specific `account_id` attributes instead.",
-			},
-
 			consts.APIHostnameSchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("Configure the hostname used by the API client. Alternatively, can be configured using the `%s` environment variable.", consts.APIHostnameEnvVarKey),
@@ -169,7 +161,6 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		retries           int64
 		minBackOff        int64
 		maxBackOff        int64
-		accountID         string
 		baseHostname      string
 		basePath          string
 	)
@@ -308,17 +299,6 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 			fmt.Sprintf("must provide one of %q, %q or %q.", consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey),
 		)
 		return
-	}
-
-	if !data.AccountID.IsNull() {
-		accountID = data.AccountID.ValueString()
-	} else {
-		accountID = utils.GetDefaultFromEnv(consts.AccountIDEnvVarKey, "")
-	}
-
-	if accountID != "" {
-		tflog.Info(ctx, fmt.Sprintf("using specified account id %s in Cloudflare provider", accountID))
-		options = append(options, cloudflare.UsingAccount(accountID))
 	}
 
 	config.Options = options

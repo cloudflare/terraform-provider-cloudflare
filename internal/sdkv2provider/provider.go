@@ -11,7 +11,6 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -95,6 +94,7 @@ func New(version string) func() *schema.Provider {
 					Optional:     true,
 					Description:  fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)"),
+					ExactlyOneOf: []string{consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey},
 				},
 
 				consts.APITokenSchemaKey: {
@@ -102,13 +102,14 @@ func New(version string) func() *schema.Provider {
 					Optional:     true,
 					Description:  fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
+					ExactlyOneOf: []string{consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey},
 				},
 
 				consts.APIUserServiceKeySchemaKey: {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("CLOUDFLARE_API_HOSTNAME", "api.cloudflare.com"),
-					Description: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
+					Type:         schema.TypeString,
+					Optional:     true,
+					Description:  fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
+					ExactlyOneOf: []string{consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey},
 				},
 
 				consts.RPSSchemaKey: {
@@ -286,7 +287,6 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			retries           int64
 			minBackOff        int64
 			maxBackOff        int64
-			accountID         string
 			baseHostname      string
 			basePath          string
 		)
@@ -425,17 +425,6 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 				Summary:  fmt.Sprintf("must provide one of %q, %q or %q.", consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey),
 			})
 			return nil, diags
-		}
-
-		if v, ok := d.GetOk(consts.AccountIDSchemaKey); ok {
-			accountID = v.(string)
-		} else {
-			accountID = utils.GetDefaultFromEnv(consts.AccountIDEnvVarKey, "")
-		}
-
-		if accountID != "" {
-			tflog.Info(ctx, fmt.Sprintf("using specified account id %s in Cloudflare provider", accountID))
-			options = append(options, cloudflare.UsingAccount(accountID))
 		}
 
 		config.Options = options
