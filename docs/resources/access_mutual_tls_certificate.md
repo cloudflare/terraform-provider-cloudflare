@@ -44,7 +44,7 @@ resource "cloudflare_access_mutual_tls_certificate" "my_cert" {
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
-- `associated_hostnames` (List of String) The hostnames that will be prompted for this certificate.
+- `associated_hostnames` (Set of String) The hostnames that will be prompted for this certificate.
 - `certificate` (String) The Root CA for your certificates.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
