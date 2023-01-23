@@ -44,6 +44,7 @@ func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error 
 		{field: "name", stateValue: attrs["name"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
 		{field: "auth_domain", stateValue: attrs["auth_domain"], expectedValue: "terraform-cfapi.cloudflareaccess.com"},
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
+		{field: "ui_read_only_toggle_reason", stateValue: attrs["ui_read_only_toggle_reason"], expectedValue: "Temporarily disable UI lock to edit settings."},
 		{field: "user_seat_expiration_inactive_time", stateValue: attrs["user_seat_expiration_inactive_time"], expectedValue: "1460h"},
 		{field: "login_design.#", stateValue: attrs["login_design.#"], expectedValue: "1"},
 	}
@@ -64,6 +65,7 @@ func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID string) strin
 			name            = "terraform-cfapi.cloudflareaccess.com"
 			auth_domain     = "terraform-cfapi.cloudflareaccess.com1"
 			is_ui_read_only = false
+			ui_read_only_toggle_reason         = "Temporarily disable UI lock to edit settings."
 			user_seat_expiration_inactive_time = "1460h"
 
 			login_design {
