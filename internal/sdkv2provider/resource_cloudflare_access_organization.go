@@ -61,6 +61,7 @@ func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.Res
 	d.Set("name", organization.Name)
 	d.Set("auth_domain", organization.AuthDomain)
 	d.Set("is_ui_read_only", organization.IsUIReadOnly)
+	d.Set("ui_read_only_toggle_reason", organization.UIReadOnlyToggleReason)
 	d.Set("user_seat_expiration_inactive_time", organization.UserSeatExpirationInactiveTime)
 
 	loginDesign := convertLoginDesignStructToSchema(ctx, d, &organization.LoginDesign)

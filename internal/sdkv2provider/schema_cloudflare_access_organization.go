@@ -39,6 +39,11 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "When set to true, this will disable all editing of Access resources via the Zero Trust Dashboard",
 		},
+		"ui_read_only_toggle_reason": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "A description of the reason why the UI read only field is being toggled.",
+		},
 		"user_seat_expiration_inactive_time": {
 			Type:        schema.TypeString,
 			Optional:    true,
