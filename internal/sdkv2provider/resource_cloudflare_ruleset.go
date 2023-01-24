@@ -620,12 +620,14 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			var rateLimit []map[string]interface{}
 
 			rateLimit = append(rateLimit, map[string]interface{}{
-				"characteristics":     r.RateLimit.Characteristics,
-				"period":              r.RateLimit.Period,
-				"requests_per_period": r.RateLimit.RequestsPerPeriod,
-				"mitigation_timeout":  r.RateLimit.MitigationTimeout,
-				"counting_expression": r.RateLimit.CountingExpression,
-				"requests_to_origin":  r.RateLimit.RequestsToOrigin,
+				"characteristics":            r.RateLimit.Characteristics,
+				"period":                     r.RateLimit.Period,
+				"requests_per_period":        r.RateLimit.RequestsPerPeriod,
+				"score_per_period":           r.RateLimit.ScorePerPeriod,
+				"score_response_header_name": r.RateLimit.ScoreResponseHeaderName,
+				"mitigation_timeout":         r.RateLimit.MitigationTimeout,
+				"counting_expression":        r.RateLimit.CountingExpression,
+				"requests_to_origin":         r.RateLimit.RequestsToOrigin,
 			})
 
 			rule["ratelimit"] = rateLimit
@@ -1277,6 +1279,10 @@ func buildRulesetRulesFromResource(d *schema.ResourceData) ([]cloudflare.Ruleset
 						rule.RateLimit.Period = pValue.(int)
 					case "requests_per_period":
 						rule.RateLimit.RequestsPerPeriod = pValue.(int)
+					case "score_per_period":
+						rule.RateLimit.ScorePerPeriod = pValue.(int)
+					case "score_response_header_name":
+						rule.RateLimit.ScoreResponseHeaderName = pValue.(string)
 					case "mitigation_timeout":
 						rule.RateLimit.MitigationTimeout = pValue.(int)
 					case "counting_expression":
