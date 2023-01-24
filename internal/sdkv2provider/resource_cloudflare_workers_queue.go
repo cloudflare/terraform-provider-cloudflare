@@ -38,7 +38,7 @@ func resourceCloudflareWorkersQueueCreate(ctx context.Context, d *schema.Resourc
 		Name: queueName,
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("[Info] Creating Cloudflare Workers Queue from struct: %+v", req))
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Workers Queue from struct: %+v", req))
 
 	r, err := client.CreateQueue(ctx, cloudflare.AccountIdentifier(accountID), req)
 	if err != nil {
