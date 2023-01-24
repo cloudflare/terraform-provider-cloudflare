@@ -3,8 +3,10 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,17 +29,12 @@ func resourceCloudflareQueue() *schema.Resource {
 
 func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-
-	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
-
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	queueName := d.Get("name").(string)
+
 	req := cloudflare.CreateQueueParams{
 		Name: queueName,
 	}
-
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Workers Queue from struct: %+v", req))
 
 	r, err := client.CreateQueue(ctx, cloudflare.AccountIdentifier(accountID), req)
@@ -59,11 +56,7 @@ func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, 
 func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	queueID := d.Id()
-
-	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	resp, _, err := client.ListQueues(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListQueuesParams{})
 	if err != nil {
@@ -83,18 +76,12 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	d.Set("account_id", accountID)
-
 	return nil
 }
 
 func resourceCloudflareQueueUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-
-	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	// TODO(soon) fix the cloudflare-go UpdateQueue implementation: updating a queue should accept the existing name, as well as the new name. Other properties are read-only.
 	_, err := client.UpdateQueue(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateQueueParams{
@@ -109,10 +96,7 @@ func resourceCloudflareQueueUpdate(ctx context.Context, d *schema.ResourceData, 
 
 func resourceCloudflareQueueDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers Queue with id: %+v", d.Id()))
 
@@ -126,6 +110,17 @@ func resourceCloudflareQueueDelete(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceCloudflareQueueImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	attributes := strings.SplitN(d.Id(), "/", 2)
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/queueID\"", d.Id())
+	}
+
+	accountID, queueID := attributes[0], attributes[1]
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Queue id %s for account %s", queueID, accountID))
+
+	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.SetId(queueID)
+
 	resourceCloudflareQueueRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }
