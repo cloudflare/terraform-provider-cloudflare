@@ -132,7 +132,7 @@ resource "cloudflare_workers_kv_namespace" "%[1]s" {
 	title = "%[1]s"
 }
 
-resource "cloudflare_workers_queue" "%[1]s" {
+resource "cloudflare_queue" "%[1]s" {
 	account_id = "%[4]s"
 	name = "%[1]s"
 }
@@ -181,7 +181,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 
   queue_binding {
     binding         = "MY_QUEUE"
-    queue = cloudflare_workers_queue.%[1]s.name
+    queue = cloudflare_queue.%[1]s.name
   }
 
 }`, rnd, scriptContent2, encodedWasm, accountID)

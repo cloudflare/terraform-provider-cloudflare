@@ -10,20 +10,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareWorkersQueue_Basic(t *testing.T) {
+func TestAccCloudflareQueue_Basic(t *testing.T) {
 	t.Parallel()
 	var queue cloudflare.Queue
 	rnd := generateRandomResourceName()
-	resourceName := "cloudflare_workers_queue." + rnd
+	resourceName := "cloudflare_queue." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersQueueDestroy,
+		CheckDestroy:      testAccCloudflareQueueDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersQueue(rnd),
+				Config: testAccCheckCloudflareQueue(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkersQueueExists(rnd, &queue),
+					testAccCheckCloudflareQueueExists(rnd, &queue),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 				),
 			},
@@ -31,11 +31,11 @@ func TestAccCloudflareWorkersQueue_Basic(t *testing.T) {
 	})
 }
 
-func testAccCloudflareWorkersQueueDestroy(s *terraform.State) error {
+func testAccCloudflareQueueDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_workers_queue" {
+		if rs.Type != "cloudflare_queue" {
 			continue
 		}
 
@@ -59,18 +59,18 @@ func testAccCloudflareWorkersQueueDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWorkersQueue(rName string) string {
+func testAccCheckCloudflareQueue(rName string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_workers_queue" "%[1]s" {
+resource "cloudflare_queue" "%[1]s" {
 	title = "%[1]s"
 }`, rName)
 }
 
-func testAccCheckCloudflareWorkersQueueExists(name string, queue *cloudflare.Queue) resource.TestCheckFunc {
+func testAccCheckCloudflareQueueExists(name string, queue *cloudflare.Queue) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 
-		rs, ok := s.RootModule().Resources["cloudflare_workers_queue."+name]
+		rs, ok := s.RootModule().Resources["cloudflare_queue."+name]
 		if !ok {
 			return fmt.Errorf("not found: %s", name)
 		}

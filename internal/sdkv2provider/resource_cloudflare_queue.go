@@ -11,21 +11,21 @@ import (
 	"github.com/pkg/errors"
 )
 
-func resourceCloudflareWorkersQueue() *schema.Resource {
+func resourceCloudflareQueue() *schema.Resource {
 	return &schema.Resource{
-		Schema:        resourceCloudflareWorkersQueueSchema(),
-		CreateContext: resourceCloudflareWorkersQueueCreate,
-		ReadContext:   resourceCloudflareWorkersQueueRead,
-		UpdateContext: resourceCloudflareWorkersQueueUpdate,
-		DeleteContext: resourceCloudflareWorkersQueueDelete,
+		Schema:        resourceCloudflareQueueSchema(),
+		CreateContext: resourceCloudflareQueueCreate,
+		ReadContext:   resourceCloudflareQueueRead,
+		UpdateContext: resourceCloudflareQueueUpdate,
+		DeleteContext: resourceCloudflareQueueDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: resourceCloudflareWorkersQueueImport,
+			StateContext: resourceCloudflareQueueImport,
 		},
 		Description: "Provides the ability to manage Cloudflare Workers Queue features.",
 	}
 }
 
-func resourceCloudflareWorkersQueueCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
@@ -53,10 +53,10 @@ func resourceCloudflareWorkersQueueCreate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Cloudflare Workers Queue ID: %s. Name: %s", d.Id(), queueName))
 
-	return resourceCloudflareWorkersQueueRead(ctx, d, meta)
+	return resourceCloudflareQueueRead(ctx, d, meta)
 }
 
-func resourceCloudflareWorkersQueueRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	queueID := d.Id()
 
@@ -88,7 +88,7 @@ func resourceCloudflareWorkersQueueRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceCloudflareWorkersQueueUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareQueueUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get("account_id").(string)
@@ -104,10 +104,10 @@ func resourceCloudflareWorkersQueueUpdate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(errors.Wrap(err, "error updating workers queue"))
 	}
 
-	return resourceCloudflareWorkersQueueRead(ctx, d, meta)
+	return resourceCloudflareQueueRead(ctx, d, meta)
 }
 
-func resourceCloudflareWorkersQueueDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareQueueDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get("account_id").(string)
 	if accountID == "" {
@@ -125,7 +125,7 @@ func resourceCloudflareWorkersQueueDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceCloudflareWorkersQueueImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	resourceCloudflareWorkersQueueRead(ctx, d, meta)
+func resourceCloudflareQueueImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	resourceCloudflareQueueRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }
