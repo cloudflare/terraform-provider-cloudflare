@@ -118,7 +118,7 @@ func resourceCloudflareQueueImport(ctx context.Context, d *schema.ResourceData, 
 	accountID, queueID := attributes[0], attributes[1]
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Queue id %s for account %s", queueID, accountID))
 
-	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.Set("account_id", accountID)
 	d.SetId(queueID)
 
 	resourceCloudflareQueueRead(ctx, d, meta)
