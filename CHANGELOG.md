@@ -1,4 +1,6 @@
-## 3.33.0 (Unreleased)
+## 3.34.0 (Unreleased)
+
+## 3.33.0 (January 25th, 2023)
 
 ENHANCEMENTS:
 
