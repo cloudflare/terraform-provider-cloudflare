@@ -174,5 +174,10 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Optional: true,
 			Elem:     analyticsEngineBindingResource,
 		},
+		"logpush": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Worker Logpush config",
+		},
 	}
 }
