@@ -15,6 +15,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps dependabot/fetch-metadata from 1.3.5 to 1.3.6 ([#2183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2183))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.58.1 to 0.59.0 ([#2166](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2166))
 
 ## 3.32.0 (January 11th, 2023)
