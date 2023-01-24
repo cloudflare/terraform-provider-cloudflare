@@ -83,6 +83,8 @@ resource "cloudflare_worker_script" "my_script" {
 - `secret_text_binding` (Block Set) (see [below for nested schema](#nestedblock--secret_text_binding))
 - `service_binding` (Block Set) (see [below for nested schema](#nestedblock--service_binding))
 - `webassembly_binding` (Block Set) (see [below for nested schema](#nestedblock--webassembly_binding))
+- `logpush` (Boolean) Whether to enable [Logpush](https://developers.cloudflare.com/workers/platform/logpush/)
+
 
 ### Read-Only
 
