@@ -228,7 +228,6 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_queue":                                  resourceCloudflareQueue(),
 				"cloudflare_rate_limit":                             resourceCloudflareRateLimit(),
 				"cloudflare_record":                                 resourceCloudflareRecord(),
-				"cloudflare_ruleset":                                resourceCloudflareRuleset(),
 				"cloudflare_spectrum_application":                   resourceCloudflareSpectrumApplication(),
 				"cloudflare_split_tunnel":                           resourceCloudflareSplitTunnel(),
 				"cloudflare_static_route":                           resourceCloudflareStaticRoute(),
