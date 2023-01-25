@@ -1,5 +1,9 @@
 ## 3.34.0 (Unreleased)
 
+BUG FIXES:
+
+* provider: remove conflicting `ExactlyOneOf` schema validation from framework schema ([#2185](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2185))
+
 ## 3.33.0 (January 25th, 2023)
 
 ENHANCEMENTS:
