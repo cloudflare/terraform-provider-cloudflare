@@ -6,7 +6,6 @@ ENHANCEMENTS:
 * resource/cloudflare_access_group: supports ip_list property. ([#2073](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2073))
 * resource/cloudflare_access_organization: add support for `user_seat_expiration_inactive_time` ([#2115](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2115))
 * resource/cloudflare_ruleset: do not let edge_ttl: default be zero ([#2143](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2143))
-* resource/cloudflare_ruleset: add support for `score_per_period` and `score_response_header_name` ([#2176](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2176))
 * resource/cloudflare_teams_accounts: adds support for `mailto_address` and `mailto_subject` blockpage settings ([#2146](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2146))
 * resource/cloudflare_teams_rules: adds egress rule settings. ([#2159](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2159))
 
