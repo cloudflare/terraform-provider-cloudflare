@@ -77,11 +77,6 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 					stringvalidator.AlsoRequires(path.Expressions{
 						path.MatchRoot(consts.EmailSchemaKey),
 					}...),
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
 				},
 			},
 
@@ -93,24 +88,12 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
 						"API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores",
 					),
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
 				},
 			},
 
 			consts.APIUserServiceKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
-				Validators: []validator.String{
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
-				},
 			},
 
 			consts.RPSSchemaKey: schema.Int64Attribute{
