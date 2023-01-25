@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -341,7 +342,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			maxBackOff = i
 		}
 
-		if retries > strconv.IntSize {
+		if retries >= math.MaxInt32 {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
@@ -350,7 +351,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			return nil, diags
 		}
 
-		if minBackOff > strconv.IntSize {
+		if minBackOff >= math.MaxInt32 {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
@@ -359,7 +360,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			return nil, diags
 		}
 
-		if maxBackOff > strconv.IntSize {
+		if maxBackOff >= math.MaxInt32 {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
