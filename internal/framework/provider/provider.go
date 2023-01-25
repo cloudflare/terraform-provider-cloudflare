@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"testing"
@@ -204,7 +205,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		maxBackOff = i
 	}
 
-	if retries > strconv.IntSize {
+	if retries >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
 			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
@@ -212,7 +213,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	if minBackOff > strconv.IntSize {
+	if minBackOff >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
 			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
@@ -220,7 +221,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	if maxBackOff > strconv.IntSize {
+	if maxBackOff >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
 			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
