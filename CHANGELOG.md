@@ -1,5 +1,9 @@
 ## 3.34.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_page_rule: make cache_key_fields optional to align with API constraints ([#2192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2192))
+
 ## 3.33.1 (January 25th, 2023)
 
 BUG FIXES:
