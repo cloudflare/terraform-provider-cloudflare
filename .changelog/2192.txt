@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_page_rule: make cache_key_fields optional to align with API constraints
+```
