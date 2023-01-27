@@ -1,0 +1,27 @@
+on:
+  issues:
+    types: [opened]
+
+name: Add Community Note to Issues 
+
+jobs:
+  community-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add community note to new Issues
+        if: github.event_name == 'issues'
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            # Community Note
+
+            **Voting for Prioritization**
+
+            * Please vote on this issue by adding a 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) to the original post to help the community and maintainers prioritize this request.
+            * Please **do not** leave "+1" or other comments that do not add relevant new information or questions, they generate extra noise for issue followers and do not help prioritize the request.
+
+            **Volunteering to Work on This Issue**
+
+            * If you are interested in working on this issue, please leave a comment.
+            * If this would be your first contribution, please review the [contribution guide](https://github.com/cloudflare/terraform-provider-cloudflare/tree/master/contributing).
