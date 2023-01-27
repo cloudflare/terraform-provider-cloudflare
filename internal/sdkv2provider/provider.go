@@ -231,6 +231,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_logpush_ownership_challenge":            resourceCloudflareLogpushOwnershipChallenge(),
 				"cloudflare_magic_firewall_ruleset":                 resourceCloudflareMagicFirewallRuleset(),
 				"cloudflare_managed_headers":                        resourceCloudflareManagedHeaders(),
+				"cloudflare_mtls_certificate":                       resourceCloudflareMTLSCertificate(),
 				"cloudflare_notification_policy_webhooks":           resourceCloudflareNotificationPolicyWebhook(),
 				"cloudflare_notification_policy":                    resourceCloudflareNotificationPolicy(),
 				"cloudflare_origin_ca_certificate":                  resourceCloudflareOriginCACertificate(),

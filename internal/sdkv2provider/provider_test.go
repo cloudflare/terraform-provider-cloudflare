@@ -79,6 +79,17 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
+func testAccPreCheckWithoutZoneID(t *testing.T) {
+	testAccPreCheckEmail(t)
+	testAccPreCheckApiKey(t)
+	testAccPreCheckDomain(t)
+
+	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func testAccPreCheckAltDomain(t *testing.T) {
 	if v := os.Getenv("CLOUDFLARE_ALT_DOMAIN"); v == "" {
 		t.Fatal("CLOUDFLARE_ALT_DOMAIN must be set for this acceptance test")
