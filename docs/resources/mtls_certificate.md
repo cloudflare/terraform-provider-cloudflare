@@ -43,4 +43,10 @@ resource "cloudflare_mtls_certificate" "example" {
 - `signature` (String) **Modifying this attribute will force creation of a new resource.**
 - `uploaded_on` (String) **Modifying this attribute will force creation of a new resource.**
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_mtls_certificate.example <account_id>/<mtls_certificate_id>
+```
