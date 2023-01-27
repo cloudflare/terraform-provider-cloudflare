@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -36,7 +37,7 @@ func resourceCloudflareMTLSCertificate() *schema.Resource {
 
 func resourceCloudflareMTLSCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	accountIDrc := cloudflare.AccountIdentifier(accountID)
 
 	certificate := cloudflare.CreateMTLSCertificateParams{
@@ -58,7 +59,7 @@ func resourceCloudflareMTLSCertificateCreate(ctx context.Context, d *schema.Reso
 
 func resourceCloudflareMTLSCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	accountIDrc := cloudflare.AccountIdentifier(accountID)
 	certID := d.Id()
 
@@ -84,7 +85,7 @@ func resourceCloudflareMTLSCertificateRead(ctx context.Context, d *schema.Resour
 
 func resourceCloudflareMTLSCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get("account_id").(string)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	accountIDrc := cloudflare.AccountIdentifier(accountID)
 	certID := d.Id()
 
@@ -103,7 +104,7 @@ func resourceCloudflareMTLSCertificateImport(ctx context.Context, d *schema.Reso
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/certID\"", d.Id())
 	}
 	accountID, certID := idAttr[0], idAttr[1]
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(certID)
 
 	resourceCloudflareMTLSCertificateRead(ctx, d, meta)
