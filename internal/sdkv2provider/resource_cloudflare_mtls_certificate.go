@@ -26,9 +26,6 @@ func resourceCloudflareMTLSCertificate() *schema.Resource {
 		},
 
 		Schema: resourceCloudflareMTLSCertificateSchema(),
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(1 * time.Minute),
-		},
 		Description: heredoc.Doc(`
 			Provides a Cloudflare mTLS certificate resource. These certificates may be used with mTLS enabled Cloudflare services.
 		`),
