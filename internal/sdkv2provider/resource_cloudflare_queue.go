@@ -67,6 +67,7 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 	for _, r := range resp {
 		if r.ID == queueID {
 			queue = r
+			d.Set("name", r.Name)
 			break
 		}
 	}
@@ -82,10 +83,15 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 func resourceCloudflareQueueUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	updatedName := d.Get("name").(string)
 
-	// TODO(soon) fix the cloudflare-go UpdateQueue implementation: updating a queue should accept the existing name, as well as the new name. Other properties are read-only.
+	// Read the resource to obtain its existing name
+	resourceCloudflareQueueRead(ctx, d, meta)
+	existingName := d.Get("name").(string)
+
 	_, err := client.UpdateQueue(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateQueueParams{
-		Name: d.Get("name").(string),
+		Name:        existingName,
+		UpdatedName: updatedName,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating workers queue"))
