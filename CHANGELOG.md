@@ -12,6 +12,10 @@ BUG FIXES:
 
 * resource/cloudflare_page_rule: make cache_key_fields optional to align with API constraints ([#2192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2192))
 
+DEPENDENCIES:
+
+* provider: bumps goreleaser/goreleaser-action from 4.1.0 to 4.2.0 ([#2201](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2201))
+
 ## 3.33.1 (January 25th, 2023)
 
 BUG FIXES:
