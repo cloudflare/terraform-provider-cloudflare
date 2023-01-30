@@ -2,6 +2,9 @@
 
 BREAKING CHANGES:
 
+* datasource/cloudflare_waf_groups: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_packages: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* datasource/cloudflare_waf_rules: removed with no current replacement ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
 * provider: `account_id` is no longer available as a global configuration option. Instead, use the resource specific attributes. ([#2139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2139))
 * resource/cloudflare_access_bookmark: resource has been removed in favour of configuration on `cloudflare_access_application` ([#2136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2136))
 * resource/cloudflare_access_rule: require explicit `zone_id` or `account_id` and remove implicit fallback to user level rules ([#2157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2157))
@@ -13,6 +16,10 @@ BREAKING CHANGES:
 * resource/cloudflare_load_balancer_monitor: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
 * resource/cloudflare_load_balancer_pool: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
 * resource/cloudflare_load_balancer_pool: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
+* resource/cloudflare_waf_group: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_override: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_package: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
+* resource/cloudflare_waf_rule: removed in favour of `cloudflare_ruleset` ([#2138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2138))
 * resource/cloudflare_workers_kv: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
 * resource/cloudflare_workers_kv: no longer sets `client.AccountID` internally and relies on the resource provided value ([#2154](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2154))
 * resource/cloudflare_workers_kv_namespace: `account_id` is now required ([#2153](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2153))
