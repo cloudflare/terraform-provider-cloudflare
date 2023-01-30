@@ -422,11 +422,13 @@ func transformToCloudflarePageRuleAction(ctx context.Context, id string, value i
 
 				switch sectionID {
 				case "cookie", "header":
-					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
-						sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+					if len(sectionValue.([]interface{})) != 0 && sectionValue.([]interface{})[0] != nil {
+						for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+							sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+						}
 					}
 				case "query_string":
-					if sectionValue.([]interface{})[0] != nil {
+					if len(sectionValue.([]interface{})) != 0 && sectionValue.([]interface{})[0] != nil {
 						for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
 							switch fieldID {
 							case "exclude", "include":
