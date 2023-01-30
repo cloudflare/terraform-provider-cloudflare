@@ -737,13 +737,13 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
-  
-  resource.Test(t, resource.TestCase{
+
+	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-        Config: testAccCheckCloudflareRulesetRateLimit(rnd, "example HTTP rate limit", zoneID, zoneName),
+				Config: testAccCheckCloudflareRulesetRateLimit(rnd, "example HTTP rate limit", zoneID, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "example HTTP rate limit"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
@@ -766,7 +766,7 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.score_response_header_name", "my-score"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "60"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_to_origin", "true"),
-          ),
+				),
 			},
 		},
 	})
@@ -2680,8 +2680,8 @@ func testAccCheckCloudflareRulesetRateLimitScorePerPeriod(rnd, name, zoneID, zon
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
- }
-  
+}
+
 func testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {

@@ -1251,34 +1251,34 @@ func buildRule(d *schema.ResourceData, resourceRule map[string]interface{}, rule
 		}
 	}
 
-  if len(resourceRule["ratelimit"].([]interface{})) > 0 {
-    rule.RateLimit = &cloudflare.RulesetRuleRateLimit{}
-    for _, parameter := range resourceRule["ratelimit"].([]interface{}) {
-      for pKey, pValue := range parameter.(map[string]interface{}) {
-        switch pKey {
-        case "characteristics":
-          characteristicKeys := make([]string, 0)
-          for _, v := range pValue.(*schema.Set).List() {
-            characteristicKeys = append(characteristicKeys, v.(string))
-          }
-          rule.RateLimit.Characteristics = characteristicKeys
-        case "period":
-          rule.RateLimit.Period = pValue.(int)
-        case "requests_per_period":
-          rule.RateLimit.RequestsPerPeriod = pValue.(int)
-        case "score_per_period":
-          rule.RateLimit.ScorePerPeriod = pValue.(int)
-        case "score_response_header_name":
-          rule.RateLimit.ScoreResponseHeaderName = pValue.(string)
-        case "mitigation_timeout":
-          rule.RateLimit.MitigationTimeout = pValue.(int)
-        case "counting_expression":
-          rule.RateLimit.CountingExpression = pValue.(string)
-        case "requests_to_origin":
-          rule.RateLimit.RequestsToOrigin = pValue.(bool)
+	if len(resourceRule["ratelimit"].([]interface{})) > 0 {
+		rule.RateLimit = &cloudflare.RulesetRuleRateLimit{}
+		for _, parameter := range resourceRule["ratelimit"].([]interface{}) {
+			for pKey, pValue := range parameter.(map[string]interface{}) {
+				switch pKey {
+				case "characteristics":
+					characteristicKeys := make([]string, 0)
+					for _, v := range pValue.(*schema.Set).List() {
+						characteristicKeys = append(characteristicKeys, v.(string))
+					}
+					rule.RateLimit.Characteristics = characteristicKeys
+				case "period":
+					rule.RateLimit.Period = pValue.(int)
+				case "requests_per_period":
+					rule.RateLimit.RequestsPerPeriod = pValue.(int)
+				case "score_per_period":
+					rule.RateLimit.ScorePerPeriod = pValue.(int)
+				case "score_response_header_name":
+					rule.RateLimit.ScoreResponseHeaderName = pValue.(string)
+				case "mitigation_timeout":
+					rule.RateLimit.MitigationTimeout = pValue.(int)
+				case "counting_expression":
+					rule.RateLimit.CountingExpression = pValue.(string)
+				case "requests_to_origin":
+					rule.RateLimit.RequestsToOrigin = pValue.(bool)
 
-        default:
-          log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for ratelimit: %s", pKey)
+				default:
+					log.Printf("[DEBUG] unknown key encountered in buildRulesetRulesFromResource for ratelimit: %s", pKey)
 				}
 			}
 		}
