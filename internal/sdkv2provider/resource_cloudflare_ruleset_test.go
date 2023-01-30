@@ -735,25 +735,15 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	t.Parallel()
-	rnd := generateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
-
-	resource.Test(t, resource.TestCase{
+  
+  resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRulesetRateLimit(rnd, "example HTTP rate limit", zoneID, zoneName),
+        Config: testAccCheckCloudflareRulesetRateLimit(rnd, "example HTTP rate limit", zoneID, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "example HTTP rate limit"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
@@ -776,10 +766,100 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.score_response_header_name", "my-score"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "60"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_to_origin", "true"),
+          ),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_PreserveRuleIDs(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	var adminRuleID, loginRuleID, adminRuleCopyID string
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				// Create a ruleset with two rules (one for /admin, one for /login) and get their IDs.
+				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", getValue(&adminRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", getValue(&loginRuleID)),
+				),
+			},
+			{
+				// Reverse the order of rules. The IDs should remain the same, just in reverse order.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&loginRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&adminRuleID)),
+				),
+			},
+			{
+				// Revert to the original version.
+				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&loginRuleID)),
+				),
+			},
+			{
+				// Append a copy of the admin rule. The first two IDs should not change.
+				Config: testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&loginRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.id", getValue(&adminRuleCopyID)),
+				),
+			},
+			{
+				// Disable the login rule. Its ID will change, but the admin rule IDs should remain the same.
+				Config: testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", notEqualsValue(&loginRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.id", equalsValue(&adminRuleCopyID)),
 				),
 			},
 		},
 	})
+}
+
+func getValue(result *string) func(string) error {
+	return func(value string) error {
+		*result = value
+		return nil
+	}
+}
+
+func equalsValue(expected *string) func(string) error {
+	return func(value string) error {
+		if value != *expected {
+			return fmt.Errorf("expected '%s' got '%s'", *expected, value)
+		}
+		return nil
+	}
+}
+
+func notEqualsValue(expected *string) func(string) error {
+	return func(value string) error {
+		if value == *expected {
+			return fmt.Errorf("expected != '%s'", *expected)
+		}
+		return nil
+	}
 }
 
 func TestAccCloudflareRuleset_CustomErrors(t *testing.T) {
@@ -2600,6 +2680,74 @@ func testAccCheckCloudflareRulesetRateLimitScorePerPeriod(rnd, name, zoneID, zon
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
+ }
+  
+func testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "log"
+      enabled    = true
+      expression = "(http.request.uri.path eq \"/admin\")"
+    }
+    rules {
+      action     = "challenge"
+      enabled    = true
+      expression = "(http.request.uri.path eq \"/login\")"
+    }
+  }`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "challenge"
+      enabled    = true
+      expression = "(http.request.uri.path eq \"/login\")"
+    }
+    rules {
+      action     = "log"
+      enabled    = true
+      expression = "(http.request.uri.path eq \"/admin\")"
+    }
+  }`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID string, enableLoginRule bool) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "log"
+      enabled    = true
+      expression = "(http.request.uri.path eq \"/admin\")"
+    }
+    rules {
+      action     = "challenge"
+      enabled    = %[3]t
+      expression = "(http.request.uri.path eq \"/login\")"
+    }
+    rules {
+      action     = "log"
+      enabled    = true
+      expression = "(http.request.uri.path eq \"/admin\")"
+    }
+  }`, rnd, zoneID, enableLoginRule)
 }
 
 func testAccCheckCloudflareRulesetActionParametersOverridesActionEnabled(rnd, name, zoneID, zoneName string) string {

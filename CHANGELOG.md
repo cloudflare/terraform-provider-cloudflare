@@ -1,4 +1,24 @@
-## 3.33.0 (Unreleased)
+## 3.34.0 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_mtls_certificate` ([#2182](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2182))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: Preserve IDs of unmodified rules when updating rulesets ([#2172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2172))
+
+BUG FIXES:
+
+* resource/cloudflare_page_rule: make cache_key_fields optional to align with API constraints ([#2192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2192))
+
+## 3.33.1 (January 25th, 2023)
+
+BUG FIXES:
+
+* provider: remove conflicting `ExactlyOneOf` schema validation from framework schema ([#2185](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2185))
+
+## 3.33.0 (January 25th, 2023)
 
 ENHANCEMENTS:
 
@@ -15,6 +35,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps dependabot/fetch-metadata from 1.3.5 to 1.3.6 ([#2183](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2183))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.58.1 to 0.59.0 ([#2166](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2166))
 
 ## 3.32.0 (January 11th, 2023)
