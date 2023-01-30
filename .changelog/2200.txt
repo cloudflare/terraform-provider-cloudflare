@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_page_rule: ensure 'cookie' and 'header' have data before using them
+```
