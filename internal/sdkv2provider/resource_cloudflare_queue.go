@@ -83,15 +83,12 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 func resourceCloudflareQueueUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	updatedName := d.Get("name").(string)
 
-	// Read the resource to obtain its existing name
-	resourceCloudflareQueueRead(ctx, d, meta)
-	existingName := d.Get("name").(string)
+	existingName, updatedName := d.GetChange("name")
 
 	_, err := client.UpdateQueue(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateQueueParams{
-		Name:        existingName,
-		UpdatedName: updatedName,
+		Name:        existingName.(string),
+		UpdatedName: updatedName.(string),
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating workers queue"))
@@ -124,7 +121,7 @@ func resourceCloudflareQueueImport(ctx context.Context, d *schema.ResourceData, 
 	accountID, queueID := attributes[0], attributes[1]
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Queue id %s for account %s", queueID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(queueID)
 
 	resourceCloudflareQueueRead(ctx, d, meta)

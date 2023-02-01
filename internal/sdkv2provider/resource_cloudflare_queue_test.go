@@ -35,7 +35,10 @@ func testSweepCloudflareQueue(r string) error {
 	}
 
 	for _, q := range resp {
-		client.DeleteQueue(ctx, cloudflare.AccountIdentifier(accountID), q.Name)
+		err := client.DeleteQueue(ctx, cloudflare.AccountIdentifier(accountID), q.Name)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
