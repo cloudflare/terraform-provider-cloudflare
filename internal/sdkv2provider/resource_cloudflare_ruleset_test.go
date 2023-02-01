@@ -735,6 +735,15 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
@@ -743,9 +752,9 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareRulesetRateLimit(rnd, "example HTTP rate limit", zoneID, zoneName),
+				Config: testAccCheckCloudflareRulesetRateLimitScorePerPeriod(rnd, "example HTTP rate limit by header score", zoneID, zoneName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "example HTTP rate limit"),
+					resource.TestCheckResourceAttr(resourceName, "name", "example HTTP rate limit by header score"),
 					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
 					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_ratelimit"),
