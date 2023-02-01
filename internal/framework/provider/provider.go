@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"testing"
@@ -77,11 +78,6 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 					stringvalidator.AlsoRequires(path.Expressions{
 						path.MatchRoot(consts.EmailSchemaKey),
 					}...),
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
 				},
 			},
 
@@ -93,24 +89,12 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
 						"API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores",
 					),
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
 				},
 			},
 
 			consts.APIUserServiceKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
-				Validators: []validator.String{
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
-				},
 			},
 
 			consts.RPSSchemaKey: schema.Int64Attribute{
@@ -221,7 +205,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		maxBackOff = i
 	}
 
-	if retries > strconv.IntSize {
+	if retries >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
 			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
@@ -229,7 +213,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	if minBackOff > strconv.IntSize {
+	if minBackOff >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
 			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
@@ -237,7 +221,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	if maxBackOff > strconv.IntSize {
+	if maxBackOff >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
 			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
