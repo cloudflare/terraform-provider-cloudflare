@@ -210,34 +210,6 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
   }
 }
 
-# HTTP rate limit using header score for an API route
-resource "cloudflare_ruleset" "rate_limiting_example" {
-  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "restrict API requests by response header score"
-  description = "apply HTTP rate limiting for a route by header score"
-  kind        = "zone"
-  phase       = "http_ratelimit"
-
-  rules {
-    action = "block"
-    ratelimit {
-      characteristics = [
-        "cf.colo.id",
-        "http.request.headers[\"x-api-key\"]"
-      ]
-      period                     = 60
-      score_per_period           = 400
-      score_response_header_name = "my-score"
-      mitigation_timeout         = 600
-      counting_expression        = ""
-    }
-
-    expression  = "(http.request.uri.path matches \"^/api/\")"
-    description = "rate limit for API"
-    enabled     = true
-  }
-}
-
 # Change origin for an API route
 resource "cloudflare_ruleset" "http_origin_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
@@ -849,8 +821,8 @@ Optional:
 - `period` (Number) The period of time to consider (in seconds) when evaluating the request rate.
 - `requests_per_period` (Number) The number of requests over the period of time that will trigger the Rate Limiting rule.
 - `requests_to_origin` (Boolean) Whether to include requests to origin within the Rate Limiting count.
-- `score_per_period` (Number) The maximum aggregate score over the period of time that will trigger Rate Limiting rule. When this value is exceeded, the rule action will execute.
-- `score_response_header_name` (String) Name of HTTP header in the response, set by the origin server, with the score for the current request. The score corresponds to the complexity (or cost) of serving the current request. The score value must be between 1 and 500.
+- `score_per_period` (Number) The maximum aggregate score over the period of time that will trigger Rate Limiting rule.
+- `score_response_header_name` (String) Name of HTTP header in the response, set by the origin server, with the score for the current request.
 
 ## Import
 
