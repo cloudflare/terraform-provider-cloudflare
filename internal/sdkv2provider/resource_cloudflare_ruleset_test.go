@@ -734,6 +734,53 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	t.Parallel()
+	rnd := generateRandomResourceName()
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetRateLimitScorePerPeriod(rnd, "example HTTP rate limit by header score", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "example HTTP rate limit by header score"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_ratelimit"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "block"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.response.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.response.0.status_code", "418"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.response.0.content_type", "text/plain"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.response.0.content", "test content"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http rate limit"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.#", "1"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.characteristics.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.score_per_period", "400"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.score_response_header_name", "my-score"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_to_origin", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_PreserveRuleIDs(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -2598,6 +2645,42 @@ func testAccCheckCloudflareRulesetRateLimit(rnd, name, zoneID, zoneName string) 
         ]
         period = 60
         requests_per_period = 100
+        mitigation_timeout = 60
+        requests_to_origin = true
+      }
+      expression = "(http.request.uri.path matches \"^/api/\")"
+      description = "example http rate limit"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetRateLimitScorePerPeriod(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_ratelimit"
+
+    rules {
+      action = "block"
+      action_parameters {
+        response {
+          status_code = 418
+          content_type = "text/plain"
+          content = "test content"
+        }
+      }
+      ratelimit {
+        characteristics = [
+          "cf.colo.id",
+          "ip.src"
+        ]
+        period = 60
+        score_per_period = 400
+		score_response_header_name = "my-score"
         mitigation_timeout = 60
         requests_to_origin = true
       }
