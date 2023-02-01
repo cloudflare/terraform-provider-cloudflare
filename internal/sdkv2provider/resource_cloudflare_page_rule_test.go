@@ -300,7 +300,7 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 	})
 }
 
-func TestAccCloudflarePageRuleMinifyAction(t *testing.T) {
+func TestAccCloudflarePageRule_MinifyAction(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -507,7 +507,7 @@ func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders
 	})
 }
 
-func TestAccCloudflarePageRuleEdgeCacheTTLNotClobbered(t *testing.T) {
+func TestAccCloudflarePageRule_EdgeCacheTTLNotClobbered(t *testing.T) {
 	var before, after cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -538,7 +538,7 @@ func TestAccCloudflarePageRuleEdgeCacheTTLNotClobbered(t *testing.T) {
 	})
 }
 
-func TestAccCloudflarePageRuleCacheKeyFieldsBasic(t *testing.T) {
+func TestAccCloudflarePageRule_CacheKeyFieldsBasic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -567,7 +567,7 @@ func TestAccCloudflarePageRuleCacheKeyFieldsBasic(t *testing.T) {
 	})
 }
 
-func TestAccCloudflarePageRuleCacheKeyFieldsIgnoreQueryStringOrdering(t *testing.T) {
+func TestAccCloudflarePageRule_CacheKeyFieldsIgnoreQueryStringOrdering(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -596,7 +596,7 @@ func TestAccCloudflarePageRuleCacheKeyFieldsIgnoreQueryStringOrdering(t *testing
 	})
 }
 
-func TestAccCloudflarePageRuleCacheKeyFieldsExcludeAllQueryString(t *testing.T) {
+func TestAccCloudflarePageRule_CacheKeyFieldsExcludeAllQueryString(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -625,7 +625,7 @@ func TestAccCloudflarePageRuleCacheKeyFieldsExcludeAllQueryString(t *testing.T) 
 	})
 }
 
-func TestAccCloudflarePageRuleCacheKeyFieldsExcludeMultipleValuesQueryString(t *testing.T) {
+func TestAccCloudflarePageRule_CacheKeyFieldsExcludeMultipleValuesQueryString(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -654,7 +654,7 @@ func TestAccCloudflarePageRuleCacheKeyFieldsExcludeMultipleValuesQueryString(t *
 	})
 }
 
-func TestAccCloudflarePageRuleCacheKeyFieldsNoQueryStringValuesDefined(t *testing.T) {
+func TestAccCloudflarePageRule_CacheKeyFieldsNoQueryStringValuesDefined(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -681,7 +681,7 @@ func TestAccCloudflarePageRuleCacheKeyFieldsNoQueryStringValuesDefined(t *testin
 	})
 }
 
-func TestAccCloudflarePageRuleCacheKeyFieldsIncludeAllQueryStringValues(t *testing.T) {
+func TestAccCloudflarePageRule_CacheKeyFieldsIncludeAllQueryStringValues(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -709,7 +709,7 @@ func TestAccCloudflarePageRuleCacheKeyFieldsIncludeAllQueryStringValues(t *testi
 	})
 }
 
-func TestAccCloudflarePageRuleCacheKeyFieldsIncludeMultipleValuesQueryString(t *testing.T) {
+func TestAccCloudflarePageRule_CacheKeyFieldsIncludeMultipleValuesQueryString(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -771,7 +771,7 @@ func TestAccCloudflarePageRule_EmptyCookie(t *testing.T) {
 	})
 }
 
-func TestAccCloudflarePageRuleCacheTTLByStatus(t *testing.T) {
+func TestAccCloudflarePageRule_CacheTTLByStatus(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
