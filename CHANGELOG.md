@@ -7,6 +7,7 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_ruleset: Preserve IDs of unmodified rules when updating rulesets ([#2172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2172))
+* resource/cloudflare_ruleset: add support for `score_per_period` and `score_response_header_name` ([#2177](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2177))
 
 BUG FIXES:
 
