@@ -738,6 +738,39 @@ func TestAccCloudflarePageRuleCacheKeyFieldsIncludeMultipleValuesQueryString(t *
 	})
 }
 
+func TestAccCloudflarePageRule_EmptyCookie(t *testing.T) {
+	var pageRule cloudflare.PageRule
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
+	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflarePageRuleEmtpyCookie(zoneID, rnd, pageRuleTarget),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.host.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.query_string.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.user.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.cookie.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.header.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.query_string.0.include.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.user.0.device_type", "true"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.user.0.geo", "false"),
+					resource.TestCheckResourceAttr(resourceName, "actions.0.cache_key_fields.0.user.0.lang", "false"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflarePageRuleCacheTTLByStatus(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -1283,4 +1316,27 @@ func testAccCheckCloudflarePageRuleHasAction(pageRule *cloudflare.PageRule, key 
 		}
 		return fmt.Errorf("cloudflare page rule action not found %#v:%#v\nAction State\n%#v", key, value, pageRule.Actions)
 	}
+}
+
+func testAccCheckCloudflarePageRuleEmtpyCookie(zoneID, rnd, target string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_page_rule" "%[3]s" {
+	zone_id = "%[1]s"
+	target = "%[3]s"
+	actions {
+    cache_key_fields {
+      host {
+        resolved = true
+      }
+      query_string {
+        ignore = true
+      }
+      user {
+        device_type = true
+        geo         = false
+        lang        = false
+      }
+    }
+  }
+}`, zoneID, target, rnd)
 }
