@@ -1,0 +1,3 @@
+```release-note:breaking-change
+resource/cloudflare_notification_policy: Notifications g6_health_alert, g6_pool_toggle_alert, scriptmonitor_alert_new_max_length_script_url, scriptmonitor_alert_new_scripts have been renamed. Notifications block_notification_review_accepted and workers_uptime have been removed.
+```
