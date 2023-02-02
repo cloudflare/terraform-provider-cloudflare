@@ -7,13 +7,16 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_ruleset: Preserve IDs of unmodified rules when updating rulesets ([#2172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2172))
+* resource/cloudflare_ruleset: add support for `score_per_period` and `score_response_header_name` ([#2177](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2177))
 
 BUG FIXES:
 
 * resource/cloudflare_page_rule: make cache_key_fields optional to align with API constraints ([#2192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2192))
+* resource/cloudflare_page_rule: remove empty cookie and header fields when applying this resource ([#2208](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2208))
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.59.0 to 0.60.0 ([#2204](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2204))
 * provider: bumps goreleaser/goreleaser-action from 4.1.0 to 4.2.0 ([#2201](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2201))
 
 ## 3.33.1 (January 25th, 2023)
