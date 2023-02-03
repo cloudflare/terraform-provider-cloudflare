@@ -11,12 +11,14 @@ BREAKING CHANGES:
 FEATURES:
 
 * **New Resource:** `cloudflare_mtls_certificate` ([#2182](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2182))
+* **New Resource:** `cloudflare_queue` ([#2134](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2134))
 
 ENHANCEMENTS:
 
 * resource/cloudflare_notification_policy: alert types `block_notification_block_removed`, `fbm_dosd_attack`, `scriptmonitor_alert_new_max_length_resource_url`, `scriptmonitor_alert_new_resources`, `tunnel_health_event`, `tunnel_update_event` have been added. ([#2215](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2215))
 * resource/cloudflare_ruleset: Preserve IDs of unmodified rules when updating rulesets ([#2172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2172))
 * resource/cloudflare_ruleset: add support for `score_per_period` and `score_response_header_name` ([#2177](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2177))
+* resource/cloudflare_worker_script: add support for `queue_binding` ([#2134](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2134))
 
 BUG FIXES:
 
