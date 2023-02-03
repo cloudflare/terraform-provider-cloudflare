@@ -41,7 +41,6 @@ and `sed` for simple replacements however we will be providing examples using
 structure. NB: the attached examples are intentionally simple and you may want
 to make them more specific to suit your use case or environment.
 
-
 ## Provider configuration for `account_id` is removed
 
 In 3.x, `account_id` was available as a provider configuration attribute to
@@ -114,6 +113,61 @@ level resources remain unchanged.
 detect and build parts of the HTTP request URL if the global `AccountID` value
 is provided. While internal, this has been removed in favour of explicit
 `account_id` configurations mentioned above.
+
+## `cloudflare_load_balancer`
+
+- `session_affinity_attributes` has been migrated from `TypeMap` to `TypeSet`.
+
+Before:
+
+```hcl
+resource "cloudflare_load_balancer" "..." {
+  zone_id = "..."
+  session_affinity_attributes = {
+    ...
+  }
+}
+```
+
+After:
+
+```hcl
+resource "cloudflare_load_balancer" "..." {
+  zone_id = "..."
+  session_affinity_attributes {
+    ...
+  }
+}
+```
+
+There is no automatic schema migration for this change as `TypeMap` does not have
+constraints and the current values may have been invalid in previous states.
+
+- `drain_duration` is now an integer (previously a string)
+
+Before:
+
+```hcl
+resource "cloudflare_load_balancer" "..." {
+  zone_id = "..."
+  session_affinity_attributes = {
+    secure = "Always"
+    drain_duration = "5"
+  }
+}
+```
+
+After:
+
+```hcl
+resource "cloudflare_load_balancer" "..." {
+  zone_id = "..."
+  session_affinity_attributes { # note the type change from above
+    secure = "Always"
+    drain_duration = 5
+  }
+}
+```
 
 ## Renames
 
