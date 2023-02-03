@@ -1,0 +1,7 @@
+```release-note:new-resource
+cloudflare_queue
+```
+
+```release-note:enhancement
+resource/cloudflare_worker_script: add support for `queue_binding`
+```
