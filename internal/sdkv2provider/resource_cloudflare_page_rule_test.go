@@ -1183,7 +1183,6 @@ resource "cloudflare_page_rule" "%[3]s" {
 	target = "%[2]s"
 	actions {
 		cache_key_fields {
-			cookie {}
 			header {
 				exclude = ["origin"]
 			}
@@ -1205,7 +1204,6 @@ resource "cloudflare_page_rule" "%[3]s" {
 	target = "%[2]s"
 	actions {
 		cache_key_fields {
-			cookie {}
 			header {
 				exclude = ["origin"]
 			}
