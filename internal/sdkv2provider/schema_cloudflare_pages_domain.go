@@ -13,6 +13,8 @@ func resourceCloudflarePagesDomainSchema() map[string]*schema.Schema {
 			Required:    true,
 			ForceNew:    true,
 		},
+		// Domain name is the unique identifier for this resource, we use this in the API calls.
+		// If this changes, `plan` will fail as it can't figure out the changes.
 		"domain": {
 			Description: "Custom domain.",
 			Type:        schema.TypeString,
