@@ -917,6 +917,16 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Optional:    true,
 									Description: "The number of requests over the period of time that will trigger the Rate Limiting rule.",
 								},
+								"score_per_period": {
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Description: "The maximum aggregate score over the period of time that will trigger Rate Limiting rule.",
+								},
+								"score_response_header_name": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Name of HTTP header in the response, set by the origin server, with the score for the current request.",
+								},
 								"mitigation_timeout": {
 									Type:        schema.TypeInt,
 									Optional:    true,

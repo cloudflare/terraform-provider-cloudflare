@@ -5,6 +5,10 @@ run:
   skip-dirs-use-default: true
   modules-download-mode: readonly
 
+issues:
+  max-per-linter: 0
+  max-same-issues: 0
+  
 linters:
   disable-all: true
   enable:

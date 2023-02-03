@@ -821,6 +821,8 @@ Optional:
 - `period` (Number) The period of time to consider (in seconds) when evaluating the request rate.
 - `requests_per_period` (Number) The number of requests over the period of time that will trigger the Rate Limiting rule.
 - `requests_to_origin` (Boolean) Whether to include requests to origin within the Rate Limiting count.
+- `score_per_period` (Number) The maximum aggregate score over the period of time that will trigger Rate Limiting rule.
+- `score_response_header_name` (String) Name of HTTP header in the response, set by the origin server, with the score for the current request.
 
 ## Import
 
