@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_pages_project: changing `name` will now correctly invalidate the resource state. Fixes #2202
+```
