@@ -114,6 +114,34 @@ detect and build parts of the HTTP request URL if the global `AccountID` value
 is provided. While internal, this has been removed in favour of explicit
 `account_id` configurations mentioned above.
 
+## `cloudflare_spectrum_application`
+
+- `edge_ips` is now a nested block that holds all edge IP configuration such as
+  `type`, `connectivity` and `ips`.
+- `edge_ip_connectivity` is now nested under `edge_ips` as `connectivity`.
+- `type` and `connectivity` are explicitly required values now.
+
+```hcl
+resource "cloudflare_spectrum_application" "..." {
+  zone_id = "..."
+  edge_ip_connectivity = "all"
+  edge_ips = ["203.0.113.1", "203.0.113.2"]
+}
+```
+
+After:
+
+```hcl
+resource "cloudflare_spectrum_application" "..." {
+  zone_id = "..."
+  edge_ips {
+    type = "static"
+    connectivity = "all"
+    ips = ["203.0.113.1", "203.0.113.2"]
+  }
+}
+```
+
 ## `cloudflare_load_balancer`
 
 - `session_affinity_attributes` has been migrated from `TypeMap` to `TypeSet`.

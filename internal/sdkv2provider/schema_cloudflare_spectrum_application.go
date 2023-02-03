@@ -19,7 +19,7 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 		"protocol": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "The port configuration at Cloudflare’s edge. e.g. `tcp/22`.",
+			Description: "The port configuration at Cloudflare's edge. e.g. `tcp/22`.",
 		},
 
 		"traffic_type": {
@@ -130,18 +130,32 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 		},
 
 		"edge_ips": {
-			Type:        schema.TypeSet,
+			Type:        schema.TypeList,
 			Optional:    true,
-			Elem:        &schema.Schema{Type: schema.TypeString},
-			Description: "A list of edge IPs (IPv4 and/or IPv6) to configure Spectrum application to. Requires [Bring Your Own IP](https://developers.cloudflare.com/spectrum/getting-started/byoip/) provisioned.",
-		},
-
-		"edge_ip_connectivity": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			Computed:     true,
-			ValidateFunc: validation.StringInSlice([]string{"all", "ipv4", "ipv6"}, false),
-			Description:  fmt.Sprintf("Choose which types of IP addresses will be provisioned for this subdomain. %s", renderAvailableDocumentationValuesStringSlice([]string{"all", "ipv4", "ipv6"})),
+			MaxItems:    1,
+			Description: "The anycast edge IP configuration for the hostname of this application.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"type": {
+						Type:         schema.TypeString,
+						Required:     true,
+						ValidateFunc: validation.StringInSlice([]string{"dynamic", "static"}, false),
+						Description:  fmt.Sprintf("The type of edge IP configuration specified. %s", renderAvailableDocumentationValuesStringSlice([]string{"dynamic", "static"})),
+					},
+					"connectivity": {
+						Type:         schema.TypeString,
+						Required:     true,
+						ValidateFunc: validation.StringInSlice([]string{"all", "ipv4", "ipv6"}, false),
+						Description:  fmt.Sprintf("The IP versions supported for inbound connections on Spectrum anycast IPs. %s", renderAvailableDocumentationValuesStringSlice([]string{"all", "ipv4", "ipv6"})),
+					},
+					"ips": {
+						Type:        schema.TypeSet,
+						Elem:        &schema.Schema{Type: schema.TypeString},
+						Optional:    true,
+						Description: "The collection of customer owned IPs to broadcast via anycast for this hostname and application. Requires [Bring Your Own IP](https://developers.cloudflare.com/spectrum/getting-started/byoip/) provisioned.",
+					},
+				},
+			},
 		},
 
 		"argo_smart_routing": {
