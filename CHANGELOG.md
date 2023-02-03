@@ -11,6 +11,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_page_rule: fix failing page rules acceptance tests ([#2213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2213))
 * resource/cloudflare_page_rule: make cache_key_fields optional to align with API constraints ([#2192](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2192))
 * resource/cloudflare_page_rule: remove empty cookie and header fields when applying this resource ([#2208](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2208))
 
