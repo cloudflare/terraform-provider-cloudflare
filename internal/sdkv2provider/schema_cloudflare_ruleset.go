@@ -93,6 +93,19 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "Brief summary of the ruleset rule and its intended use.",
 					},
+					"last_updated": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The most recent update to this rule.",
+					},
+					// "categories": {
+					// 	Type:        schema.TypeList,
+					// 	Optional:    true,
+					// 	Description: "List of classifications for the rule, including specific attack(s) or CVE(s)",
+					// 	Elem: &schema.Schema{
+					// 		Type: schema.TypeString,
+					// 	},
+					// },
 					"action_parameters": {
 						Type:        schema.TypeList,
 						MaxItems:    1,
