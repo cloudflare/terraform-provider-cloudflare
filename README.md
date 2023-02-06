@@ -23,7 +23,7 @@ import them into Terraform.
 
 We are working on releasing the next major version of the Cloudflare Terraform Provider and want your help! 
 
-If you have suitable workloads and would like to test out the next release before everyone else, you can opt-in by updating your provider `version` to explicitly match one of the release candidate versions (`~>`, `>` or `>=` will not work). See the [releases](https://github.com/cloudflare/terraform-provider-cloudflare/releases) page for available versions.
+If you have suitable workloads and would like to test out the next release before everyone else, you can opt-in by updating your provider `version` to explicitly match one of the release candidate versions ([`~>`, `>` or `>=` will not work](https://developer.hashicorp.com/terraform/language/expressions/version-constraints#version-constraint-behavior)). See the [releases](https://github.com/cloudflare/terraform-provider-cloudflare/releases) page for available versions.
 
 ```hcl
 terraform {
