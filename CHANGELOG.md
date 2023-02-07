@@ -1,4 +1,6 @@
-## 3.34.0 (Unreleased)
+## 3.35.0 (Unreleased)
+
+## 3.34.0 (February 8th, 2023)
 
 BREAKING CHANGES:
 
