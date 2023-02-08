@@ -179,8 +179,6 @@ func dataSourceCloudflareRulesetsRead(ctx context.Context, d *schema.ResourceDat
 					"last_updated": rule.LastUpdated.String(),
 					"ref":          rule.Ref,
 					"enabled":      rule.Enabled,
-					// "categories":   rule.Categories,
-					// "score_threshold":          rule.ScoreThreshold, // unsupported
 				}
 
 				if rule.RateLimit != nil {
