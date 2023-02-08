@@ -15,18 +15,17 @@ func dataSourceCloudflareRulesets() *schema.Resource {
 		ReadContext: dataSourceCloudflareRulesetsRead,
 
 		Schema: map[string]*schema.Schema{
-			"zone_id": {
-				Description:   "The zone identifier to target for the resource.",
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"account_id"},
-			},
-
 			"account_id": {
-				Description:   "The account identifier to target for the resource.",
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"zone_id"},
+				Description:  "The account identifier to target for the resource.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{"zone_id", "account_id"},
+			},
+			"zone_id": {
+				Description:  "The zone identifier to target for the resource.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{"zone_id", "account_id"},
 			},
 
 			"include_rules": {
