@@ -2,6 +2,7 @@
 
 DEPENDENCIES:
 
+* provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.9.0 to 0.10.0 ([#2227](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2227))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.8.0 to 0.9.0 ([#2228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2228))
 
 ## 3.34.0 (February 8th, 2023)
