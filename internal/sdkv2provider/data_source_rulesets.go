@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -13,6 +14,10 @@ import (
 func dataSourceCloudflareRulesets() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceCloudflareRulesetsRead,
+
+		Description: heredoc.Doc(`
+			Use this datasource to lookup Rulesets in an account or zone.
+		`),
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -41,24 +46,29 @@ func dataSourceCloudflareRulesets() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The ID of the Ruleset to target.",
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Name of the ruleset.",
 						},
 						"phase": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
 						},
 						"kind": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: fmt.Sprintf("Type of Ruleset to create. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.RulesetKindValues())),
 						},
 						"version": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Version of the ruleset to filter on.",
 						},
 					},
 				},
