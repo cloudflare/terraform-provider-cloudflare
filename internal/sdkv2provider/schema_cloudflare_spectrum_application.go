@@ -144,9 +144,9 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 					},
 					"connectivity": {
 						Type:         schema.TypeString,
-						Required:     true,
+						Optional:     true,
 						ValidateFunc: validation.StringInSlice([]string{"all", "ipv4", "ipv6"}, false),
-						Description:  fmt.Sprintf("The IP versions supported for inbound connections on Spectrum anycast IPs. %s", renderAvailableDocumentationValuesStringSlice([]string{"all", "ipv4", "ipv6"})),
+						Description:  fmt.Sprintf("The IP versions supported for inbound connections on Spectrum anycast IPs. Required when `type` is not `static`. %s", renderAvailableDocumentationValuesStringSlice([]string{"all", "ipv4", "ipv6"})),
 					},
 					"ips": {
 						Type:        schema.TypeSet,

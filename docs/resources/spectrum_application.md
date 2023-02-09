@@ -31,9 +31,8 @@ resource "cloudflare_spectrum_application" "example" {
   ]
 
   edge_ips {
-    type         = "static"
-    connectivity = "all"
-    ips          = ["203.0.113.1", "203.0.113.2"]
+    type = "static"
+    ips  = ["203.0.113.1", "203.0.113.2"]
   }
 }
 ```
@@ -77,11 +76,11 @@ Required:
 
 Required:
 
-- `connectivity` (String) The IP versions supported for inbound connections on Spectrum anycast IPs. Available values: `all`, `ipv4`, `ipv6`.
 - `type` (String) The type of edge IP configuration specified. Available values: `dynamic`, `static`.
 
 Optional:
 
+- `connectivity` (String) The IP versions supported for inbound connections on Spectrum anycast IPs. Required when `type` is not `static`. Available values: `all`, `ipv4`, `ipv6`.
 - `ips` (Set of String) The collection of customer owned IPs to broadcast via anycast for this hostname and application. Requires [Bring Your Own IP](https://developers.cloudflare.com/spectrum/getting-started/byoip/) provisioned.
 
 

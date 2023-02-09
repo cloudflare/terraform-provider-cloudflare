@@ -119,7 +119,7 @@ is provided. While internal, this has been removed in favour of explicit
 - `edge_ips` is now a nested block that holds all edge IP configuration such as
   `type`, `connectivity` and `ips`.
 - `edge_ip_connectivity` is now nested under `edge_ips` as `connectivity`.
-- `type` and `connectivity` are explicitly required values now.
+- `type` is now a required field.
 
 ```hcl
 resource "cloudflare_spectrum_application" "..." {
@@ -136,7 +136,6 @@ resource "cloudflare_spectrum_application" "..." {
   zone_id = "..."
   edge_ips {
     type = "static"
-    connectivity = "all"
     ips = ["203.0.113.1", "203.0.113.2"]
   }
 }

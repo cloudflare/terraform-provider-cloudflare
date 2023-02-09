@@ -228,8 +228,6 @@ func flattenEdgeIPs(edgeIPs *cloudflare.SpectrumApplicationEdgeIPs) []map[string
 
 	if edgeIPs.Connectivity != nil {
 		flattened["connectivity"] = edgeIPs.Connectivity.String()
-	} else {
-		flattened["connectivity"] = cloudflare.SpectrumConnectivityAll
 	}
 
 	ips := []string{}
@@ -284,8 +282,10 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 
 	application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{}
 
-	c := edgeIPsConnectivityFromString(d.Get("edge_ips.0.connectivity").(string))
-	application.EdgeIPs.Connectivity = &c
+	if d.Get("edge_ips.0.connectivity").(string) != "" {
+		c := edgeIPsConnectivityFromString(d.Get("edge_ips.0.connectivity").(string))
+		application.EdgeIPs.Connectivity = &c
+	}
 
 	application.EdgeIPs.Type = edgeIPsTypeFromString(d.Get("edge_ips.0.type").(string))
 

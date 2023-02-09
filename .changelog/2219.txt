@@ -7,5 +7,5 @@ resource/cloudflare_spectrum_application: `edge_ips` now contains nested attribu
 ```
 
 ```release-note:breaking-change
-resource/cloudflare_spectrum_application: `edge_ips.type` and `edge_ips.connectivity` are now required fields
+resource/cloudflare_spectrum_application: `edge_ips.type` is now a required field
 ```

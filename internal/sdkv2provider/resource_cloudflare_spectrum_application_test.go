@@ -237,30 +237,6 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareSpectrumApplication_EdgeIPsWithoutConnectivity(t *testing.T) {
-	var spectrumApp cloudflare.SpectrumApplication
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
-	name := "cloudflare_spectrum_application." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigEdgeIPsWithoutConnectivity(zoneID, domain, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ips.0.ips.#", "1"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.13"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -500,7 +476,6 @@ resource "cloudflare_spectrum_application" "%[3]s" {
   origin_port   = 22
   edge_ips {
 	type = "static"
-	connectivity = "all"
 	ips = ["172.65.64.13"]
   }
 }`, zoneID, zoneName, ID)
@@ -521,7 +496,6 @@ resource "cloudflare_spectrum_application" "%[3]s" {
   origin_port   = 22
   edge_ips {
 	type = "static"
-	connectivity = "all"
 	ips = [%[4]s]
   }
 }`, zoneID, zoneName, ID, IPs)

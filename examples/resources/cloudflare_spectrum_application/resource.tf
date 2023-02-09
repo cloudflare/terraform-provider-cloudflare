@@ -13,8 +13,7 @@ resource "cloudflare_spectrum_application" "example" {
   ]
 
   edge_ips {
-    type         = "static"
-    connectivity = "all"
-    ips          = ["203.0.113.1", "203.0.113.2"]
+    type = "static"
+    ips  = ["203.0.113.1", "203.0.113.2"]
   }
 }
