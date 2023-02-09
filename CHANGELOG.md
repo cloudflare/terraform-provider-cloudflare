@@ -1,5 +1,9 @@
 ## 3.35.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_rulesets` ([#2220](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2220))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.9.0 to 0.10.0 ([#2227](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2227))
