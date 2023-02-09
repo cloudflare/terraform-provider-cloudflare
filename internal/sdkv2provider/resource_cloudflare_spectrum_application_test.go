@@ -84,6 +84,16 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
 				),
 			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
+					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
+				),
+			},
 		},
 	})
 }
@@ -220,31 +230,7 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ip_connectivity", "ipv4"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareSpectrumApplication_EdgeIPsWithoutConnectivity(t *testing.T) {
-	var spectrumApp cloudflare.SpectrumApplication
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
-	name := "cloudflare_spectrum_application." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigEdgeIPsWithoutConnectivity(zoneID, domain, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ips.#", "1"),
-					resource.TestCheckResourceAttr(name, "edge_ips.0", "172.65.64.13"),
+					resource.TestCheckResourceAttr(name, "edge_ips.0.connectivity", "ipv4"),
 				),
 			},
 		},
@@ -267,9 +253,9 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ips.#", "2"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.13"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.49"),
+					resource.TestCheckResourceAttr(name, "edge_ips.0.ips.#", "2"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.13"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.49"),
 				),
 			},
 			{
@@ -277,9 +263,9 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ips.#", "2"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.13"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.*", "172.65.64.49"),
+					resource.TestCheckResourceAttr(name, "edge_ips.0.ips.#", "2"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.13"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.49"),
 				),
 			},
 		},
@@ -357,6 +343,11 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
   origin_direct = ["tcp://128.66.0.1:23"]
   origin_port   = 22
+
+  edge_ips {
+	type = "dynamic"
+	connectivity = "all"
+  }
 }
 `, zoneID, zoneName, ID)
 }
@@ -385,6 +376,11 @@ resource "cloudflare_spectrum_application" "%[3]s" {
     name = "%[3]s.origin.%[2]s"
   }
   origin_port   = 22
+
+  edge_ips {
+	type = "dynamic"
+	connectivity = "all"
+  }
 }`, zoneID, zoneName, ID)
 }
 
@@ -416,6 +412,11 @@ resource "cloudflare_spectrum_application" "%[3]s" {
     start = 2022
     end   = 2023
   }
+
+  edge_ips {
+	type = "dynamic"
+	connectivity = "all"
+  }
 }`, zoneID, zoneName, ID)
 }
 
@@ -432,6 +433,11 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
   origin_direct = ["tcp://128.66.0.2:23"]
   origin_port   = 22
+
+  edge_ips {
+	type = "dynamic"
+	connectivity = "all"
+  }
 }`, zoneID, zoneName, ID)
 }
 
@@ -448,7 +454,10 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
   origin_direct = ["tcp://128.66.0.3:23"]
   origin_port   = 22
-  edge_ip_connectivity = "ipv4"
+  edge_ips {
+	type = "dynamic"
+	connectivity = "ipv4"
+  }
 }`, zoneID, zoneName, ID)
 }
 
@@ -465,7 +474,10 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
   origin_direct = ["tcp://128.66.0.4:23"]
   origin_port   = 22
-  edge_ips = ["172.65.64.13"]
+  edge_ips {
+	type = "static"
+	ips = ["172.65.64.13"]
+  }
 }`, zoneID, zoneName, ID)
 }
 
@@ -482,6 +494,9 @@ resource "cloudflare_spectrum_application" "%[3]s" {
 
   origin_direct = ["tcp://128.66.0.4:23"]
   origin_port   = 22
-  edge_ips = [%[4]s]
+  edge_ips {
+	type = "static"
+	ips = [%[4]s]
+  }
 }`, zoneID, zoneName, ID, IPs)
 }

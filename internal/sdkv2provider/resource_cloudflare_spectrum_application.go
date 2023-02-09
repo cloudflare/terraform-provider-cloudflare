@@ -118,16 +118,8 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 		}
 	}
 
-	if application.EdgeIPs != nil {
-		if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
-			tflog.Warn(ctx, fmt.Sprintf("Error setting Edge IPs on spectrum application %q: %s", d.Id(), err))
-		}
-
-		if application.EdgeIPs.Connectivity != nil {
-			if err := d.Set("edge_ip_connectivity", application.EdgeIPs.Connectivity.String()); err != nil {
-				tflog.Warn(ctx, fmt.Sprintf("Error setting Edge IP connectivity on spectrum application %q: %s", d.Id(), err))
-			}
-		}
+	if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
+		tflog.Warn(ctx, fmt.Sprintf("Error setting Edge IPs on spectrum application %q: %s", d.Id(), err))
 	}
 
 	d.Set("tls", application.TLS)
@@ -229,14 +221,22 @@ func flattenOriginPortRange(port *cloudflare.SpectrumApplicationOriginPort) []ma
 	return []map[string]interface{}{flattened}
 }
 
-func flattenEdgeIPs(edgeIPs *cloudflare.SpectrumApplicationEdgeIPs) []string {
-	flattened := make([]string, 0)
-
-	for _, ip := range edgeIPs.IPs {
-		flattened = append(flattened, ip.String())
+func flattenEdgeIPs(edgeIPs *cloudflare.SpectrumApplicationEdgeIPs) []map[string]interface{} {
+	flattened := map[string]interface{}{
+		"type": edgeIPs.Type.String(),
 	}
 
-	return flattened
+	if edgeIPs.Connectivity != nil {
+		flattened["connectivity"] = edgeIPs.Connectivity.String()
+	}
+
+	ips := []string{}
+	for _, ip := range edgeIPs.IPs {
+		ips = append(ips, ip.String())
+	}
+	flattened["ips"] = ips
+
+	return []map[string]interface{}{flattened}
 }
 
 func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplication {
@@ -280,25 +280,48 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 		application.ArgoSmartRouting = argoSmartRouting.(bool)
 	}
 
-	connectivity := cloudflare.SpectrumApplicationConnectivity(cloudflare.SpectrumConnectivityAll)
-	application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{
-		Type:         cloudflare.SpectrumEdgeTypeDynamic,
-		Connectivity: &connectivity,
+	application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{}
+
+	if d.Get("edge_ips.0.connectivity").(string) != "" {
+		c := edgeIPsConnectivityFromString(d.Get("edge_ips.0.connectivity").(string))
+		application.EdgeIPs.Connectivity = &c
 	}
 
-	if edgeIPConnectivity, ok := d.GetOk("edge_ip_connectivity"); ok {
-		connectivity = cloudflare.SpectrumApplicationConnectivity(edgeIPConnectivity.(string))
-	}
+	application.EdgeIPs.Type = edgeIPsTypeFromString(d.Get("edge_ips.0.type").(string))
 
-	if edgeIPs, ok := d.GetOk("edge_ips"); ok {
-		application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{
-			Type: cloudflare.SpectrumEdgeTypeStatic,
-		}
-		// connectivity = cloudflare.SpectrumConnectivityStatic
-		for _, value := range edgeIPs.(*schema.Set).List() {
+	if ips, ok := d.GetOk("edge_ips.0.ips"); ok {
+		for _, value := range ips.(*schema.Set).List() {
 			application.EdgeIPs.IPs = append(application.EdgeIPs.IPs, net.ParseIP(value.(string)))
 		}
 	}
 
 	return application
+}
+
+func edgeIPsTypeFromString(s string) cloudflare.SpectrumApplicationEdgeType {
+	s = strings.ToLower(s)
+	var v cloudflare.SpectrumApplicationEdgeType
+	switch s {
+	case "dynamic":
+		v = cloudflare.SpectrumEdgeTypeDynamic
+	case "static":
+		v = cloudflare.SpectrumEdgeTypeStatic
+	}
+	return v
+}
+
+func edgeIPsConnectivityFromString(s string) cloudflare.SpectrumApplicationConnectivity {
+	s = strings.ToLower(s)
+	var v cloudflare.SpectrumApplicationConnectivity
+	switch s {
+	case "all":
+		v = cloudflare.SpectrumConnectivityAll
+	case "ipv4":
+		v = cloudflare.SpectrumConnectivityIPv4
+	case "ipv6":
+		v = cloudflare.SpectrumConnectivityIPv6
+	case "static":
+		v = cloudflare.SpectrumConnectivityStatic
+	}
+	return v
 }
