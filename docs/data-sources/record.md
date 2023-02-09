@@ -13,7 +13,7 @@ Use this data source to lookup a single [DNS Record](https://api.cloudflare.com/
 
 ```terraform
 data "cloudflare_record" "example" {
-  zone_id  = var.zone_id
+  zone_id  = "0da42c8d2132a9ddaf714f9e7c920711"
   hostname = "example.com"
 }
 ```
