@@ -456,6 +456,7 @@ Optional:
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
 - `exposed_credential_check` (Block List, Max: 1) List of parameters that configure exposed credential checks. (see [below for nested schema](#nestedblock--rules--exposed_credential_check))
+- `last_updated` (String) The most recent update to this rule.
 - `logging` (Block List, Max: 1) List parameters to configure how the rule generates logs. (see [below for nested schema](#nestedblock--rules--logging))
 - `ratelimit` (Block List, Max: 1) List of parameters that configure HTTP rate limiting behaviour. (see [below for nested schema](#nestedblock--rules--ratelimit))
 
