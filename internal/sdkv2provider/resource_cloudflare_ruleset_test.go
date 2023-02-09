@@ -1940,6 +1940,29 @@ func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_FirewallRulesMigration(t *testing.T) {
+	rnd := generateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetFirewallRulesMigration(rnd, zoneID),
+				Check:  resource.TestCheckResourceAttr(resourceName, "name", "Terraform provider test"),
+			},
+		},
+		ErrorCheck: func(err error) error {
+			if err == nil {
+				return errors.New("expected error but got none")
+			}
+			return err
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -3472,4 +3495,34 @@ func testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRules
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetFirewallRulesMigration(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_filter" "%[1]s" {
+    zone_id = "%[2]s"
+    paused = false
+    description = "%[1]s filter description"
+    expression = "(http.request.uri.path eq \"/admin\")"
+  }
+  resource "cloudflare_firewall_rule" "%[1]s" {
+    zone_id = "%[2]s"
+    paused = false
+    description = "%[1]s rule description"
+    filter_id = "${cloudflare_filter.%[1]s.id}"
+    action = "log"
+    priority = 1
+  }
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "log"
+      enabled    = true
+      expression = "(http.request.uri.path eq \"/admin\")"
+    }
+  }`, rnd, zoneID)
 }

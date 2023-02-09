@@ -302,6 +302,17 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			basePath          string
 		)
 
+		if _, ok := p.ResourcesMap["cloudflare_ruleset"]; ok {
+			if _, ok := p.ResourcesMap["cloudflare_firewall_rule"]; ok {
+				diags = append(diags, diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  "cannot use both cloudflare_ruleset and cloudflare_firewall_rule",
+				})
+
+				return nil, diags
+			}
+		}
+
 		if d.Get(consts.APIHostnameSchemaKey).(string) != "" {
 			baseHostname = d.Get(consts.APIHostnameSchemaKey).(string)
 		} else {
