@@ -55,7 +55,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET"}),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET", "MY_QUEUE"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -132,6 +132,11 @@ resource "cloudflare_workers_kv_namespace" "%[1]s" {
 	title = "%[1]s"
 }
 
+resource "cloudflare_queue" "%[1]s" {
+	account_id = "%[4]s"
+	name = "%[1]s"
+}
+
 resource "cloudflare_worker_script" "%[1]s-service" {
 	account_id = "%[4]s"
 	name    = "%[1]s-service"
@@ -173,6 +178,12 @@ resource "cloudflare_worker_script" "%[1]s" {
     service = cloudflare_worker_script.%[1]s-service.name
     environment = "production"
   }
+
+  queue_binding {
+    binding         = "MY_QUEUE"
+    queue = cloudflare_queue.%[1]s.name
+  }
+
 }`, rnd, scriptContent2, encodedWasm, accountID)
 }
 

@@ -79,6 +79,7 @@ resource "cloudflare_worker_script" "my_script" {
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `module` (Boolean) Whether to upload Worker as a module.
 - `plain_text_binding` (Block Set) (see [below for nested schema](#nestedblock--plain_text_binding))
+- `queue_binding` (Block Set) (see [below for nested schema](#nestedblock--queue_binding))
 - `r2_bucket_binding` (Block Set) (see [below for nested schema](#nestedblock--r2_bucket_binding))
 - `secret_text_binding` (Block Set) (see [below for nested schema](#nestedblock--secret_text_binding))
 - `service_binding` (Block Set) (see [below for nested schema](#nestedblock--service_binding))
@@ -113,6 +114,15 @@ Required:
 
 - `name` (String) The global variable for the binding in your Worker code.
 - `text` (String) The plain text you want to store.
+
+
+<a id="nestedblock--queue_binding"></a>
+### Nested Schema for `queue_binding`
+
+Required:
+
+- `binding` (String) The name of the global variable for the binding in your Worker code.
+- `queue` (String) Name of the queue you want to use.
 
 
 <a id="nestedblock--r2_bucket_binding"></a>

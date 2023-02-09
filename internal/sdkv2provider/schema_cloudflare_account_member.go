@@ -28,6 +28,7 @@ func resourceCloudflareAccountMemberSchema() map[string]*schema.Schema {
 		"status": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			Computed:    true,
 			Description: fmt.Sprintf("A member's status in the account. %s", renderAvailableDocumentationValuesStringSlice([]string{"accepted", "pending"})),
 		},
 	}
