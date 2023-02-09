@@ -117,7 +117,7 @@ resource "cloudflare_pages_project" "deployment_configs" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `name` (String) Name of the project.
+- `name` (String) Name of the project. **Modifying this attribute will force creation of a new resource.**
 - `production_branch` (String) The name of the branch that is used for the production environment.
 
 ### Optional
