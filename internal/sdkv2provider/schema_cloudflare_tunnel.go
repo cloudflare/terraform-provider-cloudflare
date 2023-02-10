@@ -35,6 +35,7 @@ func resourceCloudflareTunnelSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 			Description: "Token used by a connector to authenticate and run the tunnel.",
+			Sensitive:   true,
 		},
 	}
 }

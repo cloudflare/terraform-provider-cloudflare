@@ -35,7 +35,7 @@ resource "cloudflare_tunnel" "example" {
 
 - `cname` (String) Usable CNAME for accessing the Tunnel.
 - `id` (String) The ID of this resource.
-- `tunnel_token` (String) Token used by a connector to authenticate and run the tunnel.
+- `tunnel_token` (String, Sensitive) Token used by a connector to authenticate and run the tunnel.
 
 ## Import
 
