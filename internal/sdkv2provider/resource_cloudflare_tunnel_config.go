@@ -30,15 +30,15 @@ func resourceCloudflareTunnelConfig() *schema.Resource {
 
 func buildTunnelConfig(d *schema.ResourceData) cloudflare.TunnelConfiguration {
 	warpRouting := cloudflare.WarpRoutingConfig{}
-	if item, ok := d.GetOk("config.0.warp_routing.0"); ok {
+	if item, ok := d.GetOk("config.0.warp_routing"); ok {
 		warpRouting = cloudflare.WarpRoutingConfig{
-			Enabled: item.(map[string]interface{})["enabled"].(bool),
+			Enabled: item.([]interface{})[0].(map[string]interface{})["enabled"].(bool),
 		}
 	}
 
 	originConfig := cloudflare.OriginRequestConfig{}
-	if item, ok := d.GetOk("config.0.origin_request.0"); ok {
-		originRequest := item.(map[string]interface{})
+	if item, ok := d.GetOk("config.0.origin_request"); ok {
+		originRequest := item.([]interface{})[0].(map[string]interface{})
 		if v, ok := originRequest["connect_timeout"]; ok {
 			timeout, _ := time.ParseDuration(v.(string))
 			originConfig.ConnectTimeout = &timeout
