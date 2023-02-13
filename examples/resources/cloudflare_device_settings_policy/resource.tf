@@ -15,4 +15,5 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
   switch_locked         = true
   service_mode_v2_mode  = "warp"
   service_mode_v2_port  = 3000
+  exclude_office_ips    = false
 }
