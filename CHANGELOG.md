@@ -8,6 +8,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_argo_tunnel: mark `tunnel_token` as sensitive ([#2231](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2231))
 
+BUG FIXES:
+
+* resource/cloudflare_tunnel_config: use correct notation for nested lists ([#2235](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2235))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.9.0 to 0.10.0 ([#2227](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2227))
