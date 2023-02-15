@@ -18,9 +18,10 @@ They are referenced in Zero Trust Gateway rules.
 ```terraform
 # Predefined profile
 resource "cloudflare_dlp_profile" "example_predefined" {
-  account_id  = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Example Predefined Profile"
-  type        = "predefined"
+  account_id          = "0da42c8d2132a9ddaf714f9e7c920711"
+  name                = "Example Predefined Profile"
+  type                = "predefined"
+  allowed_match_count = 0
 
   entry {
 	name = "Mastercard Card Number"
@@ -35,10 +36,11 @@ resource "cloudflare_dlp_profile" "example_predefined" {
 
 # Custom profile
 resource "cloudflare_dlp_profile" "example_custom" {
-  account_id  = "0da42c8d2132a9ddaf714f9e7c920711"
-  name        = "Example Custom Profile"
-  description = "A profile with example entries"
-  type        = "custom"
+  account_id          = "0da42c8d2132a9ddaf714f9e7c920711"
+  name                = "Example Custom Profile"
+  description         = "A profile with example entries"
+  type                = "custom"
+  allowed_match_count = 0
 
   entry {
 	name = "Matches visa credit cards"
@@ -72,6 +74,7 @@ resource "cloudflare_dlp_profile" "example_custom" {
 ### Optional
 
 - `description` (String) Brief summary of the profile and its intended use.
+- `allowed_match_count` (Number) Brief summary of the profile and its intended use.
 
 ### Read-Only
 
