@@ -14,8 +14,10 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.60.0 to 0.61.0 ([#2240](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2240))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.9.0 to 0.10.0 ([#2227](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2227))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.8.0 to 0.9.0 ([#2228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2228))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.24.1 to 2.25.0 ([#2239](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2239))
 
 ## 3.34.0 (February 8th, 2023)
 
