@@ -106,7 +106,7 @@ func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceDat
 	if dlpProfile.Description != "" {
 		d.Set("description", dlpProfile.Description)
 	}
-	d.Set("allowed_match_count", fmt.Sprintf("%d", dlpProfile.AllowedMatchCount))
+	d.Set("allowed_match_count", dlpProfile.AllowedMatchCount)
 	entries := make([]interface{}, 0, len(dlpProfile.Entries))
 	for _, entry := range dlpProfile.Entries {
 		entries = append(entries, dlpEntryToSchema(entry))
