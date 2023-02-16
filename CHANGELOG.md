@@ -8,6 +8,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_argo_tunnel: mark `tunnel_token` as sensitive ([#2231](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2231))
 * resource/cloudflare_device_settings_policy: Add new flag MS IP Exclusion for device policies ([#2236](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2236))
+* resource/cloudflare_dlp_profile: Add new `allowed_match_count` field to profiles ([#2210](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2210))
 
 BUG FIXES:
 
