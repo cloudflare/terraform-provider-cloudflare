@@ -36,6 +36,7 @@ lint: tools terraform-provider-lint golangci-lint
 
 terraform-provider-lint: tools
 	$$(go env GOPATH)/bin/tfproviderlintx \
+	 -R001=false \
 	 -R003=false \
 	 -R012=false \
 	 -S006=false \

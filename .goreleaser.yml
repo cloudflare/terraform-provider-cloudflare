@@ -1,5 +1,3 @@
-# Visit https://goreleaser.com for documentation on how to customize this
-# behavior.
 builds:
 - env:
     # goreleaser does not work with CGO, it could also complicate
@@ -52,3 +50,8 @@ changelog:
   skip: true
 snapshot:
     name_template: '{{.ShortCommit}}-dev'
+
+announce:
+  discord:
+    enabled: true
+    message_template: '{{ .ProjectName }} ({{ .Version }}) has been released. See the release notes at {{ .ReleaseURL }}'

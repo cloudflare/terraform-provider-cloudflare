@@ -350,7 +350,7 @@ func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 
 								"host": {
 									Type:     schema.TypeList,
-									Optional: true,
+									Required: true,
 									MinItems: 1,
 									MaxItems: 1,
 									Elem: &schema.Resource{
@@ -366,7 +366,7 @@ func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 
 								"query_string": {
 									Type:     schema.TypeList,
-									Optional: true,
+									Required: true,
 									MinItems: 1,
 									MaxItems: 1,
 									Elem: &schema.Resource{
@@ -398,7 +398,7 @@ func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 
 								"user": {
 									Type:     schema.TypeList,
-									Optional: true,
+									Required: true,
 									MinItems: 1,
 									MaxItems: 1,
 									Elem: &schema.Resource{

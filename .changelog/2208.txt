@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_page_rule: remove empty cookie and header fields when applying this resource
+```

@@ -456,6 +456,7 @@ Optional:
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
 - `exposed_credential_check` (Block List, Max: 1) List of parameters that configure exposed credential checks. (see [below for nested schema](#nestedblock--rules--exposed_credential_check))
+- `last_updated` (String) The most recent update to this rule.
 - `logging` (Block List, Max: 1) List parameters to configure how the rule generates logs. (see [below for nested schema](#nestedblock--rules--logging))
 - `ratelimit` (Block List, Max: 1) List of parameters that configure HTTP rate limiting behaviour. (see [below for nested schema](#nestedblock--rules--ratelimit))
 
@@ -821,6 +822,8 @@ Optional:
 - `period` (Number) The period of time to consider (in seconds) when evaluating the request rate.
 - `requests_per_period` (Number) The number of requests over the period of time that will trigger the Rate Limiting rule.
 - `requests_to_origin` (Boolean) Whether to include requests to origin within the Rate Limiting count.
+- `score_per_period` (Number) The maximum aggregate score over the period of time that will trigger Rate Limiting rule.
+- `score_response_header_name` (String) Name of HTTP header in the response, set by the origin server, with the score for the current request.
 
 ## Import
 

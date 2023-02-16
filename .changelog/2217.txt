@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_account_member: allow `status` to be computed when not provided
+```
