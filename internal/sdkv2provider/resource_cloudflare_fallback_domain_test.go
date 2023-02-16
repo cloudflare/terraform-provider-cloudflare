@@ -151,6 +151,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	precedence                = 10
 	support_url               = "support_url"
 	switch_locked             = true
+	exclude_office_ips		  = false
 }
 
 resource "cloudflare_fallback_domain" "%[1]s" {
