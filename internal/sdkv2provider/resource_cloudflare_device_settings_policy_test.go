@@ -102,7 +102,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	precedence                = %[3]d
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
-	exclude_office_ips		  = false
+	exclude_office_ips		  = true
 }
 `, rnd, accountID, precedence)
 }
@@ -122,7 +122,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	enabled                   = true
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
-	exclude_office_ips		  = false
+	exclude_office_ips		  = true
 }
 `, rnd, accountID)
 }
@@ -143,7 +143,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	match                     = "identity.email == \"foo@example.com\""
-	exclude_office_ips		  = false
+	exclude_office_ips		  = true
 }
 `, rnd, accountID)
 }

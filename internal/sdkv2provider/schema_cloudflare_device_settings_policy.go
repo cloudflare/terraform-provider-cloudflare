@@ -93,10 +93,9 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 			RequiredWith: []string{"service_mode_v2_mode"},
 		},
 		"exclude_office_ips": {
-			Description:  "Whether to add Microsoft IPs to split tunnel exclusions.",
-			Type:         schema.TypeBool,
-			Optional:     true,
-			RequiredWith: []string{"exclude_office_ips"},
+			Description: "Whether to add Microsoft IPs to split tunnel exclusions.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 	}
 }
