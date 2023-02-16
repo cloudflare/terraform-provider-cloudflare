@@ -67,6 +67,7 @@ resource "cloudflare_dlp_profile" "example_custom" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+- `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `entry` (Block Set, Min: 1) List of entries to apply to the profile. (see [below for nested schema](#nestedblock--entry))
 - `name` (String) Name of the profile. **Modifying this attribute will force creation of a new resource.**
 - `type` (String) The type of the profile. Available values: `custom`, `predefined`. **Modifying this attribute will force creation of a new resource.**
@@ -74,7 +75,6 @@ resource "cloudflare_dlp_profile" "example_custom" {
 ### Optional
 
 - `description` (String) Brief summary of the profile and its intended use.
-- `allowed_match_count` (Number) Brief summary of the profile and its intended use.
 
 ### Read-Only
 
