@@ -12,6 +12,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_logpush_job: fixing typo in comment ([#2238](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2238))
 * resource/cloudflare_record: always send tags object which allows removal of unwanted tags ([#2205](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2205))
 * resource/cloudflare_tunnel_config: use correct notation for nested lists ([#2235](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2235))
 
