@@ -562,6 +562,37 @@ func TestAccCloudflareRecord_MXNull(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_ClearTags(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigMultipleTags(zoneID, rnd, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "tags.#", "2"),
+					resource.TestCheckResourceAttr(name, "comment", "this is a comment"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigNoTags(zoneID, rnd, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "tags.#", "0"),
+					resource.TestCheckResourceAttr(name, "comment", ""),
+				),
+			},
+		},
+	})
+}
+
 func TestSuppressTrailingDots(t *testing.T) {
 	t.Parallel()
 
@@ -886,4 +917,28 @@ func testAccCheckCloudflareRecordNullMX(zoneID, rnd string) string {
 		priority = 0
 	  }
 	`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareRecordConfigMultipleTags(zoneID, name, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	value = "192.168.0.10"
+	type = "A"
+	ttl = 3600
+	tags = ["tag1", "tag2"]
+    comment = "this is a comment"
+}`, zoneID, name, rnd)
+}
+
+func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	value = "192.168.0.10"
+	type = "A"
+	ttl = 3600
+}`, zoneID, name, rnd)
 }
