@@ -8,6 +8,7 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -32,7 +33,7 @@ func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 			{
 				Config: testAccCloudflareWaitingRoomEvent(rnd, waitingRoomEventName, zoneID, waitingRoomID, eventStartTime, eventEndTime, domain, waitingRoomName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", waitingRoomEventName),
 					resource.TestCheckResourceAttrSet(name, "waiting_room_id"),
 					resource.TestCheckResourceAttr(name, "event_start_time", eventStartTime.Format(time.RFC3339)),
@@ -61,7 +62,7 @@ func testAccCheckCloudflareWaitingRoomEventDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.WaitingRoomEvent(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["waiting_room_id"], rs.Primary.Attributes["id"])
+		_, err := client.WaitingRoomEvent(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.Attributes["waiting_room_id"], rs.Primary.Attributes["id"])
 		if err == nil {
 			return fmt.Errorf("waiting room event still exists")
 		}

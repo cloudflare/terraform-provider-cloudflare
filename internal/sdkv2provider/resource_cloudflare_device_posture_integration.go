@@ -156,7 +156,7 @@ func resourceCloudflareDevicePostureIntegrationImport(ctx context.Context, d *sc
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare device posture integration: id %s for account %s", devicePostureIntegrationID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(devicePostureIntegrationID)
 
 	resourceCloudflareDevicePostureIntegrationRead(ctx, d, meta)

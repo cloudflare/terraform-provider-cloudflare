@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -70,7 +71,7 @@ func TestAccCloudflareTunnelVirtualNetwork_Exists(t *testing.T) {
 				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd, accountID, rnd, false),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareTunnelVirtualNetworkExists(name, &TunnelVirtualNetwork),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
 					resource.TestCheckResourceAttr(name, "is_default_network", "false"),
@@ -92,7 +93,7 @@ func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwor
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"]), cloudflare.TunnelVirtualNetworksListParams{
+		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.TunnelVirtualNetworksListParams{
 			IsDeleted: cloudflare.BoolPtr(false),
 			ID:        rs.Primary.ID,
 		})

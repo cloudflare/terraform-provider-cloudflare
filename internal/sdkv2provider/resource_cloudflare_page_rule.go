@@ -526,7 +526,7 @@ func resourceCloudflarePageRuleImport(ctx context.Context, d *schema.ResourceDat
 	if len(idAttr) == 2 {
 		zoneID = idAttr[0]
 		pageRuleID = idAttr[1]
-		d.Set("zone_id", zoneID)
+		d.Set(consts.ZoneIDSchemaKey, zoneID)
 		d.SetId(pageRuleID)
 	} else {
 		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/pageRuleID\"", d.Id())

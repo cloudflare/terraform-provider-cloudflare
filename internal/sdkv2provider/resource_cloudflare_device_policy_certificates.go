@@ -66,7 +66,7 @@ func resourceCloudflareDevicePolicyCertificateImport(ctx context.Context, d *sch
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare device policy certificate setting: zoneID=%s", zoneID))
 
 	d.SetId(zoneID)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 
 	resourceCloudflareDevicePolicyCertificateRead(ctx, d, meta)
 

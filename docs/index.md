@@ -11,6 +11,13 @@ The Cloudflare provider is used to interact with resources supported by
 Cloudflare. The provider needs to be configured with the proper credentials
 before it can be used.
 
+
+!> The 4.x version of the provider is an early release candidate. It may contain
+bugs and backwards incompatible state modifications. **You should not use it in
+production you are clear on the ramifications and have a clear backup plan in
+the event of breakages.**<br><br>For production usage, the 3.x release is
+recommended using the `~> 3` provider version selector.
+
 ## Getting Started
 
 Try the [getting started tutorial](https://developers.cloudflare.com/terraform/tutorial/)
@@ -53,7 +60,6 @@ resource "cloudflare_page_rule" "www" {
 
 ### Optional
 
-- `account_id` (String, Deprecated) Configure API client to always use a specific account. Alternatively, can be configured using the `CLOUDFLARE_ACCOUNT_ID` environment variable.
 - `api_base_path` (String) Configure the base path used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_BASE_PATH` environment variable.
 - `api_client_logging` (Boolean) Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `CLOUDFLARE_API_CLIENT_LOGGING` environment variable.
 - `api_hostname` (String) Configure the hostname used by the API client. Alternatively, can be configured using the `CLOUDFLARE_API_HOSTNAME` environment variable.

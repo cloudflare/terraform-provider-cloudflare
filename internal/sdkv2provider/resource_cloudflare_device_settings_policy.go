@@ -165,7 +165,7 @@ func resourceCloudflareDeviceSettingsPolicyImport(ctx context.Context, d *schema
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare device settings policy: id %s for account %s", policyID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	if policyID == "default" {
 		d.SetId(accountID)
 	} else {

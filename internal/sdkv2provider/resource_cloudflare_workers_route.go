@@ -135,7 +135,7 @@ func resourceCloudflareWorkerRouteImport(ctx context.Context, d *schema.Resource
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/routeID\"", d.Id())
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(routeID)
 
 	resourceCloudflareWorkerRouteRead(ctx, d, meta)

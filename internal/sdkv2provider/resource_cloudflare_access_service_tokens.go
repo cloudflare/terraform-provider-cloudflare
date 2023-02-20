@@ -173,7 +173,7 @@ func resourceCloudflareAccessServiceTokenImport(ctx context.Context, d *schema.R
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/serviceTokenID\"", d.Id())
 	}
 
-	d.Set("account_id", attributes[0])
+	d.Set(consts.AccountIDSchemaKey, attributes[0])
 	d.SetId(attributes[1])
 
 	resourceCloudflareAccessServiceTokenRead(ctx, d, meta)

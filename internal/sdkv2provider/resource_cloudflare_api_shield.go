@@ -55,7 +55,7 @@ func resourceCloudflareAPIShieldRead(ctx context.Context, d *schema.ResourceData
 	}
 
 	d.Set("auth_id_characteristics", flattenAPIShieldConfiguration(as.AuthIdCharacteristics))
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(zoneID)
 
 	return nil
@@ -63,7 +63,7 @@ func resourceCloudflareAPIShieldRead(ctx context.Context, d *schema.ResourceData
 
 func resourceCloudflareAPIShieldUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id")
+	zoneID := d.Get(consts.ZoneIDSchemaKey)
 
 	as, err := buildAPIShieldConfiguration(d)
 	if err != nil {
@@ -80,7 +80,7 @@ func resourceCloudflareAPIShieldUpdate(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareAPIShieldDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get("zone_id")
+	zoneID := d.Get(consts.ZoneIDSchemaKey)
 
 	_, err := client.UpdateAPIShieldConfiguration(ctx, cloudflare.ZoneIdentifier(zoneID.(string)), cloudflare.UpdateAPIShieldParams{AuthIdCharacteristics: []cloudflare.AuthIdCharacteristics{}})
 	if err != nil {

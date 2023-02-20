@@ -198,7 +198,7 @@ func resourceCloudflareFirewallRuleImport(ctx context.Context, d *schema.Resourc
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Firewall Rule: id %s for zone %s", ruleID, zoneID))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(ruleID)
 
 	resourceCloudflareFirewallRuleRead(ctx, d, meta)

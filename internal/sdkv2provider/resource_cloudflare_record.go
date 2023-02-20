@@ -390,7 +390,7 @@ func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData,
 	name := strings.TrimSuffix(record.Name, "."+record.ZoneName)
 
 	d.Set("name", name)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(recordID)
 
 	resourceCloudflareRecordRead(ctx, d, meta)

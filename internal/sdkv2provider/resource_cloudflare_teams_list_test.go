@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -34,7 +35,7 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsListConfigBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "SERIAL"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -67,7 +68,7 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "SERIAL"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -154,7 +155,7 @@ func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {
 			continue
 		}
 
-		identifier := cloudflare.AccountIdentifier(rs.Primary.Attributes["account_id"])
+		identifier := cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey])
 		_, err := client.GetTeamsList(context.Background(), identifier, rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Teams List still exists")

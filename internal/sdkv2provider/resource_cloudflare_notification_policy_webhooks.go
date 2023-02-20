@@ -113,7 +113,7 @@ func resourceCloudflareNotificationPolicyWebhookImport(ctx context.Context, d *s
 
 	accountID, webhooksID := attributes[0], attributes[1]
 	d.SetId(webhooksID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareNotificationPolicyWebhookRead(ctx, d, meta)
 

@@ -205,7 +205,7 @@ func resourceCloudflareWaitingRoomEventImport(ctx context.Context, d *schema.Res
 
 	d.SetId(waitingRoomEvent.ID)
 	d.Set("waiting_room_id", waitingRoomID)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 
 	resourceCloudflareWaitingRoomEventRead(ctx, d, meta)
 

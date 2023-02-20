@@ -193,7 +193,7 @@ func resourceCloudflareCustomSslImport(ctx context.Context, d *schema.ResourceDa
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Custom SSL Cert: id %s for zone %s", certID, zoneID))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(certID)
 
 	resourceCloudflareCustomSslRead(ctx, d, meta)

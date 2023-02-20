@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -44,7 +45,7 @@ func TestAccCloudflareWeb3HostnameEthereum(t *testing.T) {
 			{
 				Config: buildWeb3HostnameConfigEthereum(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd+"."+domain),
 					resource.TestCheckResourceAttr(name, "target", "ethereum"),
 					resource.TestCheckResourceAttr(name, "description", "test"),
@@ -67,7 +68,7 @@ func TestAccCloudflareWeb3Hostname(t *testing.T) {
 			{
 				Config: buildWeb3HostnameConfigIPFS(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd+"."+domain),
 					resource.TestCheckResourceAttr(name, "target", "ipfs"),
 					resource.TestCheckResourceAttr(name, "description", "test"),

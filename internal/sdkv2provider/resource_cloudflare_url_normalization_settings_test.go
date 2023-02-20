@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -25,7 +26,7 @@ func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "cloudflare", "incoming", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "type", "cloudflare"),
 					resource.TestCheckResourceAttr(name, "scope", "incoming"),
 				),
@@ -33,7 +34,7 @@ func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, "cloudflare", "both", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "type", "cloudflare"),
 					resource.TestCheckResourceAttr(name, "scope", "both"),
 				),
@@ -60,7 +61,7 @@ func testAccCheckCloudflareURLNormalizationSettingsDestroy(s *terraform.State) e
 			continue
 		}
 
-		settings, err := client.URLNormalizationSettings(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes["zone_id"]))
+		settings, err := client.URLNormalizationSettings(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]))
 		if err != nil {
 			return err
 		}

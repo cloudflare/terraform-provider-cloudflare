@@ -43,7 +43,7 @@ func resourceCloudflareURLNormalizationSettingsRead(ctx context.Context, d *sche
 	}
 
 	d.SetId(zoneID)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("type", settings.Type)
 	d.Set("scope", settings.Scope)
 

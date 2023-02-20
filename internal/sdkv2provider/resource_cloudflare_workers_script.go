@@ -135,10 +135,6 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
-	if accountID == "" {
-		accountID = client.AccountID
-	}
-
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
 		return diag.FromErr(err)
@@ -179,10 +175,6 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -321,10 +313,6 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
-	if accountID == "" {
-		accountID = client.AccountID
-	}
-
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
 		return diag.FromErr(err)
@@ -357,10 +345,6 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -396,7 +380,7 @@ func resourceCloudflareWorkerScriptImport(ctx context.Context, d *schema.Resourc
 	accountID, scriptName := attributes[0], attributes[1]
 
 	d.Set("name", scriptName)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareWorkerScriptRead(ctx, d, meta)
 

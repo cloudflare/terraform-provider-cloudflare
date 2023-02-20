@@ -2,10 +2,14 @@ package sdkv2provider
 
 import (
 	"context"
+	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -214,4 +218,31 @@ func skipPagesProjectForNonConfiguredDefaultAccount(t *testing.T) {
 	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
 		t.Skipf("Skipping acceptance test as %s is using pages project that isn't setup for CI", testAccCloudflareAccountID)
 	}
+}
+
+func TestAccProvider_EnsureAtLeastOneCredentialDefined(t *testing.T) {
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	if os.Getenv("CLOUDFLARE_API_KEY") != "" {
+		t.Setenv("CLOUDFLARE_API_KEY", "")
+	}
+
+	if os.Getenv("CLOUDFLARE_API_USER_SERVICE_KEY") != "" {
+		t.Setenv("CLOUDFLARE_API_USER_SERVICE_KEY", "")
+	}
+
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareRecordConfigBasic(zoneID, rnd, rnd),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta(fmt.Sprintf("must provide exactly one of %q, %q or %q.", consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey))),
+			},
+		},
+	})
 }

@@ -40,7 +40,7 @@ func resourceCloudflareArgoRead(ctx context.Context, d *schema.ResourceData, met
 
 	checksum := stringChecksum(fmt.Sprintf("%s/argo", zoneID))
 	d.SetId(checksum)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 
 	if tieredCaching != "" {
 		tieredCaching, err := client.ArgoTieredCaching(ctx, zoneID)
@@ -112,7 +112,7 @@ func resourceCloudflareArgoImport(ctx context.Context, d *schema.ResourceData, m
 
 	id := stringChecksum(fmt.Sprintf("%s/argo", zoneID))
 	d.SetId(id)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 
 	resourceCloudflareArgoRead(ctx, d, meta)
 

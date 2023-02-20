@@ -69,7 +69,7 @@ func resourceCloudflareListImport(ctx context.Context, d *schema.ResourceData, m
 
 	accountID, listID := attributes[0], attributes[1]
 	d.SetId(listID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareListRead(ctx, d, meta)
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -171,7 +172,7 @@ func resourceCloudflareAccessGroupImport(ctx context.Context, d *schema.Resource
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Group: accountID %q, accessGroupID %q", accountID, accessGroupID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(accessGroupID)
 
 	resourceCloudflareAccessGroupRead(ctx, d, meta)
