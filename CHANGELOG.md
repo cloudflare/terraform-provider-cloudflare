@@ -18,10 +18,11 @@ BUG FIXES:
 
 INTERNAL:
 
-* internal: bump Go version to 1.20 ([#2245](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2245))
+* internal: bump Go version to 1.20 ([#2243](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2243))
 
 DEPENDENCIES:
 
+* provider: bump golang.org/x/net to v0.7.0 ([#2245](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2245))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.60.0 to 0.61.0 ([#2240](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2240))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.9.0 to 0.10.0 ([#2227](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2227))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.8.0 to 0.9.0 ([#2228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2228))
