@@ -15,13 +15,13 @@ resource/cloudflare_waf_rule: removed in favour of `cloudflare_ruleset`
 ```
 
 ```release-note:breaking-change
-datasource/cloudflare_waf_groups: removed with no current replacement
+datasource/cloudflare_waf_groups: removed in favour of `cloudflare_rulesets`
 ```
 
 ```release-note:breaking-change
-datasource/cloudflare_waf_packages: removed with no current replacement
+datasource/cloudflare_waf_packages: removed in favour of `cloudflare_rulesets`
 ```
 
 ```release-note:breaking-change
-datasource/cloudflare_waf_rules: removed with no current replacement
+datasource/cloudflare_waf_rules: removed in favour of `cloudflare_rulesets`
 ```
