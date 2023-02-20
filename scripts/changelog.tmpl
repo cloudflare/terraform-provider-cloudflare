@@ -45,6 +45,14 @@ BUG FIXES:
 {{ end -}}
 {{- end -}}
 
+{{- if .NotesByType.internal }}
+INTERNAL:
+
+{{range .NotesByType.internal | sort -}}
+{{ template "note" . }}
+{{ end -}}
+{{- end -}}
+
 {{- if .NotesByType.dependency }}
 DEPENDENCIES:
 
