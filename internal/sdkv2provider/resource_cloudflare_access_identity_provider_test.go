@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -68,7 +69,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "onetimepin"),
 				),
@@ -85,7 +86,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "onetimepin"),
 				),
@@ -109,7 +110,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
@@ -135,7 +136,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
@@ -145,7 +146,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuthUpdatedName(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "github"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
@@ -171,7 +172,7 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderSAML(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "saml"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.issuer_url", "jumpcloud"),

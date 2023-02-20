@@ -162,7 +162,7 @@ func resourceCloudflareCertificatePackImport(ctx context.Context, d *schema.Reso
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Certificate Pack: id %s for zone %s", certificatePackID, zoneID))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(certificatePackID)
 
 	resourceCloudflareCertificatePackRead(ctx, d, meta)

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -28,7 +29,7 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "application_id"),
 					resource.TestCheckResourceAttrSet(name, "aud"),
 					resource.TestCheckResourceAttrSet(name, "public_key"),
@@ -55,7 +56,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "application_id"),
 					resource.TestCheckResourceAttrSet(name, "aud"),
 					resource.TestCheckResourceAttrSet(name, "public_key"),
@@ -87,12 +88,12 @@ func testAccCheckCloudflareAccessCACertificateDestroy(s *terraform.State) error 
 			continue
 		}
 
-		_, err := client.AccessCACertificate(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.AccessCACertificate(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Access CA certificate still exists")
 		}
 
-		_, err = client.ZoneLevelAccessCACertificate(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err = client.ZoneLevelAccessCACertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Access CA certificate still exists")
 		}

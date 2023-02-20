@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -28,7 +29,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersKV(name, key, value),
+				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
 					resource.TestCheckResourceAttr(
@@ -57,7 +58,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkersKV(name, key, value),
+				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
 					resource.TestCheckResourceAttr(
@@ -66,7 +67,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWorkersKV(name, key+"-updated", value),
+				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key+"-updated", value, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key+"-updated", &kvPair),
 					resource.TestCheckResourceAttr(
@@ -101,7 +102,7 @@ func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkersKVExists(key, &kvPair),
 					resource.TestCheckResourceAttr(resourceName, "value", value),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 				),
 			},
 		},
@@ -119,10 +120,7 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 		namespaceID := rs.Primary.Attributes["namespace_id"]
 		key := rs.Primary.Attributes["key"]
 
-		accountID := rs.Primary.Attributes["account_id"]
-		if accountID == "" {
-			accountID = client.AccountID
-		}
+		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 
 		_, err := client.GetWorkersKV(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetWorkersKVParams{NamespaceID: namespaceID, Key: key})
 
@@ -134,17 +132,18 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWorkersKV(rName string, key string, value string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName) + fmt.Sprintf(`
+func testAccCheckCloudflareWorkersKV(rName, key, value, accountID string) string {
+	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + fmt.Sprintf(`
 resource "cloudflare_workers_kv" "%[1]s" {
+	account_id = "%[4]s"
 	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
 	key = "%[2]s"
 	value = "%[3]s"
-}`, rName, key, value)
+}`, rName, key, value, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVWithAccount(rName string, key string, value string, accountID string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName) + fmt.Sprintf(`
+	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + fmt.Sprintf(`
 resource "cloudflare_workers_kv" "%[1]s" {
 	account_id = "%[4]s"
 	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
@@ -162,7 +161,7 @@ func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVP
 				continue
 			}
 
-			accountID := rs.Primary.Attributes["account_id"]
+			accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 			if accountID == "" {
 				accountID = client.AccountID
 			}

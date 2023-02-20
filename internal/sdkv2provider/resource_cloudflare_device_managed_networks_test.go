@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -20,7 +21,7 @@ func TestAccCloudflareDeviceManagedNetworks(t *testing.T) {
 			{
 				Config: testAccCloudflareDeviceManagedNetworks(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "tls"),
 					resource.TestCheckResourceAttr(name, "config.0.tls_sockaddr", "foobar:1234"),

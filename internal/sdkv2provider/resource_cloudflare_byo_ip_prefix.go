@@ -50,7 +50,7 @@ func resourceCloudflareBYOIPPrefixImport(ctx context.Context, d *schema.Resource
 
 	accountID, prefixID := attributes[0], attributes[1]
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.Set("prefix_id", prefixID)
 	d.SetId(prefixID)
 

@@ -1,0 +1,27 @@
+```release-note:breaking-change
+resource/cloudflare_workers_kv: no longer sets `client.AccountID` internally and relies on the resource provided value
+```
+
+```release-note:breaking-change
+resource/cloudflare_load_balancer_monitor: no longer sets `client.AccountID` internally and relies on the resource provided value
+```
+
+```release-note:breaking-change
+resource/cloudflare_workers_script: no longer sets `client.AccountID` internally and relies on the resource provided value
+```
+
+```release-note:breaking-change
+resource/cloudflare_workers_kv_namespace: no longer sets `client.AccountID` internally and relies on the resource provided value
+```
+
+```release-note:breaking-change
+resource/cloudflare_load_balancer_pool: no longer sets `client.AccountID` internally and relies on the resource provided value
+```
+
+```release-note:breaking-change
+resource/cloudflare_zone: no longer sets `client.AccountID` internally and relies on the resource provided value
+```
+
+```release-note:breaking-change
+resource/cloudflare_account_member: no longer sets `client.AccountID` internally and relies on the resource provided value
+```

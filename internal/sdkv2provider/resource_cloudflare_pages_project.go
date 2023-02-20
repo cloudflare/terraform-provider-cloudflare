@@ -263,7 +263,7 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Pages Project Response: %#v", project))
 	d.Set("subdomain", project.SubDomain)
 	d.Set("production_branch", project.ProductionBranch)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.Set("domains", project.Domains)
 	d.Set("created_on", project.CreatedOn.Format(time.RFC3339))
 
@@ -374,7 +374,7 @@ func resourceCloudflarePagesProjectImport(ctx context.Context, d *schema.Resourc
 
 	d.SetId(project.Name)
 	d.Set("name", project.Name)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflarePagesProjectRead(ctx, d, meta)
 

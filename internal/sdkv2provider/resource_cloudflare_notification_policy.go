@@ -126,7 +126,7 @@ func resourceNotificationPolicyImport(ctx context.Context, d *schema.ResourceDat
 
 	accountID, policyID := attributes[0], attributes[1]
 	d.SetId(policyID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareNotificationPolicyRead(ctx, d, meta)
 

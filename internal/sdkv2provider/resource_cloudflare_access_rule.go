@@ -67,10 +67,8 @@ func resourceCloudflareAccessRuleCreate(ctx context.Context, d *schema.ResourceD
 
 	if accountID != "" {
 		r, err = client.CreateAccountAccessRule(ctx, accountID, newRule)
-	} else if zoneID != "" {
-		r, err = client.CreateZoneAccessRule(ctx, zoneID, newRule)
 	} else {
-		r, err = client.CreateUserAccessRule(ctx, newRule)
+		r, err = client.CreateZoneAccessRule(ctx, zoneID, newRule)
 	}
 
 	if err != nil {
@@ -96,10 +94,8 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 
 	if accountID != "" {
 		accessRuleResponse, err = client.AccountAccessRule(ctx, accountID, d.Id())
-	} else if zoneID != "" {
-		accessRuleResponse, err = client.ZoneAccessRule(ctx, zoneID, d.Id())
 	} else {
-		accessRuleResponse, err = client.UserAccessRule(ctx, d.Id())
+		accessRuleResponse, err = client.ZoneAccessRule(ctx, zoneID, d.Id())
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("accessRuleResponse: %#v", accessRuleResponse))
@@ -117,7 +113,7 @@ func resourceCloudflareAccessRuleRead(ctx context.Context, d *schema.ResourceDat
 
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Access Rule read configuration: %#v", accessRuleResponse))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("mode", accessRuleResponse.Result.Mode)
 	d.Set("notes", accessRuleResponse.Result.Notes)
 	tflog.Debug(ctx, fmt.Sprintf("read configuration: %#v", d.Get("configuration")))
@@ -156,10 +152,8 @@ func resourceCloudflareAccessRuleUpdate(ctx context.Context, d *schema.ResourceD
 
 	if accountID != "" {
 		_, err = client.UpdateAccountAccessRule(ctx, accountID, d.Id(), updatedRule)
-	} else if zoneID != "" {
-		_, err = client.UpdateZoneAccessRule(ctx, zoneID, d.Id(), updatedRule)
 	} else {
-		_, err = client.UpdateUserAccessRule(ctx, d.Id(), updatedRule)
+		_, err = client.UpdateZoneAccessRule(ctx, zoneID, d.Id(), updatedRule)
 	}
 
 	if err != nil {
@@ -180,10 +174,8 @@ func resourceCloudflareAccessRuleDelete(ctx context.Context, d *schema.ResourceD
 
 	if accountID != "" {
 		_, err = client.DeleteAccountAccessRule(ctx, accountID, d.Id())
-	} else if zoneID != "" {
-		_, err = client.DeleteZoneAccessRule(ctx, zoneID, d.Id())
 	} else {
-		_, err = client.DeleteUserAccessRule(ctx, d.Id())
+		_, err = client.DeleteZoneAccessRule(ctx, zoneID, d.Id())
 	}
 
 	if err != nil {
@@ -212,9 +204,9 @@ func resourceCloudflareAccessRuleImport(ctx context.Context, d *schema.ResourceD
 
 	switch accessRuleType {
 	case "account":
-		d.Set("account_id", accessRuleTypeIdentifier)
+		d.Set(consts.AccountIDSchemaKey, accessRuleTypeIdentifier)
 	case "zone":
-		d.Set("zone_id", accessRuleTypeIdentifier)
+		d.Set(consts.ZoneIDSchemaKey, accessRuleTypeIdentifier)
 	}
 
 	resourceCloudflareAccessRuleRead(ctx, d, meta)

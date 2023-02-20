@@ -11,4 +11,9 @@ resource "cloudflare_spectrum_application" "example" {
   origin_direct = [
     "tcp://192.0.2.1:22"
   ]
+
+  edge_ips {
+    type = "static"
+    ips  = ["203.0.113.1", "203.0.113.2"]
+  }
 }

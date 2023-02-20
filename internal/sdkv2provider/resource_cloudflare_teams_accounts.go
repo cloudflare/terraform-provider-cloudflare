@@ -160,7 +160,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 
 func resourceCloudflareTeamsAccountImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.SetId(d.Id())
-	d.Set("account_id", d.Id())
+	d.Set(consts.AccountIDSchemaKey, d.Id())
 
 	resourceCloudflareTeamsAccountRead(ctx, d, meta)
 

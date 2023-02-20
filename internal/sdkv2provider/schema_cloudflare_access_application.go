@@ -18,14 +18,14 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
-			ConflictsWith: []string{"zone_id"},
+			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
 			Description:   "The zone identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
-			ConflictsWith: []string{"account_id"},
+			ConflictsWith: []string{consts.AccountIDSchemaKey},
 		},
 		"aud": {
 			Type:        schema.TypeString,

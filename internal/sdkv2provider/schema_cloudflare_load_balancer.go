@@ -9,6 +9,71 @@ import (
 )
 
 var (
+	loadBalancerSessionAffinityAttributesElem = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"samesite": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Lax", "None", "Strict"}, false),
+				Default:      "Auto",
+				Description:  fmt.Sprintf("Configures the SameSite attribute on session affinity cookie. Value `Auto` will be translated to `Lax` or `None` depending if Always Use HTTPS is enabled. Note: when using value `None`, then you can not set [`secure=\"Never\"`](#secure). %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Lax", "None", "Strict"})),
+			},
+
+			"secure": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "Auto",
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Always", "Never"}, false),
+				Description:  fmt.Sprintf("Configures the Secure attribute on session affinity cookie. Value `Always` indicates the Secure attribute will be set in the Set-Cookie header, `Never` indicates the Secure attribute will not be set, and `Auto` will set the Secure attribute depending if Always Use HTTPS is enabled. %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Always", "Never"})),
+			},
+
+			"drain_duration": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      0,
+				ValidateFunc: validation.IntBetween(0, 86400), // less than 24 hours
+				Description:  "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+			},
+
+			"zero_downtime_failover": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "none",
+				ValidateFunc: validation.StringInSlice([]string{"none", "temporary", "sticky"}, false),
+				Description:  fmt.Sprintf("Configures the zero-downtime failover between origins within a pool when session affinity is enabled. Value `none` means no failover takes place for sessions pinned to the origin. Value `temporary` means traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. Value `sticky` means the session affinity cookie is updated and subsequent requests are sent to the new origin. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. %s", renderAvailableDocumentationValuesStringSlice([]string{"none", "temporary", "sticky"})),
+			},
+		},
+	}
+
+	loadBalancerOverridesSessionAffinityAttributesElem = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"samesite": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Lax", "None", "Strict"}, false),
+				Description:  fmt.Sprintf("Configures the SameSite attribute on session affinity cookie. Value `Auto` will be translated to `Lax` or `None` depending if Always Use HTTPS is enabled. Note: when using value `None`, then you can not set [`secure=\"Never\"`](#secure). %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Lax", "None", "Strict"})),
+			},
+
+			"secure": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Auto", "Always", "Never"}, false),
+				Description:  fmt.Sprintf("Configures the Secure attribute on session affinity cookie. Value `Always` indicates the Secure attribute will be set in the Set-Cookie header, `Never` indicates the Secure attribute will not be set, and `Auto` will set the Secure attribute depending if Always Use HTTPS is enabled. %s", renderAvailableDocumentationValuesStringSlice([]string{"Auto", "Always", "Never"})),
+			},
+
+			//
+			// "drain_duration" not currently supported as a rule override
+			//
+
+			"zero_downtime_failover": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"none", "temporary", "sticky"}, false),
+				Description:  fmt.Sprintf("Configures the zero-downtime failover between origins within a pool when session affinity is enabled. Value `none` means no failover takes place for sessions pinned to the origin. Value `temporary` means traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. Value `sticky` means the session affinity cookie is updated and subsequent requests are sent to the new origin. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. %s", renderAvailableDocumentationValuesStringSlice([]string{"none", "temporary", "sticky"})),
+			},
+		},
+	}
+
 	loadBalancerAdaptiveRoutingElem = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"failover_across_pools": {
@@ -25,7 +90,7 @@ var (
 			"failover_across_pools": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "See [`failover_across_pools`](#failover_across_pools).",
+				Description: "Extends zero-downtime failover of requests to healthy origins from alternate pools, when no healthy alternate exists in the same pool, according to the failover order defined by traffic and origin steering. When set `false`, zero-downtime failover will only occur between origins within the same pool.",
 			},
 		},
 	}
@@ -56,14 +121,14 @@ var (
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"always", "never", "proximity", "geo"}, false),
-				Description:  "See [`prefer_ecs`](#prefer_ecs).",
+				Description:  fmt.Sprintf("Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location. Value `always` will always prefer ECS, `never` will never prefer ECS, `proximity` will prefer ECS only when [`steering_policy=\"proximity\"`](#steering_policy), and `geo` will prefer ECS only when [`steering_policy=\"geo\"`](#steering_policy). %s", renderAvailableDocumentationValuesStringSlice([]string{"always", "never", "proximity", "geo"})),
 			},
 
 			"mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"pop", "resolver_ip"}, false),
-				Description:  "See [`mode`](#mode).",
+				Description:  fmt.Sprintf("Determines the authoritative location when ECS is not preferred, does not exist in the request, or its GeoIP lookup is unsuccessful. Value `pop` will use the Cloudflare PoP location. Value `resolver_ip` will use the DNS resolver GeoIP location. If the GeoIP lookup is unsuccessful, it will use the Cloudflare PoP location. %s", renderAvailableDocumentationValuesStringSlice([]string{"pop", "resolver_ip"})),
 			},
 		},
 	}
@@ -98,14 +163,14 @@ var (
 					Type:         schema.TypeFloat,
 					ValidateFunc: validation.FloatBetween(0, 1),
 				},
-				Description: "See [`pool_weights`](#pool_weights).",
+				Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
 			},
 
 			"default_weight": {
 				Type:         schema.TypeFloat,
 				Optional:     true,
 				ValidateFunc: validation.FloatBetween(0, 1),
-				Description:  "See [`default_weight`](#default_weight).",
+				Description:  "The default weight for pools in the load balancer that are not specified in the [`pool_weights`](#pool_weights) map.",
 			},
 		},
 	}
@@ -136,7 +201,7 @@ var (
 			"pop": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "See [`pop`](#pop).",
+				Description: "A 3-letter code for the Point-of-Presence. Allowed values can be found in the list of datacenters on the [status page](https://www.cloudflarestatus.com/). Multiple entries should not be specified with the same PoP.",
 			},
 
 			"pool_ids": {
@@ -146,7 +211,7 @@ var (
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringLenBetween(1, 32),
 				},
-				Description: "See [`pool_ids`](#pool_ids).",
+				Description: "A list of pool IDs in failover priority to use for traffic reaching the given PoP.",
 			},
 		},
 	}
@@ -177,7 +242,7 @@ var (
 			"country": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "See [`country`](#country).",
+				Description: "A country code which can be determined with the Load Balancing Regions API described [here](https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/). Multiple entries should not be specified with the same country.",
 			},
 
 			"pool_ids": {
@@ -187,7 +252,7 @@ var (
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringLenBetween(1, 32),
 				},
-				Description: "See [`pool_ids`](#pool_ids).",
+				Description: "A list of pool IDs in failover priority to use in the given country.",
 			},
 		},
 	}
@@ -220,7 +285,7 @@ var (
 			"region": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "See [`region`](#region).",
+				Description: "A region code which must be in the list defined [here](https://developers.cloudflare.com/load-balancing/reference/region-mapping-api/#list-of-load-balancer-regions). Multiple entries should not be specified with the same region.",
 			},
 
 			"pool_ids": {
@@ -230,7 +295,7 @@ var (
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringLenBetween(1, 32),
 				},
-				Description: "See [`pool_ids`](#pool_ids).",
+				Description: "A list of pool IDs in failover priority to use in the given region.",
 			},
 		},
 	}
@@ -293,63 +358,61 @@ var (
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"", "none", "cookie", "ip_cookie"}, false),
-							Description:  "See [`session_affinity`](#session_affinity).",
+							Description:  "Configure cookie attributes for session affinity cookie.",
 						},
 
 						"session_affinity_ttl": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							ValidateFunc: validation.IntBetween(1800, 604800),
-							Description:  "See [`session_affinity_ttl`](#session_affinity_ttl).",
+							Description:  "Time, in seconds, until this load balancer's session affinity cookie expires after being created. This parameter is ignored unless a supported session affinity policy is set. The current default of `82800` (23 hours) will be used unless [`session_affinity_ttl`](#session_affinity_ttl) is explicitly set. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. Valid values are between `1800` and `604800`.",
 						},
 
 						"session_affinity_attributes": {
-							Type:     schema.TypeMap,
-							Optional: true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							Description: "See [`session_affinity_attributes`](#nested-schema-for-session_affinity_attributes). Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        loadBalancerOverridesSessionAffinityAttributesElem,
+							Description: "Configure cookie attributes for session affinity cookie. Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
 						},
 
 						"adaptive_routing": {
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem:        loadBalancerOverridesAdaptiveRoutingElem,
-							Description: "See [`adaptive_routing`](#adaptive_routing).",
+							Description: "Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests.",
 						},
 
 						"location_strategy": {
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem:        loadBalancerOverridesLocationStrategyElem,
-							Description: "See [`location_strategy`](#location_strategy).",
+							Description: "Controls location-based steering for non-proxied requests.",
 						},
 
 						"random_steering": {
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem:        loadBalancerOverridesRandomSteeringElem,
-							Description: "See [`random_steering`](#random_steering).",
+							Description: "Configures pool weights for random steering. When the [`steering_policy=\"random\"`](#steering_policy), a random pool is selected with probability proportional to these pool weights.",
 						},
 
 						"ttl": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "See [`ttl`](#ttl).",
+							Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This cannot be set for proxied load balancers. Defaults to `30`.",
 						},
 
 						"steering_policy": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", ""}, false),
-							Description:  "See [`steering_policy`](#steering_policy).",
+							Description:  fmt.Sprintf("The method the load balancer uses to determine the route to your origin. Value `off` uses [`default_pool_ids`](#default_pool_ids). Value `geo` uses [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools). For non-proxied requests, the [`country`](#country) for [`country_pools`](#country_pools) is determined by [`location_strategy`](#location_strategy). Value `random` selects a pool randomly. Value `dynamic_latency` uses round trip time to select the closest pool in [`default_pool_ids`](#default_pool_ids) (requires pool health checks). Value `proximity` uses the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by [`location_strategy`](#location_strategy) for non-proxied requests. Value `\"\"` maps to `geo` if you use [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) otherwise `off`. %s Defaults to `\"\"`.", renderAvailableDocumentationValuesStringSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", `""`})),
 						},
 
 						"fallback_pool": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "See [`fallback_pool_id`](#fallback_pool_id).",
+							Description: "The pool ID to use when all other pools are detected as unhealthy.",
 						},
 
 						"default_pools": {
@@ -358,7 +421,7 @@ var (
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-							Description: "See [`default_pool_ids`](#default_pool_ids).",
+							Description: "A list of pool IDs ordered by their failover priority. Used whenever [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) are not defined.",
 						},
 
 						"pop_pools": {
@@ -366,7 +429,7 @@ var (
 							Optional:    true,
 							Computed:    true,
 							Elem:        loadBalancerOverridesPopPoolElem,
-							Description: "See [`pop_pools`](#pop_pools).",
+							Description: "A set containing mappings of Cloudflare Point-of-Presence (PoP) identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). This feature is only available to enterprise customers.",
 						},
 
 						"country_pools": {
@@ -374,7 +437,7 @@ var (
 							Optional:    true,
 							Computed:    true,
 							Elem:        loadBalancerOverridesCountryPoolElem,
-							Description: "See [`country_pools`](#country_pools).",
+							Description: "A set containing mappings of country codes to a list of pool IDs (ordered by their failover priority) for the given country.",
 						},
 
 						"region_pools": {
@@ -382,7 +445,7 @@ var (
 							Optional:    true,
 							Computed:    true,
 							Elem:        loadBalancerOverridesRegionPoolElem,
-							Description: "See [`region_pools`](#region_pools).",
+							Description: "A set containing mappings of region codes to a list of pool IDs (ordered by their failover priority) for the given region.",
 						},
 					},
 				},
@@ -515,12 +578,10 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		},
 
 		"session_affinity_attributes": {
-			Type:     schema.TypeMap,
-			Optional: true,
-			Elem: &schema.Schema{
-				Type: schema.TypeString,
-			},
-			Description: "See [`session_affinity_attributes`](#nested-schema-for-session_affinity_attributes)",
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Elem:        loadBalancerSessionAffinityAttributesElem,
+			Description: "Configure cookie attributes for session affinity cookie.",
 		},
 
 		"adaptive_routing": {

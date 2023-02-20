@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -58,7 +59,7 @@ func TestAccCertificatePack_AdvancedDigicert(t *testing.T) {
 			{
 				Config: testAccCertificatePackAdvancedDigicertConfig(zoneID, domain, "advanced", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "type", "advanced"),
 					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 					resource.TestCheckResourceAttr(name, "validation_method", "txt"),
@@ -101,7 +102,7 @@ func TestAccCertificatePack_AdvancedLetsEncrypt(t *testing.T) {
 			{
 				Config: testAccCertificatePackAdvancedLetsEncryptConfig(zoneID, domain, "advanced", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "type", "advanced"),
 					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 					resource.TestCheckResourceAttr(name, "validation_method", "txt"),
@@ -144,7 +145,7 @@ func TestAccCertificatePack_WaitForActive(t *testing.T) {
 			{
 				Config: testAccCertificatePackAdvancedWaitForActiveConfig(zoneID, domain, "advanced", rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "type", "advanced"),
 					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 					resource.TestCheckResourceAttr(name, "validation_method", "txt"),

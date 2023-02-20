@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -29,7 +30,7 @@ func TestAccCloudflareDevicePolicyCertificatesCreate(t *testing.T) {
 			{
 				Config: testCloudflareDevicePolicyCertificates(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 				),
 			},

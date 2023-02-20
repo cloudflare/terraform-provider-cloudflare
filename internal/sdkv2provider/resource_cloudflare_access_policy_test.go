@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -32,7 +33,7 @@ func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
 				Config: testAccessPolicyServiceTokenConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.service_token.#", "1"),
 				),
 			},
@@ -57,7 +58,7 @@ func TestAccCloudflareAccessPolicy_AnyServiceToken(t *testing.T) {
 				Config: testAccessPolicyAnyServiceTokenConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 				),
 			},
@@ -81,7 +82,7 @@ func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
 				Config: testAccessPolicyWithZoneID(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 				),
 			},
@@ -89,7 +90,7 @@ func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
 				Config: testAccessPolicyWithZoneIDUpdated(rnd, zone, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", updatedName),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "include.0.any_valid_service_token", "true"),
 				),
 			},
@@ -211,7 +212,7 @@ func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 				Config: testAccessPolicyGroupConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.group.#", "1"),
 				),
 			},
@@ -268,7 +269,7 @@ func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
 				Config: testAccessPolicyMTLSConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.certificate", "true"),
 				),
 			},
@@ -316,7 +317,7 @@ func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
 				Config: testAccessPolicyCommonNameConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.common_name", "example@example.com"),
 				),
 			},
@@ -364,7 +365,7 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 				Config: testAccessPolicyEmailDomainConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
 				),
 			},
@@ -412,7 +413,7 @@ func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
 				Config: testAccessPolicyEmailsConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.email.#", "2"),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", "a@example.com"),
 					resource.TestCheckResourceAttr(name, "include.0.email.1", "b@example.com"),
@@ -462,7 +463,7 @@ func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
 				Config: testAccessPolicyEveryoneConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.everyone", "true"),
 				),
 			},
@@ -510,7 +511,7 @@ func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
 				Config: testAccessPolicyIPsConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.ip.#", "2"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.0", "10.0.0.1/32"),
 					resource.TestCheckResourceAttr(name, "include.0.ip.1", "10.0.0.2/32"),
@@ -560,7 +561,7 @@ func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
 				Config: testAccessPolicyAuthMethodConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.auth_method", "hwk"),
 				),
 			},
@@ -608,7 +609,7 @@ func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
 				Config: testAccessPolicyGeoConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.geo.#", "2"),
 					resource.TestCheckResourceAttr(name, "include.0.geo.0", "US"),
 					resource.TestCheckResourceAttr(name, "include.0.geo.1", "AU"),
@@ -658,7 +659,7 @@ func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
 				Config: testAccessPolicyOktaConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.okta.0.name.#", "2"),
 					resource.TestCheckResourceAttr(name, "include.0.okta.0.name.0", "jacob-group"),
 					resource.TestCheckResourceAttr(name, "include.0.okta.0.name.1", "jacob-group1"),
@@ -829,7 +830,7 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 				Config: testAccessPolicyExternalEvalautionConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.external_evaluation.0.evaluate_url", "https://example.com"),
 					resource.TestCheckResourceAttr(name, "include.0.external_evaluation.0.keys_url", "https://example.com/keys"),
 				),

@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -46,7 +47,7 @@ func TestAccCloudflareZone_NameLookup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZonesDataSourceID(name),
 					resource.TestCheckResourceAttr(name, "name", "terraform.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "zone_id", testAccCloudflareZoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, testAccCloudflareZoneID),
 					resource.TestCheckResourceAttr(name, "status", "active"),
 				),
 			},

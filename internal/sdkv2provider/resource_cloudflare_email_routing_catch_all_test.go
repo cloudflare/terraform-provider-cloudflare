@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -40,7 +41,7 @@ func TestAccTestEmailRoutingCatchAll(t *testing.T) {
 				Config: testEmailRoutingRuleCatchAllConfig(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", "terraform rule catch all"),
 
 					resource.TestCheckResourceAttr(name, "matcher.0.type", "all"),

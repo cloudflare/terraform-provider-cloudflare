@@ -179,7 +179,7 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateImport(ctx context.Con
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/type/certID\"", d.Id())
 	}
 	zoneID, aopType, certID := idAttr[0], idAttr[1], idAttr[2]
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("type", aopType)
 	d.SetId(certID)
 

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -32,7 +33,7 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "serial_number"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -65,7 +66,7 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigOsVersion(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "os_version"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -99,7 +100,7 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigLinuxDistro(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "os_version"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -134,7 +135,7 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigDomainJoined(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "domain_joined"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -167,7 +168,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigFirewall(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "firewall"),
 					resource.TestCheckResourceAttr(name, "description", "firewall description"),
@@ -202,7 +203,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryption(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "disk_encryption"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -342,7 +343,7 @@ func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.DevicePostureRule(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.DevicePostureRule(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Device Posture Rule still exists")
 		}

@@ -1,0 +1,3 @@
+```release-note:breaking-change
+resource/cloudflare_access_bookmark: resource has been removed in favour of configuration on `cloudflare_access_application`
+```

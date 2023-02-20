@@ -11,13 +11,13 @@ func dataSourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schem
 			Description:  "The account identifier to target for the resource.",
 			Type:         schema.TypeString,
 			Optional:     true,
-			ExactlyOneOf: []string{"zone_id", "account_id"},
+			ExactlyOneOf: []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
 			Description:  "The zone identifier to target for the resource.",
 			Type:         schema.TypeString,
 			Optional:     true,
-			ExactlyOneOf: []string{"zone_id", "account_id"},
+			ExactlyOneOf: []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
 		},
 		"name": {
 			Type:        schema.TypeString,
