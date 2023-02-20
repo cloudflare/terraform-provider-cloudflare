@@ -216,6 +216,6 @@ resource "cloudflare_load_balancer" "..." {
 
 ### Data source
 
-- `cloudflare_waf_groups`: No replacment.
-- `cloudflare_waf_packages`: No replacment.
-- `cloudflare_waf_rules`: No replacment.
+- `cloudflare_waf_groups`: Use `cloudflare_ruleset` instead.
+- `cloudflare_waf_packages`: Use `cloudflare_ruleset` instead.
+- `cloudflare_waf_rules`: Use `cloudflare_ruleset` instead.
