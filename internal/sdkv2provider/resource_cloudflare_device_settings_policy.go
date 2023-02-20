@@ -129,6 +129,9 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 	if err := d.Set("service_mode_v2_port", policy.Result.ServiceModeV2.Port); err != nil {
 		return diag.FromErr(fmt.Errorf("error setting service_mode_v2_port"))
 	}
+	if err := d.Set("exclude_office_ips", policy.Result.ExcludeOfficeIps); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing exclude_office_ips"))
+	}
 	// ignore setting forbidden fields for default policies
 	if policy.Result.Name != nil {
 		if err := d.Set("name", policy.Result.Name); err != nil {
@@ -212,6 +215,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 			Mode: d.Get("service_mode_v2_mode").(string),
 			Port: d.Get("service_mode_v2_port").(int),
 		},
+		ExcludeOfficeIps: cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
 	}
 
 	name := d.Get("name").(string)

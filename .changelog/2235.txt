@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_tunnel_config: use correct notation for nested lists
+```

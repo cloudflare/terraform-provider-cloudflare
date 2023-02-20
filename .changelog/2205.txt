@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: always send tags object which allows removal of unwanted tags
+```

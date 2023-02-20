@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_logpush_job: fixing typo in comment
+```

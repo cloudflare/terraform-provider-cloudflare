@@ -92,5 +92,11 @@ func resourceCloudflareDLPProfileSchema() map[string]*schema.Schema {
 				Schema: resourceCloudflareDLPEntrySchema(),
 			},
 		},
+		"allowed_match_count": {
+			Type:         schema.TypeInt,
+			Description:  "Related DLP policies will trigger when the match count exceeds the number set.",
+			Required:     true,
+			ValidateFunc: validation.IntBetween(0, 1000),
+		},
 	}
 }

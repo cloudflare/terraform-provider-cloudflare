@@ -104,6 +104,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	precedence                = 10
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
+	exclude_office_ips        = false
 }
 
 resource "cloudflare_split_tunnel" "%[1]s" {

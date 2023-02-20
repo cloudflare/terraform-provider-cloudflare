@@ -19,7 +19,7 @@ current_pr=$(curl -s "https://api.github.com/repos/cloudflare/terraform-provider
 next_pr=$(($current_pr + 1))
 changelog_path=".changelog/$next_pr.txt"
 
-echo "==> What type of change is this? (enhancement, bug, breaking-change, new-resource, new-data-source, new-guide)"
+echo "==> What type of change is this? (enhancement, bug, breaking-change, internal, new-resource, new-data-source, new-guide)"
 read entry_type
 
 echo "==> What is the summary of this change? Example: resource/example: made a change to CRUD operations"

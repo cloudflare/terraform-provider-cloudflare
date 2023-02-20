@@ -106,6 +106,7 @@ func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceDat
 	if dlpProfile.Description != "" {
 		d.Set("description", dlpProfile.Description)
 	}
+	d.Set("allowed_match_count", dlpProfile.AllowedMatchCount)
 	entries := make([]interface{}, 0, len(dlpProfile.Entries))
 	for _, entry := range dlpProfile.Entries {
 		entries = append(entries, dlpEntryToSchema(entry))
@@ -122,9 +123,10 @@ func resourceCloudflareDLPProfileCreate(ctx context.Context, d *schema.ResourceD
 	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
 	newDLPProfile := cloudflare.DLPProfile{
-		Name:        d.Get("name").(string),
-		Type:        d.Get("type").(string),
-		Description: d.Get("description").(string),
+		Name:              d.Get("name").(string),
+		Type:              d.Get("type").(string),
+		Description:       d.Get("description").(string),
+		AllowedMatchCount: d.Get("allowed_match_count").(int),
 	}
 
 	if newDLPProfile.Type == DLPProfileTypePredefined {
@@ -156,9 +158,10 @@ func resourceCloudflareDLPProfileUpdate(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 
 	updatedDLPProfile := cloudflare.DLPProfile{
-		ID:   d.Id(),
-		Name: d.Get("name").(string),
-		Type: d.Get("type").(string),
+		ID:                d.Id(),
+		Name:              d.Get("name").(string),
+		Type:              d.Get("type").(string),
+		AllowedMatchCount: d.Get("allowed_match_count").(int),
 	}
 	updatedDLPProfile.Description, _ = d.Get("description").(string)
 	if entries, ok := d.GetOk("entry"); ok {

@@ -55,6 +55,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "service_mode_v2_port", "0"),
 					resource.TestCheckResourceAttr(name, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "switch_locked", "true"),
+					resource.TestCheckResourceAttr(name, "exclude_office_ips", "true"),
 				),
 			},
 			{
@@ -75,6 +76,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(defaultName, "service_mode_v2_port", "0"),
 					resource.TestCheckResourceAttr(defaultName, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(defaultName, "switch_locked", "true"),
+					resource.TestCheckResourceAttr(defaultName, "exclude_office_ips", "true"),
 				),
 			},
 			{
@@ -101,6 +103,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	precedence                = %[3]d
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
+	exclude_office_ips		  = true
 }
 `, rnd, accountID, precedence)
 }
@@ -120,6 +123,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	enabled                   = true
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
+	exclude_office_ips		  = true
 }
 `, rnd, accountID)
 }
@@ -140,6 +144,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	match                     = "identity.email == \"foo@example.com\""
+	exclude_office_ips		  = true
 }
 `, rnd, accountID)
 }
