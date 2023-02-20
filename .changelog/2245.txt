@@ -1,0 +1,3 @@
+```release-note:internal
+internal: bump Go version to 1.20
+```
