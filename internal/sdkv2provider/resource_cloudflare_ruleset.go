@@ -939,7 +939,7 @@ func buildRule(d *schema.ResourceData, resourceRule map[string]interface{}, rule
 						}
 					}
 				case "cache":
-					if value, ok := d.GetOk(fmt.Sprintf("rules.%d.action_parameters.0.cache", rulesCounter)); ok {
+					if value, ok := d.GetOkExists(fmt.Sprintf("rules.%d.action_parameters.0.cache", rulesCounter)); ok {
 						rule.ActionParameters.Cache = cloudflare.BoolPtr(value.(bool))
 					}
 

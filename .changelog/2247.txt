@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset Allow for cache setting to be false
+```
