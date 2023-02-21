@@ -1,3 +1,5 @@
+## 4.1.0 (Unreleased)
+
 ## 4.0.0 (February 21st, 2023)
 
 > **Warning** Prior to upgrading you should ensure you have adequate backups in the event you need to rollback to version 3. This is a major version bump and involves backwards incompatible changes.
