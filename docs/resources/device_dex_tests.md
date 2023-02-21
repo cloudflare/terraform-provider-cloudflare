@@ -12,7 +12,7 @@ Provides a Cloudflare Device Digital Experience Monitoring (DEX) test configurat
 ## Example Usage
 
 ```terraform
-resource "cloudflare_device_dex_tests" "example" {
+resource "cloudflare_device_dex_tests" "dex_tests" {
     test_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415",
     name = "GET dashboard",
     description = "Send a HTTP GET request to the 'home' endpoint of the dash every half hour.",
@@ -38,7 +38,7 @@ resource "cloudflare_device_dex_tests" "example" {
 
 ### Optional
 
-- `description` (String) A description of the test to help identify it.
+- `description` (String) Additional details about the test.
 
 ### Read-Only
 
@@ -55,7 +55,7 @@ Required:
 - `method` (String) HTTP request method. Available values: `GET`.
 
 `traceroute` kind required fields:
-- `host` (String) A valid hostname.
+- `host` (String) A valid hostname or IP address.
 
 ## Import
 
