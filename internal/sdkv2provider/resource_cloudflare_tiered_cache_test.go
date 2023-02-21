@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -29,7 +30,7 @@ func TestAccCloudflareTieredCache_Smart(t *testing.T) {
 			{
 				Config: testTieredCacheConfig(rnd, zoneID, "smart"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "cache_type", "smart"),
 				),
 			},
@@ -49,7 +50,7 @@ func TestAccCloudflareTieredCache_Generic(t *testing.T) {
 			{
 				Config: testTieredCacheConfig(rnd, zoneID, "generic"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "cache_type", "generic"),
 				),
 			},

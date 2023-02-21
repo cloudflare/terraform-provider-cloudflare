@@ -160,7 +160,7 @@ func resourceCloudflareTunnelRouteImport(ctx context.Context, d *schema.Resource
 	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", network, vnetID)))
 	d.Set("virtual_network_id", vnetID)
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.Set("network", network)
 
 	err := resourceCloudflareTunnelRouteRead(ctx, d, meta)

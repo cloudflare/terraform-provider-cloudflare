@@ -56,12 +56,12 @@ resource "cloudflare_load_balancer_pool" "example" {
 
 ### Required
 
+- `account_id` (String) The account identifier to target for the resource.
 - `name` (String) A short name (tag) for the pool.
 - `origins` (Block Set, Min: 1) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedblock--origins))
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource.
 - `check_regions` (Set of String) A list of regions (specified by region code) from which to run health checks. Empty means every Cloudflare data center (the default), but requires an Enterprise plan. Region codes can be found [here](https://developers.cloudflare.com/load-balancing/reference/region-mapping-api).
 - `description` (String) Free text description.
 - `enabled` (Boolean) Whether to enable (the default) this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any). Defaults to `true`.

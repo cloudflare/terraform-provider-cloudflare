@@ -109,12 +109,7 @@ func resourceCloudflareZone() *schema.Resource {
 
 func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	var accountID string
-	if d.Get(consts.AccountIDSchemaKey).(string) != "" {
-		accountID = d.Get(consts.AccountIDSchemaKey).(string)
-	} else {
-		accountID = client.AccountID
-	}
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	zoneName := d.Get("zone").(string)
 	jumpstart := d.Get("jump_start").(bool)
 	zoneType := d.Get("type").(string)
@@ -187,7 +182,7 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 		plan = zone.Plan.LegacyID
 	}
 
-	d.Set("account_id", zone.Account.ID)
+	d.Set(consts.AccountIDSchemaKey, zone.Account.ID)
 	d.Set("paused", zone.Paused)
 	d.Set("vanity_name_servers", zone.VanityNS)
 	d.Set("status", zone.Status)

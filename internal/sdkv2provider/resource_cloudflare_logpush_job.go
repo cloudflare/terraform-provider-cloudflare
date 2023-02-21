@@ -11,6 +11,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -246,11 +247,11 @@ func resourceCloudflareLogpushJobImport(ctx context.Context, d *schema.ResourceD
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Logpush Job for %s with id %s", identifier, logpushJobID))
 
 	if identifier.Type == AccountType {
-		if err := d.Set("account_id", identifier.Value); err != nil {
+		if err := d.Set(consts.AccountIDSchemaKey, identifier.Value); err != nil {
 			return nil, fmt.Errorf("failed to set account_id: %w", err)
 		}
 	} else {
-		if err := d.Set("zone_id", identifier.Value); err != nil {
+		if err := d.Set(consts.ZoneIDSchemaKey, identifier.Value); err != nil {
 			return nil, fmt.Errorf("failed to set zone_id: %w", err)
 		}
 	}

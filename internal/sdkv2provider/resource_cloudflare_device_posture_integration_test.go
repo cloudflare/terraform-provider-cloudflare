@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -38,7 +39,7 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 			{
 				Config: testAccCloudflareDevicePostureIntegration(rnd, accountID, clientID, clientSecret, apiURL, authURL),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "workspace_one"),
 					resource.TestCheckResourceAttr(name, "interval", "24h"),
@@ -76,7 +77,7 @@ func testAccCheckCloudflareDevicePostureIntegrationDestroy(s *terraform.State) e
 			continue
 		}
 
-		_, err := client.DevicePostureIntegration(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.DevicePostureIntegration(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Device Posture Integration still exists")
 		}

@@ -26,11 +26,8 @@ resource "cloudflare_workers_kv_namespace" "example" {
 
 ### Required
 
-- `title` (String) Title value of the Worker KV Namespace.
-
-### Optional
-
 - `account_id` (String) The account identifier to target for the resource.
+- `title` (String) Title value of the Worker KV Namespace.
 
 ### Read-Only
 

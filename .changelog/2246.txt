@@ -1,0 +1,5 @@
+```release-note:upgrade-guide
+> **Warning** Prior to upgrading you should ensure you have adequate backups in the event you need to rollback to version 3. This is a major version bump and involves backwards incompatible changes.
+
+[3.x to 4.x upgrade guide](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-4-upgrade)
+```

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -31,7 +32,7 @@ func TestAccCloudflareUserAgentBlockingRule(t *testing.T) {
 			{
 				Config: testAccCloudflareUserAgentBlockingRule(rnd, zoneID, "js_challenge"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "mode", "js_challenge"),
 					resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
@@ -67,7 +68,7 @@ func testAccCheckCloudflareUserAgentBlockingRulesDestroy(s *terraform.State) err
 			continue
 		}
 
-		_, err := client.UserAgentRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.UserAgentRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("User Agent Blocking Rule still exists")
 		}

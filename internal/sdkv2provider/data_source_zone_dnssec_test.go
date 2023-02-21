@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -23,7 +24,7 @@ func TestAccCloudflareZoneDNSSEC(t *testing.T) {
 				Config: testAccCloudflareZoneDNSSECConfig(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
-					resource.TestCheckResourceAttrSet(name, "zone_id"),
+					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
 					resource.TestMatchResourceAttr(name, "status", regexp.MustCompile("active|disabled|pending")),
 					resource.TestCheckResourceAttrSet(name, "flags"),
 					resource.TestCheckResourceAttrSet(name, "algorithm"),

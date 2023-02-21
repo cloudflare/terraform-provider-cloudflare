@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -28,7 +29,7 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "tls_decrypt_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "activity_log_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "fips.0.tls", "true"),

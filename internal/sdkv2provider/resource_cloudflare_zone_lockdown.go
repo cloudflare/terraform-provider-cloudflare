@@ -208,7 +208,7 @@ func resourceCloudflareZoneLockdownImport(ctx context.Context, d *schema.Resourc
 	if len(idAttr) == 2 {
 		zoneID = idAttr[0]
 		zoneLockdownID = idAttr[1]
-		d.Set("zone_id", zoneID)
+		d.Set(consts.ZoneIDSchemaKey, zoneID)
 		d.SetId(zoneLockdownID)
 	} else {
 		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/zoneLockdownId\"", d.Id())

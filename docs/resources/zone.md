@@ -29,11 +29,11 @@ resource "cloudflare_zone" "example" {
 
 ### Required
 
+- `account_id` (String) Account ID to manage the zone resource in.
 - `zone` (String) The DNS zone name which will be added. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
-- `account_id` (String) Account ID to manage the zone resource in.
 - `jump_start` (Boolean) Whether to scan for DNS records on creation. Ignored after zone is created.
 - `paused` (Boolean) Whether this zone is paused (traffic bypasses Cloudflare). Defaults to `false`.
 - `plan` (String) The name of the commercial plan to apply to the zone. Available values: `free`, `lite`, `pro`, `pro_plus`, `business`, `enterprise`, `partners_free`, `partners_pro`, `partners_business`, `partners_enterprise`.

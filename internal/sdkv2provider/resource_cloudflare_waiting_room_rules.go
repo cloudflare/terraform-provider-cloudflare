@@ -189,7 +189,7 @@ func resourceCloudflareWaitingRoomRulesImport(ctx context.Context, d *schema.Res
 
 	d.SetId(waitingRoomID)
 	d.Set("waiting_room_id", waitingRoomID)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 
 	resourceCloudflareWaitingRoomRulesRead(ctx, d, meta)
 

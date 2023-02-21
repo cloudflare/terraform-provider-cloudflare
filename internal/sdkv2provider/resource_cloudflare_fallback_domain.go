@@ -110,7 +110,7 @@ func resourceCloudflareFallbackDomainImport(ctx context.Context, d *schema.Resou
 		return nil, fmt.Errorf("must provide account ID")
 	}
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	if policyID == "default" {
 		d.Set("policy_id", accountID)
 		d.SetId(accountID)

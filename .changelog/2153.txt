@@ -1,0 +1,27 @@
+```release-note:breaking-change
+resource/cloudflare_zone: `account_id` is now required
+```
+
+```release-note:breaking-change
+resource/cloudflare_load_balancer_pool: `account_id` is now required
+```
+
+```release-note:breaking-change
+resource/cloudflare_load_balancer_monitor: `account_id` is now required
+```
+
+```release-note:breaking-change
+resource/cloudflare_account_member: `account_id` is now required
+```
+
+```release-note:breaking-change
+resource/cloudflare_workers_kv_namespace: `account_id` is now required
+```
+
+```release-note:breaking-change
+resource/cloudflare_workers_kv: `account_id` is now required
+```
+
+```release-note:breaking-change
+resource/cloudflare_workers_script: `account_id` is now required
+```

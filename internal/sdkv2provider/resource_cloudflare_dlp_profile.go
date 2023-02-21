@@ -218,7 +218,7 @@ func resourceCloudflareDLPProfileImport(ctx context.Context, d *schema.ResourceD
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare DLP Profile: %q, ID %q", accountID, dlpProfileID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(dlpProfileID)
 
 	resourceCloudflareDLPProfileRead(ctx, d, meta)

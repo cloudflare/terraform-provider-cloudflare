@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -26,10 +27,10 @@ func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
 				Config: testAccCheckCloudflareCustomSSLCertBasic(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareCustomSSLExists(resourceName, &customSSL),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestMatchResourceAttr(resourceName, "priority", regexp.MustCompile("^[0-9]\\d*$")),
 					resource.TestCheckResourceAttr(resourceName, "status", "active"),
-					resource.TestMatchResourceAttr(resourceName, "zone_id", regexp.MustCompile("^[a-z0-9]{32}$")),
+					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
 					resource.TestCheckResourceAttr(resourceName, "custom_ssl_options.0.type", "legacy_custom"),
 				),
 			},
@@ -59,7 +60,7 @@ func testAccCheckCloudflareCustomSSLDestroy(s *terraform.State) error {
 			continue
 		}
 
-		err := client.DeleteSSL(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeleteSSL(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("cert still exists")
 		}
@@ -80,7 +81,7 @@ func testAccCheckCloudflareCustomSSLExists(n string, customSSL *cloudflare.ZoneC
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundCustomSSL, err := client.SSLDetails(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundCustomSSL, err := client.SSLDetails(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -82,7 +83,7 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
 					testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
 				),
 			},
@@ -107,7 +108,7 @@ func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
 				),
 			},
@@ -132,7 +133,7 @@ func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigForwardingOnly(zoneID, target, rnd, rnd+"."+domain),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.0.forwarding_url.0.url", fmt.Sprintf("http://%s/forward", rnd+"."+domain)),
 				),
@@ -158,7 +159,7 @@ func TestAccCloudflarePageRule_ForwardingAndOthers(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", target),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
 				),
@@ -186,7 +187,7 @@ func TestAccCloudflarePageRule_DisableZaraz(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigDisableZaraz(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
 					resource.TestCheckResourceAttr(resourceName, "actions.0.disable_zaraz", "true"),
 				),
@@ -285,7 +286,7 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigBasic(oldZoneID, oldTarget, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &before),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", oldZoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, oldZoneID),
 				),
 			},
 			{
@@ -293,7 +294,7 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
 					testAccCheckCloudflarePageRuleRecreated(&before, &after),
-					resource.TestCheckResourceAttr(resourceName, "zone_id", newZoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, newZoneID),
 				),
 			},
 		},
@@ -821,7 +822,7 @@ func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.PageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.PageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("PageRule still exists")
 		}
@@ -904,7 +905,7 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -928,7 +929,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
-		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
 		}

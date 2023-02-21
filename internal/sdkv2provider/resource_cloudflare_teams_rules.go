@@ -187,7 +187,7 @@ func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceDa
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams Rule: id %s for account %s", teamsRuleID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(teamsRuleID)
 
 	resourceCloudflareTeamsRuleRead(ctx, d, meta)

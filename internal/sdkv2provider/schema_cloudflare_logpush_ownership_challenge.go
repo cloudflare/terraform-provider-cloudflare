@@ -11,13 +11,13 @@ func resourceCloudflareLogpushOwnershipChallengeSchema() map[string]*schema.Sche
 			Description:  "The account identifier to target for the resource.",
 			Type:         schema.TypeString,
 			Optional:     true,
-			ExactlyOneOf: []string{"account_id", "zone_id"},
+			ExactlyOneOf: []string{consts.AccountIDSchemaKey, consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
 			Description:  "The zone identifier to target for the resource.",
 			Type:         schema.TypeString,
 			Optional:     true,
-			ExactlyOneOf: []string{"account_id", "zone_id"},
+			ExactlyOneOf: []string{consts.AccountIDSchemaKey, consts.ZoneIDSchemaKey},
 		},
 		"destination_conf": {
 			Type:        schema.TypeString,

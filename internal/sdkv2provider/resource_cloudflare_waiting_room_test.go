@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -27,7 +28,7 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 			{
 				Config: testAccCloudflareWaitingRoom(rnd, waitingRoomName, zoneID, domain, "/foobar"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", waitingRoomName),
 					resource.TestCheckResourceAttr(name, "description", "my desc"),
 					resource.TestCheckResourceAttr(name, "queueing_method", "fifo"),
@@ -54,7 +55,7 @@ func testAccCheckCloudflareWaitingRoomDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.WaitingRoom(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.Attributes["name"])
+		_, err := client.WaitingRoom(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.Attributes["name"])
 		if err == nil {
 			return fmt.Errorf("Waiting room still exists")
 		}

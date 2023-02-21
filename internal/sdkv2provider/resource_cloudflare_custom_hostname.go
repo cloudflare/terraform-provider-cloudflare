@@ -188,7 +188,7 @@ func resourceCloudflareCustomHostnameImport(ctx context.Context, d *schema.Resou
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Custom Hostname: id %s for zone %s", hostnameID, zoneID))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(hostnameID)
 
 	return []*schema.ResourceData{d}, nil

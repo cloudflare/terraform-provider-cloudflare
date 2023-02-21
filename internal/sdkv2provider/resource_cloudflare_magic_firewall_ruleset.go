@@ -60,7 +60,7 @@ func resourceCloudflareMagicFirewallRulesetImport(ctx context.Context, d *schema
 
 	accountID, rulesetID := attributes[0], attributes[1]
 	d.SetId(rulesetID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareMagicFirewallRulesetRead(ctx, d, meta)
 

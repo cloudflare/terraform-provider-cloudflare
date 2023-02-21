@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -170,7 +171,7 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 				Config: testPagesProjectSource(rnd, accountID, rnd, pagesOwner, pagesRepo),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "source.0.type", "github"),
 					resource.TestCheckResourceAttr(name, "source.0.config.0.owner", pagesOwner),
 					resource.TestCheckResourceAttr(name, "source.0.config.0.repo_name", pagesRepo),
@@ -211,7 +212,7 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 				Config: testPagesProjectBuildConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "build_config.0.build_command", "npm run build"),
 					resource.TestCheckResourceAttr(name, "build_config.0.destination_dir", "build"),
 					resource.TestCheckResourceAttr(name, "build_config.0.root_dir", "/"),
@@ -240,7 +241,7 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 				Config: testPagesProjectDeploymentConfig(rnd, accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 
 					// Preview
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.compatibility_date", "2022-08-15"),
@@ -316,7 +317,7 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 				Config: testPagesProjectDirectUpload(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "production_branch", "main"),
 				),
 			},

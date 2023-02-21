@@ -3,7 +3,6 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"time"
@@ -103,11 +102,7 @@ func resourceCloudflareLoadBalancerCreate(ctx context.Context, d *schema.Resourc
 	}
 
 	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
-		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		newLoadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
+		newLoadBalancer.SessionAffinityAttributes = expandSessionAffinityAttrs(sessionAffinityAttrs)
 	}
 
 	if adaptiveRouting, ok := d.GetOk("adaptive_routing"); ok {
@@ -198,11 +193,7 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 	}
 
 	if sessionAffinityAttrs, ok := d.GetOk("session_affinity_attributes"); ok {
-		sessionAffinityAttributes, err := expandSessionAffinityAttrs(sessionAffinityAttrs)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		loadBalancer.SessionAffinityAttributes = sessionAffinityAttributes
+		loadBalancer.SessionAffinityAttributes = expandSessionAffinityAttrs(sessionAffinityAttrs)
 	}
 
 	if adaptiveRouting, ok := d.GetOk("adaptive_routing"); ok {
@@ -349,13 +340,16 @@ func flattenGeoPools(pools map[string][]string, geoType string, hashResourceMap 
 	return schema.NewSet(schema.HashResource(hashResourceMap[geoType]), flattened)
 }
 
-func flattenSessionAffinityAttrs(attrs *cloudflare.SessionAffinityAttributes) map[string]interface{} {
-	return map[string]interface{}{
-		"drain_duration":         strconv.Itoa(attrs.DrainDuration),
-		"samesite":               attrs.SameSite,
-		"secure":                 attrs.Secure,
-		"zero_downtime_failover": attrs.ZeroDowntimeFailover,
+func flattenSessionAffinityAttrs(properties *cloudflare.SessionAffinityAttributes) *schema.Set {
+	flattened := []interface{}{
+		map[string]interface{}{
+			"drain_duration":         properties.DrainDuration,
+			"samesite":               properties.SameSite,
+			"secure":                 properties.Secure,
+			"zero_downtime_failover": properties.ZeroDowntimeFailover,
+		},
 	}
+	return schema.NewSet(schema.HashResource(loadBalancerSessionAffinityAttributesElem), flattened)
 }
 
 func flattenAdaptiveRouting(properties *cloudflare.AdaptiveRouting) *schema.Set {
@@ -418,7 +412,7 @@ func resourceCloudflareLoadBalancerImport(ctx context.Context, d *schema.Resourc
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/loadBalancerID\"", d.Id())
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(loadBalancerID)
 
 	resourceCloudflareLoadBalancerRead(ctx, d, meta)
@@ -506,19 +500,23 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 				om["region_pools"] = flattenGeoPools(o.RegionPools, "region", loadBalancerOverridesLocalPoolElems)
 				m["overrides"] = []interface{}{om}
 			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes", idx)); o.SessionAffinityAttrs != nil && ok {
+			if saaOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes", idx)); o.SessionAffinityAttrs != nil && ok {
 				saa := map[string]interface{}{}
-				om["session_affinity_attributes"] = saa
+				if l := saaOk.(*schema.Set).List(); len(l) > 0 {
+					for k := range l[0].(map[string]interface{}) {
+						switch k {
+						case "samesite":
+							saa[k] = o.SessionAffinityAttrs.SameSite
+						case "secure":
+							saa[k] = o.SessionAffinityAttrs.Secure
+						case "zero_downtime_failover":
+							saa[k] = o.SessionAffinityAttrs.ZeroDowntimeFailover
+						}
+					}
+				}
+				flattened := []interface{}{saa}
+				om["session_affinity_attributes"] = schema.NewSet(schema.HashResource(loadBalancerOverridesSessionAffinityAttributesElem), flattened)
 				m["overrides"] = []interface{}{om}
-				if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes.samesite", idx)); ok {
-					saa["samesite"] = o.SessionAffinityAttrs.SameSite
-				}
-				if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes.secure", idx)); ok {
-					saa["secure"] = o.SessionAffinityAttrs.Secure
-				}
-				if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes.zero_downtime_failover", idx)); ok {
-					saa["zero_downtime_failover"] = o.SessionAffinityAttrs.ZeroDowntimeFailover
-				}
 			}
 			if arOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.adaptive_routing", idx)); o.AdaptiveRouting != nil && ok {
 				ar := map[string]interface{}{}
@@ -614,20 +612,22 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 				}
 			}
 
-			if saattr, ok := ov["session_affinity_attributes"]; ok {
-				attr := saattr.(map[string]interface{})
-				v := &cloudflare.LoadBalancerRuleOverridesSessionAffinityAttrs{}
-				if ss, ok := attr["samesite"]; ok {
-					v.SameSite = ss.(string)
-					lbr.Overrides.SessionAffinityAttrs = v
-				}
-				if sec, ok := attr["secure"]; ok {
-					v.Secure = sec.(string)
-					lbr.Overrides.SessionAffinityAttrs = v
-				}
-				if zdf, ok := attr["zero_downtime_failover"]; ok {
-					v.ZeroDowntimeFailover = zdf.(string)
-					lbr.Overrides.SessionAffinityAttrs = v
+			if saa, ok := ov["session_affinity_attributes"]; ok {
+				if l := saa.(*schema.Set).List(); len(l) > 0 {
+					saaOverride := &cloudflare.LoadBalancerRuleOverridesSessionAffinityAttrs{}
+					for k, v := range l[0].(map[string]interface{}) {
+						switch k {
+						case "samesite":
+							saaOverride.SameSite = v.(string)
+							lbr.Overrides.SessionAffinityAttrs = saaOverride
+						case "secure":
+							saaOverride.Secure = v.(string)
+							lbr.Overrides.SessionAffinityAttrs = saaOverride
+						case "zero_downtime_failover":
+							saaOverride.ZeroDowntimeFailover = v.(string)
+							lbr.Overrides.SessionAffinityAttrs = saaOverride
+						}
+					}
 				}
 			}
 
@@ -750,26 +750,25 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 	return rules, nil
 }
 
-func expandSessionAffinityAttrs(attrs interface{}) (*cloudflare.SessionAffinityAttributes, error) {
+func expandSessionAffinityAttrs(set interface{}) *cloudflare.SessionAffinityAttributes {
 	var cfSessionAffinityAttrs cloudflare.SessionAffinityAttributes
 
-	for k, v := range attrs.(map[string]interface{}) {
-		switch k {
-		case "secure":
-			cfSessionAffinityAttrs.Secure = v.(string)
-		case "samesite":
-			cfSessionAffinityAttrs.SameSite = v.(string)
-		case "drain_duration":
-			var err error
-			if cfSessionAffinityAttrs.DrainDuration, err = strconv.Atoi(v.(string)); err != nil {
-				return nil, err
+	if l := set.(*schema.Set).List(); len(l) > 0 {
+		for k, v := range l[0].(map[string]interface{}) {
+			switch k {
+			case "secure":
+				cfSessionAffinityAttrs.Secure = v.(string)
+			case "samesite":
+				cfSessionAffinityAttrs.SameSite = v.(string)
+			case "drain_duration":
+				cfSessionAffinityAttrs.DrainDuration = v.(int)
+			case "zero_downtime_failover":
+				cfSessionAffinityAttrs.ZeroDowntimeFailover = v.(string)
 			}
-		case "zero_downtime_failover":
-			cfSessionAffinityAttrs.ZeroDowntimeFailover = v.(string)
 		}
 	}
 
-	return &cfSessionAffinityAttrs, nil
+	return &cfSessionAffinityAttrs
 }
 
 func expandAdaptiveRouting(set interface{}) *cloudflare.AdaptiveRouting {

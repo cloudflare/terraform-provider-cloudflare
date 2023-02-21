@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -61,7 +62,7 @@ func TestAccFilterSimple(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "this is notes"),
 					resource.TestCheckResourceAttr(name, "expression", filterUnquoted),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 				),
 			},
 		},

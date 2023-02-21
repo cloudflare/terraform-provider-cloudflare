@@ -12,7 +12,6 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -141,13 +140,6 @@ func New(version string) func() *schema.Provider {
 					Description: fmt.Sprintf("Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `%s` environment variable.", consts.APIClientLoggingEnvVarKey),
 				},
 
-				consts.AccountIDSchemaKey: {
-					Type:        schema.TypeString,
-					Optional:    true,
-					Description: fmt.Sprintf("Configure API client to always use a specific account. Alternatively, can be configured using the `%s` environment variable.", consts.AccountIDEnvVarKey),
-					Deprecated:  "Use resource specific `account_id` attributes instead.",
-				},
-
 				consts.APIHostnameSchemaKey: {
 					Type:        schema.TypeString,
 					Optional:    true,
@@ -172,9 +164,6 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_origin_ca_root_certificate":  dataSourceCloudflareOriginCARootCertificate(),
 				"cloudflare_record":                      dataSourceCloudflareRecord(),
 				"cloudflare_rulesets":                    dataSourceCloudflareRulesets(),
-				"cloudflare_waf_groups":                  dataSourceCloudflareWAFGroups(),
-				"cloudflare_waf_packages":                dataSourceCloudflareWAFPackages(),
-				"cloudflare_waf_rules":                   dataSourceCloudflareWAFRules(),
 				"cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
 				"cloudflare_zone":                        dataSourceCloudflareZone(),
 				"cloudflare_zones":                       dataSourceCloudflareZones(),
@@ -182,7 +171,6 @@ func New(version string) func() *schema.Provider {
 
 			ResourcesMap: map[string]*schema.Resource{
 				"cloudflare_access_application":                     resourceCloudflareAccessApplication(),
-				"cloudflare_access_bookmark":                        resourceCloudflareAccessBookmark(),
 				"cloudflare_access_ca_certificate":                  resourceCloudflareAccessCACertificate(),
 				"cloudflare_access_group":                           resourceCloudflareAccessGroup(),
 				"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
@@ -196,7 +184,6 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_account":                                resourceCloudflareAccount(),
 				"cloudflare_api_shield":                             resourceCloudflareAPIShield(),
 				"cloudflare_api_token":                              resourceCloudflareApiToken(),
-				"cloudflare_argo_tunnel":                            resourceCloudflareArgoTunnel(),
 				"cloudflare_argo":                                   resourceCloudflareArgo(),
 				"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),
 				"cloudflare_authenticated_origin_pulls":             resourceCloudflareAuthenticatedOriginPulls(),
@@ -207,11 +194,11 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_custom_pages":                           resourceCloudflareCustomPages(),
 				"cloudflare_custom_ssl":                             resourceCloudflareCustomSsl(),
 				"cloudflare_device_dex_tests":                       resourceCloudflareDeviceDexTests(),
-				"cloudflare_device_settings_policy":                 resourceCloudflareDeviceSettingsPolicy(),
+				"cloudflare_device_managed_networks":                resourceCloudflareDeviceManagedNetworks(),
 				"cloudflare_device_policy_certificates":             resourceCloudflareDevicePolicyCertificates(),
 				"cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
 				"cloudflare_device_posture_rule":                    resourceCloudflareDevicePostureRule(),
-				"cloudflare_device_managed_networks":                resourceCloudflareDeviceManagedNetworks(),
+				"cloudflare_device_settings_policy":                 resourceCloudflareDeviceSettingsPolicy(),
 				"cloudflare_dlp_profile":                            resourceCloudflareDLPProfile(),
 				"cloudflare_email_routing_address":                  resourceCloudflareEmailRoutingAddress(),
 				"cloudflare_email_routing_catch_all":                resourceCloudflareEmailRoutingCatchAll(),
@@ -222,7 +209,6 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
 				"cloudflare_gre_tunnel":                             resourceCloudflareGRETunnel(),
 				"cloudflare_healthcheck":                            resourceCloudflareHealthcheck(),
-				"cloudflare_ip_list":                                resourceCloudflareIPList(),
 				"cloudflare_ipsec_tunnel":                           resourceCloudflareIPsecTunnel(),
 				"cloudflare_list":                                   resourceCloudflareList(),
 				"cloudflare_load_balancer_monitor":                  resourceCloudflareLoadBalancerMonitor(),
@@ -251,18 +237,15 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_teams_list":                             resourceCloudflareTeamsList(),
 				"cloudflare_teams_location":                         resourceCloudflareTeamsLocation(),
 				"cloudflare_teams_proxy_endpoint":                   resourceCloudflareTeamsProxyEndpoint(),
-				"cloudflare_tiered_cache":                           resourceCloudflareTieredCache(),
-				"cloudflare_tunnel_config":                          resourceCloudflareTunnelConfig(),
 				"cloudflare_teams_rule":                             resourceCloudflareTeamsRule(),
+				"cloudflare_tiered_cache":                           resourceCloudflareTieredCache(),
 				"cloudflare_total_tls":                              resourceCloudflareTotalTLS(),
+				"cloudflare_tunnel_config":                          resourceCloudflareTunnelConfig(),
 				"cloudflare_tunnel_route":                           resourceCloudflareTunnelRoute(),
 				"cloudflare_tunnel_virtual_network":                 resourceCloudflareTunnelVirtualNetwork(),
+				"cloudflare_tunnel":                                 resourceCloudflareTunnel(),
 				"cloudflare_url_normalization_settings":             resourceCloudflareURLNormalizationSettings(),
 				"cloudflare_user_agent_blocking_rule":               resourceCloudflareUserAgentBlockingRules(),
-				"cloudflare_waf_group":                              resourceCloudflareWAFGroup(),
-				"cloudflare_waf_override":                           resourceCloudflareWAFOverride(),
-				"cloudflare_waf_package":                            resourceCloudflareWAFPackage(),
-				"cloudflare_waf_rule":                               resourceCloudflareWAFRule(),
 				"cloudflare_waiting_room_event":                     resourceCloudflareWaitingRoomEvent(),
 				"cloudflare_waiting_room_rules":                     resourceCloudflareWaitingRoomRules(),
 				"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
@@ -299,7 +282,6 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			retries           int64
 			minBackOff        int64
 			maxBackOff        int64
-			accountID         string
 			baseHostname      string
 			basePath          string
 		)
@@ -435,20 +417,9 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		if apiKey == "" && apiToken == "" && apiUserServiceKey == "" {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
-				Summary:  fmt.Sprintf("must provide one of %q, %q or %q.", consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey),
+				Summary:  fmt.Sprintf("must provide exactly one of %q, %q or %q.", consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey),
 			})
 			return nil, diags
-		}
-
-		if v, ok := d.GetOk(consts.AccountIDSchemaKey); ok {
-			accountID = v.(string)
-		} else {
-			accountID = utils.GetDefaultFromEnv(consts.AccountIDEnvVarKey, "")
-		}
-
-		if accountID != "" {
-			tflog.Info(ctx, fmt.Sprintf("using specified account id %s in Cloudflare provider", accountID))
-			options = append(options, cloudflare.UsingAccount(accountID))
 		}
 
 		config.Options = options

@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -42,7 +43,7 @@ func TestAccTestEmailRoutingRule(t *testing.T) {
 				Config: testEmailRoutingRuleConfig(rnd, zoneID, true, 10),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "priority", "10"),
 					resource.TestCheckResourceAttr(name, "name", "terraform rule"),
 

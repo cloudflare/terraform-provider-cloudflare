@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -108,7 +109,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderDataSourceGitHub(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "github"),
 				),

@@ -15,13 +15,13 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Description:  "The account identifier to target for the resource.",
 			Type:         schema.TypeString,
 			Optional:     true,
-			ExactlyOneOf: []string{"account_id", "zone_id"},
+			ExactlyOneOf: []string{consts.AccountIDSchemaKey, consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
 			Description:  "The zone identifier to target for the resource.",
 			Type:         schema.TypeString,
 			Optional:     true,
-			ExactlyOneOf: []string{"account_id", "zone_id"},
+			ExactlyOneOf: []string{consts.AccountIDSchemaKey, consts.ZoneIDSchemaKey},
 		},
 		"enabled": {
 			Type:        schema.TypeBool,
@@ -78,7 +78,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"logpull_options": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: `Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpull options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).`,
+			Description: `Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpush options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).`,
 		},
 		"destination_conf": {
 			Type:        schema.TypeString,

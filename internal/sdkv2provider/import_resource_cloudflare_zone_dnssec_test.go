@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -23,7 +24,7 @@ func TestAccCloudflareZoneDNSSEC_Import(t *testing.T) {
 				Config: testAccCloudflareZoneDNSSECResourceConfig(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
-					resource.TestCheckResourceAttrSet(name, "zone_id"),
+					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
 					resource.TestMatchResourceAttr(name, "status", regexp.MustCompile("active|disabled|pending")),
 					resource.TestCheckResourceAttrSet(name, "flags"),
 					resource.TestCheckResourceAttrSet(name, "algorithm"),
@@ -44,7 +45,7 @@ func TestAccCloudflareZoneDNSSEC_Import(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"status"},
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
-					resource.TestCheckResourceAttrSet(name, "zone_id"),
+					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
 					resource.TestMatchResourceAttr(name, "status", regexp.MustCompile("active|disabled|pending")),
 					resource.TestCheckResourceAttrSet(name, "flags"),
 					resource.TestCheckResourceAttrSet(name, "algorithm"),

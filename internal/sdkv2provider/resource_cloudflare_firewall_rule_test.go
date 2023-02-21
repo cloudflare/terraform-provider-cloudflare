@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -61,7 +62,7 @@ func TestAccFirewallRuleSimple(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "action", "allow"),
 					resource.TestCheckResourceAttr(name, "priority", "1"),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 				),
 			},
 		},
@@ -106,7 +107,7 @@ func TestAccFirewallRuleBypass(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "action", "bypass"),
 					resource.TestCheckResourceAttr(name, "priority", "2"),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "products.#", "2"),
 				),
 			},
@@ -153,7 +154,7 @@ func TestAccFirewallRuleWithUnicodeAndHTMLEntity(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "action", "allow"),
 					resource.TestCheckResourceAttr(name, "priority", "1"),
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 				),
 				ExpectNonEmptyPlan: false,
 			},
