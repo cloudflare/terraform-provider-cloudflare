@@ -150,6 +150,12 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		},
 		Description: "Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs.",
 	},
+	"untrusted_cert": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesUntrustedCertActionValues(), false),
+		Optional:     true,
+		Description:  "Action to be taken when the SSL certificate of upstream is invalid. Options are pass_through, block, and error",
+	},
 }
 
 var egressSettings = map[string]*schema.Schema{

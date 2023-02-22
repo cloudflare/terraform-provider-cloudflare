@@ -46,6 +46,7 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rule_settings.0.insecure_disable_dnssec_validation", "false"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv4", "203.0.113.1"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv6", "2001:db8::/32"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.untrusted_cert.0.action", "error"),
 				),
 			},
 		},
@@ -69,6 +70,9 @@ resource "cloudflare_teams_rule" "%[1]s" {
 	egress {
 		ipv4 = "203.0.113.1"
 		ipv6 = "2001:db8::/32"
+	}
+	untrusted_cert {
+		action = "error"
 	}
   }
 }

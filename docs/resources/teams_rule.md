@@ -66,6 +66,7 @@ Optional:
 - `l4override` (Block List, Max: 1) Settings to forward layer 4 traffic. (see [below for nested schema](#nestedblock--rule_settings--l4override))
 - `override_host` (String) The host to override matching DNS queries with.
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
+- `untrusted_cert` (Block List, Max: 1) Settings for untrusted certificate behavior. (see [below for nested schema](#nestedblock--rule_settings--untrusted_cert))
 
 <a id="nestedblock--rule_settings--biso_admin_controls"></a>
 ### Nested Schema for `rule_settings.biso_admin_controls`
@@ -108,6 +109,13 @@ Required:
 
 - `ip` (String) Override IP to forward traffic to.
 - `port` (Number) Override Port to forward traffic to.
+
+<a id="nestedblock--rule_settings--untrusted_cert"></a>
+### Nested Schema for `rule_settings.untrusted_Cert`
+
+Required:
+
+- `action` (String) Action to take when the SSL certificate of upstream is invalid. Options are pass_through, block, and error
 
 ## Import
 

@@ -207,6 +207,7 @@ func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interfac
 		"add_headers":                        flattenTeamsAddHeaders(settings.AddHeaders),
 		"insecure_disable_dnssec_validation": settings.InsecureDisableDNSSECValidation,
 		"egress":                             flattenTeamsEgressSettings(settings.EgressSettings),
+		"untrusted_cert":                     settings.UntrustedCertSettings,
 	}}
 }
 

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_cloudflare_teams_rules: Add untrusted_cert setting to teams rules settings
+```
