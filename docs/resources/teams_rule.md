@@ -32,7 +32,7 @@ resource "cloudflare_teams_rule" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `action` (String) The action executed by matched teams rule. Available values: `allow`, `block`, `safesearch`, `ytrestricted`, `on`, `off`, `scan`, `noscan`, `isolate`, `noisolate`, `override`, `l4_override`, `egress`.
+- `action` (String) The action executed by matched teams rule. Available values: `allow`(dns|http|l4), `block`(dns|http|l4), `safesearch`(dns), `ytrestricted`(dns), `on`(http), `off`(http), `scan`(http), `noscan`(http), `isolate`(http), `noisolate`(http), `override`(dns), `l4_override`(l4), `egress`(egress), `audit_ssh`(l4).
 - `description` (String) The description of the teams rule.
 - `name` (String) The name of the teams rule.
 - `precedence` (Number) The evaluation precedence of the teams rule.
