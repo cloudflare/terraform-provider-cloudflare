@@ -91,15 +91,15 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Computed:            true,
+							Optional:            true,
 							MarkdownDescription: "Unique rule identifier.",
 						},
 						"version": schema.StringAttribute{
-							Computed:            true,
+							Optional:            true,
 							MarkdownDescription: "Version of the ruleset to deploy.",
 						},
 						"ref": schema.StringAttribute{
-							Computed:            true,
+							Optional:            true,
 							MarkdownDescription: "Rule reference.",
 						},
 						"enabled": schema.BoolAttribute{

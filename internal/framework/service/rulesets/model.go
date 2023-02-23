@@ -15,75 +15,75 @@ type RulesetResourceModel struct {
 }
 
 type RulesModel struct {
-	Action                 types.String                 `tfsdk:"action"`
-	ActionParameters       *ActionParametersModel       `tfsdk:"action_parameters"`
-	Description            types.String                 `tfsdk:"description"`
-	Enabled                types.Bool                   `tfsdk:"enabled"`
-	ExposedCredentialCheck *ExposedCredentialCheckModel `tfsdk:"exposed_credential_check"`
-	Expression             types.String                 `tfsdk:"expression"`
-	ID                     types.String                 `tfsdk:"id"`
-	LastUpdated            types.String                 `tfsdk:"last_updated"`
-	Logging                *LoggingModel                `tfsdk:"logging"`
-	Ratelimit              *RatelimitModel              `tfsdk:"ratelimit"`
-	Ref                    types.String                 `tfsdk:"ref"`
-	Version                types.String                 `tfsdk:"version"`
+	Action                 types.String                   `tfsdk:"action"`
+	ActionParameters       []*ActionParametersModel       `tfsdk:"action_parameters"`
+	Description            types.String                   `tfsdk:"description"`
+	Enabled                types.Bool                     `tfsdk:"enabled"`
+	ExposedCredentialCheck []*ExposedCredentialCheckModel `tfsdk:"exposed_credential_check"`
+	Expression             types.String                   `tfsdk:"expression"`
+	ID                     types.String                   `tfsdk:"id"`
+	LastUpdated            types.String                   `tfsdk:"last_updated"`
+	Logging                []*LoggingModel                `tfsdk:"logging"`
+	Ratelimit              []*RatelimitModel              `tfsdk:"ratelimit"`
+	Ref                    types.String                   `tfsdk:"ref"`
+	Version                types.String                   `tfsdk:"version"`
 }
 
 type ActionParametersModel struct {
-	AutomaticHTTPSRewrites  types.Bool                        `tfsdk:"automatic_https_rewrites"`
-	AutoMinify              *ActionParameterAutoMinifyModel   `tfsdk:"autominify"`
-	BIC                     types.Bool                        `tfsdk:"bic"`
-	BrowserTTL              *ActionParameterBrowserTTLModel   `tfsdk:"browser_ttl"`
-	Cache                   types.Bool                        `tfsdk:"cache"`
-	CacheKey                *ActionParameterCacheKeyModel     `tfsdk:"cache_key"`
-	Content                 types.String                      `tfsdk:"content"`
-	ContentType             types.String                      `tfsdk:"content_type"`
-	CookieFields            types.Set                         `tfsdk:"cookie_fields"`
-	DisableApps             types.Bool                        `tfsdk:"disable_apps"`
-	DisableRailgun          types.Bool                        `tfsdk:"disable_railgun"`
-	DisableZaraz            types.Bool                        `tfsdk:"disable_zaraz"`
-	EdgeTTL                 *ActionParameterEdgeTTLModel      `tfsdk:"edge_ttl"`
-	EmailObfuscation        types.Bool                        `tfsdk:"email_obfuscation"`
-	FromList                *ActionParameterFromListModel     `tfsdk:"from_list"`
-	FromValue               *ActionParameterFromValueModel    `tfsdk:"from_value"`
-	Headers                 *ActionParametersHeadersModel     `tfsdk:"headers"`
-	HostHeader              types.String                      `tfsdk:"host_header"`
-	HotlinkProtection       types.Bool                        `tfsdk:"hotlink_protection"`
-	ID                      types.String                      `tfsdk:"id"`
-	Increment               types.Int64                       `tfsdk:"increment"`
-	MatchedData             *ActionParametersMatchedDataModel `tfsdk:"matched_data"`
-	Mirage                  types.Bool                        `tfsdk:"mirage"`
-	OpportunisticEncryption types.Bool                        `tfsdk:"opportunistic_encryption"`
-	Origin                  *ActionParameterOriginModel       `tfsdk:"origin"`
-	Overrides               *ActionParameterOverridesModel    `tfsdk:"overrides"`
-	Phases                  types.Set                         `tfsdk:"phases"`
-	Polish                  types.String                      `tfsdk:"polish"`
-	Products                types.Set                         `tfsdk:"products"`
-	RequestFields           types.Set                         `tfsdk:"request_fields"`
-	RespectStrongEtags      types.Bool                        `tfsdk:"respect_strong_etags"`
-	Response                *ActionParameterResponseModel     `tfsdk:"response"`
-	ResponseFields          types.Set                         `tfsdk:"response_fields"`
-	RocketLoader            types.Bool                        `tfsdk:"rocket_loader"`
-	Rules                   types.Map                         `tfsdk:"rules"`
-	Ruleset                 types.String                      `tfsdk:"ruleset"`
-	Rulesets                types.Set                         `tfsdk:"rulesets"`
-	SecurityLevel           types.String                      `tfsdk:"security_level"`
-	ServerSideExcludes      types.Bool                        `tfsdk:"server_side_excludes"`
-	ServeStale              *ActionParameterServeStaleModel   `tfsdk:"serve_stale"`
-	SNI                     *ActionParameterSNIModel          `tfsdk:"sni"`
-	SSL                     types.String                      `tfsdk:"ssl"`
-	StatusCode              types.Int64                       `tfsdk:"status_code"`
-	SXG                     types.Bool                        `tfsdk:"sxg"`
-	URI                     *ActionParametersURIModel         `tfsdk:"uri"`
-	Version                 types.String                      `tfsdk:"version"`
+	AutomaticHTTPSRewrites  types.Bool                          `tfsdk:"automatic_https_rewrites"`
+	AutoMinify              []*ActionParameterAutoMinifyModel   `tfsdk:"autominify"`
+	BIC                     types.Bool                          `tfsdk:"bic"`
+	BrowserTTL              []*ActionParameterBrowserTTLModel   `tfsdk:"browser_ttl"`
+	Cache                   types.Bool                          `tfsdk:"cache"`
+	CacheKey                []*ActionParameterCacheKeyModel     `tfsdk:"cache_key"`
+	Content                 types.String                        `tfsdk:"content"`
+	ContentType             types.String                        `tfsdk:"content_type"`
+	CookieFields            types.Set                           `tfsdk:"cookie_fields"`
+	DisableApps             types.Bool                          `tfsdk:"disable_apps"`
+	DisableRailgun          types.Bool                          `tfsdk:"disable_railgun"`
+	DisableZaraz            types.Bool                          `tfsdk:"disable_zaraz"`
+	EdgeTTL                 []*ActionParameterEdgeTTLModel      `tfsdk:"edge_ttl"`
+	EmailObfuscation        types.Bool                          `tfsdk:"email_obfuscation"`
+	FromList                []*ActionParameterFromListModel     `tfsdk:"from_list"`
+	FromValue               []*ActionParameterFromValueModel    `tfsdk:"from_value"`
+	Headers                 []*ActionParametersHeadersModel     `tfsdk:"headers"`
+	HostHeader              types.String                        `tfsdk:"host_header"`
+	HotlinkProtection       types.Bool                          `tfsdk:"hotlink_protection"`
+	ID                      types.String                        `tfsdk:"id"`
+	Increment               types.Int64                         `tfsdk:"increment"`
+	MatchedData             []*ActionParametersMatchedDataModel `tfsdk:"matched_data"`
+	Mirage                  types.Bool                          `tfsdk:"mirage"`
+	OpportunisticEncryption types.Bool                          `tfsdk:"opportunistic_encryption"`
+	Origin                  []*ActionParameterOriginModel       `tfsdk:"origin"`
+	Overrides               []*ActionParameterOverridesModel    `tfsdk:"overrides"`
+	Phases                  types.Set                           `tfsdk:"phases"`
+	Polish                  types.String                        `tfsdk:"polish"`
+	Products                types.Set                           `tfsdk:"products"`
+	RequestFields           types.Set                           `tfsdk:"request_fields"`
+	RespectStrongEtags      types.Bool                          `tfsdk:"respect_strong_etags"`
+	Response                []*ActionParameterResponseModel     `tfsdk:"response"`
+	ResponseFields          types.Set                           `tfsdk:"response_fields"`
+	RocketLoader            types.Bool                          `tfsdk:"rocket_loader"`
+	Rules                   types.Map                           `tfsdk:"rules"`
+	Ruleset                 types.String                        `tfsdk:"ruleset"`
+	Rulesets                types.Set                           `tfsdk:"rulesets"`
+	SecurityLevel           types.String                        `tfsdk:"security_level"`
+	ServerSideExcludes      types.Bool                          `tfsdk:"server_side_excludes"`
+	ServeStale              []*ActionParameterServeStaleModel   `tfsdk:"serve_stale"`
+	SNI                     []*ActionParameterSNIModel          `tfsdk:"sni"`
+	SSL                     types.String                        `tfsdk:"ssl"`
+	StatusCode              types.Int64                         `tfsdk:"status_code"`
+	SXG                     types.Bool                          `tfsdk:"sxg"`
+	URI                     []*ActionParametersURIModel         `tfsdk:"uri"`
+	Version                 types.String                        `tfsdk:"version"`
 }
 
 type ActionParameterOverridesModel struct {
-	Enabled          types.Bool                               `tfsdk:"enabled"`
-	Action           types.String                             `tfsdk:"action"`
-	SensitivityLevel types.String                             `tfsdk:"sensitivity_level"`
-	Categories       *ActionParameterOverridesCategoriesModel `tfsdk:"categories"`
-	Rules            *ActionParameterOverridesRulesModel      `tfsdk:"rules"`
+	Enabled          types.Bool                                 `tfsdk:"enabled"`
+	Action           types.String                               `tfsdk:"action"`
+	SensitivityLevel types.String                               `tfsdk:"sensitivity_level"`
+	Categories       []*ActionParameterOverridesCategoriesModel `tfsdk:"categories"`
+	Rules            []*ActionParameterOverridesRulesModel      `tfsdk:"rules"`
 }
 
 type ActionParameterOverridesCategoriesModel struct {
@@ -110,9 +110,9 @@ type ActionParameterSNIModel struct {
 }
 
 type ActionParametersURIModel struct {
-	Path   *ActionParametersURIPartModel `tfsdk:"path"`
-	Query  *ActionParametersURIPartModel `tfsdk:"query"`
-	Origin types.Bool                    `tfsdk:"origin"`
+	Path   []*ActionParametersURIPartModel `tfsdk:"path"`
+	Query  []*ActionParametersURIPartModel `tfsdk:"query"`
+	Origin types.Bool                      `tfsdk:"origin"`
 }
 
 type ActionParametersURIPartModel struct {
@@ -144,15 +144,15 @@ type ActionParameterAutoMinifyModel struct {
 }
 
 type ActionParameterEdgeTTLModel struct {
-	Mode          types.String                              `tfsdk:"mode"`
-	Default       types.Int64                               `tfsdk:"default"`
-	StatusCodeTTL *ActionParameterEdgeTTLStatusCodeTTLModel `tfsdk:"status_code_ttl"`
+	Mode          types.String                                `tfsdk:"mode"`
+	Default       types.Int64                                 `tfsdk:"default"`
+	StatusCodeTTL []*ActionParameterEdgeTTLStatusCodeTTLModel `tfsdk:"status_code_ttl"`
 }
 
 type ActionParameterEdgeTTLStatusCodeTTLModel struct {
-	StatusCode      types.Int64                                              `tfsdk:"status_code"`
-	Value           types.Int64                                              `tfsdk:"value"`
-	StatusCodeRange *ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel `tfsdk:"status_code_range"`
+	StatusCode      types.Int64                                                `tfsdk:"status_code"`
+	Value           types.Int64                                                `tfsdk:"value"`
+	StatusCodeRange []*ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel `tfsdk:"status_code_range"`
 }
 
 type ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel struct {
@@ -170,18 +170,18 @@ type ActionParameterServeStaleModel struct {
 }
 
 type ActionParameterCacheKeyModel struct {
-	CacheByDeviceType       types.Bool                             `tfsdk:"cache_by_device_type"`
-	IgnoreQueryStringsOrder types.Bool                             `tfsdk:"ignore_query_strings_order"`
-	CacheDeceptionArmor     types.Bool                             `tfsdk:"cache_deception_armor"`
-	CustomKey               *ActionParameterCacheKeyCustomKeyModel `tfsdk:"custom_key"`
+	CacheByDeviceType       types.Bool                               `tfsdk:"cache_by_device_type"`
+	IgnoreQueryStringsOrder types.Bool                               `tfsdk:"ignore_query_strings_order"`
+	CacheDeceptionArmor     types.Bool                               `tfsdk:"cache_deception_armor"`
+	CustomKey               []*ActionParameterCacheKeyCustomKeyModel `tfsdk:"custom_key"`
 }
 
 type ActionParameterCacheKeyCustomKeyModel struct {
-	QueryString *ActionParameterCacheKeyCustomKeyQueryStringModel `tfsdk:"query_string"`
-	Header      *ActionParameterCacheKeyCustomKeyHeaderModel      `tfsdk:"header"`
-	Cookie      *ActionParameterCacheKeyCustomKeyCookieModel      `tfsdk:"cookie"`
-	User        *ActionParameterCacheKeyCustomKeyUserModel        `tfsdk:"user"`
-	Host        *ActionParameterCacheKeyCustomKeyHostModel        `tfsdk:"host"`
+	QueryString []*ActionParameterCacheKeyCustomKeyQueryStringModel `tfsdk:"query_string"`
+	Header      []*ActionParameterCacheKeyCustomKeyHeaderModel      `tfsdk:"header"`
+	Cookie      []*ActionParameterCacheKeyCustomKeyCookieModel      `tfsdk:"cookie"`
+	User        []*ActionParameterCacheKeyCustomKeyUserModel        `tfsdk:"user"`
+	Host        []*ActionParameterCacheKeyCustomKeyHostModel        `tfsdk:"host"`
 }
 
 type ActionParameterCacheKeyCustomKeyQueryStringModel struct {
@@ -216,9 +216,9 @@ type ActionParameterFromListModel struct {
 }
 
 type ActionParameterFromValueModel struct {
-	StatusCode          types.Int64                             `tfsdk:"status_code"`
-	PreserveQueryString types.Bool                              `tfsdk:"preserve_query_string"`
-	TargetURL           *ActionParameterFromValueTargetURLModel `tfsdk:"target_url"`
+	StatusCode          types.Int64                               `tfsdk:"status_code"`
+	PreserveQueryString types.Bool                                `tfsdk:"preserve_query_string"`
+	TargetURL           []*ActionParameterFromValueTargetURLModel `tfsdk:"target_url"`
 }
 
 type ActionParameterFromValueTargetURLModel struct {
