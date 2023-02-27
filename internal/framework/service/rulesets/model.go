@@ -56,26 +56,26 @@ type ActionParametersModel struct {
 	OpportunisticEncryption types.Bool                          `tfsdk:"opportunistic_encryption"`
 	Origin                  []*ActionParameterOriginModel       `tfsdk:"origin"`
 	Overrides               []*ActionParameterOverridesModel    `tfsdk:"overrides"`
-	Phases                  types.Set                           `tfsdk:"phases"`
-	Polish                  types.String                        `tfsdk:"polish"`
-	Products                types.Set                           `tfsdk:"products"`
-	RequestFields           types.Set                           `tfsdk:"request_fields"`
-	RespectStrongEtags      types.Bool                          `tfsdk:"respect_strong_etags"`
-	Response                []*ActionParameterResponseModel     `tfsdk:"response"`
-	ResponseFields          types.Set                           `tfsdk:"response_fields"`
-	RocketLoader            types.Bool                          `tfsdk:"rocket_loader"`
-	Rules                   types.Map                           `tfsdk:"rules"`
-	Ruleset                 types.String                        `tfsdk:"ruleset"`
-	Rulesets                types.Set                           `tfsdk:"rulesets"`
-	SecurityLevel           types.String                        `tfsdk:"security_level"`
-	ServerSideExcludes      types.Bool                          `tfsdk:"server_side_excludes"`
-	ServeStale              []*ActionParameterServeStaleModel   `tfsdk:"serve_stale"`
-	SNI                     []*ActionParameterSNIModel          `tfsdk:"sni"`
-	SSL                     types.String                        `tfsdk:"ssl"`
-	StatusCode              types.Int64                         `tfsdk:"status_code"`
-	SXG                     types.Bool                          `tfsdk:"sxg"`
-	URI                     []*ActionParametersURIModel         `tfsdk:"uri"`
-	Version                 types.String                        `tfsdk:"version"`
+	// Phases                  types.Set                           `tfsdk:"phases"`
+	Polish types.String `tfsdk:"polish"`
+	// Products                types.Set                           `tfsdk:"products"`
+	// RequestFields           types.Set                           `tfsdk:"request_fields"`
+	RespectStrongEtags types.Bool                      `tfsdk:"respect_strong_etags"`
+	Response           []*ActionParameterResponseModel `tfsdk:"response"`
+	// ResponseFields          types.Set                           `tfsdk:"response_fields"`
+	RocketLoader types.Bool `tfsdk:"rocket_loader"`
+	// Rules        types.Map    `tfsdk:"rules"`
+	Ruleset types.String `tfsdk:"ruleset"`
+	// Rulesets           types.Set                         `tfsdk:"rulesets"`
+	SecurityLevel      types.String                      `tfsdk:"security_level"`
+	ServerSideExcludes types.Bool                        `tfsdk:"server_side_excludes"`
+	ServeStale         []*ActionParameterServeStaleModel `tfsdk:"serve_stale"`
+	SNI                []*ActionParameterSNIModel        `tfsdk:"sni"`
+	SSL                types.String                      `tfsdk:"ssl"`
+	StatusCode         types.Int64                       `tfsdk:"status_code"`
+	SXG                types.Bool                        `tfsdk:"sxg"`
+	URI                []*ActionParametersURIModel       `tfsdk:"uri"`
+	Version            types.String                      `tfsdk:"version"`
 }
 
 type ActionParameterOverridesModel struct {

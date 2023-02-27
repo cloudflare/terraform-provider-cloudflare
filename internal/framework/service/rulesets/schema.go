@@ -36,6 +36,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 			consts.IDSchemaKey: schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: consts.IDSchemaDescription,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				MarkdownDescription: "The account identifier to target for the resource.",
@@ -81,6 +84,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Required: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetPhaseValues()...),
+				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 				MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
 			},
@@ -196,52 +202,52 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Turn on or off the Cloudflare Opportunistic Encryption feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.",
 									},
-									"phases": schema.SetAttribute{
-										ElementType:         types.StringType,
-										Optional:            true,
-										MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
-									},
+									// "phases": schema.SetAttribute{
+									// 	ElementType:         types.StringType,
+									// 	Optional:            true,
+									// 	MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
+									// },
 									"polish": schema.StringAttribute{
 										Optional:            true,
 										MarkdownDescription: "Apply options from the Polish feature of the Cloudflare Speed app.",
 									},
-									"products": schema.SetAttribute{
-										ElementType:         types.StringType,
-										Optional:            true,
-										MarkdownDescription: fmt.Sprintf("Products to target with the actions. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetActionParameterProductValues())),
-									},
-									"request_fields": schema.SetAttribute{
-										ElementType:         types.StringType,
-										Optional:            true,
-										MarkdownDescription: "List of request headers to include as part of custom fields logging, in lowercase.",
-									},
+									// "products": schema.SetAttribute{
+									// 	ElementType:         types.StringType,
+									// 	Optional:            true,
+									// 	MarkdownDescription: fmt.Sprintf("Products to target with the actions. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetActionParameterProductValues())),
+									// },
+									// "request_fields": schema.SetAttribute{
+									// 	ElementType:         types.StringType,
+									// 	Optional:            true,
+									// 	MarkdownDescription: "List of request headers to include as part of custom fields logging, in lowercase.",
+									// },
 									"respect_strong_etags": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Respect strong ETags.",
 									},
-									"response_fields": schema.SetAttribute{
-										ElementType:         types.StringType,
-										Optional:            true,
-										MarkdownDescription: "List of response headers to include as part of custom fields logging, in lowercase.",
-									},
+									// "response_fields": schema.SetAttribute{
+									// 	ElementType:         types.StringType,
+									// 	Optional:            true,
+									// 	MarkdownDescription: "List of response headers to include as part of custom fields logging, in lowercase.",
+									// },
 									"rocket_loader": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Turn on or off Cloudflare Rocket Loader in the Cloudflare Speed app.",
 									},
-									"rules": schema.MapAttribute{
-										ElementType:         types.StringType,
-										Optional:            true,
-										MarkdownDescription: "Map of managed WAF rule ID to comma-delimited string of ruleset rule IDs. Example: `rules = { \"efb7b8c949ac4650a09736fc376e9aee\" = \"5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760\" }`.",
-									},
+									// "rules": schema.MapAttribute{
+									// 	ElementType:         types.StringType,
+									// 	Optional:            true,
+									// 	MarkdownDescription: "Map of managed WAF rule ID to comma-delimited string of ruleset rule IDs. Example: `rules = { \"efb7b8c949ac4650a09736fc376e9aee\" = \"5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760\" }`.",
+									// },
 									"ruleset": schema.StringAttribute{
 										Optional:            true,
 										MarkdownDescription: "Which ruleset ID to target.",
 									},
-									"rulesets": schema.SetAttribute{
-										ElementType:         types.StringType,
-										Optional:            true,
-										MarkdownDescription: "List of managed WAF rule IDs to target. Only valid when the `\"action\"` is set to skip.",
-									},
+									// "rulesets": schema.SetAttribute{
+									// 	ElementType:         types.StringType,
+									// 	Optional:            true,
+									// 	MarkdownDescription: "List of managed WAF rule IDs to target. Only valid when the `\"action\"` is set to skip.",
+									// },
 									"security_level": schema.StringAttribute{
 										Optional:            true,
 										MarkdownDescription: "Control options for the Security Level feature from the Security app.",

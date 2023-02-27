@@ -4,18 +4,24 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 const (
 	accountLevelRulesetDeleteURL = "https://api.cloudflare.com/#account-rulesets-delete-account-ruleset"
 	zoneLevelRulesetDeleteURL    = "https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset"
-	duplicateRulesetError        = "failed to create ruleset %q as a similar configuration with rules already exists and overwriting will have unintended consequences. If you are migrating from the Dashboard, you will need to first remove the existing rules otherwise you can remove the existing phase yourself using the API (%s)."
+	duplicateRulesetError        = "A similar configuration with rules already exists and overwriting will have unintended consequences. If you are migrating from the Dashboard, you will need to first remove the existing rules otherwise you can remove the existing phase yourself using the API (%s)."
 )
 
 var _ resource.Resource = &RulesetResource{}
@@ -42,8 +48,8 @@ func (r *RulesetResource) Configure(ctx context.Context, req resource.ConfigureR
 
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			"unexpected resource configure yype",
+			fmt.Sprintf("expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -68,7 +74,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	var ruleset cloudflare.Ruleset
 	var sempahoreErr error
 
-	if !accountID.IsNull() || accountID.ValueString() != "" {
+	if accountID.ValueString() != "" {
 		ruleset, sempahoreErr = r.client.GetAccountRulesetPhase(ctx, accountID.ValueString(), rulesetPhase)
 	} else {
 		ruleset, sempahoreErr = r.client.GetZoneRulesetPhase(ctx, zoneID.ValueString(), rulesetPhase)
@@ -80,8 +86,8 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 			deleteRulesetURL = zoneLevelRulesetDeleteURL
 		}
 		resp.Diagnostics.AddError(
-			fmt.Sprintf(duplicateRulesetError, rulesetPhase, deleteRulesetURL),
-			fmt.Sprintf(duplicateRulesetError, rulesetPhase, deleteRulesetURL),
+			fmt.Sprintf("failed to create ruleset %q", rulesetPhase),
+			fmt.Sprintf(duplicateRulesetError, deleteRulesetURL),
 		)
 		return
 	}
@@ -96,16 +102,16 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		Phase:       rulesetPhase,
 	}
 
-	rules := data.toRulesetRules()
+	rulesetData := data.toRuleset()
 
-	if len(rules) > 0 {
-		rs.Rules = rules
+	if len(rulesetData.Rules) > 0 {
+		rs.Rules = rulesetData.Rules
 	}
 
 	if sempahoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
 		tflog.Debug(ctx, "default ruleset created by the UI with empty rules found, recreating from scratch")
 		var deleteRulesetErr error
-		if !accountID.IsNull() || accountID.ValueString() != "" {
+		if accountID.ValueString() != "" {
 			deleteRulesetErr = r.client.DeleteAccountRuleset(ctx, accountID.ValueString(), ruleset.ID)
 		} else {
 			deleteRulesetErr = r.client.DeleteZoneRuleset(ctx, zoneID.ValueString(), ruleset.ID)
@@ -118,7 +124,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	var rulesetCreateErr error
-	if !accountID.IsNull() || accountID.ValueString() != "" {
+	if accountID.ValueString() != "" {
 		ruleset, rulesetCreateErr = r.client.CreateAccountRuleset(ctx, accountID.ValueString(), rs)
 	} else {
 		ruleset, rulesetCreateErr = r.client.CreateZoneRuleset(ctx, zoneID.ValueString(), rs)
@@ -131,14 +137,14 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 
 	rulesetEntryPoint := cloudflare.Ruleset{
 		Description: rulesetDescription,
-		Rules:       rules,
+		Rules:       rulesetData.Rules,
 	}
 
 	var err error
 	// For "custom" rulesets, we don't send a follow up PUT it to the entrypoint
 	// endpoint.
 	if rulesetKind != string(cloudflare.RulesetKindCustom) {
-		if !accountID.IsNull() || accountID.ValueString() != "" {
+		if accountID.ValueString() != "" {
 			_, err = r.client.UpdateAccountRulesetPhase(ctx, accountID.ValueString(), rulesetPhase, rulesetEntryPoint)
 		} else {
 			_, err = r.client.UpdateZoneRulesetPhase(ctx, zoneID.ValueString(), rulesetPhase, rulesetEntryPoint)
@@ -148,6 +154,12 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 			resp.Diagnostics.AddError(fmt.Sprintf("error updating ruleset phase entrypoint %s", rulesetName), err.Error())
 			return
 		}
+	}
+
+	if zoneID.ValueString() != "" {
+		data.ZoneID = types.StringValue(zoneID.ValueString())
+	} else {
+		data.AccountID = types.StringValue(accountID.ValueString())
 	}
 
 	data.ID = types.StringValue(ruleset.ID)
@@ -165,14 +177,14 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	accountID := data.AccountID
-	zoneID := data.ZoneID.ValueString()
+	zoneID := data.ZoneID
 	var err error
 	var ruleset cloudflare.Ruleset
 
-	if !accountID.IsNull() || accountID.ValueString() != "" {
+	if accountID.ValueString() != "" {
 		ruleset, err = r.client.GetAccountRuleset(ctx, accountID.ValueString(), data.ID.ValueString())
 	} else {
-		ruleset, err = r.client.GetZoneRuleset(ctx, zoneID, data.ID.ValueString())
+		ruleset, err = r.client.GetZoneRuleset(ctx, zoneID.ValueString(), data.ID.ValueString())
 	}
 
 	if err != nil {
@@ -190,10 +202,7 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	// set updated ruleset with the tfsdk model
-	tflog.Debug(ctx, "ruleset", map[string]interface{}{"id": ruleset.ID})
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, toRulesetResourceModel(zoneID, accountID, ruleset))...)
 }
 
 func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -212,15 +221,15 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 	accountID := plan.AccountID
 	zoneID := plan.ZoneID.ValueString()
 
-	rules := plan.toRulesetRules()
+	ruleset := plan.toRuleset()
 
 	var err error
 	var rs cloudflare.Ruleset
 	description := plan.Description.ValueString()
-	if !accountID.IsNull() || accountID.ValueString() != "" {
-		rs, err = r.client.UpdateAccountRuleset(ctx, accountID.ValueString(), state.ID.ValueString(), description, rules)
+	if accountID.ValueString() != "" {
+		rs, err = r.client.UpdateAccountRuleset(ctx, accountID.ValueString(), state.ID.ValueString(), description, ruleset.Rules)
 	} else {
-		rs, err = r.client.UpdateZoneRuleset(ctx, zoneID, state.ID.ValueString(), description, rules)
+		rs, err = r.client.UpdateZoneRuleset(ctx, zoneID, state.ID.ValueString(), description, ruleset.Rules)
 	}
 
 	if err != nil {
@@ -244,7 +253,7 @@ func (r *RulesetResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 	var err error
 
-	if !accountID.IsNull() || accountID.ValueString() != "" {
+	if accountID.ValueString() != "" {
 		err = r.client.DeleteAccountRuleset(ctx, accountID.ValueString(), data.ID.ValueString())
 	} else {
 		err = r.client.DeleteZoneRuleset(ctx, zoneID.ValueString(), data.ID.ValueString())
@@ -257,12 +266,112 @@ func (r *RulesetResource) Delete(ctx context.Context, req resource.DeleteRequest
 }
 
 func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	idParts := strings.Split(req.ID, "/")
+	resourceLevel, resourceIdentifier, rulesetID := idParts[0], idParts[1], idParts[2]
+
+	if len(idParts) != 3 || resourceLevel == "" || resourceIdentifier == "" || rulesetID == "" {
+		resp.Diagnostics.AddError(
+			"invalid import identifier",
+			fmt.Sprintf("expected import identifier to be resourceLevel/resourceIdentifier/rulesetID. got: %q", req.ID),
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), rulesetID)...)
+	if resourceLevel == "zone" {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("zone_id"), resourceIdentifier)...)
+	} else {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("account_id"), resourceIdentifier)...)
+	}
 }
 
-func (r *RulesetResourceModel) toRulesetRules() []cloudflare.RulesetRule {
+func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudflare.Ruleset) *RulesetResourceModel {
+	data := RulesetResourceModel{
+		ID:          types.StringValue(in.ID),
+		Description: types.StringValue(in.Description),
+		Name:        types.StringValue(in.Name),
+		Kind:        types.StringValue(in.Kind),
+		Phase:       types.StringValue(in.Phase),
+	}
+
+	var rules []*RulesModel
+	for _, inRule := range in.Rules {
+		var rule RulesModel
+
+		rule.Action = types.StringValue(inRule.Action)
+		rule.Expression = types.StringValue(inRule.Expression)
+		rule.Description = types.StringValue(inRule.Description)
+		rule.Enabled = types.BoolValue(inRule.Enabled)
+
+		// action_parameters
+		if !reflect.ValueOf(inRule.ActionParameters).IsNil() {
+			rule.ActionParameters = append(rule.ActionParameters, &ActionParametersModel{
+				Response: []*ActionParameterResponseModel{{
+					StatusCode:  types.Int64Value(int64(inRule.ActionParameters.Response.StatusCode)),
+					ContentType: types.StringValue(inRule.ActionParameters.Response.ContentType),
+					Content:     types.StringValue(inRule.ActionParameters.Response.Content),
+				}},
+			})
+
+			var cookieFields []attr.Value
+			for _, s := range inRule.ActionParameters.CookieFields {
+				cookieFields = append(cookieFields, types.StringValue(s.Name))
+			}
+			rule.ActionParameters[0].CookieFields = flatteners.StringSet(cookieFields)
+		}
+
+		// ratelimit
+		if !reflect.ValueOf(inRule.RateLimit).IsNil() {
+			var rlCharacteristicsKeys []attr.Value
+			for _, s := range inRule.RateLimit.Characteristics {
+				rlCharacteristicsKeys = append(rlCharacteristicsKeys, types.StringValue(s))
+			}
+
+			rule.Ratelimit = append(rule.Ratelimit, &RatelimitModel{
+				Characteristics:   types.SetValueMust(types.StringType, rlCharacteristicsKeys),
+				Period:            types.Int64Value(int64(inRule.RateLimit.Period)),
+				RequestsPerPeriod: types.Int64Value(int64(inRule.RateLimit.RequestsPerPeriod)),
+				RequestsToOrigin:  types.BoolValue(inRule.RateLimit.RequestsToOrigin),
+				MitigationTimeout: types.Int64Value(int64(inRule.RateLimit.MitigationTimeout)),
+			})
+
+			if inRule.RateLimit.ScorePerPeriod > 0 {
+				rule.Ratelimit[0].ScorePerPeriod = types.Int64Value(int64(inRule.RateLimit.ScorePerPeriod))
+			}
+
+			if inRule.RateLimit.ScoreResponseHeaderName != "" {
+				rule.Ratelimit[0].ScoreResponseHeaderName = types.StringValue(inRule.RateLimit.ScoreResponseHeaderName)
+			}
+
+			if inRule.RateLimit.CountingExpression != "" {
+				rule.Ratelimit[0].CountingExpression = types.StringValue(inRule.RateLimit.CountingExpression)
+			}
+		}
+
+		// logging
+		if !reflect.ValueOf(inRule.Logging).IsNil() {
+			rule.Logging = append(rule.Logging, &LoggingModel{Enabled: types.BoolValue(*inRule.Logging.Enabled)})
+		}
+
+		rules = append(rules, &rule)
+	}
+
+	data.Rules = rules
+
+	if zoneID.ValueString() != "" {
+		data.ZoneID = types.StringValue(zoneID.ValueString())
+	} else {
+		data.AccountID = types.StringValue(accountID.ValueString())
+	}
+
+	return &data
+}
+
+func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
+	var rs cloudflare.Ruleset
 	var rules []cloudflare.RulesetRule
 
+	rs.ID = r.ID.ValueString()
 	for _, rule := range r.Rules {
 		newRule := cloudflare.RulesetRule{
 			ID:          rule.ID.ValueString(),
@@ -271,10 +380,8 @@ func (r *RulesetResourceModel) toRulesetRules() []cloudflare.RulesetRule {
 			Description: rule.Description.ValueString(),
 		}
 
-		if !rule.ID.IsNull() {
-			newRule.Enabled = cloudflare.BoolPtr(rule.Enabled.ValueBool())
-		} else {
-			newRule.Enabled = nil
+		if !rule.Enabled.IsNull() {
+			newRule.Enabled = rule.Enabled.ValueBool()
 		}
 
 		if !rule.ID.IsNull() {
@@ -289,15 +396,42 @@ func (r *RulesetResourceModel) toRulesetRules() []cloudflare.RulesetRule {
 			newRule.Version = rule.Version.ValueString()
 		}
 
-		for _, ap := range rule.ActionParameters {
+		for i, ap := range rule.ActionParameters {
+			response := cloudflare.RulesetRuleActionParametersBlockResponse{
+				ContentType: ap.Response[i].ContentType.ValueString(),
+				Content:     ap.Response[i].Content.ValueString(),
+				StatusCode:  uint16(ap.Response[i].StatusCode.ValueInt64()),
+			}
 			newRule.ActionParameters = &cloudflare.RulesetRuleActionParameters{
-				ID:      ap.ID.ValueString(),
-				Version: ap.Version.ValueString(),
+				ID:       ap.ID.ValueString(),
+				Version:  ap.Version.ValueString(),
+				Response: &response,
+			}
+
+			apCookieFields := expanders.StringSet(ap.CookieFields)
+			if len(apCookieFields) > 0 {
+				for _, cookie := range apCookieFields {
+					newRule.ActionParameters.CookieFields = append(newRule.ActionParameters.CookieFields, cloudflare.RulesetActionParametersLogCustomField{Name: cookie})
+				}
+			}
+		}
+
+		for _, rl := range rule.Ratelimit {
+			newRule.RateLimit = &cloudflare.RulesetRuleRateLimit{
+				Characteristics:         expanders.StringSet(rl.Characteristics),
+				Period:                  int(rl.Period.ValueInt64()),
+				RequestsPerPeriod:       int(rl.RequestsPerPeriod.ValueInt64()),
+				ScorePerPeriod:          int(rl.ScorePerPeriod.ValueInt64()),
+				ScoreResponseHeaderName: rl.ScoreResponseHeaderName.ValueString(),
+				MitigationTimeout:       int(rl.MitigationTimeout.ValueInt64()),
+				CountingExpression:      rl.CountingExpression.ValueString(),
+				RequestsToOrigin:        rl.RequestsToOrigin.ValueBool(),
 			}
 		}
 
 		rules = append(rules, newRule)
 	}
+	rs.Rules = rules
 
-	return rules
+	return rs
 }
