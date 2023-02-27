@@ -25,6 +25,8 @@ var defaultTemplateLanguages = []string{
 	"tr-TR",
 	"zh-CN",
 	"zh-TW",
+	"ru-RU",
+	"fa-IR",
 }
 var waitingRoomQueueingMethod = []string{
 	"fifo",
