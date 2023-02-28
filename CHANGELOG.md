@@ -1,5 +1,9 @@
 ## 4.1.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#2263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2263))
+
 ## 4.0.0 (February 21st, 2023)
 
 > **Warning** Prior to upgrading you should ensure you have adequate backups in the event you need to rollback to version 3. This is a major version bump and involves backwards incompatible changes.
