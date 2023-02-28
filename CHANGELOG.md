@@ -1,5 +1,9 @@
 ## 4.1.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_waiting_room: add 'ru-RU' and 'fa-IR' to default_template_language field ([#2262](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2262))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#2263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2263))
