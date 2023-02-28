@@ -48,6 +48,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
+		PathCookieAttribute:     cloudflare.BoolPtr(d.Get("path_cookie_attribute").(bool)),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
@@ -129,6 +130,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
 	d.Set("http_only_cookie_attribute", cloudflare.Bool(accessApplication.HttpOnlyCookieAttribute))
 	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
+	d.Set("path_cookie_attribute", accessApplication.PathCookieAttribute)
 	d.Set("skip_interstitial", accessApplication.SkipInterstitial)
 	d.Set("logo_url", accessApplication.LogoURL)
 	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
@@ -164,6 +166,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		CustomDenyURL:           d.Get("custom_deny_url").(string),
 		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
 		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
+		PathCookieAttribute:     cloudflare.BoolPtr(d.Get("path_cookie_attribute").(bool)),
 		LogoURL:                 d.Get("logo_url").(string),
 		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
