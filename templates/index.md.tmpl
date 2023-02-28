@@ -11,13 +11,6 @@ The Cloudflare provider is used to interact with resources supported by
 Cloudflare. The provider needs to be configured with the proper credentials
 before it can be used.
 
-
-!> The 4.x version of the provider is an early release candidate. It may contain
-bugs and backwards incompatible state modifications. **You should not use it in
-production you are clear on the ramifications and have a clear backup plan in
-the event of breakages.**<br><br>For production usage, the 3.x release is
-recommended using the `~> 3` provider version selector.
-
 ## Getting Started
 
 Try the [getting started tutorial](https://developers.cloudflare.com/terraform/tutorial/)
