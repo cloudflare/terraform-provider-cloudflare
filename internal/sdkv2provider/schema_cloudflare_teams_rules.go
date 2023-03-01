@@ -150,6 +150,23 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		},
 		Description: "Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs.",
 	},
+	"payload_log": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: payloadLogSettings,
+		},
+		Description: "Configure DLP Payload Logging settings for this rule.",
+	},
+}
+
+var payloadLogSettings = map[string]*schema.Schema{
+	"enabled": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Enable or disable DLP Payload Logging for this rule.",
+	},
 }
 
 var egressSettings = map[string]*schema.Schema{
