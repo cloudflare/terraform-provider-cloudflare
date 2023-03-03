@@ -15,6 +15,7 @@ type RulesetResourceModel struct {
 }
 
 type RulesModel struct {
+	// Version                types.String                   `tfsdk:"version"`
 	Action                 types.String                   `tfsdk:"action"`
 	ActionParameters       []*ActionParametersModel       `tfsdk:"action_parameters"`
 	Description            types.String                   `tfsdk:"description"`
@@ -26,10 +27,10 @@ type RulesModel struct {
 	Logging                []*LoggingModel                `tfsdk:"logging"`
 	Ratelimit              []*RatelimitModel              `tfsdk:"ratelimit"`
 	Ref                    types.String                   `tfsdk:"ref"`
-	Version                types.String                   `tfsdk:"version"`
 }
 
 type ActionParametersModel struct {
+	// Version                 types.String                        `tfsdk:"version"`
 	AutomaticHTTPSRewrites  types.Bool                          `tfsdk:"automatic_https_rewrites"`
 	AutoMinify              []*ActionParameterAutoMinifyModel   `tfsdk:"autominify"`
 	BIC                     types.Bool                          `tfsdk:"bic"`
@@ -55,27 +56,27 @@ type ActionParametersModel struct {
 	Mirage                  types.Bool                          `tfsdk:"mirage"`
 	OpportunisticEncryption types.Bool                          `tfsdk:"opportunistic_encryption"`
 	Origin                  []*ActionParameterOriginModel       `tfsdk:"origin"`
+	OriginErrorPagePassthru types.Bool                          `tfsdk:"origin_error_page_passthru"`
 	Overrides               []*ActionParameterOverridesModel    `tfsdk:"overrides"`
-	// Phases                  types.Set                           `tfsdk:"phases"`
-	Polish types.String `tfsdk:"polish"`
-	// Products                types.Set                           `tfsdk:"products"`
-	// RequestFields           types.Set                           `tfsdk:"request_fields"`
-	RespectStrongEtags types.Bool                      `tfsdk:"respect_strong_etags"`
-	Response           []*ActionParameterResponseModel `tfsdk:"response"`
-	// ResponseFields          types.Set                           `tfsdk:"response_fields"`
-	RocketLoader types.Bool `tfsdk:"rocket_loader"`
-	// Rules        types.Map    `tfsdk:"rules"`
-	Ruleset types.String `tfsdk:"ruleset"`
-	// Rulesets           types.Set                         `tfsdk:"rulesets"`
-	SecurityLevel      types.String                      `tfsdk:"security_level"`
-	ServerSideExcludes types.Bool                        `tfsdk:"server_side_excludes"`
-	ServeStale         []*ActionParameterServeStaleModel `tfsdk:"serve_stale"`
-	SNI                []*ActionParameterSNIModel        `tfsdk:"sni"`
-	SSL                types.String                      `tfsdk:"ssl"`
-	StatusCode         types.Int64                       `tfsdk:"status_code"`
-	SXG                types.Bool                        `tfsdk:"sxg"`
-	URI                []*ActionParametersURIModel       `tfsdk:"uri"`
-	Version            types.String                      `tfsdk:"version"`
+	Phases                  types.Set                           `tfsdk:"phases"`
+	Polish                  types.String                        `tfsdk:"polish"`
+	Products                types.Set                           `tfsdk:"products"`
+	RequestFields           types.Set                           `tfsdk:"request_fields"`
+	RespectStrongEtags      types.Bool                          `tfsdk:"respect_strong_etags"`
+	Response                []*ActionParameterResponseModel     `tfsdk:"response"`
+	ResponseFields          types.Set                           `tfsdk:"response_fields"`
+	RocketLoader            types.Bool                          `tfsdk:"rocket_loader"`
+	Rules                   map[string]types.String             `tfsdk:"rules"`
+	Ruleset                 types.String                        `tfsdk:"ruleset"`
+	Rulesets                types.Set                           `tfsdk:"rulesets"`
+	SecurityLevel           types.String                        `tfsdk:"security_level"`
+	ServerSideExcludes      types.Bool                          `tfsdk:"server_side_excludes"`
+	ServeStale              []*ActionParameterServeStaleModel   `tfsdk:"serve_stale"`
+	SNI                     []*ActionParameterSNIModel          `tfsdk:"sni"`
+	SSL                     types.String                        `tfsdk:"ssl"`
+	StatusCode              types.Int64                         `tfsdk:"status_code"`
+	SXG                     types.Bool                          `tfsdk:"sxg"`
+	URI                     []*ActionParametersURIModel         `tfsdk:"uri"`
 }
 
 type ActionParameterOverridesModel struct {
@@ -102,7 +103,7 @@ type ActionParameterOverridesRulesModel struct {
 
 type ActionParameterOriginModel struct {
 	Host types.String `tfsdk:"host"`
-	Port types.String `tfsdk:"port"`
+	Port types.Int64  `tfsdk:"port"`
 }
 
 type ActionParameterSNIModel struct {
@@ -117,7 +118,7 @@ type ActionParametersURIModel struct {
 
 type ActionParametersURIPartModel struct {
 	Value      types.String `tfsdk:"value"`
-	Expression types.List   `tfsdk:"expression"`
+	Expression types.String `tfsdk:"expression"`
 }
 
 type ActionParametersHeadersModel struct {
@@ -138,9 +139,9 @@ type ActionParameterResponseModel struct {
 }
 
 type ActionParameterAutoMinifyModel struct {
-	HTML types.String `tfsdk:"html"`
-	CSS  types.String `tfsdk:"css"`
-	JS   types.String `tfsdk:"js"`
+	HTML types.Bool `tfsdk:"html"`
+	CSS  types.Bool `tfsdk:"css"`
+	JS   types.Bool `tfsdk:"js"`
 }
 
 type ActionParameterEdgeTTLModel struct {
@@ -156,8 +157,8 @@ type ActionParameterEdgeTTLStatusCodeTTLModel struct {
 }
 
 type ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel struct {
-	From types.String `tfsdk:"from"`
-	To   types.String `tfsdk:"to"`
+	From types.Int64 `tfsdk:"from"`
+	To   types.Int64 `tfsdk:"to"`
 }
 
 type ActionParameterBrowserTTLModel struct {
@@ -185,19 +186,19 @@ type ActionParameterCacheKeyCustomKeyModel struct {
 }
 
 type ActionParameterCacheKeyCustomKeyQueryStringModel struct {
-	Include []types.String `tfsdk:"include"`
-	Exclude []types.String `tfsdk:"exclude"`
+	Include types.Set `tfsdk:"include"`
+	Exclude types.Set `tfsdk:"exclude"`
 }
 
 type ActionParameterCacheKeyCustomKeyHeaderModel struct {
-	Include       []types.String `tfsdk:"include"`
-	CheckPresence []types.String `tfsdk:"check_presence"`
-	ExcludeOrigin types.Bool     `tfsdk:"exclude_origin"`
+	Include       types.Set  `tfsdk:"include"`
+	CheckPresence types.Set  `tfsdk:"check_presence"`
+	ExcludeOrigin types.Bool `tfsdk:"exclude_origin"`
 }
 
 type ActionParameterCacheKeyCustomKeyCookieModel struct {
-	Include       []types.String `tfsdk:"include"`
-	CheckPresence []types.String `tfsdk:"check_presence"`
+	Include       types.Set `tfsdk:"include"`
+	CheckPresence types.Set `tfsdk:"check_presence"`
 }
 
 type ActionParameterCacheKeyCustomKeyUserModel struct {

@@ -285,6 +285,12 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 	}
 }
 
+// toRulesetResourceModel is a method that takes the API payload
+// (`cloudflare.Ruleset`) and builds the state representation in the form of
+// `*RulesetResourceModel`.
+//
+// The reverse of this method is `toRuleset` which handles building an API
+// representation using the proposed config.
 func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudflare.Ruleset) *RulesetResourceModel {
 	data := RulesetResourceModel{
 		ID:          types.StringValue(in.ID),
@@ -294,69 +300,382 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 		Phase:       types.StringValue(in.Phase),
 	}
 
-	var rules []*RulesModel
-	for _, inRule := range in.Rules {
+	var ruleState []*RulesModel
+	for _, ruleResponse := range in.Rules {
 		var rule RulesModel
 
-		rule.Action = types.StringValue(inRule.Action)
-		rule.Expression = types.StringValue(inRule.Expression)
-		rule.Description = types.StringValue(inRule.Description)
-		rule.Enabled = types.BoolValue(inRule.Enabled)
+		rule.Action = flatteners.String(ruleResponse.Action)
+		rule.Expression = flatteners.String(ruleResponse.Expression)
+		rule.Description = flatteners.String(ruleResponse.Description)
+		rule.Enabled = flatteners.Bool(ruleResponse.Enabled)
+		// rule.Version = flatteners.String(ruleResponse.Version)
 
 		// action_parameters
-		if !reflect.ValueOf(inRule.ActionParameters).IsNil() {
+		if !reflect.ValueOf(ruleResponse.ActionParameters).IsNil() {
 			rule.ActionParameters = append(rule.ActionParameters, &ActionParametersModel{
-				Response: []*ActionParameterResponseModel{{
-					StatusCode:  types.Int64Value(int64(inRule.ActionParameters.Response.StatusCode)),
-					ContentType: types.StringValue(inRule.ActionParameters.Response.ContentType),
-					Content:     types.StringValue(inRule.ActionParameters.Response.Content),
-				}},
+				AutomaticHTTPSRewrites:  flatteners.Bool(ruleResponse.ActionParameters.AutomaticHTTPSRewrites),
+				BIC:                     flatteners.Bool(ruleResponse.ActionParameters.BrowserIntegrityCheck),
+				Cache:                   flatteners.Bool(ruleResponse.ActionParameters.Cache),
+				Content:                 flatteners.String(ruleResponse.ActionParameters.Content),
+				ContentType:             flatteners.String(ruleResponse.ActionParameters.ContentType),
+				DisableApps:             flatteners.Bool(ruleResponse.ActionParameters.DisableApps),
+				DisableRailgun:          flatteners.Bool(ruleResponse.ActionParameters.DisableRailgun),
+				DisableZaraz:            flatteners.Bool(ruleResponse.ActionParameters.DisableZaraz),
+				EmailObfuscation:        flatteners.Bool(ruleResponse.ActionParameters.EmailObfuscation),
+				HostHeader:              flatteners.String(ruleResponse.ActionParameters.HostHeader),
+				HotlinkProtection:       flatteners.Bool(ruleResponse.ActionParameters.HotLinkProtection),
+				ID:                      flatteners.String(ruleResponse.ActionParameters.ID),
+				Increment:               flatteners.Int64(int64(ruleResponse.ActionParameters.Increment)),
+				Mirage:                  flatteners.Bool(ruleResponse.ActionParameters.Mirage),
+				OpportunisticEncryption: flatteners.Bool(ruleResponse.ActionParameters.OpportunisticEncryption),
+				RocketLoader:            flatteners.Bool(ruleResponse.ActionParameters.RocketLoader),
+				Ruleset:                 flatteners.String(ruleResponse.ActionParameters.Ruleset),
+				ServerSideExcludes:      flatteners.Bool(ruleResponse.ActionParameters.ServerSideExcludes),
+				StatusCode:              flatteners.Int64(int64(ruleResponse.ActionParameters.StatusCode)),
+				SXG:                     flatteners.Bool(ruleResponse.ActionParameters.SXG),
+				OriginErrorPagePassthru: flatteners.Bool(ruleResponse.ActionParameters.OriginErrorPagePassthru),
+				RespectStrongEtags:      flatteners.Bool(ruleResponse.ActionParameters.RespectStrongETags),
+				// Version:                 flatteners.String(ruleResponse.ActionParameters.Version),
 			})
 
+			if !reflect.ValueOf(ruleResponse.ActionParameters.Polish).IsNil() {
+				rule.ActionParameters[0].Polish = flatteners.String(ruleResponse.ActionParameters.Polish.String())
+			}
+
+			if !reflect.ValueOf(ruleResponse.ActionParameters.SecurityLevel).IsNil() {
+				rule.ActionParameters[0].SecurityLevel = flatteners.String(ruleResponse.ActionParameters.SecurityLevel.String())
+			}
+
+			if !reflect.ValueOf(ruleResponse.ActionParameters.SSL).IsNil() {
+				rule.ActionParameters[0].SSL = flatteners.String(ruleResponse.ActionParameters.SSL.String())
+			}
+
+			var phases []attr.Value
+			for _, s := range ruleResponse.ActionParameters.Phases {
+				phases = append(phases, types.StringValue(s))
+			}
+			rule.ActionParameters[0].Phases = flatteners.StringSet(phases)
+
+			var products []attr.Value
+			for _, s := range ruleResponse.ActionParameters.Products {
+				products = append(products, types.StringValue(s))
+			}
+			rule.ActionParameters[0].Products = flatteners.StringSet(products)
+
 			var cookieFields []attr.Value
-			for _, s := range inRule.ActionParameters.CookieFields {
+			for _, s := range ruleResponse.ActionParameters.CookieFields {
 				cookieFields = append(cookieFields, types.StringValue(s.Name))
 			}
 			rule.ActionParameters[0].CookieFields = flatteners.StringSet(cookieFields)
+
+			var rulesets []attr.Value
+			for _, s := range ruleResponse.ActionParameters.Rulesets {
+				rulesets = append(rulesets, types.StringValue(s))
+			}
+			rule.ActionParameters[0].Rulesets = flatteners.StringSet(rulesets)
+
+			var requestFields []attr.Value
+			for _, s := range ruleResponse.ActionParameters.RequestFields {
+				requestFields = append(requestFields, types.StringValue(s.Name))
+			}
+			rule.ActionParameters[0].RequestFields = flatteners.StringSet(requestFields)
+
+			var responseFields []attr.Value
+			for _, s := range ruleResponse.ActionParameters.ResponseFields {
+				responseFields = append(responseFields, types.StringValue(s.Name))
+			}
+			rule.ActionParameters[0].ResponseFields = flatteners.StringSet(responseFields)
+
+			if !reflect.ValueOf(ruleResponse.ActionParameters.Overrides).IsNil() {
+				var overrides []*ActionParameterOverridesModel
+
+				var ruleOverrides []*ActionParameterOverridesRulesModel
+				for _, r := range ruleResponse.ActionParameters.Overrides.Rules {
+					ruleOverrides = append(ruleOverrides, &ActionParameterOverridesRulesModel{
+						ID:               flatteners.String(r.ID),
+						Action:           flatteners.String(r.Action),
+						ScoreThreshold:   flatteners.Int64(int64(r.ScoreThreshold)),
+						Enabled:          flatteners.Bool(r.Enabled),
+						SensitivityLevel: flatteners.String(r.SensitivityLevel),
+					})
+				}
+
+				var categoryOverrides []*ActionParameterOverridesCategoriesModel
+				for _, c := range ruleResponse.ActionParameters.Overrides.Categories {
+					categoryOverrides = append(categoryOverrides, &ActionParameterOverridesCategoriesModel{
+						Category: flatteners.String(c.Category),
+						Action:   flatteners.String(c.Action),
+						Enabled:  flatteners.Bool(c.Enabled),
+					})
+				}
+
+				override := &ActionParameterOverridesModel{
+					SensitivityLevel: flatteners.String(ruleResponse.ActionParameters.Overrides.SensitivityLevel),
+					Action:           flatteners.String(ruleResponse.ActionParameters.Overrides.Action),
+					Enabled:          flatteners.Bool(ruleResponse.ActionParameters.Overrides.Enabled),
+				}
+
+				if len(ruleOverrides) > 0 {
+					override.Rules = ruleOverrides
+				}
+
+				if len(categoryOverrides) > 0 {
+					override.Categories = categoryOverrides
+				}
+
+				overrides = append(overrides, override)
+
+				rule.ActionParameters[0].Overrides = overrides
+			}
+
+			if ruleResponse.ActionParameters.Rules != nil {
+				result := make(map[string]basetypes.StringValue, 0)
+				for k, v := range ruleResponse.ActionParameters.Rules {
+					result[k] = types.StringValue(strings.Join(v, ","))
+				}
+				rule.ActionParameters[0].Rules = result
+			}
+
+			if ruleResponse.ActionParameters.Response != nil {
+				rule.ActionParameters[0].Response = []*ActionParameterResponseModel{{
+					StatusCode:  flatteners.Int64(int64(ruleResponse.ActionParameters.Response.StatusCode)),
+					ContentType: flatteners.String(ruleResponse.ActionParameters.Response.ContentType),
+					Content:     flatteners.String(ruleResponse.ActionParameters.Response.Content),
+				}}
+			}
+
+			if ruleResponse.ActionParameters.AutoMinify != nil {
+				rule.ActionParameters[0].AutoMinify = []*ActionParameterAutoMinifyModel{{
+					HTML: flatteners.Bool(&ruleResponse.ActionParameters.AutoMinify.HTML),
+					CSS:  flatteners.Bool(&ruleResponse.ActionParameters.AutoMinify.CSS),
+					JS:   flatteners.Bool(&ruleResponse.ActionParameters.AutoMinify.JS),
+				}}
+			}
+
+			if ruleResponse.ActionParameters.MatchedData != nil && ruleResponse.ActionParameters.MatchedData.PublicKey != "" {
+				rule.ActionParameters[0].MatchedData = []*ActionParametersMatchedDataModel{{
+					PublicKey: types.StringValue(ruleResponse.ActionParameters.MatchedData.PublicKey),
+				}}
+			}
+
+			if ruleResponse.ActionParameters.BrowserTTL != nil {
+				var defaultVal basetypes.Int64Value
+				if cloudflare.Uint(ruleResponse.ActionParameters.BrowserTTL.Default) > 0 {
+					defaultVal = types.Int64Value(int64(cloudflare.Uint(ruleResponse.ActionParameters.BrowserTTL.Default)))
+				}
+
+				rule.ActionParameters[0].BrowserTTL = []*ActionParameterBrowserTTLModel{{
+					Mode:    types.StringValue(ruleResponse.ActionParameters.BrowserTTL.Mode),
+					Default: defaultVal,
+				}}
+			}
+
+			if ruleResponse.ActionParameters.CacheKey != nil {
+				rule.ActionParameters[0].CacheKey = []*ActionParameterCacheKeyModel{{
+					CacheByDeviceType:       flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CacheByDeviceType),
+					CacheDeceptionArmor:     flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CacheDeceptionArmor),
+					IgnoreQueryStringsOrder: flatteners.Bool(ruleResponse.ActionParameters.CacheKey.IgnoreQueryStringsOrder),
+				}}
+
+				if ruleResponse.ActionParameters.CacheKey.CustomKey != nil {
+					key := &ActionParameterCacheKeyCustomKeyModel{}
+
+					if ruleResponse.ActionParameters.CacheKey.CustomKey.User != nil {
+						key.User = []*ActionParameterCacheKeyCustomKeyUserModel{{
+							DeviceType: flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.User.DeviceType),
+							Geo:        flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.User.Geo),
+							Lang:       flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.User.Lang),
+						}}
+					}
+
+					if ruleResponse.ActionParameters.CacheKey.CustomKey.Host != nil {
+						key.Host = []*ActionParameterCacheKeyCustomKeyHostModel{{
+							Resolved: flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Host.Resolved),
+						}}
+					}
+
+					if ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie != nil {
+						include, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie.Include)
+						checkPresence, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie.CheckPresence)
+						key.Cookie = []*ActionParameterCacheKeyCustomKeyCookieModel{{
+							Include:       include,
+							CheckPresence: checkPresence,
+						}}
+					}
+
+					if ruleResponse.ActionParameters.CacheKey.CustomKey.Header != nil {
+						include, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.Include)
+						checkPresence, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.CheckPresence)
+						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 {
+							key.Header = []*ActionParameterCacheKeyCustomKeyHeaderModel{{
+								Include:       include,
+								CheckPresence: checkPresence,
+								ExcludeOrigin: flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin),
+							}}
+						}
+
+					}
+
+					if ruleResponse.ActionParameters.CacheKey.CustomKey.Query != nil {
+						include, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include)
+						exclude, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude)
+
+						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include != nil && ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include.All {
+							include, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+						}
+
+						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude != nil && ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude.All {
+							exclude, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+						}
+
+						key.QueryString = []*ActionParameterCacheKeyCustomKeyQueryStringModel{{
+							Include: include,
+							Exclude: exclude,
+						}}
+					}
+
+					rule.ActionParameters[0].CacheKey[0].CustomKey = []*ActionParameterCacheKeyCustomKeyModel{key}
+				}
+			}
+
+			if ruleResponse.ActionParameters.EdgeTTL != nil {
+				var defaultVal basetypes.Int64Value
+				if cloudflare.Uint(ruleResponse.ActionParameters.EdgeTTL.Default) > 0 {
+					defaultVal = types.Int64Value(int64(cloudflare.Uint(ruleResponse.ActionParameters.EdgeTTL.Default)))
+				}
+
+				rule.ActionParameters[0].EdgeTTL = []*ActionParameterEdgeTTLModel{{
+					Mode:    types.StringValue(ruleResponse.ActionParameters.EdgeTTL.Mode),
+					Default: defaultVal,
+				}}
+
+				var statusCodeTTLs []*ActionParameterEdgeTTLStatusCodeTTLModel
+				for _, sct := range ruleResponse.ActionParameters.EdgeTTL.StatusCodeTTL {
+					var sctrange []*ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel
+
+					if sct.StatusCodeRange != nil && sct.StatusCodeRange.From != nil && sct.StatusCodeRange.To != nil {
+						sctrange = append(sctrange, &ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel{
+							To:   flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeRange.To))),
+							From: flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeRange.From))),
+						})
+					}
+					statusCodeTTLs = append(statusCodeTTLs, &ActionParameterEdgeTTLStatusCodeTTLModel{
+						StatusCode:      flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeValue))),
+						Value:           types.Int64Value(int64(cloudflare.Int(sct.Value))),
+						StatusCodeRange: sctrange,
+					})
+
+				}
+				rule.ActionParameters[0].EdgeTTL[0].StatusCodeTTL = statusCodeTTLs
+			}
+
+			if ruleResponse.ActionParameters.ServeStale != nil {
+				rule.ActionParameters[0].ServeStale = []*ActionParameterServeStaleModel{{
+					DisableStaleWhileUpdating: types.BoolValue(*ruleResponse.ActionParameters.ServeStale.DisableStaleWhileUpdating),
+				}}
+			}
+
+			if ruleResponse.ActionParameters.FromList != nil {
+				rule.ActionParameters[0].FromList = []*ActionParameterFromListModel{{
+					Name: types.StringValue(ruleResponse.ActionParameters.FromList.Name),
+					Key:  types.StringValue(ruleResponse.ActionParameters.FromList.Key),
+				}}
+			}
+
+			if ruleResponse.ActionParameters.Origin != nil {
+				rule.ActionParameters[0].Origin = []*ActionParameterOriginModel{{
+					Host: types.StringValue(ruleResponse.ActionParameters.Origin.Host),
+					Port: types.Int64Value(int64(ruleResponse.ActionParameters.Origin.Port)),
+				}}
+			}
+
+			if ruleResponse.ActionParameters.SNI != nil && ruleResponse.ActionParameters.SNI.Value != "" {
+				rule.ActionParameters[0].SNI = []*ActionParameterSNIModel{{
+					Value: types.StringValue(ruleResponse.ActionParameters.SNI.Value),
+				}}
+			}
+
+			if ruleResponse.ActionParameters.URI != nil {
+				rule.ActionParameters[0].URI = []*ActionParametersURIModel{{
+					Origin: flatteners.Bool(ruleResponse.ActionParameters.URI.Origin),
+				}}
+
+				if ruleResponse.ActionParameters.URI.Path != nil {
+					rule.ActionParameters[0].URI[0].Path = []*ActionParametersURIPartModel{{
+						Value:      flatteners.String(ruleResponse.ActionParameters.URI.Path.Value),
+						Expression: flatteners.String(ruleResponse.ActionParameters.URI.Path.Expression),
+					}}
+				}
+
+				if ruleResponse.ActionParameters.URI.Query != nil {
+					rule.ActionParameters[0].URI[0].Query = []*ActionParametersURIPartModel{{
+						Value:      flatteners.String(ruleResponse.ActionParameters.URI.Query.Value),
+						Expression: flatteners.String(ruleResponse.ActionParameters.URI.Query.Expression),
+					}}
+				}
+			}
+
+			if ruleResponse.ActionParameters.Headers != nil {
+				var headers []*ActionParametersHeadersModel
+				for name, header := range ruleResponse.ActionParameters.Headers {
+					headers = append(headers, &ActionParametersHeadersModel{
+						Name:       types.StringValue(name),
+						Value:      flatteners.String(header.Value),
+						Expression: flatteners.String(header.Expression),
+						Operation:  flatteners.String(header.Operation),
+					})
+				}
+				rule.ActionParameters[0].Headers = headers
+			}
+
+			if ruleResponse.ActionParameters.FromValue != nil {
+				rule.ActionParameters[0].FromValue = []*ActionParameterFromValueModel{{
+					StatusCode:          flatteners.Int64(int64(ruleResponse.ActionParameters.FromValue.StatusCode)),
+					PreserveQueryString: flatteners.Bool(&ruleResponse.ActionParameters.FromValue.PreserveQueryString),
+					TargetURL: []*ActionParameterFromValueTargetURLModel{{
+						Value:      flatteners.String(ruleResponse.ActionParameters.FromValue.TargetURL.Value),
+						Expression: flatteners.String(ruleResponse.ActionParameters.FromValue.TargetURL.Expression),
+					}},
+				}}
+			}
 		}
 
 		// ratelimit
-		if !reflect.ValueOf(inRule.RateLimit).IsNil() {
+		if !reflect.ValueOf(ruleResponse.RateLimit).IsNil() {
 			var rlCharacteristicsKeys []attr.Value
-			for _, s := range inRule.RateLimit.Characteristics {
+			for _, s := range ruleResponse.RateLimit.Characteristics {
 				rlCharacteristicsKeys = append(rlCharacteristicsKeys, types.StringValue(s))
 			}
 
 			rule.Ratelimit = append(rule.Ratelimit, &RatelimitModel{
-				Characteristics:   types.SetValueMust(types.StringType, rlCharacteristicsKeys),
-				Period:            types.Int64Value(int64(inRule.RateLimit.Period)),
-				RequestsPerPeriod: types.Int64Value(int64(inRule.RateLimit.RequestsPerPeriod)),
-				RequestsToOrigin:  types.BoolValue(inRule.RateLimit.RequestsToOrigin),
-				MitigationTimeout: types.Int64Value(int64(inRule.RateLimit.MitigationTimeout)),
+				Characteristics:         types.SetValueMust(types.StringType, rlCharacteristicsKeys),
+				Period:                  flatteners.Int64(int64(ruleResponse.RateLimit.Period)),
+				RequestsPerPeriod:       flatteners.Int64(int64(ruleResponse.RateLimit.RequestsPerPeriod)),
+				RequestsToOrigin:        flatteners.Bool(cloudflare.BoolPtr(ruleResponse.RateLimit.RequestsToOrigin)),
+				MitigationTimeout:       flatteners.Int64(int64(ruleResponse.RateLimit.MitigationTimeout)),
+				ScorePerPeriod:          flatteners.Int64(int64(ruleResponse.RateLimit.ScorePerPeriod)),
+				ScoreResponseHeaderName: flatteners.String(ruleResponse.RateLimit.ScoreResponseHeaderName),
+				CountingExpression:      flatteners.String(ruleResponse.RateLimit.CountingExpression),
 			})
+		}
 
-			if inRule.RateLimit.ScorePerPeriod > 0 {
-				rule.Ratelimit[0].ScorePerPeriod = types.Int64Value(int64(inRule.RateLimit.ScorePerPeriod))
-			}
-
-			if inRule.RateLimit.ScoreResponseHeaderName != "" {
-				rule.Ratelimit[0].ScoreResponseHeaderName = types.StringValue(inRule.RateLimit.ScoreResponseHeaderName)
-			}
-
-			if inRule.RateLimit.CountingExpression != "" {
-				rule.Ratelimit[0].CountingExpression = types.StringValue(inRule.RateLimit.CountingExpression)
-			}
+		// exposed credential check
+		if !reflect.ValueOf(ruleResponse.ExposedCredentialCheck).IsNil() {
+			rule.ExposedCredentialCheck = append(rule.ExposedCredentialCheck, &ExposedCredentialCheckModel{
+				UsernameExpression: types.StringValue(ruleResponse.ExposedCredentialCheck.UsernameExpression),
+				PasswordExpression: types.StringValue(ruleResponse.ExposedCredentialCheck.PasswordExpression),
+			})
 		}
 
 		// logging
-		if !reflect.ValueOf(inRule.Logging).IsNil() {
-			rule.Logging = append(rule.Logging, &LoggingModel{Enabled: types.BoolValue(*inRule.Logging.Enabled)})
+		if !reflect.ValueOf(ruleResponse.Logging).IsNil() {
+			rule.Logging = append(rule.Logging, &LoggingModel{Enabled: types.BoolValue(*ruleResponse.Logging.Enabled)})
 		}
 
-		rules = append(rules, &rule)
+		ruleState = append(ruleState, &rule)
 	}
 
-	data.Rules = rules
+	data.Rules = ruleState
 
 	if zoneID.ValueString() != "" {
 		data.ZoneID = types.StringValue(zoneID.ValueString())
@@ -367,6 +686,12 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 	return &data
 }
 
+// toRuleset is a method that takes the proposed configuration changes
+// (`*RulesetResourceModel`) and builds the API representation in the form of
+// `cloudflare.Ruleset`,
+//
+// The reverse of this method is `toRulesetResourceModel` which handles building
+// a state representation using the API response.
 func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 	var rs cloudflare.Ruleset
 	var rules []cloudflare.RulesetRule
@@ -381,7 +706,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 		}
 
 		if !rule.Enabled.IsNull() {
-			newRule.Enabled = rule.Enabled.ValueBool()
+			newRule.Enabled = cloudflare.BoolPtr(rule.Enabled.ValueBool())
 		}
 
 		if !rule.ID.IsNull() {
@@ -392,26 +717,477 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 			newRule.Ref = rule.Ref.ValueString()
 		}
 
-		if !rule.Version.IsNull() {
-			newRule.Version = rule.Version.ValueString()
-		}
+		// if !rule.Version.IsNull() {
+		// 	newRule.Version = rule.Version.ValueString()
+		// }
 
-		for i, ap := range rule.ActionParameters {
-			response := cloudflare.RulesetRuleActionParametersBlockResponse{
-				ContentType: ap.Response[i].ContentType.ValueString(),
-				Content:     ap.Response[i].Content.ValueString(),
-				StatusCode:  uint16(ap.Response[i].StatusCode.ValueInt64()),
+		for _, ap := range rule.ActionParameters {
+			newRule.ActionParameters = &cloudflare.RulesetRuleActionParameters{}
+
+			if len(ap.Rules) > 0 {
+				ruleMap := map[string][]string{}
+				for key, ruleIDs := range ap.Rules {
+					s := strings.Split(ruleIDs.ValueString(), ",")
+					ruleMap[key] = s
+					newRule.ActionParameters.Rules = ruleMap
+				}
 			}
-			newRule.ActionParameters = &cloudflare.RulesetRuleActionParameters{
-				ID:       ap.ID.ValueString(),
-				Version:  ap.Version.ValueString(),
-				Response: &response,
+
+			if len(expanders.StringSet(ap.Phases)) > 0 {
+				newRule.ActionParameters.Phases = expanders.StringSet(ap.Phases)
+			}
+
+			if len(expanders.StringSet(ap.Products)) > 0 {
+				newRule.ActionParameters.Products = expanders.StringSet(ap.Products)
+			}
+
+			if len(expanders.StringSet(ap.Rulesets)) > 0 {
+				newRule.ActionParameters.Rulesets = expanders.StringSet(ap.Rulesets)
+			}
+
+			if !ap.ID.IsNull() {
+				newRule.ActionParameters.ID = ap.ID.ValueString()
+			}
+
+			if !ap.Content.IsNull() {
+				newRule.ActionParameters.Content = ap.Content.ValueString()
+			}
+
+			if !ap.ContentType.IsNull() {
+				newRule.ActionParameters.ContentType = ap.ContentType.ValueString()
+			}
+
+			if !ap.HostHeader.IsNull() {
+				newRule.ActionParameters.HostHeader = ap.HostHeader.ValueString()
+			}
+
+			if !ap.Ruleset.IsNull() {
+				newRule.ActionParameters.Ruleset = ap.Ruleset.ValueString()
+			}
+
+			// if !ap.Version.IsNull() {
+			// 	newRule.ActionParameters.Version = ap.Version.ValueString()
+			// }
+
+			if !ap.Increment.IsNull() {
+				newRule.ActionParameters.Increment = int(ap.Increment.ValueInt64())
+			}
+
+			if !ap.StatusCode.IsNull() {
+				newRule.ActionParameters.StatusCode = uint16(ap.StatusCode.ValueInt64())
+			}
+
+			if !ap.AutomaticHTTPSRewrites.IsNull() {
+				newRule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(ap.AutomaticHTTPSRewrites.ValueBool())
+			}
+
+			if !ap.BIC.IsNull() {
+				newRule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(ap.BIC.ValueBool())
+			}
+
+			if !ap.Cache.IsNull() {
+				newRule.ActionParameters.Cache = cloudflare.BoolPtr(ap.Cache.ValueBool())
+			}
+
+			if !ap.DisableApps.IsNull() {
+				newRule.ActionParameters.DisableApps = cloudflare.BoolPtr(ap.DisableApps.ValueBool())
+			}
+
+			if !ap.DisableRailgun.IsNull() {
+				newRule.ActionParameters.DisableRailgun = cloudflare.BoolPtr(ap.DisableRailgun.ValueBool())
+			}
+
+			if !ap.DisableZaraz.IsNull() {
+				newRule.ActionParameters.DisableZaraz = cloudflare.BoolPtr(ap.DisableZaraz.ValueBool())
+			}
+
+			if !ap.EmailObfuscation.IsNull() {
+				newRule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(ap.EmailObfuscation.ValueBool())
+			}
+
+			if !ap.HotlinkProtection.IsNull() {
+				newRule.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(ap.HotlinkProtection.ValueBool())
+			}
+
+			if !ap.Mirage.IsNull() {
+				newRule.ActionParameters.Mirage = cloudflare.BoolPtr(ap.Mirage.ValueBool())
+			}
+
+			if !ap.OpportunisticEncryption.IsNull() {
+				newRule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(ap.OpportunisticEncryption.ValueBool())
+			}
+
+			if !ap.RocketLoader.IsNull() {
+				newRule.ActionParameters.RocketLoader = cloudflare.BoolPtr(ap.RocketLoader.ValueBool())
+			}
+
+			if !ap.ServerSideExcludes.IsNull() {
+				newRule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(ap.ServerSideExcludes.ValueBool())
+			}
+
+			if !ap.SXG.IsNull() {
+				newRule.ActionParameters.SXG = cloudflare.BoolPtr(ap.SXG.ValueBool())
+			}
+
+			if !ap.Polish.IsNull() {
+				polish, _ := cloudflare.PolishFromString(ap.Polish.ValueString())
+				newRule.ActionParameters.Polish = polish
+			}
+
+			if !ap.SecurityLevel.IsNull() {
+				securityLevel, _ := cloudflare.SecurityLevelFromString(ap.SecurityLevel.ValueString())
+				newRule.ActionParameters.SecurityLevel = securityLevel
+			}
+
+			if !ap.SSL.IsNull() {
+				ssl, _ := cloudflare.SSLFromString(ap.SSL.ValueString())
+				newRule.ActionParameters.SSL = ssl
+			}
+
+			if !ap.OriginErrorPagePassthru.IsNull() {
+				newRule.ActionParameters.OriginErrorPagePassthru = cloudflare.BoolPtr(ap.OriginErrorPagePassthru.ValueBool())
+			}
+
+			if !ap.RespectStrongEtags.IsNull() {
+				newRule.ActionParameters.RespectStrongETags = cloudflare.BoolPtr(ap.RespectStrongEtags.ValueBool())
+			}
+
+			if len(ap.Overrides) > 0 {
+				var overrides cloudflare.RulesetRuleActionParametersOverrides
+				var ruleOverrides []cloudflare.RulesetRuleActionParametersRules
+				var categoryOverrides []cloudflare.RulesetRuleActionParametersCategories
+
+				for _, ro := range ap.Overrides[0].Rules {
+					rule := cloudflare.RulesetRuleActionParametersRules{
+						ID:               ro.ID.ValueString(),
+						Action:           ro.Action.ValueString(),
+						SensitivityLevel: ro.SensitivityLevel.ValueString(),
+					}
+
+					if !ro.ScoreThreshold.IsNull() {
+						rule.ScoreThreshold = int(ro.ScoreThreshold.ValueInt64())
+					}
+
+					if !ro.Enabled.IsNull() {
+						rule.Enabled = cloudflare.BoolPtr(ro.Enabled.ValueBool())
+					}
+
+					ruleOverrides = append(ruleOverrides, rule)
+				}
+				overrides.Rules = ruleOverrides
+
+				for _, co := range ap.Overrides[0].Categories {
+					category := cloudflare.RulesetRuleActionParametersCategories{
+						Category: co.Category.ValueString(),
+					}
+
+					if !co.Action.IsNull() {
+						category.Action = co.Action.ValueString()
+					}
+
+					if !co.Enabled.IsNull() {
+						category.Enabled = cloudflare.BoolPtr(co.Enabled.ValueBool())
+					}
+
+					categoryOverrides = append(categoryOverrides, category)
+				}
+				overrides.Categories = categoryOverrides
+
+				if !ap.Overrides[0].Action.IsNull() {
+					overrides.Action = ap.Overrides[0].Action.ValueString()
+				}
+
+				if !ap.Overrides[0].SensitivityLevel.IsNull() {
+					overrides.SensitivityLevel = ap.Overrides[0].SensitivityLevel.ValueString()
+				}
+
+				if !ap.Overrides[0].Enabled.IsNull() {
+					overrides.Enabled = cloudflare.BoolPtr(ap.Overrides[0].Enabled.ValueBool())
+				}
+
+				newRule.ActionParameters.Overrides = &overrides
+			}
+
+			if len(ap.MatchedData) > 0 {
+				newRule.ActionParameters.MatchedData = &cloudflare.RulesetRuleActionParametersMatchedData{
+					PublicKey: ap.MatchedData[0].PublicKey.ValueString(),
+				}
+			}
+
+			if len(ap.Response) > 0 {
+				response := cloudflare.RulesetRuleActionParametersBlockResponse{
+					ContentType: ap.Response[0].ContentType.ValueString(),
+					Content:     ap.Response[0].Content.ValueString(),
+					StatusCode:  uint16(ap.Response[0].StatusCode.ValueInt64()),
+				}
+				newRule.ActionParameters.Response = &response
+			}
+
+			if len(ap.AutoMinify) > 0 {
+				autominify := cloudflare.RulesetRuleActionParametersAutoMinify{
+					HTML: ap.AutoMinify[0].HTML.ValueBool(),
+					CSS:  ap.AutoMinify[0].CSS.ValueBool(),
+					JS:   ap.AutoMinify[0].JS.ValueBool(),
+				}
+				newRule.ActionParameters.AutoMinify = &autominify
+			}
+
+			if len(ap.BrowserTTL) > 0 {
+				browserTTL := cloudflare.RulesetRuleActionParametersBrowserTTL{
+					Mode: ap.BrowserTTL[0].Mode.ValueString(),
+				}
+
+				if !ap.BrowserTTL[0].Default.IsNull() {
+					browserTTL.Default = cloudflare.UintPtr(uint(ap.BrowserTTL[0].Default.ValueInt64()))
+				}
+
+				newRule.ActionParameters.BrowserTTL = &browserTTL
+			}
+
+			if len(ap.ServeStale) > 0 && !ap.ServeStale[0].DisableStaleWhileUpdating.IsNull() {
+				newRule.ActionParameters.ServeStale = &cloudflare.RulesetRuleActionParametersServeStale{
+					DisableStaleWhileUpdating: cloudflare.BoolPtr(ap.ServeStale[0].DisableStaleWhileUpdating.ValueBool()),
+				}
+			}
+
+			if len(ap.FromList) > 0 {
+				fromList := cloudflare.RulesetRuleActionParametersFromList{
+					Name: ap.FromList[0].Name.ValueString(),
+					Key:  ap.FromList[0].Key.ValueString(),
+				}
+				newRule.ActionParameters.FromList = &fromList
+			}
+
+			if len(ap.Origin) > 0 {
+				origin := cloudflare.RulesetRuleActionParametersOrigin{
+					Host: ap.Origin[0].Host.ValueString(),
+					Port: uint16(ap.Origin[0].Port.ValueInt64()),
+				}
+				newRule.ActionParameters.Origin = &origin
+			}
+
+			if len(ap.SNI) > 0 {
+				sni := cloudflare.RulesetRuleActionParametersSni{
+					Value: ap.SNI[0].Value.ValueString(),
+				}
+				newRule.ActionParameters.SNI = &sni
+			}
+
+			if len(ap.URI) > 0 {
+				uri := &cloudflare.RulesetRuleActionParametersURI{}
+
+				if !ap.URI[0].Origin.IsNull() {
+					uri.Origin = cloudflare.BoolPtr(ap.URI[0].Origin.ValueBool())
+				}
+
+				if len(ap.URI[0].Path) > 0 {
+					uri.Path = &cloudflare.RulesetRuleActionParametersURIPath{
+						Value:      ap.URI[0].Path[0].Value.ValueString(),
+						Expression: ap.URI[0].Path[0].Expression.ValueString(),
+					}
+				}
+
+				if len(ap.URI[0].Query) > 0 {
+					uri.Query = &cloudflare.RulesetRuleActionParametersURIQuery{
+						Value:      ap.URI[0].Query[0].Value.ValueString(),
+						Expression: ap.URI[0].Query[0].Expression.ValueString(),
+					}
+				}
+
+				newRule.ActionParameters.URI = uri
+			}
+
+			if len(ap.Headers) > 0 {
+				headers := map[string]cloudflare.RulesetRuleActionParametersHTTPHeader{}
+				for _, header := range ap.Headers {
+					headers[header.Name.ValueString()] = cloudflare.RulesetRuleActionParametersHTTPHeader{
+						Operation:  header.Operation.ValueString(),
+						Value:      header.Value.ValueString(),
+						Expression: header.Expression.ValueString(),
+					}
+				}
+
+				newRule.ActionParameters.Headers = headers
+			}
+
+			if len(ap.CacheKey) > 0 {
+				key := cloudflare.RulesetRuleActionParametersCacheKey{}
+
+				if !ap.CacheKey[0].IgnoreQueryStringsOrder.IsNull() {
+					key.IgnoreQueryStringsOrder = cloudflare.BoolPtr(ap.CacheKey[0].IgnoreQueryStringsOrder.ValueBool())
+				}
+
+				if !ap.CacheKey[0].CacheByDeviceType.IsNull() {
+					key.CacheByDeviceType = cloudflare.BoolPtr(ap.CacheKey[0].CacheByDeviceType.ValueBool())
+				}
+
+				if !ap.CacheKey[0].CacheDeceptionArmor.IsNull() {
+					key.CacheDeceptionArmor = cloudflare.BoolPtr(ap.CacheKey[0].CacheDeceptionArmor.ValueBool())
+				}
+
+				if len(ap.CacheKey[0].CustomKey) > 0 {
+					customKey := cloudflare.RulesetRuleActionParametersCustomKey{}
+
+					if len(ap.CacheKey[0].CustomKey[0].QueryString) > 0 {
+						includeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].QueryString[0].Include)
+						excludeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].QueryString[0].Exclude)
+
+						if len(includeQueryList) > 0 {
+							if len(includeQueryList) == 1 && includeQueryList[0] == "*" {
+								customKey.Query = &cloudflare.RulesetRuleActionParametersCustomKeyQuery{
+									Include: &cloudflare.RulesetRuleActionParametersCustomKeyList{
+										All: true,
+									},
+								}
+							} else {
+								customKey.Query = &cloudflare.RulesetRuleActionParametersCustomKeyQuery{
+									Include: &cloudflare.RulesetRuleActionParametersCustomKeyList{
+										List: includeQueryList,
+									},
+								}
+							}
+						}
+
+						if len(excludeQueryList) > 0 {
+							if len(excludeQueryList) == 1 && excludeQueryList[0] == "*" {
+								customKey.Query = &cloudflare.RulesetRuleActionParametersCustomKeyQuery{
+									Exclude: &cloudflare.RulesetRuleActionParametersCustomKeyList{
+										All: true,
+									},
+								}
+							} else {
+								customKey.Query = &cloudflare.RulesetRuleActionParametersCustomKeyQuery{
+									Exclude: &cloudflare.RulesetRuleActionParametersCustomKeyList{
+										List: excludeQueryList,
+									},
+								}
+							}
+						}
+					}
+
+					if len(ap.CacheKey[0].CustomKey[0].Header) > 0 {
+						includeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].Header[0].Include)
+						checkPresenceList := expanders.StringSet(basetypes.SetValue(ap.CacheKey[0].CustomKey[0].Header[0].CheckPresence))
+
+						customKey.Header = &cloudflare.RulesetRuleActionParametersCustomKeyHeader{
+							RulesetRuleActionParametersCustomKeyFields: cloudflare.RulesetRuleActionParametersCustomKeyFields{
+								Include:       includeQueryList,
+								CheckPresence: checkPresenceList,
+							},
+							ExcludeOrigin: cloudflare.BoolPtr(ap.CacheKey[0].CustomKey[0].Header[0].ExcludeOrigin.ValueBool()),
+						}
+					}
+
+					if len(ap.CacheKey[0].CustomKey[0].Cookie) > 0 {
+						includeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].Cookie[0].Include)
+						checkPresenceList := expanders.StringSet(basetypes.SetValue(ap.CacheKey[0].CustomKey[0].Cookie[0].CheckPresence))
+
+						if len(includeQueryList) > 0 || len(checkPresenceList) > 0 {
+							customKey.Cookie = &cloudflare.RulesetRuleActionParametersCustomKeyCookie{
+								Include:       includeQueryList,
+								CheckPresence: checkPresenceList,
+							}
+						}
+					}
+
+					if len(ap.CacheKey[0].CustomKey[0].User) > 0 &&
+						(!ap.CacheKey[0].CustomKey[0].User[0].DeviceType.IsNull() ||
+							!ap.CacheKey[0].CustomKey[0].User[0].Geo.IsNull() ||
+							!ap.CacheKey[0].CustomKey[0].User[0].Lang.IsNull()) {
+						customKey.User = &cloudflare.RulesetRuleActionParametersCustomKeyUser{}
+
+						if !ap.CacheKey[0].CustomKey[0].User[0].DeviceType.IsNull() {
+							customKey.User.DeviceType = cloudflare.BoolPtr(ap.CacheKey[0].CustomKey[0].User[0].DeviceType.ValueBool())
+						}
+
+						if !ap.CacheKey[0].CustomKey[0].User[0].Geo.IsNull() {
+							customKey.User.Geo = cloudflare.BoolPtr(ap.CacheKey[0].CustomKey[0].User[0].Geo.ValueBool())
+						}
+
+						if !ap.CacheKey[0].CustomKey[0].User[0].Lang.IsNull() {
+							customKey.User.Lang = cloudflare.BoolPtr(ap.CacheKey[0].CustomKey[0].User[0].Lang.ValueBool())
+						}
+					}
+
+					if len(ap.CacheKey[0].CustomKey[0].Host) > 0 && !ap.CacheKey[0].CustomKey[0].Host[0].Resolved.IsNull() {
+						customKey.Host = &cloudflare.RulesetRuleActionParametersCustomKeyHost{
+							Resolved: cloudflare.BoolPtr(ap.CacheKey[0].CustomKey[0].Host[0].Resolved.ValueBool()),
+						}
+					}
+
+					key.CustomKey = &customKey
+				}
+
+				newRule.ActionParameters.CacheKey = &key
+			}
+
+			if len(ap.EdgeTTL) > 0 {
+				edgeTTL := &cloudflare.RulesetRuleActionParametersEdgeTTL{
+					Mode: ap.EdgeTTL[0].Mode.ValueString(),
+				}
+
+				if !ap.EdgeTTL[0].Default.IsNull() {
+					edgeTTL.Default = cloudflare.UintPtr(uint(ap.EdgeTTL[0].Default.ValueInt64()))
+				}
+
+				var statusCodeTTLs []cloudflare.RulesetRuleActionParametersStatusCodeTTL
+				for _, sct := range ap.EdgeTTL[0].StatusCodeTTL {
+					config := cloudflare.RulesetRuleActionParametersStatusCodeTTL{}
+
+					if sct.StatusCodeRange != nil {
+						config.StatusCodeRange = &cloudflare.RulesetRuleActionParametersStatusCodeRange{
+							From: cloudflare.UintPtr(uint(sct.StatusCodeRange[0].From.ValueInt64())),
+							To:   cloudflare.UintPtr(uint(sct.StatusCodeRange[0].To.ValueInt64())),
+						}
+					}
+
+					if !sct.StatusCode.IsNull() {
+						config.StatusCodeValue = cloudflare.UintPtr(uint(sct.StatusCode.ValueInt64()))
+					}
+
+					config.Value = cloudflare.IntPtr(int(sct.Value.ValueInt64()))
+					statusCodeTTLs = append(statusCodeTTLs, config)
+				}
+
+				edgeTTL.StatusCodeTTL = statusCodeTTLs
+				newRule.ActionParameters.EdgeTTL = edgeTTL
+			}
+
+			if len(ap.FromValue) > 0 {
+				from := &cloudflare.RulesetRuleActionParametersFromValue{}
+
+				if !ap.FromValue[0].StatusCode.IsNull() {
+					from.StatusCode = uint16(ap.FromValue[0].StatusCode.ValueInt64())
+				}
+
+				if !ap.FromValue[0].PreserveQueryString.IsNull() {
+					from.PreserveQueryString = ap.FromValue[0].PreserveQueryString.ValueBool()
+				}
+
+				from.TargetURL.Expression = ap.FromValue[0].TargetURL[0].Expression.ValueString()
+				from.TargetURL.Value = ap.FromValue[0].TargetURL[0].Value.ValueString()
+
+				newRule.ActionParameters.FromValue = from
 			}
 
 			apCookieFields := expanders.StringSet(ap.CookieFields)
 			if len(apCookieFields) > 0 {
 				for _, cookie := range apCookieFields {
 					newRule.ActionParameters.CookieFields = append(newRule.ActionParameters.CookieFields, cloudflare.RulesetActionParametersLogCustomField{Name: cookie})
+				}
+			}
+
+			apRequestFields := expanders.StringSet(ap.RequestFields)
+			if len(apRequestFields) > 0 {
+				for _, request := range apRequestFields {
+					newRule.ActionParameters.RequestFields = append(newRule.ActionParameters.RequestFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
+				}
+			}
+
+			apResponseFields := expanders.StringSet(ap.ResponseFields)
+			if len(apResponseFields) > 0 {
+				for _, request := range apResponseFields {
+					newRule.ActionParameters.ResponseFields = append(newRule.ActionParameters.ResponseFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
 				}
 			}
 		}
@@ -426,6 +1202,19 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 				MitigationTimeout:       int(rl.MitigationTimeout.ValueInt64()),
 				CountingExpression:      rl.CountingExpression.ValueString(),
 				RequestsToOrigin:        rl.RequestsToOrigin.ValueBool(),
+			}
+		}
+
+		for _, l := range rule.Logging {
+			newRule.Logging = &cloudflare.RulesetRuleLogging{
+				Enabled: cloudflare.BoolPtr(l.Enabled.ValueBool()),
+			}
+		}
+
+		for _, e := range rule.ExposedCredentialCheck {
+			newRule.ExposedCredentialCheck = &cloudflare.RulesetRuleExposedCredentialCheck{
+				UsernameExpression: e.UsernameExpression.ValueString(),
+				PasswordExpression: e.PasswordExpression.ValueString(),
 			}
 		}
 
