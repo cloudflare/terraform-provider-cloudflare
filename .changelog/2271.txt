@@ -1,0 +1,3 @@
+```release-note:internal
+resource/cloudflare_ruleset: migrate from SDKv2 to `terraform-plugin-framework`
+```
