@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_group: fixes an issue where Azure group rules with different identity provider ids would override each other
+```
