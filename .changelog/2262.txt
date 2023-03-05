@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_waiting_room: add 'ru-RU' and 'fa-IR' to default_template_language field
+```
