@@ -7,6 +7,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_access_group: fixes an issue where Azure group rules with different identity provider ids would override each other ([#2270](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2270))
+* resource/cloudflare_notification_policy: ensure all emails are saved if multiple `email_integration` values specified ([#2248](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2248))
 
 DEPENDENCIES:
 
