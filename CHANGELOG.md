@@ -6,6 +6,7 @@ ENHANCEMENTS:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.61.0 to 0.62.0 ([#2268](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2268))
 * provider: bumps github.com/stretchr/testify from 1.8.1 to 1.8.2 ([#2263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2263))
 
 ## 4.0.0 (February 21st, 2023)
