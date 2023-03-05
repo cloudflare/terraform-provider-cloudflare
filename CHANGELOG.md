@@ -4,6 +4,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_waiting_room: add 'ru-RU' and 'fa-IR' to default_template_language field ([#2262](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2262))
 
+BUG FIXES:
+
+* resource/cloudflare_access_group: fixes an issue where Azure group rules with different identity provider ids would override each other ([#2270](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2270))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.61.0 to 0.62.0 ([#2268](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2268))
