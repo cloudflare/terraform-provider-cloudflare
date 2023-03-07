@@ -64,11 +64,15 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				MarkdownDescription: "Name of the ruleset.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"description": schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: "Brief summary of the ruleset and its intended use.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"shareable_entitlement_name": schema.StringAttribute{
 				Optional:            true,
@@ -79,6 +83,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetKindValues()...),
 				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 				MarkdownDescription: fmt.Sprintf("Type of Ruleset to create. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetKindValues())),
 			},
 			"phase": schema.StringAttribute{
@@ -88,6 +95,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 				MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
 			},
@@ -99,16 +107,17 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 					Attributes: map[string]schema.Attribute{
 						consts.IDSchemaKey: schema.StringAttribute{
 							Optional:            true,
+							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
-						// "version": schema.StringAttribute{
-						// 	Computed:            true,
-						// 	Optional:            true,
-						// 	MarkdownDescription: "Version of the ruleset to deploy.",
-						// 	PlanModifiers: []planmodifier.String{
-						// 		stringplanmodifier.UseStateForUnknown(),
-						// 	},
-						// },
+						"version": schema.StringAttribute{
+							Computed:            true,
+							Optional:            true,
+							MarkdownDescription: "Version of the ruleset to deploy.",
+						},
 						"ref": schema.StringAttribute{
 							Optional:            true,
 							MarkdownDescription: "Rule reference.",
@@ -123,6 +132,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 						},
 						"description": schema.StringAttribute{
 							Optional:            true,
+							Computed:            true,
 							MarkdownDescription: "Brief summary of the ruleset rule and its intended use.",
 						},
 						"expression": schema.StringAttribute{
@@ -281,14 +291,11 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Pass-through error page for origin.",
 									},
-									// "version": schema.StringAttribute{
-									// 	Computed:            true,
-									// 	Optional:            true,
-									// 	MarkdownDescription: "Version of the ruleset to deploy.",
-									// 	PlanModifiers: []planmodifier.String{
-									// 		stringplanmodifier.UseStateForUnknown(),
-									// 	},
-									// },
+									"version": schema.StringAttribute{
+										Computed:            true,
+										Optional:            true,
+										MarkdownDescription: "Version of the ruleset to deploy.",
+									},
 								},
 								Blocks: map[string]schema.Block{
 									"uri": schema.ListNestedBlock{
@@ -353,16 +360,16 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 												"value": schema.StringAttribute{
 													Optional:            true,
 													MarkdownDescription: "Static value to provide as the HTTP request header value.",
-													// Validators: []validator.String{
-													// 	stringvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtName("expression"))),
-													// },
+													Validators: []validator.String{
+														stringvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("expression"))),
+													},
 												},
 												"expression": schema.StringAttribute{
 													Optional:            true,
 													MarkdownDescription: "Use a value dynamically determined by the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.",
-													// Validators: []validator.String{
-													// 	stringvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtName("value"))),
-													// },
+													Validators: []validator.String{
+														stringvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("value"))),
+													},
 												},
 												"operation": schema.StringAttribute{
 													Optional:            true,

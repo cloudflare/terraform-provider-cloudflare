@@ -15,7 +15,7 @@ type RulesetResourceModel struct {
 }
 
 type RulesModel struct {
-	// Version                types.String                   `tfsdk:"version"`
+	Version                types.String                   `tfsdk:"version"`
 	Action                 types.String                   `tfsdk:"action"`
 	ActionParameters       []*ActionParametersModel       `tfsdk:"action_parameters"`
 	Description            types.String                   `tfsdk:"description"`
@@ -30,7 +30,7 @@ type RulesModel struct {
 }
 
 type ActionParametersModel struct {
-	// Version                 types.String                        `tfsdk:"version"`
+	Version                 types.String                        `tfsdk:"version"`
 	AutomaticHTTPSRewrites  types.Bool                          `tfsdk:"automatic_https_rewrites"`
 	AutoMinify              []*ActionParameterAutoMinifyModel   `tfsdk:"autominify"`
 	BIC                     types.Bool                          `tfsdk:"bic"`

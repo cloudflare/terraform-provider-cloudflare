@@ -304,11 +304,13 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 	for _, ruleResponse := range in.Rules {
 		var rule RulesModel
 
+		rule.ID = flatteners.String(ruleResponse.ID)
 		rule.Action = flatteners.String(ruleResponse.Action)
 		rule.Expression = flatteners.String(ruleResponse.Expression)
-		rule.Description = flatteners.String(ruleResponse.Description)
+		rule.Description = types.StringValue(ruleResponse.Description)
+
 		rule.Enabled = flatteners.Bool(ruleResponse.Enabled)
-		// rule.Version = flatteners.String(ruleResponse.Version)
+		rule.Version = flatteners.String(cloudflare.String(ruleResponse.Version))
 
 		// action_parameters
 		if !reflect.ValueOf(ruleResponse.ActionParameters).IsNil() {
@@ -335,7 +337,7 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 				SXG:                     flatteners.Bool(ruleResponse.ActionParameters.SXG),
 				OriginErrorPagePassthru: flatteners.Bool(ruleResponse.ActionParameters.OriginErrorPagePassthru),
 				RespectStrongEtags:      flatteners.Bool(ruleResponse.ActionParameters.RespectStrongETags),
-				// Version:                 flatteners.String(ruleResponse.ActionParameters.Version),
+				Version:                 flatteners.String(cloudflare.String(ruleResponse.ActionParameters.Version)),
 			})
 
 			if !reflect.ValueOf(ruleResponse.ActionParameters.Polish).IsNil() {
@@ -616,13 +618,19 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 			}
 
 			if ruleResponse.ActionParameters.Headers != nil {
+				sortedHeaders := make([]string, 0, len(ruleResponse.ActionParameters.Headers))
+				for k := range ruleResponse.ActionParameters.Headers {
+					sortedHeaders = append(sortedHeaders, k)
+				}
+				sort.Strings(sortedHeaders)
+
 				var headers []*ActionParametersHeadersModel
-				for name, header := range ruleResponse.ActionParameters.Headers {
+				for _, name := range sortedHeaders {
 					headers = append(headers, &ActionParametersHeadersModel{
 						Name:       types.StringValue(name),
-						Value:      flatteners.String(header.Value),
-						Expression: flatteners.String(header.Expression),
-						Operation:  flatteners.String(header.Operation),
+						Value:      flatteners.String(ruleResponse.ActionParameters.Headers[name].Value),
+						Expression: flatteners.String(ruleResponse.ActionParameters.Headers[name].Expression),
+						Operation:  flatteners.String(ruleResponse.ActionParameters.Headers[name].Operation),
 					})
 				}
 				rule.ActionParameters[0].Headers = headers
@@ -677,18 +685,15 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 
 	data.Rules = ruleState
 
-	if zoneID.ValueString() != "" {
-		data.ZoneID = types.StringValue(zoneID.ValueString())
-	} else {
-		data.AccountID = types.StringValue(accountID.ValueString())
-	}
+	data.ZoneID = flatteners.String(zoneID.ValueString())
+	data.AccountID = flatteners.String(accountID.ValueString())
 
 	return &data
 }
 
 // toRuleset is a method that takes the proposed configuration changes
 // (`*RulesetResourceModel`) and builds the API representation in the form of
-// `cloudflare.Ruleset`,
+// `cloudflare.Ruleset`.
 //
 // The reverse of this method is `toRulesetResourceModel` which handles building
 // a state representation using the API response.
@@ -698,7 +703,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 
 	rs.ID = r.ID.ValueString()
 	for _, rule := range r.Rules {
-		newRule := cloudflare.RulesetRule{
+		rr := cloudflare.RulesetRule{
 			ID:          rule.ID.ValueString(),
 			Action:      rule.Action.ValueString(),
 			Expression:  rule.Expression.ValueString(),
@@ -706,150 +711,150 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 		}
 
 		if !rule.Enabled.IsNull() {
-			newRule.Enabled = cloudflare.BoolPtr(rule.Enabled.ValueBool())
-		}
-
-		if !rule.ID.IsNull() {
-			newRule.ID = rule.ID.ValueString()
+			rr.Enabled = cloudflare.BoolPtr(rule.Enabled.ValueBool())
 		}
 
 		if !rule.Ref.IsNull() {
-			newRule.Ref = rule.Ref.ValueString()
+			rr.Ref = rule.Ref.ValueString()
 		}
 
-		// if !rule.Version.IsNull() {
-		// 	newRule.Version = rule.Version.ValueString()
-		// }
+		if !rule.Version.IsNull() {
+			if rule.Version.ValueString() != "" {
+				rr.Version = cloudflare.StringPtr(rule.Version.ValueString())
+			}
+		}
 
 		for _, ap := range rule.ActionParameters {
-			newRule.ActionParameters = &cloudflare.RulesetRuleActionParameters{}
+			rr.ActionParameters = &cloudflare.RulesetRuleActionParameters{}
 
 			if len(ap.Rules) > 0 {
 				ruleMap := map[string][]string{}
 				for key, ruleIDs := range ap.Rules {
 					s := strings.Split(ruleIDs.ValueString(), ",")
 					ruleMap[key] = s
-					newRule.ActionParameters.Rules = ruleMap
+					rr.ActionParameters.Rules = ruleMap
 				}
 			}
 
 			if len(expanders.StringSet(ap.Phases)) > 0 {
-				newRule.ActionParameters.Phases = expanders.StringSet(ap.Phases)
+				rr.ActionParameters.Phases = expanders.StringSet(ap.Phases)
 			}
 
 			if len(expanders.StringSet(ap.Products)) > 0 {
-				newRule.ActionParameters.Products = expanders.StringSet(ap.Products)
+				rr.ActionParameters.Products = expanders.StringSet(ap.Products)
 			}
 
 			if len(expanders.StringSet(ap.Rulesets)) > 0 {
-				newRule.ActionParameters.Rulesets = expanders.StringSet(ap.Rulesets)
+				rr.ActionParameters.Rulesets = expanders.StringSet(ap.Rulesets)
 			}
 
 			if !ap.ID.IsNull() {
-				newRule.ActionParameters.ID = ap.ID.ValueString()
+				rr.ActionParameters.ID = ap.ID.ValueString()
 			}
 
 			if !ap.Content.IsNull() {
-				newRule.ActionParameters.Content = ap.Content.ValueString()
+				rr.ActionParameters.Content = ap.Content.ValueString()
 			}
 
 			if !ap.ContentType.IsNull() {
-				newRule.ActionParameters.ContentType = ap.ContentType.ValueString()
+				rr.ActionParameters.ContentType = ap.ContentType.ValueString()
 			}
 
 			if !ap.HostHeader.IsNull() {
-				newRule.ActionParameters.HostHeader = ap.HostHeader.ValueString()
+				rr.ActionParameters.HostHeader = ap.HostHeader.ValueString()
 			}
 
 			if !ap.Ruleset.IsNull() {
-				newRule.ActionParameters.Ruleset = ap.Ruleset.ValueString()
+				rr.ActionParameters.Ruleset = ap.Ruleset.ValueString()
 			}
 
-			// if !ap.Version.IsNull() {
-			// 	newRule.ActionParameters.Version = ap.Version.ValueString()
-			// }
+			if !ap.Version.IsNull() {
+				if ap.Version.ValueString() != "" {
+					rr.ActionParameters.Version = cloudflare.StringPtr(ap.Version.ValueString())
+				}
+			}
 
 			if !ap.Increment.IsNull() {
-				newRule.ActionParameters.Increment = int(ap.Increment.ValueInt64())
+				rr.ActionParameters.Increment = int(ap.Increment.ValueInt64())
 			}
 
 			if !ap.StatusCode.IsNull() {
-				newRule.ActionParameters.StatusCode = uint16(ap.StatusCode.ValueInt64())
+				rr.ActionParameters.StatusCode = uint16(ap.StatusCode.ValueInt64())
 			}
 
 			if !ap.AutomaticHTTPSRewrites.IsNull() {
-				newRule.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(ap.AutomaticHTTPSRewrites.ValueBool())
+				rr.ActionParameters.AutomaticHTTPSRewrites = cloudflare.BoolPtr(ap.AutomaticHTTPSRewrites.ValueBool())
 			}
 
 			if !ap.BIC.IsNull() {
-				newRule.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(ap.BIC.ValueBool())
+				rr.ActionParameters.BrowserIntegrityCheck = cloudflare.BoolPtr(ap.BIC.ValueBool())
 			}
 
 			if !ap.Cache.IsNull() {
-				newRule.ActionParameters.Cache = cloudflare.BoolPtr(ap.Cache.ValueBool())
+				rr.ActionParameters.Cache = cloudflare.BoolPtr(ap.Cache.ValueBool())
 			}
 
 			if !ap.DisableApps.IsNull() {
-				newRule.ActionParameters.DisableApps = cloudflare.BoolPtr(ap.DisableApps.ValueBool())
+				rr.ActionParameters.DisableApps = cloudflare.BoolPtr(ap.DisableApps.ValueBool())
 			}
 
 			if !ap.DisableRailgun.IsNull() {
-				newRule.ActionParameters.DisableRailgun = cloudflare.BoolPtr(ap.DisableRailgun.ValueBool())
+				rr.ActionParameters.DisableRailgun = cloudflare.BoolPtr(ap.DisableRailgun.ValueBool())
 			}
 
 			if !ap.DisableZaraz.IsNull() {
-				newRule.ActionParameters.DisableZaraz = cloudflare.BoolPtr(ap.DisableZaraz.ValueBool())
+				rr.ActionParameters.DisableZaraz = cloudflare.BoolPtr(ap.DisableZaraz.ValueBool())
 			}
 
 			if !ap.EmailObfuscation.IsNull() {
-				newRule.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(ap.EmailObfuscation.ValueBool())
+				rr.ActionParameters.EmailObfuscation = cloudflare.BoolPtr(ap.EmailObfuscation.ValueBool())
 			}
 
 			if !ap.HotlinkProtection.IsNull() {
-				newRule.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(ap.HotlinkProtection.ValueBool())
+				rr.ActionParameters.HotLinkProtection = cloudflare.BoolPtr(ap.HotlinkProtection.ValueBool())
 			}
 
 			if !ap.Mirage.IsNull() {
-				newRule.ActionParameters.Mirage = cloudflare.BoolPtr(ap.Mirage.ValueBool())
+				rr.ActionParameters.Mirage = cloudflare.BoolPtr(ap.Mirage.ValueBool())
 			}
 
 			if !ap.OpportunisticEncryption.IsNull() {
-				newRule.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(ap.OpportunisticEncryption.ValueBool())
+				rr.ActionParameters.OpportunisticEncryption = cloudflare.BoolPtr(ap.OpportunisticEncryption.ValueBool())
 			}
 
 			if !ap.RocketLoader.IsNull() {
-				newRule.ActionParameters.RocketLoader = cloudflare.BoolPtr(ap.RocketLoader.ValueBool())
+				rr.ActionParameters.RocketLoader = cloudflare.BoolPtr(ap.RocketLoader.ValueBool())
 			}
 
 			if !ap.ServerSideExcludes.IsNull() {
-				newRule.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(ap.ServerSideExcludes.ValueBool())
+				rr.ActionParameters.ServerSideExcludes = cloudflare.BoolPtr(ap.ServerSideExcludes.ValueBool())
 			}
 
 			if !ap.SXG.IsNull() {
-				newRule.ActionParameters.SXG = cloudflare.BoolPtr(ap.SXG.ValueBool())
+				rr.ActionParameters.SXG = cloudflare.BoolPtr(ap.SXG.ValueBool())
 			}
 
 			if !ap.Polish.IsNull() {
 				polish, _ := cloudflare.PolishFromString(ap.Polish.ValueString())
-				newRule.ActionParameters.Polish = polish
+				rr.ActionParameters.Polish = polish
 			}
 
 			if !ap.SecurityLevel.IsNull() {
 				securityLevel, _ := cloudflare.SecurityLevelFromString(ap.SecurityLevel.ValueString())
-				newRule.ActionParameters.SecurityLevel = securityLevel
+				rr.ActionParameters.SecurityLevel = securityLevel
 			}
 
 			if !ap.SSL.IsNull() {
 				ssl, _ := cloudflare.SSLFromString(ap.SSL.ValueString())
-				newRule.ActionParameters.SSL = ssl
+				rr.ActionParameters.SSL = ssl
 			}
 
 			if !ap.OriginErrorPagePassthru.IsNull() {
-				newRule.ActionParameters.OriginErrorPagePassthru = cloudflare.BoolPtr(ap.OriginErrorPagePassthru.ValueBool())
+				rr.ActionParameters.OriginErrorPagePassthru = cloudflare.BoolPtr(ap.OriginErrorPagePassthru.ValueBool())
 			}
 
 			if !ap.RespectStrongEtags.IsNull() {
-				newRule.ActionParameters.RespectStrongETags = cloudflare.BoolPtr(ap.RespectStrongEtags.ValueBool())
+				rr.ActionParameters.RespectStrongETags = cloudflare.BoolPtr(ap.RespectStrongEtags.ValueBool())
 			}
 
 			if len(ap.Overrides) > 0 {
@@ -905,11 +910,11 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					overrides.Enabled = cloudflare.BoolPtr(ap.Overrides[0].Enabled.ValueBool())
 				}
 
-				newRule.ActionParameters.Overrides = &overrides
+				rr.ActionParameters.Overrides = &overrides
 			}
 
 			if len(ap.MatchedData) > 0 {
-				newRule.ActionParameters.MatchedData = &cloudflare.RulesetRuleActionParametersMatchedData{
+				rr.ActionParameters.MatchedData = &cloudflare.RulesetRuleActionParametersMatchedData{
 					PublicKey: ap.MatchedData[0].PublicKey.ValueString(),
 				}
 			}
@@ -920,7 +925,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					Content:     ap.Response[0].Content.ValueString(),
 					StatusCode:  uint16(ap.Response[0].StatusCode.ValueInt64()),
 				}
-				newRule.ActionParameters.Response = &response
+				rr.ActionParameters.Response = &response
 			}
 
 			if len(ap.AutoMinify) > 0 {
@@ -929,7 +934,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					CSS:  ap.AutoMinify[0].CSS.ValueBool(),
 					JS:   ap.AutoMinify[0].JS.ValueBool(),
 				}
-				newRule.ActionParameters.AutoMinify = &autominify
+				rr.ActionParameters.AutoMinify = &autominify
 			}
 
 			if len(ap.BrowserTTL) > 0 {
@@ -941,11 +946,11 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					browserTTL.Default = cloudflare.UintPtr(uint(ap.BrowserTTL[0].Default.ValueInt64()))
 				}
 
-				newRule.ActionParameters.BrowserTTL = &browserTTL
+				rr.ActionParameters.BrowserTTL = &browserTTL
 			}
 
 			if len(ap.ServeStale) > 0 && !ap.ServeStale[0].DisableStaleWhileUpdating.IsNull() {
-				newRule.ActionParameters.ServeStale = &cloudflare.RulesetRuleActionParametersServeStale{
+				rr.ActionParameters.ServeStale = &cloudflare.RulesetRuleActionParametersServeStale{
 					DisableStaleWhileUpdating: cloudflare.BoolPtr(ap.ServeStale[0].DisableStaleWhileUpdating.ValueBool()),
 				}
 			}
@@ -955,7 +960,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					Name: ap.FromList[0].Name.ValueString(),
 					Key:  ap.FromList[0].Key.ValueString(),
 				}
-				newRule.ActionParameters.FromList = &fromList
+				rr.ActionParameters.FromList = &fromList
 			}
 
 			if len(ap.Origin) > 0 {
@@ -963,14 +968,14 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					Host: ap.Origin[0].Host.ValueString(),
 					Port: uint16(ap.Origin[0].Port.ValueInt64()),
 				}
-				newRule.ActionParameters.Origin = &origin
+				rr.ActionParameters.Origin = &origin
 			}
 
 			if len(ap.SNI) > 0 {
 				sni := cloudflare.RulesetRuleActionParametersSni{
 					Value: ap.SNI[0].Value.ValueString(),
 				}
-				newRule.ActionParameters.SNI = &sni
+				rr.ActionParameters.SNI = &sni
 			}
 
 			if len(ap.URI) > 0 {
@@ -994,7 +999,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					}
 				}
 
-				newRule.ActionParameters.URI = uri
+				rr.ActionParameters.URI = uri
 			}
 
 			if len(ap.Headers) > 0 {
@@ -1007,7 +1012,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					}
 				}
 
-				newRule.ActionParameters.Headers = headers
+				rr.ActionParameters.Headers = headers
 			}
 
 			if len(ap.CacheKey) > 0 {
@@ -1118,7 +1123,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 					key.CustomKey = &customKey
 				}
 
-				newRule.ActionParameters.CacheKey = &key
+				rr.ActionParameters.CacheKey = &key
 			}
 
 			if len(ap.EdgeTTL) > 0 {
@@ -1150,7 +1155,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 				}
 
 				edgeTTL.StatusCodeTTL = statusCodeTTLs
-				newRule.ActionParameters.EdgeTTL = edgeTTL
+				rr.ActionParameters.EdgeTTL = edgeTTL
 			}
 
 			if len(ap.FromValue) > 0 {
@@ -1167,33 +1172,33 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 				from.TargetURL.Expression = ap.FromValue[0].TargetURL[0].Expression.ValueString()
 				from.TargetURL.Value = ap.FromValue[0].TargetURL[0].Value.ValueString()
 
-				newRule.ActionParameters.FromValue = from
+				rr.ActionParameters.FromValue = from
 			}
 
 			apCookieFields := expanders.StringSet(ap.CookieFields)
 			if len(apCookieFields) > 0 {
 				for _, cookie := range apCookieFields {
-					newRule.ActionParameters.CookieFields = append(newRule.ActionParameters.CookieFields, cloudflare.RulesetActionParametersLogCustomField{Name: cookie})
+					rr.ActionParameters.CookieFields = append(rr.ActionParameters.CookieFields, cloudflare.RulesetActionParametersLogCustomField{Name: cookie})
 				}
 			}
 
 			apRequestFields := expanders.StringSet(ap.RequestFields)
 			if len(apRequestFields) > 0 {
 				for _, request := range apRequestFields {
-					newRule.ActionParameters.RequestFields = append(newRule.ActionParameters.RequestFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
+					rr.ActionParameters.RequestFields = append(rr.ActionParameters.RequestFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
 				}
 			}
 
 			apResponseFields := expanders.StringSet(ap.ResponseFields)
 			if len(apResponseFields) > 0 {
 				for _, request := range apResponseFields {
-					newRule.ActionParameters.ResponseFields = append(newRule.ActionParameters.ResponseFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
+					rr.ActionParameters.ResponseFields = append(rr.ActionParameters.ResponseFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
 				}
 			}
 		}
 
 		for _, rl := range rule.Ratelimit {
-			newRule.RateLimit = &cloudflare.RulesetRuleRateLimit{
+			rr.RateLimit = &cloudflare.RulesetRuleRateLimit{
 				Characteristics:         expanders.StringSet(rl.Characteristics),
 				Period:                  int(rl.Period.ValueInt64()),
 				RequestsPerPeriod:       int(rl.RequestsPerPeriod.ValueInt64()),
@@ -1206,19 +1211,19 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 		}
 
 		for _, l := range rule.Logging {
-			newRule.Logging = &cloudflare.RulesetRuleLogging{
+			rr.Logging = &cloudflare.RulesetRuleLogging{
 				Enabled: cloudflare.BoolPtr(l.Enabled.ValueBool()),
 			}
 		}
 
 		for _, e := range rule.ExposedCredentialCheck {
-			newRule.ExposedCredentialCheck = &cloudflare.RulesetRuleExposedCredentialCheck{
+			rr.ExposedCredentialCheck = &cloudflare.RulesetRuleExposedCredentialCheck{
 				UsernameExpression: e.UsernameExpression.ValueString(),
 				PasswordExpression: e.PasswordExpression.ValueString(),
 			}
 		}
 
-		rules = append(rules, newRule)
+		rules = append(rules, rr)
 	}
 	rs.Rules = rules
 
