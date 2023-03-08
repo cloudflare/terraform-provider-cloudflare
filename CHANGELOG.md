@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 
+* resource/cloudflare_cloudflare_teams_rules: Add untrusted_cert setting to teams rules settings ([#2256](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2256))
 * resource/cloudflare_teams_account: Add support for DLP payload logging public key ([#2267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2267))
 * resource/cloudflare_teams_rule: Add support for enabling DLP payload logging per-rule ([#2267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2267))
 * resource/cloudflare_waiting_room: add 'ru-RU' and 'fa-IR' to default_template_language field ([#2262](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2262))
