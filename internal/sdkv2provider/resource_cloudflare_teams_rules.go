@@ -207,6 +207,7 @@ func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interfac
 		"add_headers":                        flattenTeamsAddHeaders(settings.AddHeaders),
 		"insecure_disable_dnssec_validation": settings.InsecureDisableDNSSECValidation,
 		"egress":                             flattenTeamsEgressSettings(settings.EgressSettings),
+		"untrusted_cert":                     flattenTeamsUntrustedCertSettings(settings.UntrustedCertSettings),
 		"payload_log":                        flattenTeamsDlpPayloadLogSettings(settings.PayloadLog),
 	}}
 }
@@ -235,6 +236,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 	insecureDisableDNSSECValidation := settingsMap["insecure_disable_dnssec_validation"].(bool)
 	egressSettings := inflateTeamsEgressSettings(settingsMap["egress"].([]interface{}))
 	payloadLog := inflateTeamsDlpPayloadLogSettings(settingsMap["payload_log"].([]interface{}))
+	untrustedCertSettings := inflateTeamsUntrustedCertSettings(settingsMap["untrusted_cert"].([]interface{}))
 
 	return &cloudflare.TeamsRuleSettings{
 		BlockPageEnabled:                enabled,
@@ -248,6 +250,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 		InsecureDisableDNSSECValidation: insecureDisableDNSSECValidation,
 		EgressSettings:                  egressSettings,
 		PayloadLog:                      payloadLog,
+		UntrustedCertSettings:           untrustedCertSettings,
 	}
 }
 
@@ -406,6 +409,15 @@ func flattenTeamsDlpPayloadLogSettings(settings *cloudflare.TeamsDlpPayloadLogSe
 	}}
 }
 
+func flattenTeamsUntrustedCertSettings(settings *cloudflare.UntrustedCertSettings) []interface{} {
+	if settings == nil {
+		return nil
+	}
+	return []interface{}{map[string]interface{}{
+		"action": settings.Action,
+	}}
+}
+
 func inflateTeamsDlpPayloadLogSettings(settings interface{}) *cloudflare.TeamsDlpPayloadLogSettings {
 	settingsList := settings.([]interface{})
 	if len(settingsList) != 1 {
@@ -415,6 +427,28 @@ func inflateTeamsDlpPayloadLogSettings(settings interface{}) *cloudflare.TeamsDl
 	enabled := settingsMap["enabled"].(bool)
 	return &cloudflare.TeamsDlpPayloadLogSettings{
 		Enabled: enabled,
+	}
+}
+
+func inflateTeamsUntrustedCertSettings(settings interface{}) *cloudflare.UntrustedCertSettings {
+	settingsList := settings.([]interface{})
+	if len(settingsList) != 1 {
+		return nil
+	}
+	settingsMap := settingsList[0].(map[string]interface{})
+	action := settingsMap["action"].(string)
+	var actionValue cloudflare.TeamsGatewayUntrustedCertAction
+	switch action {
+	case "pass_through":
+		actionValue = cloudflare.UntrustedCertPassthrough
+	case "block":
+		actionValue = cloudflare.UntrustedCertBlock
+	case "error":
+		actionValue = cloudflare.UntrustedCertError
+	}
+
+	return &cloudflare.UntrustedCertSettings{
+		Action: actionValue,
 	}
 }
 
