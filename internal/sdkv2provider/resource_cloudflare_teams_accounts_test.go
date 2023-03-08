@@ -50,6 +50,7 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_blocks", "true"),
 					resource.TestCheckResourceAttr(name, "proxy.0.tcp", "true"),
 					resource.TestCheckResourceAttr(name, "proxy.0.udp", "false"),
+					resource.TestCheckResourceAttr(name, "payload_log.0.public_key", "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="),
 				),
 			},
 		},
@@ -100,6 +101,9 @@ resource "cloudflare_teams_account" "%[1]s" {
         log_blocks = true
       }
     }
+  }
+  payload_log {
+	public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
   }
 }
 `, rnd, accountID)

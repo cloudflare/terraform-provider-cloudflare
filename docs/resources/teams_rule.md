@@ -66,6 +66,7 @@ Optional:
 - `l4override` (Block List, Max: 1) Settings to forward layer 4 traffic. (see [below for nested schema](#nestedblock--rule_settings--l4override))
 - `override_host` (String) The host to override matching DNS queries with.
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
+- `payload_log` (Block List, Max: 1) Configure DLP Payload Logging settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--payload_log))
 
 <a id="nestedblock--rule_settings--biso_admin_controls"></a>
 ### Nested Schema for `rule_settings.biso_admin_controls`
@@ -108,6 +109,14 @@ Required:
 
 - `ip` (String) Override IP to forward traffic to.
 - `port` (Number) Override Port to forward traffic to.
+
+
+<a id="nestedblock--rule_settings--payload_log"></a>
+### Nested Schema for `rule_settings.payload_log`
+
+Required:
+
+- `enabled` (Boolean) Enable or disable DLP Payload Logging for this rule.
 
 ## Import
 
