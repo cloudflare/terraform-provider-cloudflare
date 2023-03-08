@@ -109,9 +109,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Optional:            true,
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
-							PlanModifiers: []planmodifier.String{
-								stringplanmodifier.UseStateForUnknown(),
-							},
 						},
 						"version": schema.StringAttribute{
 							Computed:            true,
