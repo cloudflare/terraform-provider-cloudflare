@@ -215,9 +215,9 @@ func getNotificationMechanisms(s *schema.Set) []cloudflare.NotificationMechanism
 
 func setNotificationMechanisms(md []cloudflare.NotificationMechanismData) *schema.Set {
 	mechanisms := make([]interface{}, 0)
-	data := make(map[string]interface{})
 
 	for _, m := range md {
+		data := make(map[string]interface{})
 		data["name"] = m.Name
 		data["id"] = m.ID
 		mechanisms = append(mechanisms, data)

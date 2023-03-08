@@ -154,7 +154,24 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesUntrustedCertActionValues(), false),
 		Optional:     true,
-		Description:  "Action to be taken when the SSL certificate of upstream is invalid. Options are pass_through, block, and error",
+		Description:  fmt.Sprintf("Action to be taken when the SSL certificate of upstream is invalid. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.TeamsRulesUntrustedCertActionValues())),
+	},
+	"payload_log": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: payloadLogSettings,
+		},
+		Description: "Configure DLP Payload Logging settings for this rule.",
+	},
+}
+
+var payloadLogSettings = map[string]*schema.Schema{
+	"enabled": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Enable or disable DLP Payload Logging for this rule.",
 	},
 }
 
