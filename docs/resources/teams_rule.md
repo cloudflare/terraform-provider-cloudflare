@@ -67,7 +67,7 @@ Optional:
 - `override_host` (String) The host to override matching DNS queries with.
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
 - `payload_log` (Block List, Max: 1) Configure DLP Payload Logging settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--payload_log))
-- `untrusted_cert` (String) Action to be taken when the SSL certificate of upstream is invalid. Available values: `pass_through`, `block`, `error`.
+- `untrusted_cert` (Block List, Max: 1) Configure untrusted certificate settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--untrusted_cert))
 
 <a id="nestedblock--rule_settings--biso_admin_controls"></a>
 ### Nested Schema for `rule_settings.biso_admin_controls`
@@ -118,6 +118,14 @@ Required:
 Required:
 
 - `enabled` (Boolean) Enable or disable DLP Payload Logging for this rule.
+
+
+<a id="nestedblock--rule_settings--untrusted_cert"></a>
+### Nested Schema for `rule_settings.untrusted_cert`
+
+Optional:
+
+- `action` (String) Action to be taken when the SSL certificate of upstream is invalid. Available values: `pass_through`, `block`, `error`.
 
 ## Import
 
