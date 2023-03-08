@@ -1786,6 +1786,54 @@ func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_TransformationRuleURIStripOffQueryString(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetRewriteForEmptyQueryString(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_transform"),
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.uri.0.query.0.value", ""),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_TransformationRuleURIStripOffPath(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetRewriteForEmptyPath(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_transform"),
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.uri.0.path.0.value", "/"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -3284,6 +3332,56 @@ func testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRules
       enabled = true
     }
   }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCloudflareRulesetRewriteForEmptyQueryString(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_transform"
+
+    rules {
+      action = "rewrite"
+      action_parameters {
+		uri {
+		  query {
+			value = ""
+		  }
+		}
+	  }
+      expression = "true"
+      description = "strip off query string"
+      enabled = true
+    }
+  }`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetRewriteForEmptyPath(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_transform"
+
+    rules {
+      action = "rewrite"
+      action_parameters {
+		uri {
+		  path {
+			value = "/"
+		  }
+		}
+	  }
+      expression = "true"
+      description = "strip off path"
+      enabled = true
+    }
+  }`, rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetDestroy(s *terraform.State) error {

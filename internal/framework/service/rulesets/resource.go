@@ -616,10 +616,17 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 				}
 
 				if ruleResponse.ActionParameters.URI.Query != nil {
-					rule.ActionParameters[0].URI[0].Query = []*ActionParametersURIPartModel{{
-						Value:      flatteners.String(ruleResponse.ActionParameters.URI.Query.Value),
-						Expression: flatteners.String(ruleResponse.ActionParameters.URI.Query.Expression),
-					}}
+					if ruleResponse.ActionParameters.URI.Query.Expression != "" {
+						rule.ActionParameters[0].URI[0].Query = []*ActionParametersURIPartModel{{
+							Value:      types.StringNull(),
+							Expression: flatteners.String(ruleResponse.ActionParameters.URI.Query.Expression),
+						}}
+					} else {
+						rule.ActionParameters[0].URI[0].Query = []*ActionParametersURIPartModel{{
+							Value:      types.StringValue(cloudflare.String(ruleResponse.ActionParameters.URI.Query.Value)),
+							Expression: flatteners.String(ruleResponse.ActionParameters.URI.Query.Expression),
+						}}
+					}
 				}
 			}
 
@@ -1007,15 +1014,20 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 
 			if len(ap.URI[0].Path) > 0 {
 				uri.Path = &cloudflare.RulesetRuleActionParametersURIPath{
-					Value:      ap.URI[0].Path[0].Value.ValueString(),
 					Expression: ap.URI[0].Path[0].Expression.ValueString(),
+					Value:      ap.URI[0].Path[0].Value.ValueString(),
 				}
 			}
 
 			if len(ap.URI[0].Query) > 0 {
-				uri.Query = &cloudflare.RulesetRuleActionParametersURIQuery{
-					Value:      ap.URI[0].Query[0].Value.ValueString(),
-					Expression: ap.URI[0].Query[0].Expression.ValueString(),
+				if ap.URI[0].Query[0].Expression.ValueString() != "" {
+					uri.Query = &cloudflare.RulesetRuleActionParametersURIQuery{
+						Expression: ap.URI[0].Query[0].Expression.ValueString(),
+					}
+				} else {
+					uri.Query = &cloudflare.RulesetRuleActionParametersURIQuery{
+						Value: cloudflare.StringPtr(ap.URI[0].Query[0].Value.ValueString()),
+					}
 				}
 			}
 
