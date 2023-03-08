@@ -151,10 +151,13 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Description: "Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs.",
 	},
 	"untrusted_cert": {
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesUntrustedCertActionValues(), false),
-		Optional:     true,
-		Description:  fmt.Sprintf("Action to be taken when the SSL certificate of upstream is invalid. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.TeamsRulesUntrustedCertActionValues())),
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: untrustedCertSettings,
+		},
+		Description: "Configure untrusted certificate settings for this rule.",
 	},
 	"payload_log": {
 		Type:     schema.TypeList,
@@ -172,6 +175,15 @@ var payloadLogSettings = map[string]*schema.Schema{
 		Type:        schema.TypeBool,
 		Required:    true,
 		Description: "Enable or disable DLP Payload Logging for this rule.",
+	},
+}
+
+var untrustedCertSettings = map[string]*schema.Schema{
+	"action": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesUntrustedCertActionValues(), false),
+		Optional:     true,
+		Description:  fmt.Sprintf("Action to be taken when the SSL certificate of upstream is invalid. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.TeamsRulesUntrustedCertActionValues())),
 	},
 }
 
