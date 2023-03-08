@@ -614,7 +614,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithPayloadLogging(t *testing.T) 
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.id", "efb7b8c949ac4650a09736fc376e9aee"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.matched_data.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.matched_data.0.public_key", "not_a_real_public_key"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.matched_data.0.public_key", "bm90X2FfcmVhbF9wdWJsaWNfa2V5"),
 				),
 			},
 		},
@@ -2405,7 +2405,7 @@ func testAccCheckCloudflareRulesetManagedWAFPayloadLogging(rnd, name, zoneID, zo
       action_parameters {
         id = "efb7b8c949ac4650a09736fc376e9aee"
         matched_data {
-          public_key = "not_a_real_public_key"
+          public_key = "bm90X2FfcmVhbF9wdWJsaWNfa2V5"
         }
       }
       expression = "true"
