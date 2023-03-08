@@ -27,10 +27,6 @@ and clean up the resources before attempting to configure them with
 Terraform. This is because Terraform will fail to apply if configuration
 already exists to prevent blindly overwriting changes.
 
-~> `enabled` has been immediately deprecated in favour of
-`status`. You should swap over to ensure that your configuration doesn't
-have inconsistent operations and inadvertently disable rulesets.
-
 ## Example Usage
 
 ```terraform
@@ -465,6 +461,7 @@ Optional:
 - `logging` (Block List) List parameters to configure how the rule generates logs. (see [below for nested schema](#nestedblock--rules--logging))
 - `ratelimit` (Block List) List of parameters that configure HTTP rate limiting behaviour. (see [below for nested schema](#nestedblock--rules--ratelimit))
 - `ref` (String) Rule reference.
+- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters"></a>
 ### Nested Schema for `rules.action_parameters`
@@ -517,6 +514,7 @@ Optional:
 - `status_code` (Number) HTTP status code of the custom error response.
 - `sxg` (Boolean) Turn on or off the SXG feature.
 - `uri` (Block List) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations. (see [below for nested schema](#nestedblock--rules--action_parameters--uri))
+- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters--autominify"></a>
 ### Nested Schema for `rules.action_parameters.autominify`
