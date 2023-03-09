@@ -195,3 +195,31 @@ func resourceCloudflareWaitingRoomRulesImport(ctx context.Context, d *schema.Res
 
 	return []*schema.ResourceData{d}, nil
 }
+
+// statusToAPIEnabledFieldConversion takes the "status" field from the Terraform
+// schema/state and converts it to the API equivalent for the "enabled" field.
+func statusToAPIEnabledFieldConversion(s string) *bool {
+	if s == "enabled" {
+		return cloudflare.BoolPtr(true)
+	} else if s == "disabled" {
+		return cloudflare.BoolPtr(false)
+	} else {
+		return nil
+	}
+}
+
+// apiEnabledToStatusFieldConversion takes the "enabled" field from the API and
+// converts it to the Terraform schema/state key "status".
+func apiEnabledToStatusFieldConversion(s *bool) string {
+	if s == nil {
+		return ""
+	}
+
+	if *s == true {
+		return "enabled"
+	} else if *s == false {
+		return "disabled"
+	} else {
+		return ""
+	}
+}
