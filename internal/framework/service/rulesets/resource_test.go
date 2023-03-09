@@ -1862,6 +1862,30 @@ func TestAccCloudflareRuleset_TransformationRuleURIStripOffPath(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ConfigSingleFalseyValue(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetConfigSingleFalseyValue(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_config_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_config"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.bic", "false"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -3430,6 +3454,27 @@ func testAccCloudflareRulesetRewriteForEmptyPath(rnd, zoneID string) string {
       description = "strip off path"
       enabled = true
     }
+  }`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetConfigSingleFalseyValue(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_config_settings"
+
+    rules {
+      action = "set_config"
+	  action_parameters {
+		bic  = false
+	  }
+	  expression  = "true"
+	  description = "disable BIC"
+	  enabled     = true
+	}
   }`, rnd, zoneID)
 }
 
