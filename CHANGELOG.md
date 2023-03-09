@@ -1,5 +1,9 @@
 ## 4.2.0 (Unreleased)
 
+ENHANCEMENTS:
+
+- `resource/cloudflare_access_device_posture_rule`: Add support for `sentinelone` type ([#2278](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2278))
+
 ## 4.1.0 (March 8th, 2023)
 
 ENHANCEMENTS:
