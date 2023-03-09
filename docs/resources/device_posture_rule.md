@@ -59,6 +59,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 
 Optional:
 
+- `check_disks` (List of String) Specific volume(s) to check for encryption.
 - `compliance_status` (String) The workspace one device compliance status. Available values: `compliant`, `noncompliant`.
 - `connection_id` (String) The workspace one connection id.
 - `domain` (String) The domain that the client must join.
