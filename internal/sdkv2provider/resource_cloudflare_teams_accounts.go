@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -100,12 +101,15 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	payloadLogSettings, err := client.GetDLPPayloadLogSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetDLPPayloadLogSettingsParams{})
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("error finding DLP Account config %q: %w", d.Id(), err))
-	}
-
-	if err := d.Set("payload_log", flattenPayloadLogSettings(&payloadLogSettings)); err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing payload log settings: %w", err))
+	if err == nil {
+		if err := d.Set("payload_log", flattenPayloadLogSettings(&payloadLogSettings)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing payload log settings: %w", err))
+		}
+	} else {
+		var notFoundError *cloudflare.NotFoundError
+		if !errors.As(err, &notFoundError) {
+			return diag.FromErr(fmt.Errorf("error finding DLP Account config %q: %w", d.Id(), err))
+		}
 	}
 
 	return nil
