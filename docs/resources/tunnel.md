@@ -42,5 +42,5 @@ resource "cloudflare_tunnel" "example" {
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_argo_tunnel.example <account_id>/<tunnel_id>
+$ terraform import cloudflare_tunnel.example <account_id>/<tunnel_id>
 ```
