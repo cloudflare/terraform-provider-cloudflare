@@ -1,19 +1,20 @@
 ---
-page_title: "cloudflare_lists Data Source - Cloudflare"
+page_title: "cloudflare_list Data Source - Cloudflare"
 subcategory: ""
 description: |-
-  Data source for looking up Cloudflare Lists.
+  Data source for looking up a Cloudflare List.
 ---
 
-# cloudflare_lists (Data Source)
+# cloudflare_list (Data Source)
 
-Data source for looking up Cloudflare Lists.
+Data source for looking up a Cloudflare List.
 
 ## Example Usage
 
 ```terraform
-data "cloudflare_lists" "example" {
+data "cloudflare_list" "example" {
   account_id = "01234567890123456789012345678901"
+  name       = "list_name"
 }
 ```
 
@@ -23,19 +24,12 @@ data "cloudflare_lists" "example" {
 ### Required
 
 - `account_id` (String) The account id to target for the resource.
+- `name` (String) The name of the list for the resource.
 
 ### Read-Only
 
-- `lists` (List of Object) (see [below for nested schema](#nestedatt--lists))
 - `id` (String) The ID of this resource.
-
-<a id="nestedatt--lists"></a>
-### Nested Schema for `lists`
-
-Read-Only:
-
 - `name` (String)
-- `id` (String)
 - `description` (String)
 - `kind` (String)
 - `numitems` (Number)
