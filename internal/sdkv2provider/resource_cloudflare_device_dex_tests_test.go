@@ -61,7 +61,7 @@ func TestAccCloudflareDeviceDexTests(t *testing.T) {
 func testAccCloudflareDeviceDexTestsHttp(accountID, rnd string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_device_dex_tests" "%[1]s" {
-		test_id = "%[2]s"
+		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"
 		interval = "0h30m0s"
@@ -78,7 +78,7 @@ func testAccCloudflareDeviceDexTestsHttp(accountID, rnd string) string {
 func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_device_dex_tests" "%[1]s" {
-		test_id = "%[2]s"
+		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"
 		interval = "0h30m0s"
@@ -94,7 +94,7 @@ func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd string) string {
 func testAccCloudflareDeviceDexTestsTracerouteIpv4(accountID, rnd string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_device_dex_tests" "%[1]s" {
-		test_id = "%[2]s"
+		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"
 		interval = "0h30m0s"

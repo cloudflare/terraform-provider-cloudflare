@@ -48,8 +48,8 @@ func resourceCloudflareDeviceDexTestsRead(ctx context.Context, d *schema.Resourc
 	d.Set("description", dexTest.Description)
 	d.Set("enabled", dexTest.Enabled)
 	d.Set("interval", dexTest.Interval)
-	d.Set("updated", dexTest.Updated)
-	d.Set("created", dexTest.Created)
+	d.Set("updated", &dexTest.Updated)
+	d.Set("created", &dexTest.Created)
 	d.Set("data", convertDeviceDexTestDataToSchema(dexTest.Data))
 
 	return nil
