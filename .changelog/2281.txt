@@ -1,0 +1,3 @@
+```release-note:enhancement
+examples/resources: rename references of cloudflare_argo_tunnel to cloudflare_tunnel
+```
