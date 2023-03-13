@@ -6,6 +6,10 @@ ENHANCEMENTS:
 * resource/cloudflare_tunnel_config: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
 * resource/cloudflare_tunnel_route: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
 
+BUG FIXES:
+
+* resource/cloudflare_teams_account: fixes an issue where accounts that had never configured DLP payload logging would error upon reading this resource ([#2284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2284))
+
 ## 4.1.0 (March 8th, 2023)
 
 ENHANCEMENTS:
