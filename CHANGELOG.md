@@ -10,6 +10,10 @@ BUG FIXES:
 
 * resource/cloudflare_teams_account: fixes an issue where accounts that had never configured DLP payload logging would error upon reading this resource ([#2284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2284))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.62.0 to 0.63.0 ([#2289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2289))
+
 ## 4.1.0 (March 8th, 2023)
 
 ENHANCEMENTS:
