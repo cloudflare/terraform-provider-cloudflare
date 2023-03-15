@@ -1,5 +1,13 @@
 ## 4.2.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: `status` has been removed in favour of `enabled` now that the workaround for zero values is no longer required ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+
+NOTES:
+
+* `cloudflare_ruleset` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state. Along with this, you will need to update any references to `status` which was the previous workaround for the `enabled` values. If you have `status = "enabled"` you will need to replace it with `enabled = true` and similar for `status = "disabled"` to be replaced with `enabled = false`. ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_device_posture_rule: Support `check_disks` in the `input` block schema. ([#2280](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2280))
@@ -10,6 +18,10 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_teams_account: fixes an issue where accounts that had never configured DLP payload logging would error upon reading this resource ([#2284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2284))
+
+INTERNAL:
+
+* resource/cloudflare_ruleset: migrate from SDKv2 to `terraform-plugin-framework` ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
 
 DEPENDENCIES:
 
