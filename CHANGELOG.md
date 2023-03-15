@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 
+* resource/cloudflare_device_posture_rule: Support `check_disks` in the `input` block schema. ([#2280](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2280))
 * resource/cloudflare_tunnel: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
 * resource/cloudflare_tunnel_config: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
 * resource/cloudflare_tunnel_route: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
