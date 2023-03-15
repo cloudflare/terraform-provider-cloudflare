@@ -99,6 +99,14 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Computed:    true,
 						Description: "True if all drives must be encrypted.",
 					},
+					"check_disks": {
+						Type: schema.TypeSet,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Optional:    true,
+						Description: "Specific volume(s) to check for encryption.",
+					},
 					"enabled": {
 						Type:        schema.TypeBool,
 						Optional:    true,
