@@ -451,7 +451,7 @@ Required:
 
 Optional:
 
-- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the ruleset rule. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `action_parameters` (Block List, Max: 1) List of parameters that configure the behavior of the ruleset rule action. (see [below for nested schema](#nestedblock--rules--action_parameters))
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
@@ -706,7 +706,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the rule-level override. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
 - `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
@@ -718,7 +718,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the tag-level override. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `category` (String) Tag name to apply the ruleset rule override to.
 - `enabled` (Boolean, Deprecated) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 - `status` (String) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag. Available values: `enabled`, `disabled`. Defaults to `""`.
@@ -729,7 +729,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the rule-level override. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `enabled` (Boolean, Deprecated) Defines if the current rule-level override enables or disables the rule.
 - `id` (String) Rule ID to apply the override to.
 - `score_threshold` (Number) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.

@@ -335,9 +335,9 @@ func buildStateFromRulesetRules(rules []cloudflare.RulesetRule) interface{} {
 			if !reflect.ValueOf(r.ActionParameters.URI).IsNil() {
 				var query []map[string]interface{}
 				var path []map[string]interface{}
-				originValue := false
-				if r.ActionParameters.URI.Origin {
-					originValue = true
+				var originValue bool
+				if !reflect.ValueOf(r.ActionParameters.URI.Origin).IsNil() {
+					originValue = cloudflare.Bool(r.ActionParameters.URI.Origin)
 				}
 
 				if !reflect.ValueOf(r.ActionParameters.URI.Query).IsNil() {
@@ -672,8 +672,8 @@ func buildRule(d *schema.ResourceData, resourceRule map[string]interface{}, rule
 				case "id":
 					rule.ActionParameters.ID = pValue.(string)
 				case "version":
-					if rule.ActionParameters.Version != "" {
-						rule.ActionParameters.Version = pValue.(string)
+					if cloudflare.String(rule.ActionParameters.Version) != "" {
+						rule.ActionParameters.Version = cloudflare.StringPtr(pValue.(string))
 					}
 				case "products":
 					var products []string
@@ -819,7 +819,7 @@ func buildRule(d *schema.ResourceData, resourceRule map[string]interface{}, rule
 						if val, ok := uriValue.(map[string]interface{})["query"]; ok && len(val.([]interface{})) > 0 {
 							uriQueryConfig := val.([]interface{})[0].(map[string]interface{})
 							uriParameterConfig.Query = &cloudflare.RulesetRuleActionParametersURIQuery{
-								Value:      uriQueryConfig["value"].(string),
+								Value:      cloudflare.StringPtr(uriQueryConfig["value"].(string)),
 								Expression: uriQueryConfig["expression"].(string),
 							}
 						}
@@ -1316,7 +1316,7 @@ func buildRule(d *schema.ResourceData, resourceRule map[string]interface{}, rule
 	}
 
 	rule.Action = resourceRule["action"].(string)
-	rule.Enabled = resourceRule["enabled"].(bool)
+	rule.Enabled = cloudflare.BoolPtr(resourceRule["enabled"].(bool))
 
 	if resourceRule["expression"] != nil {
 		rule.Expression = resourceRule["expression"].(string)

@@ -6,13 +6,13 @@ resource "cloudflare_dlp_profile" "example_predefined" {
   allowed_match_count = 0
 
   entry {
-	name = "Mastercard Card Number"
-	enabled = true
+    name    = "Mastercard Card Number"
+    enabled = true
   }
 
   entry {
-	name = "Union Pay Card Number"
-	enabled = false
+    name    = "Union Pay Card Number"
+    enabled = false
   }
 }
 
@@ -25,20 +25,20 @@ resource "cloudflare_dlp_profile" "example_custom" {
   allowed_match_count = 0
 
   entry {
-	name = "Matches visa credit cards"
-	enabled = true
-	pattern {
-		regex = "4\d{3}([-\. ])?\d{4}([-\. ])?\d{4}([-\. ])?\d{4}"
-		validation = "luhn"
-	}
+    name    = "Matches visa credit cards"
+    enabled = true
+    pattern {
+      regex      = "4\d{3}([-\\. ])?\d{4}([-\\. ])?\d{4}([-\\. ])?\d{4}"
+      validation = "luhn"
+    }
   }
 
   entry {
-	name = "Matches diners club card"
-	enabled = true
-	pattern {
-		regex = "(?:0[0-5]|[68][0-9])[0-9]{11}"
-		validation = "luhn"
-	}
+    name    = "Matches diners club card"
+    enabled = true
+    pattern {
+      regex      = "(?:0[0-5]|[68][0-9])[0-9]{11}"
+      validation = "luhn"
+    }
   }
 }

@@ -149,7 +149,7 @@ func dataSourceCloudflareRulesetsRead(ctx context.Context, d *schema.ResourceDat
 		if filter.Kind != "" && filter.Kind != ruleset.Kind {
 			continue
 		}
-		if filter.Version != "" && filter.Version != ruleset.Version {
+		if filter.Version != "" && filter.Version != cloudflare.String(ruleset.Version) {
 			continue
 		}
 		if filter.Name != nil && !filter.Name.Match([]byte(ruleset.Name)) {
