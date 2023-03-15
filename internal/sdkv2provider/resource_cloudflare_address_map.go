@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -19,6 +20,9 @@ func resourceCloudflareAddressMap() *schema.Resource {
 		ReadContext:   resourceCloudflareAddressMapRead,
 		UpdateContext: resourceCloudflareAddressMapUpdate,
 		DeleteContext: resourceCloudflareAddressMapDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAddressMapImport,
+		},
 		Description: heredoc.Doc(`
 			Provides the ability to manage IP addresses that can be used by DNS records when
 			they are proxied through Cloudflare.
@@ -194,6 +198,25 @@ func resourceCloudflareAddressMapDelete(ctx context.Context, d *schema.ResourceD
 	}
 
 	return nil
+}
+
+func resourceCloudflareAddressMapImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	attributes := strings.SplitN(d.Id(), "/", 2)
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "<account_id>/<address_map_id>"`, d.Id())
+	}
+
+	accountID, addressMapID := attributes[0], attributes[1]
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Address Map: id %s for account %s", addressMapID, accountID))
+
+	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.SetId(addressMapID)
+
+	if readErr := resourceCloudflareAddressMapRead(ctx, d, meta); readErr != nil {
+		return nil, fmt.Errorf("failed to read Address Map state")
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func convertIPsToSchema(ips []cloudflare.AddressMapIP) []interface{} {
