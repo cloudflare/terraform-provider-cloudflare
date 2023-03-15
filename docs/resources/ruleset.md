@@ -448,11 +448,7 @@ Required:
 Optional:
 
 - `action` (String) Action to perform in the ruleset rule. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
-<<<<<<< HEAD
-- `action_parameters` (Block List, Max: 1) List of parameters that configure the behavior of the ruleset rule action. (see [below for nested schema](#nestedblock--rules--action_parameters))
-=======
 - `action_parameters` (Block List) List of parameters that configure the behavior of the ruleset rule action. (see [below for nested schema](#nestedblock--rules--action_parameters))
->>>>>>> d3672384 (`make docs`)
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
 - `exposed_credential_check` (Block List) List of parameters that configure exposed credential checks. (see [below for nested schema](#nestedblock--rules--exposed_credential_check))
@@ -716,11 +712,7 @@ Optional:
 Optional:
 
 - `action` (String) Action to perform in the rule-level override. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
-<<<<<<< HEAD
-- `enabled` (Boolean, Deprecated) Defines if the current rule-level override enables or disables the rule.
-=======
 - `enabled` (Boolean) Defines if the current rule-level override enables or disables the rule.
->>>>>>> d3672384 (`make docs`)
 - `id` (String) Rule ID to apply the override to.
 - `score_threshold` (Number) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
 - `sensitivity_level` (String) Sensitivity level for a ruleset rule override.
