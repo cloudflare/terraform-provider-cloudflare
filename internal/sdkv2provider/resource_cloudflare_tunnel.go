@@ -53,12 +53,12 @@ func resourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, m
 	client := meta.(*cloudflare.API)
 	accID := d.Get(consts.AccountIDSchemaKey).(string)
 
-	tunnel, err := client.Tunnel(ctx, cloudflare.AccountIdentifier(accID), d.Id())
+	tunnel, err := client.GetTunnel(ctx, cloudflare.AccountIdentifier(accID), d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to fetch Argo Tunnel: %w", err))
 	}
 
-	token, err := client.TunnelToken(ctx, cloudflare.AccountIdentifier(accID), tunnel.ID)
+	token, err := client.GetTunnelToken(ctx, cloudflare.AccountIdentifier(accID), tunnel.ID)
 
 	if err != nil {
 		tflog.Warn(ctx, "unable to set the tunnel_token in state because it's not found in API")
@@ -101,7 +101,7 @@ func resourceCloudflareTunnelImport(ctx context.Context, d *schema.ResourceData,
 
 	accID, tunnelID := attributes[0], attributes[1]
 
-	tunnel, err := client.Tunnel(ctx, cloudflare.AccountIdentifier(accID), tunnelID)
+	tunnel, err := client.GetTunnel(ctx, cloudflare.AccountIdentifier(accID), tunnelID)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch Argo Tunnel %s", tunnelID))
 	}
