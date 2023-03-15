@@ -181,8 +181,7 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 			input.RequireAll = require_all.(bool)
 		}
 		if check_disks, ok := d.GetOk("input.0.check_disks"); ok {
-			values := check_disks.([]interface{})
-			input.CheckDisks = make([]string, len(values))
+			values := check_disks.(*schema.Set).List()
 			for _, value := range values {
 				input.CheckDisks = append(input.CheckDisks, value.(string))
 			}
