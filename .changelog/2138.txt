@@ -1,0 +1,27 @@
+```release-note:breaking-change
+resource/cloudflare_waf_group: removed in favour of `cloudflare_ruleset`
+```
+
+```release-note:breaking-change
+resource/cloudflare_waf_override: removed in favour of `cloudflare_ruleset`
+```
+
+```release-note:breaking-change
+resource/cloudflare_waf_package: removed in favour of `cloudflare_ruleset`
+```
+
+```release-note:breaking-change
+resource/cloudflare_waf_rule: removed in favour of `cloudflare_ruleset`
+```
+
+```release-note:breaking-change
+datasource/cloudflare_waf_groups: removed in favour of `cloudflare_rulesets`
+```
+
+```release-note:breaking-change
+datasource/cloudflare_waf_packages: removed in favour of `cloudflare_rulesets`
+```
+
+```release-note:breaking-change
+datasource/cloudflare_waf_rules: removed in favour of `cloudflare_rulesets`
+```

@@ -1,6 +1,8 @@
 package sdkv2provider
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -8,19 +10,22 @@ import (
 
 func TestAccCloudflareLoadBalancerMonitor_Import(t *testing.T) {
 	t.Parallel()
-	name := "cloudflare_load_balancer_monitor.test"
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer_monitor." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(),
+				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(rnd, accountID),
 			},
 			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})

@@ -1,0 +1,3 @@
+```release-note:breaking-change
+resource/cloudflare_argo_tunnel: resource has been renamed to `cloudflare_tunnel`
+```

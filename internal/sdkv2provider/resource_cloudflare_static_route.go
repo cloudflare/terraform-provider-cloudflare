@@ -56,7 +56,7 @@ func resourceCloudflareStaticRouteImport(ctx context.Context, d *schema.Resource
 
 	accountID, routeID := attributes[0], attributes[1]
 	d.SetId(routeID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareStaticRouteRead(ctx, d, meta)
 

@@ -1,5 +1,3 @@
-# Visit https://goreleaser.com for documentation on how to customize this
-# behavior.
 builds:
 - env:
     # goreleaser does not work with CGO, it could also complicate
@@ -30,12 +28,13 @@ archives:
   name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  extra_files:
+    - glob: 'terraform-registry-manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
   algorithm: sha256
 signs:
   - artifacts: checksum
     args:
-      # if you are using this is a GitHub action or some other automated pipeline, you
-      # need to pass the batch flag to indicate its not interactive.
       - "--batch"
       - "--local-user"
       - "{{ .Env.GPG_FINGERPRINT }}" # set this environment variable for your signing key
@@ -43,7 +42,16 @@ signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
+release:
+  extra_files:
+    - glob: 'terraform-registry-manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
 changelog:
   skip: true
 snapshot:
     name_template: '{{.ShortCommit}}-dev'
+
+announce:
+  discord:
+    enabled: true
+    message_template: '{{ .ProjectName }} ({{ .Version }}) has been released. See the release notes at {{ .ReleaseURL }}'

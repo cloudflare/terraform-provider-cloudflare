@@ -154,7 +154,7 @@ func resourceCloudflareWaitingRoomImport(ctx context.Context, d *schema.Resource
 	}
 
 	d.SetId(waitingRoom.ID)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 
 	resourceCloudflareWaitingRoomRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil

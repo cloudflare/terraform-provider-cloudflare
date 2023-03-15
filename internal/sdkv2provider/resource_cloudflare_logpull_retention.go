@@ -73,7 +73,7 @@ func resourceCloudflareLogpullRetentionImport(ctx context.Context, d *schema.Res
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Logpull Retention option for zone ID: %s", zoneID))
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(stringChecksum("logpull-retention/" + zoneID))
 
 	resourceCloudflareLogpullRetentionRead(ctx, d, meta)

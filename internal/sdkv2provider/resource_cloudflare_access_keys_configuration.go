@@ -90,7 +90,7 @@ func resourceCloudflareKeysConfigurationImport(ctx context.Context, d *schema.Re
 	accountID := d.Id()
 
 	d.SetId(accountID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareAccessKeysConfigurationRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil

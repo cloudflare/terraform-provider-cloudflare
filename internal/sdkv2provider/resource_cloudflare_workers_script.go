@@ -120,15 +120,20 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			Dataset: data["dataset"].(string),
 		}
 	}
+
+	for _, rawData := range d.Get("queue_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+
+		bindings[data["binding"].(string)] = cloudflare.WorkerQueueBinding{
+			Binding: data["binding"].(string),
+			Queue:   data["queue"].(string),
+		}
+	}
 }
 
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -171,10 +176,6 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
-	if accountID == "" {
-		accountID = client.AccountID
-	}
-
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
 		return diag.FromErr(err)
@@ -210,6 +211,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	serviceBindings := &schema.Set{F: schema.HashResource(serviceBindingResource)}
 	r2BucketBindings := &schema.Set{F: schema.HashResource(r2BucketBindingResource)}
 	analyticsEngineBindings := &schema.Set{F: schema.HashResource(analyticsEngineBindingResource)}
+	queueBindings := &schema.Set{F: schema.HashResource(queueBindingResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -258,6 +260,11 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"name":    name,
 				"dataset": v.Dataset,
 			})
+		case cloudflare.WorkerQueueBinding:
+			queueBindings.Add(map[string]interface{}{
+				"binding": name,
+				"queue":   v.Queue,
+			})
 		}
 	}
 
@@ -293,6 +300,10 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("cannot set analytics engine bindings (%s): %w", d.Id(), err))
 	}
 
+	if err := d.Set("queue_binding", queueBindings); err != nil {
+		return diag.FromErr(fmt.Errorf("cannot set queue bindings (%s): %w", d.Id(), err))
+	}
+
 	d.SetId(scriptData.ID)
 
 	return nil
@@ -301,10 +312,6 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -338,10 +345,6 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	scriptData, err := getScriptData(d, client)
 	if err != nil {
@@ -377,7 +380,7 @@ func resourceCloudflareWorkerScriptImport(ctx context.Context, d *schema.Resourc
 	accountID, scriptName := attributes[0], attributes[1]
 
 	d.Set("name", scriptName)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	resourceCloudflareWorkerScriptRead(ctx, d, meta)
 

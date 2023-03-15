@@ -290,8 +290,24 @@ func transformFromCloudflarePageRuleAction(pageRuleAction *cloudflare.PageRuleAc
 
 		for sectionID, sectionValue := range pageRuleAction.Value.(map[string]interface{}) {
 			switch sectionID {
-			case "cookie", "header", "host", "user":
+			case "host", "user":
 				output[sectionID] = []interface{}{sectionValue}
+
+			case "cookie", "header":
+				fieldOutput := map[string]interface{}{}
+				for fieldID, fieldValue := range sectionValue.(map[string]interface{}) {
+					switch fieldValue.(type) {
+					case []interface{}:
+						if len(fieldValue.([]interface{})) > 0 {
+							fieldOutput[fieldID] = fieldValue
+						}
+					default:
+						fieldOutput[fieldID] = fieldValue
+					}
+				}
+				if len(fieldOutput) > 0 {
+					output[sectionID] = []interface{}{fieldOutput}
+				}
 
 			case "query_string":
 				fieldOutput := map[string]interface{}{}
@@ -422,11 +438,14 @@ func transformToCloudflarePageRuleAction(ctx context.Context, id string, value i
 
 				switch sectionID {
 				case "cookie", "header":
-					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
-						sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+					if len(sectionValue.([]interface{})) > 0 && sectionValue.([]interface{})[0] != nil {
+						for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+							sectionOutput[fieldID] = fieldValue.(*schema.Set).List()
+						}
+						output[sectionID] = sectionOutput
 					}
 				case "query_string":
-					if sectionValue.([]interface{})[0] != nil {
+					if len(sectionValue.([]interface{})) > 0 && sectionValue.([]interface{})[0] != nil {
 						for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
 							switch fieldID {
 							case "exclude", "include":
@@ -464,12 +483,13 @@ func transformToCloudflarePageRuleAction(ctx context.Context, id string, value i
 
 					output[sectionID] = sectionOutput
 				default:
-					for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
-						sectionOutput[fieldID] = fieldValue
+					if len(sectionValue.([]interface{})) > 0 {
+						for fieldID, fieldValue := range sectionValue.([]interface{})[0].(map[string]interface{}) {
+							sectionOutput[fieldID] = fieldValue
+						}
+						output[sectionID] = sectionOutput
 					}
 				}
-
-				output[sectionID] = sectionOutput
 			}
 
 			pageRuleAction.Value = output
@@ -506,7 +526,7 @@ func resourceCloudflarePageRuleImport(ctx context.Context, d *schema.ResourceDat
 	if len(idAttr) == 2 {
 		zoneID = idAttr[0]
 		pageRuleID = idAttr[1]
-		d.Set("zone_id", zoneID)
+		d.Set(consts.ZoneIDSchemaKey, zoneID)
 		d.SetId(pageRuleID)
 	} else {
 		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"zoneID/pageRuleID\"", d.Id())

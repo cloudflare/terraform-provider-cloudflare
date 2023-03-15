@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -28,7 +29,7 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "tls_decrypt_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "activity_log_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "fips.0.tls", "true"),
@@ -49,6 +50,7 @@ func TestAccCloudflareTeamsAccountConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_blocks", "true"),
 					resource.TestCheckResourceAttr(name, "proxy.0.tcp", "true"),
 					resource.TestCheckResourceAttr(name, "proxy.0.udp", "false"),
+					resource.TestCheckResourceAttr(name, "payload_log.0.public_key", "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="),
 				),
 			},
 		},
@@ -99,6 +101,9 @@ resource "cloudflare_teams_account" "%[1]s" {
         log_blocks = true
       }
     }
+  }
+  payload_log {
+	public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
   }
 }
 `, rnd, accountID)

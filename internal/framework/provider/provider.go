@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"testing"
@@ -20,7 +21,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 )
@@ -43,7 +43,6 @@ type CloudflareProviderModel struct {
 	Email             types.String `tfsdk:"email"`
 	MinBackOff        types.Int64  `tfsdk:"min_backoff"`
 	RPS               types.Int64  `tfsdk:"rps"`
-	AccountID         types.String `tfsdk:"account_id"`
 	APIBasePath       types.String `tfsdk:"api_base_path"`
 	APIToken          types.String `tfsdk:"api_token"`
 	Retries           types.Int64  `tfsdk:"retries"`
@@ -77,11 +76,6 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 					stringvalidator.AlsoRequires(path.Expressions{
 						path.MatchRoot(consts.EmailSchemaKey),
 					}...),
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
 				},
 			},
 
@@ -93,24 +87,12 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
 						"API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores",
 					),
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
 				},
 			},
 
 			consts.APIUserServiceKeySchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("A special Cloudflare API key good for a restricted set of endpoints. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIUserServiceKeyEnvVarKey),
-				Validators: []validator.String{
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRoot(consts.APIKeySchemaKey),
-						path.MatchRoot(consts.APITokenSchemaKey),
-						path.MatchRoot(consts.APIUserServiceKeySchemaKey),
-					}...),
-				},
 			},
 
 			consts.RPSSchemaKey: schema.Int64Attribute{
@@ -138,12 +120,6 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 				MarkdownDescription: fmt.Sprintf("Whether to print logs from the API client (using the default log library logger). Alternatively, can be configured using the `%s` environment variable.", consts.APIClientLoggingEnvVarKey),
 			},
 
-			consts.AccountIDSchemaKey: schema.StringAttribute{
-				Optional:            true,
-				MarkdownDescription: fmt.Sprintf("Configure API client to always use a specific account. Alternatively, can be configured using the `%s` environment variable.", consts.AccountIDEnvVarKey),
-				DeprecationMessage:  "Use resource specific `account_id` attributes instead.",
-			},
-
 			consts.APIHostnameSchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("Configure the hostname used by the API client. Alternatively, can be configured using the `%s` environment variable.", consts.APIHostnameEnvVarKey),
@@ -169,7 +145,6 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		retries           int64
 		minBackOff        int64
 		maxBackOff        int64
-		accountID         string
 		baseHostname      string
 		basePath          string
 	)
@@ -221,7 +196,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		maxBackOff = i
 	}
 
-	if retries > strconv.IntSize {
+	if retries >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
 			fmt.Sprintf("retries value of %d is too large, try a smaller value.", retries),
@@ -229,7 +204,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	if minBackOff > strconv.IntSize {
+	if minBackOff >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
 			fmt.Sprintf("min_backoff value of %d is too large, try a smaller value.", minBackOff),
@@ -237,7 +212,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	if maxBackOff > strconv.IntSize {
+	if maxBackOff >= math.MaxInt32 {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
 			fmt.Sprintf("max_backoff value of %d is too large, try a smaller value.", maxBackOff),
@@ -308,17 +283,6 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 			fmt.Sprintf("must provide one of %q, %q or %q.", consts.APIKeySchemaKey, consts.APITokenSchemaKey, consts.APIUserServiceKeySchemaKey),
 		)
 		return
-	}
-
-	if !data.AccountID.IsNull() {
-		accountID = data.AccountID.ValueString()
-	} else {
-		accountID = utils.GetDefaultFromEnv(consts.AccountIDEnvVarKey, "")
-	}
-
-	if accountID != "" {
-		tflog.Info(ctx, fmt.Sprintf("using specified account id %s in Cloudflare provider", accountID))
-		options = append(options, cloudflare.UsingAccount(accountID))
 	}
 
 	config.Options = options

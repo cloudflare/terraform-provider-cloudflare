@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -31,7 +32,7 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)),
 				),
 			},
@@ -78,14 +79,14 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rnd, domain)),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rndUpdate, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("fallback-origin.%s.%s", rndUpdate, domain)),
 				),
 			},
@@ -101,7 +102,7 @@ func testAccCheckCloudflareCustomHostnameFallbackOriginDestroy(s *terraform.Stat
 			continue
 		}
 
-		fallbackOrigin, err := client.CustomHostnameFallbackOrigin(context.Background(), rs.Primary.Attributes["zone_id"])
+		fallbackOrigin, err := client.CustomHostnameFallbackOrigin(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey])
 
 		// If the fallback origin is in the process of being deleted, that's fine to
 		// say it's been deleted as the remote API will take care of it.

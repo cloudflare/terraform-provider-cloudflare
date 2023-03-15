@@ -53,7 +53,7 @@ func resourceCloudflareGRETunnelImport(ctx context.Context, d *schema.ResourceDa
 
 	accountID, tunnelID := attributes[0], attributes[1]
 	d.SetId(tunnelID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	readErr := resourceCloudflareGRETunnelRead(ctx, d, meta)
 	if readErr != nil {

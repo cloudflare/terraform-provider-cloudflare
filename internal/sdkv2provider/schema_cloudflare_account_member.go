@@ -11,7 +11,7 @@ func resourceCloudflareAccountMemberSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
 			Type:        schema.TypeString,
-			Optional:    true,
+			Required:    true,
 			Description: "Account ID to create the account member in.",
 		},
 		"email_address": {
@@ -28,6 +28,7 @@ func resourceCloudflareAccountMemberSchema() map[string]*schema.Schema {
 		"status": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			Computed:    true,
 			Description: fmt.Sprintf("A member's status in the account. %s", renderAvailableDocumentationValuesStringSlice([]string{"accepted", "pending"})),
 		},
 	}

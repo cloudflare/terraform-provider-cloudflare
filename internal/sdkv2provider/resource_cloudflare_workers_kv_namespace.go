@@ -31,9 +31,6 @@ func resourceCloudflareWorkersKVNamespaceCreate(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	req := cloudflare.CreateWorkersKVNamespaceParams{
 		Title: d.Get("title").(string),
@@ -62,9 +59,6 @@ func resourceCloudflareWorkersKVNamespaceRead(ctx context.Context, d *schema.Res
 	namespaceID := d.Id()
 
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	resp, _, err := client.ListWorkersKVNamespaces(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersKVNamespacesParams{})
 	if err != nil {
@@ -84,7 +78,7 @@ func resourceCloudflareWorkersKVNamespaceRead(ctx context.Context, d *schema.Res
 		return nil
 	}
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	return nil
 }
@@ -93,9 +87,6 @@ func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	_, err := client.UpdateWorkersKVNamespace(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateWorkersKVNamespaceParams{
 		NamespaceID: d.Id(),
@@ -111,9 +102,6 @@ func resourceCloudflareWorkersKVNamespaceUpdate(ctx context.Context, d *schema.R
 func resourceCloudflareWorkersKVNamespaceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers KV Namespace with id: %+v", d.Id()))
 
@@ -134,7 +122,7 @@ func resourceCloudflareWorkersKVNamespaceImport(ctx context.Context, d *schema.R
 	}
 
 	accountID, namespaceID := attributes[0], attributes[1]
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	client := meta.(*cloudflare.API)
 

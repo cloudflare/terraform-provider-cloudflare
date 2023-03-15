@@ -46,7 +46,7 @@ func TestValidateRecordType(t *testing.T) {
 func TestValidateRecordName(t *testing.T) {
 	validNames := map[string]string{
 		"A":    "192.168.0.1",
-		"AAAA": "2001:0db8:0000:0042:0000:8a2e:0370:7334",
+		"AAAA": "2001:0db8:0000:0000:0000:0000:0000:0000",
 		"TXT":  " ",
 	}
 

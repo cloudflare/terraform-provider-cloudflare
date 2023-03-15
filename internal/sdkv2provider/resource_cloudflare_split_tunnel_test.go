@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -29,7 +30,7 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 			{
 				Config: testAccCloudflareDefaultSplitTunnelInclude(rnd, accountID, "example domain", "*.example.com", "include"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "mode", "include"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.host", "*.example.com"),
@@ -39,7 +40,7 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 			{
 				Config: testAccCloudflareDefaultSplitTunnelInclude(rnd, accountID, "example domain", "test.example.com", "include"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "mode", "include"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.host", "test.example.com"),
@@ -103,6 +104,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	precedence                = 10
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
+	exclude_office_ips        = false
 }
 
 resource "cloudflare_split_tunnel" "%[1]s" {
@@ -150,7 +152,7 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 			{
 				Config: testAccCloudflareSplitTunnelExclude(rnd, accountID, "example domain", "*.example.com", "exclude"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "mode", "exclude"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "tunnels.0.host", "*.example.com"),

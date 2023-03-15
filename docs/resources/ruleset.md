@@ -451,11 +451,12 @@ Required:
 
 Optional:
 
-- `action` (String) Action to perform in the ruleset rule. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the ruleset rule. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `action_parameters` (Block List, Max: 1) List of parameters that configure the behavior of the ruleset rule action. (see [below for nested schema](#nestedblock--rules--action_parameters))
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
 - `exposed_credential_check` (Block List, Max: 1) List of parameters that configure exposed credential checks. (see [below for nested schema](#nestedblock--rules--exposed_credential_check))
+- `last_updated` (String) The most recent update to this rule.
 - `logging` (Block List, Max: 1) List parameters to configure how the rule generates logs. (see [below for nested schema](#nestedblock--rules--logging))
 - `ratelimit` (Block List, Max: 1) List of parameters that configure HTTP rate limiting behaviour. (see [below for nested schema](#nestedblock--rules--ratelimit))
 
@@ -705,7 +706,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the rule-level override. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `categories` (Block List) List of tag-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--categories))
 - `enabled` (Boolean, Deprecated) Defines if the current ruleset-level override enables or disables the ruleset.
 - `rules` (Block List) List of rule-based overrides. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides--rules))
@@ -717,7 +718,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the tag-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the tag-level override. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `category` (String) Tag name to apply the ruleset rule override to.
 - `enabled` (Boolean, Deprecated) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag.
 - `status` (String) Defines if the current tag-level override enables or disables the ruleset rules with the specified tag. Available values: `enabled`, `disabled`. Defaults to `""`.
@@ -728,7 +729,7 @@ Optional:
 
 Optional:
 
-- `action` (String) Action to perform in the rule-level override. Available values: `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
+- `action` (String) Action to perform in the rule-level override. Available values: `allow`, `block`, `challenge`, `ddos_dynamic`, `execute`, `force_connection_close`, `js_challenge`, `log`, `log_custom_field`, `managed_challenge`, `redirect`, `rewrite`, `route`, `score`, `set_cache_settings`, `set_config`, `serve_error`, `skip`.
 - `enabled` (Boolean, Deprecated) Defines if the current rule-level override enables or disables the rule.
 - `id` (String) Rule ID to apply the override to.
 - `score_threshold` (Number) Anomaly score threshold to apply in the ruleset rule override. Only applicable to modsecurity-based rulesets.
@@ -821,6 +822,8 @@ Optional:
 - `period` (Number) The period of time to consider (in seconds) when evaluating the request rate.
 - `requests_per_period` (Number) The number of requests over the period of time that will trigger the Rate Limiting rule.
 - `requests_to_origin` (Boolean) Whether to include requests to origin within the Rate Limiting count.
+- `score_per_period` (Number) The maximum aggregate score over the period of time that will trigger Rate Limiting rule.
+- `score_response_header_name` (String) Name of HTTP header in the response, set by the origin server, with the score for the current request.
 
 ## Import
 

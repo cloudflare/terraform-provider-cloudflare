@@ -166,14 +166,14 @@ func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 	}
 
 	if accountID != "" {
-		d.Set("account_id", accountID)
+		d.Set(consts.AccountIDSchemaKey, accountID)
 		return &AccessIdentifier{
 			Type:  AccountType,
 			Value: accountID,
 		}, nil
 	}
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	return &AccessIdentifier{
 		Type:  ZoneType,
 		Value: zoneID,

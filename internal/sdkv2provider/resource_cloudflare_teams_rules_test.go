@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -33,7 +34,7 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 			{
 				Config: testAccCloudflareTeamsRuleConfigBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", "desc"),
 					resource.TestCheckResourceAttr(name, "precedence", "12302"),
@@ -45,6 +46,8 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rule_settings.0.insecure_disable_dnssec_validation", "false"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv4", "203.0.113.1"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv6", "2001:db8::/32"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.untrusted_cert.0.action", "error"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.payload_log.0.enabled", "true"),
 				),
 			},
 		},
@@ -69,6 +72,12 @@ resource "cloudflare_teams_rule" "%[1]s" {
 		ipv4 = "203.0.113.1"
 		ipv6 = "2001:db8::/32"
 	}
+	untrusted_cert {
+		action = "error"
+	}
+	payload_log {
+		enabled = true
+	}
   }
 }
 `, rnd, accountID)
@@ -82,7 +91,7 @@ func testAccCheckCloudflareTeamsRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.TeamsRule(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.TeamsRule(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("teams rule still exists")
 		}

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -26,6 +27,7 @@ func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 	var route cloudflare.WorkerRoute
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	routeRnd := generateRandomResourceName()
 	routeName := "cloudflare_worker_route." + routeRnd
 	pattern1 := fmt.Sprintf("%s/%s", zoneName, generateRandomResourceName())
@@ -44,19 +46,19 @@ func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerRouteDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, routeRnd, scriptRnd, pattern1),
+				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, accountID, routeRnd, scriptRnd, pattern1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerRouteExists(routeName, &route),
-					resource.TestCheckResourceAttr(routeName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(routeName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(routeName, "pattern", pattern1),
 					resource.TestCheckResourceAttr(routeName, "script_name", scriptRnd),
 				),
 			},
 			{
-				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, routeRnd, scriptRnd, pattern2),
+				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, accountID, routeRnd, scriptRnd, pattern2),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerRouteExists(routeName, &route),
-					resource.TestCheckResourceAttr(routeName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(routeName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(routeName, "pattern", pattern2),
 					resource.TestCheckResourceAttr(routeName, "script_name", ""),
 				),
@@ -65,31 +67,33 @@ func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, routeRnd, scriptRnd, pattern string) string {
+func testAccCheckCloudflareWorkerRouteConfigMultiScriptInitial(zoneID, accountID, routeRnd, scriptRnd, pattern string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_worker_route" "%[2]s" {
+resource "cloudflare_worker_route" "%[3]s" {
   zone_id = "%[1]s"
-  pattern = "%[4]s"
-  script_name = "${cloudflare_worker_script.%[3]s.name}"
+  pattern = "%[5]s"
+  script_name = "${cloudflare_worker_script.%[4]s.name}"
 }
 
-resource "cloudflare_worker_script" "%[3]s" {
-  name = "%[3]s"
-  content = "%[5]s"
-}`, zoneID, routeRnd, scriptRnd, pattern, defaultScriptContent)
+resource "cloudflare_worker_script" "%[4]s" {
+  account_id = "%[2]s"
+  name = "%[4]s"
+  content = "%[6]s"
+}`, zoneID, accountID, routeRnd, scriptRnd, pattern, defaultScriptContent)
 }
 
-func testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, routeRnd, scriptRnd, pattern string) string {
+func testAccCheckCloudflareWorkerRouteConfigMultiScriptUpdate(zoneID, accountID, routeRnd, scriptRnd, pattern string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_worker_route" "%[2]s" {
+resource "cloudflare_worker_route" "%[3]s" {
   zone_id = "%[1]s"
-  pattern = "%[4]s"
+  pattern = "%[5]s"
 }
 
-resource "cloudflare_worker_script" "%[3]s" {
-  name = "%[3]s"
-  content = "%[5]s"
-}`, zoneID, routeRnd, scriptRnd, pattern, defaultScriptContent)
+resource "cloudflare_worker_script" "%[4]s" {
+  account_id = "%[2]s"
+  name = "%[4]s"
+  content = "%[6]s"
+}`, zoneID, accountID, routeRnd, scriptRnd, pattern, defaultScriptContent)
 }
 
 func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
@@ -119,7 +123,7 @@ func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
 				Config: testAccCheckCloudflareWorkerRouteConfigMultiScriptDisabledRoute(zoneID, routeRnd, pattern),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerRouteExists(routeName, &route),
-					resource.TestCheckResourceAttr(routeName, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(routeName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(routeName, "pattern", pattern),
 					resource.TestCheckNoResourceAttr(routeName, "script_name"),
 				),
@@ -172,7 +176,7 @@ func testAccCheckCloudflareWorkerRouteExists(n string, route *cloudflare.WorkerR
 			return fmt.Errorf("No Worker Route ID is set")
 		}
 
-		zoneID := rs.Primary.Attributes["zone_id"]
+		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
 		routeId := rs.Primary.ID
 		foundRoute, err := getRouteFromApi(zoneID, routeId)
 		if err != nil {
@@ -194,7 +198,7 @@ func testAccCheckCloudflareWorkerRouteDestroy(s *terraform.State) error {
 			continue
 		}
 
-		zoneID := rs.Primary.Attributes["zone_id"]
+		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
 		routeId := rs.Primary.ID
 		route, err := getRouteFromApi(zoneID, routeId)
 

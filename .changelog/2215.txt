@@ -1,0 +1,23 @@
+```release-note:breaking-change
+resource/cloudflare_notification_policy: alert types `block_notification_review_accepted` and `workers_uptime` have been removed.
+```
+
+```release-note:breaking-change
+resource/cloudflare_notification_policy: alert types `g6_health_alert` has been renamed to `load_balancing_health_alert`
+```
+
+```release-note:breaking-change
+resource/cloudflare_notification_policy: alert types `g6_pool_toggle_alert` has been renamed to `load_balancing_pool_enablement_alert`
+```
+
+```release-note:breaking-change
+resource/cloudflare_notification_policy: alert types `scriptmonitor_alert_new_max_length_script_url` has been renamed to `scriptmonitor_alert_new_max_length_resource_url`
+```
+
+```release-note:breaking-change
+resource/cloudflare_notification_policy: alert types `scriptmonitor_alert_new_scripts` has been renamed to `scriptmonitor_alert_new_resources`
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: alert types `block_notification_block_removed`, `fbm_dosd_attack`, `scriptmonitor_alert_new_max_length_resource_url`, `scriptmonitor_alert_new_resources`, `tunnel_health_event`, `tunnel_update_event` have been added.
+```

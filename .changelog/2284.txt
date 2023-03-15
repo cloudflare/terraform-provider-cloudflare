@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_teams_account: fixes an issue where accounts that had never configured DLP payload logging would error upon reading this resource
+```

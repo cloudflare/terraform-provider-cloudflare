@@ -1,0 +1,11 @@
+```release-note:breaking-change
+resource/cloudflare_spectrum_application: `edge_ip_connectivity` is now nested under `edge_ips` as `connectivity`
+```
+
+```release-note:breaking-change
+resource/cloudflare_spectrum_application: `edge_ips` now contains nested attributes other than IP ranges. `type` and `connectivity` have been added. `edge_ips.ips` contains the static IP addresses that used to reside at `edge_ips`.
+```
+
+```release-note:breaking-change
+resource/cloudflare_spectrum_application: `edge_ips.type` is now a required field
+```

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -31,7 +32,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}, 0),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
@@ -48,7 +49,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, 0),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
@@ -217,7 +218,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}, 0),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
@@ -235,7 +236,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, 0),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
@@ -263,12 +264,12 @@ func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.DeleteAccessServiceToken(context.Background(), rs.Primary.Attributes["account_id"], rs.Primary.ID)
+		_, err := client.DeleteAccessServiceToken(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("access service token still exists")
 		}
 
-		_, err = client.DeleteZoneLevelAccessServiceToken(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err = client.DeleteZoneLevelAccessServiceToken(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("access service token still exists")
 		}

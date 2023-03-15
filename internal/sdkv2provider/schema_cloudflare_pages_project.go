@@ -189,10 +189,13 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Required:    true,
 		},
+		// Name is the unique identifier for this resource, we use this in the API calls.
+		// If this changes, `plan` will fail as it can't figure out the changes.
 		"name": {
 			Description: "Name of the project.",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"subdomain": {
 			Description: "The Cloudflare subdomain associated with the project.",

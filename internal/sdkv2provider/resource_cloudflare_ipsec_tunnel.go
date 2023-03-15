@@ -69,7 +69,7 @@ func resourceCloudflareIPsecTunnelImport(ctx context.Context, d *schema.Resource
 
 	accountID, tunnelID := attributes[0], attributes[1]
 	d.SetId(tunnelID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	readDiags := resourceCloudflareIPsecTunnelRead(ctx, d, meta)
 	if readDiags != nil {

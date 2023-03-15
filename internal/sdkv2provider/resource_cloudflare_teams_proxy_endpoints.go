@@ -129,7 +129,7 @@ func resourceCloudflareTeamsProxyEndpointImport(ctx context.Context, d *schema.R
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Teams Proxy Endpoint: id %s for account %s", teamsProxyEndpointID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(teamsProxyEndpointID)
 
 	resourceCloudflareTeamsProxyEndpointRead(ctx, d, meta)

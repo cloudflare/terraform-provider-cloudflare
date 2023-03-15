@@ -7,6 +7,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -110,7 +111,7 @@ func resourceCloudflareAccessOrganizationImport(ctx context.Context, d *schema.R
 
 	tflog.Info(ctx, fmt.Sprintf("Importing Cloudflare Access Organization for account %s", accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	readErr := resourceCloudflareAccessOrganizationRead(ctx, d, meta)
 	if readErr != nil {

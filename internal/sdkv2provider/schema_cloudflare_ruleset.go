@@ -15,13 +15,13 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 			Description:   "The account identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
-			ConflictsWith: []string{"zone_id"},
+			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
 			Description:   "The zone identifier to target for the resource.",
 			Type:          schema.TypeString,
 			Optional:      true,
-			ConflictsWith: []string{"account_id"},
+			ConflictsWith: []string{consts.AccountIDSchemaKey},
 		},
 		"name": {
 			Type:        schema.TypeString,
@@ -92,6 +92,11 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "Brief summary of the ruleset rule and its intended use.",
+					},
+					"last_updated": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The most recent update to this rule.",
 					},
 					"action_parameters": {
 						Type:        schema.TypeList,
@@ -916,6 +921,16 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Type:        schema.TypeInt,
 									Optional:    true,
 									Description: "The number of requests over the period of time that will trigger the Rate Limiting rule.",
+								},
+								"score_per_period": {
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Description: "The maximum aggregate score over the period of time that will trigger Rate Limiting rule.",
+								},
+								"score_response_header_name": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "Name of HTTP header in the response, set by the origin server, with the score for the current request.",
 								},
 								"mitigation_timeout": {
 									Type:        schema.TypeInt,

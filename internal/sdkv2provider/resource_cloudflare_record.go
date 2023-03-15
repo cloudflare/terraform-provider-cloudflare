@@ -309,11 +309,11 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 		updateRecord.Comment = comment.(string)
 	}
 
-	if tags, ok := d.GetOk("tags"); ok {
-		for _, tag := range tags.(*schema.Set).List() {
-			updateRecord.Tags = append(updateRecord.Tags, tag.(string))
-		}
+	tags := []string{}
+	for _, tag := range d.Get("tags").(*schema.Set).List() {
+		tags = append(tags, tag.(string))
 	}
+	updateRecord.Tags = tags
 
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record update configuration: %#v", updateRecord))
 
@@ -390,7 +390,7 @@ func resourceCloudflareRecordImport(ctx context.Context, d *schema.ResourceData,
 	name := strings.TrimSuffix(record.Name, "."+record.ZoneName)
 
 	d.Set("name", name)
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(recordID)
 
 	resourceCloudflareRecordRead(ctx, d, meta)

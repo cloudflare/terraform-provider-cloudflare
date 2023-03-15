@@ -157,7 +157,7 @@ func resourceCloudflareHealthcheckImport(ctx context.Context, d *schema.Resource
 
 	zoneID, HealthcheckID := attributes[0], attributes[1]
 
-	d.Set("zone_id", zoneID)
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(HealthcheckID)
 
 	resourceCloudflareHealthcheckRead(ctx, d, meta)

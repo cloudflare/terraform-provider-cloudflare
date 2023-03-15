@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -27,7 +28,7 @@ func TestAccAPIShield_Basic(t *testing.T) {
 			{
 				Config: testAccCloudflareAPIShieldSingleEntry(rnd, zoneID, cloudflare.AuthIdCharacteristics{Name: "test-header", Type: "header"}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.#", "1"),
 					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.0.name", "test-header"),
 					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.0.type", "header"),
@@ -55,7 +56,7 @@ func TestAccAPIShield_EmptyAuthIdCharacteristics(t *testing.T) {
 			{
 				Config: testAccCloudflareAPIShieldEmptyAuthIdCharacteristics(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceID, "zone_id", zoneID),
+					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "auth_id_characteristics.#", "0"),
 				),
 			},

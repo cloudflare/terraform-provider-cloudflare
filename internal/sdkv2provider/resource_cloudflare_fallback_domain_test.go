@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
@@ -33,7 +34,7 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 			{
 				Config: testAccCloudflareDefaultFallbackDomain(rnd, accountID, "example domain", "example.com", "1.0.0.1"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.com"),
@@ -66,7 +67,7 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 			{
 				Config: testAccCloudflareDefaultFallbackDomain(rnd, accountID, "second example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "second example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
@@ -77,7 +78,7 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 			{
 				Config: testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "third example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
@@ -110,7 +111,7 @@ func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
 			{
 				Config: testAccCloudflareFallbackDomain(rnd, accountID, "third example domain", "example.net", "1.1.1.1"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "domains.#", "1"),
 					resource.TestCheckResourceAttr(name, "domains.0.description", "third example domain"),
 					resource.TestCheckResourceAttr(name, "domains.0.suffix", "example.net"),
@@ -151,6 +152,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	precedence                = 10
 	support_url               = "support_url"
 	switch_locked             = true
+	exclude_office_ips		  = false
 }
 
 resource "cloudflare_fallback_domain" "%[1]s" {

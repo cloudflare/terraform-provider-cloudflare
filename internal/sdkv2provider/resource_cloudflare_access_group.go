@@ -8,6 +8,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -171,7 +172,7 @@ func resourceCloudflareAccessGroupImport(ctx context.Context, d *schema.Resource
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Group: accountID %q, accessGroupID %q", accountID, accessGroupID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(accessGroupID)
 
 	resourceCloudflareAccessGroupRead(ctx, d, meta)
@@ -405,8 +406,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	githubName := ""
 	githubTeams := []string{}
 	githubID := ""
-	azureID := ""
-	azureIDs := []string{}
+	azureGroups := []map[string]interface{}{}
 	samlGroups := []map[string]string{}
 	externalEvaluationURL := ""
 	externalEvaluationKeysURL := ""
@@ -474,8 +474,22 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				}
 			case "azureAD":
 				azureCfg := groupValue.(map[string]interface{})
-				azureID = azureCfg["identity_provider_id"].(string)
-				azureIDs = append(azureIDs, azureCfg["id"].(string))
+				azureIdPID := azureCfg["identity_provider_id"].(string)
+				azureGroupID := azureCfg["id"].(string)
+
+				var azureGroup map[string]interface{}
+				for _, ag := range azureGroups {
+					if ag["identity_provider_id"] == azureIdPID {
+						azureGroup = ag
+						break
+					}
+				}
+
+				if len(azureGroup) == 0 {
+					azureGroups = append(azureGroups, map[string]interface{}{"identity_provider_id": azureIdPID, "id": []string{azureGroupID}})
+				} else {
+					azureGroup["id"] = append(azureGroup["id"].([]string), azureGroupID)
+				}
 			case "saml":
 				samlCfg := groupValue.(map[string]interface{})
 				samlAttrName := samlCfg["attribute_name"].(string)
@@ -578,13 +592,8 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 		}
 	}
 
-	if len(azureIDs) > 0 && azureID != "" {
-		groupMap["azure"] = []interface{}{
-			map[string]interface{}{
-				"identity_provider_id": azureID,
-				"id":                   azureIDs,
-			},
-		}
+	if len(azureGroups) > 0 {
+		groupMap["azure"] = azureGroups
 	}
 
 	if len(samlGroups) > 0 {

@@ -126,7 +126,7 @@ func resourceCloudflareDeviceManagedNetworksImport(ctx context.Context, d *schem
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Device Managed Network: id %s for account %s", managedNetworkID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(managedNetworkID)
 
 	resourceCloudflareDeviceManagedNetworksRead(ctx, d, meta)

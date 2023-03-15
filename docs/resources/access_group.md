@@ -259,6 +259,7 @@ Optional:
 - `group` (List of String)
 - `gsuite` (Block List) (see [below for nested schema](#nestedblock--require--gsuite))
 - `ip` (List of String)
+- `ip_list` (List of String)
 - `login_method` (List of String)
 - `okta` (Block List) (see [below for nested schema](#nestedblock--require--okta))
 - `saml` (Block List) (see [below for nested schema](#nestedblock--require--saml))

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"strings"
 
 	"time"
 
@@ -24,7 +25,7 @@ func resourceCloudflareLoadBalancerPool() *schema.Resource {
 		ReadContext:   resourceCloudflareLoadBalancerPoolRead,
 		DeleteContext: resourceCloudflareLoadBalancerPoolDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceCloudflareLoadBalancerPoolImport,
 		},
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Load Balancer pool resource. This provides a
@@ -79,9 +80,6 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	r, err := client.CreateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateLoadBalancerPoolParams{LoadBalancerPool: loadBalancerPool})
 	if err != nil {
@@ -146,9 +144,6 @@ func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.Res
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Load Balancer Pool from struct: %+v", loadBalancerPool))
 
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 	_, err := client.UpdateLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateLoadBalancerPoolParams{LoadBalancer: loadBalancerPool})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating load balancer pool"))
@@ -231,9 +226,6 @@ func resourceCloudflareLoadBalancerPoolRead(ctx context.Context, d *schema.Resou
 	client := meta.(*cloudflare.API)
 
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 
 	loadBalancerPool, err := client.GetLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
@@ -329,13 +321,30 @@ func resourceCloudflareLoadBalancerPoolDelete(ctx context.Context, d *schema.Res
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Pool: %s ", d.Id()))
 
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	if accountID == "" {
-		accountID = client.AccountID
-	}
 	err := client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error deleting Cloudflare Load Balancer Pool"))
 	}
 
 	return nil
+}
+
+func resourceCloudflareLoadBalancerPoolImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var accountID string
+	var lbPoolID string
+	if len(idAttr) == 2 {
+		accountID = idAttr[0]
+		lbPoolID = idAttr[1]
+	} else {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/loadBalancerPoolID\"", d.Id())
+	}
+
+	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.SetId(lbPoolID)
+
+	resourceCloudflareLoadBalancerPoolRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }

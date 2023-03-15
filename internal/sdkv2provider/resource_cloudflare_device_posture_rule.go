@@ -148,7 +148,7 @@ func resourceCloudflareDevicePostureRuleImport(ctx context.Context, d *schema.Re
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Device Posture Rule: id %s for account %s", devicePostureRuleID, accountID))
 
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(devicePostureRuleID)
 
 	resourceCloudflareDevicePostureRuleRead(ctx, d, meta)

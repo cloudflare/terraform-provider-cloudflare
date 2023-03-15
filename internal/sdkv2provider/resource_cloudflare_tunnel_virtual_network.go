@@ -132,7 +132,7 @@ func resourceCloudflareTunnelVirtualNetworkImport(ctx context.Context, d *schema
 	accountID, vnetID := attributes[0], attributes[1]
 
 	d.SetId(vnetID)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	err := resourceCloudflareTunnelVirtualNetworkRead(ctx, d, meta)
 	if err != nil {

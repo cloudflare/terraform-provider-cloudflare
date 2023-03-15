@@ -108,7 +108,7 @@ func resourceCloudflareWorkerCronTriggerImport(ctx context.Context, d *schema.Re
 	accountID, scriptName := attributes[0], attributes[1]
 
 	d.Set("script_name", scriptName)
-	d.Set("account_id", accountID)
+	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(stringChecksum(scriptName))
 
 	resourceCloudflareWorkerCronTriggerRead(ctx, d, meta)
