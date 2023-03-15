@@ -6,7 +6,6 @@
 resource/cloudflare_ruleset: `status` has been removed in favour of `enabled` now that the workaround for zero values is no longer required
 ```
 
-
 ```release-note:internal
 resource/cloudflare_ruleset: migrate from SDKv2 to `terraform-plugin-framework`
 ```
