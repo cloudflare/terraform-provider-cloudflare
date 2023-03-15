@@ -8,7 +8,12 @@ run:
 issues:
   max-per-linter: 0
   max-same-issues: 0
-  
+  exclude:
+    # no way to flag these paths as ignore in contextcheck
+    - "Function `toRuleset->toRulesetRule->StringSet` should pass the context parameter"
+    - "Function `toRulesetResourceModel` should pass the context parameter"
+    - "Function `remapPreservedRuleIDs->toRuleset->toRulesetRule->StringSet` should pass the context parameter"
+
 linters:
   disable-all: true
   enable:
