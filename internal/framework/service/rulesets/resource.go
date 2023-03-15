@@ -521,7 +521,6 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 								ExcludeOrigin: flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin),
 							}}
 						}
-
 					}
 
 					if ruleResponse.ActionParameters.CacheKey.CustomKey.Query != nil {
@@ -572,7 +571,6 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 						Value:           types.Int64Value(int64(cloudflare.Int(sct.Value))),
 						StatusCodeRange: sctrange,
 					})
-
 				}
 				rule.ActionParameters[0].EdgeTTL[0].StatusCodeTTL = statusCodeTTLs
 			}
