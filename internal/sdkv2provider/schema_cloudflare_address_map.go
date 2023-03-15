@@ -9,9 +9,9 @@ import (
 func resourceCloudflareAddressMapSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,
+			Description: "The account identifier to target for the resource.",
 		},
 		"description": {
 			Type:        schema.TypeString,
@@ -48,6 +48,7 @@ func resourceCloudflareAddressMapSchema() map[string]*schema.Schema {
 					"ip": {
 						Type:         schema.TypeString,
 						Required:     true,
+						Description:  "An IPv4 or IPv6 address.",
 						ValidateFunc: validation.IsIPAddress,
 					},
 				},
@@ -61,12 +62,14 @@ func resourceCloudflareAddressMapSchema() map[string]*schema.Schema {
 				SchemaVersion: 1,
 				Schema: map[string]*schema.Schema{
 					"identifier": {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "Identifier of the account or zone",
 					},
 					"kind": {
 						Type:         schema.TypeString,
 						Required:     true,
+						Description:  "The type of the membership.",
 						ValidateFunc: validation.StringInSlice([]string{"account", "zone"}, false),
 					},
 					"can_delete": {

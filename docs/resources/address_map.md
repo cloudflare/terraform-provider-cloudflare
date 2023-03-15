@@ -59,7 +59,7 @@ resource "cloudflare_address_map" "example" {
 
 Required:
 
-- `ip` (String)
+- `ip` (String) An IPv4 or IPv6 address.
 
 
 <a id="nestedblock--memberships"></a>
@@ -67,8 +67,8 @@ Required:
 
 Required:
 
-- `identifier` (String)
-- `kind` (String)
+- `identifier` (String) Identifier of the account or zone.
+- `kind` (String) The type of the membership.
 
 Read-Only:
 
