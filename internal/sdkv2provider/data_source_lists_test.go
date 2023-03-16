@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccCloudflareListDataSource(t *testing.T) {
+func TestAccCloudflareListsDataSource(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 
@@ -22,24 +22,17 @@ func TestAccCloudflareListDataSource(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareListDataSource(accountID, rnd),
+				Config: testAccCheckCloudflareListsDataSource(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
 				),
 			},
 		},
 	})
 }
 
-func testAccCheckCloudflareListDataSource(accountID, name string) string {
+func testAccCheckCloudflareListsDataSource(accountID, name string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_list" "%[1]s" {
-  account_id  = "%[2]s"
-  name        = "%[1]s"
-  kind        = "redirect"
-}
-
 data "cloudflare_lists" "%[1]s" {
   account_id = "%[2]s"
 }`, name, accountID)
