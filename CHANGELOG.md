@@ -25,6 +25,7 @@ INTERNAL:
 
 DEPENDENCIES:
 
+* provider: bumps actions/setup-go from 3 to 4 ([#2291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2291))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.62.0 to 0.63.0 ([#2289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2289))
 
 ## 4.1.0 (March 8th, 2023)
