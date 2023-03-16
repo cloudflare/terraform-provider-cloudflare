@@ -100,6 +100,8 @@ Optional:
 - `certs_url` (String)
 - `client_id` (String)
 - `client_secret` (String)
+- `claims` (List of String)
+- `scopes` (List of String)
 - `directory_id` (String)
 - `email_attribute_name` (String)
 - `idp_public_cert` (String)

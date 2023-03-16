@@ -197,6 +197,22 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 			IDPConfig.Attributes = attrData
 		}
 
+		if _, ok := d.GetOk("config.0.claims"); ok {
+			claimData := make([]string, d.Get("config.0.claims.#").(int))
+			for id := range claimData {
+				claimData[id] = d.Get(fmt.Sprintf("config.0.claims.%d", id)).(string)
+			}
+			IDPConfig.Claims = claimData
+		}
+
+		if _, ok := d.GetOk("config.0.scopes"); ok {
+			scopeData := make([]string, d.Get("config.0.scopes.#").(int))
+			for id := range scopeData {
+				scopeData[id] = d.Get(fmt.Sprintf("config.0.scopes.%d", id)).(string)
+			}
+			IDPConfig.Scopes = scopeData
+		}
+
 		IDPConfig.APIToken = d.Get("config.0.api_token").(string)
 		IDPConfig.AppsDomain = d.Get("config.0.apps_domain").(string)
 		IDPConfig.AuthURL = d.Get("config.0.auth_url").(string)
@@ -242,6 +258,8 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 		"certs_url":            options.CertsURL,
 		"client_id":            options.ClientID,
 		"client_secret":        options.ClientSecret,
+		"claims":               options.Claims,
+		"scopes":               options.Scopes,
 		"directory_id":         options.DirectoryID,
 		"email_attribute_name": options.EmailAttributeName,
 		"idp_public_cert":      options.IdpPublicCert,

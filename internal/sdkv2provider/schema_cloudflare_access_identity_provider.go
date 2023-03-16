@@ -86,6 +86,20 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 							return CONCEALED_STRING
 						},
 					},
+					"claims": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+					"scopes": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
 					"directory_id": {
 						Type:     schema.TypeString,
 						Optional: true,
