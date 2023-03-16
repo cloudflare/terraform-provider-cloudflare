@@ -1,0 +1,7 @@
+```release-note:new-data-source
+datasource/cloudflare_list: Get a single list filtered on list `name`
+```
+
+```release-note:new-data-source
+datasource/cloudflare_lists: Return all lists
+```
