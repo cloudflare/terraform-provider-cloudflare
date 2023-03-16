@@ -39,6 +39,12 @@ func resourceCloudflareListSchema() map[string]*schema.Schema {
 			Optional: true,
 			Elem:     listItemElem,
 		},
+		"ignore_inline_items": {
+			Description: "Set to true if not managing list items in line.",
+			Type:        schema.TypeBool,
+			Default:     false,
+			Optional:    true,
+		},
 	}
 }
 
