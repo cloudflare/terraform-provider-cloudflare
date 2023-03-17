@@ -14,7 +14,7 @@ import (
 
 func dataSourceCloudflareLists() *schema.Resource {
 	return &schema.Resource{
-		Description: heredoc.Doc("Data source for looking up Cloudflare Lists."),
+		Description: heredoc.Doc("Data source for looking up multiple Cloudflare Lists."),
 		ReadContext: dataSourceCloudflareListsRead,
 
 		Schema: map[string]*schema.Schema{
