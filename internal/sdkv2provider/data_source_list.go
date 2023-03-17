@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -14,7 +13,6 @@ import (
 
 func dataSourceCloudflareList() *schema.Resource {
 	return &schema.Resource{
-		Description: heredoc.Doc("Data source for looking up a single Cloudflare Lists."),
 		ReadContext: dataSourceCloudflareListRead,
 
 		Schema: map[string]*schema.Schema{
@@ -44,6 +42,7 @@ func dataSourceCloudflareList() *schema.Resource {
 				Computed:    true,
 			},
 		},
+		Description: "Use this data source to lookup a [List](https://developers.cloudflare.com/api/operations/lists-get-lists).",
 	}
 }
 
