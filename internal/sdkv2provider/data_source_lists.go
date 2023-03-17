@@ -34,11 +34,6 @@ func dataSourceCloudflareLists() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
-						"id": {
-							Description: "List ID.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
 						"description": {
 							Description: "List description.",
 							Type:        schema.TypeString,
