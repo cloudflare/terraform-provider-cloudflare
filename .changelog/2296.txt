@@ -1,5 +1,5 @@
 ```release-note:new-data-source
-datasource/cloudflare_list: Get a single list filtered on list `name`
+cloudflare_list
 ```
 
 ```release-note:new-data-source
