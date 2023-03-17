@@ -29,7 +29,7 @@ func TestAccCloudflareListItem_Exists(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareListItemExists(name, &ListItem),
+					testAccCheckCloudflareListItemExists(name, rnd, &ListItem),
 					resource.TestCheckResourceAttr(
 						name, "ip", "192.0.2.0"),
 				),
@@ -55,7 +55,7 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareListItemExists(name, &listItem),
+					testAccCheckCloudflareListItemExists(name, rnd, &listItem),
 					resource.TestCheckResourceAttr(
 						name, "ip", "192.0.2.0"),
 				),
@@ -63,7 +63,7 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd+"-updated", accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareListItemExists(name, &listItem),
+					testAccCheckCloudflareListItemExists(name, rnd, &listItem),
 					resource.TestCheckResourceAttr(name, "comment", rnd+"-updated"),
 				),
 			},
@@ -93,7 +93,7 @@ func TestAccCloudflareListItem_BadListItemType(t *testing.T) {
 
 func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_list" "list_name" {
+  resource "cloudflare_list" "%[2]s" {
     account_id          = "%[4]s"
     name                = "%[2]s"
     description         = "list named %[2]s"
@@ -103,16 +103,16 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
   
   resource "cloudflare_list_item" "%[1]s" {
     account_id = "%[4]s"
-	list_id    = cloudflare_list.list_name.id
+	list_id    = cloudflare_list.%[2]s.id
 	ip         = "192.0.2.0"
 	comment    = "%[3]s"
   } `, ID, name, comment, accountID)
 }
 
-func testAccCheckCloudflareListItemExists(n string, listItem *cloudflare.ListItem) resource.TestCheckFunc {
+func testAccCheckCloudflareListItemExists(n string, name string, listItem *cloudflare.ListItem) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-		listRS := s.RootModule().Resources["cloudflare_list.list_name"]
+		listRS := s.RootModule().Resources["cloudflare_list."+name]
 
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -137,7 +137,7 @@ func testAccCheckCloudflareListItemExists(n string, listItem *cloudflare.ListIte
 
 func testAccCheckCloudflareBadListItemType(ID, name, comment, accountID string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_list" "list_name" {
+  resource "cloudflare_list" "%[2]s" {
     account_id          = "%[4]s"
     name                = "%[2]s"
     description         = "list named %[2]s"
@@ -145,9 +145,9 @@ func testAccCheckCloudflareBadListItemType(ID, name, comment, accountID string) 
 	ignore_inline_items = true
   }
   
-  resource "cloudflare_list_item" "%[1]s" {
+  resource "cloudflare_list_item" "%[2]s" {
     account_id = "%[4]s"
-	list_id    = cloudflare_list.list_name.id
+	list_id    = cloudflare_list.%[2]s.id
 	ip         = "192.0.2.0"
 	comment    = "%[3]s"
   } `, ID, name, comment, accountID)

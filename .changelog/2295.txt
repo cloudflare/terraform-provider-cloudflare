@@ -1,7 +1,3 @@
 ```release-note:new-resource
-resource/cloudflare_list_item: Create and manage list items as Terraform resources.
-```
-
-```release-note:enhancement
-resource/cloudflare_list: Add `ignore_inline_items` attribute.  Useful when not managing list items in the `cloudflare_list` resource.
+cloudflare_list_item
 ```

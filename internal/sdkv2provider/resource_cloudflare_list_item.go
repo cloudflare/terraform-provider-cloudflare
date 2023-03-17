@@ -85,7 +85,8 @@ func resourceCloudflareListItemRead(ctx context.Context, d *schema.ResourceData,
 
 	listItem, err := client.GetListItem(ctx, cloudflare.AccountIdentifier(accountID), listID, d.Id())
 	if err != nil {
-		if strings.Contains(err.Error(), "could not find item") {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("List item %s no longer exists", d.Id()))
 			d.SetId("")
 			return nil
@@ -125,12 +126,6 @@ func resourceCloudflareListItemRead(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceCloudflareListItemUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// The API does not currently support in-place update of list items
-	dr := resourceCloudflareListItemDelete(ctx, d, meta)
-	if dr != nil {
-		return dr
-	}
-
 	cr := resourceCloudflareListItemCreate(ctx, d, meta)
 	if cr != nil {
 		return cr

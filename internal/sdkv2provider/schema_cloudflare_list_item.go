@@ -24,11 +24,13 @@ func resourceCloudflareListItemSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ExactlyOneOf: []string{"ip", "redirect"},
+			ForceNew:     true,
 		},
 		"redirect": {
 			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
+			ForceNew: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"source_url": {
