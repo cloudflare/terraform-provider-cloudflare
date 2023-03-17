@@ -3,5 +3,5 @@ cloudflare_list
 ```
 
 ```release-note:new-data-source
-datasource/cloudflare_lists: Return all lists
+cloudflare_lists
 ```
