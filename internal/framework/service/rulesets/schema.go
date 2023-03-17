@@ -73,6 +73,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
+				Computed: true,
 			},
 			"shareable_entitlement_name": schema.StringAttribute{
 				Optional:            true,
@@ -145,6 +146,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 						},
 						"last_updated": schema.StringAttribute{
 							Optional:            true,
+							Computed:            true,
 							MarkdownDescription: "The most recent update to this rule.",
 						},
 					},
