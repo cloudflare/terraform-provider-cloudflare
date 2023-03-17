@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -13,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 )
 
 func resourceCloudflareTunnelConfig() *schema.Resource {
@@ -22,6 +24,9 @@ func resourceCloudflareTunnelConfig() *schema.Resource {
 		CreateContext: resourceCloudflareTunnelConfigUpdate,
 		UpdateContext: resourceCloudflareTunnelConfigUpdate,
 		DeleteContext: resourceCloudflareTunnelConfigDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTunnelConfigImport,
+		},
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Tunnel configuration resource.
 		`),
@@ -222,4 +227,29 @@ func resourceCloudflareTunnelConfigDelete(ctx context.Context, d *schema.Resourc
 
 	d.SetId("")
 	return nil
+}
+
+func resourceCloudflareTunnelConfigImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	client := meta.(*cloudflare.API)
+	attributes := strings.Split(d.Id(), "/")
+
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/tunnelId\"", d.Id())
+	}
+
+	accountId, tunnelId := attributes[0], attributes[1]
+
+	result, err := client.GetTunnelConfiguration(ctx, cloudflare.AccountIdentifier(accountId), tunnelId)
+	tflog.Debug(ctx, fmt.Sprintf("GetTunnelConfiguration: %+v", result))
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch Cloudflare Tunnel configuration %s", tunnelId))
+	}
+
+	d.Set(consts.AccountIDSchemaKey, accountId)
+	d.Set("tunnel_id", result.TunnelID)
+	d.SetId(result.TunnelID)
+
+	resourceCloudflareTunnelConfigRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
