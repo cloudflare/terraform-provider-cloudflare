@@ -81,8 +81,8 @@ resource "cloudflare_list" "example" {
 ### Optional
 
 - `description` (String) An optional description of the list.
+- `ignore_inline_items` (Boolean) Set to true if not managing list items in line. Defaults to `false`.
 - `item` (Block Set) (see [below for nested schema](#nestedblock--item))
-- `ignore_inline_items` (Boolean) Will cause the resource to ignore item nested blocks. Useful when managing list items outside of Terraform or when using the `cloudflare_list_item` resource. Defaults to `false`.
 
 ### Read-Only
 
