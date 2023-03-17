@@ -73,7 +73,6 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 
 func TestAccCloudflareListItem_BadListItemType(t *testing.T) {
 	rnd := generateRandomResourceName()
-	// name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{

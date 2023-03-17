@@ -172,8 +172,6 @@ func buildListItemCreateRequest(d *schema.ResourceData) cloudflare.ListItemCreat
 		return request
 	}
 
-	// itemType must be 'redirect'
-
 	stringToOptBool := func(r map[string]interface{}, s string) *bool {
 		switch r[s] {
 		case "enabled":
