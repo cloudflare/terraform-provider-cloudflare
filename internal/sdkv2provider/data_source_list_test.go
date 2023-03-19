@@ -28,7 +28,6 @@ func TestAccCloudflareListDataSource(t *testing.T) {
 				Config: testAccCheckCloudflareListDataSource(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "kind", "ip"),
 					resource.TestCheckResourceAttr(name, "numitems", "0"),
