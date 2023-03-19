@@ -26,6 +26,11 @@ func dataSourceCloudflareLists() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"id": {
+							Description: "List identifier.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"name": {
 							Description: "The list name to target for the resource.",
 							Type:        schema.TypeString,

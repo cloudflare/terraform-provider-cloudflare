@@ -35,6 +35,7 @@ data "cloudflare_lists" "example" {
 Read-Only:
 
 - `description` (String)
+- `id` (String)
 - `kind` (String)
 - `name` (String)
 - `numitems` (Number)
