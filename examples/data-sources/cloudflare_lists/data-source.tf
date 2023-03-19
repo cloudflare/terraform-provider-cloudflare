@@ -1,3 +1,3 @@
 data "cloudflare_lists" "example" {
-  account_id = "01234567890123456789012345678901"
+  account_id = "f037e56e89293a057740de681ac9abbe"
 }
