@@ -1721,6 +1721,78 @@ func TestAccCloudflareRuleset_CacheSettingsEdgeTTLRespectOrigin(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_CacheSettingsStatusRangeGreaterThan(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsStatusRangeGreaterThan(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.0.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.0.status_code_range.0.from", "105"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.status_code_range.0.from", "100"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.status_code_range.0.to", "101"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsStatusRangeLessThan(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsStatusRangeLessThan(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.0.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.0.status_code_range.0.to", "400"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.status_code_range.0.from", "500"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.status_code_range.0.to", "501"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_CacheSettingsFalse(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -3308,6 +3380,80 @@ func testAccCloudflareRulesetCacheSettingsEdgeTTLRespectOrigin(rnd, zoneID strin
 						}
 						value = 5
 					}
+					mode = "respect_origin"
+				}
+				cache = true
+			}
+			expression = "true"
+			description = "%[1]s set cache settings rule"
+			enabled = true
+		}
+	}`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsStatusRangeGreaterThan(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "%[1]s" {
+		zone_id     = "%[2]s"
+		name        = "%[1]s"
+		description = "%[1]s ruleset description"
+		kind        = "zone"
+		phase       = "http_request_cache_settings"
+
+		rules {
+			action = "set_cache_settings"
+			action_parameters {
+				edge_ttl {
+					status_code_ttl {
+						status_code_range {
+						  from = 105
+						}
+						value = 1
+					  }
+					  status_code_ttl {
+						status_code_range {
+						  from = 100
+						  to   = 101
+						}
+						value = 1
+					  }
+					mode = "respect_origin"
+				}
+				cache = true
+			}
+			expression = "true"
+			description = "%[1]s set cache settings rule"
+			enabled = true
+		}
+	}`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsStatusRangeLessThan(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "%[1]s" {
+		zone_id     = "%[2]s"
+		name        = "%[1]s"
+		description = "%[1]s ruleset description"
+		kind        = "zone"
+		phase       = "http_request_cache_settings"
+
+		rules {
+			action = "set_cache_settings"
+			action_parameters {
+				edge_ttl {
+					status_code_ttl {
+						status_code_range {
+						  to = 400
+						}
+						value = 1
+					  }
+					  status_code_ttl {
+						status_code_range {
+						  from = 500
+						  to   = 501
+						}
+						value = 1
+					  }
 					mode = "respect_origin"
 				}
 				cache = true
