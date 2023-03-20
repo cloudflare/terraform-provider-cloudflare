@@ -15,6 +15,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/access_organization: add ui_read_only_toggle_reason field ([#2175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2175))
 * resource/cloudflare_device_posture_rule: Support `check_disks` in the `input` block schema. ([#2280](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2280))
 * resource/cloudflare_tunnel: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
 * resource/cloudflare_tunnel_config: add support for import of `cloudflare_tunnel_config` ([#2298](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2298))
