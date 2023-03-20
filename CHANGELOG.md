@@ -8,6 +8,11 @@ NOTES:
 
 * `cloudflare_ruleset` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state. Along with this, you will need to update any references to `status` which was the previous workaround for the `enabled` values. If you have `status = "enabled"` you will need to replace it with `enabled = true` and similar for `status = "disabled"` to be replaced with `enabled = false`. ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_list` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+* **New Data Source:** `cloudflare_lists` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_device_posture_rule: Support `check_disks` in the `input` block schema. ([#2280](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2280))
