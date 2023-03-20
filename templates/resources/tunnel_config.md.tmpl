@@ -16,3 +16,11 @@ description: |-
 {{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
 
 {{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+## Import
+
+Import is supported using the following syntax:
+
+{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
+{{- end }}
