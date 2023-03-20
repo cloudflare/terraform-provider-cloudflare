@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	tfsdkv2 "github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 const (
@@ -77,7 +77,7 @@ func testAccPreCheck(t *testing.T) {
 		t.Fatal("CLOUDFLARE_ZONE_ID must be set for this acceptance test")
 	}
 
-	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	err := testAccProvider.Configure(context.Background(), tfsdkv2.NewResourceConfigRaw(nil))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,7 +88,7 @@ func testAccPreCheckWithoutZoneID(t *testing.T) {
 	testAccPreCheckApiKey(t)
 	testAccPreCheckDomain(t)
 
-	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	err := testAccProvider.Configure(context.Background(), tfsdkv2.NewResourceConfigRaw(nil))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,7 +129,7 @@ func testAccPreCheckApiUserServiceKey(t *testing.T) {
 		t.Fatal("CLOUDFLARE_API_USER_SERVICE_KEY must be set for acceptance tests")
 	}
 
-	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	err := testAccProvider.Configure(context.Background(), tfsdkv2.NewResourceConfigRaw(nil))
 	if err != nil {
 		t.Fatal(err)
 	}

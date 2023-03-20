@@ -12,7 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -133,7 +133,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record create configuration: %#v", newRecord))
 
-	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *retry.RetryError {
 		r, err := client.CreateDNSRecord(ctx, cloudflare.ZoneIdentifier(newRecord.ZoneID), newRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
@@ -155,7 +155,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 					rs, _, _ := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(d.Get(consts.ZoneIDSchemaKey).(string)), r)
 
 					if len(rs) != 1 {
-						return resource.RetryableError(fmt.Errorf("attempted to override existing record however didn't find an exact match"))
+						return retry.RetryableError(fmt.Errorf("attempted to override existing record however didn't find an exact match"))
 					}
 
 					// Here we need to set the ID as the state will not have one and in order
@@ -163,22 +163,22 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 					d.SetId(rs[0].ID)
 
 					if updateErr := resourceCloudflareRecordUpdate(ctx, d, meta); updateErr != nil {
-						return resource.NonRetryableError(errors.New("failed to update record"))
+						return retry.NonRetryableError(errors.New("failed to update record"))
 					}
 
 					return nil
 				}
 
-				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
+				return retry.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
 			}
 
-			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
+			return retry.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
 		}
 
 		// In the event that the API returns an empty DNS Record, we verify that the
 		// ID returned is not the default ""
 		if r.Result.ID == "" {
-			return resource.NonRetryableError(fmt.Errorf("failed to find record in Create response; Record was empty"))
+			return retry.NonRetryableError(fmt.Errorf("failed to find record in Create response; Record was empty"))
 		}
 
 		d.SetId(r.Result.ID)
@@ -317,15 +317,15 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Debug(ctx, fmt.Sprintf("Cloudflare Record update configuration: %#v", updateRecord))
 
-	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *retry.RetryError {
 		updateRecord.ID = d.Id()
 		err := client.UpdateDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), updateRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
-				return resource.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
+				return retry.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))
 			}
 
-			return resource.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
+			return retry.NonRetryableError(fmt.Errorf("failed to create DNS record: %w", err))
 		}
 
 		resourceCloudflareRecordRead(ctx, d, meta)

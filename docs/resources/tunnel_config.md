@@ -139,3 +139,11 @@ Optional:
 Optional:
 
 - `enabled` (Boolean) Whether WARP routing is enabled.
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_tunnel_config.example <account_id>/<tunnel_id>
+```

@@ -9,7 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -64,28 +64,28 @@ func resourceCloudflareCustomHostnameFallbackOriginCreate(ctx context.Context, d
 		Origin: origin,
 	}
 
-	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *retry.RetryError {
 		_, err := client.UpdateCustomHostnameFallbackOrigin(ctx, zoneID, fallbackOrigin)
 		if err != nil {
 			var requestError *cloudflare.RequestError
 			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {
-				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
+				return retry.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
 			} else {
-				return resource.NonRetryableError(fmt.Errorf("failed to create custom hostname fallback origin: %w", err))
+				return retry.NonRetryableError(fmt.Errorf("failed to create custom hostname fallback origin: %w", err))
 			}
 		}
 
 		fallbackHostname, err := client.CustomHostnameFallbackOrigin(ctx, zoneID)
 
 		if err != nil {
-			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %w", err))
+			return retry.NonRetryableError(fmt.Errorf("failed to fetch custom hostname: %w", err))
 		}
 
 		// Address an eventual consistency issue where deleting a fallback hostname
 		// and then adding it _may_ cause some issues. It is possible that the status does
 		// move into the active state during the retry period.
 		if fallbackHostname.Status != "pending_deployment" && fallbackHostname.Status != "active" {
-			return resource.RetryableError(fmt.Errorf("expected custom hostname fallback to be created but was %s", fallbackHostname.Status))
+			return retry.RetryableError(fmt.Errorf("expected custom hostname fallback to be created but was %s", fallbackHostname.Status))
 		}
 
 		id := stringChecksum(fmt.Sprintf("%s/custom_hostnames_fallback_origin", zoneID))
@@ -111,14 +111,14 @@ func resourceCloudflareCustomHostnameFallbackOriginUpdate(ctx context.Context, d
 		Origin: origin,
 	}
 
-	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *resource.RetryError {
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutDefault), func() *retry.RetryError {
 		_, err := client.UpdateCustomHostnameFallbackOrigin(ctx, zoneID, fallbackOrigin)
 		if err != nil {
 			var requestError *cloudflare.RequestError
 			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 1414) {
-				return resource.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
+				return retry.RetryableError(fmt.Errorf("expected custom hostname resource to be ready for modification but is still pending"))
 			}
-			return resource.NonRetryableError(fmt.Errorf("failed to update custom hostname fallback origin: %w", err))
+			return retry.NonRetryableError(fmt.Errorf("failed to update custom hostname fallback origin: %w", err))
 		}
 
 		resourceCloudflareCustomHostnameFallbackOriginRead(ctx, d, meta)

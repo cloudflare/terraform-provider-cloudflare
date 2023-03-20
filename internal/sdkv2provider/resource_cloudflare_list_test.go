@@ -2,14 +2,55 @@ package sdkv2provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_list", &resource.Sweeper{
+		Name: "cloudflare_list",
+		F:    testSweepCloudflareList,
+	})
+}
+
+func testSweepCloudflareList(r string) error {
+	ctx := context.Background()
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	if accountID == "" {
+		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
+	}
+
+	lists, err := client.ListLists(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListListsParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Lists: %s", err))
+	}
+
+	if len(lists) == 0 {
+		log.Print("[DEBUG] No Cloudflare Lists to sweep")
+		return nil
+	}
+
+	for _, list := range lists {
+		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare List ID: %s", list.ID))
+		//nolint:errcheck
+		client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), list.ID)
+	}
+
+	return nil
+}
 
 func TestAccCloudflareList_Exists(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List

@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0 # needed for `only-new-issues` to compare diffs
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version-file: 'tools/go.mod'
       - name: golangci-lint
@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version-file: 'tools/go.mod'
       - run: make terraform-provider-lint
