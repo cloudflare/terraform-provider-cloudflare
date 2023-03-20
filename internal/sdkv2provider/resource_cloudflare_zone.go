@@ -13,7 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -287,7 +287,7 @@ func setRatePlan(ctx context.Context, client *cloudflare.API, zoneID, planID str
 		}
 	}
 
-	return resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+	return retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *retry.RetryError {
 		zone, _ := client.ZoneDetails(ctx, zoneID)
 
 		// This is a little confusing but due to the multiple views of
@@ -299,7 +299,7 @@ func setRatePlan(ctx context.Context, client *cloudflare.API, zoneID, planID str
 		// "Enterprise Website" and know that we made the swap and just trust
 		// that the rate plan identifier did the right thing.
 		if zone.Plan.Name != ratePlans[planID].Description {
-			return resource.RetryableError(fmt.Errorf("plan ID change has not yet propagated"))
+			return retry.RetryableError(fmt.Errorf("plan ID change has not yet propagated"))
 		}
 
 		return nil
