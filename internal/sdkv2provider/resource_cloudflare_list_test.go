@@ -46,7 +46,7 @@ func testSweepCloudflareList(r string) error {
 	for _, list := range lists {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare List ID: %s", list.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), list.ID)
+		client.DeleteList(ctx, cloudflare.AccountIdentifier(accountID), list.ID)
 	}
 
 	return nil
