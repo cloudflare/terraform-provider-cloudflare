@@ -97,7 +97,7 @@ func resourceCloudflareListItemRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("comment", listItem.Comment)
 
 	if listItem.IP != nil {
-		d.Set("ip", *listItem.IP)
+		d.Set("ip", listItem.IP)
 	}
 
 	if listItem.Redirect != nil {
