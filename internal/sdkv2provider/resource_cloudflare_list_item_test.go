@@ -97,7 +97,6 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
     name                = "%[2]s"
     description         = "list named %[2]s"
     kind                = "ip"
-	ignore_inline_items = true
   }
   
   resource "cloudflare_list_item" "%[1]s" {
@@ -141,7 +140,6 @@ func testAccCheckCloudflareBadListItemType(ID, name, comment, accountID string) 
     name                = "%[2]s"
     description         = "list named %[2]s"
     kind                = "redirect"
-	ignore_inline_items = true
   }
   
   resource "cloudflare_list_item" "%[2]s" {

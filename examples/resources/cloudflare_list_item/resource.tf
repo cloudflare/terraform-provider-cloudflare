@@ -3,7 +3,6 @@ resource "cloudflare_list" "example_ip_list" {
   name                = "example_list"
   description         = "example IPs for a list"
   kind                = "ip"
-  ignore_inline_items = true
 }
 
 # IP List Item
