@@ -25,7 +25,8 @@ func GenerateRandomResourceName() string {
 	return string(result)
 }
 
-// randIntRange returns a random integer between min (inclusive) and max (exclusive)
+// randIntRange returns a random integer between min (inclusive) and max
+// (exclusive).
 func randIntRange(min int, max int) int {
 	return rand.Intn(max-min) + min
 }
