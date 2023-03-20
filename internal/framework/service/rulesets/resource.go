@@ -560,7 +560,7 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 				for _, sct := range ruleResponse.ActionParameters.EdgeTTL.StatusCodeTTL {
 					var sctrange []*ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel
 
-					if sct.StatusCodeRange != nil && sct.StatusCodeRange.From != nil && sct.StatusCodeRange.To != nil {
+					if sct.StatusCodeRange != nil {
 						sctrange = append(sctrange, &ActionParameterEdgeTTLStatusCodeTTLStatusCodeRangeModel{
 							To:   flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeRange.To))),
 							From: flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeRange.From))),
@@ -568,7 +568,7 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 					}
 					statusCodeTTLs = append(statusCodeTTLs, &ActionParameterEdgeTTLStatusCodeTTLModel{
 						StatusCode:      flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeValue))),
-						Value:           types.Int64Value(int64(cloudflare.Int(sct.Value))),
+						Value:           flatteners.Int64(int64(cloudflare.Int(sct.Value))),
 						StatusCodeRange: sctrange,
 					})
 				}
@@ -1170,9 +1170,14 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 				config := cloudflare.RulesetRuleActionParametersStatusCodeTTL{}
 
 				if sct.StatusCodeRange != nil {
-					config.StatusCodeRange = &cloudflare.RulesetRuleActionParametersStatusCodeRange{
-						From: cloudflare.UintPtr(uint(sct.StatusCodeRange[0].From.ValueInt64())),
-						To:   cloudflare.UintPtr(uint(sct.StatusCodeRange[0].To.ValueInt64())),
+					config.StatusCodeRange = &cloudflare.RulesetRuleActionParametersStatusCodeRange{}
+
+					if sct.StatusCodeRange[0].From.ValueInt64() > 0 {
+						config.StatusCodeRange.From = cloudflare.UintPtr(uint(sct.StatusCodeRange[0].From.ValueInt64()))
+					}
+
+					if sct.StatusCodeRange[0].To.ValueInt64() > 0 {
+						config.StatusCodeRange.To = cloudflare.UintPtr(uint(sct.StatusCodeRange[0].To.ValueInt64()))
 					}
 				}
 

@@ -26,6 +26,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_ruleset: support cache rules for status range >= and =< operations ([#2307](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2307))
 * resource/cloudflare_teams_account: fixes an issue where accounts that had never configured DLP payload logging would error upon reading this resource ([#2284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2284))
 
 INTERNAL:
