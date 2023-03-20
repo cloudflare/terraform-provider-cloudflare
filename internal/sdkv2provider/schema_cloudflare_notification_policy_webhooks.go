@@ -20,6 +20,7 @@ func resourceCloudflareNotificationPolicyWebhookSchema() map[string]*schema.Sche
 		"url": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			ForceNew:    true,
 			Description: "The URL of the webhook destinations.",
 		},
 		"secret": {
