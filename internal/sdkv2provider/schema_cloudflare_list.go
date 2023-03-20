@@ -33,17 +33,12 @@ func resourceCloudflareListSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			ValidateFunc: validation.StringInSlice([]string{"ip", "redirect"}, false),
 			Required:     true,
+			ForceNew:     true,
 		},
 		"item": {
 			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     listItemElem,
-		},
-		"ignore_inline_items": {
-			Description: "Set to true if not managing list items in line.",
-			Type:        schema.TypeBool,
-			Default:     false,
-			Optional:    true,
 		},
 	}
 }

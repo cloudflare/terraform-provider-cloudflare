@@ -94,7 +94,13 @@ func resourceCloudflareListRead(ctx context.Context, d *schema.ResourceData, met
 	d.Set("description", list.Description)
 	d.Set("kind", list.Kind)
 
-	if d.Get("ignore_inline_items").(bool) {
+	hasChange := d.HasChange("items")
+	lenItems := d.Get("item").(*schema.Set).List()
+	if !hasChange && len(lenItems) == 0 {
+		// oldItemsIface, newItemsIface := d.GetChange("items")
+		// oldItems := oldItemsIface.(*schema.Set).List()
+		// newItems := newItemsIface.(*schema.Set).List()
+
 		return nil
 	}
 
