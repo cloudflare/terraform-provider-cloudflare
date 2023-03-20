@@ -12,7 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -54,14 +54,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		d.SetId(record.ID)
 
-		perZoneRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		perZoneRetryErr := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *retry.RetryError {
 			resp, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(ctx, zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %w", err))
+				return retry.NonRetryableError(fmt.Errorf("error reading Per Zone AOP certificate details: %w", err))
 			}
 
 			if resp.Status != "active" {
-				return resource.RetryableError(fmt.Errorf("expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
+				return retry.RetryableError(fmt.Errorf("expected Per Zone AOP certificate to be active but was in state %s", resp.Status))
 			}
 
 			resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)
@@ -85,14 +85,14 @@ func resourceCloudflareAuthenticatedOriginPullsCertificateCreate(ctx context.Con
 		}
 		d.SetId(record.ID)
 
-		perHostnameRetryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		perHostnameRetryErr := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *retry.RetryError {
 			resp, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(ctx, zoneID, record.ID)
 			if err != nil {
-				return resource.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %w", err))
+				return retry.NonRetryableError(fmt.Errorf("error reading Per Hostname AOP certificate details: %w", err))
 			}
 
 			if resp.Status != "active" {
-				return resource.RetryableError(fmt.Errorf("expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
+				return retry.RetryableError(fmt.Errorf("expected Per Hostname AOP certificate to be active but was in state %s", resp.Status))
 			}
 
 			resourceCloudflareAuthenticatedOriginPullsCertificateRead(ctx, d, meta)

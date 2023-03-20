@@ -9,10 +9,10 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -96,14 +96,14 @@ func resourceCloudflareHealthcheckCreate(ctx context.Context, d *schema.Resource
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error creating healthcheck struct")))
 	}
 
-	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *retry.RetryError {
 		hc, err := client.CreateHealthcheck(ctx, zoneID, healthcheck)
 		if err != nil {
 			if strings.Contains(err.Error(), "no such host") {
-				return resource.RetryableError(fmt.Errorf("hostname resolution failed"))
+				return retry.RetryableError(fmt.Errorf("hostname resolution failed"))
 			}
 
-			return resource.NonRetryableError(errors.Wrap(err, fmt.Sprintf("error creating standalone healthcheck")))
+			return retry.NonRetryableError(errors.Wrap(err, fmt.Sprintf("error creating standalone healthcheck")))
 		}
 
 		d.SetId(hc.ID)
