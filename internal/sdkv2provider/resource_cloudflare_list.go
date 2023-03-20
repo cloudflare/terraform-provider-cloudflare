@@ -94,6 +94,10 @@ func resourceCloudflareListRead(ctx context.Context, d *schema.ResourceData, met
 	d.Set("description", list.Description)
 	d.Set("kind", list.Kind)
 
+	if !d.HasChange("items") && len(d.Get("item").(*schema.Set).List()) == 0 {
+		return nil
+	}
+
 	items, err := client.ListListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListListItemsParams{
 		ID: d.Id(),
 	})
