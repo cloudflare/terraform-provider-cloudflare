@@ -10,7 +10,7 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -155,7 +155,7 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
 	}
 
-	retryErr := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+	retryErr := retry.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *retry.RetryError {
 		if identifier.Type == AccountType {
 			err = client.DeleteAccessMutualTLSCertificate(ctx, identifier.Value, certID)
 		} else {
@@ -164,9 +164,9 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 
 		if err != nil {
 			if strings.Contains(err.Error(), "access.api.error.certificate_has_active_associations") {
-				return resource.RetryableError(fmt.Errorf("certificate associations are not yet removed"))
+				return retry.RetryableError(fmt.Errorf("certificate associations are not yet removed"))
 			} else {
-				return resource.NonRetryableError(fmt.Errorf("error deleting Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
+				return retry.NonRetryableError(fmt.Errorf("error deleting Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
 			}
 		}
 
