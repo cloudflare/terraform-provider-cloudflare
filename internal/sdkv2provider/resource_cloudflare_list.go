@@ -94,13 +94,7 @@ func resourceCloudflareListRead(ctx context.Context, d *schema.ResourceData, met
 	d.Set("description", list.Description)
 	d.Set("kind", list.Kind)
 
-	hasChange := d.HasChange("items")
-	lenItems := d.Get("item").(*schema.Set).List()
-	if !hasChange && len(lenItems) == 0 {
-		// oldItemsIface, newItemsIface := d.GetChange("items")
-		// oldItems := oldItemsIface.(*schema.Set).List()
-		// newItems := newItemsIface.(*schema.Set).List()
-
+	if !d.HasChange("items") && len(d.Get("item").(*schema.Set).List()) == 0 {
 		return nil
 	}
 
