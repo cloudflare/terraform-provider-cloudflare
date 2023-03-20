@@ -75,13 +75,12 @@ resource "cloudflare_list" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `kind` (String) The type of items the list will contain.
+- `kind` (String) The type of items the list will contain. **Modifying this attribute will force creation of a new resource.**
 - `name` (String) The name of the list. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
 - `description` (String) An optional description of the list.
-- `ignore_inline_items` (Boolean) Set to true if not managing list items in line. Defaults to `false`.
 - `item` (Block Set) (see [below for nested schema](#nestedblock--item))
 
 ### Read-Only
