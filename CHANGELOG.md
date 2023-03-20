@@ -29,6 +29,7 @@ BUG FIXES:
 INTERNAL:
 
 * resource/cloudflare_ruleset: migrate from SDKv2 to `terraform-plugin-framework` ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+* test: swap SDKv2 testing harness to github.com/hashicorp/terraform-plugin-testing ([#2272](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2272))
 
 DEPENDENCIES:
 
