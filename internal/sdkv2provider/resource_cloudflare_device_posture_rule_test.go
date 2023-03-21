@@ -8,8 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
@@ -182,7 +182,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
+func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -201,7 +201,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryption(rnd, accountID),
+				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryptionRequireAll(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -211,6 +211,43 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "expiration", "24h"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
 					resource.TestCheckResourceAttr(name, "input.0.require_all", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryptionCheckDisks(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "disk_encryption"),
+					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "schedule", "24h"),
+					resource.TestCheckResourceAttr(name, "expiration", "24h"),
+					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
+					resource.TestCheckResourceAttr(name, "input.0.require_all", "false"),
+					resource.TestCheckResourceAttr(name, "input.0.check_disks.0", "C"),
+					resource.TestCheckResourceAttr(name, "input.0.check_disks.1", "D"),
 				),
 			},
 		},
@@ -297,7 +334,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 `, rnd, accountID)
 }
 
-func testAccCloudflareDevicePostureRuleConfigDiskEncryption(rnd, accountID string) string {
+func testAccCloudflareDevicePostureRuleConfigDiskEncryptionRequireAll(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
@@ -311,6 +348,26 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	}
 	input {
 		require_all = true
+	}
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareDevicePostureRuleConfigDiskEncryptionCheckDisks(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_device_posture_rule" "%[1]s" {
+	account_id                = "%[2]s"
+	name                      = "%[1]s"
+	type                      = "disk_encryption"
+	description               = "My description"
+	schedule                  = "24h"
+	expiration                = "24h"
+	match {
+		platform = "mac"
+	}
+	input {
+		require_all = false
+		check_disks = ["C", "D"]
 	}
 }
 `, rnd, accountID)

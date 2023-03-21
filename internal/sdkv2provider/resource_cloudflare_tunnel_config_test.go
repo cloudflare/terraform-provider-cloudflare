@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
@@ -129,6 +129,12 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "https://10.0.0.3:8081"),
 				),
 			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
 		},
 	})
 }
@@ -152,6 +158,12 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "1"),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://10.0.0.1:8081"),
 				),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})

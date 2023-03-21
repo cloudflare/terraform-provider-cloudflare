@@ -1,18 +1,44 @@
 ## 4.2.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: `status` has been removed in favour of `enabled` now that the workaround for zero values is no longer required ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+
+NOTES:
+
+* `cloudflare_ruleset` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state. Along with this, you will need to update any references to `status` which was the previous workaround for the `enabled` values. If you have `status = "enabled"` you will need to replace it with `enabled = true` and similar for `status = "disabled"` to be replaced with `enabled = false`. ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_list` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+* **New Data Source:** `cloudflare_lists` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+
 ENHANCEMENTS:
 
+* resource/access_organization: add ui_read_only_toggle_reason field ([#2175](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2175))
+* resource/cloudflare_device_posture_rule: Support `check_disks` in the `input` block schema. ([#2280](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2280))
+* resource/cloudflare_notification_policy_webhooks: ensure `url` triggers recreation, not in-place updates ([#2302](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2302))
 * resource/cloudflare_tunnel: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
+* resource/cloudflare_tunnel_config: add support for import of `cloudflare_tunnel_config` ([#2298](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2298))
 * resource/cloudflare_tunnel_config: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
 * resource/cloudflare_tunnel_route: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation ([#2281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2281))
+* resource/cloudflare_worker_script: Add `compatibility_date` attribute ([#2300](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2300))
 
 BUG FIXES:
 
+* resource/cloudflare_ruleset: support cache rules for status range >= and =< operations ([#2307](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2307))
 * resource/cloudflare_teams_account: fixes an issue where accounts that had never configured DLP payload logging would error upon reading this resource ([#2284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2284))
+
+INTERNAL:
+
+* resource/cloudflare_ruleset: migrate from SDKv2 to `terraform-plugin-framework` ([#2271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2271))
+* test: swap SDKv2 testing harness to github.com/hashicorp/terraform-plugin-testing ([#2272](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2272))
 
 DEPENDENCIES:
 
+* provider: bumps actions/setup-go from 3 to 4 ([#2291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2291))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.62.0 to 0.63.0 ([#2289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2289))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.25.1-0.20230317190757-53a4ec42ea7e to 2.26.0 ([#2308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2308))
 
 ## 4.1.0 (March 8th, 2023)
 

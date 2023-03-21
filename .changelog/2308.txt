@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.25.1-0.20230317190757-53a4ec42ea7e to 2.26.0
+```

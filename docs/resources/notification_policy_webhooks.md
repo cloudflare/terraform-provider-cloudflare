@@ -30,7 +30,7 @@ resource "cloudflare_notification_policy_webhooks" "example" {
 ### Optional
 
 - `secret` (String) An optional secret can be provided that will be passed in the `cf-webhook-auth` header when dispatching a webhook notification. Secrets are not returned in any API response body. Refer to the [documentation](https://api.cloudflare.com/#notification-webhooks-create-webhook) for more details.
-- `url` (String) The URL of the webhook destinations.
+- `url` (String) The URL of the webhook destinations. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

@@ -180,6 +180,12 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if require_all, ok := d.GetOk("input.0.require_all"); ok {
 			input.RequireAll = require_all.(bool)
 		}
+		if check_disks, ok := d.GetOk("input.0.check_disks"); ok {
+			values := check_disks.(*schema.Set).List()
+			for _, value := range values {
+				input.CheckDisks = append(input.CheckDisks, value.(string))
+			}
+		}
 		if enabled, ok := d.GetOk("input.0.enabled"); ok {
 			input.Enabled = enabled.(bool)
 		}
@@ -260,6 +266,7 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"sha256":             input.Sha256,
 		"running":            input.Running,
 		"require_all":        input.RequireAll,
+		"check_disks":        input.CheckDisks,
 		"enabled":            input.Enabled,
 		"version":            input.Version,
 		"os_distro_name":     input.OsDistroName,
