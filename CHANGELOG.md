@@ -12,6 +12,7 @@ FEATURES:
 
 * **New Data Source:** `cloudflare_list` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
 * **New Data Source:** `cloudflare_lists` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+* **New Resource:** `cloudflare_address_map` ([#2290](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2290))
 
 ENHANCEMENTS:
 
