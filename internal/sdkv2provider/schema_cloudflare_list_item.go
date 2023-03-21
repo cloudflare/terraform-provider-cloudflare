@@ -23,14 +23,17 @@ func resourceCloudflareListItemSchema() map[string]*schema.Schema {
 		"ip": {
 			Type:         schema.TypeString,
 			Optional:     true,
+			Description:  "IP address to include in the list.",
 			ExactlyOneOf: []string{"ip", "redirect"},
 			ForceNew:     true,
 		},
 		"redirect": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			ForceNew: true,
+			Type:         schema.TypeList,
+			ExactlyOneOf: []string{"ip", "redirect"},
+			Description:  "Redirect configuration to store in the list.",
+			Optional:     true,
+			MaxItems:     1,
+			ForceNew:     true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"source_url": {

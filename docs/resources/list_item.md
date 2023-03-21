@@ -53,8 +53,8 @@ resource "cloudflare_list_item" "test_two" {
 ### Optional
 
 - `comment` (String) An optional comment for the item.
-- `ip` (String) Must provide only one of `ip`, `redirect`. **Modifying this attribute will force creation of a new resource.**
-- `redirect` (Block List, Max: 1) **Modifying this attribute will force creation of a new resource.** (see [below for nested schema](#nestedblock--redirect))
+- `ip` (String) IP address to include in the list. Must provide only one of `ip`, `redirect`. **Modifying this attribute will force creation of a new resource.**
+- `redirect` (Block List, Max: 1) Redirect configuration to store in the list. Must provide only one of `ip`, `redirect`. **Modifying this attribute will force creation of a new resource.** (see [below for nested schema](#nestedblock--redirect))
 
 ### Read-Only
 
