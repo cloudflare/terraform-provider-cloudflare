@@ -2,17 +2,21 @@ package sdkv2provider
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccCloudflareAddressMap(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_address_map.%s", rnd)
-
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	altZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
@@ -34,33 +38,35 @@ func TestAccCloudflareAddressMap(t *testing.T) {
 				Config: generateCloudflareAddressMapConfig(
 					rnd,
 					accountID,
-					cloudflare.StringPtr("Terraform provider test"),
-					cloudflare.StringPtr("*.ipam.rocks"),
+					cloudflare.StringPtr(rnd),
+					cloudflare.StringPtr("*."+domain),
 					true,
-					[]string{"1.0.0.2", "1.0.0.3"},
+					[]string{"199.212.90.4", "199.212.90.5"},
 					[]cloudflare.AddressMapMembershipContainer{
-						{Identifier: "a4de22ad6ae5f5ab736ec887dc14660d", Kind: cloudflare.AddressMapMembershipZone},
-						{Identifier: "c6737c4cd61718ad3c3953680e638959", Kind: cloudflare.AddressMapMembershipZone},
+						{Identifier: zoneID, Kind: cloudflare.AddressMapMembershipZone},
+						{Identifier: altZoneID, Kind: cloudflare.AddressMapMembershipZone},
 					}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "description", "Terraform provider test"),
-					resource.TestCheckResourceAttr(name, "default_sni", "*.ipam.rocks"),
+					resource.TestCheckResourceAttr(name, "description", rnd),
+					resource.TestCheckResourceAttr(name, "default_sni", "*."+domain),
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
-					resource.TestCheckResourceAttr(name, "ips.0.ip", "1.0.0.2"),
-					resource.TestCheckResourceAttr(name, "ips.1.ip", "1.0.0.3"),
-					resource.TestCheckResourceAttr(name, "memberships.0.identifier", "a4de22ad6ae5f5ab736ec887dc14660d"),
+					resource.TestCheckResourceAttr(name, "ips.#", "2"),
+					resource.TestCheckResourceAttr(name, "ips.0.ip", "199.212.90.4"),
+					resource.TestCheckResourceAttr(name, "ips.1.ip", "199.212.90.5"),
+					resource.TestCheckResourceAttr(name, "memberships.#", "2"),
+					resource.TestCheckResourceAttr(name, "memberships.0.identifier", zoneID),
 					resource.TestCheckResourceAttr(name, "memberships.0.kind", "zone"),
-					resource.TestCheckResourceAttr(name, "memberships.1.identifier", "c6737c4cd61718ad3c3953680e638959"),
+					resource.TestCheckResourceAttr(name, "memberships.1.identifier", altZoneID),
 					resource.TestCheckResourceAttr(name, "memberships.1.kind", "zone"),
 				),
 			},
 			{
-				Config: generateCloudflareAddressMapConfig(rnd, accountID, cloudflare.StringPtr(""), cloudflare.StringPtr("*.ipam.rocks"), false, nil, nil),
+				Config: generateCloudflareAddressMapConfig(rnd, accountID, cloudflare.StringPtr(""), cloudflare.StringPtr("*."+domain), false, nil, nil),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "description", ""),
-					resource.TestCheckResourceAttr(name, "default_sni", "*.ipam.rocks"),
+					resource.TestCheckResourceAttr(name, "default_sni", "*."+domain),
 					resource.TestCheckResourceAttr(name, "enabled", "false"),
 					resource.TestCheckResourceAttr(name, "ips.#", "0"),
 					resource.TestCheckResourceAttr(name, "memberships.#", "0"),
