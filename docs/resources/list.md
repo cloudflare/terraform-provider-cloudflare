@@ -11,7 +11,7 @@ description: |-
 Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
 across all zones within the same account.
 
-~> The `cloudflare_list` resource supports defining list items in line with the `item` attribute. The provider also has a `cloudflare_list_item` resource for managing items as independent resources. Using both in line `item` definitions _and_ `cloudflare_list_items` on the same list is not supported and will cause Terraform into an irreconcilable state
+~> The `cloudflare_list` resource supports defining list items in line with the `item` attribute. The provider also has a `cloudflare_list_item` resource for managing items as independent resources. Using both in line `item` definitions _and_ `cloudflare_list_items` on the same list is not supported and will cause Terraform into an irreconcilable state.
 
 ## Example Usage
 
