@@ -79,7 +79,6 @@ resource "cloudflare_worker_script" "my_script" {
 - `compatibility_date` (String) The date to use for the compatibility flag.
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `module` (Boolean) Whether to upload Worker as a module.
-- `compatibility_date` (String) The date to use for the compatibility flag. This is used to determine which version of the Workers runtime to use. The date must be in the format `YYYY-MM-DD`.
 - `plain_text_binding` (Block Set) (see [below for nested schema](#nestedblock--plain_text_binding))
 - `queue_binding` (Block Set) (see [below for nested schema](#nestedblock--queue_binding))
 - `r2_bucket_binding` (Block Set) (see [below for nested schema](#nestedblock--r2_bucket_binding))
