@@ -145,8 +145,8 @@ github.com/hashicorp/terraform-plugin-log v0.8.0 h1:pX2VQ/TGKu+UU1rCay0OlzosNKe4
 github.com/hashicorp/terraform-plugin-log v0.8.0/go.mod h1:1myFrhVsBLeylQzYYEV17VVjtG8oYPRFdaZs7xdW2xs=
 github.com/hashicorp/terraform-plugin-mux v0.9.0 h1:a2Xh63cunDB/1GZECrV02cGA74AhQGUjY9X8W3P/L7k=
 github.com/hashicorp/terraform-plugin-mux v0.9.0/go.mod h1:8NUFbgeMigms7Tma/r2Vgi5Jv5mPv4xcJ05pJtIOhwc=
-github.com/hashicorp/terraform-plugin-sdk/v2 v2.25.1-0.20230317190757-53a4ec42ea7e h1:cMRTdfSTq0PAJSb+6eglDRbenItavppXeidlfkW1cdY=
-github.com/hashicorp/terraform-plugin-sdk/v2 v2.25.1-0.20230317190757-53a4ec42ea7e/go.mod h1:xcOSYlRVdPLmDUoqPhO9fiO/YCN/l6MGYeTzGt5jgkQ=
+github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.0 h1:We3H/dXP7Q0YH4YsBY6DAVj+Ur6PDFC+Yt1btGhTeMs=
+github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.0/go.mod h1:xcOSYlRVdPLmDUoqPhO9fiO/YCN/l6MGYeTzGt5jgkQ=
 github.com/hashicorp/terraform-plugin-testing v1.1.0 h1:l5UuTAt7yQcThGe0dFGSCOHR4M1k0VVTqW60K2+q6AE=
 github.com/hashicorp/terraform-plugin-testing v1.1.0/go.mod h1:D52zIrX/2hgLsUYMj3tfiLAOFJzhGf8GDv/8nCCtPKA=
 github.com/hashicorp/terraform-registry-address v0.1.0 h1:W6JkV9wbum+m516rCl5/NjKxCyTVaaUBbzYcMzBDO3U=
