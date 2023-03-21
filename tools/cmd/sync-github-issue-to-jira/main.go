@@ -64,11 +64,11 @@ var (
 
 	// Mapping of service label to owning internal team.
 	serviceOwnership = map[string]serviceOwner{
-		"provider/internals": serviceOwner{
+		"provider/internals": {
 			teamName: "API & Zones",
 			manager:  "rupalim",
 		},
-		"service/zones": serviceOwner{
+		"service/zones": {
 			teamName: "API & Zones",
 			manager:  "rupalim",
 		},
