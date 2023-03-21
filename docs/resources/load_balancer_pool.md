@@ -109,9 +109,9 @@ Required:
 Optional:
 
 - `default_percent` (Number) Percent of traffic to shed 0 - 100. Defaults to `0`.
-- `default_policy` (String) Method of shedding traffic. Available values: ``, `hash`, `random`. Defaults to `""`.
+- `default_policy` (String) Method of shedding traffic. Available values: `""`, `hash`, `random`. Defaults to `""`.
 - `session_percent` (Number) Percent of session traffic to shed 0 - 100. Defaults to `0`.
-- `session_policy` (String) Method of shedding traffic. Available values: ``, `hash`. Defaults to `""`.
+- `session_policy` (String) Method of shedding traffic. Available values: `""`, `hash`. Defaults to `""`.
 
 
 <a id="nestedblock--origin_steering"></a>
@@ -119,6 +119,6 @@ Optional:
 
 Optional:
 
-- `policy` (String) Origin steering policy to be used. Available values: ``, `hash`, `random`. Defaults to `random`.
+- `policy` (String) Origin steering policy to be used. Available values: `""`, `hash`, `random`. Defaults to `random`.
 
 
