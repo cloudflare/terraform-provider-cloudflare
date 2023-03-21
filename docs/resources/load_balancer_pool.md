@@ -121,4 +121,10 @@ Optional:
 
 - `policy` (String) Origin steering policy to be used. Available values: `""`, `hash`, `random`. Defaults to `random`.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_load_balancer_pool.example <account_id>/<load_balancer_poool_id>
+```
