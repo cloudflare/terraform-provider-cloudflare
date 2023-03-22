@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceCloudflareDeviceDexTestsSchema() map[string]*schema.Schema {
+func resourceCloudflareDeviceDexTestSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
 			Description: "The account identifier to target for the resource.",

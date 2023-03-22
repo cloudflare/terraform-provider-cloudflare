@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_device_dex_tests Resource - Cloudflare"
+page_title: "cloudflare_device_dex_test Resource - Cloudflare"
 subcategory: ""
 description: |-
   Provides a Cloudflare Device Digital Experience Monitoring (DEX) test configuration resource.
 ---
 
-# cloudflare_device_dex_tests (Resource)
+# cloudflare_device_dex_test (Resource)
 
 Provides a Cloudflare Device Digital Experience Monitoring (DEX) test configuration resource.
 
 ## Example Usage
 
 ```terraform
-resource "cloudflare_device_dex_tests" "dex_tests" {
+resource "cloudflare_device_dex_test" "dex_test" {
     test_id = "f174e90a-fafe-4643-bbbc-4a0ed4fc8415",
     name = "GET dashboard",
     description = "Send a HTTP GET request to the 'home' endpoint of the dash every half hour.",
@@ -62,5 +62,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_device_dex_tests.example <account_id>/<device_dex_tests_test_id>
+$ terraform import cloudflare_device_dex_test.example <account_id>/<device_dex_test_test_id>
 ```

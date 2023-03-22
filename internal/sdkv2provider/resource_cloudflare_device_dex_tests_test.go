@@ -9,7 +9,7 @@ import (
 
 func TestAccCloudflareDeviceDexTests(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_dex_tests.%s", rnd)
+	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -60,7 +60,7 @@ func TestAccCloudflareDeviceDexTests(t *testing.T) {
 
 func testAccCloudflareDeviceDexTestsHttp(accountID, rnd string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_tests" "%[1]s" {
+	resource "cloudflare_device_dex_test" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"
@@ -77,7 +77,7 @@ func testAccCloudflareDeviceDexTestsHttp(accountID, rnd string) string {
 
 func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_tests" "%[1]s" {
+	resource "cloudflare_device_dex_test" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"
@@ -93,7 +93,7 @@ func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd string) string {
 
 func testAccCloudflareDeviceDexTestsTracerouteIpv4(accountID, rnd string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_tests" "%[1]s" {
+	resource "cloudflare_device_dex_test" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"

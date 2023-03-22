@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceCloudflareDeviceDexTests() *schema.Resource {
+func resourceCloudflareDeviceDexTest() *schema.Resource {
 	return &schema.Resource{
-		Schema:        resourceCloudflareDeviceDexTestsSchema(),
-		CreateContext: resourceCloudflareDeviceDexTestsCreate,
-		ReadContext:   resourceCloudflareDeviceDexTestsRead,
-		UpdateContext: resourceCloudflareDeviceDexTestsUpdate,
-		DeleteContext: resourceCloudflareDeviceDexTestsDelete,
+		Schema:        resourceCloudflareDeviceDexTestSchema(),
+		CreateContext: resourceCloudflareDeviceDexTestCreate,
+		ReadContext:   resourceCloudflareDeviceDexTestRead,
+		UpdateContext: resourceCloudflareDeviceDexTestUpdate,
+		DeleteContext: resourceCloudflareDeviceDexTestDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: resourceCloudflareDeviceDexTestsImport,
+			StateContext: resourceCloudflareDeviceDexTestImport,
 		},
 		Description: "Provides a Cloudflare Device Dex Test resource. Device Dex Tests allow for building location-aware device settings policies.",
 	}
 }
 
-func resourceCloudflareDeviceDexTestsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareDeviceDexTestRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 	tflog.Debug(ctx, fmt.Sprintf("Reading Cloudflare Device Dex Test for Id: %+v", d.Id()))
@@ -55,7 +55,7 @@ func resourceCloudflareDeviceDexTestsRead(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceCloudflareDeviceDexTestsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareDeviceDexTestCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
@@ -86,10 +86,10 @@ func resourceCloudflareDeviceDexTestsCreate(ctx context.Context, d *schema.Resou
 
 	d.SetId(dexTest.TestID)
 
-	return resourceCloudflareDeviceDexTestsRead(ctx, d, meta)
+	return resourceCloudflareDeviceDexTestRead(ctx, d, meta)
 }
 
-func resourceCloudflareDeviceDexTestsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareDeviceDexTestUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
@@ -117,10 +117,10 @@ func resourceCloudflareDeviceDexTestsUpdate(ctx context.Context, d *schema.Resou
 		return diag.FromErr(fmt.Errorf("failed to find Dex Test ID in update response; resource was empty"))
 	}
 
-	return resourceCloudflareDeviceDexTestsRead(ctx, d, meta)
+	return resourceCloudflareDeviceDexTestRead(ctx, d, meta)
 }
 
-func resourceCloudflareDeviceDexTestsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudflareDeviceDexTestDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Device Dex Test using ID: %s", d.Id()))
@@ -129,11 +129,11 @@ func resourceCloudflareDeviceDexTestsDelete(ctx context.Context, d *schema.Resou
 		return diag.FromErr(fmt.Errorf("error deleting DLP Profile for ID %q: %w", d.Id(), err))
 	}
 
-	resourceCloudflareDeviceDexTestsRead(ctx, d, meta)
+	resourceCloudflareDeviceDexTestRead(ctx, d, meta)
 	return nil
 }
 
-func resourceCloudflareDeviceDexTestsImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceCloudflareDeviceDexTestImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	accountID, dexTestID, err := parseDeviceDexTestsIDImport(d.Id())
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func resourceCloudflareDeviceDexTestsImport(ctx context.Context, d *schema.Resou
 	d.Set("account_id", accountID)
 	d.SetId(dexTestID)
 
-	resourceCloudflareDeviceDexTestsRead(ctx, d, meta)
+	resourceCloudflareDeviceDexTestRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }

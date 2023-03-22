@@ -196,7 +196,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_custom_hostname":                        resourceCloudflareCustomHostname(),
 				"cloudflare_custom_pages":                           resourceCloudflareCustomPages(),
 				"cloudflare_custom_ssl":                             resourceCloudflareCustomSsl(),
-				"cloudflare_device_dex_tests":                       resourceCloudflareDeviceDexTests(),
+				"cloudflare_device_dex_test":                        resourceCloudflareDeviceDexTest(),
 				"cloudflare_device_managed_networks":                resourceCloudflareDeviceManagedNetworks(),
 				"cloudflare_device_policy_certificates":             resourceCloudflareDevicePolicyCertificates(),
 				"cloudflare_device_posture_integration":             resourceCloudflareDevicePostureIntegration(),
