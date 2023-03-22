@@ -40,6 +40,7 @@ DEPENDENCIES:
 
 * provider: bumps actions/setup-go from 3 to 4 ([#2291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2291))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.62.0 to 0.63.0 ([#2289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2289))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.1.1 to 1.2.0 ([#2314](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2314))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.25.1-0.20230317190757-53a4ec42ea7e to 2.26.0 ([#2308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2308))
 
 ## 4.1.0 (March 8th, 2023)
