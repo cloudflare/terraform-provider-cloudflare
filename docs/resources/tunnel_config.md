@@ -14,7 +14,7 @@ Provides a Cloudflare Tunnel configuration resource.
 ## Example Usage
 
 ```terraform
-resource "cloudflare_argo_tunnel" "example_tunnel" {
+resource "cloudflare_tunnel" "example_tunnel" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "example_tunnel"
   secret     = "<32 character secret>"
@@ -22,7 +22,7 @@ resource "cloudflare_argo_tunnel" "example_tunnel" {
 
 resource "cloudflare_tunnel_config" "example_config" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  tunnel_id  = cloudflare_argo_tunnel.example_tunnel.id
+  tunnel_id  = cloudflare_tunnel.example_tunnel.id
 
   config {
     warp_routing {
@@ -118,7 +118,7 @@ Optional:
 - `origin_server_name` (String) Hostname that cloudflared should expect from your origin server certificate. Defaults to `""`.
 - `proxy_address` (String) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures the listen address for that proxy. Defaults to `127.0.0.1`.
 - `proxy_port` (Number) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures the listen port for that proxy. If set to zero, an unused port will randomly be chosen. Defaults to `0`.
-- `proxy_type` (String) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Available values: ``, `socks`. Defaults to `""`.
+- `proxy_type` (String) cloudflared starts a proxy server to translate HTTP traffic into TCP when proxying, for example, SSH or RDP. This configures what type of proxy will be started. Available values: `""`, `socks`. Defaults to `""`.
 - `tcp_keep_alive` (String) The timeout after which a TCP keepalive packet is sent on a connection between Tunnel and the origin server. Defaults to `30s`.
 - `tls_timeout` (String) Timeout for completing a TLS handshake to your origin server, if you have chosen to connect Tunnel to an HTTPS server. Defaults to `10s`.
 
@@ -139,3 +139,11 @@ Optional:
 Optional:
 
 - `enabled` (Boolean) Whether WARP routing is enabled.
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_tunnel_config.example <account_id>/<tunnel_id>
+```

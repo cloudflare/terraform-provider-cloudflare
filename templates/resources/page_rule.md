@@ -129,10 +129,10 @@ resource "cloudflare_page_rule" "foobar" {
 }
 ```
 
-- `cookie` - (Required, but allowed to be empty) Controls what cookies go into Cache Key:
+- `cookie` - (Optional) Controls what cookies go into Cache Key:
   - `check_presence` - (Optional, Array) Check for presence of specified cookies, without including their actual values.
   - `include` - (Optional, Array) Use values of specified cookies in Cache Key.
-- `header` - (Required, but allowed to be empty) Controls what HTTP headers go into Cache Key:
+- `header` - (Optional) Controls what HTTP headers go into Cache Key:
   - `check_presence` - (Optional, Array) Check for presence of specified HTTP headers, without including their actual values.
   - `exclude` - (Optional, Array) Exclude these HTTP headers from Cache Key. Currently, only the `Origin` header can be excluded.
   - `include` - (Optional, Array) Use values of specified HTTP headers in Cache Key. Please refer to [Support article](https://support.cloudflare.com/hc/en-us/articles/115004290387-Creating-Cache-Keys) for the list of HTTP headers that cannot be included. The `Origin` header is always included unless explicitly excluded.

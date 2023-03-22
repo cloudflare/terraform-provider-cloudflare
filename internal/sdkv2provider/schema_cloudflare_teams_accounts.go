@@ -71,6 +71,15 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			},
 			Description: "Configuration block for specifying which protocols are proxied.",
 		},
+		"payload_log": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: payloadLogSchema,
+			},
+			Description: "Configuration for DLP Payload Logging.",
+		},
 	}
 }
 
@@ -210,5 +219,13 @@ var loggingEnabledSchema = map[string]*schema.Schema{
 	"log_blocks": {
 		Type:     schema.TypeBool,
 		Required: true,
+	},
+}
+
+var payloadLogSchema = map[string]*schema.Schema{
+	"public_key": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "Public key used to encrypt matched payloads.",
 	},
 }

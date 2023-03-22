@@ -10,8 +10,8 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func init() {
@@ -148,6 +148,10 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_value", "Value1"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_name", "Name2"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_value", "Value2"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.0.id.0", "group1"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.0.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.1.id.0", "group2"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.1.identity_provider_id", "5678"),
 				),
 			},
 			{
@@ -167,6 +171,10 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.saml.0.attribute_value", "Value1"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_name", "Name2"),
 					resource.TestCheckResourceAttr(name, "include.0.saml.1.attribute_value", "Value2"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.0.id.0", "group1"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.0.identity_provider_id", "1234"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.1.id.0", "group2"),
+					resource.TestCheckResourceAttr(name, "include.0.azure.1.identity_provider_id", "5678"),
 				),
 			},
 		},
@@ -377,6 +385,14 @@ resource "cloudflare_access_group" "%[1]s" {
     saml {
       attribute_name = "Name2"
       attribute_value = "Value2"
+    }
+    azure {
+      id = ["group1"]
+      identity_provider_id = "1234"
+    }
+    azure {
+      id = ["group2"]
+      identity_provider_id = "5678"
     }
   }
 }`, resourceName, email, identifier.Type, identifier.Value)

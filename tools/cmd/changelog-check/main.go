@@ -128,7 +128,7 @@ func main() {
 
 	if err != nil {
 		log.Fatalf("failed to comment on pull request %s/%s#%d: %s", owner, repo, prNo, err)
-	}	
+	}
 
 	os.Exit(1)
 }

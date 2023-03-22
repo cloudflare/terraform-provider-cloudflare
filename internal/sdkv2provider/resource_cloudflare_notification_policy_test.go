@@ -9,7 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
@@ -39,6 +39,7 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "universal_ssl_event_type"),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "email_integration.#", "2"),
 				),
 			},
 			{
@@ -49,6 +50,7 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "universal_ssl_event_type"),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "email_integration.#", "2"),
 				),
 			},
 		},
@@ -67,6 +69,10 @@ func testCheckCloudflareNotificationPolicy(name, accountID string) string {
       name =  ""
       id   =  "test@example.com"
     }
+    email_integration {
+      name =  ""
+      id   =  "test2@example.com"
+    }
   }`, name, accountID)
 }
 
@@ -81,6 +87,10 @@ func testCheckCloudflareNotificationPolicyUpdated(resName, policyName, policyDes
     email_integration {
       name =  ""
       id   =  "test@example.com"
+    }
+    email_integration {
+      name =  ""
+      id   =  "test2@example.com"
     }
   }`, resName, policyName, policyDesc, accountID)
 }

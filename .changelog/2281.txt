@@ -1,0 +1,11 @@
+```release-note:enhancement
+resource/cloudflare_tunnel: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation
+```
+
+```release-note:enhancement
+resource/cloudflare_tunnel_config: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation
+```
+
+```release-note:enhancement
+resource/cloudflare_tunnel_route: rename references of cloudflare_argo_tunnel to cloudflare_tunnel in documentation
+```

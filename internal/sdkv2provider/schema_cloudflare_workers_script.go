@@ -154,6 +154,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "Whether to upload Worker as a module.",
 		},
+		"compatibility_date": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The date to use for the compatibility flag.",
+		},
 		"plain_text_binding": {
 			Type:     schema.TypeSet,
 			Optional: true,

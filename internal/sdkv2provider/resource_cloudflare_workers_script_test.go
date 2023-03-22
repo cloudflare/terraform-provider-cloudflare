@@ -8,15 +8,16 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 const (
-	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
-	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
-	moduleContent  = `export default { fetch() { return new Response('Hello world'); }, };`
-	encodedWasm    = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
+	scriptContent1    = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
+	scriptContent2    = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
+	moduleContent     = `export default { fetch() { return new Response('Hello world'); }, };`
+	encodedWasm       = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
+	compatibilityDate = "2023-03-19"
 )
 
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
@@ -85,6 +86,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", moduleContent),
+					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
 				),
 			},
 		},
@@ -194,7 +196,8 @@ resource "cloudflare_worker_script" "%[1]s" {
   name = "%[1]s"
   content = "%[2]s"
   module = true
-}`, rnd, moduleContent, accountID)
+	compatibility_date = "%[4]s"
+}`, rnd, moduleContent, accountID, compatibilityDate)
 }
 
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {

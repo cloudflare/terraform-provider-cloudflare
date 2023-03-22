@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: support cache rules for status range >= and =< operations
+```
