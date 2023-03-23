@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -48,8 +49,8 @@ func resourceCloudflareDeviceDexTestRead(ctx context.Context, d *schema.Resource
 	d.Set("description", dexTest.Description)
 	d.Set("enabled", dexTest.Enabled)
 	d.Set("interval", dexTest.Interval)
-	d.Set("updated", &dexTest.Updated)
-	d.Set("created", &dexTest.Created)
+	d.Set("updated", dexTest.Updated.Format(time.RFC3339Nano))
+	d.Set("created", dexTest.Created.Format(time.RFC3339Nano))
 	d.Set("data", convertDeviceDexTestDataToSchema(dexTest.Data))
 
 	return nil
@@ -59,21 +60,21 @@ func resourceCloudflareDeviceDexTestCreate(ctx context.Context, d *schema.Resour
 	client := meta.(*cloudflare.API)
 	identifier := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
-	kind := d.Get("config.0.kind").(string)
+	kind := d.Get("data.0.kind").(string)
 
 	params := cloudflare.CreateDeviceDexTestParams{
 		Name:        d.Get("name").(string),
-		Description: d.Get("type").(string),
-		Interval:    d.Get("type").(string),
-		Enabled:     d.Get("type").(bool),
+		Description: d.Get("description").(string),
+		Interval:    d.Get("interval").(string),
+		Enabled:     d.Get("enabled").(bool),
 		Data: &cloudflare.DeviceDexTestData{
-			"Kind": kind,
-			"Host": d.Get("config.0.host").(string),
+			"kind": kind,
+			"host": d.Get("data.0.host").(string),
 		},
 	}
 
 	if kind == "http" {
-		(*params.Data)["Method"] = d.Get("config.0.method").(string)
+		(*params.Data)["method"] = d.Get("data.0.method").(string)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Device Dex Test with params: %+v", params))
@@ -100,9 +101,9 @@ func resourceCloudflareDeviceDexTestUpdate(ctx context.Context, d *schema.Resour
 		Interval:    d.Get("interval").(string),
 		Enabled:     d.Get("enabled").(bool),
 		Data: &cloudflare.DeviceDexTestData{
-			"Kind":   d.Get("config.0.kind").(string),
-			"Host":   d.Get("config.0.host").(string),
-			"Method": d.Get("config.0.method").(string),
+			"kind":   d.Get("data.0.kind").(string),
+			"host":   d.Get("data.0.host").(string),
+			"method": d.Get("data.0.method").(string),
 		},
 	}
 
@@ -160,9 +161,9 @@ func parseDeviceDexTestsIDImport(id string) (string, string, error) {
 }
 
 func convertDeviceDexTestDataToSchema(input *cloudflare.DeviceDexTestData) []interface{} {
-	kind, _ := (*input)["Kind"]
-	host, _ := (*input)["Host"]
-	method, _ := (*input)["Method"]
+	kind, _ := (*input)["kind"]
+	host, _ := (*input)["host"]
+	method, _ := (*input)["method"]
 
 	m := map[string]interface{}{
 		"kind": kind,

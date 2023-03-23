@@ -14,6 +14,7 @@ func resourceCloudflareDeviceDexTestSchema() map[string]*schema.Schema {
 			Description: "The account identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"name": {
 			Type:        schema.TypeString,
@@ -31,7 +32,7 @@ func resourceCloudflareDeviceDexTestSchema() map[string]*schema.Schema {
 			Description: "How often the test will run.",
 		},
 		"enabled": {
-			Type:        schema.TypeString,
+			Type:        schema.TypeBool,
 			Required:    true,
 			Description: "Determines whether or not the test is active.",
 		},
@@ -61,6 +62,16 @@ func resourceCloudflareDeviceDexTestSchema() map[string]*schema.Schema {
 					},
 				},
 			},
+		},
+		"updated": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Timestamp of when the Dex Test was last updated.",
+		},
+		"created": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Timestamp of when the Dex Test was created.",
 		},
 	}
 }
