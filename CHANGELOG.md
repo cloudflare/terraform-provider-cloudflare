@@ -1,5 +1,9 @@
 ## 4.3.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_device_dex_tests` ([#2250](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2250))
+
 ## 4.2.0 (22nd March, 2023)
 
 BREAKING CHANGES:
