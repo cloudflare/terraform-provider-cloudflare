@@ -157,10 +157,17 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
+	compatibilityFlags := make([]string, 0)
+
+	for _, item := range d.Get("compatibility_flags").([]interface{}) {
+		compatibilityFlags = append(compatibilityFlags, item.(string))
+	}
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:        scriptData.Params.ScriptName,
 		Script:            scriptBody,
 		CompatibilityDate: d.Get("compatibility_date").(string),
+		CompatibilityFlags: compatibilityFlags,
 		Module:            d.Get("module").(bool),
 		Bindings:          bindings,
 	})
@@ -330,10 +337,17 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
+	compatibilityFlags := make([]string, 0)
+
+	for _, item := range d.Get("compatibility_flags").([]interface{}) {
+		compatibilityFlags = append(compatibilityFlags, item.(string))
+	}
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:        scriptData.Params.ScriptName,
 		Script:            scriptBody,
 		CompatibilityDate: d.Get("compatibility_date").(string),
+		CompatibilityFlags: compatibilityFlags,
 		Module:            d.Get("module").(bool),
 		Bindings:          bindings,
 	})

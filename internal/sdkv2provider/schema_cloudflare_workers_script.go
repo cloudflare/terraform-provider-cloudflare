@@ -159,6 +159,15 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "The date to use for the compatibility flag.",
 		},
+		"compatibility_flags": {
+			Type:        schema.TypeList,
+			Description: "Compatibility flags used for Pages Functions.",
+			Optional:    true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Computed: true,
+		},
 		"plain_text_binding": {
 			Type:     schema.TypeSet,
 			Optional: true,
