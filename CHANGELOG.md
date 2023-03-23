@@ -4,6 +4,10 @@ FEATURES:
 
 * **New Resource:** `cloudflare_device_dex_tests` ([#2250](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2250))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.1.0 to 1.2.0 ([#2320](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2320))
+
 ## 4.2.0 (22nd March, 2023)
 
 BREAKING CHANGES:
