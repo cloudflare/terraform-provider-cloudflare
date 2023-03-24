@@ -131,6 +131,12 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 	}
 }
 
+func getCompatibilityFlags(d *schema.ResourceData, compatibilityFlags []string) {
+	for _, item := range d.Get("compatibility_flags").([]interface{}) {
+		compatibilityFlags = append(compatibilityFlags, item.(string))
+	}
+}
+
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
@@ -159,9 +165,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	compatibilityFlags := make([]string, 0)
 
-	for _, item := range d.Get("compatibility_flags").([]interface{}) {
-		compatibilityFlags = append(compatibilityFlags, item.(string))
-	}
+	getCompatibilityFlags(d, compatibilityFlags)
 
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:        scriptData.Params.ScriptName,
@@ -339,9 +343,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	compatibilityFlags := make([]string, 0)
 
-	for _, item := range d.Get("compatibility_flags").([]interface{}) {
-		compatibilityFlags = append(compatibilityFlags, item.(string))
-	}
+	getCompatibilityFlags(d, compatibilityFlags)
 
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:        scriptData.Params.ScriptName,
