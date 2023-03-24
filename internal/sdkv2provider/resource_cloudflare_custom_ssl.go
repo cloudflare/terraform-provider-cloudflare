@@ -245,8 +245,12 @@ func expandToZoneCustomSSLOptions(ctx context.Context, d *schema.ResourceData) (
 			for id, value := range cert.(map[string]interface{}) {
 				var newValue interface{}
 				if id == "geo_restrictions" {
-					newValue = cloudflare.ZoneCustomSSLGeoRestrictions{
-						Label: value.(string),
+					if value == "" {
+						newValue = nil
+					} else {
+						newValue = cloudflare.ZoneCustomSSLGeoRestrictions{
+							Label: value.(string),
+						}
 					}
 				} else {
 					newValue = value.(string)
