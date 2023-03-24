@@ -8,6 +8,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_device_posture_integration: add support for managing `kolide` third party posture provider. ([#2321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2321))
 
+BUG FIXES:
+
+* resource/cloudflare_custom_ssl: fix json sent to API when geo_restrictions are not used ([#2319](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2319))
+
 DEPENDENCIES:
 
 * provider: bumps actions/stale from 7 to 8 ([#2322](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2322))
