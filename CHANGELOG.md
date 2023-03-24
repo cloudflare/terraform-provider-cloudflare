@@ -6,6 +6,7 @@ FEATURES:
 
 DEPENDENCIES:
 
+* provider: bumps actions/stale from 7 to 8 ([#2322](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2322))
 * provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.1.0 to 1.2.0 ([#2320](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2320))
 
 ## 4.2.0 (22nd March, 2023)
