@@ -4,6 +4,10 @@ FEATURES:
 
 * **New Resource:** `cloudflare_device_dex_tests` ([#2250](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2250))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_integration: add support for managing `kolide` third party posture provider. ([#2321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2321))
+
 DEPENDENCIES:
 
 * provider: bumps actions/stale from 7 to 8 ([#2322](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2322))
