@@ -20,6 +20,10 @@ const (
 	compatibilityDate = "2023-03-19"
 )
 
+var (
+	compatibilityFlags = []string{"flag"}
+)
+
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	t.Parallel()
 
@@ -87,6 +91,8 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", moduleContent),
 					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
+					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "1"),
+					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
 				),
 			},
 		},
@@ -197,7 +203,8 @@ resource "cloudflare_worker_script" "%[1]s" {
   content = "%[2]s"
   module = true
 	compatibility_date = "%[4]s"
-}`, rnd, moduleContent, accountID, compatibilityDate)
+	compatibility_flags = [%[5]s]
+}`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
 }
 
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
