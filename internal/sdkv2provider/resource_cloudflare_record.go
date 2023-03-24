@@ -177,11 +177,11 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 
 		// In the event that the API returns an empty DNS Record, we verify that the
 		// ID returned is not the default ""
-		if r.Result.ID == "" {
+		if r.ID == "" {
 			return retry.NonRetryableError(fmt.Errorf("failed to find record in Create response; Record was empty"))
 		}
 
-		d.SetId(r.Result.ID)
+		d.SetId(r.ID)
 
 		resourceCloudflareRecordRead(ctx, d, meta)
 
@@ -319,7 +319,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 
 	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutUpdate), func() *retry.RetryError {
 		updateRecord.ID = d.Id()
-		err := client.UpdateDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), updateRecord)
+		_, err := client.UpdateDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), updateRecord)
 		if err != nil {
 			if strings.Contains(err.Error(), "already exist") {
 				return retry.RetryableError(fmt.Errorf("expected DNS record to not already be present but already exists"))

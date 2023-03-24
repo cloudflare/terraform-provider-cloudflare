@@ -101,6 +101,30 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "The host to override matching DNS queries with.",
 	},
+	"ip_categories": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Turns on ip category based filter on dns if the rule contains dns category checks.",
+	},
+	"allow_child_bypass": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Allow parent MSP accounts to enable bypass their children's rules.",
+	},
+	"bypass_parent_rule": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Allow child MSP accounts to bypass their parent's rule.",
+	},
+	"audit_ssh": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: teamsAuditSSHSettings,
+		},
+		Description: "AuditSsh Settings.",
+	},
 	"l4override": {
 		Type:     schema.TypeList,
 		MaxItems: 1,
@@ -215,6 +239,14 @@ var teamsL4OverrideSettings = map[string]*schema.Schema{
 		Type:        schema.TypeInt,
 		Required:    true,
 		Description: "Override Port to forward traffic to.",
+	},
+}
+
+var teamsAuditSSHSettings = map[string]*schema.Schema{
+	"command_logging": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Log all SSH commands.",
 	},
 }
 

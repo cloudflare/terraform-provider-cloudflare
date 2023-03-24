@@ -196,7 +196,7 @@ func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceDa
 }
 
 func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interface{} {
-	return []interface{}{map[string]interface{}{
+	result := map[string]interface{}{
 		"block_page_enabled":                 settings.BlockPageEnabled,
 		"block_page_reason":                  settings.BlockReason,
 		"override_ips":                       settings.OverrideIPs,
@@ -209,7 +209,25 @@ func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interfac
 		"egress":                             flattenTeamsEgressSettings(settings.EgressSettings),
 		"untrusted_cert":                     flattenTeamsUntrustedCertSettings(settings.UntrustedCertSettings),
 		"payload_log":                        flattenTeamsDlpPayloadLogSettings(settings.PayloadLog),
-	}}
+	}
+
+	if settings.IPCategories {
+		result["ip_categories"] = true
+	}
+
+	if settings.AllowChildBypass != nil {
+		result["allow_child_bypass"] = *settings.AllowChildBypass
+	}
+
+	if settings.BypassParentRule != nil {
+		result["bypass_parent_rule"] = *settings.BypassParentRule
+	}
+
+	if settings.AuditSSH != nil {
+		result["audit_ssh"] = flattenTeamsAuditSSHSettings(settings.AuditSSH)
+	}
+
+	return []interface{}{result}
 }
 
 func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSettings {
@@ -371,6 +389,15 @@ func inflateTeamsL4Override(settings interface{}) *cloudflare.TeamsL4OverrideSet
 		IP:   ip,
 		Port: port,
 	}
+}
+
+func flattenTeamsAuditSSHSettings(settings *cloudflare.AuditSSHRuleSettings) []interface{} {
+	if settings == nil {
+		return nil
+	}
+	return []interface{}{map[string]interface{}{
+		"command_logging": settings.CommandLogging,
+	}}
 }
 
 func flattenTeamsEgressSettings(settings *cloudflare.EgressSettings) []interface{} {

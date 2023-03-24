@@ -1,0 +1,3 @@
+```release-note:enhancement
+schema_cloudflare_teams_rules.go: updated gateway rule action audit ssh and rule settings
+```
