@@ -203,7 +203,7 @@ resource "cloudflare_worker_script" "%[1]s" {
   content = "%[2]s"
   module = true
 	compatibility_date = "%[4]s"
-	compatibility_flags = [%[5]s]
+	compatibility_flags = ["%[5]s"]
 }`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
 }
 
