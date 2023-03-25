@@ -161,7 +161,7 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 		},
 		"compatibility_flags": {
 			Type:        schema.TypeList,
-			Description: "Compatibility flags used for Pages Functions.",
+			Description: "Compatibility flags used for Worker Scripts.",
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
