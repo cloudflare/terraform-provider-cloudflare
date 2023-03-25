@@ -532,7 +532,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 											Attributes: map[string]schema.Attribute{
 												"cache_by_device_type": schema.BoolAttribute{
 													Optional:            true,
-													MarkdownDescription: "Cache by device type.",
+													MarkdownDescription: "Cache by device type. Conflicts with 'custom_key.user'",
 												},
 												"ignore_query_strings_order": schema.BoolAttribute{
 													Optional:            true,
@@ -619,7 +619,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 																},
 															},
 															"user": schema.ListNestedBlock{
-																MarkdownDescription: "User parameters for the custom key.",
+																MarkdownDescription: "User parameters for the custom key. Conflicts with 'cache_by_device_type'",
 																NestedObject: schema.NestedBlockObject{
 																	Attributes: map[string]schema.Attribute{
 																		"device_type": schema.BoolAttribute{
