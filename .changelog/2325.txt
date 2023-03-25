@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_ruleset: Add notes to the documentation about conflicted parameters.
+```
