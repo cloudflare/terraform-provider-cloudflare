@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -532,7 +533,10 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 											Attributes: map[string]schema.Attribute{
 												"cache_by_device_type": schema.BoolAttribute{
 													Optional:            true,
-													MarkdownDescription: "Cache by device type. Conflicts with 'custom_key.user'",
+													MarkdownDescription: "Cache by device type.",
+													Validators: []validator.Bool{
+														boolvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("user"))),
+													},
 												},
 												"ignore_query_strings_order": schema.BoolAttribute{
 													Optional:            true,
@@ -638,6 +642,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 																},
 																Validators: []validator.List{
 																	listvalidator.SizeAtMost(1),
+																	listvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("cache_by_device_type"))),
 																},
 															},
 															"host": schema.ListNestedBlock{
