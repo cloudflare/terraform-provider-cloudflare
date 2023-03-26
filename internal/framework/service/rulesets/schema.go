@@ -623,7 +623,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 																},
 															},
 															"user": schema.ListNestedBlock{
-																MarkdownDescription: "User parameters for the custom key. Conflicts with 'cache_by_device_type'",
+																MarkdownDescription: "User parameters for the custom key.",
 																NestedObject: schema.NestedBlockObject{
 																	Attributes: map[string]schema.Attribute{
 																		"device_type": schema.BoolAttribute{
