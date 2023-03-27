@@ -212,7 +212,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 		AllowedToLeave:      cloudflare.BoolPtr(d.Get("allowed_to_leave").(bool)),
 		SupportURL:          cloudflare.StringPtr(d.Get("support_url").(string)),
 		ServiceModeV2: &cloudflare.ServiceModeV2{
-			Mode: d.Get("service_mode_v2_mode").(string),
+			Mode: d.Get("service_mode_v2_mode").(cloudflare.ServiceMode),
 			Port: d.Get("service_mode_v2_port").(int),
 		},
 		ExcludeOfficeIps: cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
