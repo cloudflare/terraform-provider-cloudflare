@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	compatibilityFlags = []string{"flag"}
+	compatibilityFlags = []string{"nodejs_compat", "web_socket_compression"}
 )
 
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
@@ -91,7 +91,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", moduleContent),
 					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
-					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "1"),
+					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "2"),
 					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
 				),
 			},
