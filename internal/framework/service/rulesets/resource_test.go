@@ -3,6 +3,7 @@ package rulesets_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -1994,6 +1995,22 @@ func TestAccCloudflareRuleset_ConfigSingleFalseyValue(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ConfigConflictingCacheByDevice(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareRulesetConfigConflictingCacheByDeviceConfigs(rnd, zoneID),
+				ExpectError: regexp.MustCompile("Invalid Attribute Combination"),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -3677,6 +3694,34 @@ func testAccCloudflareRulesetConfigSingleFalseyValue(rnd, zoneID string) string 
 	  description = "disable BIC"
 	  enabled     = true
 	}
+  }`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetConfigConflictingCacheByDeviceConfigs(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_config_settings"
+
+    rules {
+		action = "set_cache_settings"
+		action_parameters {
+		  cache_key {
+			cache_by_device_type = true
+			custom_key {
+			  user {
+				geo = false
+			  }
+			}
+		  }
+		}
+		expression  = "true"
+		description = "do conflicting cache things"
+		enabled     = true
+	  }
   }`, rnd, zoneID)
 }
 
