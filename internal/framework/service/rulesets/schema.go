@@ -9,11 +9,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/modifiers/defaults"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -535,7 +535,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 													Optional:            true,
 													MarkdownDescription: "Cache by device type.",
 													Validators: []validator.Bool{
-														boolvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("user"))),
+														boolvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("custom_key").AtAnyListIndex().AtName("user"))),
 													},
 												},
 												"ignore_query_strings_order": schema.BoolAttribute{
@@ -642,7 +642,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 																},
 																Validators: []validator.List{
 																	listvalidator.SizeAtMost(1),
-																	listvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("cache_by_device_type"))),
+																	listvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtParent().AtParent().AtName("cache_by_device_type"))),
 																},
 															},
 															"host": schema.ListNestedBlock{
