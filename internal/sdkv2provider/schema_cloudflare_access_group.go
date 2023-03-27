@@ -179,6 +179,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"id": {
 						Type:     schema.TypeList,
+                                                Description: "The ID of the Azure group or user.",
 						Optional: true,
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
@@ -186,6 +187,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					},
 					"identity_provider_id": {
 						Type:     schema.TypeString,
+                                                Description: "The ID of the Azure Identity provider",
 						Optional: true,
 					},
 				},
