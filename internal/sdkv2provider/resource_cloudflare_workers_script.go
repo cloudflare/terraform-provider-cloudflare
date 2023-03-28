@@ -133,7 +133,7 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 
 func getCompatibilityFlags(d *schema.ResourceData) []string {
 	compatibilityFlags := make([]string, 0)
-	for _, item := range d.Get("compatibility_flags").([]interface{}) {
+	for _, item := range d.Get("compatibility_flags").(*schema.Set).List() {
 		compatibilityFlags = append(compatibilityFlags, item.(string))
 	}
 	return compatibilityFlags
