@@ -55,9 +55,7 @@ func resourceCloudflareWorkerDomainRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error reading worker domain %q", d.Id()))
 	}
 
-	d.Set("id", workerDomain.ID)
 	d.Set("zone_id", workerDomain.ZoneID)
-	d.Set("zone_name", workerDomain.ZoneName)
 	d.Set("hostname", workerDomain.Hostname)
 	d.Set("service", workerDomain.Service)
 	d.Set("environment", workerDomain.Environment)
