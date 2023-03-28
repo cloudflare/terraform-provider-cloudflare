@@ -7,6 +7,12 @@ import (
 
 func resourceCloudflareWorkerDomainSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		consts.AccountIDSchemaKey: {
+			Description: "The account identifier to target for the resource.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+
 		consts.ZoneIDSchemaKey: {
 			Description: "The zone identifier to target for the resource.",
 			Type:        schema.TypeString,
@@ -14,17 +20,23 @@ func resourceCloudflareWorkerDomainSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 
-		
-		"script": {
+		"hostname": {
+			Type: 		schema.TypeString,
+			Required:    true,
+			Description: "Hostname of the Worker Domain",
+		},
+
+		"service": {
 			Type:        schema.TypeString,
-			Optional:    true,
+			Required:    true,
 			Description: "Name of worker script to attach the domain to.",
 		},
 		
 		"environment": {
 			Type:        schema.TypeString,
-			Default: "production",
-			Description: "The [route pattern](https://developers.cloudflare.com/workers/about/routes/) to associate the Worker with.",
+			Default: 	 "production",
+			Optional: 	 true,
+			Description: "The name of the Worker environment.",
 		},
 	}
 }
