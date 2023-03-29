@@ -42,7 +42,6 @@ func resourceCloudflareWorkerDomainCreate(ctx context.Context, d *schema.Resourc
 
 	d.SetId(workerDomain.ID)
 	return resourceCloudflareWorkerDomainRead(ctx, d, meta)
-
 }
 
 func resourceCloudflareWorkerDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
