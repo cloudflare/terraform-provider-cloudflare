@@ -21,7 +21,7 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 	var domain cloudflare.WorkersDomain
 	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_domain." + rnd
-	hostname := rnd + zoneName
+	hostname := rnd + "." + zoneName
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
