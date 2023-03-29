@@ -101,6 +101,7 @@ resource "cloudflare_worker_domain" "%[1]s" {
 	account_id = "%[3]s"
 	hostname = "%[4]s"
 	service = "%[1]s"
+	depends_on = [cloudflare_worker_script.%[1]s-script]
 }`, rnd, scriptContent, accountID, hostname, zoneID)
 }
 
