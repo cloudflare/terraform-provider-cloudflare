@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Resource:** `cloudflare_device_dex_tests` ([#2250](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2250))
+* **New Resource:** `cloudflare_worker_domain` ([#2339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2339))
 
 ENHANCEMENTS:
 
