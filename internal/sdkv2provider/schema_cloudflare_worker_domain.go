@@ -21,7 +21,7 @@ func resourceCloudflareWorkerDomainSchema() map[string]*schema.Schema {
 		},
 
 		"hostname": {
-			Type: 		schema.TypeString,
+			Type:        schema.TypeString,
 			Required:    true,
 			Description: "Hostname of the Worker Domain",
 		},
@@ -31,11 +31,11 @@ func resourceCloudflareWorkerDomainSchema() map[string]*schema.Schema {
 			Required:    true,
 			Description: "Name of worker script to attach the domain to.",
 		},
-		
+
 		"environment": {
 			Type:        schema.TypeString,
-			Default: 	 "production",
-			Optional: 	 true,
+			Default:     "production",
+			Optional:    true,
 			Description: "The name of the Worker environment.",
 		},
 	}

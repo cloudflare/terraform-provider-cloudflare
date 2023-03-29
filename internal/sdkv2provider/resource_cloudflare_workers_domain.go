@@ -30,9 +30,9 @@ func resourceCloudflareWorkerDomainCreate(ctx context.Context, d *schema.Resourc
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	workerDomain, err := client.AttachWorkersDomain(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.AttachWorkersDomainParams{
-		ZoneID: d.Get("zone_id").(string),
-		Hostname: d.Get("hostname").(string),
-		Service: d.Get("service").(string),
+		ZoneID:      d.Get("zone_id").(string),
+		Hostname:    d.Get("hostname").(string),
+		Service:     d.Get("service").(string),
 		Environment: d.Get("environment").(string),
 	})
 
@@ -50,7 +50,7 @@ func resourceCloudflareWorkerDomainRead(ctx context.Context, d *schema.ResourceD
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	workerDomain, err := client.GetWorkersDomain(ctx, cloudflare.AccountIdentifier((accountID)), d.Id())
-	
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading worker domain %q", d.Id()))
 	}
@@ -68,9 +68,9 @@ func resourceCloudflareWorkerDomainUpdate(ctx context.Context, d *schema.Resourc
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	workerDomain, err := client.AttachWorkersDomain(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.AttachWorkersDomainParams{
-		ZoneID: d.Get("zone_id").(string),
-		Hostname: d.Get("hostname").(string),
-		Service: d.Get("service").(string),
+		ZoneID:      d.Get("zone_id").(string),
+		Hostname:    d.Get("hostname").(string),
+		Service:     d.Get("service").(string),
 		Environment: d.Get("environment").(string),
 	})
 
@@ -94,4 +94,3 @@ func resourceCloudflareWorkerDomainDelete(ctx context.Context, d *schema.Resourc
 
 	return nil
 }
-

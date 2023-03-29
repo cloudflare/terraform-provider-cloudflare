@@ -11,10 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-
 const (
 	scriptContent = `addEventListener('fetch', event => {event.respondWith(new Response('test'))});`
 )
+
 func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
