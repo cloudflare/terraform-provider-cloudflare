@@ -20,7 +20,7 @@ func resourceCloudflareWorkerDomain() *schema.Resource {
 		UpdateContext: resourceCloudflareWorkerDomainUpdate,
 		DeleteContext: resourceCloudflareWorkerDomainDelete,
 		Description: heredoc.Doc(
-			"Creates a worker domain.",
+			"Creates a Worker Custom Domain.",
 		),
 	}
 }

@@ -11,6 +11,7 @@ func resourceCloudflareWorkerDomainSchema() map[string]*schema.Schema {
 			Description: "The account identifier to target for the resource.",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 
 		consts.ZoneIDSchemaKey: {
