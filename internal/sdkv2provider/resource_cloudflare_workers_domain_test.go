@@ -16,10 +16,12 @@ const (
 	scriptContent = `addEventListener('fetch', event => {event.respondWith(new Response('test'))});`
 )
 func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	var domain cloudflare.WorkersDomain
 	rnd := generateRandomResourceName()
-	hostname := rnd + ".com"
 	name := "cloudflare_worker_domain." + rnd
+	hostname := rnd + zoneName
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -30,7 +32,7 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerDomainDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerDomainAttach(rnd, accountID, hostname),
+				Config: testAccCheckCloudflareWorkerDomainAttach(rnd, accountID, hostname, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerDomainExists(name, &domain),
 					resource.TestCheckResourceAttr(name, "hostname", hostname),
@@ -86,13 +88,8 @@ func testAccCheckCloudflareWorkerDomainExists(resourceName string, domain *cloud
 	}
 }
 
-func testAccCheckCloudflareWorkerDomainAttach(rnd, accountID string, hostname string) string {
+func testAccCheckCloudflareWorkerDomainAttach(rnd, accountID string, hostname string, zoneID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_zone" "%[1]s-zone" {
-	account_id = "%[3]s"
-	zone       = "%[4]s"
-}
-
 resource "cloudflare_worker_script" "%[1]s-script" {
   account_id = "%[3]s"
   name = "%[1]s"
@@ -100,11 +97,11 @@ resource "cloudflare_worker_script" "%[1]s-script" {
 }
 
 resource "cloudflare_worker_domain" "%[1]s" {
-	zone_id = "${cloudflare_zone.%[1]s-zone.id}"
+	zone_id = "%[5]s"
 	account_id = "%[3]s"
 	hostname = "%[4]s"
 	service = "%[1]s"
-}`, rnd, scriptContent, accountID, hostname)
+}`, rnd, scriptContent, accountID, hostname, zoneID)
 }
 
 func testAccCheckCloudflareWorkerDomainDestroy(s *terraform.State) error {
