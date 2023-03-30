@@ -36,7 +36,7 @@ resource "cloudflare_device_posture_integration" "example" {
 
 - `account_id` (String) The account identifier to target for the resource.
 - `name` (String) Name of the device posture integration.
-- `type` (String) The device posture integration type. Available values: `workspace_one`, `uptycs`, `crowdstrike_s2s`, `intune`.
+- `type` (String) The device posture integration type. Available values: `workspace_one`, `uptycs`, `crowdstrike_s2s`, `intune`, `kolide`.
 
 ### Optional
 

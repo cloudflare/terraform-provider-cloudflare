@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_custom_ssl: fix json sent to API when geo_restrictions are not used
+```

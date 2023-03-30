@@ -93,7 +93,7 @@ func New(version string) func() *schema.Provider {
 				consts.APIKeySchemaKey: {
 					Type:         schema.TypeString,
 					Optional:     true,
-					Description:  fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/api/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
+					Description:  fmt.Sprintf("The API key for operations. Alternatively, can be configured using the `%s` environment variable. API keys are [now considered legacy by Cloudflare](https://developers.cloudflare.com/fundamentals/api/get-started/keys/#limitations), API tokens should be used instead. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APIKeyEnvVarKey),
 					ValidateFunc: validation.StringMatch(regexp.MustCompile("[0-9a-f]{37}"), "API key must be 37 characters long and only contain characters 0-9 and a-f (all lowercased)"),
 				},
 
@@ -254,6 +254,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
 				"cloudflare_web3_hostname":                          resourceCloudflareWeb3Hostname(),
 				"cloudflare_worker_cron_trigger":                    resourceCloudflareWorkerCronTrigger(),
+				"cloudflare_worker_domain":                          resourceCloudflareWorkerDomain(),
 				"cloudflare_worker_route":                           resourceCloudflareWorkerRoute(),
 				"cloudflare_worker_script":                          resourceCloudflareWorkerScript(),
 				"cloudflare_workers_kv_namespace":                   resourceCloudflareWorkersKVNamespace(),
