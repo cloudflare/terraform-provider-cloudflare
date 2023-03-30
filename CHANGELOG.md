@@ -8,8 +8,10 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_device_posture_integration: add support for managing `kolide` third party posture provider. ([#2321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2321))
+* resource/cloudflare_device_settings_policy: use new `cloudflare.ServiceMode` type ([#2331](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2331))
 * resource/cloudflare_ruleset: enforce schema validation of conflicting cache key parameters ([#2326](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2326))
 * resource/cloudflare_worker_script: Add `compatibility_flags` attribute ([#2324](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2324))
+* resources/device_settings_policy: add validation for possible `service_mode_v2_mode` values ([#2331](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2331))
 
 BUG FIXES:
 
