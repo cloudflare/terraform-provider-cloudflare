@@ -104,7 +104,7 @@ var teamsRuleSettings = map[string]*schema.Schema{
 	"ip_categories": {
 		Type:        schema.TypeBool,
 		Optional:    true,
-		Description: "Turns on ip category based filter on dns if the rule contains dns category checks.",
+		Description: "Turns on IP category based filter on dns if the rule contains dns category checks.",
 	},
 	"allow_child_bypass": {
 		Type:        schema.TypeBool,
@@ -123,7 +123,7 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Elem: &schema.Resource{
 			Schema: teamsAuditSSHSettings,
 		},
-		Description: "AuditSsh Settings.",
+		Description: "Settings for auditing SSH usage.",
 	},
 	"l4override": {
 		Type:     schema.TypeList,
