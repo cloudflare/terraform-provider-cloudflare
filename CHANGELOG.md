@@ -1,5 +1,9 @@
 ## 4.3.0 (Unreleased)
 
+NOTES:
+
+* adds support for a basic `flox` environment project ([#2345](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2345))
+
 FEATURES:
 
 * **New Resource:** `cloudflare_device_dex_tests` ([#2250](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2250))
