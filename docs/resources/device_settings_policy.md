@@ -53,7 +53,7 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to split tunnel exclusions.
 - `match` (String) Wirefilter expression to match a device against when evaluating whether this policy should take effect for that device.
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence.
-- `service_mode_v2_mode` (String) The service mode. Defaults to `warp`. A service mode is any of the following values: `1dot1`, `warp`, `proxy`, `posture_only`, `warp_tunnel_only`
+- `service_mode_v2_mode` (String) The service mode. Available values: `1dot1`, `warp`, `proxy`, `posture_only`, `warp_tunnel_only`. Defaults to `warp`.
 - `service_mode_v2_port` (Number) The port to use for the proxy service mode. Required when using `service_mode_v2_mode`.
 - `support_url` (String) The support URL that will be opened when sending feedback.
 - `switch_locked` (Boolean) Enablement of the ZT client switch lock.
