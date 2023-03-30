@@ -115,11 +115,8 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-
-Read-Only:
-
-- `id` (List of String) The ID of this resource.
+- `id` (List of String) The ID of the Azure group or user.
+- `identity_provider_id` (String) The ID of the Azure Identity provider.
 
 
 <a id="nestedblock--include--external_evaluation"></a>
@@ -214,11 +211,8 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-
-Read-Only:
-
-- `id` (List of String) The ID of this resource.
+- `id` (List of String) The ID of the Azure group or user.
+- `identity_provider_id` (String) The ID of the Azure Identity provider.
 
 
 <a id="nestedblock--exclude--external_evaluation"></a>
@@ -300,11 +294,8 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-
-Read-Only:
-
-- `id` (List of String) The ID of this resource.
+- `id` (List of String) The ID of the Azure group or user.
+- `identity_provider_id` (String) The ID of the Azure Identity provider.
 
 
 <a id="nestedblock--require--external_evaluation"></a>
