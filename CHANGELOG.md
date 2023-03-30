@@ -7,6 +7,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_identity_provider: add `claims` and `scopes` fields ([#2313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2313))
 * resource/cloudflare_device_posture_integration: add support for managing `kolide` third party posture provider. ([#2321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2321))
 * resource/cloudflare_device_settings_policy: use new `cloudflare.ServiceMode` type ([#2331](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2331))
 * resource/cloudflare_ruleset: enforce schema validation of conflicting cache key parameters ([#2326](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2326))
