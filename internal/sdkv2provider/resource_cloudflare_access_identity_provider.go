@@ -79,7 +79,7 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 	client := meta.(*cloudflare.API)
 
 	IDPConfig, _ := convertSchemaToStruct(d)
-	ScimConfig, _ := convertScimConfigSchemaToStruct(d)
+	ScimConfig := convertScimConfigSchemaToStruct(d)
 
 	identityProvider := cloudflare.AccessIdentityProvider{
 		Name:       d.Get("name").(string),
@@ -118,10 +118,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 		return diag.FromErr(fmt.Errorf("failed to convert schema into struct: %w", conversionErr))
 	}
 
-	ScimConfig, scimConversionErr := convertScimConfigSchemaToStruct(d)
-	if scimConversionErr != nil {
-		return diag.FromErr(fmt.Errorf("failed to convert scim config schema into struct: %w", conversionErr))
-	}
+	ScimConfig := convertScimConfigSchemaToStruct(d)
 
 	tflog.Debug(ctx, fmt.Sprintf("updatedConfig: %+v", IDPConfig))
 	updatedAccessIdentityProvider := cloudflare.AccessIdentityProvider{
@@ -251,7 +248,7 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 	return IDPConfig, nil
 }
 
-func convertScimConfigSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityProviderScimConfiguration, error) {
+func convertScimConfigSchemaToStruct(d *schema.ResourceData) cloudflare.AccessIdentityProviderScimConfiguration {
 	ScimConfig := cloudflare.AccessIdentityProviderScimConfiguration{}
 
 	if _, ok := d.GetOk("scim_config"); ok {
@@ -262,7 +259,7 @@ func convertScimConfigSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessI
 		ScimConfig.SeatDeprovision = d.Get("scim_config.0.seat_deprovision").(bool)
 	}
 
-	return ScimConfig, nil
+	return ScimConfig
 }
 
 func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIdentityProviderConfiguration) []interface{} {
