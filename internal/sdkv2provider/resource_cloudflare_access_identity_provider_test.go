@@ -272,21 +272,21 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 func testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, name string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-  type = "azureAD"
-  config {
-    client_id      = "test"
-		client_secret = "test"
-    directory_id   = "directory"
-    redirect_url   = "https://test.cloudflareaccess.com/cdn-cgi/access/callback"
-    support_groups = true
+	account_id = "%[1]s"
+	name       = "%[2]s"
+	type       = "azureAD"
+	config {
+		client_id      = "test"
+		client_secret  = "test"
+		directory_id   = "directory"
+		redirect_url   = "https://terraform-cfapi.cloudflareaccess.com/cdn-cgi/access/callback"
+		support_groups = true
 	}
 	scim_config {
-    enabled                  = true
-    group_member_deprovision = true
-    seat_deprovision         = true
-    user_deprovision         = true
-  }
+		enabled                  = true
+		group_member_deprovision = true
+		seat_deprovision         = true
+		user_deprovision         = true
+	}
 }`, accountID, name)
 }
