@@ -1,4 +1,27 @@
-## 4.2.0 (Unreleased)
+## 4.3.0 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_device_dex_tests` ([#2250](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2250))
+* **New Resource:** `cloudflare_worker_domain` ([#2339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2339))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_integration: add support for managing `kolide` third party posture provider. ([#2321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2321))
+* resource/cloudflare_ruleset: enforce schema validation of conflicting cache key parameters ([#2326](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2326))
+* resource/cloudflare_worker_script: Add `compatibility_flags` attribute ([#2324](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2324))
+
+BUG FIXES:
+
+* resource/cloudflare_custom_ssl: fix json sent to API when geo_restrictions are not used ([#2319](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2319))
+
+DEPENDENCIES:
+
+* provider: bumps actions/stale from 7 to 8 ([#2322](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2322))
+* provider: bumps github.com/hashicorp/terraform-plugin-go from 0.14.3 to 0.15.0 ([#2333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2333))
+* provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.1.0 to 1.2.0 ([#2320](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2320))
+
+## 4.2.0 (22nd March, 2023)
 
 BREAKING CHANGES:
 
@@ -12,6 +35,8 @@ FEATURES:
 
 * **New Data Source:** `cloudflare_list` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
 * **New Data Source:** `cloudflare_lists` ([#2296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2296))
+* **New Resource:** `cloudflare_address_map` ([#2290](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2290))
+* **New Resource:** `cloudflare_list_item` ([#2304](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2304))
 
 ENHANCEMENTS:
 
@@ -38,7 +63,9 @@ DEPENDENCIES:
 
 * provider: bumps actions/setup-go from 3 to 4 ([#2291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2291))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.62.0 to 0.63.0 ([#2289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2289))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.1.1 to 1.2.0 ([#2314](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2314))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.25.1-0.20230317190757-53a4ec42ea7e to 2.26.0 ([#2308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2308))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.26.0 to 2.26.1 ([#2315](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2315))
 
 ## 4.1.0 (March 8th, 2023)
 

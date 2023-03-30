@@ -46,7 +46,7 @@ func testSweepCloudflareList(r string) error {
 	for _, list := range lists {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare List ID: %s", list.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), list.ID)
+		client.DeleteList(ctx, cloudflare.AccountIdentifier(accountID), list.ID)
 	}
 
 	return nil
@@ -253,6 +253,51 @@ func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
+	// endpoint does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var list cloudflare.List
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(name, &list),
+					resource.TestCheckResourceAttr(name, "item.#", "0"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareListBasicIP(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(name, &list),
+					resource.TestCheckResourceAttr(name, "item.#", "1"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(name, &list),
+					resource.TestCheckResourceAttr(name, "item.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareListIPListOrdered(ID, name, description, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_list" "%[1]s" {
@@ -438,5 +483,22 @@ func testAccCheckCloudflareListRedirectUpdateTargetUrl(ID, name, description, ac
         }
       }
     }
+  }`, ID, name, description, accountID)
+}
+
+func testAccCheckCloudflareListBasicIP(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "ip"
+
+    item {
+		value {
+		  ip = "192.0.2.0"
+		}
+		comment = "one"
+	  }
   }`, ID, name, description, accountID)
 }
