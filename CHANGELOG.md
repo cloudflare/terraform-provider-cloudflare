@@ -18,6 +18,7 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bumps actions/stale from 7 to 8 ([#2322](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2322))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.63.0 to 0.64.0 ([#2344](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2344))
 * provider: bumps github.com/hashicorp/terraform-plugin-go from 0.14.3 to 0.15.0 ([#2333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2333))
 * provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.1.0 to 1.2.0 ([#2320](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2320))
 
