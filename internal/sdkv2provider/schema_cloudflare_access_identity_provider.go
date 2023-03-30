@@ -55,6 +55,7 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
+						Computed: true,
 					},
 					"auth_url": {
 						Type:     schema.TypeString,
@@ -92,6 +93,7 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
+						Computed: true,
 					},
 					"scopes": {
 						Type:     schema.TypeList,
@@ -99,6 +101,7 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
+						Computed: true,
 					},
 					"directory_id": {
 						Type:     schema.TypeString,
@@ -153,6 +156,36 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Optional: true,
 					},
 					"pkce_enabled": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		"scim_config": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "Configuration for SCIM settings for a given IDP",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"enabled": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"secret": {
+						Type:     schema.TypeString,
+						Optional: true,
+						Computed: true,
+					},
+					"user_deprovision": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"seat_deprovision": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					"group_member_deprovision": {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},

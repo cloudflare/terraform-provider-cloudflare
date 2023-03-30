@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_identity_provider: add ability for users to enable SCIM provisioning on their Identity Providers
+```
