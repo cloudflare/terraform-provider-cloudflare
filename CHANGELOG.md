@@ -7,6 +7,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_group: Add example of usage of Azure ([#2332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2332))
 * resource/cloudflare_access_identity_provider: add `claims` and `scopes` fields ([#2313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2313))
 * resource/cloudflare_access_identity_provider: add ability for users to enable SCIM provisioning on their Identity Providers ([#2147](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2147))
 * resource/cloudflare_device_posture_integration: add support for managing `kolide` third party posture provider. ([#2321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2321))
