@@ -1,0 +1,3 @@
+```release-note:note
+adds support for a basic `flox` environment project
+```
