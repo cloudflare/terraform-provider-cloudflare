@@ -81,9 +81,11 @@ func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema
 
 func updateZoneSettingsResponseWithSingleZoneSettings(ctx context.Context, zoneSettings *cloudflare.ZoneSettingResponse, zoneId string, client *cloudflare.API) error {
 	for _, settingName := range fetchAsSingleSetting {
-		singleSetting, err := client.ZoneSingleSetting(ctx, zoneId, settingName)
+		singleSetting, err := client.GetZoneSetting(ctx, cloudflare.ZoneIdentifier(zoneId), cloudflare.GetZoneSettingParams{
+			Name: settingName,
+		})
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Error reading setting '%q' for zone %q", settingName, zoneId))
+			return errors.Wrap(err, fmt.Sprintf("Error reading setting %q for zone %q", settingName, zoneId))
 		}
 		zoneSettings.Result = append(zoneSettings.Result, singleSetting)
 	}
@@ -224,7 +226,10 @@ func updateSingleZoneSettings(ctx context.Context, zoneSettings []cloudflare.Zon
 	var indexesToCut []int
 	for i, setting := range zoneSettings {
 		if contains(fetchAsSingleSetting, setting.ID) {
-			_, err := client.UpdateZoneSingleSetting(ctx, zoneID, setting.ID, setting)
+			_, err := client.UpdateZoneSetting(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateZoneSettingParams{
+				Name:  setting.ID,
+				Value: setting.Value,
+			})
 			if err != nil {
 				return zoneSettings, err
 			}
