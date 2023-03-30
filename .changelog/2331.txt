@@ -1,4 +1,7 @@
 ```release-note:enhancement
-resource/cloudflare_device_settings_policy.go: use new `cloudflare.ServiceMode` type 
-resources/device_settings_policy.md: enumerate valid services modes for `Mode` field  
+resource/cloudflare_device_settings_policy: use new `cloudflare.ServiceMode` type
+```
+
+```release-note:enhancement
+resources/device_settings_policy: add validation for possible `service_mode_v2_mode` values
 ```
