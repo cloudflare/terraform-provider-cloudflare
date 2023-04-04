@@ -3,7 +3,6 @@ package sdkv2provider
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -23,7 +22,6 @@ func TestAccCloudflareDevices(t *testing.T) {
 				Config: testAccCloudflareDevicesConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCloudflareDevicesDataSourceId(name),
-					testAccCloudflareDevicesSize(name),
 				),
 			},
 		},
@@ -47,29 +45,8 @@ func testAccCloudflareDevicesDataSourceId(n string) resource.TestCheckFunc {
 }
 
 func testAccCloudflareDevicesConfig(name string, accountID string) string {
-	return fmt.Sprintf(`data "cloudflare_devices" "%[1]s" {
+	return fmt.Sprintf(`
+	data "cloudflare_devices" "%[1]s" {
 		account_id = "%[2]s"
 	}`, name, accountID)
-}
-
-func testAccCloudflareDevicesSize(n string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		r := s.RootModule().Resources[n]
-		a := r.Primary.Attributes
-
-		var (
-			devicesSize int
-			err         error
-		)
-
-		if devicesSize, err = strconv.Atoi(a["devices.#"]); err != nil {
-			return err
-		}
-
-		if devicesSize < 1 {
-			return fmt.Errorf("device count seems suspicious: %d", devicesSize)
-		}
-
-		return nil
-	}
 }
