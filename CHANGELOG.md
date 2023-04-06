@@ -1,5 +1,9 @@
 ## 4.4.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps peter-evans/create-or-update-comment from 2 to 3 ([#2355](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2355))
+
 ## 4.3.0 (5th April, 2023)
 
 NOTES:
