@@ -1,5 +1,9 @@
 ## 4.4.0 (Unreleased)
 
+INTERNAL:
+
+* scripts/generate-changelog-entry: make error message match the executable we are expecting ([#2357](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2357))
+
 DEPENDENCIES:
 
 * provider: bumps peter-evans/create-or-update-comment from 2 to 3 ([#2355](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2355))
