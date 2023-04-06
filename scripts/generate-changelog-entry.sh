@@ -5,7 +5,7 @@
 
 if ! command -v curl &> /dev/null
 then
-  echo "jq not be found"
+  echo "curl not be found"
   exit 1
 fi
 
