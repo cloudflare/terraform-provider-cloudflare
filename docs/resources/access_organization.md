@@ -18,6 +18,7 @@ resource "cloudflare_access_organization" "example" {
   auth_domain                        = "example.cloudflareaccess.com"
   is_ui_read_only                    = false
   user_seat_expiration_inactive_time = "720h"
+  auto_redirect_to_identity          = false
 
   login_design {
     background_color = "#ffffff"
@@ -43,6 +44,7 @@ resource "cloudflare_access_organization" "example" {
 - `name` (String) The name of your Zero Trust organization.
 - `ui_read_only_toggle_reason` (String) A description of the reason why the UI read only field is being toggled.
 - `user_seat_expiration_inactive_time` (String) The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count. Must be in the format `300ms` or `2h45m`.
+- `auto_redirect_to_identity` (Boolean) When set to true, users skip the identity provider selection step during login.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
 ### Read-Only

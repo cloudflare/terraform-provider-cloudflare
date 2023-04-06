@@ -28,6 +28,7 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "is_ui_read_only", "false"),
 					resource.TestCheckResourceAttr(name, "ui_read_only_toggle_reason", ""),
 					resource.TestCheckResourceAttr(name, "user_seat_expiration_inactive_time", "1460h"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
 					resource.TestCheckResourceAttr(name, "login_design.#", "1"),
 					resource.TestCheckResourceAttr(name, "login_design.0.", "1"),
 					resource.TestCheckResourceAttr(name, "login_design.0.background_color", "#FFFFFF"),
@@ -61,6 +62,7 @@ func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error 
 		{field: "is_ui_read_only", stateValue: attrs["is_ui_read_only"], expectedValue: "false"},
 		{field: "ui_read_only_toggle_reason", stateValue: attrs["ui_read_only_toggle_reason"], expectedValue: ""}, // UI read only is off so no message returned
 		{field: "user_seat_expiration_inactive_time", stateValue: attrs["user_seat_expiration_inactive_time"], expectedValue: "1460h"},
+		{field: "auto_redirect_to_identity", stateValue: attrs["auto_redirect_to_identity"], expectedValue: "false"},
 		{field: "login_design.#", stateValue: attrs["login_design.#"], expectedValue: "1"},
 	}
 
@@ -81,6 +83,7 @@ func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID string) strin
 			auth_domain     = "terraform-cfapi.cloudflareaccess.com1"
 			is_ui_read_only = false
 			user_seat_expiration_inactive_time = "1460h"
+			auto_redirect_to_identity = false
 
 			login_design {
 				background_color = "#FFFFFF"
