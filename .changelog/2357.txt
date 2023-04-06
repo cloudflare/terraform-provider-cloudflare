@@ -1,3 +1,3 @@
 ```release-note:internal
-Fixed error message on changelog creation
+scripts/generate-changelog-entry: make error message match the executable we are expecting
 ```
