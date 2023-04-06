@@ -1,0 +1,3 @@
+```release-note:internal
+Fixed error message on changelog creation
+```
