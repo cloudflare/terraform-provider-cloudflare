@@ -169,6 +169,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_zone_dnssec":                 dataSourceCloudflareZoneDNSSEC(),
 				"cloudflare_zone":                        dataSourceCloudflareZone(),
 				"cloudflare_zones":                       dataSourceCloudflareZones(),
+				"cloudflare_tunnel":                      dataSourceCloudflareTunnel(),
 			},
 
 			ResourcesMap: map[string]*schema.Resource{
