@@ -1,4 +1,15 @@
-## 4.3.0 (Unreleased)
+## 4.4.0 (Unreleased)
+
+INTERNAL:
+
+* scripts/generate-changelog-entry: make error message match the executable we are expecting ([#2357](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2357))
+
+DEPENDENCIES:
+
+* provider: bumps golang.org/x/net from 0.8.0 to 0.9.0 ([#2359](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2359))
+* provider: bumps peter-evans/create-or-update-comment from 2 to 3 ([#2355](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2355))
+
+## 4.3.0 (5th April, 2023)
 
 NOTES:
 

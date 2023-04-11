@@ -17,7 +17,7 @@ resource or swap to `cloudflare_zones` to further filter the results.
 {{ if .HasExample -}}
 ## Example Usage
 
-{{ printf "{{tffile %q}}" .ExampleFile }}
+{{ tffile (printf "%s%s%s" "examples/data-sources/" .Name "/data-source.tf") }}
 {{- end }}
 
 {{ .SchemaMarkdown | trimspace }}

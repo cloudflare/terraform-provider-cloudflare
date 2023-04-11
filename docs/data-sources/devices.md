@@ -35,6 +35,7 @@ data "cloudflare_devices" "example" {
 Read-Only:
 
 - `created` (String)
+- `deleted` (Boolean)
 - `device_type` (String)
 - `id` (String)
 - `ip` (String)
