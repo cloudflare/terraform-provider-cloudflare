@@ -4,6 +4,7 @@ resource "cloudflare_access_organization" "example" {
   auth_domain                        = "example.cloudflareaccess.com"
   is_ui_read_only                    = false
   user_seat_expiration_inactive_time = "720h"
+  auto_redirect_to_identity          = false
 
   login_design {
     background_color = "#ffffff"

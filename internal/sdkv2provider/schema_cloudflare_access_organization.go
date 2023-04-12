@@ -49,6 +49,11 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count. Must be in the format `300ms` or `2h45m`.",
 		},
+		"auto_redirect_to_identity": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "When set to true, users skip the identity provider selection step during login",
+		},
 		"login_design": {
 			Type:     schema.TypeList,
 			Optional: true,
