@@ -1,5 +1,9 @@
 ## 4.4.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_access_organization: Add auto_redirect_to_identity flag ([#2356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2356))
+
 INTERNAL:
 
 * scripts/generate-changelog-entry: make error message match the executable we are expecting ([#2357](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2357))
