@@ -38,8 +38,9 @@ func resourceCloudflareTunnelCreate(ctx context.Context, d *schema.ResourceData,
 	accID := d.Get(consts.AccountIDSchemaKey).(string)
 	name := d.Get("name").(string)
 	secret := d.Get("secret").(string)
+	configSrc := d.Get("config_src").(string)
 
-	tunnel, err := client.CreateTunnel(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelCreateParams{Name: name, Secret: secret})
+	tunnel, err := client.CreateTunnel(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelCreateParams{Name: name, Secret: secret, ConfigSrc: configSrc})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Argo Tunnel")))
 	}

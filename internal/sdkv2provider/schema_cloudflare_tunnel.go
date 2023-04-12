@@ -26,6 +26,13 @@ func resourceCloudflareTunnelSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 			Description: "32 or more bytes, encoded as a base64 string. The Create Argo Tunnel endpoint sets this as the tunnel's password. Anyone wishing to run the tunnel needs this password.",
 		},
+		"config_src": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   false,
+			ForceNew:    true,
+			Description: "Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel on the Zero Trust dashboard or using tunnel_config, tunnel_route or tunnel_virtual_network resources.",
+		},
 		"cname": {
 			Type:        schema.TypeString,
 			Computed:    true,
