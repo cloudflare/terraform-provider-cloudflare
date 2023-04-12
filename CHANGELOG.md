@@ -6,6 +6,7 @@ INTERNAL:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.64.0 to 0.65.0 ([#2370](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2370))
 * provider: bumps golang.org/x/net from 0.8.0 to 0.9.0 ([#2359](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2359))
 * provider: bumps peter-evans/create-or-update-comment from 2 to 3 ([#2355](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2355))
 
