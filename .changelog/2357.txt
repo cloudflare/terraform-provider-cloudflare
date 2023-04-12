@@ -1,0 +1,3 @@
+```release-note:internal
+scripts/generate-changelog-entry: make error message match the executable we are expecting
+```
