@@ -70,6 +70,14 @@ func resourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, m
 	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
 	d.Set("tunnel_token", token)
 
+	if d.Get("config_src").(string) != "" {
+		if tunnel.RemoteConfig {
+			d.Set("config_src", "cloudflare")
+		} else {
+			d.Set("config_src", "local")
+		}
+	}
+
 	return nil
 }
 
