@@ -100,7 +100,4 @@ const (
 
 	// Schema description for all ID fields.
 	IDSchemaDescription = "The identifier of this resource."
-
-	// CNAME for argo tunnel
-	ArgoTunnelCNAME = "cfargotunnel.com"
 )

@@ -102,7 +102,7 @@ func dataSourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData,
 		d.Set("deleted_at", tunnel.DeletedAt.Format(time.RFC3339))
 	}
 
-	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, consts.ArgoTunnelCNAME))
+	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
 	d.Set("tunnel_token", token)
 
 	return nil
