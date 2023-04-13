@@ -165,6 +165,8 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
+	logpush := d.Get("logpush").(bool)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:        scriptData.Params.ScriptName,
 		Script:            scriptBody,
@@ -172,6 +174,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 		CompatibilityFlags: getCompatibilityFlags(d),
 		Module:            d.Get("module").(bool),
 		Bindings:          bindings,
+		Logpush: 		   &logpush,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
@@ -339,6 +342,8 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
+	logpush := d.Get("logpush").(bool)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:        scriptData.Params.ScriptName,
 		Script:            scriptBody,
@@ -346,6 +351,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 		CompatibilityFlags: getCompatibilityFlags(d),
 		Module:            d.Get("module").(bool),
 		Bindings:          bindings,
+		Logpush:           &logpush,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating worker script"))

@@ -93,6 +93,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
 					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "2"),
 					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
+          resource.TestCheckResourceAttr(name, "logpush", "true"),
 				),
 			},
 		},
@@ -204,6 +205,7 @@ resource "cloudflare_worker_script" "%[1]s" {
   module = true
 	compatibility_date = "%[4]s"
 	compatibility_flags = ["%[5]s"]
+  logpush = true
 }`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
 }
 
