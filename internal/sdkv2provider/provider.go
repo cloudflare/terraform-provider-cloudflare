@@ -170,6 +170,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_zone":                        dataSourceCloudflareZone(),
 				"cloudflare_zones":                       dataSourceCloudflareZones(),
 				"cloudflare_tunnels":                     dataSourceCloudflareTunnels(),
+				"cloudflare_tunnel":                      datasourceCloudflareTunnel(),
 			},
 
 			ResourcesMap: map[string]*schema.Resource{

@@ -8,35 +8,41 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceCloudflareTunnel() *schema.Resource {
+func datasourceCloudflareTunnel() *schema.Resource {
 	return &schema.Resource{
 		Description: heredoc.Doc(`
-			Use this data source to lookup a single [Cloudflare Tunnel](https://developers.cloudflare.com/api/operations/cloudflare-tunnel-get-a-cloudflare-tunnel).
-		`),
-		ReadContext: dataSourceCloudflareTunnelRead,
+		Use this data source to lookup a single [Cloudflare Tunnel](https://developers.cloudflare.com/api/operations/cloudflare-tunnel-get-a-cloudflare-tunnel).
+	`),
+		ReadContext: datasourceCloudflareTunnelRead,
 		Schema: map[string]*schema.Schema{
 			consts.AccountIDSchemaKey: {
 				Description: "The account identifier to target for the resource.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"include_token": {
+				Description: "Whether to include the tunnel token in the response.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"tunnel_id": {
-				Description: "UUID of the tunnel",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:  "UUID of the tunnel",
+				Type:         schema.TypeString,
+				Optional:     true,
+				AtLeastOneOf: []string{"name", "tunnel_id"},
+			},
+			"name": {
+				Description:  "User-friendly name of the tunnel.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				AtLeastOneOf: []string{"name", "tunnel_id"},
 			},
 			"status": {
 				Description: "Current status of the tunnel. One of: inactive, degraded, healthy, down",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"name": {
-				Description: "User-friendly name of the tunnel.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -71,30 +77,30 @@ func dataSourceCloudflareTunnel() *schema.Resource {
 	}
 }
 
-func dataSourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func datasourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID := d.Get(consts.AccountIDSchemaKey).(string)
-	tunnelID := d.Get("tunnel_id").(string)
+	accountID := cloudflare.AccountIdentifier(d.Get(consts.AccountIDSchemaKey).(string))
 
-	tflog.Debug(ctx, fmt.Sprintf("getting tunnel %s", d.Get("tunnel_id").(string)))
+	listParams := cloudflare.TunnelListParams{}
+	listParams.UUID = d.Get("tunnel_id").(string)
+	listParams.Name = d.Get("name").(string)
+	listParams.PerPage = 1
 
-	tunnel, err := client.GetTunnel(ctx, cloudflare.AccountIdentifier(accountID), tunnelID)
-
+	tunnels, _, err := client.ListTunnels(ctx, accountID, listParams)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error fetching tunnel %s: %w", tunnelID, err))
+		return diag.FromErr(err)
 	}
 
-	token, err := client.GetTunnelToken(ctx, cloudflare.AccountIdentifier(accountID), tunnel.ID)
-
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("error fetching tunnel token %s: %w", tunnelID, err))
+	if len(tunnels) == 0 {
+		return diag.FromErr(err)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("got token %s", token))
+	tunnel := tunnels[0]
 
 	d.SetId(tunnel.ID)
-	d.Set("status", tunnel.Status)
 	d.Set("name", tunnel.Name)
+	d.Set("status", tunnel.Status)
+	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
 	d.Set("remote_config", tunnel.RemoteConfig)
 	d.Set("created_at", tunnel.CreatedAt.Format(time.RFC3339))
 
@@ -102,8 +108,14 @@ func dataSourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData,
 		d.Set("deleted_at", tunnel.DeletedAt.Format(time.RFC3339))
 	}
 
-	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
-	d.Set("tunnel_token", token)
+	if d.Get("include_token").(bool) {
+		token, err := client.GetTunnelToken(ctx, accountID, tunnel.ID)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		d.Set("tunnel_token", token)
+	}
 
 	return nil
 }
