@@ -1,3 +1,6 @@
 ```release-note:new-data-source
 cloudflare_tunnel
 ```
+```release-note:new-data-source
+cloudflare_tunnels
+```
