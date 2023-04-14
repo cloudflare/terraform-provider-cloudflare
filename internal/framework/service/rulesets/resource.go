@@ -50,7 +50,7 @@ func (r *RulesetResource) Configure(ctx context.Context, req resource.ConfigureR
 
 	if !ok {
 		resp.Diagnostics.AddError(
-			"unexpected resource configure yype",
+			"unexpected resource configure type",
 			fmt.Sprintf("expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 

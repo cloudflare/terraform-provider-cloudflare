@@ -1,0 +1,3 @@
+```release-note:new-resource
+resource/r2_bucket: add support for R2 buckets
+```
