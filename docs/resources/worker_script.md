@@ -75,6 +75,7 @@ resource "cloudflare_worker_script" "my_script" {
 - `compatibility_date` (String) The date to use for the compatibility flag.
 - `compatibility_flags` (Set of String) Compatibility flags used for Worker Scripts.
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
+- `logpush` (Boolean) Enabling allows Worker events to be sent to a defined Logpush destination.
 - `module` (Boolean) Whether to upload Worker as a module.
 - `plain_text_binding` (Block Set) (see [below for nested schema](#nestedblock--plain_text_binding))
 - `queue_binding` (Block Set) (see [below for nested schema](#nestedblock--queue_binding))

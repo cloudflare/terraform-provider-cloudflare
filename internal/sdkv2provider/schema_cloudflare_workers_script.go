@@ -168,6 +168,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			},
 			Computed: true,
 		},
+		"logpush": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Enabling allows Worker events to be sent to a defined Logpush destination.",
+		},
 		"plain_text_binding": {
 			Type:     schema.TypeSet,
 			Optional: true,
