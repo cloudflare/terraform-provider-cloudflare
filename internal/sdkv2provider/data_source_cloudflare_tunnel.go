@@ -92,7 +92,11 @@ func datasourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if len(tunnels) == 0 {
-		return diag.FromErr(err)
+		if listParams.UUID != "" {
+			return diag.Errorf("no tunnel found with id %q", listParams.UUID)
+		} else {
+			return diag.Errorf("no tunnel found with name %q", listParams.Name)
+		}
 	}
 
 	tunnel := tunnels[0]
