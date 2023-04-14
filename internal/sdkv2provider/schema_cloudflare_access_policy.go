@@ -63,6 +63,11 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Elem:        AccessGroupOptionSchemaElement,
 			Description: "A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).",
 		},
+		"isolation_required": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Require this application to be served in an isolated browser for users matching this policy.",
+		},
 		"purpose_justification_required": {
 			Type:        schema.TypeBool,
 			Optional:    true,

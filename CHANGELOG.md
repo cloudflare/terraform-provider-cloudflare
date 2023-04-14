@@ -3,6 +3,8 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_access_organization: Add auto_redirect_to_identity flag ([#2356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2356))
+* resource/cloudflare_access_policy: Add isolation_required flag ([#2351](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2351))
+* resource/cloudflare_worker_script: Add `logpush` attribute ([#2375](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2375))
 
 INTERNAL:
 
