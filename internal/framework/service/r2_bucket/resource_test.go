@@ -32,6 +32,12 @@ func TestAccCloudflareR2BucketBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 				),
 			},
+			{
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
 		},
 	})
 }
