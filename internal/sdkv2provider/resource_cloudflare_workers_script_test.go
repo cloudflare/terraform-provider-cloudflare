@@ -75,6 +75,8 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 	var script cloudflare.WorkerScript
 	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
+	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
+	r2AccesKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -85,7 +87,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID),
+				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccesKeyID, r2AccesKeySecret),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -93,7 +95,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
 					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "2"),
 					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
-          resource.TestCheckResourceAttr(name, "logpush", "true"),
+					resource.TestCheckResourceAttr(name, "logpush", "true"),
 				),
 			},
 		},
@@ -196,17 +198,28 @@ resource "cloudflare_worker_script" "%[1]s" {
 }`, rnd, scriptContent2, encodedWasm, accountID)
 }
 
-func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID string) string {
+func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyID, r2AccessKeySecret string) string {
 	return fmt.Sprintf(`
+	resource "cloudflare_logpush_job" "%[1]s" {
+		enabled          = true
+		account_id       = "%[3]s"
+		name             = "%[1]s"
+		logpull_options  = "fields=Event,EventTimestampMs,Outcome,Exceptions,Logs,ScriptName"
+		destination_conf = "r2://terraform-acctest/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
+		dataset          = "workers_trace_events"
+	}
+
 resource "cloudflare_worker_script" "%[1]s" {
   account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
   module = true
-	compatibility_date = "%[4]s"
-	compatibility_flags = ["%[5]s"]
+  compatibility_date = "%[4]s"
+  compatibility_flags = ["%[5]s"]
   logpush = true
-}`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`))
+
+  depends_on = [cloudflare_logpush_job.%[1]s]
+}`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret)
 }
 
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
