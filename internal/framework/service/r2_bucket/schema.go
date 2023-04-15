@@ -22,7 +22,7 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 				Optional:            true,
 			},
 			consts.IDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: "MD5 hash of the R2 bucket name.",
+				MarkdownDescription: "Duplicate of the name attribute. Used only for internal terraform purposes.",
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
