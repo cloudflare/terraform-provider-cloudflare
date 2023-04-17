@@ -1125,6 +1125,36 @@ func TestAccCloudflareRuleset_TransformationRuleResponseHeaders(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_ResponseCompression(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetResponseCompression(rnd, "my basic response compression ruleset", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic response compression ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_response_compression"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "compress_response"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" compress response rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.algorithms.0.name", "brotli"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.algorithms.1.name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.algorithms.#", "2"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_ActionParametersMultipleSkips(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -1866,6 +1896,7 @@ func TestAccCloudflareRuleset_Config(t *testing.T) {
 		},
 	})
 }
+
 func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -2635,6 +2666,33 @@ func testAccCheckCloudflareRulesetTransformationRuleResponseHeaders(rnd, name, z
       enabled = false
     }
   }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetResponseCompression(rnd, name, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_response_compression"
+
+    rules {
+      action = "compress_response"
+      action_parameters {
+        algorithms {
+			name = "brotli"
+ 		}
+        algorithms {
+			name = "default"
+ 		}
+      }
+
+      expression = "true"
+      description = "%[1]s compress response rule"
+      enabled = false
+    }
+  }`, rnd, name, zoneID)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFPayloadLogging(rnd, name, zoneID, zoneName string) string {

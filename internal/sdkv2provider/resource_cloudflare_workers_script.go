@@ -168,13 +168,13 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 	logpush := d.Get("logpush").(bool)
 
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
-		ScriptName:        scriptData.Params.ScriptName,
-		Script:            scriptBody,
-		CompatibilityDate: d.Get("compatibility_date").(string),
+		ScriptName:         scriptData.Params.ScriptName,
+		Script:             scriptBody,
+		CompatibilityDate:  d.Get("compatibility_date").(string),
 		CompatibilityFlags: getCompatibilityFlags(d),
-		Module:            d.Get("module").(bool),
-		Bindings:          bindings,
-		Logpush: 		   &logpush,
+		Module:             d.Get("module").(bool),
+		Bindings:           bindings,
+		Logpush:            &logpush,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
@@ -345,13 +345,13 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 	logpush := d.Get("logpush").(bool)
 
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
-		ScriptName:        scriptData.Params.ScriptName,
-		Script:            scriptBody,
-		CompatibilityDate: d.Get("compatibility_date").(string),
+		ScriptName:         scriptData.Params.ScriptName,
+		Script:             scriptBody,
+		CompatibilityDate:  d.Get("compatibility_date").(string),
 		CompatibilityFlags: getCompatibilityFlags(d),
-		Module:            d.Get("module").(bool),
-		Bindings:          bindings,
-		Logpush:           &logpush,
+		Module:             d.Get("module").(bool),
+		Bindings:           bindings,
+		Logpush:            &logpush,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating worker script"))

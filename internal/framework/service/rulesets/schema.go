@@ -299,6 +299,23 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 									},
 								},
 								Blocks: map[string]schema.Block{
+									"algorithms": schema.ListNestedBlock{
+										MarkdownDescription: "Compression algorithms to use in order of preference.",
+										NestedObject: schema.NestedBlockObject{
+											Attributes: map[string]schema.Attribute{
+												"name": schema.StringAttribute{
+													Required:            true,
+													MarkdownDescription: "Name of the compression algorithm to use.",
+													Validators: []validator.String{
+														stringvalidator.OneOf("gzip", "brotli", "default", "none"),
+													},
+												},
+											},
+										},
+										Validators: []validator.List{
+											listvalidator.SizeAtLeast(1),
+										},
+									},
 									"uri": schema.ListNestedBlock{
 										MarkdownDescription: "List of URI properties to configure for the ruleset rule when performing URL rewrite transformations.",
 										NestedObject: schema.NestedBlockObject{
