@@ -72,5 +72,3 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/cloudflare/cloudflare-go => github.com/Cyb3r-Jak3/cloudflare-go v0.42.1-0.20230417212430-cf6ed3d929d8

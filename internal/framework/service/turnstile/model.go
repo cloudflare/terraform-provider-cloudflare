@@ -11,5 +11,5 @@ type TurnstileWidgetModel struct {
 	Region       types.String `tfsdk:"region"`
 	Mode         types.String `tfsdk:"mode"`
 	BotFightMode types.Bool   `tfsdk:"bot_fight_mode"`
-	OffLabel     types.Bool   `tfsdk:"off_label"`
+	OffLabel     types.Bool   `tfsdk:"offlabel"`
 }

@@ -1,5 +1,3 @@
-github.com/Cyb3r-Jak3/cloudflare-go v0.42.1-0.20230417212430-cf6ed3d929d8 h1:WQ1FgYZN91jtpUbN6yUxxNq3AxbSyvamEzV1nMVjOB8=
-github.com/Cyb3r-Jak3/cloudflare-go v0.42.1-0.20230417212430-cf6ed3d929d8/go.mod h1:tA44hjU9FfycofKT+lWWMHb/dEq1pRbiVPGuJo1WzLQ=
 github.com/MakeNowJust/heredoc/v2 v2.0.1 h1:rlCHh70XXXv7toz95ajQWOWQnN4WNLt0TdpZYIR/J6A=
 github.com/MakeNowJust/heredoc/v2 v2.0.1/go.mod h1:6/2Abh5s+hc3g9nbWLe9ObDIOhaRrqsyY9MWy+4JdRM=
 github.com/Masterminds/goutils v1.1.1/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
