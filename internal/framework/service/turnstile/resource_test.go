@@ -1,4 +1,4 @@
-package challenge_widget_test
+package turnstile_test
 
 import (
 	"fmt"
@@ -10,17 +10,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareChallengeWidgetBasic(t *testing.T) {
+func TestAccCloudflareTurnstileWidgetBasic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_challenge_widget." + rnd
+	resourceName := "cloudflare_turnstile_widget." + rnd
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareChallengeWidgetBasic(rnd, accountID),
+				Config: testAccCheckCloudflareTurnstileWidgetBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
@@ -41,9 +41,9 @@ func TestAccCloudflareChallengeWidgetBasic(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareChallengeWidgetBasic(rnd, accountID string) string {
+func testAccCheckCloudflareTurnstileWidgetBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_challenge_widget" "%[1]s" {
+  resource "cloudflare_turnstile_widget" "%[1]s" {
     account_id     = "%[2]s"
     name        = "%[1]s"
 	bot_fight_mode = false

@@ -1,8 +1,8 @@
-package challenge_widget
+package turnstile
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type ChallengeWidgetModel struct {
+type TurnstileWidgetModel struct {
 	AccountID    types.String `tfsdk:"account_id"`
 	ID           types.String `tfsdk:"id"`
 	Domains      types.Set    `tfsdk:"domains"`

@@ -1,7 +1,10 @@
-package challenge_widget
+package turnstile
 
 import (
 	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -13,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r *ChallengeWidgetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
 		The [Challenge Widget](https://developers.cloudflare.com/turnstile/) resource allows you to manage Cloudflare Turnstile Widgets.
@@ -63,6 +66,12 @@ func (r *ChallengeWidgetResource) Schema(ctx context.Context, req resource.Schem
 			"bot_fight_mode": schema.BoolAttribute{
 				MarkdownDescription: "If bot_fight_mode is set to true, Cloudflare issues computationally expensive challenges in response to malicious bots (ENT only).",
 				Optional:            true,
+			},
+			"off_label": schema.BoolAttribute{
+				MarkdownDescription: "Do not show any Cloudflare branding on the widget (ENT only).",
+				Optional:            true,
+				Computed:            true,
+				Default:             booldefault.StaticBool(false),
 			},
 		},
 	}
