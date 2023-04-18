@@ -52,6 +52,88 @@ func testAccCheckCloudflareTunnelBasic(accID, name string) string {
 	}`, accID, name)
 }
 
+func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Argo Tunnel
+	// endpoint does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareTunnelManaged(accID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
+					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.cfargotunnel\\.com")),
+					resource.TestCheckResourceAttr(name, "config_src", "cloudflare"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareTunnelManaged(accID, name string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_tunnel" "%[2]s" {
+		account_id = "%[1]s"
+		name       = "%[2]s"
+		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
+		config_src = "cloudflare"
+	}`, accID, name)
+}
+
+func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Argo Tunnel
+	// endpoint does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareTunnelUnmanaged(accID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
+					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.cfargotunnel\\.com")),
+					resource.TestCheckResourceAttr(name, "config_src", "local"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareTunnelUnmanaged(accID, name string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_tunnel" "%[2]s" {
+		account_id = "%[1]s"
+		name       = "%[2]s"
+		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
+		config_src = "local"
+	}`, accID, name)
+}
+
 func testAccCheckCloudflareTunnelDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_tunnel" {
