@@ -1,5 +1,9 @@
 ## 4.4.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_ruleset: introduced future deprecation warning for the `http_request_sbfm` phase. ([#2382](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2382))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_access_organization: Add auto_redirect_to_identity flag ([#2356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2356))
