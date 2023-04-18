@@ -1,9 +1,14 @@
 ## 4.4.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_ruleset: introduced future deprecation warning for the `http_request_sbfm` phase. ([#2382](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2382))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_access_organization: Add auto_redirect_to_identity flag ([#2356](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2356))
 * resource/cloudflare_access_policy: Add isolation_required flag ([#2351](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2351))
+* resource/cloudflare_tunnel: Adds config_src parameter ([#2369](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2369))
 * resource/cloudflare_worker_script: Add `logpush` attribute ([#2375](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2375))
 
 INTERNAL:
@@ -12,6 +17,7 @@ INTERNAL:
 
 DEPENDENCIES:
 
+* provider: bumps dependabot/fetch-metadata from 1.3.6 to 1.4.0 ([#2383](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2383))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.64.0 to 0.65.0 ([#2370](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2370))
 * provider: bumps golang.org/x/net from 0.8.0 to 0.9.0 ([#2359](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2359))
 * provider: bumps peter-evans/create-or-update-comment from 2 to 3 ([#2355](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2355))

@@ -38,8 +38,9 @@ func resourceCloudflareTunnelCreate(ctx context.Context, d *schema.ResourceData,
 	accID := d.Get(consts.AccountIDSchemaKey).(string)
 	name := d.Get("name").(string)
 	secret := d.Get("secret").(string)
+	configSrc := d.Get("config_src").(string)
 
-	tunnel, err := client.CreateTunnel(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelCreateParams{Name: name, Secret: secret})
+	tunnel, err := client.CreateTunnel(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelCreateParams{Name: name, Secret: secret, ConfigSrc: configSrc})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Argo Tunnel")))
 	}
@@ -68,6 +69,14 @@ func resourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, m
 
 	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
 	d.Set("tunnel_token", token)
+
+	if d.Get("config_src").(string) != "" {
+		if tunnel.RemoteConfig {
+			d.Set("config_src", "cloudflare")
+		} else {
+			d.Set("config_src", "local")
+		}
+	}
 
 	return nil
 }
