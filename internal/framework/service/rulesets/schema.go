@@ -94,6 +94,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Required: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetPhaseValues()...),
+					sbfmDeprecationWarningValidator{},
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
