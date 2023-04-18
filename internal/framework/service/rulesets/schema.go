@@ -94,7 +94,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Required: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetPhaseValues()...),
-					sbfmDepricationWarningValidator{},
+					sbfmDeprecationWarningValidator{},
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -930,34 +930,5 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				},
 			},
 		},
-	}
-}
-
-type sbfmDepricationWarningValidator struct{}
-
-func (v sbfmDepricationWarningValidator) Description(ctx context.Context) string {
-	return fmt.Sprintf("Cloudflare is going to change the way Super Bot Fight Mode managed rules are configured through Terraform and our API. No action is required at this time. " +
-		" Please follow updates to our documentation regarding this here: https://developers.cloudflare.com/bots/get-started/biz-and-ent/#ruleset-engine")
-}
-
-func (v sbfmDepricationWarningValidator) MarkdownDescription(ctx context.Context) string {
-	return fmt.Sprintf("Cloudflare is going to change the way Super Bot Fight Mode managed rules are configured through Terraform and our API. **No action is required at this time**. " +
-		" Please follow updates to our documentation regarding this [here](https://developers.cloudflare.com/bots/get-started/biz-and-ent/#ruleset-engine)")
-}
-
-func (v sbfmDepricationWarningValidator) ValidateString(ctx context.Context, req validator.StringRequest, resp *validator.StringResponse) {
-	// If the value is unknown or null, there is nothing to validate.
-	if req.ConfigValue.IsUnknown() || req.ConfigValue.IsNull() {
-		return
-	}
-
-	if req.ConfigValue.ValueString() == "http_request_sbfm" {
-		resp.Diagnostics.AddAttributeWarning(
-			req.Path,
-			"'http_request_sbfm' may soon become deprecated in the 'cloudflare_ruleset' resource",
-			v.Description(ctx),
-		)
-
-		return
 	}
 }
