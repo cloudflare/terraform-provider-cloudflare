@@ -63,7 +63,7 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 	widget := buildChallengeWidgetFromModel(data)
 
 	createWidget, err := r.client.CreateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
-		cloudflare.CreateTurnstileWidgetRequest{
+		cloudflare.CreateTurnstileWidgetParams{
 			OffLabel:     widget.OffLabel,
 			Name:         widget.Name,
 			Domains:      widget.Domains,
@@ -117,7 +117,14 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 
 	widget := buildChallengeWidgetFromModel(data)
 
-	updatedWidget, err := r.client.UpdateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), widget)
+	updatedWidget, err := r.client.UpdateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateTurnstileWidgetParams{
+		OffLabel:     widget.OffLabel,
+		Name:         widget.Name,
+		Domains:      widget.Domains,
+		Mode:         widget.Mode,
+		BotFightMode: widget.BotFightMode,
+		Region:       widget.Region,
+	})
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading challenge widget", err.Error())

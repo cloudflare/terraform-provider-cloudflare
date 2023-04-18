@@ -29,6 +29,7 @@ func TestAccCloudflareTurnstileWidgetBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "domains.0", "example.com"),
 					resource.TestCheckResourceAttr(resourceName, "mode", "invisible"),
 					resource.TestCheckResourceAttr(resourceName, "region", "world"),
+					resource.TestCheckResourceAttr(resourceName, "offlabel", "false"),
 				),
 			},
 			{
