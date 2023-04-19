@@ -527,12 +527,20 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 						include, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include)
 						exclude, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude)
 
-						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include != nil && ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include.All {
-							include, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include != nil {
+							if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include.All {
+								include, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+							} else {
+								include, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include.List)
+							}
 						}
 
-						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude != nil && ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude.All {
-							exclude, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude != nil {
+							if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude.All {
+								exclude, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+							} else {
+								exclude, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude.List)
+							}
 						}
 
 						key.QueryString = []*ActionParameterCacheKeyCustomKeyQueryStringModel{{
