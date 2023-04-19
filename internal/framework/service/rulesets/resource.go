@@ -657,19 +657,19 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 					}},
 				}}
 			}
-		}
 
-		if len(ruleResponse.ActionParameters.Algorithms) > 0 {
-			var algos []*ActionParametersCompressionAlgorithmModel = nil
+			if len(ruleResponse.ActionParameters.Algorithms) > 0 {
+				var algos []*ActionParametersCompressionAlgorithmModel = nil
 
-			for _, algo := range ruleResponse.ActionParameters.Algorithms {
-				newAlgo := ActionParametersCompressionAlgorithmModel{
-					Name: algo.Name,
+				for _, algo := range ruleResponse.ActionParameters.Algorithms {
+					newAlgo := ActionParametersCompressionAlgorithmModel{
+						Name: algo.Name,
+					}
+					algos = append(algos, &newAlgo)
 				}
-				algos = append(algos, &newAlgo)
-			}
 
-			rule.ActionParameters[0].Algorithms = algos
+				rule.ActionParameters[0].Algorithms = algos
+			}
 		}
 
 		// ratelimit
