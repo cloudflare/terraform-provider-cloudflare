@@ -58,7 +58,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 
 	r2Bucket, err := r.client.CreateR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
 		cloudflare.CreateR2BucketParameters{
-			Name:         data.Name.ValueString(),
+			Name: data.Name.ValueString(),
 		},
 	)
 	if err != nil {
@@ -129,9 +129,6 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 	resp.Diagnostics.Append(resp.State.SetAttribute(
 		ctx, path.Root("account_id"), idparts[0],
 	)...)
-	//resp.Diagnostics.Append(resp.State.SetAttribute(
-	//	ctx, path.Root("name"), idparts[1],
-	//)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(
 		ctx, path.Root("id"), idparts[1],
 	)...)
