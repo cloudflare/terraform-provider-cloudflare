@@ -30,6 +30,7 @@ func TestAccCloudflareR2BucketBasic(t *testing.T) {
 				Config: testAccCheckCloudflareR2BucketBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "id", rnd),
 				),
 			},
 			{
@@ -45,7 +46,7 @@ func TestAccCloudflareR2BucketBasic(t *testing.T) {
 func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_r2_bucket" "%[1]s" {
-    account_id     = "%[2]s"
-    name        = "%[1]s"
+    account_id = "%[2]s"
+    name       = "%[1]s"
   }`, rnd, accountID)
 }

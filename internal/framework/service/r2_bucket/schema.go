@@ -2,6 +2,7 @@ package r2_bucket
 
 import (
 	"context"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -19,7 +20,7 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				MarkdownDescription: "The account identifier to target for the resource.",
-				Optional:            true,
+				Required:            true,
 			},
 			consts.IDSchemaKey: schema.StringAttribute{
 				MarkdownDescription: "Duplicate of the name attribute. Used only for internal terraform purposes.",

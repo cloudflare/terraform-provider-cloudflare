@@ -55,18 +55,18 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	var err error
 
-	err = r.client.CreateR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
+	r2Bucket, err := r.client.CreateR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
 		cloudflare.CreateR2BucketParameters{
-			Name: data.Name.ValueString(),
+			Name:         data.Name.ValueString(),
 		},
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating R2 bucket", err.Error())
 		return
 	}
-	data.ID = types.StringValue(data.Name.ValueString())
+	data.ID = types.StringValue(r2Bucket.Name)
+	data.Name = types.StringValue(r2Bucket.Name)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -79,16 +79,13 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	var err error
-	var r2Bucket cloudflare.R2Bucket
-
-	r2Bucket, err = r.client.GetR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.Name.ValueString())
+	r2Bucket, err := r.client.GetR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading R2 bucket", err.Error())
 		return
 	}
-	data.Name = types.StringValue(r2Bucket.Name)
 	data.ID = types.StringValue(r2Bucket.Name)
+	data.Name = types.StringValue(r2Bucket.Name)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -115,7 +112,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 
 	var err error
 
-	err = r.client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.Name.ValueString())
+	err = r.client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error deleting R2 bucket", err.Error())
@@ -132,9 +129,9 @@ func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportS
 	resp.Diagnostics.Append(resp.State.SetAttribute(
 		ctx, path.Root("account_id"), idparts[0],
 	)...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(
-		ctx, path.Root("name"), idparts[1],
-	)...)
+	//resp.Diagnostics.Append(resp.State.SetAttribute(
+	//	ctx, path.Root("name"), idparts[1],
+	//)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(
 		ctx, path.Root("id"), idparts[1],
 	)...)
