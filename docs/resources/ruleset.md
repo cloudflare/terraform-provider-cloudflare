@@ -427,7 +427,12 @@ resource "cloudflare_ruleset" "response_compress_brotli_html" {
   rules {
     action = "compress_response"
     action_parameters {
-      algorithms = [ { name: "brotli" }, { name: "default" } ]
+      algorithms {
+        name = "brotli"
+      }
+      algorithms {
+        name = "default"
+      }
     }
     expression  = "http.response.content_type.media_type == \"text/html\""
     description = "Prefer brotli compression for HTML"
@@ -537,7 +542,7 @@ Optional:
 
 Required:
 
-- `name` (String) Name of the compression algorithm to use.
+- `name` (String) Name of the compression algorithm to use. Available values: `gzip`, `brotli`, `default`, `none`
 
 
 <a id="nestedblock--rules--action_parameters--autominify"></a>
