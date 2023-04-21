@@ -16,6 +16,10 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var (
+	syncedLabel = "workflow/synced"
+)
+
 type serviceOwner struct {
 	manager  string
 	teamName string
@@ -138,6 +142,11 @@ func main() {
 		log.Fatalf("error retrieving issue %s/%s#%d: %s", githubRepositoryOwner, githubRepositoryName, issueNumber, err)
 	}
 
+	if !hasLabel(issue, syncedLabel) {
+		log.Printf("issue is already marked as synced (%s), skipping", syncedLabel)
+		os.Exit(0)
+	}
+
 	if !hasLabel(issue, acceptedLabel) {
 		log.Printf("issue is not marked as ready for syncing using %s, skipping", acceptedLabel)
 		os.Exit(0)
@@ -199,6 +208,10 @@ func main() {
 	}
 
 	fmt.Println(fmt.Sprintf("successfully created internal JIRA issue: %s", createdIssue.Key))
+	_, _, err = client.Issues.AddLabelsToIssue(ctx, githubRepositoryOwner, githubRepositoryName, issueNumber, []string{syncedLabel})
+	if err != nil {
+		log.Printf("error adding synced label for issue %s/%s#%d: %s", githubRepositoryOwner, githubRepositoryName, issueNumber, err)
+	}
 
 	os.Exit(0)
 }
