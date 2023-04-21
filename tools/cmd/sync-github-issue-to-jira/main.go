@@ -154,7 +154,7 @@ func main() {
 	newIssue := InternalIssue{Fields: IssueFields{
 		Project:     IssueKey{Key: "CUSTESC"},
 		Summary:     *issue.Title,
-		Description: jirafyBodyMarkdown(*issue.Body),
+		Description: jirafyBodyMarkdown(issue),
 		Teams:       []IssueValue{{Value: serviceOwner.teamName}},
 		EngOwner:    IssueName{Name: serviceOwner.manager},
 		SLA:         IssueValue{Value: "Pro / Free"},
@@ -225,11 +225,14 @@ func getOwnershipLabel(issue *github.Issue) string {
 
 // jirafyBodyMarkdown takes GitHub markdown and makes it palatable for JIRA
 // with reasonable formatting.
-func jirafyBodyMarkdown(s string) string {
-	s = strings.ReplaceAll(s, "- [X] ", "✅ ")
-	s = strings.ReplaceAll(s, "###", "h3.")
-	s = strings.ReplaceAll(s, "```hcl", "{code}")
-	s = strings.ReplaceAll(s, "```", "{code}")
+func jirafyBodyMarkdown(issue *github.Issue) string {
+	output := "GitHub issue: " + *issue.HTMLURL + "\n\n---\n\n"
 
-	return s
+	output += *issue.Body
+	output = strings.ReplaceAll(output, "- [X] ", "✅ ")
+	output = strings.ReplaceAll(output, "###", "h3.")
+	output = strings.ReplaceAll(output, "```hcl", "{code}")
+	output = strings.ReplaceAll(output, "```", "{code}")
+
+	return output
 }
