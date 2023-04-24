@@ -102,5 +102,23 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringInSlice([]string{"high", "low"}, false),
 			Description:  fmt.Sprintf("A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. %s", renderAvailableDocumentationValuesStringSlice([]string{"high", "low"})),
 		},
+		"max_upload_bytes": {
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(5000000, 1000000000),
+			Description:  fmt.Sprint("The maximum uncompressed file size of a batch of logs. Value must be between 5MB and 1GB."),
+		},
+		"max_upload_records": {
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(1000, 1000000),
+			Description:  fmt.Sprint("The maximum number of log lines per batch. Value must be between 1000 and 1,000,000."),
+		},
+		"max_upload_interval_seconds": {
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(30, 300),
+			Description:  fmt.Sprint("The maximum interval in seconds for log batches. Value must be between 30 and 300."),
+		},
 	}
 }
