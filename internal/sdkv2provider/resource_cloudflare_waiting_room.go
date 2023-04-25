@@ -34,6 +34,18 @@ func resourceCloudflareWaitingRoom() *schema.Resource {
 }
 
 func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
+	routes := d.Get("additional_routes").([]interface{})
+	additional_routes := []*cloudflare.WaitingRoomRoute{}
+	if routes != nil {
+		for _, route := range routes {
+			r := route.(map[string]interface{})
+			additional_routes = append(additional_routes, &cloudflare.WaitingRoomRoute{
+				Host: r["host"].(string),
+				Path: r["path"].(string),
+			})
+		}
+	}
+
 	return cloudflare.WaitingRoom{
 		Name:                    d.Get("name").(string),
 		Description:             d.Get("description").(string),
@@ -49,6 +61,8 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		JsonResponseEnabled:     d.Get("json_response_enabled").(bool),
 		QueueAll:                d.Get("queue_all").(bool),
 		DisableSessionRenewal:   d.Get("disable_session_renewal").(bool),
+		CookieSuffix:            d.Get("cookie_suffix").(string),
+		AddtionalRoutes:         additional_routes,
 	}
 }
 
@@ -101,6 +115,8 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("custom_page_html", waitingRoom.CustomPageHTML)
 	d.Set("default_template_language", waitingRoom.DefaultTemplateLanguage)
 	d.Set("json_response_enabled", waitingRoom.JsonResponseEnabled)
+	d.Set("cookie_suffix", waitingRoom.CookieSuffix)
+	d.Set("additional_routes", flattenWaitingRoomAdditionalRoutes(waitingRoom.AddtionalRoutes))
 	return nil
 }
 
@@ -158,4 +174,18 @@ func resourceCloudflareWaitingRoomImport(ctx context.Context, d *schema.Resource
 
 	resourceCloudflareWaitingRoomRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
+}
+
+func flattenWaitingRoomAdditionalRoutes(routes []*cloudflare.WaitingRoomRoute) []interface{} {
+	flattened := []interface{}{}
+	if routes == nil {
+		return flattened
+	}
+	for _, r := range routes {
+		flattened = append(flattened, map[string]interface{}{
+			"host": r.Host,
+			"path": r.Path,
+		})
+	}
+	return flattened
 }

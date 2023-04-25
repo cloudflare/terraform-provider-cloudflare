@@ -41,6 +41,12 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "total_active_users", "405"),
 					resource.TestCheckResourceAttr(name, "session_duration", "10"),
 					resource.TestCheckResourceAttr(name, "json_response_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "cookie_suffix", "queue1"),
+					resource.TestCheckResourceAttr(name, "additional_routes.#", "1"),
+					resource.TestCheckResourceAttr(name, "additional_routes.0.host", "shop1."+domain),
+					resource.TestCheckResourceAttr(name, "additional_routes.0.path", "/foobar"),
+					resource.TestCheckResourceAttr(name, "additional_routes.1.host", "shop2."+domain),
+					resource.TestCheckResourceAttr(name, "additional_routes.1.path", "/"),
 				),
 			},
 		},
@@ -82,6 +88,16 @@ resource "cloudflare_waiting_room" "%[1]s" {
   suspended                 = true
   queue_all                 = false
   json_response_enabled     = true
+	cookie_suffix 						= "queue1"
+	additional_routes 			  = [
+		{
+			host = "shop1.%[4]s"
+			path = "%[5]s"
+		},
+		{
+			host = "shop2.%[4]s"
+		}
+	]
 }
 `, resourceName, waitingRoomName, zoneID, domain, path)
 }
