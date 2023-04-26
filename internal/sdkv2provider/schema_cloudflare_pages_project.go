@@ -124,6 +124,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:        schema.TypeMap,
 				Description: "Encrypted environment variables for Pages Functions.",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			"kv_namespaces": {
 				Type:        schema.TypeMap,
