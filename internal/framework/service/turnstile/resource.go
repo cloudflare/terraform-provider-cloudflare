@@ -60,7 +60,7 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	widget := buildChallengeWidgetFromModel(data)
+	widget := buildChallengeWidgetFromModel(ctx, data)
 
 	createWidget, err := r.client.CreateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
 		cloudflare.CreateTurnstileWidgetParams{
@@ -115,7 +115,7 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	widget := buildChallengeWidgetFromModel(data)
+	widget := buildChallengeWidgetFromModel(ctx, data)
 
 	updatedWidget, err := r.client.UpdateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateTurnstileWidgetParams{
 		OffLabel:     widget.OffLabel,
@@ -162,14 +162,14 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)
 }
 
-func buildChallengeWidgetFromModel(widget *TurnstileWidgetModel) cloudflare.TurnstileWidget {
+func buildChallengeWidgetFromModel(ctx context.Context, widget *TurnstileWidgetModel) cloudflare.TurnstileWidget {
 	built := cloudflare.TurnstileWidget{
 		SiteKey:      widget.ID.ValueString(),
 		Name:         widget.Name.ValueString(),
 		BotFightMode: widget.BotFightMode.ValueBool(),
 		Mode:         widget.Mode.ValueString(),
 		Region:       widget.Region.ValueString(),
-		Domains:      expanders.StringSet(widget.Domains),
+		Domains:      expanders.StringSet(ctx, widget.Domains),
 		OffLabel:     widget.OffLabel.ValueBool(),
 	}
 
