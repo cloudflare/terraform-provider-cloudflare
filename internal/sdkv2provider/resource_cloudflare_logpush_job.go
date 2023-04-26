@@ -66,15 +66,18 @@ func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessI
 	}
 
 	job := cloudflare.LogpushJob{
-		ID:                 id,
-		Enabled:            d.Get("enabled").(bool),
-		Kind:               d.Get("kind").(string),
-		Name:               d.Get("name").(string),
-		Dataset:            d.Get("dataset").(string),
-		LogpullOptions:     d.Get("logpull_options").(string),
-		DestinationConf:    destConf,
-		OwnershipChallenge: ownershipChallenge,
-		Frequency:          d.Get("frequency").(string),
+		ID:                       id,
+		Enabled:                  d.Get("enabled").(bool),
+		Kind:                     d.Get("kind").(string),
+		Name:                     d.Get("name").(string),
+		Dataset:                  d.Get("dataset").(string),
+		LogpullOptions:           d.Get("logpull_options").(string),
+		DestinationConf:          destConf,
+		OwnershipChallenge:       ownershipChallenge,
+		Frequency:                d.Get("frequency").(string),
+		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
+		MaxUploadRecords:         d.Get("max_upload_records").(int),
+		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
 	}
 
 	filter := d.Get("filter")
@@ -144,6 +147,9 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	d.Set("ownership_challenge", d.Get("ownership_challenge"))
 	d.Set("frequency", job.Frequency)
 	d.Set("filter", filter)
+	d.Set("max_upload_bytes", job.MaxUploadBytes)
+	d.Set("max_upload_records", job.MaxUploadRecords)
+	d.Set("max_upload_interval_seconds", job.MaxUploadIntervalSeconds)
 
 	return nil
 }
