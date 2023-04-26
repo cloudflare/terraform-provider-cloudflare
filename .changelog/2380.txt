@@ -1,3 +1,3 @@
 ```release-note:new-resource
-resource/turnstile_widget: add support for Turnstile
+cloudflare_turnstile_widget
 ```
