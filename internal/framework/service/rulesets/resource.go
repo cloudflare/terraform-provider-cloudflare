@@ -104,7 +104,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		Phase:       rulesetPhase,
 	}
 
-	rulesetData := data.toRuleset()
+	rulesetData := data.toRuleset(ctx)
 
 	if len(rulesetData.Rules) > 0 {
 		rs.Rules = rulesetData.Rules
@@ -166,7 +166,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 
 	data.ID = types.StringValue(ruleset.ID)
 
-	diags = resp.State.Set(ctx, toRulesetResourceModel(data.ZoneID, data.AccountID, ruleset))
+	diags = resp.State.Set(ctx, toRulesetResourceModel(ctx, data.ZoneID, data.AccountID, ruleset))
 	resp.Diagnostics.Append(diags...)
 }
 
@@ -204,7 +204,7 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, toRulesetResourceModel(zoneID, accountID, ruleset))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, toRulesetResourceModel(ctx, zoneID, accountID, ruleset))...)
 }
 
 func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -223,7 +223,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 	accountID := plan.AccountID
 	zoneID := plan.ZoneID.ValueString()
 
-	remappedRules, e := remapPreservedRuleIDs(state, plan)
+	remappedRules, e := remapPreservedRuleIDs(ctx, state, plan)
 	if e != nil {
 		resp.Diagnostics.AddError("failed to remap rule IDs from state", e.Error())
 		return
@@ -245,7 +245,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 
 	plan.ID = types.StringValue(rs.ID)
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, toRulesetResourceModel(state.ZoneID, state.AccountID, rs))...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, toRulesetResourceModel(ctx, state.ZoneID, state.AccountID, rs))...)
 }
 
 func (r *RulesetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -297,7 +297,7 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 //
 // The reverse of this method is `toRuleset` which handles building an API
 // representation using the proposed config.
-func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudflare.Ruleset) *RulesetResourceModel {
+func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.StringValue, in cloudflare.Ruleset) *RulesetResourceModel {
 	data := RulesetResourceModel{
 		ID:          types.StringValue(in.ID),
 		Description: types.StringValue(in.Description),
@@ -503,8 +503,8 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 					}
 
 					if ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie != nil {
-						include, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie.Include)
-						checkPresence, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie.CheckPresence)
+						include, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie.Include)
+						checkPresence, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Cookie.CheckPresence)
 						key.Cookie = []*ActionParameterCacheKeyCustomKeyCookieModel{{
 							Include:       include,
 							CheckPresence: checkPresence,
@@ -512,8 +512,8 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 					}
 
 					if ruleResponse.ActionParameters.CacheKey.CustomKey.Header != nil {
-						include, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.Include)
-						checkPresence, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.CheckPresence)
+						include, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.Include)
+						checkPresence, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.CheckPresence)
 						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 {
 							key.Header = []*ActionParameterCacheKeyCustomKeyHeaderModel{{
 								Include:       include,
@@ -524,22 +524,22 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 					}
 
 					if ruleResponse.ActionParameters.CacheKey.CustomKey.Query != nil {
-						include, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include)
-						exclude, _ := basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude)
+						include, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include)
+						exclude, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude)
 
 						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include != nil {
 							if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include.All {
-								include, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+								include, _ = basetypes.NewSetValueFrom(ctx, types.StringType, []string{"*"})
 							} else {
-								include, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include.List)
+								include, _ = basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Include.List)
 							}
 						}
 
 						if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude != nil {
 							if ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude.All {
-								exclude, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, []string{"*"})
+								exclude, _ = basetypes.NewSetValueFrom(ctx, types.StringType, []string{"*"})
 							} else {
-								exclude, _ = basetypes.NewSetValueFrom(context.Background(), types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude.List)
+								exclude, _ = basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Query.Exclude.List)
 							}
 						}
 
@@ -716,13 +716,13 @@ func toRulesetResourceModel(zoneID, accountID basetypes.StringValue, in cloudfla
 //
 // The reverse of this method is `toRulesetResourceModel` which handles building
 // a state representation using the API response.
-func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
+func (r *RulesetResourceModel) toRuleset(ctx context.Context) cloudflare.Ruleset {
 	var rs cloudflare.Ruleset
 	var rules []cloudflare.RulesetRule
 
 	rs.ID = r.ID.ValueString()
 	for _, rule := range r.Rules {
-		rules = append(rules, rule.toRulesetRule())
+		rules = append(rules, rule.toRulesetRule(ctx))
 	}
 
 	rs.Rules = rules
@@ -732,7 +732,7 @@ func (r *RulesetResourceModel) toRuleset() cloudflare.Ruleset {
 
 // toRulesetRule takes a state representation of a Ruleset Rule and transforms
 // it into an API representation.
-func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
+func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 	rr := cloudflare.RulesetRule{
 		Action:      r.Action.ValueString(),
 		Expression:  r.Expression.ValueString(),
@@ -769,16 +769,16 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 			}
 		}
 
-		if len(expanders.StringSet(ap.Phases)) > 0 {
-			rr.ActionParameters.Phases = expanders.StringSet(ap.Phases)
+		if len(expanders.StringSet(ctx, ap.Phases)) > 0 {
+			rr.ActionParameters.Phases = expanders.StringSet(ctx, ap.Phases)
 		}
 
-		if len(expanders.StringSet(ap.Products)) > 0 {
-			rr.ActionParameters.Products = expanders.StringSet(ap.Products)
+		if len(expanders.StringSet(ctx, ap.Products)) > 0 {
+			rr.ActionParameters.Products = expanders.StringSet(ctx, ap.Products)
 		}
 
-		if len(expanders.StringSet(ap.Rulesets)) > 0 {
-			rr.ActionParameters.Rulesets = expanders.StringSet(ap.Rulesets)
+		if len(expanders.StringSet(ctx, ap.Rulesets)) > 0 {
+			rr.ActionParameters.Rulesets = expanders.StringSet(ctx, ap.Rulesets)
 		}
 
 		if !ap.ID.IsNull() {
@@ -1072,8 +1072,8 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 				customKey := cloudflare.RulesetRuleActionParametersCustomKey{}
 
 				if len(ap.CacheKey[0].CustomKey[0].QueryString) > 0 {
-					includeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].QueryString[0].Include)
-					excludeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].QueryString[0].Exclude)
+					includeQueryList := expanders.StringSet(ctx, ap.CacheKey[0].CustomKey[0].QueryString[0].Include)
+					excludeQueryList := expanders.StringSet(ctx, ap.CacheKey[0].CustomKey[0].QueryString[0].Exclude)
 
 					if len(includeQueryList) > 0 {
 						if len(includeQueryList) == 1 && includeQueryList[0] == "*" {
@@ -1109,8 +1109,8 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 				}
 
 				if len(ap.CacheKey[0].CustomKey[0].Header) > 0 {
-					includeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].Header[0].Include)
-					checkPresenceList := expanders.StringSet(basetypes.SetValue(ap.CacheKey[0].CustomKey[0].Header[0].CheckPresence))
+					includeQueryList := expanders.StringSet(ctx, ap.CacheKey[0].CustomKey[0].Header[0].Include)
+					checkPresenceList := expanders.StringSet(ctx, basetypes.SetValue(ap.CacheKey[0].CustomKey[0].Header[0].CheckPresence))
 
 					customKey.Header = &cloudflare.RulesetRuleActionParametersCustomKeyHeader{
 						RulesetRuleActionParametersCustomKeyFields: cloudflare.RulesetRuleActionParametersCustomKeyFields{
@@ -1122,8 +1122,8 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 				}
 
 				if len(ap.CacheKey[0].CustomKey[0].Cookie) > 0 {
-					includeQueryList := expanders.StringSet(ap.CacheKey[0].CustomKey[0].Cookie[0].Include)
-					checkPresenceList := expanders.StringSet(basetypes.SetValue(ap.CacheKey[0].CustomKey[0].Cookie[0].CheckPresence))
+					includeQueryList := expanders.StringSet(ctx, ap.CacheKey[0].CustomKey[0].Cookie[0].Include)
+					checkPresenceList := expanders.StringSet(ctx, basetypes.SetValue(ap.CacheKey[0].CustomKey[0].Cookie[0].CheckPresence))
 
 					if len(includeQueryList) > 0 || len(checkPresenceList) > 0 {
 						customKey.Cookie = &cloudflare.RulesetRuleActionParametersCustomKeyCookie{
@@ -1218,21 +1218,21 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 			rr.ActionParameters.FromValue = from
 		}
 
-		apCookieFields := expanders.StringSet(ap.CookieFields)
+		apCookieFields := expanders.StringSet(ctx, ap.CookieFields)
 		if len(apCookieFields) > 0 {
 			for _, cookie := range apCookieFields {
 				rr.ActionParameters.CookieFields = append(rr.ActionParameters.CookieFields, cloudflare.RulesetActionParametersLogCustomField{Name: cookie})
 			}
 		}
 
-		apRequestFields := expanders.StringSet(ap.RequestFields)
+		apRequestFields := expanders.StringSet(ctx, ap.RequestFields)
 		if len(apRequestFields) > 0 {
 			for _, request := range apRequestFields {
 				rr.ActionParameters.RequestFields = append(rr.ActionParameters.RequestFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
 			}
 		}
 
-		apResponseFields := expanders.StringSet(ap.ResponseFields)
+		apResponseFields := expanders.StringSet(ctx, ap.ResponseFields)
 		if len(apResponseFields) > 0 {
 			for _, request := range apResponseFields {
 				rr.ActionParameters.ResponseFields = append(rr.ActionParameters.ResponseFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
@@ -1242,7 +1242,7 @@ func (r *RulesModel) toRulesetRule() cloudflare.RulesetRule {
 
 	for _, rl := range r.Ratelimit {
 		rr.RateLimit = &cloudflare.RulesetRuleRateLimit{
-			Characteristics:         expanders.StringSet(rl.Characteristics),
+			Characteristics:         expanders.StringSet(ctx, rl.Characteristics),
 			Period:                  int(rl.Period.ValueInt64()),
 			RequestsPerPeriod:       int(rl.RequestsPerPeriod.ValueInt64()),
 			ScorePerPeriod:          int(rl.ScorePerPeriod.ValueInt64()),
@@ -1353,9 +1353,9 @@ func newRuleIDs(rulesetRules []cloudflare.RulesetRule) (ruleIDs, error) {
 	return r, nil
 }
 
-func remapPreservedRuleIDs(state, plan *RulesetResourceModel) ([]cloudflare.RulesetRule, error) {
-	currentRuleset := state.toRuleset()
-	plannedRuleset := plan.toRuleset()
+func remapPreservedRuleIDs(ctx context.Context, state, plan *RulesetResourceModel) ([]cloudflare.RulesetRule, error) {
+	currentRuleset := state.toRuleset(ctx)
+	plannedRuleset := plan.toRuleset(ctx)
 
 	ids, err := newRuleIDs(currentRuleset.Rules)
 	if err != nil {

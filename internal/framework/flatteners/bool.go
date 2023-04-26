@@ -21,6 +21,8 @@ import (
 //	} else {
 //	    requestPayload.Enabled = types.BoolNull()
 //	}
+//
+// nolint: contextcheck
 func Bool(in *bool) basetypes.BoolValue {
 	if reflect.ValueOf(in).IsNil() {
 		return types.BoolNull()

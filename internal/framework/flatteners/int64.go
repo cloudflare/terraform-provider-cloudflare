@@ -17,6 +17,8 @@ import (
 //	}
 //
 // Not recommended if you care about returning an empty string for the state.
+//
+// nolint: contextcheck
 func Int64(in int64) basetypes.Int64Value {
 	if in == 0 {
 		return types.Int64Null()
