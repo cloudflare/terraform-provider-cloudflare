@@ -64,11 +64,11 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 				},
 			},
 			"bot_fight_mode": schema.BoolAttribute{
-				MarkdownDescription: "If bot_fight_mode is set to true, Cloudflare issues computationally expensive challenges in response to malicious bots (ENT only).",
+				MarkdownDescription: "If bot_fight_mode is set to true, Cloudflare issues computationally expensive challenges in response to malicious bots (Enterprise only).",
 				Optional:            true,
 			},
 			"offlabel": schema.BoolAttribute{
-				MarkdownDescription: "Do not show any Cloudflare branding on the widget (ENT only).",
+				MarkdownDescription: "Do not show any Cloudflare branding on the widget (Enterprise only).",
 				Optional:            true,
 				Computed:            true,
 				Default:             booldefault.StaticBool(false),
