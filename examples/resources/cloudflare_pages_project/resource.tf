@@ -51,7 +51,7 @@ resource "cloudflare_pages_project" "deployment_configs" {
         ENVIRONMENT = "preview"
       }
       secrets = {
-        TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
+        TURNSTILE_SECRET = var.turnstile_secret
       }
       kv_namespaces = {
         KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
@@ -74,8 +74,8 @@ resource "cloudflare_pages_project" "deployment_configs" {
         OTHER_VALUE = "other value"
       }
       secrets = {
-        TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
-        TURNSTILE_INVIS_SECRET = "2x0000000000000000000000000000000AA"
+        TURNSTILE_SECRET = var.turnstile_secret
+        TURNSTILE_INVIS_SECRET = var.turnstile_invisible_secret
       }
       kv_namespaces = {
         KV_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
