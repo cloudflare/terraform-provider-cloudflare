@@ -665,6 +665,19 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 					}},
 				}}
 			}
+
+			if len(ruleResponse.ActionParameters.Algorithms) > 0 {
+				var algos []*ActionParametersCompressionAlgorithmModel = nil
+
+				for _, algo := range ruleResponse.ActionParameters.Algorithms {
+					newAlgo := ActionParametersCompressionAlgorithmModel{
+						Name: algo.Name,
+					}
+					algos = append(algos, &newAlgo)
+				}
+
+				rule.ActionParameters[0].Algorithms = algos
+			}
 		}
 
 		// ratelimit
@@ -1236,6 +1249,15 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 		if len(apResponseFields) > 0 {
 			for _, request := range apResponseFields {
 				rr.ActionParameters.ResponseFields = append(rr.ActionParameters.ResponseFields, cloudflare.RulesetActionParametersLogCustomField{Name: request})
+			}
+		}
+
+		if len(ap.Algorithms) > 0 {
+			for _, algo := range ap.Algorithms {
+				newAlgo := cloudflare.RulesetRuleActionParametersCompressionAlgorithm{
+					Name: algo.Name,
+				}
+				rr.ActionParameters.Algorithms = append(rr.ActionParameters.Algorithms, newAlgo)
 			}
 		}
 	}
