@@ -121,6 +121,9 @@ resource "cloudflare_logpush_job" "example_job" {
 - `frequency` (String) A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. Available values: `high`, `low`. Defaults to `high`.
 - `kind` (String) The kind of logpush job to create. Available values: `edge`, `instant-logs`, `""`.
 - `logpull_options` (String) Configuration string for the Logshare API. It specifies things like requested fields and timestamp formats. See [Logpush options documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#options).
+- `max_upload_bytes` (Number) The maximum uncompressed file size of a batch of logs. Value must be between 5MB and 1GB.
+- `max_upload_interval_seconds` (Number) The maximum interval in seconds for log batches. Value must be between 30 and 300.
+- `max_upload_records` (Number) The maximum number of log lines per batch. Value must be between 1000 and 1,000,000.
 - `name` (String) The name of the logpush job to create.
 - `ownership_challenge` (String) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage, Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
 - `zone_id` (String) The zone identifier to target for the resource. Must provide only one of `account_id`, `zone_id`.
