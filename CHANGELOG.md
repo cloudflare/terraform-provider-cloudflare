@@ -1,8 +1,16 @@
 ## 4.5.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: Fix schema for logpush job `dataset` field ([#2397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2397))
+
 BUG FIXES:
 
 * resource/cloudflare_ruleset: ensure custom cache keys using query parameters are defined as known values for state handling ([#2388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2388))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.9.0 to 0.10.0 ([#2395](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2395))
 
 ## 4.4.0 (19th April, 2023)
 

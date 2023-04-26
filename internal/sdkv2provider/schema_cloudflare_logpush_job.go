@@ -58,7 +58,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 				"workers_trace_events",
 			}, false),
 			Description: fmt.Sprintf(
-				"Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included. See [Logpush destination documentation](https://developers.cloudflare.com/logs/reference/logpush-api-configuration#destination). %s",
+				"The kind of the dataset to use with the logpush job. %s",
 				renderAvailableDocumentationValuesStringSlice([]string{
 					"access_requests",
 					"firewall_events",
