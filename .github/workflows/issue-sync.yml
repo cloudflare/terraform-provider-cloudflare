@@ -25,6 +25,7 @@ jobs:
               echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_ENV
           fi
       - run: go run cmd/sync-github-issue-to-jira/main.go ${{ env.issue_number }}
+        if: ${{ github.event.label.name == 'triage/accepted' || github.event_name == 'workflow_dispatch' }}
         working-directory: ./tools
         env:
           GITHUB_OWNER: cloudflare

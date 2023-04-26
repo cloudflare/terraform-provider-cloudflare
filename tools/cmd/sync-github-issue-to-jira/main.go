@@ -16,6 +16,10 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var (
+	syncedLabel = "workflow/synced"
+)
+
 type serviceOwner struct {
 	manager  string
 	teamName string
@@ -138,6 +142,11 @@ func main() {
 		log.Fatalf("error retrieving issue %s/%s#%d: %s", githubRepositoryOwner, githubRepositoryName, issueNumber, err)
 	}
 
+	if !hasLabel(issue, syncedLabel) {
+		log.Printf("issue is already marked as synced (%s), skipping", syncedLabel)
+		os.Exit(0)
+	}
+
 	if !hasLabel(issue, acceptedLabel) {
 		log.Printf("issue is not marked as ready for syncing using %s, skipping", acceptedLabel)
 		os.Exit(0)
@@ -154,7 +163,7 @@ func main() {
 	newIssue := InternalIssue{Fields: IssueFields{
 		Project:     IssueKey{Key: "CUSTESC"},
 		Summary:     *issue.Title,
-		Description: jirafyBodyMarkdown(*issue.Body),
+		Description: jirafyBodyMarkdown(issue),
 		Teams:       []IssueValue{{Value: serviceOwner.teamName}},
 		EngOwner:    IssueName{Name: serviceOwner.manager},
 		SLA:         IssueValue{Value: "Pro / Free"},
@@ -199,6 +208,10 @@ func main() {
 	}
 
 	fmt.Println(fmt.Sprintf("successfully created internal JIRA issue: %s", createdIssue.Key))
+	_, _, err = client.Issues.AddLabelsToIssue(ctx, githubRepositoryOwner, githubRepositoryName, issueNumber, []string{syncedLabel})
+	if err != nil {
+		log.Printf("error adding synced label for issue %s/%s#%d: %s", githubRepositoryOwner, githubRepositoryName, issueNumber, err)
+	}
 
 	os.Exit(0)
 }
@@ -225,11 +238,14 @@ func getOwnershipLabel(issue *github.Issue) string {
 
 // jirafyBodyMarkdown takes GitHub markdown and makes it palatable for JIRA
 // with reasonable formatting.
-func jirafyBodyMarkdown(s string) string {
-	s = strings.ReplaceAll(s, "- [X] ", "✅ ")
-	s = strings.ReplaceAll(s, "###", "h3.")
-	s = strings.ReplaceAll(s, "```hcl", "{code}")
-	s = strings.ReplaceAll(s, "```", "{code}")
+func jirafyBodyMarkdown(issue *github.Issue) string {
+	output := "GitHub issue: " + *issue.HTMLURL + "\n\n---\n\n"
 
-	return s
+	output += *issue.Body
+	output = strings.ReplaceAll(output, "- [X] ", "✅ ")
+	output = strings.ReplaceAll(output, "###", "h3.")
+	output = strings.ReplaceAll(output, "```hcl", "{code}")
+	output = strings.ReplaceAll(output, "```", "{code}")
+
+	return output
 }
