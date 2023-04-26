@@ -13,6 +13,7 @@ issues:
     - "Function `toRuleset->toRulesetRule->StringSet` should pass the context parameter"
     - "Function `toRulesetResourceModel` should pass the context parameter"
     - "Function `remapPreservedRuleIDs->toRuleset->toRulesetRule->StringSet` should pass the context parameter"
+    - "Function `buildChallengeWidgetFromModel->StringSet` should pass the context parameter"
 
 linters:
   disable-all: true
