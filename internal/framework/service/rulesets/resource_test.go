@@ -2011,6 +2011,36 @@ func TestAccCloudflareRuleset_ConfigConflictingCacheByDevice(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsExclude(rnd, zoneID),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringIncludeKeys(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsInclude(rnd, zoneID),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
@@ -3723,6 +3753,72 @@ func testAccCloudflareRulesetConfigConflictingCacheByDeviceConfigs(rnd, zoneID s
 		enabled     = true
 	  }
   }`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsExclude(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "cache_settings_example" {
+		zone_id     = "%[2]s"
+    name        = "%[1]s"
+		description = "set cache settings for the request"
+		kind        = "zone"
+		phase       = "http_request_cache_settings"
+		rules {
+		  action      = "set_cache_settings"
+		  description = "example"
+		  enabled     = true
+		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
+		  action_parameters {
+			cache = true
+			edge_ttl {
+			  mode    = "override_origin"
+			  default = 7200
+			}
+			cache_key {
+			  ignore_query_strings_order = true
+			  custom_key {
+				query_string {
+				  exclude = ["example"]
+				}
+			  }
+			}
+		  }
+		}
+	  }
+	`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsInclude(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "cache_settings_example" {
+		zone_id     = "%[2]s"
+    name        = "%[1]s"
+		description = "set cache settings for the request"
+		kind        = "zone"
+		phase       = "http_request_cache_settings"
+		rules {
+		  action      = "set_cache_settings"
+		  description = "example"
+		  enabled     = true
+		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
+		  action_parameters {
+			cache = true
+			edge_ttl {
+			  mode    = "override_origin"
+			  default = 7200
+			}
+			cache_key {
+			  ignore_query_strings_order = true
+			  custom_key {
+				query_string {
+				  include = ["another_example"]
+				}
+			  }
+			}
+		  }
+		}
+	  }
+	`, rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetDestroy(s *terraform.State) error {
