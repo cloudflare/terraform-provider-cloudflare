@@ -2,6 +2,7 @@
 
 FEATURES:
 
+* **New Resource:** `cloudflare_regional_hostname` ([#2396](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2396))
 * **New Resource:** `cloudflare_turnstile_widget` ([#2380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2380))
 
 ENHANCEMENTS:
