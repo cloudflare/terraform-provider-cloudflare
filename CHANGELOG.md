@@ -1,5 +1,9 @@
 ## 4.5.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_turnstile_widget` ([#2380](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2380))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_logpush_job: Fix schema for logpush job `dataset` field ([#2397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2397))
