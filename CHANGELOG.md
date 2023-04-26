@@ -10,6 +10,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.65.0 to 0.66.0 ([#2398](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2398))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.9.0 to 0.10.0 ([#2395](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2395))
 
 ## 4.4.0 (19th April, 2023)
