@@ -8,6 +8,8 @@ ENHANCEMENTS:
 
 * resource/cloudflare_logpush_job: Fix schema for logpush job `dataset` field ([#2397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2397))
 * resource/cloudflare_logpush_job: add max upload parameters ([#2394](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2394))
+* resource/cloudflare_ruleset: add support for the `compress_response` action ([#2372](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2372))
+* resource/cloudflare_ruleset: add support for the `http_response_compression` phase ([#2372](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2372))
 
 BUG FIXES:
 
