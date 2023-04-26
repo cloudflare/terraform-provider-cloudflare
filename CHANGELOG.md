@@ -7,6 +7,7 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_logpush_job: Fix schema for logpush job `dataset` field ([#2397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2397))
+* resource/cloudflare_logpush_job: add max upload parameters ([#2394](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2394))
 
 BUG FIXES:
 
