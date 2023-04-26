@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareRegionalHostName(t *testing.T) {
+func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_regional_hostname." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
