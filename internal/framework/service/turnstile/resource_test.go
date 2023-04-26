@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareTurnstileWidgetBasic(t *testing.T) {
+func TestAccCloudflareTurnstileWidget_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_turnstile_widget." + rnd
