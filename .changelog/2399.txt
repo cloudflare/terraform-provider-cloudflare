@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_pages_project: added secrets to Pages project. Secrets are encrypted environment variables, ideal for secrets such as API tokens. See documentation here: https://developers.cloudflare.com/pages/platform/functions/bindings/#secrets
+```
