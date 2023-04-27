@@ -281,9 +281,9 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.ENVIRONMENT", "production"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.OTHER_VALUE", "other value"),
 
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.secrets.%", "1"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.secrets.TURNSTILE_SECRET", "1x0000000000000000000000000000000AA"),
-					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.secrets.TURNSTILE_INVIS_SECRET", "2x0000000000000000000000000000000AA"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secrets.%", "2"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secrets.TURNSTILE_SECRET", "1x0000000000000000000000000000000AA"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secrets.TURNSTILE_INVIS_SECRET", "2x0000000000000000000000000000000AA"),
 
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.kv_namespaces.%", "2"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.kv_namespaces.KV_BINDING_1", "5eb63bbbe01eeed093cb22bb8f5acdc3"),
