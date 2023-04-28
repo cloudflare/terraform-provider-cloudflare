@@ -252,6 +252,23 @@ func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigRandomSteeringUpdate(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// explicitly verify that random_steering has been set
+					resource.TestCheckResourceAttr(name, "random_steering.#", "1"),                     // random_steering appears once
+					resource.TestCheckResourceAttr(name, "random_steering.0.pool_weights.%", "1"),      // one pool configured
+					resource.TestCheckTypeSetElemAttr(name, "random_steering.0.pool_weights.*", "0.4"), // pool weight of 0.4
+					resource.TestCheckResourceAttr(name, "random_steering.0.default_weight", "0.8"),    // default weight of 0.8
+					// dont check that other specified values are set, this will be evident by lack
+					// of plan diff some values will get empty values
+					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -644,6 +661,22 @@ resource "cloudflare_load_balancer" "%[3]s" {
       "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.3
     }
     default_weight = 0.9
+  }
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigRandomSteeringUpdate(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-random-steering-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  random_steering {
+    pool_weights = {
+      "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.4
+    }
+    default_weight = 0.8
   }
 }`, zoneID, zone, id)
 }
