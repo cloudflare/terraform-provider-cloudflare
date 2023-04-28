@@ -15,6 +15,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_pages_project: fixes pages project acceptance test ([#2402](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2402))
 * resource/cloudflare_ruleset: ensure custom cache keys using query parameters are defined as known values for state handling ([#2388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2388))
 
 DEPENDENCIES:
