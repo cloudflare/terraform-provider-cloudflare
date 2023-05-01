@@ -174,7 +174,7 @@ Optional:
 - `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
-- `secrets` (Map of String) Encrypted environment variables for Pages Functions.
+- `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--preview--service_binding))
 - `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
 
@@ -206,7 +206,7 @@ Optional:
 - `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
-- `secrets` (Map of String) Encrypted environment variables for Pages Functions.
+- `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--production--service_binding))
 - `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
 
