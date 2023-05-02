@@ -57,7 +57,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 				"network_analytics_logs",
 				"workers_trace_events",
 				"device_posture_results",
-				"zero_trust_network_sessions"
+				"zero_trust_network_sessions",
 			}, false),
 			Description: fmt.Sprintf(
 				"The kind of the dataset to use with the logpush job. %s",
@@ -75,7 +75,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 					"network_analytics_logs",
 					"workers_trace_events",
 					"device_posture_results",
-					"zero_trust_network_sessions"
+					"zero_trust_network_sessions",
 				}),
 			),
 		},
