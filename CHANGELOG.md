@@ -7,14 +7,17 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_device_posture_rule: Add support for `sentinelone` type. ([#2279](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2279))
 * resource/cloudflare_logpush_job: Fix schema for logpush job `dataset` field ([#2397](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2397))
 * resource/cloudflare_logpush_job: add max upload parameters ([#2394](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2394))
+* resource/cloudflare_logpush_job: add support for `device_posture_results` and `zero_trust_network_sessions`. ([#2405](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2405))
 * resource/cloudflare_pages_project: added secrets to Pages project. Secrets are encrypted environment variables, ideal for secrets such as API tokens. See documentation here: https://developers.cloudflare.com/pages/platform/functions/bindings/#secrets ([#2399](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2399))
 * resource/cloudflare_ruleset: add support for the `compress_response` action ([#2372](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2372))
 * resource/cloudflare_ruleset: add support for the `http_response_compression` phase ([#2372](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2372))
 
 BUG FIXES:
 
+* resource/cloudflare_load_balancer: fixes random_steering being unset on value updates ([#2403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2403))
 * resource/cloudflare_pages_project: fixes pages project acceptance test ([#2402](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2402))
 * resource/cloudflare_ruleset: ensure custom cache keys using query parameters are defined as known values for state handling ([#2388](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2388))
 

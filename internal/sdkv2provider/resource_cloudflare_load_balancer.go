@@ -807,7 +807,7 @@ func expandRandomSteering(set interface{}) *cloudflare.RandomSteering {
 	var cfRandomSteering cloudflare.RandomSteering
 
 	if l := set.(*schema.Set).List(); len(l) > 0 {
-		for k, v := range l[0].(map[string]interface{}) {
+		for k, v := range l[len(l)-1].(map[string]interface{}) {
 			switch k {
 			case "pool_weights":
 				poolWeights := make(map[string]float64)
