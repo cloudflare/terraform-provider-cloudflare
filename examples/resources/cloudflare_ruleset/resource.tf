@@ -399,7 +399,7 @@ resource "cloudflare_ruleset" "response_compress_brotli_html" {
         name = "brotli"
       }
       algorithms {
-        name = "default"
+        name = "auto"
       }
     }
     expression  = "http.response.content_type.media_type == \"text/html\""

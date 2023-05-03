@@ -305,9 +305,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 											Attributes: map[string]schema.Attribute{
 												"name": schema.StringAttribute{
 													Required:            true,
-													MarkdownDescription: fmt.Sprintf("Name of the compression algorithm to use. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"gzip", "brotli", "default", "none"})),
+													MarkdownDescription: fmt.Sprintf("Name of the compression algorithm to use. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"gzip", "brotli", "auto", "default", "none"})),
 													Validators: []validator.String{
-														stringvalidator.OneOf("gzip", "brotli", "default", "none"),
+														stringvalidator.OneOf("gzip", "brotli", "auto", "default", "none"),
 													},
 												},
 											},
