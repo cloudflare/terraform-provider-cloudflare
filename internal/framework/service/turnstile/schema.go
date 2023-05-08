@@ -19,7 +19,7 @@ import (
 func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
-		The [Challenge Widget](https://developers.cloudflare.com/turnstile/) resource allows you to manage Cloudflare Turnstile Widgets.
+		The [Turnstile Widget](https://developers.cloudflare.com/turnstile/) resource allows you to manage Cloudflare Turnstile Widgets.
 `),
 
 		Attributes: map[string]schema.Attribute{
@@ -51,13 +51,14 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 			},
 			"mode": schema.StringAttribute{
 				MarkdownDescription: "Widget Mode",
-				Optional:            true,
+				Required:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("non-interactive", "invisible", "managed"),
 				},
 			},
 			"region": schema.StringAttribute{
 				MarkdownDescription: "Region where this widget can be used.",
+				Computed:            true,
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("world"),
@@ -65,6 +66,7 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 			},
 			"bot_fight_mode": schema.BoolAttribute{
 				MarkdownDescription: "If bot_fight_mode is set to true, Cloudflare issues computationally expensive challenges in response to malicious bots (Enterprise only).",
+				Computed:            true,
 				Optional:            true,
 			},
 			"offlabel": schema.BoolAttribute{

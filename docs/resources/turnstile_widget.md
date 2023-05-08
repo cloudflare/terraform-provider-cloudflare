@@ -2,12 +2,12 @@
 page_title: "cloudflare_turnstile_widget Resource - Cloudflare"
 subcategory: ""
 description: |-
-  The Challenge Widget https://developers.cloudflare.com/turnstile/ resource allows you to manage Cloudflare Turnstile Widgets.
+  The Turnstile Widget https://developers.cloudflare.com/turnstile/ resource allows you to manage Cloudflare Turnstile Widgets.
 ---
 
 # cloudflare_turnstile_widget (Resource)
 
-The [Challenge Widget](https://developers.cloudflare.com/turnstile/) resource allows you to manage Cloudflare Turnstile Widgets.
+The [Turnstile Widget](https://developers.cloudflare.com/turnstile/) resource allows you to manage Cloudflare Turnstile Widgets.
 
 ## Example Usage
 
@@ -28,13 +28,13 @@ resource "cloudflare_turnstile_widget" "example" {
 
 - `account_id` (String) The account identifier to target for the resource.
 - `domains` (Set of String) Domains where the widget is deployed
+- `mode` (String) Widget Mode
 - `name` (String) Human readable widget name.
 
 ### Optional
 
 - `bot_fight_mode` (Boolean) If bot_fight_mode is set to true, Cloudflare issues computationally expensive challenges in response to malicious bots (Enterprise only).
 - `id` (String) The identifier of this resource. This is the site key value.
-- `mode` (String) Widget Mode
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (Enterprise only).
 - `region` (String) Region where this widget can be used.
 
@@ -42,4 +42,10 @@ resource "cloudflare_turnstile_widget" "example" {
 
 - `secret` (String, Sensitive) Secret key for this widget.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_turnstile_widget.example <account_id>/<site_key>
+```

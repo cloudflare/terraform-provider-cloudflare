@@ -118,6 +118,7 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 	widget := buildChallengeWidgetFromModel(ctx, data)
 
 	updatedWidget, err := r.client.UpdateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateTurnstileWidgetParams{
+		SiteKey:      widget.SiteKey,
 		OffLabel:     widget.OffLabel,
 		Name:         widget.Name,
 		Domains:      widget.Domains,
