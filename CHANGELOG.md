@@ -1,5 +1,10 @@
 ## 4.6.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_ruleset: allow using `0` as an edge TTL value without conflicting with Go types for zeros ([#2415](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2415))
+* resource/cloudflare_turnstile_widget: align schema to match what is returned by the API and fix updating the widget ([#2413](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2413))
+
 ## 4.5.0 (3rd May, 2023)
 
 FEATURES:

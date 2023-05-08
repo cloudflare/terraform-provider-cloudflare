@@ -574,9 +574,17 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 							From: flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeRange.From))),
 						})
 					}
+
+					var sctValue basetypes.Int64Value
+					if sct.Value != nil {
+						sctValue = types.Int64Value(int64(cloudflare.Int(sct.Value)))
+					} else {
+						sctValue = types.Int64Null()
+					}
+
 					statusCodeTTLs = append(statusCodeTTLs, &ActionParameterEdgeTTLStatusCodeTTLModel{
 						StatusCode:      flatteners.Int64(int64(cloudflare.Uint(sct.StatusCodeValue))),
-						Value:           flatteners.Int64(int64(cloudflare.Int(sct.Value))),
+						Value:           sctValue,
 						StatusCodeRange: sctrange,
 					})
 				}

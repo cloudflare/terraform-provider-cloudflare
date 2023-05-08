@@ -142,7 +142,7 @@ func main() {
 		log.Fatalf("error retrieving issue %s/%s#%d: %s", githubRepositoryOwner, githubRepositoryName, issueNumber, err)
 	}
 
-	if !hasLabel(issue, syncedLabel) {
+	if hasLabel(issue, syncedLabel) {
 		log.Printf("issue is already marked as synced (%s), skipping", syncedLabel)
 		os.Exit(0)
 	}
