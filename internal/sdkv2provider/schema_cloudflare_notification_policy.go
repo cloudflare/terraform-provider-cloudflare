@@ -267,7 +267,7 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: "Target domain to alert on.",
 				},
-				"target_host": {
+				"target_host_name": {
 					Type: schema.TypeSet,
 					Elem: &schema.Schema{
 						Type: schema.TypeString,
