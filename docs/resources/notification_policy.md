@@ -119,7 +119,7 @@ Optional:
 - `services` (Set of String)
 - `slo` (Set of String) A numerical limit. Example: `99.9`.
 - `status` (Set of String) Status to alert on.
-- `target_host_name` (Set of String) Target host to alert on for dos.
+- `target_hostname` (Set of String) Target host to alert on for dos.
 - `target_zone_name` (Set of String) Target domain to alert on.
 - `zones` (Set of String) A list of zone identifiers.
 
