@@ -50,7 +50,7 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 				ElementType:         types.StringType,
 			},
 			"mode": schema.StringAttribute{
-				MarkdownDescription: "Widget Mode",
+				MarkdownDescription: "Widget Mode. Valid values: `\"non-interactive\"`, `\"invisible\"`, or `\"managed\"`.",
 				Required:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("non-interactive", "invisible", "managed"),
