@@ -5,6 +5,10 @@ BUG FIXES:
 * resource/cloudflare_ruleset: allow using `0` as an edge TTL value without conflicting with Go types for zeros ([#2415](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2415))
 * resource/cloudflare_turnstile_widget: align schema to match what is returned by the API and fix updating the widget ([#2413](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2413))
 
+DEPENDENCIES:
+
+* provider: bumps golang.org/x/net from 0.9.0 to 0.10.0 ([#2421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2421))
+
 ## 4.5.0 (3rd May, 2023)
 
 FEATURES:

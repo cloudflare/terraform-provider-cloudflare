@@ -2,11 +2,13 @@ package turnstile
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -50,7 +52,7 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 				ElementType:         types.StringType,
 			},
 			"mode": schema.StringAttribute{
-				MarkdownDescription: "Widget Mode",
+				MarkdownDescription: fmt.Sprintf("Widget Mode. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"non-interactive", "invisible", "managed"})),
 				Required:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("non-interactive", "invisible", "managed"),

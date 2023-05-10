@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
-	t.Skip("Skipping global AOP pending investigation into correct test setup for reproducibility")
+	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility..")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -32,7 +32,7 @@ func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
-	t.Skip("Skipping zone level AOP pending investigation into correct test setup for reproducibility")
+	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -53,7 +53,7 @@ func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsPerHostname(t *testing.T) {
-	t.Skip("Skipping hostname level AOP pending investigation into correct test setup for reproducibility")
+	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
