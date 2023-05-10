@@ -28,7 +28,7 @@ resource "cloudflare_turnstile_widget" "example" {
 
 - `account_id` (String) The account identifier to target for the resource.
 - `domains` (Set of String) Domains where the widget is deployed
-- `mode` (String) Widget Mode
+- `mode` (String) Widget Mode. Available values: `non-interactive`, `invisible`, `managed`
 - `name` (String) Human readable widget name.
 
 ### Optional
