@@ -195,19 +195,7 @@ func generateRandomResourceName() string {
 // This will allow those who intentionally want to run the test to do so while
 // keeping CI sane.
 func skipMagicTransitTestForNonConfiguredDefaultZone(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
-		t.Skipf("Skipping acceptance test as %s is not configured for Magic Transit", testAccCloudflareZoneID)
-	}
-}
-
-// skipV1WAFTestForNonConfiguredDefaultZone ignores the V1 WAF test assertions
-// as the versions are mutually exclusive and the default zone ID uses V2 WAF.
-// This will allow those who intentionally want to run the test to do so while
-// keeping CI sane.
-func skipV1WAFTestForNonConfiguredDefaultZone(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
-		t.Skipf("Skipping acceptance test as %s is using WAF v2 and cannot assert v1 resource configurations", testAccCloudflareZoneID)
-	}
+	skipForDefaultZone(t, "Default account is not configured for Magic Transit.")
 }
 
 // skipPagesProjectForNonConfiguredDefaultAccount ignores the pages project tests
@@ -215,8 +203,18 @@ func skipV1WAFTestForNonConfiguredDefaultZone(t *testing.T) {
 // default account. This will allow those who intentionally want to run the test
 // to do so while keeping CI sane.
 func skipPagesProjectForNonConfiguredDefaultAccount(t *testing.T) {
+	skipForDefaultAccount(t, "Pages project that isn't setup for CI.")
+}
+
+func skipForDefaultZone(t *testing.T, reason string) {
+	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
+		t.Skipf("Skipping acceptance test for default zone (%s). %s", testAccCloudflareZoneID, reason)
+	}
+}
+
+func skipForDefaultAccount(t *testing.T, reason string) {
 	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
-		t.Skipf("Skipping acceptance test as %s is using pages project that isn't setup for CI", testAccCloudflareAccountID)
+		t.Skipf("Skipping acceptance test for default account (%s). %s", testAccCloudflareAccountID, reason)
 	}
 }
 
