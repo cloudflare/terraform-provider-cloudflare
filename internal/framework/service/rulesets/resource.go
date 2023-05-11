@@ -665,13 +665,18 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 
 			if ruleResponse.ActionParameters.FromValue != nil {
 				rule.ActionParameters[0].FromValue = []*ActionParameterFromValueModel{{
-					StatusCode:          flatteners.Int64(int64(ruleResponse.ActionParameters.FromValue.StatusCode)),
-					PreserveQueryString: flatteners.Bool(&ruleResponse.ActionParameters.FromValue.PreserveQueryString),
+					StatusCode: flatteners.Int64(int64(ruleResponse.ActionParameters.FromValue.StatusCode)),
 					TargetURL: []*ActionParameterFromValueTargetURLModel{{
 						Value:      flatteners.String(ruleResponse.ActionParameters.FromValue.TargetURL.Value),
 						Expression: flatteners.String(ruleResponse.ActionParameters.FromValue.TargetURL.Expression),
 					}},
 				}}
+
+				if !reflect.ValueOf(ruleResponse.ActionParameters.FromValue.PreserveQueryString).IsNil() {
+					rule.ActionParameters[0].FromValue[0].PreserveQueryString = flatteners.Bool(ruleResponse.ActionParameters.FromValue.PreserveQueryString)
+				} else {
+					rule.ActionParameters[0].FromValue[0].PreserveQueryString = types.BoolNull()
+				}
 			}
 
 			if len(ruleResponse.ActionParameters.Algorithms) > 0 {
@@ -1230,7 +1235,7 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 			}
 
 			if !ap.FromValue[0].PreserveQueryString.IsNull() {
-				from.PreserveQueryString = ap.FromValue[0].PreserveQueryString.ValueBool()
+				from.PreserveQueryString = cloudflare.BoolPtr(ap.FromValue[0].PreserveQueryString.ValueBool())
 			}
 
 			from.TargetURL.Expression = ap.FromValue[0].TargetURL[0].Expression.ValueString()
