@@ -8,6 +8,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.66.0 to 0.67.0 ([#2429](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2429))
 * provider: bumps golang.org/x/net from 0.9.0 to 0.10.0 ([#2421](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2421))
 
 ## 4.5.0 (3rd May, 2023)
