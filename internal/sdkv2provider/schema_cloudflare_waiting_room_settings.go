@@ -16,7 +16,7 @@ func resourceCloudflareWaitingRoomSettingsSchema() map[string]*schema.Schema {
 		},
 
 		"search_engine_crawler_bypass": {
-			Description: "Whether to allow verified search engine crawlers to bypass all waiting rooms on this zone",
+			Description: "Whether to allow verified search engine crawlers to bypass all waiting rooms on this zone.",
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Default:     false,

@@ -27,24 +27,15 @@ resource "cloudflare_waiting_room_settings" "example" {
 ### Optional
 
 - `search_engine_crawler_bypass` (Boolean) Whether to allow verified search engine crawlers to bypass all waiting rooms on this zone. Defaults to `false`.
-- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-<a id="nestedblock--timeouts"></a>
-### Nested Schema for `timeouts`
-
-Optional:
-
-- `create` (String)
-- `update` (String)
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_waiting_room_settings.default <zone_id>
+$ terraform import cloudflare_waiting_room_settings.example <zone_id>
 ```

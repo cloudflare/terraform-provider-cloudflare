@@ -1,1 +1,1 @@
-$ terraform import cloudflare_waiting_room_settings.default <zone_id>
+$ terraform import cloudflare_waiting_room_settings.example <zone_id>
