@@ -71,7 +71,7 @@ func resourceCloudflareEmailRoutingRuleSchema() map[string]*schema.Schema {
 						Description:  "Type of supported action.",
 						Type:         schema.TypeString,
 						Required:     true,
-						ValidateFunc: validation.StringInSlice([]string{"forward", "worker"}, true),
+						ValidateFunc: validation.StringInSlice([]string{"forward", "worker", "drop"}, true),
 					},
 					"value": {
 						Description: "An array with items in the following form.",
