@@ -252,6 +252,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_user_agent_blocking_rule":               resourceCloudflareUserAgentBlockingRules(),
 				"cloudflare_waiting_room_event":                     resourceCloudflareWaitingRoomEvent(),
 				"cloudflare_waiting_room_rules":                     resourceCloudflareWaitingRoomRules(),
+				"cloudflare_waiting_room_settings":                  resourceCloudflareWaitingRoomSettings(),
 				"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
 				"cloudflare_web3_hostname":                          resourceCloudflareWeb3Hostname(),
 				"cloudflare_worker_cron_trigger":                    resourceCloudflareWorkerCronTrigger(),
