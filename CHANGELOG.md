@@ -1,5 +1,9 @@
 ## 4.6.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `auto` compression in the `compress_response` action ([#2409](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2409))
+
 BUG FIXES:
 
 * resource/cloudflare_notification_policy: Fix unexpected crashes when setting target_hostname with a filters attribute ([#2425](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2425))
