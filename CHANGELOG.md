@@ -3,6 +3,7 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_ruleset: add support for `auto` compression in the `compress_response` action ([#2409](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2409))
+* resource/cloudflare_waiting_room_settings: add support for waiting room zone-level settings. ([#2419](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2419))
 
 BUG FIXES:
 
