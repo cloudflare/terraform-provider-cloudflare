@@ -28,3 +28,5 @@ jobs:
             For maintainers to triage this issue, we recommend providing a minimal reproduction test case that is only contains the impacted resources and can be easily reproduced in an isolated environment. Without providing this, maintainers are limited in what support they can provide.
       - name: Label issue as needs information
         run: gh issue edit ${{ github.event.inputs.issue_number }} --add-label "triage/needs-information"
+        env:
+          GH_TOKEN: ${{ github.token }}
