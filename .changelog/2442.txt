@@ -1,0 +1,4 @@
+```release-note:note
+resource/cloudflare_filter: This resource is being deprecated in favor of the cloudflare_rulesets resource
+resource/cloudflare_firewall_rule: This resource is being deprecated in favor of the cloudflare_rulesets resource
+```
