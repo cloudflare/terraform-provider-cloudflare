@@ -118,7 +118,7 @@ func resourceCloudflareAccountDelete(ctx context.Context, d *schema.ResourceData
 	err := client.DeleteAccount(ctx, accountID)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Account: %w", err))
+		return diag.FromErr(fmt.Errorf("error deleting Cloudflare Account %q: %w", accountID, err))
 	}
 
 	return nil
