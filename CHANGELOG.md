@@ -1,4 +1,6 @@
-## 4.6.0 (Unreleased)
+## 4.7.0 (Unreleased)
+
+## 4.6.0 (17th May, 2023)
 
 ENHANCEMENTS:
 
