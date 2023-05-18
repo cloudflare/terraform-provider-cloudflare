@@ -1,5 +1,10 @@
 ## 4.7.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_filter: This resource is being deprecated in favor of the `cloudflare_rulesets` resource. See https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users for more details. ([#2442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2442))
+* resource/cloudflare_firewall_rule: This resource is being deprecated in favor of the `cloudflare_rulesets` resource. See https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users for more details. ([#2442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2442))
+
 BUG FIXES:
 
 * resource/cloudflare_logpush_job: Properly set dataset field when importing logpush jobs ([#2444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2444))
