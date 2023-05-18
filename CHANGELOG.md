@@ -1,5 +1,9 @@
 ## 4.7.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_logpush_job: Properly set dataset field when importing logpush jobs ([#2444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2444))
+
 ## 4.6.0 (17th May, 2023)
 
 ENHANCEMENTS:
