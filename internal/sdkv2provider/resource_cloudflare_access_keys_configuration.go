@@ -93,7 +93,7 @@ func resourceCloudflareKeysConfigurationImport(ctx context.Context, d *schema.Re
 	d.Set(consts.AccountIDSchemaKey, accountID)
 
 	if err := resourceCloudflareAccessKeysConfigurationRead(ctx, d, meta); err != nil {
-		return nil, fmt.Errorf("diagnostic error occurred: %v", err)
+		return nil, errors.New(err[0].Summary)
 	}
 
 	return []*schema.ResourceData{d}, nil
