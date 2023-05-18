@@ -14,6 +14,10 @@ BUG FIXES:
 * resource/cloudflare_logpush_job: Properly set dataset field when importing logpush jobs ([#2444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2444))
 * resource/cloudflare_workers_kv: Fix import to properly parse the id ([#2434](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2434))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/stretchr/testify from 1.8.2 to 1.8.3 ([#2457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2457))
+
 ## 4.6.0 (17th May, 2023)
 
 ENHANCEMENTS:
