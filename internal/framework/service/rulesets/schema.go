@@ -459,14 +459,17 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"mode": schema.StringAttribute{
-													Optional:            true,
+													Required:            true,
+													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin")},
 													MarkdownDescription: "Mode of the edge TTL.",
 												},
 												"default": schema.Int64Attribute{
 													Optional:            true,
+													Validators:          []validator.Int64{int64validator.AtLeast(1)},
 													MarkdownDescription: "Default edge TTL",
 												},
 											},
+											Validators: []validator.Object{EdgeTTLValidator{}},
 											Blocks: map[string]schema.Block{
 												"status_code_ttl": schema.ListNestedBlock{
 													MarkdownDescription: "Edge TTL for the status codes.",
@@ -518,14 +521,17 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"mode": schema.StringAttribute{
-													Optional:            true,
+													Required:            true,
+													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin")},
 													MarkdownDescription: "Mode of the browser TTL.",
 												},
 												"default": schema.Int64Attribute{
 													Optional:            true,
-													MarkdownDescription: "Default browser TTL.",
+													Validators:          []validator.Int64{int64validator.AtLeast(1)},
+													MarkdownDescription: "Default browser TTL. This value is required when override_origin is set",
 												},
 											},
+											Validators: []validator.Object{BrowserTTLValidator{}},
 										},
 										Validators: []validator.List{
 											listvalidator.SizeAtMost(1),
