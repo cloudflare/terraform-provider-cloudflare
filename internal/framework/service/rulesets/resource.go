@@ -21,9 +21,7 @@ import (
 )
 
 const (
-	accountLevelRulesetDeleteURL = "https://api.cloudflare.com/#account-rulesets-delete-account-ruleset"
-	zoneLevelRulesetDeleteURL    = "https://api.cloudflare.com/#zone-rulesets-delete-zone-ruleset"
-	duplicateRulesetError        = "A similar configuration with rules already exists and overwriting will have unintended consequences. If you are migrating from the Dashboard, you will need to first remove the existing rules otherwise you can remove the existing phase yourself using the API (%s)."
+	duplicateRulesetError = "A similar configuration with rules already exists and overwriting will have unintended consequences. If you are migrating from the Dashboard, you will need to first import the existing rules using cf-terraforming. You can find details about how to do this at https://developers.cloudflare.com/terraform/additional-configurations/ddos-managed-rulesets/#optional-delete-existing-rulesets-to-start-from-scratch"
 )
 
 var _ resource.Resource = &RulesetResource{}
@@ -83,13 +81,9 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	if len(ruleset.Rules) > 0 {
-		deleteRulesetURL := accountLevelRulesetDeleteURL
-		if accountID.ValueString() == "" {
-			deleteRulesetURL = zoneLevelRulesetDeleteURL
-		}
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("failed to create ruleset %q", rulesetPhase),
-			fmt.Sprintf(duplicateRulesetError, deleteRulesetURL),
+			duplicateRulesetError,
 		)
 		return
 	}
