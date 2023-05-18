@@ -143,6 +143,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	d.Set("kind", job.Kind)
 	d.Set("enabled", job.Enabled)
 	d.Set("logpull_options", job.LogpullOptions)
+	d.Set("dataset", job.Dataset)
 	d.Set("destination_conf", job.DestinationConf)
 	d.Set("ownership_challenge", d.Get("ownership_challenge"))
 	d.Set("frequency", job.Frequency)
