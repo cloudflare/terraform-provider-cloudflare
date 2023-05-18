@@ -24,6 +24,10 @@ provider "cloudflare" {
 We highly recommend to review this guide, make necessary changes and move to 2.x branch, as further 1.x releases are
 unlikely to happen.
 
+~> Before attempting to upgrade to version 2, you should first upgrade to the
+   latest version of 1 to ensure any transitional updates are applied to your
+   existing configuration.
+
 Once ready, make the following change to use the latest 2.x release:
 
 ```hcl

@@ -26,6 +26,10 @@ We highly recommend reviewing this guide, make necessary changes and move to
 4.x branch, as further 3.x releases are unlikely to happen outside of critical
 security fixes.
 
+~> Before attempting to upgrade to version 4, you should first upgrade to the
+   latest version of 3 to ensure any transitional updates are applied to your
+   existing configuration.
+
 Once ready, make the following change to use the latest 4.x release:
 
 ```hcl
