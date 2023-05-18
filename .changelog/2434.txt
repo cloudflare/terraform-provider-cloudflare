@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_workers_kv: Fix import to properly parse the id
+```
