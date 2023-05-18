@@ -23,6 +23,8 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_teams_rule.%s", rnd)
 
+	t.Log("[DEBUG] No Cloudflare spectrum applications to sweep")
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -48,11 +50,51 @@ func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv6", "2001:db8::/32"),
 				),
 			},
+			{
+				Config: testAccCloudflareTeamsRuleConfigUpdate(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", "rnd0"),
+					resource.TestCheckResourceAttr(name, "description", "desc"),
+					resource.TestCheckResourceAttr(name, "precedence", "1232"),
+					resource.TestCheckResourceAttr(name, "action", "block"),
+					resource.TestCheckResourceAttr(name, "filters.0", "dns"),
+					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"example.com\")"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "false"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_reason", "cuz"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.insecure_disable_dnssec_validation", "false"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv4", "203.0.113.1"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv6", "2001:db8::/32"),
+				),
+			},
 		},
 	})
 }
 
 func testAccCloudflareTeamsRuleConfigBasic(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_teams_rule" "%[1]s" {
+  name = "%[1]s"
+  account_id = "%[2]s"
+  description = "desc"
+  precedence = 12302
+  action = "block"
+  filters = ["dns"]
+  traffic = "any(dns.domains[*] == \"example.com\")"
+  rule_settings {
+    block_page_enabled = false
+    block_page_reason = "cuz"
+    insecure_disable_dnssec_validation = false
+	egress {
+		ipv4 = "203.0.113.1"
+		ipv6 = "2001:db8::/32"
+	}
+  }
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareTeamsRuleConfigUpdate(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_teams_rule" "%[1]s" {
   name = "%[1]s"
