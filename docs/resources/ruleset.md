@@ -550,10 +550,13 @@ Optional:
 <a id="nestedblock--rules--action_parameters--browser_ttl"></a>
 ### Nested Schema for `rules.action_parameters.browser_ttl`
 
+Required:
+
+- `mode` (String) Mode of the browser TTL.
+
 Optional:
 
-- `default` (Number) Default browser TTL.
-- `mode` (String) Mode of the browser TTL.
+- `default` (Number) Default browser TTL. This value is required when override_origin is set
 
 
 <a id="nestedblock--rules--action_parameters--cache_key"></a>
@@ -628,10 +631,13 @@ Optional:
 <a id="nestedblock--rules--action_parameters--edge_ttl"></a>
 ### Nested Schema for `rules.action_parameters.edge_ttl`
 
+Required:
+
+- `mode` (String) Mode of the edge TTL.
+
 Optional:
 
 - `default` (Number) Default edge TTL
-- `mode` (String) Mode of the edge TTL.
 - `status_code_ttl` (Block List) Edge TTL for the status codes. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl--status_code_ttl))
 
 <a id="nestedblock--rules--action_parameters--edge_ttl--status_code_ttl"></a>
