@@ -147,7 +147,7 @@ Optional:
 
 - `build_command` (String) Command used to build project.
 - `destination_dir` (String) Output directory of the build.
-- `root_dir` (String) Directory to run the command.
+- `root_dir` (String) Your project's root directory, where Cloudflare runs the build command. If your site is not in a subdirectory, leave this path value empty.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String) The auth token for analytics.
 

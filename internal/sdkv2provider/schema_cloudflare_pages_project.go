@@ -21,7 +21,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			},
 			"root_dir": {
 				Type:        schema.TypeString,
-				Description: "Directory to run the command.",
+				Description: "Your project's root directory, where Cloudflare runs the build command. If your site is not in a subdirectory, leave this path value empty.",
 				Optional:    true,
 			},
 			"web_analytics_tag": {
