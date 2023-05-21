@@ -24,7 +24,7 @@ func TestEdgeTTLValidation(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 
-		t.Run("and override_origin mode is specified...", func(t *testing.T) {
+		t.Run("override_origin mode is specified", func(t *testing.T) {
 			t.Parallel()
 
 			t.Run("errors when no ttl is passed", func(t *testing.T) {
@@ -77,7 +77,7 @@ func TestEdgeTTLValidation(t *testing.T) {
 			})
 		})
 
-		t.Run("and respect_origin mode is specified", func(t *testing.T) {
+		t.Run("respect_origin mode is specified", func(t *testing.T) {
 			t.Parallel()
 
 			t.Run("passes with ttl values", func(t *testing.T) {
@@ -106,7 +106,7 @@ func TestBrowserTTLValidation(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 
-		t.Run("and override_origin mode is specified...", func(t *testing.T) {
+		t.Run("override_origin mode is specified", func(t *testing.T) {
 			t.Parallel()
 
 			t.Run("errors when no ttl is passed", func(t *testing.T) {
@@ -159,7 +159,7 @@ func TestBrowserTTLValidation(t *testing.T) {
 			})
 		})
 
-		t.Run("and respect_origin mode is specified", func(t *testing.T) {
+		t.Run("respect_origin mode is specified", func(t *testing.T) {
 			t.Parallel()
 
 			t.Run("passes with ttl values", func(t *testing.T) {
