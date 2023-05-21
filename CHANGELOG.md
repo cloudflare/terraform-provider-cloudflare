@@ -13,6 +13,7 @@ BUG FIXES:
 
 * resource/cloudflare_logpush_job: Properly set dataset field when importing logpush jobs ([#2444](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2444))
 * resource/cloudflare_pages_project: suggest a better default value for root_dir ([#2440](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2440))
+* resource/cloudflare_ruleset: Validation of ttls for action_parameters with edge_ttl or browser_ttl mode of override_origin ([#2454](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2454))
 * resource/cloudflare_workers_kv: Fix import to properly parse the id ([#2434](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2434))
 
 DEPENDENCIES:
