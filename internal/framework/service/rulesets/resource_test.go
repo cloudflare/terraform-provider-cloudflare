@@ -2103,6 +2103,70 @@ func TestAccCloudflareRuleset_ConfigConflictingCacheByDevice(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_CacheSettingsMissingEdgeTTLWithOverrideOrigin(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareRulesetCacheSettingsMissingDefaultEdgeTTLOverrideOrigin(rnd, zoneID),
+				ExpectError: regexp.MustCompile("using mode 'override_origin' requires setting a default for ttl"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsMissingBrowserTTLWithOverrideOrigin(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareRulesetCacheSettingsMissingDefaultBrowserTTLOverrideOrigin(rnd, zoneID),
+				ExpectError: regexp.MustCompile("using mode 'override_origin' requires setting a default for ttl"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsInvalidEdgeTTLWithOverrideOrigin(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareRulesetCacheSettingsInvalidDefaultEdgeTTLOverrideOrigin(rnd, zoneID),
+				ExpectError: regexp.MustCompile("using mode 'override_origin' requires setting a default for ttl"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithOverrideOrigin(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareRulesetCacheSettingsInvalidDefaultBrowserTTLOverrideOrigin(rnd, zoneID),
+				ExpectError: regexp.MustCompile("using mode 'override_origin' requires setting a default for ttl"),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -3524,6 +3588,100 @@ func testAccCloudflareRulesetCacheSettingsOptionalsEmpty(rnd, accountID, zoneID 
 	  enabled = true
     }
   }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsMissingDefaultEdgeTTLOverrideOrigin(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		edge_ttl {
+			mode = "override_origin"
+		}
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsMissingDefaultBrowserTTLOverrideOrigin(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		browser_ttl {
+			mode = "override_origin"
+		}
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsInvalidDefaultEdgeTTLOverrideOrigin(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		edge_ttl {
+			mode = "override_origin"
+			default = -1
+		}
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsInvalidDefaultBrowserTTLOverrideOrigin(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[2]s"
+    name        = "%[1]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		browser_ttl {
+			mode = "override_origin"
+			default = -1
+		}
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsEdgeTTLRespectOrigin(rnd, zoneID string) string {
