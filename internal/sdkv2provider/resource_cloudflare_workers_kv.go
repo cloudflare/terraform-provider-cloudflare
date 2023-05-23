@@ -101,14 +101,15 @@ func resourceCloudflareWorkersKVDelete(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceCloudflareWorkersKVImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	namespaceID, key, err := parseId(d.Id())
-	if err != nil {
-		return nil, err
+	parts := strings.SplitN(d.Id(), "/", -1)
+	if len(parts) != 3 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"accountID/namespaceID/keyName\"", d.Id())
 	}
 
-	d.Set("namespace_id", namespaceID)
-	d.Set("key", key)
-
+	d.Set(consts.AccountIDSchemaKey, parts[0])
+	d.Set("namespace_id", parts[1])
+	d.Set("key", parts[2])
+	d.SetId(fmt.Sprintf("%s/%s", parts[1], parts[2]))
 	resourceCloudflareWorkersKVRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil

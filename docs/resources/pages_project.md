@@ -31,7 +31,7 @@ resource "cloudflare_pages_project" "build_config" {
   build_config {
     build_command       = "npm run build"
     destination_dir     = "build"
-    root_dir            = "/"
+    root_dir            = ""
     web_analytics_tag   = "cee1c73f6e4743d0b5e6bb1a0bcaabcc"
     web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
   }
@@ -68,6 +68,9 @@ resource "cloudflare_pages_project" "deployment_configs" {
       environment_variables = {
         ENVIRONMENT = "preview"
       }
+      secrets = {
+        TURNSTILE_SECRET = var.turnstile_secret
+      }
       kv_namespaces = {
         KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
       }
@@ -87,6 +90,10 @@ resource "cloudflare_pages_project" "deployment_configs" {
       environment_variables = {
         ENVIRONMENT = "production"
         OTHER_VALUE = "other value"
+      }
+      secrets = {
+        TURNSTILE_SECRET = var.turnstile_secret
+        TURNSTILE_INVIS_SECRET = var.turnstile_invisible_secret
       }
       kv_namespaces = {
         KV_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
@@ -140,7 +147,7 @@ Optional:
 
 - `build_command` (String) Command used to build project.
 - `destination_dir` (String) Output directory of the build.
-- `root_dir` (String) Directory to run the command.
+- `root_dir` (String) Your project's root directory, where Cloudflare runs the build command. If your site is not in a subdirectory, leave this path value empty.
 - `web_analytics_tag` (String) The classifying tag for analytics.
 - `web_analytics_token` (String) The auth token for analytics.
 
@@ -167,6 +174,7 @@ Optional:
 - `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
+- `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--preview--service_binding))
 - `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
 
@@ -198,6 +206,7 @@ Optional:
 - `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
+- `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--production--service_binding))
 - `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
 

@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_pages_project: fixes pages project acceptance test
+```

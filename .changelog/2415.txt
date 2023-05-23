@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: allow using `0` as an edge TTL value without conflicting with Go types for zeros
+```

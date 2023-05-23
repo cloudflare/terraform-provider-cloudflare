@@ -43,9 +43,14 @@ body:
     label: Terraform configuration files
     description: |
       No need for code block backticks, this will be rendered as HCL automatically. 
+      
       Avoid using `for` loops, dynamics or data sources in your examples as they 
       do not make for a good reproduction test case and may contain bugs in the 
       expressions used.
+      
+      If you cannot provide your exact configuration due to sensitivity, please
+      provide a minimal reproduction case that demonstrates your issue with the setup
+      you are using.
     placeholder: |
       resource "example_resource" "my_resource" {
         # ..
@@ -65,7 +70,8 @@ body:
       Be sure to redact or sanitise any sensitive information (such as API keys or tokens) in 
       your logs. https://jacobbednarz.com/tf-log-redactor/ is an online tool that will handle
       redacting the sensitive Cloudflare details from your log output for you if you don't want
-      to manually do it.
+      to manually do it. Provider versions newer than v3.32.0 automatically redacts all Cloudflare
+      credentials.
   validations:
     required: true
 - type: textarea

@@ -48,6 +48,17 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 			}
 
 			break
+		case "secrets":
+			variables := value.(map[string]interface{})
+			for i, variable := range variables {
+				envVar := cloudflare.EnvironmentVariable{
+					Value: variable.(string),
+					Type:  cloudflare.SecretText,
+				}
+				deploymentVariables[i] = &envVar
+			}
+
+			break
 		case "kv_namespaces":
 			namespace := cloudflare.NamespaceBindingMap{}
 			variables := value.(map[string]interface{})
@@ -131,6 +142,13 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 		}
 	}
 	config["environment_variables"] = deploymentVars
+
+	deploymentVars = map[string]string{}
+	for key, value := range deployment.EnvVars {
+		if value.Type == cloudflare.SecretText {
+			deploymentVars[key] = value.Value
+		}
+	}
 
 	deploymentVars = map[string]string{}
 	for key, value := range deployment.KvNamespaces {

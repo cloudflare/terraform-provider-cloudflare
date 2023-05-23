@@ -1,0 +1,32 @@
+name: Reproduction test case contains dynamics
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: The issue to target
+        required: true
+        
+jobs:
+  reproduction-contains-dynamics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Add comment to issue about not using dynamic expressions
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.inputs.issue_number }}
+          body: |
+            Thank you for opening this issue and sorry to hear you're hitting issues. Unfortunately, the reproduction case provided contains HCL dynamic expressions. Examples of these are:
+            
+            - [Conditionals](https://developer.hashicorp.com/terraform/language/expressions/conditionals)
+            - [For loops](https://developer.hashicorp.com/terraform/language/expressions/for)
+            - [Dynamic blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks)
+            - [Modules](https://developer.hashicorp.com/terraform/language/modules) and module references
+
+            Maintainers don't accept these as reproduction cases since using these constructs and expressions can hold their own logic bugs which are outside of the provider and not able to be diagnosed.
+
+            For maintainers to triage this issue, we recommend providing a minimal reproduction test case that is only contains the impacted resources and can be easily reproduced in an isolated environment. Without providing this, maintainers are limited in what support they can provide.
+      - name: Label issue as needs information
+        run: gh issue edit ${{ github.event.inputs.issue_number }} --add-label "triage/needs-information"
+        env:
+          GH_TOKEN: ${{ github.token }}

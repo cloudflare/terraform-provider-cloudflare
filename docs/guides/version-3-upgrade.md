@@ -25,6 +25,10 @@ provider "cloudflare" {
 We highly recommend reviewing this guide, make necessary changes and move to
 3.x branch, as further 2.x releases are unlikely to happen.
 
+~> Before attempting to upgrade to version 3, you should first upgrade to the
+   latest version of 2 to ensure any transitional updates are applied to your
+   existing configuration.
+
 Once ready, make the following change to use the latest 3.x release:
 
 ```hcl

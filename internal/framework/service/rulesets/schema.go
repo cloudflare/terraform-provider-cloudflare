@@ -94,6 +94,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Required: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetPhaseValues()...),
+					sbfmDeprecationWarningValidator{},
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -298,6 +299,23 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 									},
 								},
 								Blocks: map[string]schema.Block{
+									"algorithms": schema.ListNestedBlock{
+										MarkdownDescription: "Compression algorithms to use in order of preference.",
+										NestedObject: schema.NestedBlockObject{
+											Attributes: map[string]schema.Attribute{
+												"name": schema.StringAttribute{
+													Required:            true,
+													MarkdownDescription: fmt.Sprintf("Name of the compression algorithm to use. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"gzip", "brotli", "auto", "default", "none"})),
+													Validators: []validator.String{
+														stringvalidator.OneOf("gzip", "brotli", "auto", "default", "none"),
+													},
+												},
+											},
+										},
+										Validators: []validator.List{
+											listvalidator.SizeAtLeast(1),
+										},
+									},
 									"uri": schema.ListNestedBlock{
 										MarkdownDescription: "List of URI properties to configure for the ruleset rule when performing URL rewrite transformations.",
 										NestedObject: schema.NestedBlockObject{
@@ -441,14 +459,17 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"mode": schema.StringAttribute{
-													Optional:            true,
+													Required:            true,
+													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin")},
 													MarkdownDescription: "Mode of the edge TTL.",
 												},
 												"default": schema.Int64Attribute{
 													Optional:            true,
+													Validators:          []validator.Int64{int64validator.AtLeast(1)},
 													MarkdownDescription: "Default edge TTL",
 												},
 											},
+											Validators: []validator.Object{EdgeTTLValidator{}},
 											Blocks: map[string]schema.Block{
 												"status_code_ttl": schema.ListNestedBlock{
 													MarkdownDescription: "Edge TTL for the status codes.",
@@ -500,14 +521,17 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"mode": schema.StringAttribute{
-													Optional:            true,
+													Required:            true,
+													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin")},
 													MarkdownDescription: "Mode of the browser TTL.",
 												},
 												"default": schema.Int64Attribute{
 													Optional:            true,
-													MarkdownDescription: "Default browser TTL.",
+													Validators:          []validator.Int64{int64validator.AtLeast(1)},
+													MarkdownDescription: "Default browser TTL. This value is required when override_origin is set",
 												},
 											},
+											Validators: []validator.Object{BrowserTTLValidator{}},
 										},
 										Validators: []validator.List{
 											listvalidator.SizeAtMost(1),

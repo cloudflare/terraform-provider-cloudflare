@@ -7,8 +7,8 @@ import (
 )
 
 // StringList accepts a `types.List` and returns a slice of strings.
-func StringList(in types.List) []string {
+func StringList(ctx context.Context, in types.List) []string {
 	results := []string{}
-	_ = in.ElementsAs(context.Background(), &results, false)
+	_ = in.ElementsAs(ctx, &results, false)
 	return results
 }

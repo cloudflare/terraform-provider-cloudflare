@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -309,6 +309,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 	return []func() resource.Resource{
 		rulesets.NewResource,
 		r2_bucket.NewResource,
+		turnstile.NewResource,
 	}
 }
 

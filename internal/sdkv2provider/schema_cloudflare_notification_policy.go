@@ -267,7 +267,7 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: "Target domain to alert on.",
 				},
-				"target_host": {
+				"target_hostname": {
 					Type: schema.TypeSet,
 					Elem: &schema.Schema{
 						Type: schema.TypeString,
@@ -322,6 +322,14 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					},
 					Optional:    true,
 					Description: "Stream event type to alert on.",
+				},
+				"megabits_per_second": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Megabits per second threshold for dos alert.",
 				},
 			},
 		},

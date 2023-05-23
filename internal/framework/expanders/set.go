@@ -7,8 +7,8 @@ import (
 )
 
 // StringSet accepts a `types.Set` and returns a slice of strings.
-func StringSet(in types.Set) []string {
+func StringSet(ctx context.Context, in types.Set) []string {
 	results := []string{}
-	_ = in.ElementsAs(context.Background(), &results, false)
+	_ = in.ElementsAs(ctx, &results, false)
 	return results
 }
