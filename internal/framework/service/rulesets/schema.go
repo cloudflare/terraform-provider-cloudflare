@@ -43,7 +43,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				},
 			},
 			consts.AccountIDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: "The account identifier to target for the resource.",
+				MarkdownDescription: consts.AccountIDSchemaDescription,
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(
@@ -52,7 +52,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				},
 			},
 			consts.ZoneIDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: "The zone identifier to target for the resource.",
+				MarkdownDescription: consts.ZoneIDSchemaDescription,
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(

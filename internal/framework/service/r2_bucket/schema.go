@@ -19,11 +19,14 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: "The account identifier to target for the resource.",
+				MarkdownDescription: consts.AccountIDSchemaDescription,
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			consts.IDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: "Duplicate of the name attribute. Used only for internal terraform purposes.",
+				MarkdownDescription: consts.IDSchemaDescription,
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{

@@ -15,7 +15,7 @@ var healthcheckMethod = []string{"connection_established", "GET", "HEAD"}
 func resourceCloudflareHealthcheckSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.ZoneIDSchemaKey: {
-			Description: "The zone identifier to target for the resource.",
+			Description: consts.ZoneIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 			ForceNew:    true,

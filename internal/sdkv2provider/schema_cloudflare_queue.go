@@ -1,11 +1,14 @@
 package sdkv2provider
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
 
 func resourceCloudflareQueueSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"account_id": {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},

@@ -34,7 +34,7 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 				},
 			},
 			consts.AccountIDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: "The account identifier to target for the resource.",
+				MarkdownDescription: consts.AccountIDSchemaDescription,
 				Required:            true,
 			},
 			"secret": schema.StringAttribute{
