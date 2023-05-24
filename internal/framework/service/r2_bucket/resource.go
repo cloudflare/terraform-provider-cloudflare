@@ -113,9 +113,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	var err error
-
-	err = r.client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	err := r.client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error deleting R2 bucket", err.Error())
