@@ -58,7 +58,8 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 
 	r2Bucket, err := r.client.CreateR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
 		cloudflare.CreateR2BucketParameters{
-			Name: data.Name.ValueString(),
+			Name:         data.Name.ValueString(),
+			LocationHint: data.Location.ValueString(),
 		},
 	)
 	if err != nil {
@@ -67,6 +68,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 	}
 	data.ID = types.StringValue(r2Bucket.Name)
 	data.Name = types.StringValue(r2Bucket.Name)
+	data.Location = types.StringValue(r2Bucket.Location)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -86,6 +88,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 	data.ID = types.StringValue(r2Bucket.Name)
 	data.Name = types.StringValue(r2Bucket.Name)
+	data.Location = types.StringValue(r2Bucket.Location)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

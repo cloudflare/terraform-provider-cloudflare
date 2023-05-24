@@ -11,12 +11,6 @@ import (
 )
 
 func TestAccCloudflareR2BucketBasic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -31,6 +25,7 @@ func TestAccCloudflareR2BucketBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "id", rnd),
+					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
 				),
 			},
 			{
@@ -43,10 +38,40 @@ func TestAccCloudflareR2BucketBasic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareR2BucketMinimum(t *testing.T) {
+
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_r2_bucket." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareR2BucketMinimum(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "id", rnd),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_r2_bucket" "%[1]s" {
+    account_id = "%[2]s"
+    name       = "%[1]s"
+  }`, rnd, accountID)
+}
+
 func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_r2_bucket" "%[1]s" {
     account_id = "%[2]s"
     name       = "%[1]s"
+	location   = "ENAM"
   }`, rnd, accountID)
 }

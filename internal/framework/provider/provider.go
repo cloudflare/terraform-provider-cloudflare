@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
@@ -308,7 +308,6 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		rulesets.NewResource,
-		r2_bucket.NewResource,
 		turnstile.NewResource,
 	}
 }
