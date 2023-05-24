@@ -8,14 +8,14 @@ import (
 func resourceCloudflareAccessMutualTLSCertificateSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description:   "The account identifier to target for the resource.",
+			Description:   consts.AccountIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
 			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
-			Description:   "The zone identifier to target for the resource.",
+			Description:   consts.ZoneIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,

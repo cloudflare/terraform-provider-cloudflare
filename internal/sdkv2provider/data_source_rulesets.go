@@ -16,13 +16,13 @@ import (
 func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description:   "The account identifier to target for the resource.",
+			Description:   consts.AccountIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
-			Description:   "The zone identifier to target for the resource.",
+			Description:   consts.ZoneIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			ConflictsWith: []string{consts.AccountIDSchemaKey},
@@ -1013,13 +1013,13 @@ func dataSourceCloudflareRulesets() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description:  "The account identifier to target for the resource.",
+				Description:  consts.AccountIDSchemaDescription,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ExactlyOneOf: []string{"zone_id", "account_id"},
 			},
 			"zone_id": {
-				Description:  "The zone identifier to target for the resource.",
+				Description:  consts.ZoneIDSchemaDescription,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ExactlyOneOf: []string{"zone_id", "account_id"},

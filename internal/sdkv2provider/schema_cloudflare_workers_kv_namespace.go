@@ -8,7 +8,7 @@ import (
 func resourceCloudflareWorkersKVNamespaceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},

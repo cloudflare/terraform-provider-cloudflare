@@ -8,7 +8,7 @@ import (
 func resourceCloudflareEmailRoutingSettingsSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.ZoneIDSchemaKey: {
-			Description: "The zone identifier to target for the resource.",
+			Description: consts.ZoneIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 			ForceNew:    true,

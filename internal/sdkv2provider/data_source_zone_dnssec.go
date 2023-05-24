@@ -17,7 +17,7 @@ func dataSourceCloudflareZoneDNSSEC() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			consts.ZoneIDSchemaKey: {
-				Description: "The zone identifier to target for the resource.",
+				Description: consts.ZoneIDSchemaDescription,
 				Type:        schema.TypeString,
 				Required:    true,
 			},

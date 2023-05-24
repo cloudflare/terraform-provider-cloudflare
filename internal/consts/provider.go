@@ -92,8 +92,14 @@ const (
 	// Schema key for the account ID configuration.
 	AccountIDSchemaKey = "account_id"
 
+	// Schema description for `account_id` field.
+	AccountIDSchemaDescription = "The account identifier to target for the resource."
+
 	// Schema key for the zone ID configuration.
 	ZoneIDSchemaKey = "zone_id"
+
+	// Schema description for `zone_id` field.
+	ZoneIDSchemaDescription = "The zone identifier to target for the resource."
 
 	// Schema key for IDs.
 	IDSchemaKey = "id"

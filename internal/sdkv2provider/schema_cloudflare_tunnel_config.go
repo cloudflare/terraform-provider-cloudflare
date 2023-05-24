@@ -18,7 +18,7 @@ func resourceCloudflareTunnelConfigSchema() map[string]*schema.Schema {
 		consts.AccountIDSchemaKey: {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 		},
 
 		"config": {
