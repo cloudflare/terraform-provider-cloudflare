@@ -5,6 +5,10 @@ NOTES:
 * resource/cloudflare_filter: This resource is being deprecated in favor of the `cloudflare_rulesets` resource. See https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users for more details. ([#2442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2442))
 * resource/cloudflare_firewall_rule: This resource is being deprecated in favor of the `cloudflare_rulesets` resource. See https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users for more details. ([#2442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2442))
 
+FEATURES:
+
+* **New Resource:** `cloudflare_r2_bucket` ([#2378](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2378))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_account: provide account ID for error handling in `resourceCloudflareAccountDelete` ([#2436](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2436))
