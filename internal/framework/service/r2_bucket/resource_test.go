@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareR2BucketBasic(t *testing.T) {
+func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_r2_bucket." + rnd
@@ -37,7 +37,7 @@ func TestAccCloudflareR2BucketBasic(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareR2BucketMinimum(t *testing.T) {
+func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_r2_bucket." + rnd
