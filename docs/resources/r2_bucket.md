@@ -11,9 +11,9 @@ description: |-
 
 ```terraform
 resource "cloudflare_r2_bucket" "example" {
-  account_id  = "f037e56e89293a057740de681ac9abbe"
-  name        = "terraform-bucket"
-  location = "enam"
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "terraform-bucket"
+  location   = "enam"
 }
 ```
 
@@ -34,7 +34,7 @@ resource "cloudflare_r2_bucket" "example" {
 
 ### Read-Only
 
-- `id` (String) Duplicate of the name attribute. Used only for internal terraform purposes.
+- `id` (String) The identifier of this resource.
 
 ## Import
 

@@ -63,7 +63,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 		},
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating R2 bucket", err.Error())
+		resp.Diagnostics.AddError("failed to create R2 bucket", err.Error())
 		return
 	}
 	data.ID = types.StringValue(r2Bucket.Name)
@@ -83,7 +83,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	r2Bucket, err := r.client.GetR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Error reading R2 bucket", err.Error())
+		resp.Diagnostics.AddError("failed reading R2 bucket", err.Error())
 		return
 	}
 	data.ID = types.StringValue(r2Bucket.Name)
@@ -101,7 +101,7 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	resp.Diagnostics.AddError("Error updating R2 bucket", "Not implemented")
+	resp.Diagnostics.AddError("failed to update R2 bucket", "Not implemented")
 }
 
 func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -116,7 +116,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 	err := r.client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 
 	if err != nil {
-		resp.Diagnostics.AddError("Error deleting R2 bucket", err.Error())
+		resp.Diagnostics.AddError("failed to delete R2 bucket", err.Error())
 		return
 	}
 }
@@ -124,7 +124,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 func (r *R2BucketResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	idparts := strings.Split(req.ID, "/")
 	if len(idparts) != 2 {
-		resp.Diagnostics.AddError("Error importing R2 bucket", "Invalid ID specified. Please specify the ID as \"account_id/name\"")
+		resp.Diagnostics.AddError("error importing R2 bucket", "invalid ID specified. Please specify the ID as \"account_id/name\"")
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(
