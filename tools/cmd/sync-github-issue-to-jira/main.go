@@ -64,7 +64,7 @@ var (
 	acceptedLabel = "triage/accepted"
 
 	// List of services that we permit syncing internally.
-	allowedServiceLabels = []string{"provider/internals", "service/zones", "service/access", "service/logs"}
+	allowedServiceLabels = []string{"provider/internals", "service/zones", "service/access", "service/logs", "service/tls"}
 
 	// Mapping of service label to owning internal team.
 	serviceOwnership = map[string]serviceOwner{
@@ -83,6 +83,10 @@ var (
 		"service/logs": {
 			teamName: "Logs",
 			manager:  "duc",
+		},
+		"service/tls": {
+			teamName: "SSL / TLS",
+			manager:  "mihir",
 		},
 	}
 )
