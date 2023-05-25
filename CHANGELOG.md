@@ -12,6 +12,7 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_account: provide account ID for error handling in `resourceCloudflareAccountDelete` ([#2436](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2436))
+* resource/cloudflare_device_posture_integration: add `api_url` to `uptycs` posture integration config. ([#2468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2468))
 
 BUG FIXES:
 
