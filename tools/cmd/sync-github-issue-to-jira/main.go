@@ -71,6 +71,7 @@ var (
 		"service/logs", 
 		"service/tls",
 		"service/turnstile",
+		"service/workers",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -98,6 +99,10 @@ var (
 		"service/turnstile": {
 			teamName: "Challenges and Turnstile",
 			manager: "opayne",
+		},
+		"service/workers": {
+			teamName: "Workers Core Platform",
+			manager: "laszlo",
 		},
 	}
 )
