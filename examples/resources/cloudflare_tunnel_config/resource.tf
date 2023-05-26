@@ -38,6 +38,14 @@ resource "cloudflare_tunnel_config" "example_config" {
       hostname = "foo"
       path     = "/bar"
       service  = "http://10.0.0.2:8080"
+      origin_request {
+        connect_timeout          = "2m0s"
+        access {
+          required = true
+          team_name = "terraform"
+          aud_tag = ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"]
+        }
+      }
     }
     ingress_rule {
       service = "https://10.0.0.3:8081"
