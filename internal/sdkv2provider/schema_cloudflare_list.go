@@ -31,7 +31,7 @@ func resourceCloudflareListSchema() map[string]*schema.Schema {
 		"kind": {
 			Description:  "The type of items the list will contain.",
 			Type:         schema.TypeString,
-			ValidateFunc: validation.StringInSlice([]string{"ip", "redirect"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"ip", "redirect", "hostname", "asn"}, false),
 			Required:     true,
 			ForceNew:     true,
 		},
@@ -99,6 +99,23 @@ var listItemElem = &schema.Resource{
 									Type:         schema.TypeString,
 									Optional:     true,
 									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
+								},
+							},
+						},
+					},
+					"asn": {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+					"hostname": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"url_hostname": {
+									Description: "The FQDN to match on.wildcard sub-domain matching is allowed. Eg. *.abc.com",
+									Type:        schema.TypeString,
+									Required:    true,
 								},
 							},
 						},

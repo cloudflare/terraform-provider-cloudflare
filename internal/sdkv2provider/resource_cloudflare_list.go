@@ -116,6 +116,14 @@ func resourceCloudflareListRead(ctx context.Context, d *schema.ResourceData, met
 		if i.IP != nil {
 			value["ip"] = *i.IP
 		}
+		if i.ASN != nil {
+			value["asn"] = *i.ASN
+		}
+		if i.Hostname != nil {
+			value["hostname"] = []map[string]interface{}{{
+				"url_hostname": i.Hostname.UrlHostname,
+			}}
+		}
 		if i.Redirect != nil {
 			optBoolToString := func(b *bool) string {
 				if b != nil {
@@ -207,6 +215,30 @@ func buildListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreat
 			}
 		}
 
+		var asn *uint32
+
+		if field, ok := value["asn"]; ok {
+			if field, ok := field.(int); ok {
+				f := uint32(field)
+				asn = &f
+			}
+		}
+
+		var hostname *cloudflare.Hostname
+
+		if field, ok := value["hostname"]; ok {
+			if field, ok := field.([]interface{}); ok && len(field) > 0 {
+				if field, ok := field[0].(map[string]interface{}); ok {
+					if field != nil {
+						urlHostname := field["url_hostname"].(string)
+						hostname = &cloudflare.Hostname{
+							UrlHostname: urlHostname,
+						}
+					}
+				}
+			}
+		}
+
 		var redirect *cloudflare.Redirect = nil
 		var r map[string]interface{} = nil
 
@@ -264,6 +296,8 @@ func buildListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreat
 		listItems = append(listItems, cloudflare.ListItemCreateRequest{
 			IP:       ip,
 			Redirect: redirect,
+			ASN:      asn,
+			Hostname: hostname,
 			Comment:  item.(map[string]interface{})["comment"].(string),
 		})
 	}

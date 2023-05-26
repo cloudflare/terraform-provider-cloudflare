@@ -2,13 +2,13 @@
 page_title: "cloudflare_list Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
+  Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge Rules Engine
   across all zones within the same account.
 ---
 
 # cloudflare_list (Resource)
 
-Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
+Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge Rules Engine
 across all zones within the same account.
 
 ~> The `cloudflare_list` resource supports defining list items in line with the `item` attribute. The provider also has a `cloudflare_list_item` resource for managing items as independent resources. Using both in line `item` definitions _and_ `cloudflare_list_items` on the same list is not supported and will cause Terraform into an irreconcilable state.
@@ -33,6 +33,28 @@ resource "cloudflare_list" "example" {
   item {
     value {
       ip = "192.0.2.1"
+    }
+    comment = "two"
+  }
+}
+
+# ASN list
+resource "cloudflare_list" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "example_list"
+  description = "example ASNs for a list"
+  kind        = "asn"
+
+  item {
+    value {
+      asn = 5678
+    }
+    comment = "one"
+  }
+
+  item {
+    value {
+      asn = 9810
     }
     comment = "two"
   }
@@ -65,6 +87,32 @@ resource "cloudflare_list" "example" {
         status_code           = 301
         preserve_query_string = "enabled"
         preserve_path_suffix  = "disabled"
+      }
+    }
+    comment = "two"
+  }
+}
+
+# Hostname list
+resource "cloudflare_list" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "example_list"
+  description = "example hostnames for a list"
+  kind        = "hostname"
+
+  item {
+    value {
+      hostname {
+        url_hostname = "example.com"
+      }
+    }
+    comment = "one"
+  }
+
+  item {
+    value {
+      hostname {
+       url_hostname = "*.example.com"
       }
     }
     comment = "two"
@@ -108,6 +156,8 @@ Optional:
 
 - `ip` (String)
 - `redirect` (Block List) (see [below for nested schema](#nestedblock--item--value--redirect))
+- `hostname` (Block List) (see [below for nested schema](#nestedblock--item--value--hostname))
+- `asn` (Number)
 
 <a id="nestedblock--item--value--redirect"></a>
 ### Nested Schema for `item.value.redirect`
@@ -124,6 +174,13 @@ Optional:
 - `preserve_query_string` (String) Whether the redirect target url should keep the query string of the request's url. Available values: `disabled`, `enabled`.
 - `status_code` (Number) The status code to be used when redirecting a request.
 - `subpath_matching` (String) Whether the redirect also matches subpaths of the source url. Available values: `disabled`, `enabled`.
+
+<a id="nestedblock--item--value--hostname"></a>
+### Nested Schema for `item.value.hostname`
+
+Required:
+
+- `url_hostname` (String) The hostname to match on.
 
 ## Import
 
