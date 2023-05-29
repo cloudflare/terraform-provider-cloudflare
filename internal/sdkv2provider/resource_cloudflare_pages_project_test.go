@@ -161,7 +161,7 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	//t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
+	t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd

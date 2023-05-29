@@ -1,3 +1,6 @@
-```release-note:enhacement
+```release-note:enhancement
 cloudflare_pages_project: add `placement` to deployment config
+```
+```release-note:bug
+cloudflare_pages_project: mark deployment config as computed
 ```
