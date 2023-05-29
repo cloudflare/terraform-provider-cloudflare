@@ -39,11 +39,11 @@ resource "cloudflare_tunnel_config" "example_config" {
       path     = "/bar"
       service  = "http://10.0.0.2:8080"
       origin_request {
-        connect_timeout          = "2m0s"
+        connect_timeout = "2m0s"
         access {
-          required = true
+          required  = true
           team_name = "terraform"
-          aud_tag = ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"]
+          aud_tag   = ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"]
         }
       }
     }
