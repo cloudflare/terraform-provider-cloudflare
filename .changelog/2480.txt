@@ -1,0 +1,3 @@
+```release-note:enhacement
+cloudflare_pages_project: add `placement` to deployment config
+```

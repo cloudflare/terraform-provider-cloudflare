@@ -141,6 +141,9 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				fail_open = true
 				always_use_latest_compatibility_date = false
 				usage_model = "bundled"
+				placement {
+					mode = "smart"
+				}
       		}
 		}
 		}
@@ -153,13 +156,12 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  production_branch = "main"
-		 %[3]s
 		}
-		`, resourceID, accountID, testPagesProjectEmptyDeploymentConfig)
+		`, resourceID, accountID)
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
+	//t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
@@ -275,6 +277,7 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.fail_open", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.always_use_latest_compatibility_date", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.usage_model", "unbound"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.%", "0"),
 
 					// Production
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.%", "2"),
@@ -308,7 +311,15 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.fail_open", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.always_use_latest_compatibility_date", "false"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.usage_model", "bundled"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.#", "1"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.0.mode", "smart"),
 				),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})
@@ -334,6 +345,12 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "production_branch", "main"),
 				),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})

@@ -49,14 +49,14 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 
 			break
 		case "secrets":
-			variables := value.(map[string]interface{})
-			for i, variable := range variables {
-				envVar := cloudflare.EnvironmentVariable{
-					Value: variable.(string),
-					Type:  cloudflare.SecretText,
-				}
-				deploymentVariables[i] = &envVar
-			}
+			//	variables := value.(map[string]interface{})
+			//	for i, variable := range variables {
+			//		envVar := cloudflare.EnvironmentVariable{
+			//			Value: variable.(string),
+			//			Type:  cloudflare.SecretText,
+			//		}
+			//		deploymentVariables[i] = &envVar
+			//	}
 
 			break
 		case "kv_namespaces":
@@ -91,6 +91,17 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 			}
 			config.R2Bindings = bindingMap
 			break
+		case "service_binding":
+			serviceMap := cloudflare.ServiceBindingMap{}
+			for _, item := range value.(*schema.Set).List() {
+				data := item.(map[string]interface{})
+				serviceMap[data["name"].(string)] = &cloudflare.ServiceBinding{
+					Service:     data["service"].(string),
+					Environment: data["environment"].(string),
+				}
+			}
+			config.ServiceBindings = serviceMap
+			break
 		case "compatibility_date":
 			config.CompatibilityDate = value.(string)
 			break
@@ -108,16 +119,14 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 		case "usage_model":
 			config.UsageModel = cloudflare.UsageModel(value.(string))
 			break
-		case "service_binding":
-			serviceMap := cloudflare.ServiceBindingMap{}
-			for _, item := range value.(*schema.Set).List() {
-				data := item.(map[string]interface{})
-				serviceMap[data["name"].(string)] = &cloudflare.ServiceBinding{
-					Service:     data["service"].(string),
-					Environment: data["environment"].(string),
+		case "placement":
+			parsed := value.([]interface{})
+			if len(parsed) != 0 {
+				placementMode := parsed[0].(map[string]interface{})["mode"].(string)
+				config.Placement = &cloudflare.Placement{
+					Mode: cloudflare.PlacementMode(placementMode),
 				}
 			}
-			config.ServiceBindings = serviceMap
 			break
 		}
 	}
@@ -143,12 +152,13 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 	}
 	config["environment_variables"] = deploymentVars
 
-	deploymentVars = map[string]string{}
-	for key, value := range deployment.EnvVars {
-		if value.Type == cloudflare.SecretText {
-			deploymentVars[key] = value.Value
-		}
-	}
+	//deploymentVars = map[string]string{}
+	//for key, value := range deployment.EnvVars {
+	//	if value.Type == cloudflare.SecretText {
+	//		deploymentVars[key] = value.Value
+	//	}
+	//}
+	//config["secrets"] = deploymentVars
 
 	deploymentVars = map[string]string{}
 	for key, value := range deployment.KvNamespaces {
@@ -183,6 +193,15 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 		})
 	}
 	config["service_binding"] = serviceBindings
+
+	var placementVars []map[string]string
+	placement := deployment.Placement
+	if placement != nil {
+		placementVars = append(placementVars, map[string]string{
+			"mode": string(placement.Mode),
+		})
+	}
+	config["placement"] = placementVars
 
 	returnValue = append(returnValue, config)
 	return

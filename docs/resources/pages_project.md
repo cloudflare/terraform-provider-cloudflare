@@ -155,10 +155,10 @@ Optional:
 <a id="nestedblock--deployment_configs"></a>
 ### Nested Schema for `deployment_configs`
 
-Required:
+Optional:
 
-- `preview` (Block List, Min: 1, Max: 1) Configuration for preview deploys. (see [below for nested schema](#nestedblock--deployment_configs--preview))
-- `production` (Block List, Min: 1, Max: 1) Configuration for production deploys. (see [below for nested schema](#nestedblock--deployment_configs--production))
+- `preview` (Block List, Max: 1) Configuration for preview deploys. (see [below for nested schema](#nestedblock--deployment_configs--preview))
+- `production` (Block List, Max: 1) Configuration for production deploys. (see [below for nested schema](#nestedblock--deployment_configs--production))
 
 <a id="nestedblock--deployment_configs--preview"></a>
 ### Nested Schema for `deployment_configs.preview`
@@ -173,10 +173,19 @@ Optional:
 - `environment_variables` (Map of String) Environment variables for Pages Functions.
 - `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
+- `placement` (Block List, Max: 1) Configuration for placement in the Cloudflare Pages project. (see [below for nested schema](#nestedblock--deployment_configs--preview--placement))
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
 - `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--preview--service_binding))
 - `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
+
+<a id="nestedblock--deployment_configs--preview--placement"></a>
+### Nested Schema for `deployment_configs.preview.placement`
+
+Optional:
+
+- `mode` (String) Placement Mode for the Pages Function.
+
 
 <a id="nestedblock--deployment_configs--preview--service_binding"></a>
 ### Nested Schema for `deployment_configs.preview.service_binding`
@@ -205,10 +214,19 @@ Optional:
 - `environment_variables` (Map of String) Environment variables for Pages Functions.
 - `fail_open` (Boolean) Fail open used for Pages Functions. Defaults to `false`.
 - `kv_namespaces` (Map of String) KV namespaces used for Pages Functions.
+- `placement` (Block List, Max: 1) Configuration for placement in the Cloudflare Pages project. (see [below for nested schema](#nestedblock--deployment_configs--production--placement))
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions.
 - `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--production--service_binding))
 - `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
+
+<a id="nestedblock--deployment_configs--production--placement"></a>
+### Nested Schema for `deployment_configs.production.placement`
+
+Optional:
+
+- `mode` (String) Placement Mode for the Pages Function.
+
 
 <a id="nestedblock--deployment_configs--production--service_binding"></a>
 ### Nested Schema for `deployment_configs.production.service_binding`
