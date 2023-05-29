@@ -13,6 +13,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_account: provide account ID for error handling in `resourceCloudflareAccountDelete` ([#2436](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2436))
 * resource/cloudflare_device_posture_integration: add `api_url` to `uptycs` posture integration config. ([#2468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2468))
+* resource/cloudflare_tunnel_config: add support for origin config on ingress rule and access ([#2477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2477))
 
 BUG FIXES:
 
