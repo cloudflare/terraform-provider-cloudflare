@@ -271,6 +271,8 @@ Optional:
 
 ## Import
 
+!> It is not possible to import a pages project with secret environment variables. If you have a secret environment variable, you must remove it from your project before importing it.
+
 Import is supported using the following syntax:
 
 ```shell
