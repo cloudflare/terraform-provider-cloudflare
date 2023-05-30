@@ -39,8 +39,8 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `sentinelone`.
-
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `intune`, `kolide`, `sentinelone`.
+    
 ### Optional
 
 - `description` (String)
@@ -79,6 +79,8 @@ Optional:
 - `thumbprint` (String) The thumbprint of the file certificate.
 - `version` (String) The operating system semantic version.
 - `version_operator` (String) The version comparison operator for crowdstrike. Available values: `>`, `>=`, `<`, `<=`, `==`.
+- `count_operator` (String) The count comparison operator for kolide s2s. Available values: `>`, `>=`, `<`, `<=`, `==`.
+- `issue_count` (String) The issue_count for kolide.
 
 
 <a id="nestedblock--match"></a>
