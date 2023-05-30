@@ -134,7 +134,7 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 	return config
 }
 
-func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnvironment) (returnValue []map[string]interface{}) {
+func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnvironment, d *schema.ResourceData, selection string) (returnValue []map[string]interface{}) {
 	config := make(map[string]interface{})
 
 	config["compatibility_date"] = deployment.CompatibilityDate
@@ -153,9 +153,9 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 	config["environment_variables"] = deploymentVars
 
 	deploymentVars = map[string]string{}
-	for key, value := range deployment.EnvVars {
-		if value.Type == cloudflare.SecretText {
-			deploymentVars[key] = value.Value
+	if secretsConfig, ok := d.GetOk(fmt.Sprintf("deployment_configs.0.%s.0.secrets", selection)); ok {
+		for key, value := range secretsConfig.(map[string]interface{}) {
+			deploymentVars[key] = value.(string)
 		}
 	}
 	config["secrets"] = deploymentVars
@@ -341,8 +341,8 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 
 	var deploymentConfigs []map[string]interface{}
 	deploymentConfig := make(map[string]interface{})
-	deploymentConfig["preview"] = parseDeploymentConfig(project.DeploymentConfigs.Preview)
-	deploymentConfig["production"] = parseDeploymentConfig(project.DeploymentConfigs.Production)
+	deploymentConfig["preview"] = parseDeploymentConfig(project.DeploymentConfigs.Preview, d, "preview")
+	deploymentConfig["production"] = parseDeploymentConfig(project.DeploymentConfigs.Production, d, "production")
 	deploymentConfigs = append(deploymentConfigs, deploymentConfig)
 	d.Set("deployment_configs", deploymentConfigs)
 
