@@ -1,5 +1,9 @@
 ## 4.7.1 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_list: remove `IsIPAddress` validation that doesn't take into account CIDR notation ([#2486](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2486))
+
 ## 4.7.0 (31st May, 2023)
 
 NOTES:
