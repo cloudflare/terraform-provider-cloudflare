@@ -33,6 +33,7 @@ func resourceCloudflareListItemSchema() map[string]*schema.Schema {
 			Description:  "Autonomous system number to include in the list",
 			ExactlyOneOf: []string{"ip", "redirect", "hostname", "asn"},
 			ForceNew:     true,
+			ValidateFunc: validation.IntAtLeast(1),
 		},
 		"hostname": {
 			Type:         schema.TypeList,

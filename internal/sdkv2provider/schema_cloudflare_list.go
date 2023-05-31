@@ -53,9 +53,8 @@ var listItemElem = &schema.Resource{
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"ip": {
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.IsIPAddress,
+						Type:     schema.TypeString,
+						Optional: true,
 					},
 					"redirect": {
 						Type:     schema.TypeList,
