@@ -1,0 +1,3 @@
+```release-note:enhancement
+ resource/cloudflare_list: add support for Hostname and ASN lists.
+ ```

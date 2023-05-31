@@ -25,8 +25,8 @@ func resourceCloudflareList() *schema.Resource {
 			StateContext: resourceCloudflareListImport,
 		},
 		Description: heredoc.Doc(`
-			Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
-			across all zones within the same account.
+			Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge
+			Rules Engine across all zones within the same account.
 		`),
 	}
 }
@@ -115,6 +115,14 @@ func resourceCloudflareListRead(ctx context.Context, d *schema.ResourceData, met
 
 		if i.IP != nil {
 			value["ip"] = *i.IP
+		}
+		if i.ASN != nil {
+			value["asn"] = *i.ASN
+		}
+		if i.Hostname != nil {
+			value["hostname"] = []map[string]interface{}{{
+				"url_hostname": i.Hostname.UrlHostname,
+			}}
 		}
 		if i.Redirect != nil {
 			optBoolToString := func(b *bool) string {
@@ -207,6 +215,30 @@ func buildListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreat
 			}
 		}
 
+		var asn *uint32
+
+		if field, ok := value["asn"]; ok {
+			if field, ok := field.(int); ok {
+				f := uint32(field)
+				asn = &f
+			}
+		}
+
+		var hostname *cloudflare.Hostname
+
+		if field, ok := value["hostname"]; ok {
+			if field, ok := field.([]interface{}); ok && len(field) > 0 {
+				if field, ok := field[0].(map[string]interface{}); ok {
+					if field != nil {
+						urlHostname := field["url_hostname"].(string)
+						hostname = &cloudflare.Hostname{
+							UrlHostname: urlHostname,
+						}
+					}
+				}
+			}
+		}
+
 		var redirect *cloudflare.Redirect = nil
 		var r map[string]interface{} = nil
 
@@ -261,11 +293,27 @@ func buildListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreat
 			}
 		}
 
-		listItems = append(listItems, cloudflare.ListItemCreateRequest{
-			IP:       ip,
-			Redirect: redirect,
-			Comment:  item.(map[string]interface{})["comment"].(string),
-		})
+		payload := cloudflare.ListItemCreateRequest{
+			Comment: item.(map[string]interface{})["comment"].(string),
+		}
+
+		if ip != nil && *ip != "" {
+			payload.IP = ip
+		}
+
+		if redirect != nil {
+			payload.Redirect = redirect
+		}
+
+		if asn != nil && *asn > 0 {
+			payload.ASN = asn
+		}
+
+		if hostname != nil {
+			payload.Hostname = hostname
+		}
+
+		listItems = append(listItems, payload)
 	}
 
 	return listItems
