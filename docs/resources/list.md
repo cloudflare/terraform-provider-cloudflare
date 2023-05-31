@@ -127,7 +127,7 @@ resource "cloudflare_list" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `kind` (String) The type of items the list will contain. **Modifying this attribute will force creation of a new resource.**
+- `kind` (String) The type of items the list will contain. Available values: `ip`, `redirect`, `hostname`, `asn`. **Modifying this attribute will force creation of a new resource.**
 - `name` (String) The name of the list. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional

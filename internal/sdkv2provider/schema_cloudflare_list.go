@@ -29,7 +29,7 @@ func resourceCloudflareListSchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"kind": {
-			Description:  "The type of items the list will contain.",
+			Description:  fmt.Sprintf("The type of items the list will contain. %s", renderAvailableDocumentationValuesStringSlice([]string{"ip", "redirect", "hostname", "asn"})),
 			Type:         schema.TypeString,
 			ValidateFunc: validation.StringInSlice([]string{"ip", "redirect", "hostname", "asn"}, false),
 			Required:     true,
