@@ -28,6 +28,7 @@ DEPENDENCIES:
 * provider: bumps dependabot/fetch-metadata from 1.5.0 to 1.5.1 ([#2469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2469))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.67.0 to 0.68.0 ([#2466](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2466))
 * provider: bumps github.com/stretchr/testify from 1.8.2 to 1.8.3 ([#2457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2457))
+* provider: bumps github.com/stretchr/testify from 1.8.3 to 1.8.4 ([#2484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2484))
 
 ## 4.6.0 (17th May, 2023)
 
