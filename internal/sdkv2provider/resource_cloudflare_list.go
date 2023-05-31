@@ -25,8 +25,8 @@ func resourceCloudflareList() *schema.Resource {
 			StateContext: resourceCloudflareListImport,
 		},
 		Description: heredoc.Doc(`
-			Provides Lists (IPs, Redirects) to be used in Edge Rules Engine
-			across all zones within the same account.
+			Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge
+			Rules Engine across all zones within the same account.
 		`),
 	}
 }
@@ -293,13 +293,27 @@ func buildListItemsCreateRequest(items []interface{}) []cloudflare.ListItemCreat
 			}
 		}
 
-		listItems = append(listItems, cloudflare.ListItemCreateRequest{
-			IP:       ip,
-			Redirect: redirect,
-			ASN:      asn,
-			Hostname: hostname,
-			Comment:  item.(map[string]interface{})["comment"].(string),
-		})
+		payload := cloudflare.ListItemCreateRequest{
+			Comment: item.(map[string]interface{})["comment"].(string),
+		}
+
+		if ip != nil && *ip != "" {
+			payload.IP = ip
+		}
+
+		if redirect != nil {
+			payload.Redirect = redirect
+		}
+
+		if asn != nil && *asn > 0 {
+			payload.ASN = asn
+		}
+
+		if hostname != nil {
+			payload.Hostname = hostname
+		}
+
+		listItems = append(listItems, payload)
 	}
 
 	return listItems

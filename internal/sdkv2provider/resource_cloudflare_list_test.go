@@ -253,9 +253,9 @@ func TestAccCloudflareList_Update(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareList(rndHostname, rndHostname, rndHostname, accountID, "hostname"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareListExists(rndHostname, &list),
+					testAccCheckCloudflareListExists(nameHostname, &list),
 					resource.TestCheckResourceAttr(
-						rndHostname, "name", rndHostname),
+						nameHostname, "name", rndHostname),
 				),
 			},
 			{

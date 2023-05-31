@@ -113,7 +113,7 @@ var listItemElem = &schema.Resource{
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"url_hostname": {
-									Description: "The FQDN to match on.wildcard sub-domain matching is allowed. Eg. *.abc.com",
+									Description: "The FQDN to match on. Wildcard sub-domain matching is allowed. Eg. *.abc.com",
 									Type:        schema.TypeString,
 									Required:    true,
 								},
