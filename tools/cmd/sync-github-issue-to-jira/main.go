@@ -107,7 +107,7 @@ var (
 		},
 		"service/tunnel": {
 			teamName: "Tunnel/Teams Routing",
-			manager:  "joliveirinha,
+			manager:  "joliveirinha",
 		},
 	}
 )
