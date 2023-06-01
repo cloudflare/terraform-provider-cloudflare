@@ -2,8 +2,5 @@
 cloudflare_pages_project: add `placement` to deployment config
 ```
 ```release-note:bug
-cloudflare_pages_project: mark deployment config as computed
-```
-```release-note:bug
 cloudflare_pages_project: set secrets from local schema
 ```

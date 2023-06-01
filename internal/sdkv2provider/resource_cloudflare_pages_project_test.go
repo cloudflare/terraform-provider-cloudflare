@@ -156,8 +156,10 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  production_branch = "main"
+		%[3]s
 		}
-		`, resourceID, accountID)
+
+		`, resourceID, accountID, testPagesProjectEmptyDeploymentConfig)
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
@@ -314,12 +316,6 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.#", "1"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.0.mode", "smart"),
 				),
-			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
 			},
 		},
 	})

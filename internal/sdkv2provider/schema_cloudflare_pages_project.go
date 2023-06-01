@@ -119,7 +119,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:        schema.TypeMap,
 				Description: "Environment variables for Pages Functions.",
 				Optional:    true,
-				Computed:    true,
 			},
 			"secrets": {
 				Type:        schema.TypeMap,
@@ -131,25 +130,21 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:        schema.TypeMap,
 				Description: "KV namespaces used for Pages Functions.",
 				Optional:    true,
-				Computed:    true,
 			},
 			"durable_object_namespaces": {
 				Type:        schema.TypeMap,
 				Description: "Durable Object namespaces used for Pages Functions.",
 				Optional:    true,
-				Computed:    true,
 			},
 			"d1_databases": {
 				Type:        schema.TypeMap,
 				Description: "D1 Databases used for Pages Functions.",
 				Optional:    true,
-				Computed:    true,
 			},
 			"r2_buckets": {
 				Type:        schema.TypeMap,
 				Description: "R2 Buckets used for Pages Functions.",
 				Optional:    true,
-				Computed:    true,
 			},
 			"compatibility_date": {
 				Type:        schema.TypeString,
@@ -164,7 +159,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Computed: true,
 			},
 			"service_binding": {
 				Type:        schema.TypeSet,
@@ -263,14 +257,12 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			MaxItems:    1,
 			Optional:    true,
-			Computed:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"preview": {
 						Description: "Configuration for preview deploys.",
 						Type:        schema.TypeList,
 						Optional:    true,
-						Computed:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},
@@ -278,7 +270,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 						Description: "Configuration for production deploys.",
 						Type:        schema.TypeList,
 						Optional:    true,
-						Computed:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},
