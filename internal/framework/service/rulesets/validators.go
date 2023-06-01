@@ -109,3 +109,52 @@ func (v BrowserTTLValidator) ValidateObject(ctx context.Context, req validator.O
 		}
 	}
 }
+
+type InvalidWildCardValidator struct{}
+
+func (v InvalidWildCardValidator) Description(ctx context.Context) string {
+	return fmt.Sprintf("full wildcards should use the ignore field instead")
+}
+
+func (v InvalidWildCardValidator) MarkdownDescription(ctx context.Context) string {
+	return fmt.Sprintf("full wildcards should use the ignore field instead")
+}
+
+func (v InvalidWildCardValidator) ValidateSet(ctx context.Context, req validator.SetRequest, resp *validator.SetResponse) {
+	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() {
+		return
+	}
+
+	_, ok := req.ConfigValue.ElementType(ctx).(basetypes.StringTypable)
+
+	if !ok {
+		resp.Diagnostics.AddAttributeError(
+			req.Path,
+			"Invalid Validator for Element Type",
+			"While performing schema-based validation, an unexpected error occurred. "+
+				"The attribute declares a String values validator, however its values do not implement types.StringType or the types.StringTypable interface for custom String types. "+
+				"Use the appropriate values validator that matches the element type. "+
+				"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
+				fmt.Sprintf("Path: %s\n", req.Path.String())+
+				fmt.Sprintf("Element Type: %T\n", req.ConfigValue.ElementType(ctx)),
+		)
+
+		return
+	}
+
+	for _, element := range req.ConfigValue.Elements() {
+		// ignore okay check, error handling above should catch it
+		elementValuable, _ := element.(basetypes.StringValuable)
+
+		elementValue, diags := elementValuable.ToStringValue(ctx)
+		resp.Diagnostics.Append(diags...)
+
+		if elementValue.ValueString() == "*" {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				errInvalidValue,
+				fmt.Sprintf("full wildcards should use the ignore field instead, value: %s", elementValue.ValueString()),
+			)
+		}
+	}
+}

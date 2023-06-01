@@ -586,6 +586,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 																			MarkdownDescription: "List of query string parameters to include in the custom key.",
 																			Validators: []validator.Set{
 																				setvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("exclude"))),
+																				InvalidWildCardValidator{},
 																			},
 																		},
 																		"exclude": schema.SetAttribute{
@@ -594,6 +595,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 																			MarkdownDescription: "List of query string parameters to exclude from the custom key.",
 																			Validators: []validator.Set{
 																				setvalidator.ConflictsWith(path.Expression(path.MatchRelative().AtParent().AtName("include"))),
+																				InvalidWildCardValidator{},
 																			},
 																		},
 																	},

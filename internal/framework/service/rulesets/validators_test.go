@@ -180,6 +180,85 @@ func TestBrowserTTLValidation(t *testing.T) {
 	})
 }
 
+func TestCacheKeyQueryStrings(t *testing.T) {
+	t.Parallel()
+
+	var cacheKeyValidator InvalidWildCardValidator
+	t.Run("when including query strings in cache keys", func(t *testing.T) {
+		t.Parallel()
+
+		ctx := context.Background()
+		t.Run("errors are thrown for full wildcards", func(t *testing.T) {
+			t.Parallel()
+
+			resp := &validator.SetResponse{}
+			req := constructCacheKeyObjectRequest("include", []string{"1", "*", "foobarbaz"})
+			cacheKeyValidator.ValidateSet(ctx, req, resp)
+
+			expected := &validator.SetResponse{
+				Diagnostics: diag.Diagnostics{
+					diag.NewAttributeErrorDiagnostic(path.Root("include"), "invalid value", "full wildcards should use the ignore field instead, value: *"),
+				},
+			}
+			if diff := cmp.Diff(resp, expected); diff != "" {
+				t.Errorf("unexpected difference: %s", diff)
+			}
+		})
+
+		t.Run("passes for every other value", func(t *testing.T) {
+			t.Parallel()
+
+			resp := &validator.SetResponse{}
+			req := constructCacheKeyObjectRequest("include", []string{"1", "blah/*", "foobarbaz"})
+			cacheKeyValidator.ValidateSet(ctx, req, resp)
+
+			expected := &validator.SetResponse{
+				Diagnostics: nil,
+			}
+			if diff := cmp.Diff(resp, expected); diff != "" {
+				t.Errorf("unexpected difference: %s", diff)
+			}
+		})
+	})
+
+	t.Run("when excluding query strings in cache keys", func(t *testing.T) {
+		t.Parallel()
+
+		ctx := context.Background()
+		t.Run("errors are thrown for full wildcards", func(t *testing.T) {
+			t.Parallel()
+
+			resp := &validator.SetResponse{}
+			req := constructCacheKeyObjectRequest("exclude", []string{"1", "*", "foobarbaz"})
+			cacheKeyValidator.ValidateSet(ctx, req, resp)
+
+			expected := &validator.SetResponse{
+				Diagnostics: diag.Diagnostics{
+					diag.NewAttributeErrorDiagnostic(path.Root("exclude"), "invalid value", "full wildcards should use the ignore field instead, value: *"),
+				},
+			}
+			if diff := cmp.Diff(resp, expected); diff != "" {
+				t.Errorf("unexpected difference: %s", diff)
+			}
+		})
+
+		t.Run("passes for every other value", func(t *testing.T) {
+			t.Parallel()
+
+			resp := &validator.SetResponse{}
+			req := constructCacheKeyObjectRequest("exclude", []string{"1", "blah/*", "foobarbaz"})
+			cacheKeyValidator.ValidateSet(ctx, req, resp)
+
+			expected := &validator.SetResponse{
+				Diagnostics: nil,
+			}
+			if diff := cmp.Diff(resp, expected); diff != "" {
+				t.Errorf("unexpected difference: %s", diff)
+			}
+		})
+	})
+}
+
 func constructStatusTTLObject() (tftypes.Value, attr.Value, types.ListType) {
 	tftype := tftypes.NewValue(
 		tftypes.List{
@@ -317,6 +396,32 @@ func constructBrowserTTLObjectRequest(mode string, ttl *big.Float) validator.Obj
 						ttl,
 					),
 				},
+			),
+		},
+	}
+}
+
+func constructCacheKeyObjectRequest(requestPath string, values []string) validator.SetRequest {
+	var setValue basetypes.SetValue
+	stringValues := make([]attr.Value, len(values))
+	tfValues := make([]tftypes.Value, len(values))
+
+	for i, v := range values {
+		stringValues[i] = types.StringValue(v)
+		tfValues[i] = tftypes.NewValue(tftypes.String, v)
+	}
+
+	setValue = types.SetValueMust(types.StringType, stringValues)
+
+	return validator.SetRequest{
+		Path:        path.Root(requestPath),
+		ConfigValue: setValue,
+		Config: tfsdk.Config{
+			Raw: tftypes.NewValue(
+				tftypes.Set{
+					ElementType: tftypes.String,
+				},
+				tfValues,
 			),
 		},
 	}
