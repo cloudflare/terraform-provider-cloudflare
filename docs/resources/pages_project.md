@@ -155,10 +155,10 @@ Optional:
 <a id="nestedblock--deployment_configs"></a>
 ### Nested Schema for `deployment_configs`
 
-Optional:
+Required:
 
-- `preview` (Block List, Max: 1) Configuration for preview deploys. (see [below for nested schema](#nestedblock--deployment_configs--preview))
-- `production` (Block List, Max: 1) Configuration for production deploys. (see [below for nested schema](#nestedblock--deployment_configs--production))
+- `preview` (Block List, Min: 1, Max: 1) Configuration for preview deploys. (see [below for nested schema](#nestedblock--deployment_configs--preview))
+- `production` (Block List, Min: 1, Max: 1) Configuration for production deploys. (see [below for nested schema](#nestedblock--deployment_configs--production))
 
 <a id="nestedblock--deployment_configs--preview"></a>
 ### Nested Schema for `deployment_configs.preview`
