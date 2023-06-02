@@ -1,5 +1,9 @@
 ## 4.8.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_page_rule: removes ability to set wildcards for include and exclude, provides guidance on proper values to use instead ([#2491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2491))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/hashicorp/terraform-plugin-log from 0.8.0 to 0.9.0 ([#2489](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2489))
