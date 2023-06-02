@@ -10,19 +10,9 @@ import (
 )
 
 const testPagesProjectEmptyDeploymentConfig = `
-deployment_configs {
-	preview {
-		compatibility_date = "2022-08-15"
-		compatibility_flags = []
-		always_use_latest_compatibility_date = true
-		usage_model = "unbound"
-	}
-	production {
-		compatibility_date = "2022-08-15"
-		compatibility_flags = []
-		always_use_latest_compatibility_date = false
-		usage_model = "unbound"
-	}
+deployment_configs { 
+	preview {}
+	production {}
 }
 `
 
