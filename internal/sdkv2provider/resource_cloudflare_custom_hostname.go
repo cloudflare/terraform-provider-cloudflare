@@ -65,6 +65,10 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 				"early_hints":     customHostname.SSL.Settings.EarlyHints,
 			}},
 		}
+
+		if val, ok := d.GetOk("ssl.0.bundle_method"); ok {
+			ssl["bundle_method"] = val.(string)
+		}
 		if !reflect.ValueOf(customHostname.SSL.ValidationErrors).IsNil() {
 			errors := []map[string]interface{}{}
 			for _, e := range customHostname.SSL.ValidationErrors {
@@ -205,6 +209,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 
 	if _, ok := d.GetOk("ssl"); ok {
 		ch.SSL = &cloudflare.CustomHostnameSSL{
+			BundleMethod:         d.Get("ssl.0.bundle_method").(string),
 			Method:               d.Get("ssl.0.method").(string),
 			Type:                 d.Get("ssl.0.type").(string),
 			Wildcard:             cloudflare.BoolPtr(d.Get("ssl.0.wildcard").(bool)),
