@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_origin_ca_certificate: mark `csr` as Required
+```
