@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_certificate_pack: handle UI deletion scenarios for HTTP 404s and `status = "deleted"` responses
+```
