@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: handle `Import` operations where the required values are missing for providing a nicer error message
+```
