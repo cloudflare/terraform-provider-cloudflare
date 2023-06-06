@@ -8,6 +8,7 @@ BUG FIXES:
 
 * resource/cloudflare_certificate_pack: handle UI deletion scenarios for HTTP 404s and `status = "deleted"` responses ([#2497](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2497))
 * resource/cloudflare_origin_ca_certificate: mark `csr` as Required ([#2496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2496))
+* resource/cloudflare_ruleset: handle `Import` operations where the required values are missing for providing a nicer error message ([#2503](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2503))
 
 DEPENDENCIES:
 
