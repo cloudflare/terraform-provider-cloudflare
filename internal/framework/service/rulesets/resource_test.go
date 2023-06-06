@@ -2197,6 +2197,27 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringIncludeKeys(t *test
 	})
 }
 
+func TestAccCloudflareRuleset_ImportHandlesMissingValues(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	name := "cloudflare_ruleset." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:        testAccCheckCloudflareRulesetTransformationRuleResponseHeaders(rnd, "broken", zoneID, zoneName),
+				ExpectError:   regexp.MustCompile(`invalid import identifier`),
+				ImportState:   true,
+				ImportStateId: rnd,
+				ResourceName:  name,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_ruleset" "%[1]s" {
