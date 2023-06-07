@@ -5,6 +5,8 @@ ENHANCEMENTS:
 * resource/cloudflare_custom_hostname: add support for `bundle_method` TLS configuration ([#2494](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2494))
 * resource/cloudflare_device_posture_rule: add ability to create intune and kolide s2s posture rule creation ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
 * resource/cloudflare_device_settings_policy: add `description` to device settings policy ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
+* resource/cloudflare_load_balancer: Add support for least_outstanding_requests steering ([#2472](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2472))
+* resource/cloudflare_load_balancer_pool: Add support for least_outstanding_requests origin steering ([#2472](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2472))
 * resource/cloudflare_page_rule: removes ability to set wildcards for include and exclude, provides guidance on proper values to use instead ([#2491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2491))
 * resource/cloudflare_teams_account: add ability to set `root_ca` for ZT Accounts ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
 
