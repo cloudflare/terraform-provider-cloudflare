@@ -58,6 +58,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		newAccessApplication.AllowedIdps = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
+	if value, ok := d.GetOk("self_hosted_domains"); ok {
+		newAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
+	}
+
 	if _, ok := d.GetOk("cors_headers"); ok {
 		CORSConfig, err := convertCORSSchemaToStruct(d)
 		if err != nil {
@@ -121,6 +125,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
+	d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
 	d.Set("type", accessApplication.Type)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
@@ -176,6 +181,10 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 
 	if value, ok := d.GetOk("allowed_idps"); ok {
 		updatedAccessApplication.AllowedIdps = expandInterfaceToStringList(value.(*schema.Set).List())
+	}
+
+	if value, ok := d.GetOk("self_hosted_domains"); ok {
+		updatedAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {

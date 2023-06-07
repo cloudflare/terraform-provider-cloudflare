@@ -41,7 +41,15 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Computed:    true,
-			Description: "The complete URL of the asset you wish to put Cloudflare Access in front of. Can include subdomains or paths. Or both.",
+			Description: "The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.",
+		},
+		"self_hosted_domains": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "List of domains that access will secure. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`",
 		},
 		"type": {
 			Type:         schema.TypeString,
