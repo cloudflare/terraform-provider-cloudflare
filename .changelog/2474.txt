@@ -7,5 +7,5 @@ resource/cloudflare_device_posture_rule: add ability to create intune and kolide
 ```
 
 ```release-note:enhancement
-resource/cloudflare_teams_account: add ability to set root_ca_enabled for ZT Accounts
+resource/cloudflare_teams_account: add ability to set `root_ca` for ZT Accounts
 ```
