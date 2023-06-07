@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_page_rule: removes ability to set wildcards for include and exclude, provides guidance on proper values to use instead
+```

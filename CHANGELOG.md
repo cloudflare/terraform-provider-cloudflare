@@ -1,4 +1,27 @@
-## 4.7.0 (Unreleased)
+## 4.8.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_page_rule: removes ability to set wildcards for include and exclude, provides guidance on proper values to use instead ([#2491](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2491))
+
+BUG FIXES:
+
+* resource/cloudflare_certificate_pack: handle UI deletion scenarios for HTTP 404s and `status = "deleted"` responses ([#2497](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2497))
+* resource/cloudflare_origin_ca_certificate: mark `csr` as Required ([#2496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2496))
+* resource/cloudflare_ruleset: handle `Import` operations where the required values are missing for providing a nicer error message ([#2503](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2503))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.68.0 to 0.69.0 ([#2507](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2507))
+* provider: bumps github.com/hashicorp/terraform-plugin-log from 0.8.0 to 0.9.0 ([#2489](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2489))
+
+## 4.7.1 (31st May, 2023)
+
+BUG FIXES:
+
+* resource/cloudflare_list: remove `IsIPAddress` validation that doesn't take into account CIDR notation ([#2486](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2486))
+
+## 4.7.0 (31st May, 2023)
 
 NOTES:
 
@@ -13,6 +36,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_account: provide account ID for error handling in `resourceCloudflareAccountDelete` ([#2436](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2436))
 * resource/cloudflare_device_posture_integration: add `api_url` to `uptycs` posture integration config. ([#2468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2468))
+* resource/cloudflare_list: add support for Hostname and ASN lists. ([#2483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2483))
 * resource/cloudflare_tunnel_config: add support for origin config on ingress rule and access ([#2477](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2477))
 
 BUG FIXES:
@@ -28,6 +52,7 @@ DEPENDENCIES:
 * provider: bumps dependabot/fetch-metadata from 1.5.0 to 1.5.1 ([#2469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2469))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.67.0 to 0.68.0 ([#2466](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2466))
 * provider: bumps github.com/stretchr/testify from 1.8.2 to 1.8.3 ([#2457](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2457))
+* provider: bumps github.com/stretchr/testify from 1.8.3 to 1.8.4 ([#2484](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2484))
 
 ## 4.6.0 (17th May, 2023)
 

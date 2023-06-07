@@ -104,6 +104,12 @@ func resourceCloudflareCertificatePackRead(ctx context.Context, d *schema.Resour
 
 	certificatePack, err := client.CertificatePack(ctx, zoneID, d.Id())
 	if err != nil {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) || certificatePack.Status == "deleted" {
+			tflog.Warn(ctx, fmt.Sprintf("removing certificate pack from state because it is not found in the API"))
+			d.SetId("")
+			return nil
+		}
 		return diag.FromErr(errors.Wrap(err, "failed to fetch certificate pack"))
 	}
 

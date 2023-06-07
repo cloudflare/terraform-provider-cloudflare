@@ -52,3 +52,52 @@ resource "cloudflare_list" "example" {
     comment = "two"
   }
 }
+
+# ASN list
+resource "cloudflare_list" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "example_list"
+  description = "example ASNs for a list"
+  kind        = "asn"
+
+  item {
+    value {
+      asn = 677
+    }
+    comment = "one"
+  }
+
+  item {
+    value {
+     asn = 989
+    }
+    comment = "two"
+  }
+}
+
+
+# Hostname list
+resource "cloudflare_list" "example" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "example_list"
+  description = "example hostnames for a list"
+  kind        = "hostname"
+
+  item {
+    value {
+      hostname {
+        url_hostname = "example.com"
+      }
+    }
+    comment = "one"
+  }
+
+  item {
+    value {
+      hostname {
+        url_hostname = "*.example.com"
+      }
+    }
+    comment = "two"
+  }
+}
