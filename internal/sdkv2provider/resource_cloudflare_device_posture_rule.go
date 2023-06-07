@@ -222,6 +222,12 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if versionOperator, ok := d.GetOk("input.0.version_operator"); ok {
 			input.VersionOperator = versionOperator.(string)
 		}
+		if countOperator, ok := d.GetOk("input.0.count_operator"); ok {
+			input.CountOperator = countOperator.(string)
+		}
+		if issueCount, ok := d.GetOk("input.0.issue_count"); ok {
+			input.IssueCount = issueCount.(string)
+		}
 		rule.Input = input
 	}
 }
@@ -279,6 +285,8 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"overall":            input.Overall,
 		"sensor_config":      input.SensorConfig,
 		"version_operator":   input.VersionOperator,
+		"count_operator":     input.CountOperator,
+		"issue_count":        input.IssueCount,
 	}
 
 	return []map[string]interface{}{m}

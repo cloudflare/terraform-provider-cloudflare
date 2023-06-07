@@ -20,8 +20,9 @@ resource "cloudflare_teams_account" "example" {
   }
 
   proxy {
-    tcp = true
-    udp = true
+    tcp     = true
+    udp     = true
+    root_ca = true
   }
 
   url_browser_isolation_enabled = true

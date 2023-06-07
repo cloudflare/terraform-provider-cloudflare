@@ -25,6 +25,11 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Required:    true,
 		},
+		"description": {
+			Description: "Description of Policy.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
 		"precedence": {
 			Description: "The precedence of the policy. Lower values indicate higher precedence.",
 			Type:        schema.TypeInt,
