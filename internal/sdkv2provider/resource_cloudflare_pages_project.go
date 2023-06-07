@@ -32,7 +32,11 @@ func resourceCloudflarePagesProject() *schema.Resource {
 }
 
 func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeploymentConfigEnvironment {
-	config := cloudflare.PagesProjectDeploymentConfigEnvironment{}
+	config := cloudflare.PagesProjectDeploymentConfigEnvironment{
+		Placement: &cloudflare.Placement{
+			Mode: cloudflare.PlacementModeOff,
+		},
+	}
 	parsed := environment.(map[string]interface{})
 	deploymentVariables := cloudflare.EnvironmentVariableMap{}
 	for key, value := range parsed {
