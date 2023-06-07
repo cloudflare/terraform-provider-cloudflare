@@ -334,6 +334,39 @@ func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigLeastOutstandingRequestsBalanced(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// checking our overrides of default values worked
+					resource.TestCheckResourceAttr(name, "description", "tf-acctest load balancer using least outstanding requests steering"),
+					resource.TestCheckResourceAttr(name, "proxied", "true"),
+					resource.TestCheckResourceAttr(name, "ttl", "0"),
+					resource.TestCheckResourceAttr(name, "steering_policy", "least_outstanding_requests"),
+					resource.TestCheckResourceAttr(name, "rules.0.name", "test rule 1"),
+					resource.TestCheckResourceAttr(name, "rules.0.condition", "dns.qry.type == 28"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.#", "1"),
+					resource.TestCheckResourceAttr(name, "rules.0.overrides.0.steering_policy", "least_outstanding_requests"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
@@ -716,6 +749,26 @@ resource "cloudflare_load_balancer" "%[3]s" {
   description = "tf-acctest load balancer using proximity-balancing"
   proxied = true // can't set ttl with proxied
   steering_policy = "proximity"
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigLeastOutstandingRequestsBalanced(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  description = "tf-acctest load balancer using least outstanding requests steering"
+  proxied = true
+  steering_policy = "least_outstanding_requests"
+  rules {
+    name = "test rule 1"
+    condition = "dns.qry.type == 28"
+    overrides {
+      steering_policy = "least_outstanding_requests"
+    }
+  }
 }`, zoneID, zone, id)
 }
 
