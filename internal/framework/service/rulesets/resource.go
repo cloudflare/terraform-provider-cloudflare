@@ -267,15 +267,15 @@ func (r *RulesetResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	idParts := strings.Split(req.ID, "/")
-	resourceLevel, resourceIdentifier, rulesetID := idParts[0], idParts[1], idParts[2]
 
-	if len(idParts) != 3 || resourceLevel == "" || resourceIdentifier == "" || rulesetID == "" {
+	if len(idParts) != 3 || idParts[0] == "" || idParts[1] == "" || idParts[2] == "" {
 		resp.Diagnostics.AddError(
 			"invalid import identifier",
 			fmt.Sprintf("expected import identifier to be resourceLevel/resourceIdentifier/rulesetID. got: %q", req.ID),
 		)
 		return
 	}
+	resourceLevel, resourceIdentifier, rulesetID := idParts[0], idParts[1], idParts[2]
 
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), rulesetID)...)
 	if resourceLevel == "zone" {

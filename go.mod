@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/cloudflare/cloudflare-go v0.68.0
+	github.com/cloudflare/cloudflare-go v0.69.0
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -37,10 +37,10 @@ require (
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-framework v1.2.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.10.0
-	github.com/hashicorp/terraform-plugin-log v0.8.0
+	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/hashicorp/terraform-plugin-mux v0.10.0
 	github.com/hashicorp/terraform-plugin-testing v1.2.0
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
@@ -49,7 +49,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hashicorp/go-checkpoint v0.5.0 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.3 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hc-install v0.5.0 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect

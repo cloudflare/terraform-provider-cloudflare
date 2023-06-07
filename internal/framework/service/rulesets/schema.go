@@ -368,7 +368,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										},
 									},
 									"headers": schema.ListNestedBlock{
-										MarkdownDescription: "List of HTTP header modifications to perform in the ruleset rule.",
+										MarkdownDescription: "List of HTTP header modifications to perform in the ruleset rule. Note: Headers are order dependent and must be provided sorted alphabetically ascending based on the `name` value.",
 										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"name": schema.StringAttribute{

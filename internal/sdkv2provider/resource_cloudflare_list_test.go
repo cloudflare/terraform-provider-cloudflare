@@ -142,9 +142,13 @@ func TestAccCloudflareList_Update(t *testing.T) {
 
 	rndIP := generateRandomResourceName()
 	rndRedirect := generateRandomResourceName()
+	rndASN := generateRandomResourceName()
+	rndHostname := generateRandomResourceName()
 
 	nameIP := fmt.Sprintf("cloudflare_list.%s", rndIP)
 	nameRedirect := fmt.Sprintf("cloudflare_list.%s", rndRedirect)
+	nameASN := fmt.Sprintf("cloudflare_list.%s", rndASN)
+	nameHostname := fmt.Sprintf("cloudflare_list.%s", rndHostname)
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -220,6 +224,54 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(nameRedirect, "item.#", "1"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareList(rndASN, rndASN, rndASN, accountID, "asn"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(nameASN, &list),
+					resource.TestCheckResourceAttr(
+						nameASN, "name", rndASN),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialID = list.ID
+				},
+				Config: testAccCheckCloudflareListASNUpdate(rndASN, rndASN, rndASN, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(nameASN, &list),
+					func(state *terraform.State) error {
+						if initialID != list.ID {
+							return fmt.Errorf("wanted update but List got recreated (id changed %q -> %q)", initialID, list.ID)
+						}
+						return nil
+					},
+					resource.TestCheckResourceAttr(nameASN, "item.#", "2"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareList(rndHostname, rndHostname, rndHostname, accountID, "hostname"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(nameHostname, &list),
+					resource.TestCheckResourceAttr(
+						nameHostname, "name", rndHostname),
+				),
+			},
+			{
+				PreConfig: func() {
+					initialID = list.ID
+				},
+				Config: testAccCheckCloudflareListHostnameUpdate(rndHostname, rndHostname, rndHostname, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(nameHostname, &list),
+					func(state *terraform.State) error {
+						if initialID != list.ID {
+							return fmt.Errorf("wanted update but List got recreated (id changed %q -> %q)", initialID, list.ID)
+						}
+						return nil
+					},
+					resource.TestCheckResourceAttr(nameHostname, "item.#", "2"),
 				),
 			},
 		},
@@ -500,5 +552,57 @@ func testAccCheckCloudflareListBasicIP(ID, name, description, accountID string) 
 		}
 		comment = "one"
 	  }
+  }`, ID, name, description, accountID)
+}
+
+func testAccCheckCloudflareListASNUpdate(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "asn"
+
+    item {
+      value {
+        asn = 345
+      }
+      comment = "ASN test"
+    }
+
+    item {
+      value {
+        asn = 567
+      }
+      comment = "ASN test two"
+    }
+  }`, ID, name, description, accountID)
+}
+
+func testAccCheckCloudflareListHostnameUpdate(ID, name, description, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[1]s" {
+    account_id = "%[4]s"
+    name = "%[2]s"
+    description = "%[3]s"
+    kind = "hostname"
+
+    item {
+      value {
+        hostname {
+		  url_hostname = "*.google.com"
+		}
+      }
+      comment = "hostname one"
+    }
+
+    item {
+	  value {
+		hostname {
+		  url_hostname = "manutd.com"
+		}
+	  }
+      comment = "hostname two"
+    }
   }`, ID, name, description, accountID)
 }

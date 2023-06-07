@@ -36,8 +36,9 @@ resource "cloudflare_teams_account" "example" {
   }
 
   proxy {
-    tcp = true
-    udp = true
+    tcp     = true
+    udp     = true
+    root_ca = true
   }
 
   url_browser_isolation_enabled = true
@@ -176,6 +177,7 @@ Required:
 
 Required:
 
+- `root_ca` (Boolean) Whether root ca is enabled account wide for ZT clients.
 - `tcp` (Boolean) Whether gateway proxy is enabled on gateway devices for TCP traffic.
 - `udp` (Boolean) Whether gateway proxy is enabled on gateway devices for UDP traffic.
 

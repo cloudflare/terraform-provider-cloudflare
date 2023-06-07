@@ -100,6 +100,15 @@ func resourceCloudflareListItemRead(ctx context.Context, d *schema.ResourceData,
 		d.Set("ip", listItem.IP)
 	}
 
+	if listItem.ASN != nil {
+		asn := int(*listItem.ASN)
+		d.Set("asn", asn)
+	}
+
+	if listItem.Hostname != nil {
+		d.Set("url_hostname", listItem.Hostname.UrlHostname)
+	}
+
 	if listItem.Redirect != nil {
 		optBoolToString := func(b *bool) string {
 			if b != nil {
@@ -157,20 +166,23 @@ func listItemType(d *schema.ResourceData) string {
 		return "ip"
 	}
 
-	return "redirect"
+	if _, ok := d.GetOk("redirect"); ok {
+		return "redirect"
+	}
+
+	if _, ok := d.GetOk("hostname"); ok {
+		return "hostname"
+	}
+
+	if _, ok := d.GetOk("asn"); ok {
+		return "asn"
+	}
+
+	return ""
 }
 
 func buildListItemCreateRequest(d *schema.ResourceData) cloudflare.ListItemCreateRequest {
 	itemType := listItemType(d)
-
-	request := cloudflare.ListItemCreateRequest{
-		Comment: d.Get("comment").(string),
-	}
-
-	if itemType == "ip" {
-		request.IP = cloudflare.StringPtr(d.Get("ip").(string))
-		return request
-	}
 
 	stringToOptBool := func(r map[string]interface{}, s string) *bool {
 		switch r[s] {
@@ -183,21 +195,36 @@ func buildListItemCreateRequest(d *schema.ResourceData) cloudflare.ListItemCreat
 		}
 	}
 
-	redirect := d.Get("redirect").([]interface{})[0].(map[string]interface{})
-	request.Redirect = &cloudflare.Redirect{
-		SourceUrl: redirect["source_url"].(string),
-		TargetUrl: redirect["target_url"].(string),
+	request := cloudflare.ListItemCreateRequest{
+		Comment: d.Get("comment").(string),
 	}
 
-	if value, ok := redirect["status_code"]; ok && value != 0 {
-		request.Redirect.StatusCode = cloudflare.IntPtr(value.(int))
+	switch itemType {
+	case "ip":
+		request.IP = cloudflare.StringPtr(d.Get("ip").(string))
+	case "asn":
+		request.ASN = cloudflare.Uint32Ptr(uint32(d.Get("asn").(int)))
+	case "hostname":
+		hostname := d.Get("hostname").([]interface{})[0].(map[string]interface{})
+		request.Hostname = &cloudflare.Hostname{
+			UrlHostname: *cloudflare.StringPtr(hostname["url_hostname"].(string)),
+		}
+	case "redirect":
+		redirect := d.Get("redirect").([]interface{})[0].(map[string]interface{})
+		request.Redirect = &cloudflare.Redirect{
+			SourceUrl: redirect["source_url"].(string),
+			TargetUrl: redirect["target_url"].(string),
+		}
+
+		if value, ok := redirect["status_code"]; ok && value != 0 {
+			request.Redirect.StatusCode = cloudflare.IntPtr(value.(int))
+		}
+
+		request.Redirect.IncludeSubdomains = stringToOptBool(redirect, "include_subdomains")
+		request.Redirect.PreserveQueryString = stringToOptBool(redirect, "preserve_query_string")
+		request.Redirect.SubpathMatching = stringToOptBool(redirect, "subpath_matching")
+		request.Redirect.PreservePathSuffix = stringToOptBool(redirect, "preserve_path_suffix")
 	}
-
-	request.Redirect.IncludeSubdomains = stringToOptBool(redirect, "include_subdomains")
-	request.Redirect.PreserveQueryString = stringToOptBool(redirect, "preserve_query_string")
-	request.Redirect.SubpathMatching = stringToOptBool(redirect, "subpath_matching")
-	request.Redirect.PreservePathSuffix = stringToOptBool(redirect, "preserve_path_suffix")
-
 	return request
 }
 

@@ -1,0 +1,11 @@
+```release-note:enhancement
+resource/cloudflare_device_settings_policy: add `description` to device settings policy
+```
+
+```release-note:enhancement
+resource/cloudflare_device_posture_rule: add ability to create intune and kolide s2s posture rule creation
+```
+
+```release-note:enhancement
+resource/cloudflare_teams_account: add ability to set `root_ca` for ZT Accounts
+```

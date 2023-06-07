@@ -159,6 +159,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+				Computed: true,
 			},
 			"service_binding": {
 				Type:        schema.TypeSet,
