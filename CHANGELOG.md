@@ -12,6 +12,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.68.0 to 0.69.0 ([#2507](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2507))
 * provider: bumps github.com/hashicorp/terraform-plugin-log from 0.8.0 to 0.9.0 ([#2489](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2489))
 
 ## 4.7.1 (31st May, 2023)
