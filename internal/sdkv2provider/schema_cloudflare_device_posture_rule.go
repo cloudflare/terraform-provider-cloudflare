@@ -177,10 +177,10 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						ValidateFunc: validation.StringInSlice([]string{">", ">=", "<", "<=", "=="}, true),
 						Description:  fmt.Sprintf("The count comparison operator for kolide. %s", renderAvailableDocumentationValuesStringSlice([]string{">", ">=", "<", "<=", "=="})),
 					},
-					"issue_config": {
+					"issue_count": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The Number of Issues for kolide.",
+						Description: "The number of issues for kolide.",
 					},
 				},
 			},
