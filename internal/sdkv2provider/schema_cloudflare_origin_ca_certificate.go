@@ -17,7 +17,7 @@ func resourceCloudflareOriginCACertificateSchema() map[string]*schema.Schema {
 		"csr": {
 			Type:         schema.TypeString,
 			ForceNew:     true,
-			Optional:     true,
+			Required:     true,
 			ValidateFunc: validateCSR,
 			Description:  "The Certificate Signing Request. Must be newline-encoded.",
 		},
