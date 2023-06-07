@@ -72,12 +72,12 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	rulesetPhase := data.Phase.ValueString()
 
 	var ruleset cloudflare.Ruleset
-	var sempahoreErr error
+	var semaphoreErr error
 
 	if accountID.ValueString() != "" {
-		ruleset, sempahoreErr = r.client.GetAccountRulesetPhase(ctx, accountID.ValueString(), rulesetPhase)
+		ruleset, semaphoreErr = r.client.GetAccountRulesetPhase(ctx, accountID.ValueString(), rulesetPhase)
 	} else {
-		ruleset, sempahoreErr = r.client.GetZoneRulesetPhase(ctx, zoneID.ValueString(), rulesetPhase)
+		ruleset, semaphoreErr = r.client.GetZoneRulesetPhase(ctx, zoneID.ValueString(), rulesetPhase)
 	}
 
 	if len(ruleset.Rules) > 0 {
@@ -104,7 +104,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		rs.Rules = rulesetData.Rules
 	}
 
-	if sempahoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
+	if semaphoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
 		tflog.Debug(ctx, "default ruleset created by the UI with empty rules found, recreating from scratch")
 		var deleteRulesetErr error
 		if accountID.ValueString() != "" {
