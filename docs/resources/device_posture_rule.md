@@ -39,8 +39,8 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `intune`, `kolide`, `sentinelone`.
-    
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `sentinelone`, `kolide`, `tanium_s2s`, `intune`.
+
 ### Optional
 
 - `description` (String)
@@ -62,10 +62,12 @@ Optional:
 - `check_disks` (Set of String) Specific volume(s) to check for encryption.
 - `compliance_status` (String) The workspace one device compliance status. Available values: `compliant`, `noncompliant`.
 - `connection_id` (String) The workspace one connection id.
+- `count_operator` (String) The count comparison operator for kolide. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `domain` (String) The domain that the client must join.
 - `enabled` (Boolean) True if the firewall must be enabled.
 - `exists` (Boolean) Checks if the file should exist.
 - `id` (String) The Teams List id.
+- `issue_config` (String) The Number of Issues for kolide.
 - `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
 - `os_distro_name` (String) The operating system excluding version information.
@@ -79,8 +81,6 @@ Optional:
 - `thumbprint` (String) The thumbprint of the file certificate.
 - `version` (String) The operating system semantic version.
 - `version_operator` (String) The version comparison operator for crowdstrike. Available values: `>`, `>=`, `<`, `<=`, `==`.
-- `count_operator` (String) The count comparison operator for kolide s2s. Available values: `>`, `>=`, `<`, `<=`, `==`.
-- `issue_count` (String) The issue_count for kolide.
 
 
 <a id="nestedblock--match"></a>

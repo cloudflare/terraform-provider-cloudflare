@@ -39,6 +39,7 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
+- `description` (String) Description of Policy.
 - `name` (String) Name of the policy.
 
 ### Optional
@@ -58,7 +59,6 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
 - `service_mode_v2_port` (Number) The port to use for the proxy service mode. Required when using `service_mode_v2_mode`.
 - `support_url` (String) The support URL that will be opened when sending feedback.
 - `switch_locked` (Boolean) Enablement of the ZT client switch lock.
-- `description` (String) A description of the policy.
 
 ### Read-Only
 
