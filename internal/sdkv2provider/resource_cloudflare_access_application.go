@@ -125,7 +125,6 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
 	d.Set("domain", accessApplication.Domain)
-	d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
 	d.Set("type", accessApplication.Type)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
@@ -147,6 +146,10 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	saasConfig := convertSaasStructToSchema(d, accessApplication.SaasApplication)
 	if saasConfigErr := d.Set("saas_app", saasConfig); saasConfigErr != nil {
 		return diag.FromErr(fmt.Errorf("error setting Access Application SaaS app configuration: %w", saasConfigErr))
+	}
+
+	if _, ok := d.GetOk("self_hosted_domains"); ok {
+		d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
 	}
 
 	return nil

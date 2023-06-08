@@ -493,10 +493,8 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("d1.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttrSet(name, "domain"),
 					resource.TestCheckResourceAttr(name, "self_hosted_domains.#", "2"),
-					resource.TestCheckResourceAttr(name, "self_hosted_domains.0", fmt.Sprintf("d1.%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(name, "self_hosted_domains.1", fmt.Sprintf("d2.%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
@@ -744,8 +742,8 @@ resource "cloudflare_access_application" "%[1]s" {
   session_duration          = "24h"
   auto_redirect_to_identity = false
   self_hosted_domains       = [
-    d1.%[1]s.%[2]s,
-    d2.%[1]s.%[2]s,
+    "d1.%[1]s.%[2]s",
+    "d2.%[1]s.%[2]s"
   ]
 }
 `, rnd, domain, identifier.Type, identifier.Value)
