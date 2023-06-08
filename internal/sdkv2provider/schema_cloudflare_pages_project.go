@@ -186,6 +186,21 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled"}, false),
 				Default:      "bundled",
 			},
+			"placement": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Description: "Configuration for placement in the Cloudflare Pages project.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"mode": {
+							Description: "Placement Mode for the Pages Function.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -195,8 +210,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Required:    true,
 		},
-		// Name is the unique identifier for this resource, we use this in the API calls.
-		// If this changes, `plan` will fail as it can't figure out the changes.
 		"name": {
 			Description: "Name of the project.",
 			Type:        schema.TypeString,

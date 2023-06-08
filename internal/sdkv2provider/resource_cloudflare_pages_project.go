@@ -32,7 +32,11 @@ func resourceCloudflarePagesProject() *schema.Resource {
 }
 
 func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeploymentConfigEnvironment {
-	config := cloudflare.PagesProjectDeploymentConfigEnvironment{}
+	config := cloudflare.PagesProjectDeploymentConfigEnvironment{
+		Placement: &cloudflare.Placement{
+			Mode: cloudflare.PlacementModeOff,
+		},
+	}
 	parsed := environment.(map[string]interface{})
 	deploymentVariables := cloudflare.EnvironmentVariableMap{}
 	for key, value := range parsed {
@@ -91,6 +95,17 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 			}
 			config.R2Bindings = bindingMap
 			break
+		case "service_binding":
+			serviceMap := cloudflare.ServiceBindingMap{}
+			for _, item := range value.(*schema.Set).List() {
+				data := item.(map[string]interface{})
+				serviceMap[data["name"].(string)] = &cloudflare.ServiceBinding{
+					Service:     data["service"].(string),
+					Environment: data["environment"].(string),
+				}
+			}
+			config.ServiceBindings = serviceMap
+			break
 		case "compatibility_date":
 			config.CompatibilityDate = value.(string)
 			break
@@ -108,16 +123,14 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 		case "usage_model":
 			config.UsageModel = cloudflare.UsageModel(value.(string))
 			break
-		case "service_binding":
-			serviceMap := cloudflare.ServiceBindingMap{}
-			for _, item := range value.(*schema.Set).List() {
-				data := item.(map[string]interface{})
-				serviceMap[data["name"].(string)] = &cloudflare.ServiceBinding{
-					Service:     data["service"].(string),
-					Environment: data["environment"].(string),
+		case "placement":
+			parsed := value.([]interface{})
+			if len(parsed) != 0 {
+				placementMode := parsed[0].(map[string]interface{})["mode"].(string)
+				config.Placement = &cloudflare.Placement{
+					Mode: cloudflare.PlacementMode(placementMode),
 				}
 			}
-			config.ServiceBindings = serviceMap
 			break
 		}
 	}
@@ -125,7 +138,7 @@ func buildDeploymentConfig(environment interface{}) cloudflare.PagesProjectDeplo
 	return config
 }
 
-func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnvironment) (returnValue []map[string]interface{}) {
+func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnvironment, d *schema.ResourceData, selection string) (returnValue []map[string]interface{}) {
 	config := make(map[string]interface{})
 
 	config["compatibility_date"] = deployment.CompatibilityDate
@@ -144,11 +157,12 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 	config["environment_variables"] = deploymentVars
 
 	deploymentVars = map[string]string{}
-	for key, value := range deployment.EnvVars {
-		if value.Type == cloudflare.SecretText {
-			deploymentVars[key] = value.Value
+	if secretsConfig, ok := d.GetOk(fmt.Sprintf("deployment_configs.0.%s.0.secrets", selection)); ok {
+		for key, value := range secretsConfig.(map[string]interface{}) {
+			deploymentVars[key] = value.(string)
 		}
 	}
+	config["secrets"] = deploymentVars
 
 	deploymentVars = map[string]string{}
 	for key, value := range deployment.KvNamespaces {
@@ -183,6 +197,15 @@ func parseDeploymentConfig(deployment cloudflare.PagesProjectDeploymentConfigEnv
 		})
 	}
 	config["service_binding"] = serviceBindings
+
+	var placementVars []map[string]string
+	placement := deployment.Placement
+	if placement != nil {
+		placementVars = append(placementVars, map[string]string{
+			"mode": string(placement.Mode),
+		})
+	}
+	config["placement"] = placementVars
 
 	returnValue = append(returnValue, config)
 	return
@@ -322,8 +345,8 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 
 	var deploymentConfigs []map[string]interface{}
 	deploymentConfig := make(map[string]interface{})
-	deploymentConfig["preview"] = parseDeploymentConfig(project.DeploymentConfigs.Preview)
-	deploymentConfig["production"] = parseDeploymentConfig(project.DeploymentConfigs.Production)
+	deploymentConfig["preview"] = parseDeploymentConfig(project.DeploymentConfigs.Preview, d, "preview")
+	deploymentConfig["production"] = parseDeploymentConfig(project.DeploymentConfigs.Production, d, "production")
 	deploymentConfigs = append(deploymentConfigs, deploymentConfig)
 	d.Set("deployment_configs", deploymentConfigs)
 

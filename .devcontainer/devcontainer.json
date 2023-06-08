@@ -10,6 +10,9 @@
   "remoteEnv": {
     "GOPATH": "${containerEnv:GOPATH}"
   },
+  "mounts": [
+    "source=terraform-provider-cloudflare-bashhistory,target=/commandhistory,type=volume"
+  ],
   "updateContentCommand": "go generate -tags tools tools/tools.go",
   "customizations": {
     "vscode": {
