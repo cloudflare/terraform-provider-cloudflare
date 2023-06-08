@@ -79,6 +79,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"shareable_entitlement_name": schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: "Name of entitlement that is shareable between entities.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"kind": schema.StringAttribute{
 				Required: true,

@@ -92,11 +92,13 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	rulesetName := data.Name.ValueString()
 	rulesetDescription := data.Description.ValueString()
 	rulesetKind := data.Kind.ValueString()
+	rulesetShareableEntitlementName := data.ShareableEntitlementName.ValueString()
 	rs := cloudflare.Ruleset{
-		Name:        rulesetName,
-		Description: rulesetDescription,
-		Kind:        rulesetKind,
-		Phase:       rulesetPhase,
+		Name:                     rulesetName,
+		Description:              rulesetDescription,
+		Kind:                     rulesetKind,
+		Phase:                    rulesetPhase,
+		ShareableEntitlementName: rulesetShareableEntitlementName,
 	}
 
 	rulesetData := data.toRuleset(ctx)
@@ -294,11 +296,12 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 // representation using the proposed config.
 func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.StringValue, in cloudflare.Ruleset) *RulesetResourceModel {
 	data := RulesetResourceModel{
-		ID:          types.StringValue(in.ID),
-		Description: types.StringValue(in.Description),
-		Name:        types.StringValue(in.Name),
-		Kind:        types.StringValue(in.Kind),
-		Phase:       types.StringValue(in.Phase),
+		ID:                       types.StringValue(in.ID),
+		Description:              types.StringValue(in.Description),
+		Name:                     types.StringValue(in.Name),
+		Kind:                     types.StringValue(in.Kind),
+		Phase:                    types.StringValue(in.Phase),
+		ShareableEntitlementName: flatteners.String(in.ShareableEntitlementName),
 	}
 
 	var ruleState []*RulesModel
