@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 
+* cloudflare_pages_project: add `placement` to deployment config ([#2480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2480))
 * resource/cloudflare_custom_hostname: add support for `bundle_method` TLS configuration ([#2494](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2494))
 * resource/cloudflare_device_posture_rule: add ability to create intune and kolide s2s posture rule creation ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
 * resource/cloudflare_device_settings_policy: add `description` to device settings policy ([#2474](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2474))
@@ -12,6 +13,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* cloudflare_pages_project: use user provided configuration for secrets in the state handler since the API does not return them ([#2480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2480))
 * resource/cloudflare_certificate_pack: handle UI deletion scenarios for HTTP 404s and `status = "deleted"` responses ([#2497](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2497))
 * resource/cloudflare_custom_hostname: use user provided values for state management when the API response isn't provided ([#2494](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2494))
 * resource/cloudflare_origin_ca_certificate: mark `csr` as Required ([#2496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2496))
