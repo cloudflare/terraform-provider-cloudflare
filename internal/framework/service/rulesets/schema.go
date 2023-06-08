@@ -118,6 +118,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 						},
 						"ref": schema.StringAttribute{
 							Optional:            true,
+							Computed:            true,
 							MarkdownDescription: "Rule reference.",
 						},
 						"enabled": schema.BoolAttribute{
