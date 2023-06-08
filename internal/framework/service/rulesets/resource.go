@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
@@ -302,15 +303,21 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 
 	var ruleState []*RulesModel
 	for _, ruleResponse := range in.Rules {
-		var rule RulesModel
+		rule := RulesModel{
+			ID:          flatteners.String(ruleResponse.ID),
+			Ref:         flatteners.String(ruleResponse.Ref),
+			Action:      flatteners.String(ruleResponse.Action),
+			Expression:  flatteners.String(ruleResponse.Expression),
+			Description: types.StringValue(ruleResponse.Description),
+			Enabled:     flatteners.Bool(ruleResponse.Enabled),
+			Version:     flatteners.String(cloudflare.String(ruleResponse.Version)),
+		}
 
-		rule.ID = flatteners.String(ruleResponse.ID)
-		rule.Action = flatteners.String(ruleResponse.Action)
-		rule.Expression = flatteners.String(ruleResponse.Expression)
-		rule.Description = types.StringValue(ruleResponse.Description)
-
-		rule.Enabled = flatteners.Bool(ruleResponse.Enabled)
-		rule.Version = flatteners.String(cloudflare.String(ruleResponse.Version))
+		if ruleResponse.LastUpdated != nil {
+			rule.LastUpdated = types.StringValue(ruleResponse.LastUpdated.String())
+		} else {
+			rule.LastUpdated = types.StringNull()
+		}
 
 		// action_parameters
 		if !reflect.ValueOf(ruleResponse.ActionParameters).IsNil() {
@@ -754,27 +761,16 @@ func (r *RulesetResourceModel) toRuleset(ctx context.Context) cloudflare.Ruleset
 // it into an API representation.
 func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 	rr := cloudflare.RulesetRule{
+		ID:          r.ID.ValueString(),
+		Ref:         r.Ref.ValueString(),
+		Version:     r.Version.ValueStringPointer(),
 		Action:      r.Action.ValueString(),
 		Expression:  r.Expression.ValueString(),
 		Description: r.Description.ValueString(),
 	}
 
-	if !r.ID.IsNull() {
-		rr.ID = r.ID.ValueString()
-	}
-
 	if !r.Enabled.IsNull() {
 		rr.Enabled = cloudflare.BoolPtr(r.Enabled.ValueBool())
-	}
-
-	if !r.Ref.IsNull() {
-		rr.Ref = r.Ref.ValueString()
-	}
-
-	if !r.Version.IsNull() {
-		if r.Version.ValueString() != "" {
-			rr.Version = cloudflare.StringPtr(r.Version.ValueString())
-		}
 	}
 
 	for _, ap := range r.ActionParameters {
@@ -1292,6 +1288,15 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 		rr.ExposedCredentialCheck = &cloudflare.RulesetRuleExposedCredentialCheck{
 			UsernameExpression: e.UsernameExpression.ValueString(),
 			PasswordExpression: e.PasswordExpression.ValueString(),
+		}
+	}
+
+	if !r.LastUpdated.IsNull() {
+		if lastUpdated, err := time.Parse(
+			"2006-01-02 15:04:05.999999999 -0700 MST",
+			r.LastUpdated.ValueString(),
+		); err == nil {
+			rr.LastUpdated = &lastUpdated
 		}
 	}
 
