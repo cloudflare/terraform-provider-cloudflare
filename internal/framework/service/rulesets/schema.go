@@ -136,6 +136,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Optional:            true,
 							Computed:            true,
 							MarkdownDescription: "Brief summary of the ruleset rule and its intended use.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"expression": schema.StringAttribute{
 							Required:            true,

@@ -594,7 +594,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", fmt.Sprintf("%s magic transit ruleset description", rnd)),
 					resource.TestCheckResourceAttr(name, "rules.#", "1"),
-					resource.TestCheckResourceAttr(name, "rules.0.action", "allow"),
+					resource.TestCheckResourceAttr(name, "rules.0.action", "skip"),
 					resource.TestCheckResourceAttr(name, "rules.0.description", "Allow TCP Ephemeral Ports"),
 					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rules.0.expression", "tcp.dstport in { 32768..65535 }"),
@@ -609,7 +609,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 					resource.TestCheckResourceAttr(name, "rules.0.description", "Block UDP Ephemeral Ports"),
 					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rules.0.expression", "udp.dstport in { 32768..65535 }"),
-					resource.TestCheckResourceAttr(name, "rules.1.action", "allow"),
+					resource.TestCheckResourceAttr(name, "rules.1.action", "skip"),
 					resource.TestCheckResourceAttr(name, "rules.1.description", "Allow TCP Ephemeral Ports"),
 					resource.TestCheckResourceAttr(name, "rules.1.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rules.1.expression", "tcp.dstport in { 32768..65535 }"),
@@ -983,11 +983,11 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", rnd+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", rnd+"."+zoneName),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+"."+zoneName),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.port", "80"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sni.0.value", rnd+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sni.0.value", rnd+"."+zoneName),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
 				),
@@ -1495,7 +1495,7 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "skip"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(cf.zone.plan eq \"ENT\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example disabled logging"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.#", "1"),
 
@@ -2300,9 +2300,15 @@ func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string
     phase       = "magic_transit"
 
     rules {
-      action = "allow"
+      action = "skip"
+      action_parameters {
+        ruleset = "current"
+      }
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
+      logging {
+        enabled = false
+      }
     }
   }`, rnd, name, accountID)
 }
@@ -2324,10 +2330,16 @@ func testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, name, accountID stri
     }
 
     rules {
-      action = "allow"
+      action = "skip"
+	  action_parameters {
+        ruleset = "current"
+      }
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
       enabled = true
+      logging {
+        enabled = false
+      }
     }
   }`, rnd, name, accountID)
 }
@@ -3001,13 +3013,13 @@ func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) str
     rules {
       action = "route"
       action_parameters {
-        host_header = "%[1]s.terraform.cfapi.net"
+        host_header = "%[1]s.%[4]s"
         origin {
-          host = "%[1]s.terraform.cfapi.net"
+          host = "%[1]s.%[4]s"
           port = 80
         }
         sni {
-          value = "%[1]s.terraform.cfapi.net"
+          value = "%[1]s.%[4]s"
         }
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
@@ -3353,7 +3365,7 @@ func testAccCheckCloudflareRulesetAccountLevelCustomWAFRule(rnd, name, accountID
       action_parameters {
         id = cloudflare_ruleset.%[1]s_account_custom_firewall.id
       }
-      expression = "(cf.zone.name eq \"example.com\")"
+      expression = "(cf.zone.name eq \"example.com\") and (cf.zone.plan eq \"ENT\")"
       description = ""
       enabled = true
     }
@@ -3425,7 +3437,7 @@ func testAccCheckCloudflareRulesetDisableLoggingForSkipAction(rnd, name, account
       action_parameters {
         ruleset = "current"
       }
-      expression = "true"
+      expression = "(cf.zone.plan eq \"ENT\")"
       enabled = true
       description = "example disabled logging"
       logging {
@@ -3461,7 +3473,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteAlone
            public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
         }
       }
-      expression  = "(cf.zone.name eq \"%[3]s\")"
+      expression  = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
       description = "Account OWASP %[3]s"
       enabled     = true
     }
@@ -3485,7 +3497,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenS
           "4814384a9e5d4991b9815dcfc25d2f1f" = "a6be45d4905042b9964ff81dc12e41d2,fa54f3d75ed446e78c22b4ea57b90acf,ec42fac3279943388b6be5ee9182835e,37da7855d2f94f69865365d894a556a4,f2db062052cf453fbe9e93f058ecf7e7,1129dfb383bb42e48466488cf3b37cb1"
         }
       }
-      expression = "(cf.zone.name eq \"%[3]s\")"
+      expression = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
       description = "Account skip rules OWASP"
       enabled = true
 	  logging {
@@ -3509,7 +3521,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenS
            public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
         }
       }
-      expression  = "(cf.zone.name eq \"%[3]s\")"
+      expression  = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
       description = "Account OWASP %[3]s"
       enabled     = true
     }
