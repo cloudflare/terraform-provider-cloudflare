@@ -757,7 +757,7 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRuleset_PreserveRuleIDs(t *testing.T) {
+func TestAccCloudflareRuleset_PreserveRuleRefs(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -769,52 +769,124 @@ func TestAccCloudflareRuleset_PreserveRuleIDs(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	var adminRuleID, loginRuleID, adminRuleCopyID string
+	var adminRuleRef, loginRuleRef, adminRuleCopyRef, adminRuleExplicitRef string
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				// Create a ruleset with two rules (one for /admin, one for /login) and get their IDs.
+				// Create a ruleset with two rules (one for /admin, one for
+				// /login) and get their refs.
 				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", getValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", getValue(&loginRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", getValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", getValue(&loginRuleRef)),
 				),
 			},
 			{
-				// Reverse the order of rules. The IDs should remain the same, just in reverse order.
+				// Reverse the order of rules. The refs should remain the same,
+				// just in reverse order.
 				Config: testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&loginRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&adminRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&adminRuleRef)),
 				),
 			},
 			{
 				// Revert to the original version.
 				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&loginRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
 				),
 			},
 			{
-				// Append a copy of the admin rule. The first two IDs should not change.
+				// Append a copy of the admin rule. The first two refs should
+				// not change.
 				Config: testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&loginRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.2.id", getValue(&adminRuleCopyID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", notEqualsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", getValue(&adminRuleCopyRef)),
 				),
 			},
 			{
-				// Disable the login rule. Its ID will change, but the admin rule IDs should remain the same.
+				// Disable the login rule. Its ref will change, but the admin
+				// rule refs should remain the same.
 				Config: testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID, false),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", notEqualsValue(&loginRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.2.id", equalsValue(&adminRuleCopyID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", notEqualsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", equalsValue(&adminRuleCopyRef)),
+				),
+			},
+			{
+				// Revert to the original version. The preserved admin rule ref
+				// should stay the same, and the login rule ref should change.
+				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", notEqualsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", getValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Give the admin rule a ref.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "foo"),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", getValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Disable the admin rule. Its ref should stay the same.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Prepend a copy of the admin rule without an explicit ref. The
+				// original rule should keep its explicit ref and the new rule
+				// should get a new ref.
+				Config: testAccCheckCloudflareRulesetThreeCustomRulesWithRef(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", notEqualsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", notEqualsValue(&adminRuleCopyRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", notEqualsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Remove the prepended admin rule and re-enable the original
+				// admin rule.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Revert to the original version. The refs should remain
+				// exactly the same.
+				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Reverse the order of rules. The refs should remain the same,
+				// just in reverse order.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&adminRuleExplicitRef)),
 				),
 			},
 		},
@@ -3082,6 +3154,55 @@ func testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID string, enableLog
       expression = "(http.request.uri.path eq \"/admin\")"
     }
   }`, rnd, zoneID, enableLoginRule)
+}
+
+func testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID string, enableAdminRule bool) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "log"
+      enabled    =  %[3]t
+      expression = "(http.request.uri.path eq \"/admin\")"
+      ref        = "foo"
+    }
+    rules {
+        action     = "challenge"
+        enabled    = true
+        expression = "(http.request.uri.path eq \"/login\")"
+    }
+  }`, rnd, zoneID, enableAdminRule)
+}
+
+func testAccCheckCloudflareRulesetThreeCustomRulesWithRef(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "log"
+      enabled    = false
+      expression = "(http.request.uri.path eq \"/admin\")"
+    }
+    rules {
+      action     = "log"
+      enabled    = false
+      expression = "(http.request.uri.path eq \"/admin\")"
+      ref        = "foo"
+    }
+    rules {
+        action     = "challenge"
+        enabled    = true
+        expression = "(http.request.uri.path eq \"/login\")"
+    }
+  }`, rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetActionParametersOverridesActionEnabled(rnd, name, zoneID, zoneName string) string {
