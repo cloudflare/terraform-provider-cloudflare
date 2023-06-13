@@ -8,6 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
+// "" or "none" = session affinity is disabled.
+var sessionAffinityPolicies = []string{"", "none", "cookie", "ip_cookie", "header"}
+
 var (
 	loadBalancerSessionAffinityAttributesElem = &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -42,6 +45,23 @@ var (
 				ValidateFunc: validation.StringInSlice([]string{"none", "temporary", "sticky"}, false),
 				Description:  fmt.Sprintf("Configures the zero-downtime failover between origins within a pool when session affinity is enabled. Value `none` means no failover takes place for sessions pinned to the origin. Value `temporary` means traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. Value `sticky` means the session affinity cookie is updated and subsequent requests are sent to the new origin. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. %s", renderAvailableDocumentationValuesStringSlice([]string{"none", "temporary", "sticky"})),
 			},
+
+			"headers": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type:         schema.TypeString,
+					ValidateFunc: validation.StringLenBetween(1, 100),
+				},
+				Description: "Configures the HTTP header names to use when header session affinity is enabled.",
+			},
+
+			"require_all_headers": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Configures how headers are used when header session affinity is enabled. Set to true to require all headers to be present on requests in order for sessions to be created or false to require at least one header to be present.",
+			},
 		},
 	}
 
@@ -70,6 +90,23 @@ var (
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"none", "temporary", "sticky"}, false),
 				Description:  fmt.Sprintf("Configures the zero-downtime failover between origins within a pool when session affinity is enabled. Value `none` means no failover takes place for sessions pinned to the origin. Value `temporary` means traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping. Value `sticky` means the session affinity cookie is updated and subsequent requests are sent to the new origin. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. %s", renderAvailableDocumentationValuesStringSlice([]string{"none", "temporary", "sticky"})),
+			},
+
+			"headers": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type:         schema.TypeString,
+					ValidateFunc: validation.StringLenBetween(1, 100),
+				},
+				Description: "Configures the HTTP header names to use when header session affinity is enabled.",
+			},
+
+			"require_all_headers": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Configures how headers are used when header session affinity is enabled. Set to true to require all headers to be present on requests in order for sessions to be created or false to require at least one header to be present.",
 			},
 		},
 	}
@@ -357,8 +394,8 @@ var (
 						"session_affinity": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"", "none", "cookie", "ip_cookie"}, false),
-							Description:  "Configure cookie attributes for session affinity cookie.",
+							ValidateFunc: validation.StringInSlice(sessionAffinityPolicies, false),
+							Description:  "Configure attributes for session affinity.",
 						},
 
 						"session_affinity_ttl": {
@@ -372,7 +409,7 @@ var (
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem:        loadBalancerOverridesSessionAffinityAttributesElem,
-							Description: "Configure cookie attributes for session affinity cookie. Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
+							Description: "Configure attributes for session affinity. Note that the property [`drain_duration`](#drain_duration) is not currently supported as a rule override.",
 						},
 
 						"adaptive_routing": {
@@ -528,8 +565,8 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "none",
-			ValidateFunc: validation.StringInSlice([]string{"", "none", "cookie", "ip_cookie"}, false),
-			Description:  fmt.Sprintf("Specifies the type of session affinity the load balancer should use unless specified as `none` or `\"\"` (default). With value `cookie`, on the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy then a new origin server is calculated and used. Value `ip_cookie` behaves the same as `cookie` except the initial origin selection is stable and based on the client's IP address. %s", renderAvailableDocumentationValuesStringSlice([]string{`""`, "none", "cookie", "ip_cookie"})),
+			ValidateFunc: validation.StringInSlice(sessionAffinityPolicies, false),
+			Description:  fmt.Sprintf("Specifies the type of session affinity the load balancer should use unless specified as `none` or `\"\"` (default). With value `cookie`, on the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy then a new origin server is calculated and used. Value `ip_cookie` behaves the same as `cookie` except the initial origin selection is stable and based on the client's IP address. %s", renderAvailableDocumentationValuesStringSlice(sessionAffinityPolicies)),
 		},
 
 		"proxied": {
@@ -573,7 +610,7 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		"session_affinity_ttl": {
 			Type:         schema.TypeInt,
 			Optional:     true,
-			ValidateFunc: validation.IntBetween(1800, 604800),
+			ValidateFunc: validation.IntBetween(0, 604800),
 			Description:  "Time, in seconds, until this load balancer's session affinity cookie expires after being created. This parameter is ignored unless a supported session affinity policy is set. The current default of `82800` (23 hours) will be used unless [`session_affinity_ttl`](#session_affinity_ttl) is explicitly set. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. Valid values are between `1800` and `604800`.",
 		},
 
@@ -581,7 +618,7 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem:        loadBalancerSessionAffinityAttributesElem,
-			Description: "Configure cookie attributes for session affinity cookie.",
+			Description: "Configure attributes for session affinity.",
 		},
 
 		"adaptive_routing": {

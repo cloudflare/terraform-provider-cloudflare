@@ -349,6 +349,8 @@ func flattenSessionAffinityAttrs(properties *cloudflare.SessionAffinityAttribute
 			"samesite":               properties.SameSite,
 			"secure":                 properties.Secure,
 			"zero_downtime_failover": properties.ZeroDowntimeFailover,
+			"headers":                properties.Headers,
+			"require_all_headers":    properties.RequireAllHeaders,
 		},
 	}
 	return schema.NewSet(schema.HashResource(loadBalancerSessionAffinityAttributesElem), flattened)
@@ -547,6 +549,13 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 						case "zero_downtime_failover":
 							saaOverride.ZeroDowntimeFailover = v.(string)
 							lbr.Overrides.SessionAffinityAttrs = saaOverride
+						case "headers":
+							saaOverride.Headers = v.([]string)
+							lbr.Overrides.SessionAffinityAttrs = saaOverride
+						case "require_all_headers":
+							requireAllHeaders := v.(bool)
+							saaOverride.RequireAllHeaders = &requireAllHeaders
+							lbr.Overrides.SessionAffinityAttrs = saaOverride
 						}
 					}
 				}
@@ -685,6 +694,10 @@ func expandSessionAffinityAttrs(set interface{}) *cloudflare.SessionAffinityAttr
 				cfSessionAffinityAttrs.DrainDuration = v.(int)
 			case "zero_downtime_failover":
 				cfSessionAffinityAttrs.ZeroDowntimeFailover = v.(string)
+			case "headers":
+				cfSessionAffinityAttrs.Headers = v.([]string)
+			case "require_all_headers":
+				cfSessionAffinityAttrs.RequireAllHeaders = v.(bool)
 			}
 		}
 	}
