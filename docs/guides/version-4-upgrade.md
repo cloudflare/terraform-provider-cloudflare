@@ -140,6 +140,12 @@ we recommend you:
 - Upgrade to 4.x
 - Import the `cloudflare_ruleset` resource back into your state file (`terraform import ...`)
 
+The identifier to import is `resourceLevel/resourceIdentifier/rulesetID`  
+where:
+- resourceLevel = "zone" or "account"
+- resourceIdentifier = Cloudflare's zone_id or account_id
+- rulesetID = Ruleset ID to import
+
 ## `cloudflare_spectrum_application`
 
 - `edge_ips` is now a nested block that holds all edge IP configuration such as
