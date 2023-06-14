@@ -24,7 +24,7 @@ func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -65,7 +65,7 @@ func TestAccCloudflareRuleset_WAFManagedRuleset(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -102,7 +102,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithoutDescription(t *testing.T) 
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -138,7 +138,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASP(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -175,7 +175,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPBlockXSSWithAnomalyOver60(t 
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -223,7 +223,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetOWASPOnlyPL1(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -273,7 +273,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultiple(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -323,7 +323,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithSkip(t *testing
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -379,7 +379,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetDeployMultipleWithTopSkipAndLastS
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -441,7 +441,7 @@ func TestAccCloudflareRuleset_SkipPhaseAndProducts(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -491,7 +491,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithCategoryAndRuleBasedOverrides
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -539,7 +539,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithIDBasedOverrides(t *testing.T
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -584,7 +584,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 	name := fmt.Sprintf("cloudflare_ruleset.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -594,7 +594,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", fmt.Sprintf("%s magic transit ruleset description", rnd)),
 					resource.TestCheckResourceAttr(name, "rules.#", "1"),
-					resource.TestCheckResourceAttr(name, "rules.0.action", "allow"),
+					resource.TestCheckResourceAttr(name, "rules.0.action", "skip"),
 					resource.TestCheckResourceAttr(name, "rules.0.description", "Allow TCP Ephemeral Ports"),
 					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rules.0.expression", "tcp.dstport in { 32768..65535 }"),
@@ -609,7 +609,7 @@ func TestAccCloudflareRuleset_MagicTransitUpdateWithHigherPriority(t *testing.T)
 					resource.TestCheckResourceAttr(name, "rules.0.description", "Block UDP Ephemeral Ports"),
 					resource.TestCheckResourceAttr(name, "rules.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rules.0.expression", "udp.dstport in { 32768..65535 }"),
-					resource.TestCheckResourceAttr(name, "rules.1.action", "allow"),
+					resource.TestCheckResourceAttr(name, "rules.1.action", "skip"),
 					resource.TestCheckResourceAttr(name, "rules.1.description", "Allow TCP Ephemeral Ports"),
 					resource.TestCheckResourceAttr(name, "rules.1.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rules.1.expression", "tcp.dstport in { 32768..65535 }"),
@@ -632,7 +632,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithPayloadLogging(t *testing.T) 
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -671,7 +671,7 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -723,7 +723,7 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -757,7 +757,7 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRuleset_PreserveRuleIDs(t *testing.T) {
+func TestAccCloudflareRuleset_PreserveRuleRefs(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -769,52 +769,124 @@ func TestAccCloudflareRuleset_PreserveRuleIDs(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	var adminRuleID, loginRuleID, adminRuleCopyID string
+	var adminRuleRef, loginRuleRef, adminRuleCopyRef, adminRuleExplicitRef string
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				// Create a ruleset with two rules (one for /admin, one for /login) and get their IDs.
+				// Create a ruleset with two rules (one for /admin, one for
+				// /login) and get their refs.
 				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", getValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", getValue(&loginRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", getValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", getValue(&loginRuleRef)),
 				),
 			},
 			{
-				// Reverse the order of rules. The IDs should remain the same, just in reverse order.
+				// Reverse the order of rules. The refs should remain the same,
+				// just in reverse order.
 				Config: testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&loginRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&adminRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&adminRuleRef)),
 				),
 			},
 			{
 				// Revert to the original version.
 				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&loginRuleID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
 				),
 			},
 			{
-				// Append a copy of the admin rule. The first two IDs should not change.
+				// Append a copy of the admin rule. The first two refs should
+				// not change.
 				Config: testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", equalsValue(&loginRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.2.id", getValue(&adminRuleCopyID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", notEqualsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", getValue(&adminRuleCopyRef)),
 				),
 			},
 			{
-				// Disable the login rule. Its ID will change, but the admin rule IDs should remain the same.
+				// Disable the login rule. Its ref will change, but the admin
+				// rule refs should remain the same.
 				Config: testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID, false),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrWith(resourceName, "rules.0.id", equalsValue(&adminRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.1.id", notEqualsValue(&loginRuleID)),
-					resource.TestCheckResourceAttrWith(resourceName, "rules.2.id", equalsValue(&adminRuleCopyID)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", notEqualsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", equalsValue(&adminRuleCopyRef)),
+				),
+			},
+			{
+				// Revert to the original version. The preserved admin rule ref
+				// should stay the same, and the login rule ref should change.
+				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", notEqualsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", getValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Give the admin rule a ref.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ref", "foo"),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", getValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Disable the admin rule. Its ref should stay the same.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Prepend a copy of the admin rule without an explicit ref. The
+				// original rule should keep its explicit ref and the new rule
+				// should get a new ref.
+				Config: testAccCheckCloudflareRulesetThreeCustomRulesWithRef(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", notEqualsValue(&adminRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", notEqualsValue(&adminRuleCopyRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", notEqualsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.2.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Remove the prepended admin rule and re-enable the original
+				// admin rule.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Revert to the original version. The refs should remain
+				// exactly the same.
+				Config: testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&adminRuleExplicitRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&loginRuleRef)),
+				),
+			},
+			{
+				// Reverse the order of rules. The refs should remain the same,
+				// just in reverse order.
+				Config: testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName, "rules.0.ref", equalsValue(&loginRuleRef)),
+					resource.TestCheckResourceAttrWith(resourceName, "rules.1.ref", equalsValue(&adminRuleExplicitRef)),
 				),
 			},
 		},
@@ -859,7 +931,7 @@ func TestAccCloudflareRuleset_CustomErrors(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -897,7 +969,7 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -911,11 +983,11 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", rnd+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", rnd+"."+zoneName),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.host", rnd+"."+zoneName),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.port", "80"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sni.0.value", rnd+".terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sni.0.value", rnd+"."+zoneName),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
 				),
@@ -937,7 +1009,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIPath(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -972,7 +1044,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIQuery(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1007,7 +1079,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIPathAndQueryCombination(t *te
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1046,7 +1118,7 @@ func TestAccCloudflareRuleset_TransformationRuleRequestHeaders(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1092,7 +1164,7 @@ func TestAccCloudflareRuleset_TransformationRuleResponseHeaders(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1130,7 +1202,7 @@ func TestAccCloudflareRuleset_ResponseCompression(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1168,7 +1240,7 @@ func TestAccCloudflareRuleset_ActionParametersMultipleSkips(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1214,7 +1286,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesAction(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1257,7 +1329,7 @@ func TestAccCloudflareRuleset_ActionParametersHTTPDDoSOverride(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1297,7 +1369,7 @@ func TestAccCloudflareRuleset_ActionParametersOverrideAllRulesetRules(t *testing
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1337,7 +1409,7 @@ func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1371,7 +1443,7 @@ func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1409,7 +1481,7 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1423,7 +1495,7 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "skip"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(cf.zone.plan eq \"ENT\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example disabled logging"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.#", "1"),
 
@@ -1446,7 +1518,7 @@ func TestAccCloudflareRuleset_ConditionallySetActionParameterVersion(t *testing.
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1473,7 +1545,7 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithActionManagedChallenge(t *tes
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1532,7 +1604,7 @@ func TestAccCloudflareRuleset_LogCustomField(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1576,7 +1648,7 @@ func TestAccCloudflareRuleset_ActionParametersOverridesThrashingStatus(t *testin
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1631,7 +1703,7 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1690,7 +1762,7 @@ func TestAccCloudflareRuleset_CacheSettingsOptionalsEmpty(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1725,7 +1797,7 @@ func TestAccCloudflareRuleset_CacheSettingsEdgeTTLRespectOrigin(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1757,7 +1829,7 @@ func TestAccCloudflareRuleset_CacheSettingsNoCacheForStatus(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1789,7 +1861,7 @@ func TestAccCloudflareRuleset_CacheSettingsStatusRangeGreaterThan(t *testing.T) 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1825,7 +1897,7 @@ func TestAccCloudflareRuleset_CacheSettingsStatusRangeLessThan(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1861,7 +1933,7 @@ func TestAccCloudflareRuleset_CacheSettingsFalse(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1889,7 +1961,7 @@ func TestAccCloudflareRuleset_Config(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1934,7 +2006,7 @@ func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1961,7 +2033,7 @@ func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -1991,7 +2063,7 @@ func TestAccCloudflareRuleset_DynamicRedirectWithoutPreservingQueryString(t *tes
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2020,7 +2092,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIStripOffQueryString(t *testin
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2044,7 +2116,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIStripOffPath(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2068,7 +2140,7 @@ func TestAccCloudflareRuleset_ConfigSingleFalseyValue(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2091,7 +2163,7 @@ func TestAccCloudflareRuleset_ConfigConflictingCacheByDevice(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2107,7 +2179,7 @@ func TestAccCloudflareRuleset_CacheSettingsMissingEdgeTTLWithOverrideOrigin(t *t
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2123,7 +2195,7 @@ func TestAccCloudflareRuleset_CacheSettingsMissingBrowserTTLWithOverrideOrigin(t
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2139,7 +2211,7 @@ func TestAccCloudflareRuleset_CacheSettingsInvalidEdgeTTLWithOverrideOrigin(t *t
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2155,7 +2227,7 @@ func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithOverrideOrigin(t
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2171,7 +2243,7 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *test
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2186,7 +2258,7 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringIncludeKeys(t *test
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2203,7 +2275,7 @@ func TestAccCloudflareRuleset_ImportHandlesMissingValues(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	name := "cloudflare_ruleset." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -2228,9 +2300,15 @@ func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string
     phase       = "magic_transit"
 
     rules {
-      action = "allow"
+      action = "skip"
+      action_parameters {
+        ruleset = "current"
+      }
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
+      logging {
+        enabled = false
+      }
     }
   }`, rnd, name, accountID)
 }
@@ -2252,10 +2330,16 @@ func testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, name, accountID stri
     }
 
     rules {
-      action = "allow"
+      action = "skip"
+	  action_parameters {
+        ruleset = "current"
+      }
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
       enabled = true
+      logging {
+        enabled = false
+      }
     }
   }`, rnd, name, accountID)
 }
@@ -2929,13 +3013,13 @@ func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) str
     rules {
       action = "route"
       action_parameters {
-        host_header = "%[1]s.terraform.cfapi.net"
+        host_header = "%[1]s.%[4]s"
         origin {
-          host = "%[1]s.terraform.cfapi.net"
+          host = "%[1]s.%[4]s"
           port = 80
         }
         sni {
-          value = "%[1]s.terraform.cfapi.net"
+          value = "%[1]s.%[4]s"
         }
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
@@ -3082,6 +3166,55 @@ func testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID string, enableLog
       expression = "(http.request.uri.path eq \"/admin\")"
     }
   }`, rnd, zoneID, enableLoginRule)
+}
+
+func testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID string, enableAdminRule bool) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "log"
+      enabled    =  %[3]t
+      expression = "(http.request.uri.path eq \"/admin\")"
+      ref        = "foo"
+    }
+    rules {
+        action     = "challenge"
+        enabled    = true
+        expression = "(http.request.uri.path eq \"/login\")"
+    }
+  }`, rnd, zoneID, enableAdminRule)
+}
+
+func testAccCheckCloudflareRulesetThreeCustomRulesWithRef(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id      = "%[2]s"
+    name         = "Terraform provider test"
+    description  = "%[1]s ruleset description"
+    kind         = "zone"
+    phase        = "http_request_firewall_custom"
+    rules {
+      action     = "log"
+      enabled    = false
+      expression = "(http.request.uri.path eq \"/admin\")"
+    }
+    rules {
+      action     = "log"
+      enabled    = false
+      expression = "(http.request.uri.path eq \"/admin\")"
+      ref        = "foo"
+    }
+    rules {
+        action     = "challenge"
+        enabled    = true
+        expression = "(http.request.uri.path eq \"/login\")"
+    }
+  }`, rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetActionParametersOverridesActionEnabled(rnd, name, zoneID, zoneName string) string {
@@ -3232,7 +3365,7 @@ func testAccCheckCloudflareRulesetAccountLevelCustomWAFRule(rnd, name, accountID
       action_parameters {
         id = cloudflare_ruleset.%[1]s_account_custom_firewall.id
       }
-      expression = "(cf.zone.name eq \"example.com\")"
+      expression = "(cf.zone.name eq \"example.com\") and (cf.zone.plan eq \"ENT\")"
       description = ""
       enabled = true
     }
@@ -3304,7 +3437,7 @@ func testAccCheckCloudflareRulesetDisableLoggingForSkipAction(rnd, name, account
       action_parameters {
         ruleset = "current"
       }
-      expression = "true"
+      expression = "(cf.zone.plan eq \"ENT\")"
       enabled = true
       description = "example disabled logging"
       logging {
@@ -3340,7 +3473,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteAlone
            public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
         }
       }
-      expression  = "(cf.zone.name eq \"%[3]s\")"
+      expression  = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
       description = "Account OWASP %[3]s"
       enabled     = true
     }
@@ -3364,7 +3497,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenS
           "4814384a9e5d4991b9815dcfc25d2f1f" = "a6be45d4905042b9964ff81dc12e41d2,fa54f3d75ed446e78c22b4ea57b90acf,ec42fac3279943388b6be5ee9182835e,37da7855d2f94f69865365d894a556a4,f2db062052cf453fbe9e93f058ecf7e7,1129dfb383bb42e48466488cf3b37cb1"
         }
       }
-      expression = "(cf.zone.name eq \"%[3]s\")"
+      expression = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
       description = "Account skip rules OWASP"
       enabled = true
 	  logging {
@@ -3388,7 +3521,7 @@ func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenS
            public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
         }
       }
-      expression  = "(cf.zone.name eq \"%[3]s\")"
+      expression  = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
       description = "Account OWASP %[3]s"
       enabled     = true
     }
