@@ -1,4 +1,6 @@
-## 4.8.0 (Unreleased)
+## 4.9.0 (Unreleased)
+
+## 4.8.0 (14th June, 2023)
 
 BREAKING CHANGES:
 
