@@ -1,5 +1,9 @@
 ## 4.8.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: Prevent the rule ID, version and last updated attributes from being set ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
+
 ENHANCEMENTS:
 
 * cloudflare_pages_project: add `placement` to deployment config ([#2480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2480))
@@ -18,6 +22,9 @@ BUG FIXES:
 * resource/cloudflare_certificate_pack: handle UI deletion scenarios for HTTP 404s and `status = "deleted"` responses ([#2497](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2497))
 * resource/cloudflare_custom_hostname: use user provided values for state management when the API response isn't provided ([#2494](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2494))
 * resource/cloudflare_origin_ca_certificate: mark `csr` as Required ([#2496](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2496))
+* resource/cloudflare_ruleset: Mark that the ruleset must be re-created if the shareable entitlement name attribute changes ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
+* resource/cloudflare_ruleset: Populate the rule ID, ref, version and last updated attributes in API requests and from API responses ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
+* resource/cloudflare_ruleset: Populate the shareable entitlement name attribute in API requests and from API responses ([#2511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2511))
 * resource/cloudflare_ruleset: handle `Import` operations where the required values are missing for providing a nicer error message ([#2503](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2503))
 
 DEPENDENCIES:
