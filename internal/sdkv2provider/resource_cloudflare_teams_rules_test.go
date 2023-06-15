@@ -75,6 +75,56 @@ resource "cloudflare_teams_rule" "%[1]s" {
 `, rnd, accountID)
 }
 
+func TestAccCloudflareTeamsRuleNoSettings(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_teams_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareTeamsRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsRuleConfigBasic(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "description", "desc"),
+					resource.TestCheckResourceAttr(name, "precedence", "12302"),
+					resource.TestCheckResourceAttr(name, "action", "block"),
+					resource.TestCheckResourceAttr(name, "filters.0", "dns"),
+					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"example.com\")"),
+					resource.TestCheckResourceAttr(name, "rule_settings", "null"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCloudflareTeamsRuleConfigNoSettings(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_teams_rule" "%[1]s" {
+  name = "%[1]s"
+  account_id = "%[2]s"
+  description = "desc"
+  precedence = 12302
+  action = "block"
+  filters = ["dns"]
+  traffic = "any(dns.domains[*] == \"example.com\")"
+}
+`, rnd, accountID)
+}
+
 func testAccCheckCloudflareTeamsRuleDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
