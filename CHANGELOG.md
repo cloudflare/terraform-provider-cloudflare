@@ -1,5 +1,9 @@
 ## 4.9.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.0 to 1.3.1 ([#2529](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2529))
+
 ## 4.8.0 (14th June, 2023)
 
 BREAKING CHANGES:
