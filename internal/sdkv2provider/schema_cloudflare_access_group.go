@@ -8,14 +8,14 @@ import (
 func resourceCloudflareAccessGroupSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description:   "The account identifier to target for the resource.",
+			Description:   consts.AccountIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
-			Description:   "The zone identifier to target for the resource.",
+			Description:   consts.ZoneIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
@@ -178,15 +178,17 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"id": {
-						Type:     schema.TypeList,
-						Optional: true,
+						Type:        schema.TypeList,
+						Description: "The ID of the Azure group or user.",
+						Optional:    true,
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
 					},
 					"identity_provider_id": {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:        schema.TypeString,
+						Description: "The ID of the Azure Identity provider",
+						Optional:    true,
 					},
 				},
 			},

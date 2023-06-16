@@ -80,6 +80,7 @@ resource "cloudflare_access_identity_provider" "okta" {
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`. **Modifying this attribute will force creation of a new resource.**
 - `config` (Block List) Provider configuration from the [developer documentation](https://developers.cloudflare.com/access/configuring-identity-providers/). (see [below for nested schema](#nestedblock--config))
+- `scim_config` (Block List) Configuration for SCIM settings for a given IDP. (see [below for nested schema](#nestedblock--scim_config))
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
@@ -98,6 +99,7 @@ Optional:
 - `centrify_account` (String)
 - `centrify_app_id` (String)
 - `certs_url` (String)
+- `claims` (List of String)
 - `client_id` (String)
 - `client_secret` (String)
 - `directory_id` (String)
@@ -108,10 +110,23 @@ Optional:
 - `onelogin_account` (String)
 - `pkce_enabled` (Boolean)
 - `redirect_url` (String)
+- `scopes` (List of String)
 - `sign_request` (Boolean)
 - `sso_target_url` (String)
 - `support_groups` (Boolean)
 - `token_url` (String)
+
+
+<a id="nestedblock--scim_config"></a>
+### Nested Schema for `scim_config`
+
+Optional:
+
+- `enabled` (Boolean)
+- `group_member_deprovision` (Boolean)
+- `seat_deprovision` (Boolean)
+- `secret` (String)
+- `user_deprovision` (Boolean)
 
 ## Import
 

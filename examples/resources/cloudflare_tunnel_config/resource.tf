@@ -1,4 +1,4 @@
-resource "cloudflare_argo_tunnel" "example_tunnel" {
+resource "cloudflare_tunnel" "example_tunnel" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "example_tunnel"
   secret     = "<32 character secret>"
@@ -6,7 +6,7 @@ resource "cloudflare_argo_tunnel" "example_tunnel" {
 
 resource "cloudflare_tunnel_config" "example_config" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  tunnel_id  = cloudflare_argo_tunnel.example_tunnel.id
+  tunnel_id  = cloudflare_tunnel.example_tunnel.id
 
   config {
     warp_routing {
@@ -38,6 +38,14 @@ resource "cloudflare_tunnel_config" "example_config" {
       hostname = "foo"
       path     = "/bar"
       service  = "http://10.0.0.2:8080"
+      origin_request {
+        connect_timeout = "2m0s"
+        access {
+          required  = true
+          team_name = "terraform"
+          aud_tag   = ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"]
+        }
+      }
     }
     ingress_rule {
       service = "https://10.0.0.3:8081"

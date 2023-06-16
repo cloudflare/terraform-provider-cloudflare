@@ -9,7 +9,7 @@ on:
       - completed
   workflow_dispatch:
 jobs:
-  GenerateChangelog:
+  generate-changelog:
     if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:

@@ -82,16 +82,28 @@ const (
 	APIClientLoggingSchemaKey = "api_client_logging"
 	APIClientLoggingEnvVarKey = "CLOUDFLARE_API_CLIENT_LOGGING"
 
-	// Schema key for the account ID configuration.
-	AccountIDSchemaKey = "account_id"
-
 	// Environment variable key for the account ID configuration.
 	//
 	// Deprecated: Use resource specific account ID values instead.
 	AccountIDEnvVarKey = "CLOUDFLARE_ACCOUNT_ID"
 
+	UserAgentDefault = "terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s"
+
+	// Schema key for the account ID configuration.
+	AccountIDSchemaKey = "account_id"
+
+	// Schema description for `account_id` field.
+	AccountIDSchemaDescription = "The account identifier to target for the resource."
+
 	// Schema key for the zone ID configuration.
 	ZoneIDSchemaKey = "zone_id"
 
-	UserAgentDefault = "terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s"
+	// Schema description for `zone_id` field.
+	ZoneIDSchemaDescription = "The zone identifier to target for the resource."
+
+	// Schema key for IDs.
+	IDSchemaKey = "id"
+
+	// Schema description for all ID fields.
+	IDSchemaDescription = "The identifier of this resource."
 )

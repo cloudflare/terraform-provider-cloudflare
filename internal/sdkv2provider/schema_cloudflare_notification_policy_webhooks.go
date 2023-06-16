@@ -8,7 +8,7 @@ import (
 func resourceCloudflareNotificationPolicyWebhookSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -20,6 +20,7 @@ func resourceCloudflareNotificationPolicyWebhookSchema() map[string]*schema.Sche
 		"url": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			ForceNew:    true,
 			Description: "The URL of the webhook destinations.",
 		},
 		"secret": {

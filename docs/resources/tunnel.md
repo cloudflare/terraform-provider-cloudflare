@@ -31,6 +31,10 @@ resource "cloudflare_tunnel" "example" {
 - `name` (String) A user-friendly name chosen when the tunnel is created. **Modifying this attribute will force creation of a new resource.**
 - `secret` (String, Sensitive) 32 or more bytes, encoded as a base64 string. The Create Argo Tunnel endpoint sets this as the tunnel's password. Anyone wishing to run the tunnel needs this password. **Modifying this attribute will force creation of a new resource.**
 
+### Optional
+
+- `config_src` (String) Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel on the Zero Trust dashboard or using tunnel_config, tunnel_route or tunnel_virtual_network resources. Available values: `local`, `cloudflare`. **Modifying this attribute will force creation of a new resource.**
+
 ### Read-Only
 
 - `cname` (String) Usable CNAME for accessing the Tunnel.
@@ -42,5 +46,5 @@ resource "cloudflare_tunnel" "example" {
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_argo_tunnel.example <account_id>/<tunnel_id>
+$ terraform import cloudflare_tunnel.example <account_id>/<tunnel_id>
 ```

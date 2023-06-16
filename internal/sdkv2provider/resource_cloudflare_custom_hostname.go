@@ -12,7 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -50,13 +50,9 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 
 	if !reflect.ValueOf(customHostname.SSL).IsNil() {
 		ssl := map[string]interface{}{
-			"type":                  customHostname.SSL.Type,
-			"method":                customHostname.SSL.Method,
 			"wildcard":              customHostname.SSL.Wildcard,
 			"status":                customHostname.SSL.Status,
 			"certificate_authority": customHostname.SSL.CertificateAuthority,
-			"custom_certificate":    customHostname.SSL.CustomCertificate,
-			"custom_key":            customHostname.SSL.CustomKey,
 			"settings": []map[string]interface{}{{
 				"http2":           customHostname.SSL.Settings.HTTP2,
 				"tls13":           customHostname.SSL.Settings.TLS13,
@@ -65,6 +61,27 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 				"early_hints":     customHostname.SSL.Settings.EarlyHints,
 			}},
 		}
+
+		if val, ok := d.GetOk("ssl.0.bundle_method"); ok {
+			ssl["bundle_method"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.method"); ok {
+			ssl["method"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.type"); ok {
+			ssl["type"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.custom_certificate"); ok {
+			ssl["custom_certificate"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.custom_key"); ok {
+			ssl["custom_key"] = val.(string)
+		}
+
 		if !reflect.ValueOf(customHostname.SSL.ValidationErrors).IsNil() {
 			errors := []map[string]interface{}{}
 			for _, e := range customHostname.SSL.ValidationErrors {
@@ -142,14 +159,14 @@ func resourceCloudflareCustomHostnameCreate(ctx context.Context, d *schema.Resou
 	hostnameID := newCertificate.Result.ID
 
 	if d.Get("wait_for_ssl_pending_validation").(bool) {
-		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+		err := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *retry.RetryError {
 			customHostname, err := client.CustomHostname(ctx, zoneID, hostnameID)
 			tflog.Debug(ctx, fmt.Sprintf("custom hostname ssl status %s", customHostname.SSL.Status))
 			if err != nil {
-				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch custom hostname"))
+				return retry.NonRetryableError(errors.Wrap(err, "failed to fetch custom hostname"))
 			}
 			if customHostname.SSL != nil && customHostname.SSL.Status != "pending_validation" {
-				return resource.RetryableError(fmt.Errorf("hostname ssl sub-object is not yet in pending_validation status"))
+				return retry.RetryableError(fmt.Errorf("hostname ssl sub-object is not yet in pending_validation status"))
 			}
 			return nil
 		})
@@ -205,6 +222,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 
 	if _, ok := d.GetOk("ssl"); ok {
 		ch.SSL = &cloudflare.CustomHostnameSSL{
+			BundleMethod:         d.Get("ssl.0.bundle_method").(string),
 			Method:               d.Get("ssl.0.method").(string),
 			Type:                 d.Get("ssl.0.type").(string),
 			Wildcard:             cloudflare.BoolPtr(d.Get("ssl.0.wildcard").(bool)),

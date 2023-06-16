@@ -16,14 +16,14 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Description: "The ID of the application the policy is associated with.",
 		},
 		consts.AccountIDSchemaKey: {
-			Description:   "The account identifier to target for the resource.",
+			Description:   consts.AccountIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
 			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
-			Description:   "The zone identifier to target for the resource.",
+			Description:   consts.ZoneIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
@@ -62,6 +62,11 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Required:    true,
 			Elem:        AccessGroupOptionSchemaElement,
 			Description: "A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions).",
+		},
+		"isolation_required": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Require this application to be served in an isolated browser for users matching this policy.",
 		},
 		"purpose_justification_required": {
 			Type:        schema.TypeBool,

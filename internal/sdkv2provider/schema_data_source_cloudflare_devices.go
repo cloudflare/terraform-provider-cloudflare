@@ -8,7 +8,7 @@ import (
 func resoureceCloudflareDevicesSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -17,40 +17,60 @@ func resoureceCloudflareDevicesSchema() map[string]*schema.Schema {
 			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					"id": {
+					"created": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "Device ID.",
+						Description: "When the device was created.",
 					},
-					"key": {
-						Type:        schema.TypeString,
+					"deleted": {
+						Type:        schema.TypeBool,
 						Optional:    true,
-						Description: "The device's public key.",
+						Description: "Whether the device has been deleted.",
 					},
 					"device_type": {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "The type of the device.",
 					},
-					"name": {
+					"id": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The device name.",
+						Description: "Device ID.",
 					},
-					"version": {
+					"ip": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The WARP client version.",
+						Description: "IPv4 or IPv6 address.",
+					},
+					"key": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The device's public key.",
+					},
+					"last_seen": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "When the device was last seen.",
+					},
+					"mac_address": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The device's MAC address.",
+					},
+					"manufacturer": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The device manufacturer's name.",
 					},
 					"model": {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "The device model name.",
 					},
-					"os_version": {
+					"name": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The operating system version.",
+						Description: "The device name.",
 					},
 					"os_distro_name": {
 						Type:        schema.TypeString,
@@ -62,40 +82,45 @@ func resoureceCloudflareDevicesSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "The Linux distribution revision.",
 					},
-					"ip": {
+					"os_version": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "IPv4 or IPv6 address.",
+						Description: "The operating system version.",
 					},
-					"last_seen": {
+					"revoked_at": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "When the device was last seen.",
+						Description: "When the device was revoked.",
 					},
-					"created": {
+					"serial_number": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "When the device was created.",
+						Description: "The device's serial number.",
 					},
 					"updated": {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "When the device was updated.",
 					},
-					"user_id": {
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "User's ID.",
-					},
 					"user_email": {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "User's email.",
 					},
+					"user_id": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "User's ID.",
+					},
 					"user_name": {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "User's Name.",
+					},
+					"version": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The WARP client version.",
 					},
 				},
 			},

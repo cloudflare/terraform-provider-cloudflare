@@ -131,6 +131,14 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 	}
 }
 
+func getCompatibilityFlags(d *schema.ResourceData) []string {
+	compatibilityFlags := make([]string, 0)
+	for _, item := range d.Get("compatibility_flags").(*schema.Set).List() {
+		compatibilityFlags = append(compatibilityFlags, item.(string))
+	}
+	return compatibilityFlags
+}
+
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
@@ -157,11 +165,16 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
+	logpush := d.Get("logpush").(bool)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
-		ScriptName: scriptData.Params.ScriptName,
-		Script:     scriptBody,
-		Module:     d.Get("module").(bool),
-		Bindings:   bindings,
+		ScriptName:         scriptData.Params.ScriptName,
+		Script:             scriptBody,
+		CompatibilityDate:  d.Get("compatibility_date").(string),
+		CompatibilityFlags: getCompatibilityFlags(d),
+		Module:             d.Get("module").(bool),
+		Bindings:           bindings,
+		Logpush:            &logpush,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
@@ -329,11 +342,16 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	parseWorkerBindings(d, bindings)
 
+	logpush := d.Get("logpush").(bool)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
-		ScriptName: scriptData.Params.ScriptName,
-		Script:     scriptBody,
-		Module:     d.Get("module").(bool),
-		Bindings:   bindings,
+		ScriptName:         scriptData.Params.ScriptName,
+		Script:             scriptBody,
+		CompatibilityDate:  d.Get("compatibility_date").(string),
+		CompatibilityFlags: getCompatibilityFlags(d),
+		Module:             d.Get("module").(bool),
+		Bindings:           bindings,
+		Logpush:            &logpush,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating worker script"))

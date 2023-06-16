@@ -11,7 +11,7 @@ import (
 func resourceCloudflareDevicePostureIntegrationSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -23,8 +23,8 @@ func resourceCloudflareDevicePostureIntegrationSchema() map[string]*schema.Schem
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{ws1, uptycs, crowdstrike, intune}, false),
-			Description:  fmt.Sprintf("The device posture integration type. %s", renderAvailableDocumentationValuesStringSlice([]string{ws1, uptycs, crowdstrike, intune})),
+			ValidateFunc: validation.StringInSlice([]string{ws1, uptycs, crowdstrike, intune, kolide}, false),
+			Description:  fmt.Sprintf("The device posture integration type. %s", renderAvailableDocumentationValuesStringSlice([]string{ws1, uptycs, crowdstrike, intune, kolide})),
 		},
 		"identifier": {
 			Type:     schema.TypeString,

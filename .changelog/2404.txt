@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_notification_policy: Added support for setting Megabits per second threshold for dos alert in Cloudflare notification policy resource.
+```

@@ -1,7 +1,11 @@
 package sdkv2provider
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -9,7 +13,7 @@ import (
 func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.ZoneIDSchemaKey: {
-			Description: "The zone identifier to target for the resource.",
+			Description: consts.ZoneIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 			ForceNew:    true,
@@ -377,7 +381,21 @@ func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 												Computed: true,
 												Elem: &schema.Schema{
 													Type: schema.TypeString,
-												},
+													ValidateDiagFunc: func(v interface{}, p cty.Path) diag.Diagnostics {
+														value := v.(string)
+														var diags diag.Diagnostics
+
+														if value == "*" {
+															diag := diag.Diagnostic{
+																Severity: diag.Error,
+																Summary:  "Invalid exclude value",
+																Detail:   fmt.Sprintf("full wildcards are not supported for exclude, use ignore=true instead. value: %s", value),
+															}
+															diags = append(diags, diag)
+														}
+
+														return diags
+													}},
 											},
 											"include": {
 												Type:     schema.TypeSet,
@@ -385,6 +403,21 @@ func resourceCloudflarePageRuleSchema() map[string]*schema.Schema {
 												Computed: true,
 												Elem: &schema.Schema{
 													Type: schema.TypeString,
+													ValidateDiagFunc: func(v interface{}, p cty.Path) diag.Diagnostics {
+														value := v.(string)
+														var diags diag.Diagnostics
+
+														if value == "*" {
+															diag := diag.Diagnostic{
+																Severity: diag.Error,
+																Summary:  "Invalid include value",
+																Detail:   fmt.Sprintf("full wildcards are not supported for include, use ignore=false instead. value: %s", value),
+															}
+															diags = append(diags, diag)
+														}
+
+														return diags
+													},
 												},
 											},
 											"ignore": {

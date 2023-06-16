@@ -33,7 +33,7 @@ resource "cloudflare_custom_hostname" "example" {
 - `custom_metadata` (Map of String) Custom metadata associated with custom hostname. Only supports primitive string values, all other values are accessible via the API directly.
 - `custom_origin_server` (String) The custom origin server used for certificates.
 - `custom_origin_sni` (String) The [custom origin SNI](https://developers.cloudflare.com/ssl/ssl-for-saas/hostname-specific-behavior/custom-origin) used for certificates.
-- `ssl` (Block List) SSL configuration of the certificate. (see [below for nested schema](#nestedblock--ssl))
+- `ssl` (Block List) SSL properties used when creating the custom hostname. (see [below for nested schema](#nestedblock--ssl))
 - `wait_for_ssl_pending_validation` (Boolean) Whether to wait for a custom hostname SSL sub-object to reach status `pending_validation` during creation. Defaults to `false`.
 
 ### Read-Only
@@ -48,6 +48,7 @@ resource "cloudflare_custom_hostname" "example" {
 
 Optional:
 
+- `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it. Available values: `ubiquitous`, `optimal`, `force`.
 - `certificate_authority` (String)
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_key` (String) The key for a custom uploaded certificate.

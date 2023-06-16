@@ -383,3 +383,27 @@ resource "cloudflare_ruleset" "http_config_rules_example" {
     enabled     = true
   }
 }
+
+# Set compress algorithm for response.
+resource "cloudflare_ruleset" "response_compress_brotli_html" {
+  zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  name        = "Brotli response compression for HTML"
+  description = "Response compression ruleset"
+  kind        = "zone"
+  phase       = "http_response_compression"
+
+  rules {
+    action = "compress_response"
+    action_parameters {
+      algorithms {
+        name = "brotli"
+      }
+      algorithms {
+        name = "auto"
+      }
+    }
+    expression  = "http.response.content_type.media_type == \"text/html\""
+    description = "Prefer brotli compression for HTML"
+    enabled     = true
+  }
+}

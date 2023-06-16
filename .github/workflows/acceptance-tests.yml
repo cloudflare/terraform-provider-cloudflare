@@ -40,12 +40,14 @@ jobs:
       CLOUDFLARE_WORKSPACE_ONE_AUTH_URL: ${{ secrets.CLOUDFLARE_WORKSPACE_ONE_AUTH_URL }}
       CLOUDFLARE_PAGES_OWNER: jacobbednarz
       CLOUDFLARE_PAGES_REPO: pages-example
+      CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+      CLOUDFLARE_R2_ACCESS_KEY_SECRET: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_SECRET }}
 
     steps:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v3
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v4
       with:
         go-version-file: 'go.mod'
       id: go

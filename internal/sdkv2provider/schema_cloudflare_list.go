@@ -12,7 +12,7 @@ import (
 func resourceCloudflareListSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -29,10 +29,11 @@ func resourceCloudflareListSchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"kind": {
-			Description:  "The type of items the list will contain.",
+			Description:  fmt.Sprintf("The type of items the list will contain. %s", renderAvailableDocumentationValuesStringSlice([]string{"ip", "redirect", "hostname", "asn"})),
 			Type:         schema.TypeString,
-			ValidateFunc: validation.StringInSlice([]string{"ip", "redirect"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"ip", "redirect", "hostname", "asn"}, false),
 			Required:     true,
+			ForceNew:     true,
 		},
 		"item": {
 			Type:     schema.TypeSet,
@@ -98,6 +99,24 @@ var listItemElem = &schema.Resource{
 									Type:         schema.TypeString,
 									Optional:     true,
 									ValidateFunc: validation.StringInSlice([]string{"disabled", "enabled"}, false),
+								},
+							},
+						},
+					},
+					"asn": {
+						Type:         schema.TypeInt,
+						Optional:     true,
+						ValidateFunc: validation.IntAtLeast(1),
+					},
+					"hostname": {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"url_hostname": {
+									Description: "The FQDN to match on. Wildcard sub-domain matching is allowed. Eg. *.abc.com",
+									Type:        schema.TypeString,
+									Required:    true,
 								},
 							},
 						},

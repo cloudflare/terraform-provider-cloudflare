@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_pages_project: suggest a better default value for root_dir
+```

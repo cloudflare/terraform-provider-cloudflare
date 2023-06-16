@@ -1,14 +1,17 @@
 package sdkv2provider
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -19,6 +22,11 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 		},
 		"name": {
 			Description: "Name of the policy.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+		"description": {
+			Description: "Description of Policy.",
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -81,10 +89,11 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"service_mode_v2_mode": {
-			Description: "The service mode.",
-			Type:        schema.TypeString,
-			Optional:    true,
-			Default:     "warp",
+			Description:  fmt.Sprintf("The service mode. %s", renderAvailableDocumentationValuesStringSlice([]string{"1dot1", "warp", "proxy", "posture_only", "warp_tunnel_only"})),
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"1dot1", "warp", "proxy", "posture_only", "warp_tunnel_only"}, false),
+			Default:      "warp",
 		},
 		"service_mode_v2_port": {
 			Description:  "The port to use for the proxy service mode.",

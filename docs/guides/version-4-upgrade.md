@@ -26,6 +26,10 @@ We highly recommend reviewing this guide, make necessary changes and move to
 4.x branch, as further 3.x releases are unlikely to happen outside of critical
 security fixes.
 
+~> Before attempting to upgrade to version 4, you should first upgrade to the
+   latest version of 3 to ensure any transitional updates are applied to your
+   existing configuration.
+
 Once ready, make the following change to use the latest 4.x release:
 
 ```hcl
@@ -114,12 +118,36 @@ detect and build parts of the HTTP request URL if the global `AccountID` value
 is provided. While internal, this has been removed in favour of explicit
 `account_id` configurations mentioned above.
 
+## `cloudflare_ruleset`
+
+`cloudflare_ruleset` resource has been migrated internally to use the
+`terraform-plugin-framework` to better handle zero/nil values (see
+[cloudflare/terraform-provider-cloudflare#2170](https://github.com/cloudflare/terraform-provider-cloudflare/pull/2170)
+for full details).
+
+As part of the migration to the `terraform-plugin-framework`, the workaround
+that relied on `status` has been removed. If you have `status = "enabled"`
+you will need to replace it with `enabled = true` and similar for `status = "disabled"`
+to be replaced with `enabled = false`. This change realigns the Terraform
+resource with the API response.
+
+[v4.2.0](https://github.com/cloudflare/terraform-provider-cloudflare/releases/tag/v4.2.0)
+introduced the change and to get all the benefits with a smooth upgrade path,
+we recommend you:
+
+- Ensure you are on the latest 3.x release
+- Remove the resource from your state file (`terraform state rm ...`)
+- Upgrade to 4.x
+- Import the `cloudflare_ruleset` resource back into your state file (`terraform import ...`)
+
 ## `cloudflare_spectrum_application`
 
 - `edge_ips` is now a nested block that holds all edge IP configuration such as
   `type`, `connectivity` and `ips`.
 - `edge_ip_connectivity` is now nested under `edge_ips` as `connectivity`.
 - `type` is now a required field.
+
+Before:
 
 ```hcl
 resource "cloudflare_spectrum_application" "..." {

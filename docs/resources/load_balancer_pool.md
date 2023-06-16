@@ -91,7 +91,7 @@ Optional:
 
 - `enabled` (Boolean) Whether this origin is enabled. Disabled origins will not receive traffic and are excluded from health checks. Defaults to `true`.
 - `header` (Block Set) HTTP request headers. (see [below for nested schema](#nestedblock--origins--header))
-- `weight` (Number) The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked. Defaults to `1`.
+- `weight` (Number) The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked. When [`origin_steering.policy="least_outstanding_requests"`](#policy), weight is used to scale the origin's outstanding requests. Defaults to `1`.
 
 <a id="nestedblock--origins--header"></a>
 ### Nested Schema for `origins.header`
@@ -109,9 +109,9 @@ Required:
 Optional:
 
 - `default_percent` (Number) Percent of traffic to shed 0 - 100. Defaults to `0`.
-- `default_policy` (String) Method of shedding traffic. Available values: ``, `hash`, `random`. Defaults to `""`.
+- `default_policy` (String) Method of shedding traffic. Available values: `""`, `hash`, `random`. Defaults to `""`.
 - `session_percent` (Number) Percent of session traffic to shed 0 - 100. Defaults to `0`.
-- `session_policy` (String) Method of shedding traffic. Available values: ``, `hash`. Defaults to `""`.
+- `session_policy` (String) Method of shedding traffic. Available values: `""`, `hash`. Defaults to `""`.
 
 
 <a id="nestedblock--origin_steering"></a>
@@ -119,6 +119,12 @@ Optional:
 
 Optional:
 
-- `policy` (String) Origin steering policy to be used. Available values: ``, `hash`, `random`. Defaults to `random`.
+- `policy` (String) Origin steering policy to be used. Value `random` selects an origin randomly. Value `hash` selects an origin by computing a hash over the CF-Connecting-IP address. Value `least_outstanding_requests` selects an origin by taking into consideration origin weights, as well as each origin's number of outstanding requests. Origins with more pending requests are weighted proportionately less relative to others. Available values: `""`, `hash`, `random`, `least_outstanding_requests`. Defaults to `random`.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_load_balancer_pool.example <account_id>/<load_balancer_poool_id>
+```

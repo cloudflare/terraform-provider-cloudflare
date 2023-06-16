@@ -1,0 +1,7 @@
+```release-note:bug
+resource/cloudflare_custom_hostname: use user provided values for state management when the API response isn't provided
+```
+
+```release-note:enhancement
+resource/cloudflare_custom_hostname: add support for `bundle_method` TLS configuration
+```

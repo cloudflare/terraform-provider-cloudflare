@@ -134,7 +134,7 @@ var queueBindingResource = &schema.Resource{
 func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -153,6 +153,25 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Description: "Whether to upload Worker as a module.",
+		},
+		"compatibility_date": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The date to use for the compatibility flag.",
+		},
+		"compatibility_flags": {
+			Type:        schema.TypeSet,
+			Description: "Compatibility flags used for Worker Scripts.",
+			Optional:    true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Computed: true,
+		},
+		"logpush": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Enabling allows Worker events to be sent to a defined Logpush destination.",
 		},
 		"plain_text_binding": {
 			Type:     schema.TypeSet,

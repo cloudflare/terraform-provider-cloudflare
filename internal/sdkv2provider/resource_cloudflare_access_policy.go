@@ -99,6 +99,10 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("failed to set include attribute: %w", err))
 	}
 
+	if accessPolicy.IsolationRequired != nil {
+		d.Set("isolation_required", accessPolicy.IsolationRequired)
+	}
+
 	if accessPolicy.PurposeJustificationRequired != nil {
 		d.Set("purpose_justification_required", accessPolicy.PurposeJustificationRequired)
 	}
@@ -269,6 +273,9 @@ func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *sche
 			policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
 		}
 	}
+
+	isolationRequired := d.Get("isolation_required").(bool)
+	policy.IsolationRequired = &isolationRequired
 
 	purposeJustificationRequired := d.Get("purpose_justification_required").(bool)
 	policy.PurposeJustificationRequired = &purposeJustificationRequired

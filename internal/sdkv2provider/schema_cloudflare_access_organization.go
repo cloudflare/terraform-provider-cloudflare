@@ -11,14 +11,14 @@ import (
 func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description:   "The account identifier to target for the resource.",
+			Description:   consts.AccountIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
 			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
-			Description:   "The zone identifier to target for the resource.",
+			Description:   consts.ZoneIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
 			Computed:      true,
@@ -39,10 +39,20 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "When set to true, this will disable all editing of Access resources via the Zero Trust Dashboard",
 		},
+		"ui_read_only_toggle_reason": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "A description of the reason why the UI read only field is being toggled.",
+		},
 		"user_seat_expiration_inactive_time": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "The amount of time a user seat is inactive before it expires. When the user seat exceeds the set time of inactivity, the user is removed as an active seat and no longer counts against your Teams seat count. Must be in the format `300ms` or `2h45m`.",
+		},
+		"auto_redirect_to_identity": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "When set to true, users skip the identity provider selection step during login",
 		},
 		"login_design": {
 			Type:     schema.TypeList,

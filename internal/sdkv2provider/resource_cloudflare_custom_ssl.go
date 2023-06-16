@@ -9,10 +9,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -61,14 +61,14 @@ func resourceCloudflareCustomSslCreate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(fmt.Errorf("failed to find custom ssl in Create response: id was empty"))
 	}
 
-	retry := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *retry.RetryError {
 		cert, err := client.SSLDetails(ctx, zoneID, res.ID)
 		if err != nil {
-			return resource.NonRetryableError(fmt.Errorf("failed to fetch custom ssl cert: %w", err))
+			return retry.NonRetryableError(fmt.Errorf("failed to fetch custom ssl cert: %w", err))
 		}
 
 		if cert.Status != "active" {
-			return resource.RetryableError(fmt.Errorf("waiting for certificate to become active"))
+			return retry.RetryableError(fmt.Errorf("waiting for certificate to become active"))
 		}
 
 		d.SetId(res.ID)
@@ -245,8 +245,12 @@ func expandToZoneCustomSSLOptions(ctx context.Context, d *schema.ResourceData) (
 			for id, value := range cert.(map[string]interface{}) {
 				var newValue interface{}
 				if id == "geo_restrictions" {
-					newValue = cloudflare.ZoneCustomSSLGeoRestrictions{
-						Label: value.(string),
+					if value == "" {
+						newValue = nil
+					} else {
+						newValue = cloudflare.ZoneCustomSSLGeoRestrictions{
+							Label: value.(string),
+						}
 					}
 				} else {
 					newValue = value.(string)

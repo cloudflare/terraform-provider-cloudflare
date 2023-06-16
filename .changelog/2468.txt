@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_device_posture_integration: add `api_url` to `uptycs` posture integration config.
+```

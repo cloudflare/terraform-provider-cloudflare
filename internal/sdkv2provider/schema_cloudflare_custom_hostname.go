@@ -11,7 +11,7 @@ import (
 func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.ZoneIDSchemaKey: {
-			Description: "The zone identifier to target for the resource.",
+			Description: consts.ZoneIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 			ForceNew:    true,
@@ -36,13 +36,19 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 		"ssl": {
 			Type:        schema.TypeList,
 			Optional:    true,
-			Description: "SSL configuration of the certificate.",
+			Description: "SSL properties used when creating the custom hostname.",
 			Elem: &schema.Resource{
 				SchemaVersion: 1,
 				Schema: map[string]*schema.Schema{
 					"status": {
 						Type:     schema.TypeString,
 						Computed: true,
+					},
+					"bundle_method": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"ubiquitous", "optimal", "force"}, false),
+						Description:  fmt.Sprintf("A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it. %s", renderAvailableDocumentationValuesStringSlice([]string{"ubiquitous", "optimal", "force"})),
 					},
 					"method": {
 						Type:         schema.TypeString,

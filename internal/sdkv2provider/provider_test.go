@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	tfsdkv2 "github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 const (
@@ -77,7 +77,7 @@ func testAccPreCheck(t *testing.T) {
 		t.Fatal("CLOUDFLARE_ZONE_ID must be set for this acceptance test")
 	}
 
-	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	err := testAccProvider.Configure(context.Background(), tfsdkv2.NewResourceConfigRaw(nil))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,7 +88,7 @@ func testAccPreCheckWithoutZoneID(t *testing.T) {
 	testAccPreCheckApiKey(t)
 	testAccPreCheckDomain(t)
 
-	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	err := testAccProvider.Configure(context.Background(), tfsdkv2.NewResourceConfigRaw(nil))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,7 +129,7 @@ func testAccPreCheckApiUserServiceKey(t *testing.T) {
 		t.Fatal("CLOUDFLARE_API_USER_SERVICE_KEY must be set for acceptance tests")
 	}
 
-	err := testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(nil))
+	err := testAccProvider.Configure(context.Background(), tfsdkv2.NewResourceConfigRaw(nil))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -195,19 +195,7 @@ func generateRandomResourceName() string {
 // This will allow those who intentionally want to run the test to do so while
 // keeping CI sane.
 func skipMagicTransitTestForNonConfiguredDefaultZone(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
-		t.Skipf("Skipping acceptance test as %s is not configured for Magic Transit", testAccCloudflareZoneID)
-	}
-}
-
-// skipV1WAFTestForNonConfiguredDefaultZone ignores the V1 WAF test assertions
-// as the versions are mutually exclusive and the default zone ID uses V2 WAF.
-// This will allow those who intentionally want to run the test to do so while
-// keeping CI sane.
-func skipV1WAFTestForNonConfiguredDefaultZone(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
-		t.Skipf("Skipping acceptance test as %s is using WAF v2 and cannot assert v1 resource configurations", testAccCloudflareZoneID)
-	}
+	skipForDefaultZone(t, "Default account is not configured for Magic Transit.")
 }
 
 // skipPagesProjectForNonConfiguredDefaultAccount ignores the pages project tests
@@ -215,8 +203,18 @@ func skipV1WAFTestForNonConfiguredDefaultZone(t *testing.T) {
 // default account. This will allow those who intentionally want to run the test
 // to do so while keeping CI sane.
 func skipPagesProjectForNonConfiguredDefaultAccount(t *testing.T) {
+	skipForDefaultAccount(t, "Pages project that isn't setup for CI.")
+}
+
+func skipForDefaultZone(t *testing.T, reason string) {
+	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
+		t.Skipf("Skipping acceptance test for default zone (%s). %s", testAccCloudflareZoneID, reason)
+	}
+}
+
+func skipForDefaultAccount(t *testing.T, reason string) {
 	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
-		t.Skipf("Skipping acceptance test as %s is using pages project that isn't setup for CI", testAccCloudflareAccountID)
+		t.Skipf("Skipping acceptance test for default account (%s). %s", testAccCloudflareAccountID, reason)
 	}
 }
 

@@ -9,9 +9,11 @@ description: |-
 
 {{ .Description | trimspace }}
 
-~> If you want to configure Custom Firewall rules, you need to use
-`cloudflare_ruleset`, because Custom Rules are built upon the
-[Cloudflare Ruleset Engine](https://developers.cloudflare.com/ruleset-engine/).
+~> `cloudflare_firewall_rule` is in a deprecation phase that will last for one
+  year (May 1st, 2024). During this time period, this resource is still fully
+  supported but you are strongly advised  to move to the `cloudflare_ruleset`
+  resource. Full details can be found in the
+  [developer documentation](https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users).
 
 ## Example Usage
 

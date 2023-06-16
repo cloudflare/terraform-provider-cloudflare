@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -99,6 +100,18 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error parsing teams account device settings: %w", err))
 	}
 
+	payloadLogSettings, err := client.GetDLPPayloadLogSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetDLPPayloadLogSettingsParams{})
+	if err == nil {
+		if err := d.Set("payload_log", flattenPayloadLogSettings(&payloadLogSettings)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing payload log settings: %w", err))
+		}
+	} else {
+		var notFoundError *cloudflare.NotFoundError
+		if !errors.As(err, &notFoundError) {
+			return diag.FromErr(fmt.Errorf("error finding DLP Account config %q: %w", d.Id(), err))
+		}
+	}
+
 	return nil
 }
 
@@ -110,6 +123,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
 	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
+	payloadLogSettings := inflatePayloadLogSettings(d.Get("payload_log"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
 		Settings: cloudflare.TeamsAccountSettings{
 			Antivirus: antivirusConfig,
@@ -151,6 +165,12 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	if deviceConfig != nil {
 		if _, err := client.TeamsAccountDeviceUpdateConfiguration(ctx, accountID, *deviceConfig); err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err))
+		}
+	}
+
+	if payloadLogSettings != nil {
+		if _, err := client.UpdateDLPPayloadLogSettings(ctx, cloudflare.AccountIdentifier(accountID), *payloadLogSettings); err != nil {
+			return diag.FromErr(fmt.Errorf("error updating DLP Account configuration for account %q: %w", accountID, err))
 		}
 	}
 
@@ -232,8 +252,9 @@ func flattenAntivirusConfig(antivirusConfig *cloudflare.TeamsAntivirus) []interf
 
 func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) []interface{} {
 	return []interface{}{map[string]interface{}{
-		"tcp": deviceSettings.GatewayProxyEnabled,
-		"udp": deviceSettings.GatewayProxyUDPEnabled,
+		"tcp":     deviceSettings.GatewayProxyEnabled,
+		"udp":     deviceSettings.GatewayProxyUDPEnabled,
+		"root_ca": deviceSettings.RootCertificateInstallationEnabled,
 	}}
 }
 
@@ -341,7 +362,27 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 	}
 
 	return &cloudflare.TeamsDeviceSettings{
-		GatewayProxyEnabled:    deviceSettings["tcp"].(bool),
-		GatewayProxyUDPEnabled: deviceSettings["udp"].(bool),
+		GatewayProxyEnabled:                deviceSettings["tcp"].(bool),
+		GatewayProxyUDPEnabled:             deviceSettings["udp"].(bool),
+		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
+	}
+}
+
+func flattenPayloadLogSettings(payloadLogSettings *cloudflare.DLPPayloadLogSettings) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"public_key": payloadLogSettings.PublicKey,
+	}}
+}
+
+func inflatePayloadLogSettings(payloadLog interface{}) *cloudflare.DLPPayloadLogSettings {
+	payloadLogList := payloadLog.([]interface{})
+	if len(payloadLogList) != 1 {
+		return nil
+	}
+
+	payloadLogMap := payloadLogList[0].(map[string]interface{})
+	publicKey := payloadLogMap["public_key"].(string)
+	return &cloudflare.DLPPayloadLogSettings{
+		PublicKey: publicKey,
 	}
 }

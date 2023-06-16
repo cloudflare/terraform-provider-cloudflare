@@ -12,7 +12,7 @@ import (
 func resourceCloudflareLoadBalancerPoolSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -140,7 +140,7 @@ var originsElem = &schema.Resource{
 			Optional:     true,
 			Default:      1.0,
 			ValidateFunc: validation.FloatBetween(0.0, 1.0),
-			Description:  "The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked.",
+			Description:  "The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked. When [`origin_steering.policy=\"least_outstanding_requests\"`](#policy), weight is used to scale the origin's outstanding requests.",
 		},
 
 		"enabled": {
@@ -218,8 +218,8 @@ var originSteeringElem = &schema.Resource{
 			Type:         schema.TypeString,
 			Default:      "random",
 			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"", "hash", "random"}, false),
-			Description:  fmt.Sprintf("Origin steering policy to be used. %s", renderAvailableDocumentationValuesStringSlice([]string{"", "hash", "random"})),
+			ValidateFunc: validation.StringInSlice([]string{"", "hash", "random", "least_outstanding_requests"}, false),
+			Description:  fmt.Sprintf("Origin steering policy to be used. Value `random` selects an origin randomly. Value `hash` selects an origin by computing a hash over the CF-Connecting-IP address. Value `least_outstanding_requests` selects an origin by taking into consideration origin weights, as well as each origin's number of outstanding requests. Origins with more pending requests are weighted proportionately less relative to others. %s", renderAvailableDocumentationValuesStringSlice([]string{"", "hash", "random", "least_outstanding_requests"})),
 		},
 	},
 }

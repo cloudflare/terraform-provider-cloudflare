@@ -12,7 +12,7 @@ import (
 func resourceCloudflareTeamsRuleSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -101,6 +101,30 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "The host to override matching DNS queries with.",
 	},
+	"ip_categories": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Turns on IP category based filter on dns if the rule contains dns category checks.",
+	},
+	"allow_child_bypass": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Allow parent MSP accounts to enable bypass their children's rules.",
+	},
+	"bypass_parent_rule": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Allow child MSP accounts to bypass their parent's rule.",
+	},
+	"audit_ssh": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: teamsAuditSSHSettings,
+		},
+		Description: "Settings for auditing SSH usage.",
+	},
 	"l4override": {
 		Type:     schema.TypeList,
 		MaxItems: 1,
@@ -150,6 +174,41 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		},
 		Description: "Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs.",
 	},
+	"untrusted_cert": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: untrustedCertSettings,
+		},
+		Description: "Configure untrusted certificate settings for this rule.",
+	},
+	"payload_log": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: payloadLogSettings,
+		},
+		Description: "Configure DLP Payload Logging settings for this rule.",
+	},
+}
+
+var payloadLogSettings = map[string]*schema.Schema{
+	"enabled": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Enable or disable DLP Payload Logging for this rule.",
+	},
+}
+
+var untrustedCertSettings = map[string]*schema.Schema{
+	"action": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesUntrustedCertActionValues(), false),
+		Optional:     true,
+		Description:  fmt.Sprintf("Action to be taken when the SSL certificate of upstream is invalid. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.TeamsRulesUntrustedCertActionValues())),
+	},
 }
 
 var egressSettings = map[string]*schema.Schema{
@@ -180,6 +239,14 @@ var teamsL4OverrideSettings = map[string]*schema.Schema{
 		Type:        schema.TypeInt,
 		Required:    true,
 		Description: "Override Port to forward traffic to.",
+	},
+}
+
+var teamsAuditSSHSettings = map[string]*schema.Schema{
+	"command_logging": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Log all SSH commands.",
 	},
 }
 

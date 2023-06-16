@@ -67,6 +67,11 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider configuration: %w", configErr))
 	}
 
+	scimConfig := convertScimConfigStructToSchema(d, accessIdentityProvider.ScimConfig)
+	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider scim configuration: %w", scimConfigErr))
+	}
+
 	return nil
 }
 
@@ -74,11 +79,13 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 	client := meta.(*cloudflare.API)
 
 	IDPConfig, _ := convertSchemaToStruct(d)
+	ScimConfig := convertScimConfigSchemaToStruct(d)
 
 	identityProvider := cloudflare.AccessIdentityProvider{
-		Name:   d.Get("name").(string),
-		Type:   d.Get("type").(string),
-		Config: IDPConfig,
+		Name:       d.Get("name").(string),
+		Type:       d.Get("type").(string),
+		Config:     IDPConfig,
+		ScimConfig: ScimConfig,
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Identity Provider from struct: %+v", identityProvider))
@@ -111,11 +118,14 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 		return diag.FromErr(fmt.Errorf("failed to convert schema into struct: %w", conversionErr))
 	}
 
+	ScimConfig := convertScimConfigSchemaToStruct(d)
+
 	tflog.Debug(ctx, fmt.Sprintf("updatedConfig: %+v", IDPConfig))
 	updatedAccessIdentityProvider := cloudflare.AccessIdentityProvider{
-		Name:   d.Get("name").(string),
-		Type:   d.Get("type").(string),
-		Config: IDPConfig,
+		Name:       d.Get("name").(string),
+		Type:       d.Get("type").(string),
+		Config:     IDPConfig,
+		ScimConfig: ScimConfig,
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Identity Provider from struct: %+v", updatedAccessIdentityProvider))
@@ -197,6 +207,22 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 			IDPConfig.Attributes = attrData
 		}
 
+		if _, ok := d.GetOk("config.0.claims"); ok {
+			claimData := make([]string, d.Get("config.0.claims.#").(int))
+			for id := range claimData {
+				claimData[id] = d.Get(fmt.Sprintf("config.0.claims.%d", id)).(string)
+			}
+			IDPConfig.Claims = claimData
+		}
+
+		if _, ok := d.GetOk("config.0.scopes"); ok {
+			scopeData := make([]string, d.Get("config.0.scopes.#").(int))
+			for id := range scopeData {
+				scopeData[id] = d.Get(fmt.Sprintf("config.0.scopes.%d", id)).(string)
+			}
+			IDPConfig.Scopes = scopeData
+		}
+
 		IDPConfig.APIToken = d.Get("config.0.api_token").(string)
 		IDPConfig.AppsDomain = d.Get("config.0.apps_domain").(string)
 		IDPConfig.AuthURL = d.Get("config.0.auth_url").(string)
@@ -222,6 +248,20 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 	return IDPConfig, nil
 }
 
+func convertScimConfigSchemaToStruct(d *schema.ResourceData) cloudflare.AccessIdentityProviderScimConfiguration {
+	ScimConfig := cloudflare.AccessIdentityProviderScimConfiguration{}
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		ScimConfig.Enabled = d.Get("scim_config.0.enabled").(bool)
+		ScimConfig.Secret = d.Get("scim_config.0.secret").(string)
+		ScimConfig.GroupMemberDeprovision = d.Get("scim_config.0.group_member_deprovision").(bool)
+		ScimConfig.UserDeprovision = d.Get("scim_config.0.user_deprovision").(bool)
+		ScimConfig.SeatDeprovision = d.Get("scim_config.0.seat_deprovision").(bool)
+	}
+
+	return ScimConfig
+}
+
 func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIdentityProviderConfiguration) []interface{} {
 	if _, ok := d.GetOk("config"); !ok {
 		return []interface{}{}
@@ -242,6 +282,8 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 		"certs_url":            options.CertsURL,
 		"client_id":            options.ClientID,
 		"client_secret":        options.ClientSecret,
+		"claims":               options.Claims,
+		"scopes":               options.Scopes,
 		"directory_id":         options.DirectoryID,
 		"email_attribute_name": options.EmailAttributeName,
 		"idp_public_cert":      options.IdpPublicCert,
@@ -254,6 +296,22 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 		"support_groups":       options.SupportGroups,
 		"token_url":            options.TokenURL,
 		"pkce_enabled":         options.PKCEEnabled,
+	}
+
+	return []interface{}{m}
+}
+
+func convertScimConfigStructToSchema(d *schema.ResourceData, options cloudflare.AccessIdentityProviderScimConfiguration) []interface{} {
+	if _, ok := d.GetOk("scim_config"); !ok {
+		return []interface{}{}
+	}
+
+	m := map[string]interface{}{
+		"enabled":                  options.Enabled,
+		"secret":                   options.Secret,
+		"user_deprovision":         options.UserDeprovision,
+		"seat_deprovision":         options.SeatDeprovision,
+		"group_member_deprovision": options.GroupMemberDeprovision,
 	}
 
 	return []interface{}{m}

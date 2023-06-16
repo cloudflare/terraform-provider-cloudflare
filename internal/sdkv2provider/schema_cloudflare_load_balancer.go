@@ -393,7 +393,7 @@ var (
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem:        loadBalancerOverridesRandomSteeringElem,
-							Description: "Configures pool weights for random steering. When the [`steering_policy=\"random\"`](#steering_policy), a random pool is selected with probability proportional to these pool weights.",
+							Description: "Configures pool weights. When [`steering_policy=\"random\"`](#steering_policy), a random pool is selected with probability proportional to pool weights. When [`steering_policy=\"least_outstanding_requests\"`](#steering_policy), pool weights are used to scale each pool's outstanding requests.",
 						},
 
 						"ttl": {
@@ -405,8 +405,8 @@ var (
 						"steering_policy": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", ""}, false),
-							Description:  fmt.Sprintf("The method the load balancer uses to determine the route to your origin. Value `off` uses [`default_pool_ids`](#default_pool_ids). Value `geo` uses [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools). For non-proxied requests, the [`country`](#country) for [`country_pools`](#country_pools) is determined by [`location_strategy`](#location_strategy). Value `random` selects a pool randomly. Value `dynamic_latency` uses round trip time to select the closest pool in [`default_pool_ids`](#default_pool_ids) (requires pool health checks). Value `proximity` uses the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by [`location_strategy`](#location_strategy) for non-proxied requests. Value `\"\"` maps to `geo` if you use [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) otherwise `off`. %s Defaults to `\"\"`.", renderAvailableDocumentationValuesStringSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", `""`})),
+							ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", "least_outstanding_requests", ""}, false),
+							Description:  fmt.Sprintf("The method the load balancer uses to determine the route to your origin. Value `off` uses [`default_pool_ids`](#default_pool_ids). Value `geo` uses [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools). For non-proxied requests, the [`country`](#country) for [`country_pools`](#country_pools) is determined by [`location_strategy`](#location_strategy). Value `random` selects a pool randomly. Value `dynamic_latency` uses round trip time to select the closest pool in [`default_pool_ids`](#default_pool_ids) (requires pool health checks). Value `proximity` uses the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by [`location_strategy`](#location_strategy) for non-proxied requests. Value `least_outstanding_requests` selects a pool by taking into consideration [`random_steering`](#random_steering) weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others. Value `\"\"` maps to `geo` if you use [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) otherwise `off`. %s Defaults to `\"\"`.", renderAvailableDocumentationValuesStringSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", "least_outstanding_requests", `""`})),
 						},
 
 						"fallback_pool": {
@@ -566,8 +566,8 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Computed:     true,
-			ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", ""}, false),
-			Description:  fmt.Sprintf("The method the load balancer uses to determine the route to your origin. Value `off` uses [`default_pool_ids`](#default_pool_ids). Value `geo` uses [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools). For non-proxied requests, the [`country`](#country) for [`country_pools`](#country_pools) is determined by [`location_strategy`](#location_strategy). Value `random` selects a pool randomly. Value `dynamic_latency` uses round trip time to select the closest pool in [`default_pool_ids`](#default_pool_ids) (requires pool health checks). Value `proximity` uses the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by [`location_strategy`](#location_strategy) for non-proxied requests. Value `\"\"` maps to `geo` if you use [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) otherwise `off`. %s Defaults to `\"\"`.", renderAvailableDocumentationValuesStringSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", `""`})),
+			ValidateFunc: validation.StringInSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", "least_outstanding_requests", ""}, false),
+			Description:  fmt.Sprintf("The method the load balancer uses to determine the route to your origin. Value `off` uses [`default_pool_ids`](#default_pool_ids). Value `geo` uses [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools). For non-proxied requests, the [`country`](#country) for [`country_pools`](#country_pools) is determined by [`location_strategy`](#location_strategy). Value `random` selects a pool randomly. Value `dynamic_latency` uses round trip time to select the closest pool in [`default_pool_ids`](#default_pool_ids) (requires pool health checks). Value `proximity` uses the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by [`location_strategy`](#location_strategy) for non-proxied requests. Value `least_outstanding_requests` selects a pool by taking into consideration [`random_steering`](#random_steering) weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others. Value `\"\"` maps to `geo` if you use [`pop_pools`](#pop_pools)/[`country_pools`](#country_pools)/[`region_pools`](#region_pools) otherwise `off`. %s Defaults to `\"\"`.", renderAvailableDocumentationValuesStringSlice([]string{"off", "geo", "dynamic_latency", "random", "proximity", "least_outstanding_requests", `""`})),
 		},
 
 		"session_affinity_ttl": {
@@ -602,7 +602,7 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem:        loadBalancerRandomSteeringElem,
-			Description: "Configures pool weights for random steering. When the [`steering_policy=\"random\"`](#steering_policy), a random pool is selected with probability proportional to these pool weights.",
+			Description: "Configures pool weights. When [`steering_policy=\"random\"`](#steering_policy), a random pool is selected with probability proportional to pool weights. When [`steering_policy=\"least_outstanding_requests\"`](#steering_policy), pool weights are used to scale each pool's outstanding requests.",
 		},
 
 		"rules": {

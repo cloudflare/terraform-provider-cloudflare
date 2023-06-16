@@ -11,8 +11,8 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
 )
 
@@ -476,6 +476,36 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttrSet(name, "domain"),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.#", "2"),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
@@ -701,6 +731,22 @@ resource "cloudflare_access_application" "%[1]s" {
   logo_url          		 = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
 }
 `, rnd, zoneID, domain)
+}
+
+func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier AccessIdentifier) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  %[3]s_id                  = "%[4]s"
+  name                      = "%[1]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
+  self_hosted_domains       = [
+    "d1.%[1]s.%[2]s",
+    "d2.%[1]s.%[2]s"
+  ]
+}
+`, rnd, domain, identifier.Type, identifier.Value)
 }
 
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {

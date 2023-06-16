@@ -9,8 +9,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
@@ -50,6 +50,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 					resource.TestCheckResourceAttr(name, "match", "identity.email == \"foo@example.com\""),
 					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "precedence", fmt.Sprintf("%d", precedence)),
 					resource.TestCheckResourceAttr(name, "service_mode_v2_mode", "warp"),
 					resource.TestCheckResourceAttr(name, "service_mode_v2_port", "0"),
@@ -72,6 +73,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(defaultName, "disable_auto_fallback", "true"),
 					resource.TestCheckResourceAttr(defaultName, "enabled", "true"),
 					resource.TestCheckResourceAttr(defaultName, "name", defaultRnd),
+					resource.TestCheckResourceAttr(defaultName, "description", defaultRnd),
 					resource.TestCheckResourceAttr(defaultName, "service_mode_v2_mode", "warp"),
 					resource.TestCheckResourceAttr(defaultName, "service_mode_v2_port", "0"),
 					resource.TestCheckResourceAttr(defaultName, "support_url", "https://cloudflare.com"),
@@ -100,12 +102,13 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	enabled                   = true
 	match                     = "identity.email == \"foo@example.com\""
 	name                      = "%[1]s"
+	description			      = "%[4]s"
 	precedence                = %[3]d
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips		  = true
 }
-`, rnd, accountID, precedence)
+`, rnd, accountID, precedence, rnd)
 }
 
 func testAccCloudflareDefaultDeviceSettingsPolicy(rnd, accountID string) string {
@@ -114,6 +117,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	account_id                = "%[2]s"
 	default                   = true
 	name                      = "%[1]s"
+	description               = "%[3]s"
 	allow_mode_switch         = true
 	allow_updates             = true
 	allowed_to_leave          = true
@@ -125,7 +129,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	switch_locked             = true
 	exclude_office_ips		  = true
 }
-`, rnd, accountID)
+`, rnd, accountID, rnd)
 }
 
 // invalid configuration - not allowed to set match for default policies.
@@ -135,6 +139,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	account_id                = "%[2]s"
 	default                   = true
 	name                      = "%[1]s"
+	description                      = "%[3]s"
 	allow_mode_switch         = true
 	allow_updates             = true
 	allowed_to_leave          = true
@@ -146,7 +151,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	match                     = "identity.email == \"foo@example.com\""
 	exclude_office_ips		  = true
 }
-`, rnd, accountID)
+`, rnd, accountID, rnd)
 }
 
 func testAccCheckCloudflareDeviceSettingsPolicyDestroy(s *terraform.State) error {

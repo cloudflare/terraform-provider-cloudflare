@@ -21,7 +21,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			},
 			"root_dir": {
 				Type:        schema.TypeString,
-				Description: "Directory to run the command.",
+				Description: "Your project's root directory, where Cloudflare runs the build command. If your site is not in a subdirectory, leave this path value empty.",
 				Optional:    true,
 			},
 			"web_analytics_tag": {
@@ -120,6 +120,12 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Description: "Environment variables for Pages Functions.",
 				Optional:    true,
 			},
+			"secrets": {
+				Type:        schema.TypeMap,
+				Description: "Encrypted environment variables for Pages Functions.",
+				Optional:    true,
+				Sensitive:   true,
+			},
 			"kv_namespaces": {
 				Type:        schema.TypeMap,
 				Description: "KV namespaces used for Pages Functions.",
@@ -180,17 +186,30 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled"}, false),
 				Default:      "bundled",
 			},
+			"placement": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Description: "Configuration for placement in the Cloudflare Pages project.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"mode": {
+							Description: "Placement Mode for the Pages Function.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
-			Description: "The account identifier to target for the resource.",
+			Description: consts.AccountIDSchemaDescription,
 			Type:        schema.TypeString,
 			Required:    true,
 		},
-		// Name is the unique identifier for this resource, we use this in the API calls.
-		// If this changes, `plan` will fail as it can't figure out the changes.
 		"name": {
 			Description: "Name of the project.",
 			Type:        schema.TypeString,

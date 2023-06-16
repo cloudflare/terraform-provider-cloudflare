@@ -120,7 +120,7 @@ func main() {
 		changelogProcessDocumentation + ".\n\nExample: " +
 		"\n\n~~~\n```release-note:TYPE\nRelease note" +
 		"\n```\n~~~\n\n" +
-		"If you do not require a release note to be included, please add the `workflow/skip-changelog-entry` label."
+		"If you do not require a release note to be included and you have permission, please add the `workflow/skip-changelog-entry` label. Otherwise, a maintainer will add the label or ask you for one when they review the PR."
 
 	_, _, err = client.Issues.CreateComment(ctx, owner, repo, prNo, &github.IssueComment{
 		Body: &body,
@@ -128,7 +128,7 @@ func main() {
 
 	if err != nil {
 		log.Fatalf("failed to comment on pull request %s/%s#%d: %s", owner, repo, prNo, err)
-	}	
+	}
 
 	os.Exit(1)
 }

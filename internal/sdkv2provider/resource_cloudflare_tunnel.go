@@ -38,8 +38,9 @@ func resourceCloudflareTunnelCreate(ctx context.Context, d *schema.ResourceData,
 	accID := d.Get(consts.AccountIDSchemaKey).(string)
 	name := d.Get("name").(string)
 	secret := d.Get("secret").(string)
+	configSrc := d.Get("config_src").(string)
 
-	tunnel, err := client.CreateTunnel(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelCreateParams{Name: name, Secret: secret})
+	tunnel, err := client.CreateTunnel(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelCreateParams{Name: name, Secret: secret, ConfigSrc: configSrc})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Argo Tunnel")))
 	}
@@ -53,12 +54,12 @@ func resourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, m
 	client := meta.(*cloudflare.API)
 	accID := d.Get(consts.AccountIDSchemaKey).(string)
 
-	tunnel, err := client.Tunnel(ctx, cloudflare.AccountIdentifier(accID), d.Id())
+	tunnel, err := client.GetTunnel(ctx, cloudflare.AccountIdentifier(accID), d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to fetch Argo Tunnel: %w", err))
 	}
 
-	token, err := client.TunnelToken(ctx, cloudflare.AccountIdentifier(accID), tunnel.ID)
+	token, err := client.GetTunnelToken(ctx, cloudflare.AccountIdentifier(accID), tunnel.ID)
 
 	if err != nil {
 		tflog.Warn(ctx, "unable to set the tunnel_token in state because it's not found in API")
@@ -68,6 +69,14 @@ func resourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, m
 
 	d.Set("cname", fmt.Sprintf("%s.%s", tunnel.ID, argoTunnelCNAME))
 	d.Set("tunnel_token", token)
+
+	if d.Get("config_src").(string) != "" {
+		if tunnel.RemoteConfig {
+			d.Set("config_src", "cloudflare")
+		} else {
+			d.Set("config_src", "local")
+		}
+	}
 
 	return nil
 }
@@ -101,7 +110,7 @@ func resourceCloudflareTunnelImport(ctx context.Context, d *schema.ResourceData,
 
 	accID, tunnelID := attributes[0], attributes[1]
 
-	tunnel, err := client.Tunnel(ctx, cloudflare.AccountIdentifier(accID), tunnelID)
+	tunnel, err := client.GetTunnel(ctx, cloudflare.AccountIdentifier(accID), tunnelID)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed to fetch Argo Tunnel %s", tunnelID))
 	}

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
@@ -860,6 +860,56 @@ func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string
 			keys_url = "https://example.com/keys"
 		  }
       }
+    }
+
+  `, resourceID, zone, accountID)
+}
+
+func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_policy." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessPolicyIsolationRequiredConfig(rnd, zone, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "isolation_required", "true"),
+				),
+			},
+		},
+	})
+}
+
+func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_application" "%[1]s" {
+      name       = "%[1]s"
+      account_id = "%[3]s"
+      domain     = "%[1]s.%[2]s"
+    }
+
+    resource "cloudflare_access_policy" "%[1]s" {
+      application_id = cloudflare_access_application.%[1]s.id
+      name           = "%[1]s"
+      account_id     = "%[3]s"
+      decision       = "allow"
+      precedence     = "1"
+
+      include {
+        email = ["a@example.com", "b@example.com"]
+      }
+
+      isolation_required = "true"
     }
 
   `, resourceID, zone, accountID)

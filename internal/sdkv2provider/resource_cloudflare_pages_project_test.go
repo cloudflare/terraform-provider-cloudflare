@@ -6,23 +6,13 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 const testPagesProjectEmptyDeploymentConfig = `
-deployment_configs {
-	preview {
-		compatibility_date = "2022-08-15"
-		compatibility_flags = []
-		always_use_latest_compatibility_date = true
-		usage_model = "unbound"
-	}
-	production {
-		compatibility_date = "2022-08-15"
-		compatibility_flags = []
-		always_use_latest_compatibility_date = false
-		usage_model = "unbound"
-	}
+deployment_configs { 
+	preview {}
+	production {}
 }
 `
 
@@ -80,6 +70,9 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				environment_variables = {
 					ENVIRONMENT = "preview"
 				}
+				secrets = {
+					TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
+				}
 				kv_namespaces = {
 					KV_BINDING = "5eb63bbbe01eeed093cb22bb8f5acdc3"
 				}
@@ -108,6 +101,10 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 					ENVIRONMENT = "production"
 					OTHER_VALUE = "other value"
 				}
+				secrets = {
+					TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
+					TURNSTILE_INVIS_SECRET = "2x0000000000000000000000000000000AA"
+				}
 				kv_namespaces = {
 					KV_BINDING_1 = "5eb63bbbe01eeed093cb22bb8f5acdc3"
 					KV_BINDING_2 = "3cdca5f8bb22bc390deee10ebbb36be5"
@@ -134,6 +131,9 @@ func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string)
 				fail_open = true
 				always_use_latest_compatibility_date = false
 				usage_model = "bundled"
+				placement {
+					mode = "smart"
+				}
       		}
 		}
 		}
@@ -146,8 +146,9 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  production_branch = "main"
-		 %[3]s
+		%[3]s
 		}
+
 		`, resourceID, accountID, testPagesProjectEmptyDeploymentConfig)
 }
 
@@ -251,6 +252,9 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.environment_variables.%", "1"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.environment_variables.ENVIRONMENT", "preview"),
 
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.secrets.%", "1"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.secrets.TURNSTILE_SECRET", "1x0000000000000000000000000000000AA"),
+
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.kv_namespaces.%", "1"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.kv_namespaces.KV_BINDING", "5eb63bbbe01eeed093cb22bb8f5acdc3"),
 
@@ -265,11 +269,16 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.fail_open", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.always_use_latest_compatibility_date", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.preview.0.usage_model", "unbound"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.%", "0"),
 
 					// Production
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.%", "2"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.ENVIRONMENT", "production"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.environment_variables.OTHER_VALUE", "other value"),
+
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secrets.%", "2"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secrets.TURNSTILE_SECRET", "1x0000000000000000000000000000000AA"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.secrets.TURNSTILE_INVIS_SECRET", "2x0000000000000000000000000000000AA"),
 
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.kv_namespaces.%", "2"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.kv_namespaces.KV_BINDING_1", "5eb63bbbe01eeed093cb22bb8f5acdc3"),
@@ -294,6 +303,8 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.fail_open", "true"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.always_use_latest_compatibility_date", "false"),
 					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.usage_model", "bundled"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.#", "1"),
+					resource.TestCheckResourceAttr(name, "deployment_configs.0.production.0.placement.0.mode", "smart"),
 				),
 			},
 		},
@@ -320,6 +331,12 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "production_branch", "main"),
 				),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 	})

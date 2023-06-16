@@ -33,25 +33,27 @@ func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceDa
 
 	for _, device := range devices {
 		deviceDetails = append(deviceDetails, map[string]interface{}{
-			"id":                 device.ID,
-			"key":                device.Key,
-			"device_type":        device.DeviceType,
-			"name":               device.Name,
-			"version":            device.Version,
-			"updated":            device.Updated,
 			"created":            device.Created,
+			"deleted":            device.Deleted,
+			"device_type":        device.DeviceType,
+			"id":                 device.ID,
+			"ip":                 device.IP,
+			"key":                device.Key,
 			"last_seen":          device.LastSeen,
-			"revoked_at":         device.RevokedAt,
+			"mac_address":        device.MacAddress,
+			"manufacturer":       device.Manufacturer,
 			"model":              device.Model,
-			"os_version":         device.OSVersion,
+			"name":               device.Name,
 			"os_distro_name":     device.OSDistroName,
 			"os_distro_revision": device.OsDistroRevision,
-			"ip":                 device.IP,
-			"mac_address":        device.MacAddress,
+			"os_version":         device.OSVersion,
+			"revoked_at":         device.RevokedAt,
 			"serial_number":      device.SerialNumber,
-			"user_id":            device.User.ID,
+			"updated":            device.Updated,
 			"user_email":         device.User.Email,
+			"user_id":            device.User.ID,
 			"user_name":          device.User.Name,
+			"version":            device.Version,
 		})
 	}
 

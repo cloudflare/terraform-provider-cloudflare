@@ -12,7 +12,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -72,17 +72,17 @@ func resourceCloudflareCertificatePackCreate(ctx context.Context, d *schema.Reso
 	}
 
 	if d.Get("wait_for_active_status").(bool) {
-		err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *resource.RetryError {
+		err := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate)-time.Minute, func() *retry.RetryError {
 			certificatePack, err := client.CertificatePack(ctx, zoneID, certificatePackID)
 			if err != nil {
-				return resource.NonRetryableError(errors.Wrap(err, "failed to fetch certificate pack"))
+				return retry.NonRetryableError(errors.Wrap(err, "failed to fetch certificate pack"))
 			}
 			if len(certificatePack.Certificates) == 0 {
-				return resource.RetryableError(fmt.Errorf("certificate list in response is empty"))
+				return retry.RetryableError(fmt.Errorf("certificate list in response is empty"))
 			}
 			for _, certificate := range certificatePack.Certificates {
 				if certificate.Status != "active" {
-					return resource.RetryableError(fmt.Errorf("expected all certificates in certificate pack to be active state but certificate %s was in state %s", certificate.ID, certificate.Status))
+					return retry.RetryableError(fmt.Errorf("expected all certificates in certificate pack to be active state but certificate %s was in state %s", certificate.ID, certificate.Status))
 				}
 			}
 			return nil
@@ -104,6 +104,12 @@ func resourceCloudflareCertificatePackRead(ctx context.Context, d *schema.Resour
 
 	certificatePack, err := client.CertificatePack(ctx, zoneID, d.Id())
 	if err != nil {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) || certificatePack.Status == "deleted" {
+			tflog.Warn(ctx, fmt.Sprintf("removing certificate pack from state because it is not found in the API"))
+			d.SetId("")
+			return nil
+		}
 		return diag.FromErr(errors.Wrap(err, "failed to fetch certificate pack"))
 	}
 

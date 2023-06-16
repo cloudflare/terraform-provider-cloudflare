@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_policy: Add isolation_required flag 
+```

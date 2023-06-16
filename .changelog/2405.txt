@@ -1,0 +1,3 @@
+```release-note:enhancement
+ resource/cloudflare_logpush_job: add support for `device_posture_results` and `zero_trust_network_sessions`.
+ ```

@@ -109,6 +109,7 @@ Optional:
 - `health_check_id` (Set of String) Identifier health check. Required when using `filters.0.status`.
 - `input_id` (Set of String) Stream input id to alert on.
 - `limit` (Set of String) A numerical limit. Example: `100`.
+- `megabits_per_second` (Set of String) Megabits per second threshold for dos alert.
 - `new_health` (Set of String) Health status to alert on for pool or origin.
 - `packets_per_second` (Set of String) Packets per second threshold for dos alert.
 - `pool_id` (Set of String) Load balancer pool identifier.
@@ -118,7 +119,7 @@ Optional:
 - `services` (Set of String)
 - `slo` (Set of String) A numerical limit. Example: `99.9`.
 - `status` (Set of String) Status to alert on.
-- `target_host` (Set of String) Target host to alert on for dos.
+- `target_hostname` (Set of String) Target host to alert on for dos.
 - `target_zone_name` (Set of String) Target domain to alert on.
 - `zones` (Set of String) A list of zone identifiers.
 

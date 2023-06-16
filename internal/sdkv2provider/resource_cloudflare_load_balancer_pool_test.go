@@ -11,8 +11,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
 )
 
@@ -76,6 +76,40 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
 					resource.TestCheckResourceAttr(name, "header.#", "0"),
+					// also expect api to generate some values
+					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t *testing.T) {
+	// multiple instances of this config would conflict but we only use it once
+	t.Parallel()
+	testStartTime := time.Now().UTC()
+	var loadBalancerPool cloudflare.LoadBalancerPool
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastOutstandingRequests(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
+					// dont check that specified values are set, this will be evident by lack of plan diff
+					// some values will get empty values
+					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
+					resource.TestCheckResourceAttr(name, "header.#", "0"),
+					resource.TestCheckResourceAttr(name, "origin_steering.#", "1"),
+					resource.TestCheckTypeSetElemNestedAttrs(name, "origin_steering.*", map[string]string{
+						"policy": "least_outstanding_requests",
+					}),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
@@ -265,6 +299,24 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     name = "example-1"
     address = "192.0.2.1"
     enabled = true
+  }
+}`, id, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastOutstandingRequests(id, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_pool" "%[1]s" {
+  account_id = "%[2]s"
+  name = "my-tf-pool-basic-%[1]s"
+  latitude = 12.3
+  longitude = 55
+  origins {
+    name = "example-1"
+    address = "192.0.2.1"
+    enabled = true
+  }
+  origin_steering {
+    policy = "least_outstanding_requests"
   }
 }`, id, accountID)
 }

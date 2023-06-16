@@ -180,6 +180,12 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if require_all, ok := d.GetOk("input.0.require_all"); ok {
 			input.RequireAll = require_all.(bool)
 		}
+		if check_disks, ok := d.GetOk("input.0.check_disks"); ok {
+			values := check_disks.(*schema.Set).List()
+			for _, value := range values {
+				input.CheckDisks = append(input.CheckDisks, value.(string))
+			}
+		}
 		if enabled, ok := d.GetOk("input.0.enabled"); ok {
 			input.Enabled = enabled.(bool)
 		}
@@ -215,6 +221,12 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		}
 		if versionOperator, ok := d.GetOk("input.0.version_operator"); ok {
 			input.VersionOperator = versionOperator.(string)
+		}
+		if countOperator, ok := d.GetOk("input.0.count_operator"); ok {
+			input.CountOperator = countOperator.(string)
+		}
+		if issueCount, ok := d.GetOk("input.0.issue_count"); ok {
+			input.IssueCount = issueCount.(string)
 		}
 		rule.Input = input
 	}
@@ -260,6 +272,7 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"sha256":             input.Sha256,
 		"running":            input.Running,
 		"require_all":        input.RequireAll,
+		"check_disks":        input.CheckDisks,
 		"enabled":            input.Enabled,
 		"version":            input.Version,
 		"os_distro_name":     input.OsDistroName,
@@ -272,6 +285,8 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"overall":            input.Overall,
 		"sensor_config":      input.SensorConfig,
 		"version_operator":   input.VersionOperator,
+		"count_operator":     input.CountOperator,
+		"issue_count":        input.IssueCount,
 	}
 
 	return []map[string]interface{}{m}

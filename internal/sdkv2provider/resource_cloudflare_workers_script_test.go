@@ -8,15 +8,20 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 const (
-	scriptContent1 = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
-	scriptContent2 = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
-	moduleContent  = `export default { fetch() { return new Response('Hello world'); }, };`
-	encodedWasm    = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
+	scriptContent1    = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
+	scriptContent2    = `addEventListener('fetch', event => {event.respondWith(new Response('test 2'))});`
+	moduleContent     = `export default { fetch() { return new Response('Hello world'); }, };`
+	encodedWasm       = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
+	compatibilityDate = "2023-03-19"
+)
+
+var (
+	compatibilityFlags = []string{"nodejs_compat", "web_socket_compression"}
 )
 
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
@@ -70,6 +75,8 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 	var script cloudflare.WorkerScript
 	rnd := generateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
+	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
+	r2AccesKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -80,11 +87,15 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID),
+				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccesKeyID, r2AccesKeySecret),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", moduleContent),
+					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
+					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "2"),
+					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
+					resource.TestCheckResourceAttr(name, "logpush", "true"),
 				),
 			},
 		},
@@ -95,7 +106,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 // When a cloudflare_r2_bucket resource is added, we can switch to that instead
 func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 	client := testAccProvider.Meta().(*cloudflare.API)
-	err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateR2BucketParameters{Name: rnd})
+	_, err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateR2BucketParameters{Name: rnd})
 	if err != nil {
 		t.Fatalf("unable to create test bucket named %s: %v", rnd, err)
 	}
@@ -187,14 +198,28 @@ resource "cloudflare_worker_script" "%[1]s" {
 }`, rnd, scriptContent2, encodedWasm, accountID)
 }
 
-func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID string) string {
+func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyID, r2AccessKeySecret string) string {
 	return fmt.Sprintf(`
+	resource "cloudflare_logpush_job" "%[1]s" {
+		enabled          = true
+		account_id       = "%[3]s"
+		name             = "%[1]s"
+		logpull_options  = "fields=Event,EventTimestampMs,Outcome,Exceptions,Logs,ScriptName"
+		destination_conf = "r2://terraform-acctest/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
+		dataset          = "workers_trace_events"
+	}
+
 resource "cloudflare_worker_script" "%[1]s" {
   account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
   module = true
-}`, rnd, moduleContent, accountID)
+  compatibility_date = "%[4]s"
+  compatibility_flags = ["%[5]s"]
+  logpush = true
+
+  depends_on = [cloudflare_logpush_job.%[1]s]
+}`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret)
 }
 
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
