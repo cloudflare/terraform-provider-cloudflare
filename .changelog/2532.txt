@@ -1,3 +1,3 @@
 ```release-note:bug
-resource/cloudflare_teams_rules.go: unify output for rules without rule settings 
+resource/cloudflare_teams_rules.go: handle state correctly when `rules_setting` is empty
 ```
