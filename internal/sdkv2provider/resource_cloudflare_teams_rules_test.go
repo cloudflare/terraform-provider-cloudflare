@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccCloudflareTeamsRuleBasic(t *testing.T) {
+func TestAccCloudflareTeamsRule_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -75,7 +75,7 @@ resource "cloudflare_teams_rule" "%[1]s" {
 `, rnd, accountID)
 }
 
-func TestAccCloudflareTeamsRuleNoSettings(t *testing.T) {
+func TestAccCloudflareTeamsRule_NoSettings(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
