@@ -251,6 +251,14 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: "A numerical limit. Example: `99.9`.",
 				},
+				"alert_trigger_preferences": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Alert trigger preferences. Example: 'slo`.",
+				},
 				"requests_per_second": {
 					Type: schema.TypeSet,
 					Elem: &schema.Schema{
