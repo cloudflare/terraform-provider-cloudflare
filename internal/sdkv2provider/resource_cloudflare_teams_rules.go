@@ -73,17 +73,11 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 	if err := d.Set("version", int64(rule.Version)); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing rule version"))
 	}
-	empty := func(s cloudflare.TeamsRuleSettings) bool {
-		return len(s.OverrideIPs) == 0 && s.BlockReason == "" && s.OverrideHost == "" &&
-			s.BISOAdminControls != nil && s.L4Override != nil && len(s.AddHeaders) == 0 &&
-			s.CheckSession == nil && s.BlockPageEnabled == false && s.InsecureDisableDNSSECValidation == false &&
-			s.EgressSettings == nil
+
+	if err := d.Set("rule_settings", flattenTeamsRuleSettings(&rule.RuleSettings)); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing rule settings"))
 	}
-	if !empty(rule.RuleSettings) {
-		if err := d.Set("rule_settings", flattenTeamsRuleSettings(&rule.RuleSettings)); err != nil {
-			return diag.FromErr(fmt.Errorf("error parsing rule settings"))
-		}
-	}
+
 	return nil
 }
 
@@ -204,6 +198,19 @@ func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceDa
 }
 
 func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interface{} {
+	if len(settings.OverrideIPs) == 0 &&
+		settings.BlockReason == "" &&
+		settings.OverrideHost == "" &&
+		settings.BISOAdminControls == nil &&
+		settings.L4Override == nil &&
+		len(settings.AddHeaders) == 0 &&
+		settings.CheckSession == nil &&
+		settings.BlockPageEnabled == false &&
+		settings.InsecureDisableDNSSECValidation == false &&
+		settings.EgressSettings == nil {
+		return nil
+	}
+
 	return []interface{}{map[string]interface{}{
 		"block_page_enabled":                 settings.BlockPageEnabled,
 		"block_page_reason":                  settings.BlockReason,
