@@ -10,7 +10,7 @@ resource "cloudflare_healthcheck" "http_health_check" {
     "EEU"
   ]
   type = "HTTPS"
-  port = "443"
+  port = 443
   method = "GET"
   path = "/health"
   expected_body = "alive"
@@ -43,7 +43,7 @@ resource "cloudflare_healthcheck" "tcp_health_check" {
     "EEU"
   ]
   type = "TCP"
-  port = "22"
+  port = 22
   method = "connection_established"
   timeout = 10
   retries = 2
