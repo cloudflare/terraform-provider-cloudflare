@@ -1,5 +1,9 @@
 ## 4.9.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_teams_rules.go: handle state correctly when `rules_setting` is empty ([#2532](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2532))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.0 to 1.3.1 ([#2529](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2529))
