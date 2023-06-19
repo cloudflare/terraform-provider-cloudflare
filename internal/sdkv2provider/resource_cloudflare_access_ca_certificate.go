@@ -78,7 +78,7 @@ func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.Re
 		}
 		return diag.FromErr(fmt.Errorf("error finding Access CA Certificate %q: %w", d.Id(), err))
 	}
-
+	d.SetId(accessCACert.ID)
 	d.Set("aud", accessCACert.Aud)
 	d.Set("public_key", accessCACert.PublicKey)
 
