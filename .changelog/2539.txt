@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_ca_certificate: Fix issue with importing existing certificate as the application id was not being set.
+```
