@@ -2,6 +2,7 @@
 
 BUG FIXES:
 
+* resource/cloudflare_access_ca_certificate: Fix issue with importing existing certificate as the application id was not being set. ([#2539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2539))
 * resource/cloudflare_teams_rules.go: handle state correctly when `rules_setting` is empty ([#2532](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2532))
 
 DEPENDENCIES:
