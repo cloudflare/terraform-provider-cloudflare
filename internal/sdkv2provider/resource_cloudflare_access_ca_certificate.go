@@ -125,7 +125,7 @@ func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.
 	identifierType, identifierID, applicationID, accessCACertificateID := attributes[0], attributes[1], attributes[2], attributes[3]
 
 	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessCACertificateID\" or \"zone/zoneID/accessCACertificateID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID/accessCACertificateID\" or \"zone/zoneID/applicationID/accessCACertificateID\"", d.Id())
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access CA Certificate: id %s for %s %s", accessCACertificateID, identifierType, identifierID))
