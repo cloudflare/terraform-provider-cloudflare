@@ -50,13 +50,9 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 
 	if !reflect.ValueOf(customHostname.SSL).IsNil() {
 		ssl := map[string]interface{}{
-			"type":                  customHostname.SSL.Type,
-			"method":                customHostname.SSL.Method,
 			"wildcard":              customHostname.SSL.Wildcard,
 			"status":                customHostname.SSL.Status,
 			"certificate_authority": customHostname.SSL.CertificateAuthority,
-			"custom_certificate":    customHostname.SSL.CustomCertificate,
-			"custom_key":            customHostname.SSL.CustomKey,
 			"settings": []map[string]interface{}{{
 				"http2":           customHostname.SSL.Settings.HTTP2,
 				"tls13":           customHostname.SSL.Settings.TLS13,
@@ -65,6 +61,27 @@ func resourceCloudflareCustomHostnameRead(ctx context.Context, d *schema.Resourc
 				"early_hints":     customHostname.SSL.Settings.EarlyHints,
 			}},
 		}
+
+		if val, ok := d.GetOk("ssl.0.bundle_method"); ok {
+			ssl["bundle_method"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.method"); ok {
+			ssl["method"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.type"); ok {
+			ssl["type"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.custom_certificate"); ok {
+			ssl["custom_certificate"] = val.(string)
+		}
+
+		if val, ok := d.GetOk("ssl.0.custom_key"); ok {
+			ssl["custom_key"] = val.(string)
+		}
+
 		if !reflect.ValueOf(customHostname.SSL.ValidationErrors).IsNil() {
 			errors := []map[string]interface{}{}
 			for _, e := range customHostname.SSL.ValidationErrors {
@@ -205,6 +222,7 @@ func buildCustomHostname(d *schema.ResourceData) cloudflare.CustomHostname {
 
 	if _, ok := d.GetOk("ssl"); ok {
 		ch.SSL = &cloudflare.CustomHostnameSSL{
+			BundleMethod:         d.Get("ssl.0.bundle_method").(string),
 			Method:               d.Get("ssl.0.method").(string),
 			Type:                 d.Get("ssl.0.type").(string),
 			Wildcard:             cloudflare.BoolPtr(d.Get("ssl.0.wildcard").(bool)),

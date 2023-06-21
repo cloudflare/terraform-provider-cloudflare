@@ -1,0 +1,15 @@
+```release-note:breaking-change
+resource/cloudflare_ruleset: Prevent the rule ID, version and last updated attributes from being set
+```
+
+```release-note:bug
+resource/cloudflare_ruleset: Populate the rule ID, ref, version and last updated attributes in API requests and from API responses
+```
+
+```release-note:bug
+resource/cloudflare_ruleset: Mark that the ruleset must be re-created if the shareable entitlement name attribute changes
+```
+
+```release-note:bug
+resource/cloudflare_ruleset: Populate the shareable entitlement name attribute in API requests and from API responses
+```

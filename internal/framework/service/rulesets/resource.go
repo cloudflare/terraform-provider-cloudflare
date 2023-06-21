@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
@@ -72,12 +73,12 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	rulesetPhase := data.Phase.ValueString()
 
 	var ruleset cloudflare.Ruleset
-	var sempahoreErr error
+	var semaphoreErr error
 
 	if accountID.ValueString() != "" {
-		ruleset, sempahoreErr = r.client.GetAccountRulesetPhase(ctx, accountID.ValueString(), rulesetPhase)
+		ruleset, semaphoreErr = r.client.GetAccountRulesetPhase(ctx, accountID.ValueString(), rulesetPhase)
 	} else {
-		ruleset, sempahoreErr = r.client.GetZoneRulesetPhase(ctx, zoneID.ValueString(), rulesetPhase)
+		ruleset, semaphoreErr = r.client.GetZoneRulesetPhase(ctx, zoneID.ValueString(), rulesetPhase)
 	}
 
 	if len(ruleset.Rules) > 0 {
@@ -91,11 +92,13 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	rulesetName := data.Name.ValueString()
 	rulesetDescription := data.Description.ValueString()
 	rulesetKind := data.Kind.ValueString()
+	rulesetShareableEntitlementName := data.ShareableEntitlementName.ValueString()
 	rs := cloudflare.Ruleset{
-		Name:        rulesetName,
-		Description: rulesetDescription,
-		Kind:        rulesetKind,
-		Phase:       rulesetPhase,
+		Name:                     rulesetName,
+		Description:              rulesetDescription,
+		Kind:                     rulesetKind,
+		Phase:                    rulesetPhase,
+		ShareableEntitlementName: rulesetShareableEntitlementName,
 	}
 
 	rulesetData := data.toRuleset(ctx)
@@ -104,7 +107,7 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		rs.Rules = rulesetData.Rules
 	}
 
-	if sempahoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
+	if semaphoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
 		tflog.Debug(ctx, "default ruleset created by the UI with empty rules found, recreating from scratch")
 		var deleteRulesetErr error
 		if accountID.ValueString() != "" {
@@ -217,7 +220,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 	accountID := plan.AccountID
 	zoneID := plan.ZoneID.ValueString()
 
-	remappedRules, e := remapPreservedRuleIDs(ctx, state, plan)
+	remappedRules, e := remapPreservedRuleRefs(ctx, state, plan)
 	if e != nil {
 		resp.Diagnostics.AddError("failed to remap rule IDs from state", e.Error())
 		return
@@ -293,24 +296,31 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 // representation using the proposed config.
 func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.StringValue, in cloudflare.Ruleset) *RulesetResourceModel {
 	data := RulesetResourceModel{
-		ID:          types.StringValue(in.ID),
-		Description: types.StringValue(in.Description),
-		Name:        types.StringValue(in.Name),
-		Kind:        types.StringValue(in.Kind),
-		Phase:       types.StringValue(in.Phase),
+		ID:                       types.StringValue(in.ID),
+		Description:              types.StringValue(in.Description),
+		Name:                     types.StringValue(in.Name),
+		Kind:                     types.StringValue(in.Kind),
+		Phase:                    types.StringValue(in.Phase),
+		ShareableEntitlementName: flatteners.String(in.ShareableEntitlementName),
 	}
 
 	var ruleState []*RulesModel
 	for _, ruleResponse := range in.Rules {
-		var rule RulesModel
+		rule := RulesModel{
+			ID:          flatteners.String(ruleResponse.ID),
+			Ref:         flatteners.String(ruleResponse.Ref),
+			Action:      flatteners.String(ruleResponse.Action),
+			Expression:  flatteners.String(ruleResponse.Expression),
+			Description: types.StringValue(ruleResponse.Description),
+			Enabled:     flatteners.Bool(ruleResponse.Enabled),
+			Version:     flatteners.String(cloudflare.String(ruleResponse.Version)),
+		}
 
-		rule.ID = flatteners.String(ruleResponse.ID)
-		rule.Action = flatteners.String(ruleResponse.Action)
-		rule.Expression = flatteners.String(ruleResponse.Expression)
-		rule.Description = types.StringValue(ruleResponse.Description)
-
-		rule.Enabled = flatteners.Bool(ruleResponse.Enabled)
-		rule.Version = flatteners.String(cloudflare.String(ruleResponse.Version))
+		if ruleResponse.LastUpdated != nil {
+			rule.LastUpdated = types.StringValue(ruleResponse.LastUpdated.String())
+		} else {
+			rule.LastUpdated = types.StringNull()
+		}
 
 		// action_parameters
 		if !reflect.ValueOf(ruleResponse.ActionParameters).IsNil() {
@@ -754,27 +764,16 @@ func (r *RulesetResourceModel) toRuleset(ctx context.Context) cloudflare.Ruleset
 // it into an API representation.
 func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 	rr := cloudflare.RulesetRule{
+		ID:          r.ID.ValueString(),
+		Ref:         r.Ref.ValueString(),
+		Version:     r.Version.ValueStringPointer(),
 		Action:      r.Action.ValueString(),
 		Expression:  r.Expression.ValueString(),
 		Description: r.Description.ValueString(),
 	}
 
-	if !r.ID.IsNull() {
-		rr.ID = r.ID.ValueString()
-	}
-
 	if !r.Enabled.IsNull() {
 		rr.Enabled = cloudflare.BoolPtr(r.Enabled.ValueBool())
-	}
-
-	if !r.Ref.IsNull() {
-		rr.Ref = r.Ref.ValueString()
-	}
-
-	if !r.Version.IsNull() {
-		if r.Version.ValueString() != "" {
-			rr.Version = cloudflare.StringPtr(r.Version.ValueString())
-		}
 	}
 
 	for _, ap := range r.ActionParameters {
@@ -1295,112 +1294,144 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 		}
 	}
 
+	if !r.LastUpdated.IsNull() {
+		if lastUpdated, err := time.Parse(
+			"2006-01-02 15:04:05.999999999 -0700 MST",
+			r.LastUpdated.ValueString(),
+		); err == nil {
+			rr.LastUpdated = &lastUpdated
+		}
+	}
+
 	return rr
 }
 
-// ruleIDs is a lookup table for rule IDs with two operations, add and pop. We
-// use add to populate the table from the old value of rules. We use pop to look
-// up the ID for the new value of a rule (and remove it from the table).
+// ruleRefs is a lookup table for rule IDs with two operations, add and pop.
+
+// We use add to populate the table from the old value of rules. We use pop to
+// look up the ref for the new value of a rule (and remove it from the table).
+//
 // Internally, both operations serialize the rule to JSON and use the resulting
-// string as the lookup key; the ID itself is excluded from the JSON. If a
-// ruleset has multiple copies of the same rule, the copies have a single lookup
-// key associated with multiple IDs; we preserve order when adding and popping
-// the IDs.
-type ruleIDs struct {
-	ids map[string][]string
+// string as the lookup key; the ref itself and other computed fields are
+// excluded from the JSON.
+//
+// If a ruleset has multiple copies of the same rule, the copies have a single
+// lookup key associated with multiple refs; we preserve order when adding and
+// popping the refs.
+type ruleRefs struct {
+	refs map[string][]string
 }
 
-// add stores an ID for the given rule.
-func (r *ruleIDs) add(rule cloudflare.RulesetRule) error {
-	if rule.ID == "" {
-		// This is unexpected. We only invoke this function for the old
-		// values of rules, which have their IDs populated.
-		return errors.New("unable to determine ID of existing rule")
-	}
-
-	id := rule.ID
-	rule.ID = ""
-
-	// For the purposes of preserving existing rule IDs, we don't want to
-	// include computed fields as a part of the key value.
-	rule.Version = nil
-
-	data, err := json.Marshal(rule)
-	if err != nil {
-		return err
-	}
-
-	key := string(data[:])
-
-	r.ids[key] = append(r.ids[key], id)
-	return nil
-}
-
-// pop removes an ID for the given rule and returns it. Multiple IDs are
-// returned in the order they were added. If no ID was found for the rule, pop
-// returns an empty string.
-func (r *ruleIDs) pop(rule cloudflare.RulesetRule) (string, error) {
-	rule.ID = ""
-
-	// For the purposes of preserving existing rule IDs, we don't want to
-	// include computed fields as a part of the key value.
-	rule.Version = nil
-
-	data, err := json.Marshal(rule)
-	if err != nil {
-		return "", err
-	}
-
-	key := string(data[:])
-
-	ids := r.ids[key]
-	if len(ids) == 0 {
-		return "", nil
-	}
-
-	id, ids := ids[0], ids[1:]
-	r.ids[key] = ids
-
-	return id, nil
-}
-
-// empty returns true if the store does not contain any rule IDs.
-func (r *ruleIDs) empty() bool {
-	return len(r.ids) == 0
-}
-
-func newRuleIDs(rulesetRules []cloudflare.RulesetRule) (ruleIDs, error) {
-	r := ruleIDs{make(map[string][]string)}
-
+// newRuleRefs creates a new ruleRefs.
+func newRuleRefs(rulesetRules []cloudflare.RulesetRule, explicitRefs map[string]struct{}) (ruleRefs, error) {
+	r := ruleRefs{make(map[string][]string)}
 	for _, rule := range rulesetRules {
-		err := r.add(rule)
-		if err != nil {
-			return ruleIDs{}, err
+		if rule.Ref == "" {
+			// This is unexpected. We only invoke this function for the old
+			// values of rules, which have their refs populated.
+			return ruleRefs{}, errors.New("unable to determine ID or ref of existing rule")
+		}
+
+		if _, ok := explicitRefs[rule.Ref]; ok {
+			// We should not add explicitly-set refs, to avoid them being
+			// "stolen" by other rules.
+			continue
+		}
+
+		if err := r.add(rule); err != nil {
+			return ruleRefs{}, err
 		}
 	}
 
 	return r, nil
 }
 
-func remapPreservedRuleIDs(ctx context.Context, state, plan *RulesetResourceModel) ([]cloudflare.RulesetRule, error) {
+// add stores a ref for the given rule.
+func (r *ruleRefs) add(rule cloudflare.RulesetRule) error {
+	key, err := ruleToKey(rule)
+	if err != nil {
+		return err
+	}
+
+	r.refs[key] = append(r.refs[key], rule.Ref)
+	return nil
+}
+
+// pop removes a ref for the given rule and returns it. If no ref was found for
+// the rule, pop returns an empty string.
+func (r *ruleRefs) pop(rule cloudflare.RulesetRule) (string, error) {
+	key, err := ruleToKey(rule)
+	if err != nil {
+		return "", err
+	}
+
+	refs := r.refs[key]
+	if len(refs) == 0 {
+		return "", nil
+	}
+
+	ref, refs := refs[0], refs[1:]
+	r.refs[key] = refs
+
+	return ref, nil
+}
+
+// isEmpty returns true if the store does not contain any rule refs.
+func (r *ruleRefs) isEmpty() bool {
+	return len(r.refs) == 0
+}
+
+// ruleToKey converts a ruleset rule to a key that can be used to track
+// equivalent rules. Internally, it serializes the rule to JSON after removing
+// computed fields.
+func ruleToKey(rule cloudflare.RulesetRule) (string, error) {
+	// For the purposes of preserving existing rule refs, we don't want to
+	// include computed fields as a part of the key value.
+	rule.ID = ""
+	rule.Ref = ""
+	rule.Version = nil
+	rule.LastUpdated = nil
+
+	data, err := json.Marshal(rule)
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
+}
+
+// remapPreservedRuleRefs tries to preserve the refs of rules that have not
+// changed in the ruleset, while also allowing users to explicitly set the ref
+// if they choose to.
+func remapPreservedRuleRefs(ctx context.Context, state, plan *RulesetResourceModel) ([]cloudflare.RulesetRule, error) {
 	currentRuleset := state.toRuleset(ctx)
 	plannedRuleset := plan.toRuleset(ctx)
 
-	ids, err := newRuleIDs(currentRuleset.Rules)
+	plannedExplicitRefs := make(map[string]struct{})
+	for _, rule := range plannedRuleset.Rules {
+		if rule.Ref != "" {
+			plannedExplicitRefs[rule.Ref] = struct{}{}
+		}
+	}
+
+	refs, err := newRuleRefs(currentRuleset.Rules, plannedExplicitRefs)
 	if err != nil {
 		return nil, err
 	}
 
-	if ids.empty() {
-		// There are no rule IDs when the ruleset is first created.
+	if refs.isEmpty() {
+		// There are no rule refs when the ruleset is first created.
 		return plannedRuleset.Rules, nil
 	}
 
 	for i := range plannedRuleset.Rules {
 		rule := &plannedRuleset.Rules[i]
-		rule.ID, err = ids.pop(*rule)
-		if err != nil {
-			return nil, err
+
+		// We should not override refs that have been explicitly set.
+		if rule.Ref == "" {
+			if rule.Ref, err = refs.pop(*rule); err != nil {
+				return nil, err
+			}
 		}
 	}
 

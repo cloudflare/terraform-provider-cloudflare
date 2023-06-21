@@ -468,11 +468,14 @@ Optional:
 - `description` (String) Brief summary of the ruleset rule and its intended use.
 - `enabled` (Boolean) Whether the rule is active.
 - `exposed_credential_check` (Block List) List of parameters that configure exposed credential checks. (see [below for nested schema](#nestedblock--rules--exposed_credential_check))
-- `id` (String) Unique rule identifier.
-- `last_updated` (String) The most recent update to this rule.
 - `logging` (Block List) List parameters to configure how the rule generates logs. (see [below for nested schema](#nestedblock--rules--logging))
 - `ratelimit` (Block List) List of parameters that configure HTTP rate limiting behaviour. (see [below for nested schema](#nestedblock--rules--ratelimit))
 - `ref` (String) Rule reference.
+
+Read-Only:
+
+- `id` (String) Unique rule identifier.
+- `last_updated` (String) The most recent update to this rule.
 - `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters"></a>
@@ -497,7 +500,7 @@ Optional:
 - `email_obfuscation` (Boolean) Turn on or off the Cloudflare Email Obfuscation feature of the Cloudflare Scrape Shield app.
 - `from_list` (Block List) Use a list to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_list))
 - `from_value` (Block List) Use a value to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_value))
-- `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
+- `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. Note: Headers are order dependent and must be provided sorted alphabetically ascending based on the `name` value. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
 - `host_header` (String) Host Header that request origin receives.
 - `hotlink_protection` (Boolean) Turn on or off the hotlink protection feature.
 - `id` (String) Identifier of the action parameter to modify.

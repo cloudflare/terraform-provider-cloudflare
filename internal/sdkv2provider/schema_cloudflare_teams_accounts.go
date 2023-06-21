@@ -163,6 +163,11 @@ var proxySchema = map[string]*schema.Schema{
 		Required:    true,
 		Description: "Whether gateway proxy is enabled on gateway devices for UDP traffic.",
 	},
+	"root_ca": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether root ca is enabled account wide for ZT clients.",
+	},
 }
 
 var loggingSchema = map[string]*schema.Schema{

@@ -21,6 +21,8 @@ connected GitHub or GitLab account connected to Cloudflare. See the
 
 ## Import
 
+!> It is not possible to import a pages project with secret environment variables. If you have a secret environment variable, you must remove it from your project before importing it.
+
 Import is supported using the following syntax:
 
 {{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}

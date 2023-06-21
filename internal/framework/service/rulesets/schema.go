@@ -79,6 +79,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"shareable_entitlement_name": schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: "Name of entitlement that is shareable between entities.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"kind": schema.StringAttribute{
 				Required: true,
@@ -109,17 +112,16 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						consts.IDSchemaKey: schema.StringAttribute{
-							Optional:            true,
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
 						},
 						"version": schema.StringAttribute{
 							Computed:            true,
-							Optional:            true,
 							MarkdownDescription: "Version of the ruleset to deploy.",
 						},
 						"ref": schema.StringAttribute{
 							Optional:            true,
+							Computed:            true,
 							MarkdownDescription: "Rule reference.",
 						},
 						"enabled": schema.BoolAttribute{
@@ -134,6 +136,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Optional:            true,
 							Computed:            true,
 							MarkdownDescription: "Brief summary of the ruleset rule and its intended use.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"expression": schema.StringAttribute{
 							Required:            true,
@@ -147,7 +152,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Optional: true,
 						},
 						"last_updated": schema.StringAttribute{
-							Optional:            true,
 							Computed:            true,
 							MarkdownDescription: "The most recent update to this rule.",
 						},
@@ -368,7 +372,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										},
 									},
 									"headers": schema.ListNestedBlock{
-										MarkdownDescription: "List of HTTP header modifications to perform in the ruleset rule.",
+										MarkdownDescription: "List of HTTP header modifications to perform in the ruleset rule. Note: Headers are order dependent and must be provided sorted alphabetically ascending based on the `name` value.",
 										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"name": schema.StringAttribute{

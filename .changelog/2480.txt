@@ -1,0 +1,6 @@
+```release-note:enhancement
+cloudflare_pages_project: add `placement` to deployment config
+```
+```release-note:bug
+cloudflare_pages_project: use user provided configuration for secrets in the state handler since the API does not return them
+```

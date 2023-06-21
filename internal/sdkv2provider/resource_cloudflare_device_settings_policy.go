@@ -138,6 +138,11 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 			return diag.FromErr(fmt.Errorf("error parsing name"))
 		}
 	}
+	if policy.Result.Description != nil {
+		if err := d.Set("description", policy.Result.Description); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing description"))
+		}
+	}
 	if policy.Result.Precedence != nil {
 		if err := d.Set("precedence", apiToProviderRulePrecedence(uint64(*policy.Result.Precedence), d.Get("name").(string))); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing precedence"))
@@ -219,6 +224,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 	}
 
 	name := d.Get("name").(string)
+	description := d.Get("description").(string)
 	enabled := d.Get("enabled").(bool)
 	if defaultPolicy && !enabled {
 		return req, fmt.Errorf("enabled cannot be false for default policies")
@@ -226,6 +232,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 	if !defaultPolicy {
 		req.Name = &name
 		req.Enabled = &enabled
+		req.Description = &description
 	}
 
 	match, ok := d.GetOk("match")

@@ -15,6 +15,7 @@ Provides a Cloudflare Device Settings Policy resource. Device policies configure
 resource "cloudflare_device_settings_policy" "developer_warp_policy" {
   account_id            = "f037e56e89293a057740de681ac9abbe"
   name                  = "Developers WARP settings policy"
+  description           = "Developers WARP settings policy description"
   precedence            = 10
   match                 = "any(identity.groups.name[*] in {\"Developers\"})"
   default               = false
@@ -38,6 +39,7 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
+- `description` (String) Description of Policy.
 - `name` (String) Name of the policy.
 
 ### Optional
