@@ -1,5 +1,9 @@
 ## 4.9.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add `alert_trigger_preferences` to the filters block. ([#2535](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2535))
+
 BUG FIXES:
 
 * resource/cloudflare_access_ca_certificate: Fix issue with importing existing certificate as the application id was not being set. ([#2539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2539))
