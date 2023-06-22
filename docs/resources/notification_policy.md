@@ -103,6 +103,7 @@ Read-Only:
 
 Optional:
 
+- `alert_trigger_preferences` (Set of String) Alert trigger preferences. Example: `slo`.
 - `enabled` (Set of String) State of the pool to alert on.
 - `event_source` (Set of String) Source configuration to alert on for pool or origin.
 - `event_type` (Set of String) Stream event type to alert on.
