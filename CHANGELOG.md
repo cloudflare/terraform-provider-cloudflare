@@ -1,5 +1,9 @@
 ## 4.9.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add `alert_trigger_preferences` to the filters block. ([#2535](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2535))
+
 BUG FIXES:
 
 * resource/cloudflare_access_ca_certificate: Fix issue with importing existing certificate as the application id was not being set. ([#2539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2539))
@@ -7,6 +11,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.69.0 to 0.70.0 ([#2541](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2541))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.0 to 1.3.1 ([#2529](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2529))
 * provider: bumps github.com/hashicorp/terraform-plugin-go from 0.15.0 to 0.16.0 ([#2536](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2536))
 

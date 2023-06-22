@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_tunnel_config: fix sending incorrect values for various timeouts in the origin configuration block
+```
