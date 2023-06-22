@@ -324,7 +324,7 @@ resource "cloudflare_ruleset" "redirect_from_value_example" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "redirects"
   description = "Redirect ruleset"
-  kind        = "root"
+  kind        = "zone"
   phase       = "http_request_dynamic_redirect"
 
   rules {
