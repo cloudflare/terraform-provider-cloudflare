@@ -7,6 +7,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.69.0 to 0.70.0 ([#2541](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2541))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.0 to 1.3.1 ([#2529](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2529))
 * provider: bumps github.com/hashicorp/terraform-plugin-go from 0.15.0 to 0.16.0 ([#2536](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2536))
 
