@@ -97,6 +97,37 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 		`, resourceID, accountID, tunnelSecret)
 }
 
+func testTunnelConfigNilPointer(resourceID, accountID, tunnelSecret string) string {
+	return fmt.Sprintf(`
+
+resource "cloudflare_tunnel" "%[1]s" {
+		  account_id = "%[2]s"
+		  name       = "%[1]s"
+		  secret     = "%[3]s"
+		}
+
+resource "cloudflare_tunnel_config" "%[1]s" {
+  account_id = "%[2]s"
+  tunnel_id  = cloudflare_tunnel.%[1]s.id
+
+  config {
+    warp_routing {
+      enabled = true
+    }
+    origin_request {
+      no_tls_verify = true
+    }
+    ingress_rule {
+      hostname = "foo"
+      service  = "https://10.0.0.1:8006"
+    }
+    ingress_rule {
+      service = "http_status:501"
+    }
+  }
+}`, resourceID, accountID, tunnelSecret)
+}
+
 func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
@@ -185,6 +216,40 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "1"),
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://10.0.0.1:8081"),
+				),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_tunnel_config." + rnd
+	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testTunnelConfigNilPointer(rnd, zoneID, tunnelSecret),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "config.0.warp_routing.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.no_tls_verify", "true"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.#", "2"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.hostname", "foo"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://10.0.0.1:8006"),
+					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "http_status:501"),
 				),
 			},
 			{
