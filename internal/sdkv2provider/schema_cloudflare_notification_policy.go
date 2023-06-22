@@ -257,7 +257,7 @@ func notificationPolicyFilterSchema() *schema.Schema {
 						Type: schema.TypeString,
 					},
 					Optional:    true,
-					Description: "Alert trigger preferences. Example: 'slo`.",
+					Description: "Alert trigger preferences. Example: `slo`.",
 				},
 				"requests_per_second": {
 					Type: schema.TypeSet,
