@@ -9,6 +9,7 @@ BUG FIXES:
 * resource/cloudflare_access_ca_certificate: Fix issue with importing existing certificate as the application id was not being set. ([#2539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2539))
 * resource/cloudflare_teams_rules.go: handle state correctly when `rules_setting` is empty ([#2532](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2532))
 * resource/cloudflare_tunnel_config: fix sending incorrect values for various timeouts in the origin configuration block ([#2510](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2510))
+* tunnel_config: fix nil pointers for time.Durations ([#2504](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2504))
 
 DEPENDENCIES:
 
