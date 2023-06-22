@@ -89,10 +89,6 @@ func testAccCloudflareQueueDestroy(s *terraform.State) error {
 		}
 
 		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
-		if accountID == "" {
-			accountID = client.AccountID
-		}
-
 		resp, _, err := client.ListQueues(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListQueuesParams{})
 		if err != nil {
 			return err
