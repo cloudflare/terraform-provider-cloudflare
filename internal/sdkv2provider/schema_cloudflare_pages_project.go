@@ -240,14 +240,14 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"build_config": {
-			Description: "Configuration for the project build process. Read more about the build configuration here: https://developers.cloudflare.com/pages/platform/build-configuration",
+			Description: "Configuration for the project build process. Read more about the build configuration in the [developer documentation](https://developers.cloudflare.com/pages/platform/build-configuration)",
 			Type:        schema.TypeList,
 			Elem:        &buildConfig,
 			MaxItems:    1,
 			Optional:    true,
 		},
 		"source": {
-			Description: "Configuration for the project source. Read more about the source configuration here: https://developers.cloudflare.com/pages/platform/branch-build-controls/",
+			Description: "Configuration for the project source. Read more about the source configuration in the [developer documentation](https://developers.cloudflare.com/pages/platform/branch-build-controls/)",
 			Optional:    true,
 			Type:        schema.TypeList,
 			Elem:        &source,
