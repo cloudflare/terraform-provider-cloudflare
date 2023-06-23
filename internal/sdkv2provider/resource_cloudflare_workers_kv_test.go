@@ -162,10 +162,6 @@ func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVP
 			}
 
 			accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
-			if accountID == "" {
-				accountID = client.AccountID
-			}
-
 			namespaceID := rs.Primary.Attributes["namespace_id"]
 			value, err := client.GetWorkersKV(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetWorkersKVParams{NamespaceID: namespaceID, Key: key})
 			if err != nil {

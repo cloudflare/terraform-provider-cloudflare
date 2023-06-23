@@ -36,15 +36,15 @@ func resourceCloudflareTunnelConfig() *schema.Resource {
 func buildTunnelOriginRequest(originRequest map[string]interface{}) (originConfig cloudflare.OriginRequestConfig) {
 	if v, ok := originRequest["connect_timeout"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.ConnectTimeout = &timeout
+		originConfig.ConnectTimeout = &cloudflare.TunnelDuration{Duration: timeout}
 	}
 	if v, ok := originRequest["tls_timeout"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.TLSTimeout = &timeout
+		originConfig.TLSTimeout = &cloudflare.TunnelDuration{Duration: timeout}
 	}
 	if v, ok := originRequest["tcp_keep_alive"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.TCPKeepAlive = &timeout
+		originConfig.TCPKeepAlive = &cloudflare.TunnelDuration{Duration: timeout}
 	}
 	if v, ok := originRequest["no_happy_eyeballs"]; ok {
 		originConfig.NoHappyEyeballs = cloudflare.BoolPtr(v.(bool))
@@ -54,7 +54,7 @@ func buildTunnelOriginRequest(originRequest map[string]interface{}) (originConfi
 	}
 	if v, ok := originRequest["keep_alive_timeout"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.KeepAliveTimeout = &timeout
+		originConfig.KeepAliveTimeout = &cloudflare.TunnelDuration{Duration: timeout}
 	}
 	if v, ok := originRequest["http_host_header"]; ok {
 		originConfig.HTTPHostHeader = cloudflare.StringPtr(v.(string))
@@ -119,12 +119,8 @@ func buildTunnelOriginRequest(originRequest map[string]interface{}) (originConfi
 
 func parseOriginRequest(originRequest cloudflare.OriginRequestConfig) (returnValue []map[string]interface{}) {
 	returnValue = append(returnValue, map[string]interface{}{
-		"connect_timeout":          originRequest.ConnectTimeout.String(),
-		"tls_timeout":              originRequest.TLSTimeout.String(),
-		"tcp_keep_alive":           originRequest.TCPKeepAlive.String(),
 		"no_happy_eyeballs":        originRequest.NoHappyEyeballs,
 		"keep_alive_connections":   originRequest.KeepAliveConnections,
-		"keep_alive_timeout":       originRequest.KeepAliveTimeout.String(),
 		"http_host_header":         originRequest.HTTPHostHeader,
 		"origin_server_name":       originRequest.OriginServerName,
 		"ca_pool":                  originRequest.CAPool,
@@ -136,6 +132,18 @@ func parseOriginRequest(originRequest cloudflare.OriginRequestConfig) (returnVal
 		"proxy_type":               originRequest.ProxyType,
 		"http2_origin":             originRequest.Http2Origin,
 	})
+	if originRequest.ConnectTimeout != nil {
+		returnValue[0]["connect_timeout"] = originRequest.ConnectTimeout.String()
+	}
+	if originRequest.TLSTimeout != nil {
+		returnValue[0]["tls_timeout"] = originRequest.TLSTimeout.String()
+	}
+	if originRequest.TCPKeepAlive != nil {
+		returnValue[0]["tcp_keep_alive"] = originRequest.TCPKeepAlive.String()
+	}
+	if originRequest.KeepAliveTimeout != nil {
+		returnValue[0]["keep_alive_timeout"] = originRequest.KeepAliveTimeout.String()
+	}
 	var accessConfig []map[string]interface{}
 	if originRequest.Access != nil {
 		accessConfig = append(accessConfig, map[string]interface{}{

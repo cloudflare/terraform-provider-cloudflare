@@ -1,0 +1,3 @@
+```release-note:bug
+tunnel_config: fix nil pointers for time.Durations
+```
