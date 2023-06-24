@@ -33,7 +33,8 @@ func testSweepCloudflareAccessApplications(r string) error {
 
 	// Zone level Access Applications.
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneAccessApps, _, err := client.ZoneLevelAccessApplications(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	zoneRC := cloudflare.ZoneIdentifier(zoneID)
+	zoneAccessApps, _, err := client.ListAccessApplications(context.Background(), zoneRC, cloudflare.PaginationOptions{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Applications: %s", err))
 	}
@@ -44,14 +45,15 @@ func testSweepCloudflareAccessApplications(r string) error {
 	}
 
 	for _, accessApp := range zoneAccessApps {
-		if err := client.DeleteZoneLevelAccessApplication(context.Background(), zoneID, accessApp.ID); err != nil {
+		if err := client.DeleteAccessApplication(context.Background(), zoneRC, accessApp.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Application %s", accessApp.ID))
 		}
 	}
 
 	// Account level Access Applications.
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	accountAccessApps, _, err := client.AccessApplications(context.Background(), accountID, cloudflare.PaginationOptions{})
+	accountRC := cloudflare.AccountIdentifier(accountID)
+	accountAccessApps, _, err := client.ListAccessApplications(context.Background(), accountRC, cloudflare.PaginationOptions{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Applications: %s", err))
 	}
@@ -62,7 +64,7 @@ func testSweepCloudflareAccessApplications(r string) error {
 	}
 
 	for _, accessApp := range accountAccessApps {
-		if err := client.DeleteAccessApplication(context.Background(), accountID, accessApp.ID); err != nil {
+		if err := client.DeleteAccessApplication(context.Background(), accountRC, accessApp.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Application %s", accessApp.ID))
 		}
 	}
@@ -759,14 +761,14 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 
 		var notFoundError *cloudflare.NotFoundError
 		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
-			_, err := client.ZoneLevelAccessApplication(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+			_, err := client.GetAccessApplication(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 			if !errors.As(err, &notFoundError) {
 				return fmt.Errorf("AccessApplication still exists")
 			}
 		}
 
 		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
-			_, err := client.AccessApplication(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+			_, err := client.GetAccessApplication(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 			if !errors.As(err, &notFoundError) {
 				return fmt.Errorf("AccessApplication still exists")
 			}

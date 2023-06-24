@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"fmt"
+	"github.com/cloudflare/cloudflare-go"
 	"hash/crc32"
 	"log"
 	"reflect"
@@ -177,6 +178,28 @@ func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
 	return &AccessIdentifier{
 		Type:  ZoneType,
 		Value: zoneID,
+	}, nil
+}
+
+func initResourceContainer(d *schema.ResourceData) (*cloudflare.ResourceContainer, error) {
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	if accountID == "" && zoneID == "" {
+		return nil, fmt.Errorf("error creating Resource Container resource: zone_id or account_id required")
+	}
+
+	if accountID != "" {
+		d.Set(consts.AccountIDSchemaKey, accountID)
+		return &cloudflare.ResourceContainer{
+			Level:      cloudflare.AccountRouteLevel,
+			Identifier: accountID,
+		}, nil
+	}
+
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
+	return &cloudflare.ResourceContainer{
+		Level:      cloudflare.ZoneRouteLevel,
+		Identifier: zoneID,
 	}, nil
 }
 
