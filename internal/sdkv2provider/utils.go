@@ -190,17 +190,11 @@ func initResourceContainer(d *schema.ResourceData) (*cloudflare.ResourceContaine
 
 	if accountID != "" {
 		d.Set(consts.AccountIDSchemaKey, accountID)
-		return &cloudflare.ResourceContainer{
-			Level:      cloudflare.AccountRouteLevel,
-			Identifier: accountID,
-		}, nil
+		return cloudflare.AccountIdentifier(accountID), nil
 	}
 
 	d.Set(consts.ZoneIDSchemaKey, zoneID)
-	return &cloudflare.ResourceContainer{
-		Level:      cloudflare.ZoneRouteLevel,
-		Identifier: zoneID,
-	}, nil
+	return cloudflare.ZoneIdentifier(zoneID), nil
 }
 
 // String hashes a string to a unique hashcode.

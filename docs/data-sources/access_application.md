@@ -58,10 +58,10 @@ data "cloudflare_access_application" "example" {
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`. Must provide only one of `zone_id`, `account_id`.
+- `account_id` (String) The account identifier to target for the resource. Must provide only one of `zone_id`, `account_id`.
 - `domain` (String) The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed. Must provide only one of `name`, `domain`.
 - `name` (String) Friendly name of the Access Application. Must provide only one of `name`, `domain`.
-- `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`. Must provide only one of `zone_id`, `account_id`.
+- `zone_id` (String) The zone identifier to target for the resource. Must provide only one of `zone_id`, `account_id`.
 
 ### Read-Only
 

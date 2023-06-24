@@ -13,18 +13,16 @@ func dataSourceCloudflareAccessApplication() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			consts.AccountIDSchemaKey: {
-				Description:   consts.AccountIDSchemaDescription,
-				Type:          schema.TypeString,
-				Optional:      true,
-				ExactlyOneOf:  []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
-				ConflictsWith: []string{consts.ZoneIDSchemaKey},
+				Description:  consts.AccountIDSchemaDescription,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
 			},
 			consts.ZoneIDSchemaKey: {
-				Description:   consts.ZoneIDSchemaDescription,
-				Type:          schema.TypeString,
-				Optional:      true,
-				ExactlyOneOf:  []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
-				ConflictsWith: []string{consts.AccountIDSchemaKey},
+				Description:  consts.ZoneIDSchemaDescription,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
 			},
 			"name": {
 				Description:  "Friendly name of the Access Application.",
