@@ -142,19 +142,19 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 		},
 
 		"cookie_suffix": {
-			Description: "A cookie suffix to be appended to the Cloudflare waiting room cookie name. ex: __cf_waitingroom_[cookie_suffix]",
+			Description: "A cookie suffix to be appended to the Cloudflare waiting room cookie name.",
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
 
 		"additional_routes": {
-			Description: "A list of additional hostname and paths combination to be applied on the waiting room",
+			Description: "A list of additional hostname and paths combination to be applied on the waiting room.",
 			Type:        schema.TypeList,
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"host": {
-						Description: "The additional host name for which the waiting room to be applied on (no wildcards)",
+						Description: "The additional host name for which the waiting room to be applied on (no wildcards).",
 						Required:    true,
 						Type:        schema.TypeString,
 						StateFunc: func(i interface{}) string {
@@ -162,7 +162,7 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 						},
 					},
 					"path": {
-						Description: "The path within the additonal host to enable the waiting room on.",
+						Description: "The path within the additional host to enable the waiting room on.",
 						Optional:    true,
 						Default:     "/",
 						Type:        schema.TypeString,
