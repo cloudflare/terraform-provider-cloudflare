@@ -62,7 +62,7 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		QueueAll:                d.Get("queue_all").(bool),
 		DisableSessionRenewal:   d.Get("disable_session_renewal").(bool),
 		CookieSuffix:            d.Get("cookie_suffix").(string),
-		AddtionalRoutes:         additional_routes,
+		AdditionalRoutes:        additional_routes,
 	}
 }
 
@@ -116,7 +116,7 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("default_template_language", waitingRoom.DefaultTemplateLanguage)
 	d.Set("json_response_enabled", waitingRoom.JsonResponseEnabled)
 	d.Set("cookie_suffix", waitingRoom.CookieSuffix)
-	d.Set("additional_routes", flattenWaitingRoomAdditionalRoutes(waitingRoom.AddtionalRoutes))
+	d.Set("additional_routes", flattenWaitingRoomAdditionalRoutes(waitingRoom.AdditionalRoutes))
 	return nil
 }
 
