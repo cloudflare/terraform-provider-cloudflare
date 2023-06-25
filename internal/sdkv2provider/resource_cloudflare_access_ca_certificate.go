@@ -78,7 +78,7 @@ func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.Re
 		}
 		return diag.FromErr(fmt.Errorf("error finding Access CA Certificate %q: %w", d.Id(), err))
 	}
-
+	d.SetId(accessCACert.ID)
 	d.Set("aud", accessCACert.Aud)
 	d.Set("public_key", accessCACert.PublicKey)
 
@@ -116,16 +116,16 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 }
 
 func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 3)
+	attributes := strings.SplitN(d.Id(), "/", 4)
 
-	if len(attributes) != 3 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessCACertificateID\" or \"zone/zoneID/accessCACertificateID\"", d.Id())
+	if len(attributes) != 4 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID/accessCACertificateID\" or \"zone/zoneID/applicationID/accessCACertificateID\"", d.Id())
 	}
 
-	identifierType, identifierID, accessCACertificateID := attributes[0], attributes[1], attributes[2]
+	identifierType, identifierID, applicationID, accessCACertificateID := attributes[0], attributes[1], attributes[2], attributes[3]
 
 	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessCACertificateID\" or \"zone/zoneID/accessCACertificateID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID/accessCACertificateID\" or \"zone/zoneID/applicationID/accessCACertificateID\"", d.Id())
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access CA Certificate: id %s for %s %s", accessCACertificateID, identifierType, identifierID))
@@ -133,6 +133,7 @@ func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.
 	//lintignore:R001
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
 	d.SetId(accessCACertificateID)
+	d.Set("application_id", applicationID)
 
 	readErr := resourceCloudflareAccessCACertificateRead(ctx, d, meta)
 	if readErr != nil {
