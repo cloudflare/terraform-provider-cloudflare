@@ -35,17 +35,12 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessGroup cloudflare.AccessGroup
-	if identifier.Type == AccountType {
-		accessGroup, err = client.AccessGroup(ctx, identifier.Value, d.Id())
-	} else {
-		accessGroup, err = client.ZoneLevelAccessGroup(ctx, identifier.Value, d.Id())
-	}
+	accessGroup, err := client.GetAccessGroup(ctx, rc, d.Id())
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -81,20 +76,21 @@ func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.Resource
 	}
 
 	newAccessGroup = appendConditionalAccessGroupFields(newAccessGroup, d)
+	createAccessGroupParams := cloudflare.CreateAccessGroupParams{
+		Name:    newAccessGroup.Name,
+		Include: newAccessGroup.Include,
+		Exclude: newAccessGroup.Exclude,
+		Require: newAccessGroup.Require,
+	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Group from struct: %+v", newAccessGroup))
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessGroup cloudflare.AccessGroup
-	if identifier.Type == AccountType {
-		accessGroup, err = client.CreateAccessGroup(ctx, identifier.Value, newAccessGroup)
-	} else {
-		accessGroup, err = client.CreateZoneLevelAccessGroup(ctx, identifier.Value, newAccessGroup)
-	}
+	accessGroup, err := client.CreateAccessGroup(ctx, rc, createAccessGroupParams)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Access Group for ID %q: %w", accessGroup.ID, err))
 	}
@@ -112,20 +108,22 @@ func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.Resource
 	}
 
 	updatedAccessGroup = appendConditionalAccessGroupFields(updatedAccessGroup, d)
+	updatedAccessGroupParams := cloudflare.UpdateAccessGroupParams{
+		ID:      updatedAccessGroup.ID,
+		Name:    updatedAccessGroup.Name,
+		Include: updatedAccessGroup.Include,
+		Exclude: updatedAccessGroup.Exclude,
+		Require: updatedAccessGroup.Require,
+	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Group from struct: %+v", updatedAccessGroup))
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessGroup cloudflare.AccessGroup
-	if identifier.Type == AccountType {
-		accessGroup, err = client.UpdateAccessGroup(ctx, identifier.Value, updatedAccessGroup)
-	} else {
-		accessGroup, err = client.UpdateZoneLevelAccessGroup(ctx, identifier.Value, updatedAccessGroup)
-	}
+	accessGroup, err := client.UpdateAccessGroup(ctx, rc, updatedAccessGroupParams)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Group for ID %q: %w", d.Id(), err))
 	}
@@ -142,16 +140,12 @@ func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.Resource
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Group using ID: %s", d.Id()))
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		err = client.DeleteAccessGroup(ctx, identifier.Value, d.Id())
-	} else {
-		err = client.DeleteZoneLevelAccessGroup(ctx, identifier.Value, d.Id())
-	}
+	err = client.DeleteAccessGroup(ctx, rc, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Access Group for ID %q: %w", d.Id(), err))
 	}

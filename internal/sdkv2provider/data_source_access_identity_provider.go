@@ -19,18 +19,13 @@ func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 
 func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	name := d.Get("name").(string)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var providers []cloudflare.AccessIdentityProvider
-	if identifier.Type == AccountType {
-		providers, err = client.AccessIdentityProviders(ctx, identifier.Value)
-	} else {
-		providers, err = client.ZoneLevelAccessIdentityProviders(ctx, identifier.Value)
-	}
+	providers, _, err := client.ListAccessIdentityProviders(ctx, rc, cloudflare.ListAccessIdentityProvidersParams{})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing Access Identity Providers: %w", err))

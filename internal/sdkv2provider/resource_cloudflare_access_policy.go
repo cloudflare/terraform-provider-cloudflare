@@ -62,17 +62,12 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessPolicy cloudflare.AccessPolicy
-	if identifier.Type == AccountType {
-		accessPolicy, err = client.AccessPolicy(ctx, identifier.Value, appID, d.Id())
-	} else {
-		accessPolicy, err = client.ZoneLevelAccessPolicy(ctx, identifier.Value, appID, d.Id())
-	}
+	accessPolicy, err := client.GetAccessPolicy(ctx, rc, cloudflare.GetAccessPolicyParams{PolicyID: d.Id(), ApplicationID: appID})
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -138,20 +133,29 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 	}
 
 	newAccessPolicy = appendConditionalAccessPolicyFields(newAccessPolicy, d)
+	createAccessPolicy := cloudflare.CreateAccessPolicyParams{
+		ApplicationID:                appID,
+		Name:                         newAccessPolicy.Name,
+		Precedence:                   newAccessPolicy.Precedence,
+		Decision:                     newAccessPolicy.Decision,
+		IsolationRequired:            newAccessPolicy.IsolationRequired,
+		PurposeJustificationRequired: newAccessPolicy.PurposeJustificationRequired,
+		PurposeJustificationPrompt:   newAccessPolicy.PurposeJustificationPrompt,
+		ApprovalRequired:             newAccessPolicy.ApprovalRequired,
+		ApprovalGroups:               newAccessPolicy.ApprovalGroups,
+		Include:                      newAccessPolicy.Include,
+		Exclude:                      newAccessPolicy.Exclude,
+		Require:                      newAccessPolicy.Require,
+	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy))
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessPolicy cloudflare.AccessPolicy
-	if identifier.Type == AccountType {
-		accessPolicy, err = client.CreateAccessPolicy(ctx, identifier.Value, appID, newAccessPolicy)
-	} else {
-		accessPolicy, err = client.CreateZoneLevelAccessPolicy(ctx, identifier.Value, appID, newAccessPolicy)
-	}
+	accessPolicy, err := client.CreateAccessPolicy(ctx, rc, createAccessPolicy)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Access Policy for ID %q: %w", accessPolicy.ID, err))
 	}
@@ -175,17 +179,12 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Policy from struct: %+v", updatedAccessPolicy))
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessPolicy cloudflare.AccessPolicy
-	if identifier.Type == AccountType {
-		accessPolicy, err = client.UpdateAccessPolicy(ctx, identifier.Value, appID, updatedAccessPolicy)
-	} else {
-		accessPolicy, err = client.UpdateZoneLevelAccessPolicy(ctx, identifier.Value, appID, updatedAccessPolicy)
-	}
+	accessPolicy, err := client.UpdateAccessPolicy(ctx, rc, appID, updatedAccessPolicy)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Policy for ID %q: %w", d.Id(), err))
 	}
@@ -203,16 +202,15 @@ func resourceCloudflareAccessPolicyDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Policy using ID: %s", d.Id()))
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		err = client.DeleteAccessPolicy(ctx, identifier.Value, appID, d.Id())
-	} else {
-		err = client.DeleteZoneLevelAccessPolicy(ctx, identifier.Value, appID, d.Id())
-	}
+	err = client.DeleteAccessPolicy(ctx, rc, cloudflare.DeleteAccessPolicyParams{
+		ApplicationID: appID,
+		PolicyID:      d.Id(),
+	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Access Policy for ID %q: %w", d.Id(), err))
 	}

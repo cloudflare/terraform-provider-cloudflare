@@ -88,12 +88,12 @@ func testAccCheckCloudflareAccessCACertificateDestroy(s *terraform.State) error 
 			continue
 		}
 
-		_, err := client.AccessCACertificate(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		_, err := client.GetAccessCACertificate(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Access CA certificate still exists")
 		}
 
-		_, err = client.ZoneLevelAccessCACertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+		_, err = client.GetAccessCACertificate(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Access CA certificate still exists")
 		}

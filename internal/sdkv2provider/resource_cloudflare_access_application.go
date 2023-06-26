@@ -37,7 +37,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	appType := d.Get("type").(string)
 
-	newAccessApplication := cloudflare.AccessApplication{
+	newAccessApplication := cloudflare.CreateAccessApplicationParams{
 		Name:                    d.Get("name").(string),
 		Domain:                  d.Get("domain").(string),
 		Type:                    cloudflare.AccessApplicationType(appType),
@@ -149,7 +149,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 
 	appType := d.Get("type").(string)
 
-	updatedAccessApplication := cloudflare.AccessApplication{
+	updatedAccessApplication := cloudflare.UpdateAccessApplicationParams{
 		ID:                      d.Id(),
 		Name:                    d.Get("name").(string),
 		Domain:                  d.Get("domain").(string),

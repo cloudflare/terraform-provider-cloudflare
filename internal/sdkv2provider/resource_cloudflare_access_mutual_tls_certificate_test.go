@@ -28,29 +28,29 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountRC := cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
 
-	accountCerts, err := client.AccessMutualTLSCertificates(context.Background(), accountID)
+	accountCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), accountRC, cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
 	}
 
 	for _, cert := range accountCerts {
-		err := client.DeleteAccessMutualTLSCertificate(context.Background(), accountID, cert.ID)
+		err := client.DeleteAccessMutualTLSCertificate(context.Background(), accountRC, cert.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID))
 		}
 	}
 
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneCerts, err := client.ZoneAccessMutualTLSCertificates(context.Background(), zoneID)
+	zoneRC := cloudflare.ZoneIdentifier(os.Getenv("CLOUDFLARE_ZONE_ID"))
+	zoneCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), zoneRC, cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
 	}
 
 	for _, cert := range zoneCerts {
-		err := client.DeleteZoneAccessMutualTLSCertificate(context.Background(), zoneID, cert.ID)
+		err := client.DeleteAccessMutualTLSCertificate(context.Background(), zoneRC, cert.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID))
@@ -154,14 +154,14 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 		}
 
 		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
-			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+			_, err := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("AccessMutualTLSCertificate still exists")
 			}
 		}
 
 		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
-			_, err := client.AccessMutualTLSCertificate(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+			_, err := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("AccessMutualTLSCertificate still exists")
 			}

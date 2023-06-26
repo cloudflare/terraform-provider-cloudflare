@@ -58,7 +58,7 @@ func dataSourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Re
 	name := d.Get("name").(string)
 	domain := d.Get("domain").(string)
 
-	applications, _, err := client.ListAccessApplications(ctx, rc, cloudflare.PaginationOptions{})
+	applications, _, err := client.ListAccessApplications(ctx, rc, cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing Access Applications: %w", err))
 	}

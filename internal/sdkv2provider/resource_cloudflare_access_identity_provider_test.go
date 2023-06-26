@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"github.com/cloudflare/cloudflare-go"
 	"log"
 	"os"
 	"testing"
@@ -21,13 +22,13 @@ func init() {
 
 func testSweepCloudflareAccessIdentityProviders(r string) error {
 	ctx := context.Background()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountRC := cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
 	client, clientErr := sharedClient()
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
-	accessIDPs, accessIDPsErr := client.AccessIdentityProviders(context.Background(), accountID)
+	accessIDPs, _, accessIDPsErr := client.ListAccessIdentityProviders(context.Background(), accountRC, cloudflare.ListAccessIdentityProvidersParams{})
 	if accessIDPsErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Access Identity Providers: %s", accessIDPsErr))
 	}
@@ -39,7 +40,7 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 
 	for _, idp := range accessIDPs {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Access Identity Provider ID: %s", idp.ID))
-		_, err := client.DeleteAccessIdentityProvider(context.Background(), accountID, idp.ID)
+		_, err := client.DeleteAccessIdentityProvider(context.Background(), accountRC, idp.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Access Identity Provider (%s): %s", idp.ID, err))

@@ -34,7 +34,7 @@ func testSweepCloudflareAccessApplications(r string) error {
 	// Zone level Access Applications.
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneRC := cloudflare.ZoneIdentifier(zoneID)
-	zoneAccessApps, _, err := client.ListAccessApplications(context.Background(), zoneRC, cloudflare.PaginationOptions{})
+	zoneAccessApps, _, err := client.ListAccessApplications(context.Background(), zoneRC, cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Applications: %s", err))
 	}
@@ -53,7 +53,7 @@ func testSweepCloudflareAccessApplications(r string) error {
 	// Account level Access Applications.
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	accountRC := cloudflare.AccountIdentifier(accountID)
-	accountAccessApps, _, err := client.ListAccessApplications(context.Background(), accountRC, cloudflare.PaginationOptions{})
+	accountAccessApps, _, err := client.ListAccessApplications(context.Background(), accountRC, cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Applications: %s", err))
 	}

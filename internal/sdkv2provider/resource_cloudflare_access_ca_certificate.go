@@ -34,19 +34,15 @@ func resourceCloudflareAccessCACertificate() *schema.Resource {
 func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessCACert cloudflare.AccessCACertificate
-	if identifier.Type == AccountType {
-		accessCACert, err = client.CreateAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
-	} else {
-		accessCACert, err = client.CreateZoneLevelAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
-	}
+	accessCACert, err := client.CreateAccessCACertificate(ctx, rc, cloudflare.CreateAccessCACertificateParams{ApplicationID: d.Get("application_id").(string)})
+
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", rc.Level, rc.Identifier, err))
 	}
 
 	d.SetId(accessCACert.ID)
@@ -57,17 +53,12 @@ func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.
 func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	applicationID := d.Get("application_id").(string)
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var accessCACert cloudflare.AccessCACertificate
-	if identifier.Type == AccountType {
-		accessCACert, err = client.AccessCACertificate(ctx, identifier.Value, applicationID)
-	} else {
-		accessCACert, err = client.ZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
-	}
+	accessCACert, err := client.GetAccessCACertificate(ctx, rc, applicationID)
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -95,16 +86,12 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare CA Certificate using ID: %s", d.Id()))
 
-	identifier, err := initIdentifier(d)
+	rc, err := initResourceContainer(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		err = client.DeleteAccessCACertificate(ctx, identifier.Value, applicationID)
-	} else {
-		err = client.DeleteZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
-	}
+	err = client.DeleteAccessCACertificate(ctx, rc, applicationID)
 
 	if err != nil {
 		return diag.FromErr(err)

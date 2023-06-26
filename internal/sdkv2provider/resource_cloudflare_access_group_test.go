@@ -30,8 +30,8 @@ func testSweepCloudflareAccessGroups(r string) error {
 	}
 
 	// Zone level Access Groups
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneAccessGroups, _, err := client.ZoneLevelAccessGroups(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	zoneRC := cloudflare.ZoneIdentifier(os.Getenv("CLOUDFLARE_ZONE_ID"))
+	zoneAccessGroups, _, err := client.ListAccessGroups(context.Background(), zoneRC, cloudflare.ListAccessGroupsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Groups: %s", err))
 	}
@@ -42,14 +42,14 @@ func testSweepCloudflareAccessGroups(r string) error {
 	}
 
 	for _, accessGroup := range zoneAccessGroups {
-		if err := client.DeleteZoneLevelAccessGroup(context.Background(), zoneID, accessGroup.ID); err != nil {
+		if err := client.DeleteAccessGroup(context.Background(), zoneRC, accessGroup.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Group %s", accessGroup.ID))
 		}
 	}
 
 	// Account level Access Groups
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	accountAccessGroups, _, err := client.AccessGroups(context.Background(), accountID, cloudflare.PaginationOptions{})
+	accountRC := cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
+	accountAccessGroups, _, err := client.ListAccessGroups(context.Background(), accountRC, cloudflare.ListAccessGroupsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Groups: %s", err))
 	}
@@ -60,7 +60,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 	}
 
 	for _, accessGroup := range accountAccessGroups {
-		if err := client.DeleteAccessGroup(context.Background(), accountID, accessGroup.ID); err != nil {
+		if err := client.DeleteAccessGroup(context.Background(), accountRC, accessGroup.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Group %s", accessGroup.ID))
 		}
 	}
@@ -508,12 +508,12 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessId
 		var err error
 
 		if accessIdentifier.Type == AccountType {
-			foundAccessGroup, err = client.AccessGroup(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+			foundAccessGroup, err = client.GetAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 		} else {
-			foundAccessGroups, _, err := client.ZoneLevelAccessGroups(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], cloudflare.PaginationOptions{})
+			foundAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), cloudflare.ListAccessGroupsParams{})
 			if err != nil {
 				return err
 			}
@@ -538,12 +538,12 @@ func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.AccessGroup(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		_, err := client.GetAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
 		}
 
-		_, err = client.AccessGroup(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+		_, err = client.GetAccessGroup(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
 		}
@@ -570,7 +570,7 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
-		err := client.DeleteAccessGroup(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
