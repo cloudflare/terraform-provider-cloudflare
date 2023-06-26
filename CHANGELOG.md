@@ -3,6 +3,7 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_notification_policy: Add `alert_trigger_preferences` to the filters block. ([#2535](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2535))
+* resource/cloudflare_waiting_room: Add `additional_routes` and `cookie_suffix` to the Waiting Room resource ([#2528](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2528))
 
 BUG FIXES:
 
