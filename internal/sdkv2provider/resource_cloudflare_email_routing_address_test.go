@@ -28,9 +28,9 @@ func TestAccTestEmailRoutingAddress(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testEmailRoutingAddressConfig(rnd, accountID, "user@example.com"),
+				Config: testEmailRoutingAddressConfig(rnd, accountID, "jb+terraform-email-routing@cloudflare.com"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "email", "user@example.com"),
+					resource.TestCheckResourceAttr(name, "email", "jb+terraform-email-routing@cloudflare.com"),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 				),
 			},
