@@ -1,11 +1,11 @@
-# A direct upload Pages project
+# Direct upload Pages project
 resource "cloudflare_pages_project" "basic_project" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
   production_branch = "main"
 }
 
-# A Pages project with managing build config
+# Pages project with managing build config
 resource "cloudflare_pages_project" "build_config" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
@@ -19,7 +19,7 @@ resource "cloudflare_pages_project" "build_config" {
   }
 }
 
-# A Pages project managing project source
+# Pages project managing project source
 resource "cloudflare_pages_project" "source_config" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
@@ -40,7 +40,7 @@ resource "cloudflare_pages_project" "source_config" {
   }
 }
 
-#  A Pages project managing deployment configs
+# Pages project managing deployment configs
 resource "cloudflare_pages_project" "deployment_configs" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
@@ -74,7 +74,7 @@ resource "cloudflare_pages_project" "deployment_configs" {
         OTHER_VALUE = "other value"
       }
       secrets = {
-        TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
+        TURNSTILE_SECRET       = "1x0000000000000000000000000000000AA"
         TURNSTILE_INVIS_SECRET = "2x0000000000000000000000000000000AA"
       }
       kv_namespaces = {
@@ -99,8 +99,7 @@ resource "cloudflare_pages_project" "deployment_configs" {
   }
 }
 
-# A Pages project managing all configs
-
+# Pages project managing all configs
 resource "cloudflare_pages_project" "deployment_configs" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
