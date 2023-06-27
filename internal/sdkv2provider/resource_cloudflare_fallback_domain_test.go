@@ -153,6 +153,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	support_url               = "support_url"
 	switch_locked             = true
 	exclude_office_ips		  = false
+	description               = "%[1]s"
 }
 
 resource "cloudflare_fallback_domain" "%[1]s" {
