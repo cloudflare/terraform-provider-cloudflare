@@ -1,5 +1,9 @@
 ## 4.9.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_pages_project: Clarify example projects resource ([#2543](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2543))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_notification_policy: Add `alert_trigger_preferences` to the filters block. ([#2535](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2535))
