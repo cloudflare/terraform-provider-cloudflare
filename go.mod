@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.10 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/hcl/v2 v2.17.0 // indirect
-	github.com/hashicorp/terraform-plugin-go v0.16.0
+	github.com/hashicorp/terraform-plugin-go v0.17.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
 	github.com/hashicorp/yamux v0.0.0-20210826001029-26ff87cf9493 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -69,7 +69,7 @@ require (
 	golang.org/x/mod v0.10.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
-	google.golang.org/grpc v1.56.0 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	google.golang.org/grpc v1.56.1 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
