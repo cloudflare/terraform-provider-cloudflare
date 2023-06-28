@@ -1,4 +1,6 @@
-## 4.9.0 (Unreleased)
+## 4.10.0 (Unreleased)
+
+## 4.9.0 (28th June, 2023)
 
 NOTES:
 
