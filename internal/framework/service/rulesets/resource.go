@@ -70,10 +70,17 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 
 	accountID := data.AccountID
 	zoneID := data.ZoneID
-	rulesetPhase := data.Phase.ValueString()
 
-	var ruleset cloudflare.Ruleset
-	var semaphoreErr error
+	rulesetName := data.Name.ValueString()
+	rulesetDescription := data.Description.ValueString()
+	rulesetKind := data.Kind.ValueString()
+	rulesetPhase := data.Phase.ValueString()
+	rulesetShareableEntitlementName := data.ShareableEntitlementName.ValueString()
+
+	var (
+		ruleset      cloudflare.Ruleset
+		semaphoreErr error
+	)
 
 	if accountID.ValueString() != "" {
 		ruleset, semaphoreErr = r.client.GetAccountRulesetPhase(ctx, accountID.ValueString(), rulesetPhase)
@@ -81,18 +88,47 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 		ruleset, semaphoreErr = r.client.GetZoneRulesetPhase(ctx, zoneID.ValueString(), rulesetPhase)
 	}
 
-	if len(ruleset.Rules) > 0 {
-		resp.Diagnostics.AddError(
-			fmt.Sprintf("failed to create ruleset %q", rulesetPhase),
-			duplicateRulesetError,
-		)
-		return
+	// If an entrypoint ruleset with the same kind already exists, we should
+	// prevent the user from accidentally overriding their existing
+	// configuration, since only one entrypoint ruleset for each phase can exist
+	// in an account or zone. If the existing entrypoint ruleset is empty, then
+	// we should remove it, as it was probably created by the UI.
+	//
+	// This logic does not apply to non-entrypoint rulesets, such as custom
+	// rulesets, as it is possible to have multiple of these rulesets for a
+	// phase in an account or zone.
+	//
+	// We rely on the fact that GetAccountRulesetPhase and GetZoneRulesetPhase
+	// only return entrypoint rulesets to check this. If the kind of the ruleset
+	// being created does not match the kind of the ruleset returned by that
+	// function, then the ruleset being created is not an entrypoint ruleset.
+	if rulesetKind == ruleset.Kind {
+		if len(ruleset.Rules) > 0 {
+			resp.Diagnostics.AddError(
+				fmt.Sprintf("failed to create ruleset %q", rulesetPhase),
+				duplicateRulesetError,
+			)
+			return
+		}
+
+		if semaphoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
+			tflog.Debug(ctx, "default entrypoint ruleset created by the UI with empty rules found, recreating from scratch")
+			var err error
+			if accountID.ValueString() != "" {
+				err = r.client.DeleteAccountRuleset(ctx, accountID.ValueString(), ruleset.ID)
+			} else {
+				err = r.client.DeleteZoneRuleset(ctx, zoneID.ValueString(), ruleset.ID)
+			}
+			if err != nil {
+				resp.Diagnostics.AddError(
+					fmt.Sprintf("failed to delete existing entrypoint ruleset with ID %q", ruleset.ID),
+					err.Error(),
+				)
+				return
+			}
+		}
 	}
 
-	rulesetName := data.Name.ValueString()
-	rulesetDescription := data.Description.ValueString()
-	rulesetKind := data.Kind.ValueString()
-	rulesetShareableEntitlementName := data.ShareableEntitlementName.ValueString()
 	rs := cloudflare.Ruleset{
 		Name:                     rulesetName,
 		Description:              rulesetDescription,
@@ -105,21 +141,6 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 
 	if len(rulesetData.Rules) > 0 {
 		rs.Rules = rulesetData.Rules
-	}
-
-	if semaphoreErr == nil && len(ruleset.Rules) == 0 && ruleset.Description == "" {
-		tflog.Debug(ctx, "default ruleset created by the UI with empty rules found, recreating from scratch")
-		var deleteRulesetErr error
-		if accountID.ValueString() != "" {
-			deleteRulesetErr = r.client.DeleteAccountRuleset(ctx, accountID.ValueString(), ruleset.ID)
-		} else {
-			deleteRulesetErr = r.client.DeleteZoneRuleset(ctx, zoneID.ValueString(), ruleset.ID)
-		}
-
-		if deleteRulesetErr != nil {
-			resp.Diagnostics.AddError("failed to delete ruleset", deleteRulesetErr.Error())
-			return
-		}
 	}
 
 	var rulesetCreateErr error
