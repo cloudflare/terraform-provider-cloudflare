@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -420,158 +421,31 @@ func resourceCloudflareLoadBalancerImport(ctx context.Context, d *schema.Resourc
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) (interface{}, error) {
+func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) ([]interface{}, error) {
 	if len(rules) == 0 {
 		return nil, nil
 	}
 
-	cfResources := []map[string]interface{}{}
-	for idx, r := range rules {
-		m := map[string]interface{}{
-			"name":      r.Name,
-			"condition": r.Condition,
-			"disabled":  r.Disabled,
+	cfResources := []interface{}{}
+	for _, r := range rules {
+		m := make(map[string]interface{})
+
+		jsonRule, err := json.Marshal(r)
+		if err != nil {
+			return nil, err
 		}
 
-		if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.priority", idx)); ok {
-			m["priority"] = r.Priority
+		json.Unmarshal(jsonRule, &m)
+		if m["fixed_response"] != nil {
+			m["fixed_response"] = []interface{}{m["fixed_response"]}
 		}
-		if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.terminates", idx)); ok {
-			m["terminates"] = r.Terminates
-		}
-
-		if fr := r.FixedResponse; fr != nil {
-			frm := map[string]interface{}{}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.message_body", idx)); ok {
-				frm["message_body"] = fr.MessageBody
-				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.status_code", idx)); ok {
-				frm["status_code"] = fr.StatusCode
-				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.content_type", idx)); ok {
-				frm["content_type"] = fr.ContentType
-				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.fixed_response.0.location", idx)); ok {
-				frm["location"] = fr.Location
-				m["fixed_response"] = []interface{}{frm} // only set if one of these has is true
-			}
-		}
-
-		if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides", idx)); ok {
-			o := r.Overrides
-			om := map[string]interface{}{}
-
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity", idx)); ok {
-				om["session_affinity"] = o.Persistence
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.session_affinity_ttl", idx)); ok {
-				om["session_affinity"] = o.PersistenceTTL
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.ttl", idx)); ok {
-				om["ttl"] = o.TTL
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.steering_policy", idx)); ok {
-				om["steering_policy"] = o.SteeringPolicy
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.fallback_pool", idx)); ok {
-				om["fallback_pool"] = o.FallbackPool
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.default_pools", idx)); ok {
-				om["default_pools"] = o.DefaultPools
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.pop_pools", idx)); ok {
-				om["pop_pools"] = flattenGeoPools(o.PoPPools, "pop", loadBalancerOverridesLocalPoolElems)
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.country_pools", idx)); ok {
-				om["country_pools"] = flattenGeoPools(o.CountryPools, "country", loadBalancerOverridesLocalPoolElems)
-				m["overrides"] = []interface{}{om}
-			}
-			if _, ok := d.GetOkExists(fmt.Sprintf("rules.%d.overrides.0.region_pools", idx)); ok {
-				om["region_pools"] = flattenGeoPools(o.RegionPools, "region", loadBalancerOverridesLocalPoolElems)
-				m["overrides"] = []interface{}{om}
-			}
-			if saaOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.session_affinity_attributes", idx)); o.SessionAffinityAttrs != nil && ok {
-				saa := map[string]interface{}{}
-				if l := saaOk.(*schema.Set).List(); len(l) > 0 {
-					for k := range l[0].(map[string]interface{}) {
-						switch k {
-						case "samesite":
-							saa[k] = o.SessionAffinityAttrs.SameSite
-						case "secure":
-							saa[k] = o.SessionAffinityAttrs.Secure
-						case "zero_downtime_failover":
-							saa[k] = o.SessionAffinityAttrs.ZeroDowntimeFailover
-						}
-					}
-				}
-				flattened := []interface{}{saa}
-				om["session_affinity_attributes"] = schema.NewSet(schema.HashResource(loadBalancerOverridesSessionAffinityAttributesElem), flattened)
-				m["overrides"] = []interface{}{om}
-			}
-			if arOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.adaptive_routing", idx)); o.AdaptiveRouting != nil && ok {
-				ar := map[string]interface{}{}
-				if l := arOk.(*schema.Set).List(); len(l) > 0 {
-					for k := range l[0].(map[string]interface{}) {
-						switch k {
-						case "failover_across_pools":
-							ar[k] = bool(o.AdaptiveRouting.FailoverAcrossPools != nil && *o.AdaptiveRouting.FailoverAcrossPools)
-						}
-					}
-				}
-				flattened := []interface{}{ar}
-				om["adaptive_routing"] = schema.NewSet(schema.HashResource(loadBalancerOverridesAdaptiveRoutingElem), flattened)
-				m["overrides"] = []interface{}{om}
-			}
-			if lsOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.location_strategy", idx)); o.LocationStrategy != nil && ok {
-				ls := map[string]interface{}{}
-				if l := lsOk.(*schema.Set).List(); len(l) > 0 {
-					for k := range l[0].(map[string]interface{}) {
-						switch k {
-						case "prefer_ecs":
-							ls[k] = o.LocationStrategy.PreferECS
-						case "mode":
-							ls[k] = o.LocationStrategy.Mode
-						}
-					}
-				}
-				flattened := []interface{}{ls}
-				om["location_strategy"] = schema.NewSet(schema.HashResource(loadBalancerOverridesLocationStrategyElem), flattened)
-				m["overrides"] = []interface{}{om}
-			}
-			if rsOk, ok := d.GetOk(fmt.Sprintf("rules.%d.overrides.0.random_steering", idx)); o.RandomSteering != nil && ok {
-				rs := map[string]interface{}{}
-				if l := rsOk.(*schema.Set).List(); len(l) > 0 {
-					for k := range l[0].(map[string]interface{}) {
-						switch k {
-						case "pool_weights":
-							poolWeights := make(map[string]interface{})
-							for poolID, poolWeight := range o.RandomSteering.PoolWeights {
-								poolWeights[poolID] = poolWeight
-							}
-							rs[k] = poolWeights
-						case "default_weight":
-							rs[k] = o.RandomSteering.DefaultWeight
-						}
-					}
-				}
-				flattened := []interface{}{rs}
-				om["random_steering"] = schema.NewSet(schema.HashResource(loadBalancerOverridesRandomSteeringElem), flattened)
-				m["overrides"] = []interface{}{om}
-			}
+		if m["overrides"] != nil {
+			m["overrides"] = []interface{}{m["overrides"]}
 		}
 
 		cfResources = append(cfResources, m)
 	}
+
 	return cfResources, nil
 }
 
