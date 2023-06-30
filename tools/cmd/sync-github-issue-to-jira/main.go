@@ -73,6 +73,7 @@ var (
 		"service/turnstile",
 		"service/workers",
 		"service/tunnel",
+		"service/load_balancing",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -108,6 +109,10 @@ var (
 		"service/tunnel": {
 			teamName: "Tunnel/Teams Routing",
 			manager:  "joliveirinha",
+		},
+		"service/load_balancing": {
+			teamName: "Load Balancing",
+			manager:  "laurence",
 		},
 	}
 )
