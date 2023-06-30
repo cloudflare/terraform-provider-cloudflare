@@ -563,6 +563,35 @@ func TestAccCloudflareRecord_MXNull(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckDomain(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordDNSKEY(zoneID, domain),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", domain),
+					resource.TestCheckResourceAttr(name, "type", "DNSKEY"),
+					resource.TestCheckResourceAttr(name, "data.0.flags", "257"),
+					resource.TestCheckResourceAttr(name, "data.0.protocol", "13"),
+					resource.TestCheckResourceAttr(name, "data.0.algorithm", "2"),
+					resource.TestCheckResourceAttr(name, "data.0.public_key", "mdsswUyr3DPW132mOi8V9xESWE8jTo0dxCjjnopKl+GqJxpVXckHAeF+KkxLbxILfDLUT0rAK9iUzy1L53eKGQ=="),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRecord_ClearTags(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -942,4 +971,21 @@ resource "cloudflare_record" "%[3]s" {
 	type = "A"
 	ttl = 3600
 }`, zoneID, name, rnd)
+}
+
+func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
+	return fmt.Sprintf(`
+	 resource "cloudflare_record" "dnskey" {
+ 		zone_id = "%[1]s"
+	   	name    = "%[2]s"
+	   	type    = "DNSKEY"
+	  
+	   	data {
+			algorithm  = 2
+		 	flags      = 2371
+		 	protocol   = 13
+		 	public_key = "mdsswUyr3DPW132mOi8V9xESWE8jTo0dxCjjnopKl+GqJxpVXckHAeF+KkxLbxILfDLUT0rAK9iUzy1L53eKGQ=="
+	   }
+	 }
+`, zoneID, name)
 }
