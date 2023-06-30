@@ -140,8 +140,6 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 	// with it so here we perform an update (to remove them) before we continue on
 	// with wiping the certificate itself.
 	deletedCertificate := cloudflare.AccessMutualTLSCertificate{
-		ID:                  d.Id(),
-		Name:                d.Get("name").(string),
 		AssociatedHostnames: []string{},
 	}
 
@@ -163,8 +161,9 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 		}
 
 		if err != nil {
-			if strings.Contains(err.Error(), "access.api.error.certificate_has_active_associations") {
-				return retry.RetryableError(fmt.Errorf("certificate associations are not yet removed"))
+			var requestError *cloudflare.RequestError
+			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 12132) {
+				return retry.RetryableError(errors.New("certificate associations are not yet removed"))
 			} else {
 				return retry.NonRetryableError(fmt.Errorf("error deleting Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
 			}
