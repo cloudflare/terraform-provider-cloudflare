@@ -1,4 +1,18 @@
-## 4.9.0 (Unreleased)
+## 4.10.0 (Unreleased)
+
+DEPENDENCIES:
+
+* provider: bumps dependabot/fetch-metadata from 1.5.1 to 1.6.0 ([#2557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2557))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.1 to 1.3.2 ([#2563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2563))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.10.0 to 0.11.0 ([#2564](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2564))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.0 to 0.11.1 ([#2567](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2567))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.26.1 to 2.27.0 ([#2565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2565))
+
+## 4.9.0 (28th June, 2023)
+
+NOTES:
+
+* resource/cloudflare_pages_project: Clarify example projects resource ([#2543](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2543))
 
 ENHANCEMENTS:
 
@@ -8,7 +22,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_access_ca_certificate: Fix issue with importing existing certificate as the application id was not being set. ([#2539](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2539))
-* resource/cloudflare_teams_rules.go: handle state correctly when `rules_setting` is empty ([#2532](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2532))
+* resource/cloudflare_teams_rules: handle state correctly when `rules_setting` is empty ([#2532](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2532))
 * resource/cloudflare_tunnel_config: fix sending incorrect values for various timeouts in the origin configuration block ([#2510](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2510))
 * tunnel_config: fix nil pointers for time.Durations ([#2504](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2504))
 
