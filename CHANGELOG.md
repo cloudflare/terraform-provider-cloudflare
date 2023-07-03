@@ -1,5 +1,9 @@
 ## 4.10.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_load_balancer_monitor: Add example import. ([#2572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2572))
+
 DEPENDENCIES:
 
 * provider: bumps dependabot/fetch-metadata from 1.5.1 to 1.6.0 ([#2557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2557))
