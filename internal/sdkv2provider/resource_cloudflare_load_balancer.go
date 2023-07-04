@@ -445,7 +445,7 @@ func flattenRules(rules []*cloudflare.LoadBalancerRule) ([]interface{}, error) {
 		}
 		if m["overrides"] != nil {
 			if overrides, ok := m["overrides"].(map[string]interface{}); ok {
-				if overrides["pool"] != nil {
+				if overrides["pop_pools"] != nil {
 					overrides["pop_pools"] = flattenGeoPools(
 						r.Overrides.PoPPools,
 						"pop",
