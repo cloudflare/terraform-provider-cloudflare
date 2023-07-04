@@ -1,3 +1,6 @@
 ```release-note:new-data-source
 access_application: create data source for access applications
 ```
+```release-note:enhancement
+access_ca_certificate: better handling of ID attributes
+```

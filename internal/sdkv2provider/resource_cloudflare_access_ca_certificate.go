@@ -103,23 +103,23 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 }
 
 func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	attributes := strings.SplitN(d.Id(), "/", 4)
+	attributes := strings.SplitN(d.Id(), "/", 3)
 
-	if len(attributes) != 4 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID/accessCACertificateID\" or \"zone/zoneID/applicationID/accessCACertificateID\"", d.Id())
+	if len(attributes) != 3 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID\" or \"zone/zoneID/applicationID\"", d.Id())
 	}
 
-	identifierType, identifierID, applicationID, accessCACertificateID := attributes[0], attributes[1], attributes[2], attributes[3]
+	identifierType, identifierID, applicationID := attributes[0], attributes[1], attributes[2]
 
 	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID/accessCACertificateID\" or \"zone/zoneID/applicationID/accessCACertificateID\"", d.Id())
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID\" or \"zone/zoneID/applicationID\"", d.Id())
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access CA Certificate: id %s for %s %s", accessCACertificateID, identifierType, identifierID))
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access CA Certificate for %s %s", identifierType, identifierID))
 
 	//lintignore:R001
 	d.Set(fmt.Sprintf("%s_id", identifierType), identifierID)
-	d.SetId(accessCACertificateID)
+	d.SetId(applicationID)
 	d.Set("application_id", applicationID)
 
 	readErr := resourceCloudflareAccessCACertificateRead(ctx, d, meta)
