@@ -36,15 +36,15 @@ func resourceCloudflareTunnelConfig() *schema.Resource {
 func buildTunnelOriginRequest(originRequest map[string]interface{}) (originConfig cloudflare.OriginRequestConfig) {
 	if v, ok := originRequest["connect_timeout"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.ConnectTimeout = &cloudflare.TunnelDuration{Duration: timeout}
+		originConfig.ConnectTimeout = &cloudflare.TunnelDuration{Duration: timeout / time.Seconds}
 	}
 	if v, ok := originRequest["tls_timeout"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.TLSTimeout = &cloudflare.TunnelDuration{Duration: timeout}
+		originConfig.TLSTimeout = &cloudflare.TunnelDuration{Duration: timeout / time.Seconds}
 	}
 	if v, ok := originRequest["tcp_keep_alive"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.TCPKeepAlive = &cloudflare.TunnelDuration{Duration: timeout}
+		originConfig.TCPKeepAlive = &cloudflare.TunnelDuration{Duration: timeout / time.Seconds}
 	}
 	if v, ok := originRequest["no_happy_eyeballs"]; ok {
 		originConfig.NoHappyEyeballs = cloudflare.BoolPtr(v.(bool))
@@ -54,7 +54,7 @@ func buildTunnelOriginRequest(originRequest map[string]interface{}) (originConfi
 	}
 	if v, ok := originRequest["keep_alive_timeout"]; ok {
 		timeout, _ := time.ParseDuration(v.(string))
-		originConfig.KeepAliveTimeout = &cloudflare.TunnelDuration{Duration: timeout}
+		originConfig.KeepAliveTimeout = &cloudflare.TunnelDuration{Duration: timeout / time.Seconds}
 	}
 	if v, ok := originRequest["http_host_header"]; ok {
 		originConfig.HTTPHostHeader = cloudflare.StringPtr(v.(string))
