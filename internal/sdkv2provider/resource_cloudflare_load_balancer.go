@@ -297,7 +297,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 	}
 
 	if len(loadBalancer.Rules) > 0 {
-		fr, err := flattenRules(d, loadBalancer.Rules)
+		fr, err := flattenRules(loadBalancer.Rules)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed to flatten rules: %w", err))
 		}
@@ -421,7 +421,7 @@ func resourceCloudflareLoadBalancerImport(ctx context.Context, d *schema.Resourc
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) ([]interface{}, error) {
+func flattenRules(rules []*cloudflare.LoadBalancerRule) ([]interface{}, error) {
 	if len(rules) == 0 {
 		return nil, nil
 	}
@@ -435,11 +435,69 @@ func flattenRules(d *schema.ResourceData, rules []*cloudflare.LoadBalancerRule) 
 			return nil, err
 		}
 
-		json.Unmarshal(jsonRule, &m)
+		err = json.Unmarshal(jsonRule, &m)
+		if err != nil {
+			return nil, err
+		}
+
 		if m["fixed_response"] != nil {
 			m["fixed_response"] = []interface{}{m["fixed_response"]}
 		}
 		if m["overrides"] != nil {
+			if overrides, ok := m["overrides"].(map[string]interface{}); ok {
+				if overrides["pool"] != nil {
+					overrides["pop_pools"] = flattenGeoPools(
+						r.Overrides.PoPPools,
+						"pop",
+						loadBalancerOverridesLocalPoolElems,
+					)
+				}
+
+				if overrides["country_pools"] != nil {
+					overrides["country_pools"] = flattenGeoPools(
+						r.Overrides.CountryPools,
+						"country",
+						loadBalancerOverridesLocalPoolElems,
+					)
+				}
+
+				if overrides["region_pools"] != nil {
+					overrides["region_pools"] = flattenGeoPools(
+						r.Overrides.RegionPools,
+						"region",
+						loadBalancerOverridesLocalPoolElems,
+					)
+				}
+
+				if overrides["session_affinity_attributes"] != nil {
+					overrides["session_affinity_attributes"] = schema.NewSet(
+						schema.HashResource(loadBalancerOverridesSessionAffinityAttributesElem),
+						[]interface{}{overrides["session_affinity_attributes"]},
+					)
+				}
+
+				if overrides["adaptive_routing"] != nil {
+					overrides["adaptive_routing"] = schema.NewSet(
+						schema.HashResource(loadBalancerOverridesAdaptiveRoutingElem),
+						[]interface{}{overrides["adaptive_routing"]},
+					)
+				}
+
+				if overrides["location_strategy"] != nil {
+					overrides["location_strategy"] = schema.NewSet(
+						schema.HashResource(loadBalancerOverridesLocationStrategyElem),
+						[]interface{}{overrides["location_strategy"]},
+					)
+				}
+
+				if overrides["random_steering"] != nil {
+					overrides["random_steering"] = schema.NewSet(
+						schema.HashResource(loadBalancerOverridesRandomSteeringElem),
+						[]interface{}{overrides["random_steering"]},
+					)
+				}
+			}
+
 			m["overrides"] = []interface{}{m["overrides"]}
 		}
 
