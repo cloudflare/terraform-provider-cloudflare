@@ -42,12 +42,7 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 		return diag.FromErr(err)
 	}
 
-	var accessIdentityProvider cloudflare.AccessIdentityProvider
-	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.AccessIdentityProviderDetails(ctx, identifier.Value, d.Id())
-	} else {
-		accessIdentityProvider, err = client.ZoneLevelAccessIdentityProviderDetails(ctx, identifier.Value, d.Id())
-	}
+	accessIdentityProvider, err := client.GetAccessIdentityProvider(ctx, identifier, d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -81,7 +76,7 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 	IDPConfig, _ := convertSchemaToStruct(d)
 	ScimConfig := convertScimConfigSchemaToStruct(d)
 
-	identityProvider := cloudflare.AccessIdentityProvider{
+	identityProvider := cloudflare.CreateAccessIdentityProviderParams{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
 		Config:     IDPConfig,
@@ -95,14 +90,9 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 		return diag.FromErr(err)
 	}
 
-	var accessIdentityProvider cloudflare.AccessIdentityProvider
-	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.CreateAccessIdentityProvider(ctx, identifier.Value, identityProvider)
-	} else {
-		accessIdentityProvider, err = client.CreateZoneLevelAccessIdentityProvider(ctx, identifier.Value, identityProvider)
-	}
+	accessIdentityProvider, err := client.CreateAccessIdentityProvider(ctx, identifier, identityProvider)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Identity Provider for ID %q: %w", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("failed to create Access Identity Provider: %w", err))
 	}
 
 	d.SetId(accessIdentityProvider.ID)
@@ -121,7 +111,8 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 	ScimConfig := convertScimConfigSchemaToStruct(d)
 
 	tflog.Debug(ctx, fmt.Sprintf("updatedConfig: %+v", IDPConfig))
-	updatedAccessIdentityProvider := cloudflare.AccessIdentityProvider{
+	updatedAccessIdentityProvider := cloudflare.UpdateAccessIdentityProviderParams{
+		ID:         d.Id(),
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
 		Config:     IDPConfig,
@@ -135,12 +126,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 		return diag.FromErr(err)
 	}
 
-	var accessIdentityProvider cloudflare.AccessIdentityProvider
-	if identifier.Type == AccountType {
-		accessIdentityProvider, err = client.UpdateAccessIdentityProvider(ctx, identifier.Value, d.Id(), updatedAccessIdentityProvider)
-	} else {
-		accessIdentityProvider, err = client.UpdateZoneLevelAccessIdentityProvider(ctx, identifier.Value, d.Id(), updatedAccessIdentityProvider)
-	}
+	accessIdentityProvider, err := client.UpdateAccessIdentityProvider(ctx, identifier, updatedAccessIdentityProvider)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
@@ -162,11 +148,7 @@ func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *sche
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		_, err = client.DeleteAccessIdentityProvider(ctx, identifier.Value, d.Id())
-	} else {
-		_, err = client.DeleteZoneLevelAccessIdentityProvider(ctx, identifier.Value, d.Id())
-	}
+	_, err = client.DeleteAccessIdentityProvider(ctx, identifier, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Access Identity Provider for ID %q: %w", d.Id(), err))
 	}

@@ -33,7 +33,7 @@ func testSweepCloudflareAccessApplications(r string) error {
 
 	// Zone level Access Applications.
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneAccessApps, _, err := client.ZoneLevelAccessApplications(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	zoneAccessApps, _, err := client.ListAccessApplications(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Applications: %s", err))
 	}
@@ -44,14 +44,14 @@ func testSweepCloudflareAccessApplications(r string) error {
 	}
 
 	for _, accessApp := range zoneAccessApps {
-		if err := client.DeleteZoneLevelAccessApplication(context.Background(), zoneID, accessApp.ID); err != nil {
+		if err := client.DeleteAccessApplication(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessApp.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Application %s", accessApp.ID))
 		}
 	}
 
 	// Account level Access Applications.
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	accountAccessApps, _, err := client.AccessApplications(context.Background(), accountID, cloudflare.PaginationOptions{})
+	accountAccessApps, _, err := client.ListAccessApplications(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Applications: %s", err))
 	}
@@ -62,7 +62,7 @@ func testSweepCloudflareAccessApplications(r string) error {
 	}
 
 	for _, accessApp := range accountAccessApps {
-		if err := client.DeleteAccessApplication(context.Background(), accountID, accessApp.ID); err != nil {
+		if err := client.DeleteAccessApplication(context.Background(), cloudflare.AccountIdentifier(accountID), accessApp.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Application %s", accessApp.ID))
 		}
 	}
@@ -87,7 +87,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -116,7 +116,7 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -489,7 +489,7 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -506,7 +506,7 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 	})
 }
 
-func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier AccessIdentifier) string {
+func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
   %[3]s_id                  = "%[4]s"
@@ -516,7 +516,7 @@ resource "cloudflare_access_application" "%[1]s" {
   session_duration          = "24h"
   auto_redirect_to_identity = false
 }
-`, rnd, domain, identifier.Type, identifier.Value)
+`, rnd, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain string) string {
@@ -733,7 +733,7 @@ resource "cloudflare_access_application" "%[1]s" {
 `, rnd, zoneID, domain)
 }
 
-func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier AccessIdentifier) string {
+func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
   %[3]s_id                  = "%[4]s"
@@ -746,7 +746,7 @@ resource "cloudflare_access_application" "%[1]s" {
     "d2.%[1]s.%[2]s"
   ]
 }
-`, rnd, domain, identifier.Type, identifier.Value)
+`, rnd, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
@@ -759,14 +759,14 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 
 		var notFoundError *cloudflare.NotFoundError
 		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
-			_, err := client.ZoneLevelAccessApplication(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+			_, err := client.GetAccessApplication(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 			if !errors.As(err, &notFoundError) {
 				return fmt.Errorf("AccessApplication still exists")
 			}
 		}
 
 		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
-			_, err := client.AccessApplication(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+			_, err := client.GetAccessApplication(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 			if !errors.As(err, &notFoundError) {
 				return fmt.Errorf("AccessApplication still exists")
 			}

@@ -37,7 +37,7 @@ func resourceCloudflareAccessMutualTLSCertificate() *schema.Resource {
 func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	newAccessMutualTLSCertificate := cloudflare.AccessMutualTLSCertificate{
+	newAccessMutualTLSCertificate := cloudflare.CreateAccessMutualTLSCertificateParams{
 		Name:        d.Get("name").(string),
 		Certificate: d.Get("certificate").(string),
 	}
@@ -50,14 +50,9 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *
 		return diag.FromErr(err)
 	}
 
-	var accessMutualTLSCert cloudflare.AccessMutualTLSCertificate
-	if identifier.Type == AccountType {
-		accessMutualTLSCert, err = client.CreateAccessMutualTLSCertificate(ctx, identifier.Value, newAccessMutualTLSCertificate)
-	} else {
-		accessMutualTLSCert, err = client.CreateZoneAccessMutualTLSCertificate(ctx, identifier.Value, newAccessMutualTLSCertificate)
-	}
+	accessMutualTLSCert, err := client.CreateAccessMutualTLSCertificate(ctx, identifier, newAccessMutualTLSCertificate)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error creating Access Mutual TLS Certificate for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	d.SetId(accessMutualTLSCert.ID)
@@ -73,12 +68,7 @@ func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *sc
 		return diag.FromErr(err)
 	}
 
-	var accessMutualTLSCert cloudflare.AccessMutualTLSCertificate
-	if identifier.Type == AccountType {
-		accessMutualTLSCert, err = client.AccessMutualTLSCertificate(ctx, identifier.Value, d.Id())
-	} else {
-		accessMutualTLSCert, err = client.ZoneAccessMutualTLSCertificate(ctx, identifier.Value, d.Id())
-	}
+	accessMutualTLSCert, err := client.GetAccessMutualTLSCertificate(ctx, identifier, d.Id())
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -100,7 +90,7 @@ func resourceCloudflareAccessMutualTLSCertificateRead(ctx context.Context, d *sc
 func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	updatedAccessMutualTLSCert := cloudflare.AccessMutualTLSCertificate{
+	updatedAccessMutualTLSCert := cloudflare.UpdateAccessMutualTLSCertificateParams{
 		ID:   d.Id(),
 		Name: d.Get("name").(string),
 	}
@@ -113,13 +103,9 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		_, err = client.UpdateAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), updatedAccessMutualTLSCert)
-	} else {
-		_, err = client.UpdateZoneAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), updatedAccessMutualTLSCert)
-	}
+	_, err = client.UpdateAccessMutualTLSCertificate(ctx, identifier, updatedAccessMutualTLSCert)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	return resourceCloudflareAccessMutualTLSCertificateRead(ctx, d, meta)
@@ -139,33 +125,25 @@ func resourceCloudflareAccessMutualTLSCertificateDelete(ctx context.Context, d *
 	// To actually delete the certificate, it cannot have any hostnames associated
 	// with it so here we perform an update (to remove them) before we continue on
 	// with wiping the certificate itself.
-	deletedCertificate := cloudflare.AccessMutualTLSCertificate{
+	deletedCertificate := cloudflare.UpdateAccessMutualTLSCertificateParams{
+		ID:                  d.Id(),
 		AssociatedHostnames: []string{},
 	}
 
-	if identifier.Type == AccountType {
-		_, err = client.UpdateAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), deletedCertificate)
-	} else {
-		_, err = client.UpdateZoneAccessMutualTLSCertificate(ctx, identifier.Value, d.Id(), deletedCertificate)
-	}
-
+	_, err = client.UpdateAccessMutualTLSCertificate(ctx, identifier, deletedCertificate)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Mutual TLS Certificate for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	retryErr := retry.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *retry.RetryError {
-		if identifier.Type == AccountType {
-			err = client.DeleteAccessMutualTLSCertificate(ctx, identifier.Value, certID)
-		} else {
-			err = client.DeleteZoneAccessMutualTLSCertificate(ctx, identifier.Value, certID)
-		}
+		err = client.DeleteAccessMutualTLSCertificate(ctx, identifier, certID)
 
 		if err != nil {
 			var requestError *cloudflare.RequestError
 			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 12132) {
 				return retry.RetryableError(errors.New("certificate associations are not yet removed"))
 			} else {
-				return retry.NonRetryableError(fmt.Errorf("error deleting Access Mutual TLS Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
+				return retry.NonRetryableError(fmt.Errorf("error deleting Access Mutual TLS Certificate for %s %q: %w", identifier.Level, identifier.Identifier, err))
 			}
 		}
 
@@ -190,7 +168,7 @@ func resourceCloudflareAccessMutualTLSCertificateImport(ctx context.Context, d *
 
 	identifierType, identifierID, accessMutualTLSCertificateID := attributes[0], attributes[1], attributes[2]
 
-	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
+	if !contains([]string{"zone", "account"}, identifierType) {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/accessMutualTLSCertificateID\" or \"zone/zoneID/accessMutualTLSCertificateID\"", d.Id())
 	}
 

@@ -30,7 +30,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
@@ -47,7 +47,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
@@ -80,13 +80,13 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 				),
 			},
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", AccessIdentifier{Type: AccountType, Value: accountID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
 				),
@@ -99,13 +99,13 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", resourceName),
 				),
 			},
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", AccessIdentifier{Type: ZoneType, Value: zoneID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
 				),
@@ -137,7 +137,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 // 		ProviderFactories: providerFactories,
 // 		Steps: []resource.TestStep{
 // 			{
-// 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, expirationTime),
+// 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID), expirationTime),
 // 				Check: resource.ComposeTestCheckFunc(
 // 					testAccCheckCloudflareAccessServiceTokenSaved(name, &initialState),
 // 					resource.TestCheckResourceAttr(name, "min_days_for_renewal", strconv.Itoa(expirationTime)),
@@ -146,7 +146,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 // 				ExpectNonEmptyPlan: true,
 // 			},
 // 			{
-// 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, expirationTime),
+// 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID), expirationTime),
 // 				Check: resource.ComposeTestCheckFunc(
 // 					resource.TestCheckResourceAttr(name, "min_days_for_renewal", strconv.Itoa(expirationTime)),
 // 					testAccCheckCloudflareAccessServiceTokenRenewed(name, &initialState),
@@ -216,7 +216,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: AccountType, Value: accountID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
@@ -234,7 +234,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, AccessIdentifier{Type: ZoneType, Value: zoneID}, 0),
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", resourceName),
@@ -247,13 +247,13 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 	})
 }
 
-func testCloudflareAccessServiceTokenBasicConfig(resourceName string, tokenName string, identifier AccessIdentifier, minDaysForRenewal int) string {
+func testCloudflareAccessServiceTokenBasicConfig(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_service_token" "%[1]s" {
   %[3]s_id = "%[4]s"
   name     = "%[2]s"
-  min_days_for_renewal ="%[5]d"
-}`, resourceName, tokenName, identifier.Type, identifier.Value, minDaysForRenewal)
+  min_days_for_renewal = "0"
+}`, resourceName, tokenName, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
@@ -264,12 +264,12 @@ func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.DeleteAccessServiceToken(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		_, err := client.DeleteAccessServiceToken(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("access service token still exists")
 		}
 
-		_, err = client.DeleteZoneLevelAccessServiceToken(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+		_, err = client.DeleteAccessServiceToken(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("access service token still exists")
 		}
