@@ -42,58 +42,14 @@ func resourceCloudflareLogpushJob() *schema.Resource {
 	}
 }
 
-func getJobFromResource(d *schema.ResourceData) (cloudflare.LogpushJob, *AccessIdentifier, error) {
-	id := 0
-
-	identifier, err := initIdentifier(d)
-	if err != nil {
-		return cloudflare.LogpushJob{}, identifier, err
-	}
-
-	if d.Id() != "" {
-		var err error
-		if id, err = strconv.Atoi(d.Id()); err != nil {
-			return cloudflare.LogpushJob{}, identifier, fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %w", d.Id(), err)
-		}
-	}
-
-	destConf := d.Get("destination_conf").(string)
-	ownershipChallenge := d.Get("ownership_challenge").(string)
+func validateDestination(destinationConf, ownershipChallenge string) error {
 	var re = regexp.MustCompile(`^((datadog|splunk|https|r2)://|s3://.+endpoint=)`)
 
-	if ownershipChallenge == "" && !re.MatchString(destConf) {
-		return cloudflare.LogpushJob{}, identifier, fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
+	if ownershipChallenge == "" && !re.MatchString(destinationConf) {
+		return fmt.Errorf("ownership_challenge must be set for the provided destination_conf")
 	}
 
-	job := cloudflare.LogpushJob{
-		ID:                       id,
-		Enabled:                  d.Get("enabled").(bool),
-		Kind:                     d.Get("kind").(string),
-		Name:                     d.Get("name").(string),
-		Dataset:                  d.Get("dataset").(string),
-		LogpullOptions:           d.Get("logpull_options").(string),
-		DestinationConf:          destConf,
-		OwnershipChallenge:       ownershipChallenge,
-		Frequency:                d.Get("frequency").(string),
-		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
-		MaxUploadRecords:         d.Get("max_upload_records").(int),
-		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
-	}
-
-	filter := d.Get("filter")
-	if filter != "" {
-		var jobFilter cloudflare.LogpushJobFilters
-		if err := json.Unmarshal([]byte(filter.(string)), &jobFilter); err != nil {
-			return cloudflare.LogpushJob{}, identifier, err
-		}
-		err := jobFilter.Where.Validate()
-		if err != nil {
-			return job, identifier, err
-		}
-		job.Filter = &jobFilter
-	}
-
-	return job, identifier, nil
+	return nil
 }
 
 func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -103,16 +59,12 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("could not extract Logpush job from resource - invalid identifier (%s): %w", d.Id(), err))
 	}
 
-	var job cloudflare.LogpushJob
 	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if identifier.Type == AccountType {
-		job, err = client.GetAccountLogpushJob(ctx, identifier.Value, jobID)
-	} else {
-		job, err = client.GetZoneLogpushJob(ctx, identifier.Value, jobID)
-	}
+
+	job, err := client.GetLogpushJob(ctx, identifier, jobID)
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -158,19 +110,52 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	job, identifier, err := getJobFromResource(d)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed to initialise identifiers"))
+	}
+
+	destConf := d.Get("destination_conf").(string)
+	ownershipChallenge := d.Get("ownership_challenge").(string)
+
+	if err := validateDestination(destConf, ownershipChallenge); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to validate destination configuration: %s", err))
+	}
+
+	job := cloudflare.CreateLogpushJobParams{
+		Enabled:                  d.Get("enabled").(bool),
+		Kind:                     d.Get("kind").(string),
+		Name:                     d.Get("name").(string),
+		Dataset:                  d.Get("dataset").(string),
+		LogpullOptions:           d.Get("logpull_options").(string),
+		DestinationConf:          destConf,
+		OwnershipChallenge:       ownershipChallenge,
+		Frequency:                d.Get("frequency").(string),
+		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
+		MaxUploadRecords:         d.Get("max_upload_records").(int),
+		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
+	}
+
+	filter := d.Get("filter")
+	if filter != "" {
+		var jobFilter cloudflare.LogpushJobFilters
+		if err := json.Unmarshal([]byte(filter.(string)), &jobFilter); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to unmarshal logpush job filter"))
+		}
+		err := jobFilter.Where.Validate()
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("failed to validate job filter"))
+		}
+		job.Filter = &jobFilter
+	}
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Logpush job for %s from struct: %+v", identifier, job))
 
-	var j *cloudflare.LogpushJob
-	if identifier.Type == AccountType {
-		j, err = client.CreateAccountLogpushJob(ctx, identifier.Value, job)
-	} else {
-		j, err = client.CreateZoneLogpushJob(ctx, identifier.Value, job)
-	}
+	j, err := client.CreateLogpushJob(ctx, identifier, job)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating logpush job for %s: %w", identifier, err))
 	}
@@ -188,18 +173,58 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	job, identifier, err := getJobFromResource(d)
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed to initialise identifiers"))
+	}
+
+	destConf := d.Get("destination_conf").(string)
+	ownershipChallenge := d.Get("ownership_challenge").(string)
+
+	if err := validateDestination(destConf, ownershipChallenge); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to validate destination configuration: %s", err))
+	}
+
+	jobID, _ := strconv.Atoi(d.Id())
+	job := cloudflare.UpdateLogpushJobParams{
+		ID:                       jobID,
+		Enabled:                  d.Get("enabled").(bool),
+		Kind:                     d.Get("kind").(string),
+		Name:                     d.Get("name").(string),
+		Dataset:                  d.Get("dataset").(string),
+		LogpullOptions:           d.Get("logpull_options").(string),
+		DestinationConf:          destConf,
+		OwnershipChallenge:       ownershipChallenge,
+		Frequency:                d.Get("frequency").(string),
+		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
+		MaxUploadRecords:         d.Get("max_upload_records").(int),
+		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
+	}
+
+	filter := d.Get("filter")
+	if filter != "" {
+		var jobFilter cloudflare.LogpushJobFilters
+		if err := json.Unmarshal([]byte(filter.(string)), &jobFilter); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to unmarshal logpush job filter"))
+		}
+		err := jobFilter.Where.Validate()
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("failed to validate job filter"))
+		}
+		job.Filter = &jobFilter
+	}
+
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
+	}
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
 	tflog.Info(ctx, fmt.Sprintf("Updating Cloudflare Logpush job for %s from struct: %+v", identifier, job))
 
-	if identifier.Type == AccountType {
-		err = client.UpdateAccountLogpushJob(ctx, identifier.Value, job.ID, job)
-	} else {
-		err = client.UpdateZoneLogpushJob(ctx, identifier.Value, job.ID, job)
-	}
+	err = client.UpdateLogpushJob(ctx, identifier, job)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating logpush job id %q for %s: %w", job.ID, identifier, err))
@@ -210,26 +235,22 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 
 func resourceCloudflareLogpushJobDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-
-	job, identifier, err := getJobFromResource(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing logpush job from resource: %w", err))
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Logpush job for %s with id: %+v", identifier, job.ID))
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Logpush job for %s with id: %+v", identifier, d.Id()))
 
-	if identifier.Type == AccountType {
-		err = client.DeleteAccountLogpushJob(ctx, identifier.Value, job.ID)
-	} else {
-		err = client.DeleteZoneLogpushJob(ctx, identifier.Value, job.ID)
-	}
+	jobID, _ := strconv.Atoi(d.Id())
+	err = client.DeleteLogpushJob(ctx, identifier, jobID)
 	if err != nil {
 		if strings.Contains(err.Error(), "job not found") {
-			tflog.Info(ctx, fmt.Sprintf("Could not find logpush job for %s with id: %q", identifier, job.ID))
+			tflog.Info(ctx, fmt.Sprintf("Could not find logpush job for %s with id: %q", identifier, d.Id()))
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("error deleting logpush job id %v for %s: %w", job.ID, identifier, err))
+		return diag.FromErr(fmt.Errorf("error deleting logpush job id %v for %s: %w", d.Id(), identifier, err))
 	}
 
 	d.SetId("")
@@ -241,28 +262,22 @@ func resourceCloudflareLogpushJobImport(ctx context.Context, d *schema.ResourceD
 	// split the id so we can lookup
 	idAttr := strings.Split(d.Id(), "/")
 
-	if len(idAttr) != 3 || (AccessIdentifierType(idAttr[0]) != AccountType && AccessIdentifierType(idAttr[0]) != ZoneType) || idAttr[1] == "" || idAttr[2] == "" {
+	if len(idAttr) != 3 || !contains([]string{"zone", "account"}, idAttr[0]) || idAttr[1] == "" || idAttr[2] == "" {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/jobID\" or \"zone/zoneID/jobID\"", d.Id())
 	}
 
-	identifier := AccessIdentifier{
-		Type:  AccessIdentifierType(idAttr[0]),
-		Value: idAttr[1],
-	}
-	logpushJobID := idAttr[2]
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Logpush Job for %s with id %s", idAttr[1], idAttr[2]))
 
-	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Logpush Job for %s with id %s", identifier, logpushJobID))
-
-	if identifier.Type == AccountType {
-		if err := d.Set(consts.AccountIDSchemaKey, identifier.Value); err != nil {
+	if idAttr[0] == "account" {
+		if err := d.Set(consts.AccountIDSchemaKey, cloudflare.AccountIdentifier(idAttr[1])); err != nil {
 			return nil, fmt.Errorf("failed to set account_id: %w", err)
 		}
 	} else {
-		if err := d.Set(consts.ZoneIDSchemaKey, identifier.Value); err != nil {
+		if err := d.Set(consts.ZoneIDSchemaKey, cloudflare.ZoneIdentifier(idAttr[1])); err != nil {
 			return nil, fmt.Errorf("failed to set zone_id: %w", err)
 		}
 	}
-	d.SetId(logpushJobID)
+	d.SetId(idAttr[2])
 
 	resourceCloudflareLogpushJobRead(ctx, d, meta)
 

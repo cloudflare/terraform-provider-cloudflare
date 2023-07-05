@@ -40,13 +40,7 @@ func resourceCloudflareLogpushOwnershipChallengeCreate(ctx context.Context, d *s
 		return diag.FromErr(err)
 	}
 
-	var challenge *cloudflare.LogpushGetOwnershipChallenge
-	if identifier.Type == AccountType {
-		challenge, err = client.GetAccountLogpushOwnershipChallenge(ctx, identifier.Value, destinationConf)
-	} else {
-		challenge, err = client.GetZoneLogpushOwnershipChallenge(ctx, identifier.Value, destinationConf)
-	}
-
+	challenge, err := client.GetLogpushOwnershipChallenge(ctx, identifier, cloudflare.GetLogpushOwnershipChallengeParams{DestinationConf: destinationConf})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error requesting ownership challenge for %s: %w", identifier, err))
 	}

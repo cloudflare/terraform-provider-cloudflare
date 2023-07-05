@@ -25,12 +25,7 @@ func dataSourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *sche
 		return diag.FromErr(err)
 	}
 
-	var providers []cloudflare.AccessIdentityProvider
-	if identifier.Type == AccountType {
-		providers, err = client.AccessIdentityProviders(ctx, identifier.Value)
-	} else {
-		providers, err = client.ZoneLevelAccessIdentityProviders(ctx, identifier.Value)
-	}
+	providers, _, err := client.ListAccessIdentityProviders(ctx, identifier, cloudflare.ListAccessIdentityProvidersParams{})
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing Access Identity Providers: %w", err))

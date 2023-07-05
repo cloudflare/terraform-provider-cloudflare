@@ -31,7 +31,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 
 	// Zone level Access Groups
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneAccessGroups, _, err := client.ZoneLevelAccessGroups(context.Background(), zoneID, cloudflare.PaginationOptions{})
+	zoneAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessGroupsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Groups: %s", err))
 	}
@@ -42,14 +42,14 @@ func testSweepCloudflareAccessGroups(r string) error {
 	}
 
 	for _, accessGroup := range zoneAccessGroups {
-		if err := client.DeleteZoneLevelAccessGroup(context.Background(), zoneID, accessGroup.ID); err != nil {
+		if err := client.DeleteAccessGroup(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessGroup.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Group %s", accessGroup.ID))
 		}
 	}
 
 	// Account level Access Groups
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	accountAccessGroups, _, err := client.AccessGroups(context.Background(), accountID, cloudflare.PaginationOptions{})
+	accountAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessGroupsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Groups: %s", err))
 	}
@@ -60,7 +60,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 	}
 
 	for _, accessGroup := range accountAccessGroups {
-		if err := client.DeleteAccessGroup(context.Background(), accountID, accessGroup.ID); err != nil {
+		if err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(accountID), accessGroup.ID); err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Group %s", accessGroup.ID))
 		}
 	}
@@ -74,7 +74,7 @@ var (
 	accessGroup cloudflare.AccessGroup
 )
 
-func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
+func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
@@ -87,9 +87,9 @@ func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
@@ -102,9 +102,9 @@ func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
@@ -120,7 +120,7 @@ func TestAccCloudflareAccessGroupConfig_BasicZone(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
+func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
@@ -132,9 +132,9 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: ZoneType, Value: zoneID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
@@ -155,9 +155,9 @@ func TestAccCloudflareAccessGroupConfig_BasicAccount(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: ZoneType, Value: zoneID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
@@ -196,7 +196,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 			{
 				Config: testAccessGroupConfigExclude(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
@@ -223,7 +223,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 			{
 				Config: testAccessGroupConfigRequire(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
@@ -250,7 +250,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 			{
 				Config: testAccessGroupConfigFullConfig(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", email),
@@ -280,7 +280,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(groupName, AccessIdentifier{Type: AccountType, Value: accountID}, &accessGroup),
+					testAccCheckCloudflareAccessGroupExists(groupName, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(groupName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(groupName, "name", rnd),
 					resource.TestCheckResourceAttrSet(groupName, "include.0.github.0.identity_provider_id"),
@@ -306,15 +306,15 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &before),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &before),
 				),
 			},
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, "test-changed@example.com", AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, "test-changed@example.com", cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &after),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
 					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", "test-changed@example.com"),
 				),
@@ -338,9 +338,9 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &before),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &before),
 					testAccManuallyDeleteAccessGroup(name, &initialID),
 				),
 				ExpectNonEmptyPlan: true,
@@ -348,7 +348,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 			{
 				Config: testAccCloudflareAccessGroupConfigBasicWithUpdate(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, AccessIdentifier{Type: AccountType, Value: accountID}, &after),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
 					testAccCheckCloudflareAccessGroupRecreated(&before, &after),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s-updated", rnd)),
@@ -360,7 +360,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
-func testAccCloudflareAccessGroupConfigBasic(resourceName string, email string, identifier AccessIdentifier) string {
+func testAccCloudflareAccessGroupConfigBasic(resourceName string, email string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
   %[3]s_id = "%[4]s"
@@ -395,7 +395,7 @@ resource "cloudflare_access_group" "%[1]s" {
       identity_provider_id = "5678"
     }
   }
-}`, resourceName, email, identifier.Type, identifier.Value)
+}`, resourceName, email, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessGroupConfigBasicWithUpdate(resourceName, accountID, email string) string {
@@ -492,7 +492,7 @@ resource "cloudflare_access_group" "%[2]s" {
 }`, accountID, rnd, githubOrg, team)
 }
 
-func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessIdentifier, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
+func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -507,17 +507,16 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier AccessId
 		var foundAccessGroup cloudflare.AccessGroup
 		var err error
 
-		if accessIdentifier.Type == AccountType {
-			foundAccessGroup, err = client.AccessGroup(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		if accessIdentifier.Level == cloudflare.AccountRouteLevel {
+			foundAccessGroup, err = client.GetAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 		} else {
-			foundAccessGroups, _, err := client.ZoneLevelAccessGroups(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], cloudflare.PaginationOptions{})
+			foundAccessGroup, err = client.GetAccessGroup(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 			if err != nil {
 				return err
 			}
-			foundAccessGroup = foundAccessGroups[0]
 		}
 
 		if foundAccessGroup.ID != rs.Primary.ID {
@@ -538,12 +537,12 @@ func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.AccessGroup(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		_, err := client.GetAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
 		}
 
-		_, err = client.AccessGroup(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
+		_, err = client.GetAccessGroup(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("AccessGroup still exists")
 		}
@@ -570,7 +569,7 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
-		err := client.DeleteAccessGroup(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
+		err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}

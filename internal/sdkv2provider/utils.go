@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -136,48 +137,19 @@ func stringFromBool(status bool) string {
 	return "off"
 }
 
-// AccessIdentifier represents the identifier provided in a resource.
-type AccessIdentifier struct {
-	Type  AccessIdentifierType
-	Value string
-}
-
-// Add string representation to consistently print this in log messages.
-func (i AccessIdentifier) String() string {
-	return fmt.Sprintf("%s (%s)", i.Type, i.Value)
-}
-
-// AccessIdentifierType represents the identifier type for access resources.
-type AccessIdentifierType string
-
-const (
-	// AccountType is the access identifier type for an account.
-	AccountType AccessIdentifierType = "account"
-
-	// ZoneType is the access identifier type for a zone.
-	ZoneType AccessIdentifierType = "zone"
-)
-
-func initIdentifier(d *schema.ResourceData) (*AccessIdentifier, error) {
+func initIdentifier(d *schema.ResourceData) (*cloudflare.ResourceContainer, error) {
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+
 	if accountID == "" && zoneID == "" {
-		return nil, fmt.Errorf("error creating Access resource: zone_id or account_id required")
+		return nil, fmt.Errorf(`error determining resource: "zone_id" or "account_id" required`)
 	}
 
 	if accountID != "" {
-		d.Set(consts.AccountIDSchemaKey, accountID)
-		return &AccessIdentifier{
-			Type:  AccountType,
-			Value: accountID,
-		}, nil
+		return cloudflare.AccountIdentifier(accountID), nil
 	}
 
-	d.Set(consts.ZoneIDSchemaKey, zoneID)
-	return &AccessIdentifier{
-		Type:  ZoneType,
-		Value: zoneID,
-	}, nil
+	return cloudflare.ZoneIdentifier(zoneID), nil
 }
 
 // String hashes a string to a unique hashcode.
