@@ -39,14 +39,9 @@ func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.
 		return diag.FromErr(err)
 	}
 
-	var accessCACert cloudflare.AccessCACertificate
-	if identifier.Type == AccountType {
-		accessCACert, err = client.CreateAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
-	} else {
-		accessCACert, err = client.CreateZoneLevelAccessCACertificate(ctx, identifier.Value, d.Get("application_id").(string))
-	}
+	accessCACert, err := client.CreateAccessCACertificate(ctx, identifier, cloudflare.CreateAccessCACertificateParams{ApplicationID: d.Get("application_id").(string)})
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	d.SetId(accessCACert.ID)
@@ -62,12 +57,7 @@ func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.Re
 		return diag.FromErr(err)
 	}
 
-	var accessCACert cloudflare.AccessCACertificate
-	if identifier.Type == AccountType {
-		accessCACert, err = client.AccessCACertificate(ctx, identifier.Value, applicationID)
-	} else {
-		accessCACert, err = client.ZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
-	}
+	accessCACert, err := client.GetAccessCACertificate(ctx, identifier, applicationID)
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -100,11 +90,7 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		err = client.DeleteAccessCACertificate(ctx, identifier.Value, applicationID)
-	} else {
-		err = client.DeleteZoneLevelAccessCACertificate(ctx, identifier.Value, applicationID)
-	}
+	err = client.DeleteAccessCACertificate(ctx, identifier, applicationID)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -124,7 +110,7 @@ func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.
 
 	identifierType, identifierID, applicationID, accessCACertificateID := attributes[0], attributes[1], attributes[2], attributes[3]
 
-	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
+	if !contains([]string{"zone", "account"}, identifierType) {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID/accessCACertificateID\" or \"zone/zoneID/applicationID/accessCACertificateID\"", d.Id())
 	}
 

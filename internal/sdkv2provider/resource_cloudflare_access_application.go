@@ -37,7 +37,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	appType := d.Get("type").(string)
 
-	newAccessApplication := cloudflare.AccessApplication{
+	newAccessApplication := cloudflare.CreateAccessApplicationParams{
 		Name:                    d.Get("name").(string),
 		Domain:                  d.Get("domain").(string),
 		Type:                    cloudflare.AccessApplicationType(appType),
@@ -81,14 +81,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		return diag.FromErr(err)
 	}
 
-	var accessApplication cloudflare.AccessApplication
-	if identifier.Type == AccountType {
-		accessApplication, err = client.CreateAccessApplication(ctx, identifier.Value, newAccessApplication)
-	} else {
-		accessApplication, err = client.CreateZoneLevelAccessApplication(ctx, identifier.Value, newAccessApplication)
-	}
+	accessApplication, err := client.CreateAccessApplication(ctx, identifier, newAccessApplication)
+
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	d.SetId(accessApplication.ID)
@@ -104,12 +100,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		return diag.FromErr(err)
 	}
 
-	var accessApplication cloudflare.AccessApplication
-	if identifier.Type == AccountType {
-		accessApplication, err = client.AccessApplication(ctx, identifier.Value, d.Id())
-	} else {
-		accessApplication, err = client.ZoneLevelAccessApplication(ctx, identifier.Value, d.Id())
-	}
+	accessApplication, err := client.GetAccessApplication(ctx, identifier, d.Id())
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -160,7 +151,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 
 	appType := d.Get("type").(string)
 
-	updatedAccessApplication := cloudflare.AccessApplication{
+	updatedAccessApplication := cloudflare.UpdateAccessApplicationParams{
 		ID:                      d.Id(),
 		Name:                    d.Get("name").(string),
 		Domain:                  d.Get("domain").(string),
@@ -210,14 +201,9 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		return diag.FromErr(err)
 	}
 
-	var accessApplication cloudflare.AccessApplication
-	if identifier.Type == AccountType {
-		accessApplication, err = client.UpdateAccessApplication(ctx, identifier.Value, updatedAccessApplication)
-	} else {
-		accessApplication, err = client.UpdateZoneLevelAccessApplication(ctx, identifier.Value, updatedAccessApplication)
-	}
+	accessApplication, err := client.UpdateAccessApplication(ctx, identifier, updatedAccessApplication)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	if accessApplication.ID == "" {
@@ -238,13 +224,9 @@ func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.Re
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		err = client.DeleteAccessApplication(ctx, identifier.Value, appID)
-	} else {
-		err = client.DeleteZoneLevelAccessApplication(ctx, identifier.Value, appID)
-	}
+	err = client.DeleteAccessApplication(ctx, identifier, appID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)

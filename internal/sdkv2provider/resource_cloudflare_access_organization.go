@@ -49,12 +49,7 @@ func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.Res
 		return diag.FromErr(err)
 	}
 
-	var organization cloudflare.AccessOrganization
-	if identifier.Type == AccountType {
-		organization, _, err = client.AccessOrganization(ctx, identifier.Value)
-	} else {
-		organization, _, err = client.ZoneLevelAccessOrganization(ctx, identifier.Value)
-	}
+	organization, _, err := client.GetAccessOrganization(ctx, identifier, cloudflare.GetAccessOrganizationParams{})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error fetching access organization: %w", err))
 	}
@@ -77,7 +72,7 @@ func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.Res
 func resourceCloudflareAccessOrganizationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	updatedAccessOrganization := cloudflare.AccessOrganization{
+	updatedAccessOrganization := cloudflare.UpdateAccessOrganizationParams{
 		Name:                           d.Get("name").(string),
 		AuthDomain:                     d.Get("auth_domain").(string),
 		IsUIReadOnly:                   cloudflare.BoolPtr(d.Get("is_ui_read_only").(bool)),
@@ -94,13 +89,9 @@ func resourceCloudflareAccessOrganizationUpdate(ctx context.Context, d *schema.R
 		return diag.FromErr(err)
 	}
 
-	if identifier.Type == AccountType {
-		_, err = client.UpdateAccessOrganization(ctx, identifier.Value, updatedAccessOrganization)
-	} else {
-		_, err = client.UpdateZoneLevelAccessOrganization(ctx, identifier.Value, updatedAccessOrganization)
-	}
+	_, err = client.UpdateAccessOrganization(ctx, identifier, updatedAccessOrganization)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Organization for %s %q: %w", identifier.Type, identifier.Value, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Organization for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	return resourceCloudflareAccessOrganizationRead(ctx, d, meta)
