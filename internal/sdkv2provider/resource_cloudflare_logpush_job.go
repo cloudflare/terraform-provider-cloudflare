@@ -119,7 +119,7 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 	ownershipChallenge := d.Get("ownership_challenge").(string)
 
 	if err := validateDestination(destConf, ownershipChallenge); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to validate destination configuration: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to validate destination configuration: %w", err))
 	}
 
 	job := cloudflare.CreateLogpushJobParams{
@@ -182,7 +182,7 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 	ownershipChallenge := d.Get("ownership_challenge").(string)
 
 	if err := validateDestination(destConf, ownershipChallenge); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to validate destination configuration: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to validate destination configuration: %w", err))
 	}
 
 	jobID, _ := strconv.Atoi(d.Id())
@@ -269,11 +269,11 @@ func resourceCloudflareLogpushJobImport(ctx context.Context, d *schema.ResourceD
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Logpush Job for %s with id %s", idAttr[1], idAttr[2]))
 
 	if idAttr[0] == "account" {
-		if err := d.Set(consts.AccountIDSchemaKey, cloudflare.AccountIdentifier(idAttr[1])); err != nil {
+		if err := d.Set(consts.AccountIDSchemaKey, idAttr[1]); err != nil {
 			return nil, fmt.Errorf("failed to set account_id: %w", err)
 		}
 	} else {
-		if err := d.Set(consts.ZoneIDSchemaKey, cloudflare.ZoneIdentifier(idAttr[1])); err != nil {
+		if err := d.Set(consts.ZoneIDSchemaKey, idAttr[1]); err != nil {
 			return nil, fmt.Errorf("failed to set zone_id: %w", err)
 		}
 	}
