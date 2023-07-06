@@ -2,13 +2,14 @@ package sdkv2provider
 
 import (
 	"fmt"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareAccessApplicationDataSourceAccount_Name(t *testing.T) {
+func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
@@ -16,7 +17,7 @@ func TestAccCloudflareAccessApplicationDataSourceAccount_Name(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessApplicationAccount_Name(accountID, rnd, domain),
+				Config: testAccCheckCloudflareAccessApplicationAccountName(accountID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -29,7 +30,7 @@ func TestAccCloudflareAccessApplicationDataSourceAccount_Name(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessApplicationAccount_Name(accountID, name, domain string) string {
+func testAccCheckCloudflareAccessApplicationAccountName(accountID, name, domain string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_access_application" "%[1]s" {
 		account_id = "%[2]s"
@@ -45,7 +46,7 @@ func testAccCheckCloudflareAccessApplicationAccount_Name(accountID, name, domain
 	`, name, accountID, domain)
 }
 
-func TestAccCloudflareAccessApplicationDataSourceAccount_Domain(t *testing.T) {
+func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
@@ -53,7 +54,7 @@ func TestAccCloudflareAccessApplicationDataSourceAccount_Domain(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessApplicationAccount_Domain(accountID, rnd, domain),
+				Config: testAccCheckCloudflareAccessApplicationAccountDomain(accountID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -66,7 +67,7 @@ func TestAccCloudflareAccessApplicationDataSourceAccount_Domain(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessApplicationAccount_Domain(accountID, name, domain string) string {
+func testAccCheckCloudflareAccessApplicationAccountDomain(accountID, name, domain string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_access_application" "%[1]s" {
 		account_id = "%[2]s"
@@ -82,7 +83,7 @@ func testAccCheckCloudflareAccessApplicationAccount_Domain(accountID, name, doma
 	`, name, accountID, domain)
 }
 
-func TestAccCloudflareAccessApplicationDataSourceZone_Name(t *testing.T) {
+func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
@@ -90,7 +91,7 @@ func TestAccCloudflareAccessApplicationDataSourceZone_Name(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessApplicationZone_Name(zoneID, rnd, domain),
+				Config: testAccCheckCloudflareAccessApplicationZoneName(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -103,7 +104,7 @@ func TestAccCloudflareAccessApplicationDataSourceZone_Name(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessApplicationZone_Name(zoneID, name, domain string) string {
+func testAccCheckCloudflareAccessApplicationZoneName(zoneID, name, domain string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_access_application" "%[1]s" {
 		zone_id = "%[2]s"
@@ -119,7 +120,7 @@ func testAccCheckCloudflareAccessApplicationZone_Name(zoneID, name, domain strin
 	`, name, zoneID, domain)
 }
 
-func TestAccCloudflareAccessApplicationDataSource_Zone_Domain(t *testing.T) {
+func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
@@ -127,7 +128,7 @@ func TestAccCloudflareAccessApplicationDataSource_Zone_Domain(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessApplicationZone_Domain(zoneID, rnd, domain),
+				Config: testAccCheckCloudflareAccessApplicationZoneDomain(zoneID, rnd, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -140,7 +141,7 @@ func TestAccCloudflareAccessApplicationDataSource_Zone_Domain(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessApplicationZone_Domain(zoneID, name, domain string) string {
+func testAccCheckCloudflareAccessApplicationZoneDomain(zoneID, name, domain string) string {
 	return fmt.Sprintf(`
 	resource "cloudflare_access_application" "%[1]s" {
 		zone_id = "%[2]s"
