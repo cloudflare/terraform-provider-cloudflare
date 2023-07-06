@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -32,7 +33,7 @@ func dataSourceCloudflareAccessApplication() *schema.Resource {
 				ExactlyOneOf: []string{"name", "domain"},
 			},
 			"domain": {
-				Description:  "The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.",
+				Description:  "The primary hostname and path that Access will secure.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,

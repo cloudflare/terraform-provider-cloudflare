@@ -13,43 +13,39 @@ Use this data source to lookup a single [Access Application](https://developers.
 
 ```terraform
 # For account level applications
-
 resource "cloudflare_access_application" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  name = "example"
-  domain = "example.com"
+  name       = "example"
+  domain     = "example.com"
 }
 
 # You can use either `name` or `domain` to identify the application
-
 data "cloudflare_access_application" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  name = "example"
+  name       = "example"
 }
 
 data "cloudflare_access_application" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  domain = "example.com"
+  domain     = "example.com"
 }
 
 # For zone level applications
-
 resource "cloudflare_access_application" "example" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-  name = "example"
-  domain = "example.com"
+  name    = "example"
+  domain  = "example.com"
 }
 
 # You can use either `name` or `domain` to identify the application
-
 data "cloudflare_access_application" "example" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-  name = "example"
+  name    = "example"
 }
 
 data "cloudflare_access_application" "example" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
-  domain = "example.com"
+  domain  = "example.com"
 }
 ```
 
@@ -59,7 +55,7 @@ data "cloudflare_access_application" "example" {
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource. Must provide only one of `zone_id`, `account_id`.
-- `domain` (String) The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed. Must provide only one of `name`, `domain`.
+- `domain` (String) The primary hostname and path that Access will secure. Must provide only one of `name`, `domain`.
 - `name` (String) Friendly name of the Access Application. Must provide only one of `name`, `domain`.
 - `zone_id` (String) The zone identifier to target for the resource. Must provide only one of `zone_id`, `account_id`.
 
