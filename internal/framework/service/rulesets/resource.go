@@ -471,10 +471,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 			}
 
 			if ruleResponse.ActionParameters.BrowserTTL != nil {
-				var defaultVal basetypes.Int64Value
-				if cloudflare.Uint(ruleResponse.ActionParameters.BrowserTTL.Default) > 0 {
-					defaultVal = types.Int64Value(int64(cloudflare.Uint(ruleResponse.ActionParameters.BrowserTTL.Default)))
-				}
+				var defaultVal basetypes.Int64Value = types.Int64Value(int64(cloudflare.Uint(ruleResponse.ActionParameters.BrowserTTL.Default)))
 
 				rule.ActionParameters[0].BrowserTTL = []*ActionParameterBrowserTTLModel{{
 					Mode:    types.StringValue(ruleResponse.ActionParameters.BrowserTTL.Mode),
