@@ -1,6 +1,6 @@
 ```release-note:new-data-source
-access_application: create data source for access applications
+clouflare_access_application
 ```
 ```release-note:enhancement
-access_ca_certificate: better handling of ID attributes
+resource/cloudflare_access_ca_certificate: remove redundant `certificate_id` from `Import` requirements as it is never used
 ```
