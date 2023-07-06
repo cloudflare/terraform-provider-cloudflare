@@ -13,6 +13,7 @@ DEPENDENCIES:
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.10.0 to 0.11.0 ([#2564](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2564))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.0 to 0.11.1 ([#2567](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2567))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.26.1 to 2.27.0 ([#2565](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2565))
+* provider: bumps golang.org/x/net from 0.11.0 to 0.12.0 ([#2589](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2589))
 
 ## 4.9.0 (28th June, 2023)
 
