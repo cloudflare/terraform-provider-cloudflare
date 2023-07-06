@@ -257,7 +257,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Description: "Configuration for deployments in a project.",
 			Type:        schema.TypeList,
 			MaxItems:    1,
-			Optional:    true,
+			Required:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"preview": {
