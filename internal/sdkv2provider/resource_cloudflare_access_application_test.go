@@ -45,14 +45,16 @@ func testSweepCloudflareAccessApplications(r string) error {
 
 	for _, accessApp := range zoneAccessApps {
 		if err := client.DeleteAccessApplication(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessApp.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Application %s", accessApp.ID))
 		}
 	}
+
+	// Account level Access Applications.
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountAccessApps, _, err := client.ListAccessApplications(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Applications: %s", err))
 	}
-
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	accountAccessApps, _, err := client.ListAccessApplications(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessApplicationsParams{})
 
 	if len(accountAccessApps) == 0 {
 		log.Print("[DEBUG] No Cloudflare account level Access Applications to sweep")
@@ -163,6 +165,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

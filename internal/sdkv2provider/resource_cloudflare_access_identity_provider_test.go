@@ -3,11 +3,11 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
 	"log"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -22,6 +22,7 @@ func init() {
 
 func testSweepCloudflareAccessIdentityProviders(r string) error {
 	ctx := context.Background()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	client, clientErr := sharedClient()
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
@@ -97,6 +98,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
@@ -122,6 +124,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
@@ -157,6 +160,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
@@ -187,6 +191,7 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
