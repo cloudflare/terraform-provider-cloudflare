@@ -28,7 +28,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
-
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	accountCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
@@ -42,6 +42,7 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		}
 	}
 
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
