@@ -323,7 +323,7 @@ func resourceCloudflareLoadBalancerRead(ctx context.Context, d *schema.ResourceD
 		tflog.Warn(ctx, fmt.Sprintf("Error setting region_pools on load balancer %q: %s", d.Id(), err))
 	}
 
-	if loadBalancer.PersistenceTTL != 0 {
+	if _, sessionAffinityTTLOk := d.GetOk("session_affinity_ttl"); sessionAffinityTTLOk && loadBalancer.PersistenceTTL != 0 {
 		d.Set("session_affinity_ttl", loadBalancer.PersistenceTTL)
 	}
 
