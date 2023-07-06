@@ -35,12 +35,12 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessGroup, err := client.GetAccessGroup(ctx, rc, d.Id())
+	accessGroup, err := client.GetAccessGroup(ctx, identifier, d.Id())
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -71,26 +71,39 @@ func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceDa
 
 func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	newAccessGroup := cloudflare.AccessGroup{
+	newAccessGroup := cloudflare.CreateAccessGroupParams{
 		Name: d.Get("name").(string),
 	}
 
-	newAccessGroup = appendConditionalAccessGroupFields(newAccessGroup, d)
-	createAccessGroupParams := cloudflare.CreateAccessGroupParams{
-		Name:    newAccessGroup.Name,
-		Include: newAccessGroup.Include,
-		Exclude: newAccessGroup.Exclude,
-		Require: newAccessGroup.Require,
+	exclude := d.Get("exclude").([]interface{})
+	for _, value := range exclude {
+		if value != nil {
+			newAccessGroup.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	require := d.Get("require").([]interface{})
+	for _, value := range require {
+		if value != nil {
+			newAccessGroup.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	include := d.Get("include").([]interface{})
+	for _, value := range include {
+		if value != nil {
+			newAccessGroup.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Group from struct: %+v", newAccessGroup))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessGroup, err := client.CreateAccessGroup(ctx, rc, createAccessGroupParams)
+	accessGroup, err := client.CreateAccessGroup(ctx, identifier, newAccessGroup)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Access Group for ID %q: %w", accessGroup.ID, err))
 	}
@@ -102,28 +115,40 @@ func resourceCloudflareAccessGroupCreate(ctx context.Context, d *schema.Resource
 
 func resourceCloudflareAccessGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	updatedAccessGroup := cloudflare.AccessGroup{
+	updatedAccessGroup := cloudflare.UpdateAccessGroupParams{
 		Name: d.Get("name").(string),
 		ID:   d.Id(),
 	}
 
-	updatedAccessGroup = appendConditionalAccessGroupFields(updatedAccessGroup, d)
-	updatedAccessGroupParams := cloudflare.UpdateAccessGroupParams{
-		ID:      updatedAccessGroup.ID,
-		Name:    updatedAccessGroup.Name,
-		Include: updatedAccessGroup.Include,
-		Exclude: updatedAccessGroup.Exclude,
-		Require: updatedAccessGroup.Require,
+	exclude := d.Get("exclude").([]interface{})
+	for _, value := range exclude {
+		if value != nil {
+			updatedAccessGroup.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	require := d.Get("require").([]interface{})
+	for _, value := range require {
+		if value != nil {
+			updatedAccessGroup.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	include := d.Get("include").([]interface{})
+	for _, value := range include {
+		if value != nil {
+			updatedAccessGroup.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Group from struct: %+v", updatedAccessGroup))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessGroup, err := client.UpdateAccessGroup(ctx, rc, updatedAccessGroupParams)
+	accessGroup, err := client.UpdateAccessGroup(ctx, identifier, updatedAccessGroup)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Group for ID %q: %w", d.Id(), err))
 	}
@@ -140,12 +165,12 @@ func resourceCloudflareAccessGroupDelete(ctx context.Context, d *schema.Resource
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Group using ID: %s", d.Id()))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	err = client.DeleteAccessGroup(ctx, rc, d.Id())
+	err = client.DeleteAccessGroup(ctx, identifier, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Access Group for ID %q: %w", d.Id(), err))
 	}
@@ -172,35 +197,6 @@ func resourceCloudflareAccessGroupImport(ctx context.Context, d *schema.Resource
 	resourceCloudflareAccessGroupRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-// appendConditionalAccessGroupFields determines which of the
-// conditional group enforcement fields it should append to the
-// AccessGroup by iterating over the provided values and generating the
-// correct structs.
-func appendConditionalAccessGroupFields(group cloudflare.AccessGroup, d *schema.ResourceData) cloudflare.AccessGroup {
-	exclude := d.Get("exclude").([]interface{})
-	for _, value := range exclude {
-		if value != nil {
-			group.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	require := d.Get("require").([]interface{})
-	for _, value := range require {
-		if value != nil {
-			group.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	include := d.Get("include").([]interface{})
-	for _, value := range include {
-		if value != nil {
-			group.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	return group
 }
 
 // BuildAccessGroupCondition iterates the provided `map` of values and

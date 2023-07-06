@@ -62,12 +62,12 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessPolicy, err := client.GetAccessPolicy(ctx, rc, cloudflare.GetAccessPolicyParams{PolicyID: d.Id(), ApplicationID: appID})
+	accessPolicy, err := client.GetAccessPolicy(ctx, identifier, cloudflare.GetAccessPolicyParams{ApplicationID: appID, PolicyID: d.Id()})
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -126,36 +126,42 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
-	newAccessPolicy := cloudflare.AccessPolicy{
-		Name:       d.Get("name").(string),
-		Precedence: d.Get("precedence").(int),
-		Decision:   d.Get("decision").(string),
+	newAccessPolicy := cloudflare.CreateAccessPolicyParams{
+		ApplicationID: appID,
+		Name:          d.Get("name").(string),
+		Precedence:    d.Get("precedence").(int),
+		Decision:      d.Get("decision").(string),
 	}
 
-	newAccessPolicy = appendConditionalAccessPolicyFields(newAccessPolicy, d)
-	createAccessPolicy := cloudflare.CreateAccessPolicyParams{
-		ApplicationID:                appID,
-		Name:                         newAccessPolicy.Name,
-		Precedence:                   newAccessPolicy.Precedence,
-		Decision:                     newAccessPolicy.Decision,
-		IsolationRequired:            newAccessPolicy.IsolationRequired,
-		PurposeJustificationRequired: newAccessPolicy.PurposeJustificationRequired,
-		PurposeJustificationPrompt:   newAccessPolicy.PurposeJustificationPrompt,
-		ApprovalRequired:             newAccessPolicy.ApprovalRequired,
-		ApprovalGroups:               newAccessPolicy.ApprovalGroups,
-		Include:                      newAccessPolicy.Include,
-		Exclude:                      newAccessPolicy.Exclude,
-		Require:                      newAccessPolicy.Require,
+	exclude := d.Get("exclude").([]interface{})
+	for _, value := range exclude {
+		if value != nil {
+			newAccessPolicy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	require := d.Get("require").([]interface{})
+	for _, value := range require {
+		if value != nil {
+			newAccessPolicy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	include := d.Get("include").([]interface{})
+	for _, value := range include {
+		if value != nil {
+			newAccessPolicy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessPolicy, err := client.CreateAccessPolicy(ctx, rc, createAccessPolicy)
+	accessPolicy, err := client.CreateAccessPolicy(ctx, identifier, newAccessPolicy)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Access Policy for ID %q: %w", accessPolicy.ID, err))
 	}
@@ -168,23 +174,43 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
-	updatedAccessPolicy := cloudflare.AccessPolicy{
-		Name:       d.Get("name").(string),
-		Precedence: d.Get("precedence").(int),
-		Decision:   d.Get("decision").(string),
-		ID:         d.Id(),
+	updatedAccessPolicy := cloudflare.UpdateAccessPolicyParams{
+		ApplicationID: appID,
+		PolicyID:      d.Id(),
+		Name:          d.Get("name").(string),
+		Precedence:    d.Get("precedence").(int),
+		Decision:      d.Get("decision").(string),
 	}
 
-	updatedAccessPolicy = appendConditionalAccessPolicyFields(updatedAccessPolicy, d)
+	exclude := d.Get("exclude").([]interface{})
+	for _, value := range exclude {
+		if value != nil {
+			updatedAccessPolicy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	require := d.Get("require").([]interface{})
+	for _, value := range require {
+		if value != nil {
+			updatedAccessPolicy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
+
+	include := d.Get("include").([]interface{})
+	for _, value := range include {
+		if value != nil {
+			updatedAccessPolicy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
+		}
+	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Policy from struct: %+v", updatedAccessPolicy))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessPolicy, err := client.UpdateAccessPolicy(ctx, rc, appID, updatedAccessPolicy)
+	accessPolicy, err := client.UpdateAccessPolicy(ctx, identifier, updatedAccessPolicy)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Policy for ID %q: %w", d.Id(), err))
 	}
@@ -202,15 +228,12 @@ func resourceCloudflareAccessPolicyDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Policy using ID: %s", d.Id()))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	err = client.DeleteAccessPolicy(ctx, rc, cloudflare.DeleteAccessPolicyParams{
-		ApplicationID: appID,
-		PolicyID:      d.Id(),
-	})
+	err = client.DeleteAccessPolicy(ctx, identifier, cloudflare.DeleteAccessPolicyParams{ApplicationID: appID, PolicyID: d.Id()})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Access Policy for ID %q: %w", d.Id(), err))
 	}

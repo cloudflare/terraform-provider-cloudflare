@@ -21,9 +21,6 @@ func resourceCloudflareApiToken() *schema.Resource {
 		ReadContext:   resourceCloudflareApiTokenRead,
 		UpdateContext: resourceCloudflareApiTokenUpdate,
 		DeleteContext: resourceCloudflareApiTokenDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
 		Description: heredoc.Doc(`
 			Provides a resource which manages Cloudflare API tokens.
 

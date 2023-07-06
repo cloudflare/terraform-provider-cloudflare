@@ -22,13 +22,12 @@ func init() {
 
 func testSweepCloudflareAccessIdentityProviders(r string) error {
 	ctx := context.Background()
-	accountRC := cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
 	client, clientErr := sharedClient()
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
-	accessIDPs, _, accessIDPsErr := client.ListAccessIdentityProviders(context.Background(), accountRC, cloudflare.ListAccessIdentityProvidersParams{})
+	accessIDPs, _, accessIDPsErr := client.ListAccessIdentityProviders(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessIdentityProvidersParams{})
 	if accessIDPsErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Access Identity Providers: %s", accessIDPsErr))
 	}
@@ -40,7 +39,7 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 
 	for _, idp := range accessIDPs {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Access Identity Provider ID: %s", idp.ID))
-		_, err := client.DeleteAccessIdentityProvider(context.Background(), accountRC, idp.ID)
+		_, err := client.DeleteAccessIdentityProvider(context.Background(), cloudflare.AccountIdentifier(accountID), idp.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Access Identity Provider (%s): %s", idp.ID, err))
@@ -68,7 +67,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
@@ -85,7 +84,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
@@ -98,7 +97,6 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 	t.Parallel()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
@@ -124,7 +122,6 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 	t.Parallel()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
@@ -160,7 +157,6 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 	t.Parallel()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
@@ -191,7 +187,6 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 
 func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 	t.Parallel()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
@@ -219,13 +214,13 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier AccessIdentifier) string {
+func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[1]s" {
   %[2]s_id = "%[3]s"
   name     = "%[1]s"
   type     = "onetimepin"
-}`, name, identifier.Type, identifier.Value)
+}`, name, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, name string) string {

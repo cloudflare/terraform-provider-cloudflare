@@ -33,7 +33,7 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -41,7 +41,7 @@ func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.Res
 	// The Cloudflare API doesn't support fetching a single service token,
 	// so instead we loop over all the service tokens and only continue
 	// when we have a match.
-	serviceTokens, _, err := client.ListAccessServiceTokens(ctx, rc, cloudflare.ListAccessServiceTokensParams{})
+	serviceTokens, _, err := client.ListAccessServiceTokens(ctx, identifier, cloudflare.ListAccessServiceTokensParams{})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error fetching access service tokens: %w", err))
 	}
@@ -88,12 +88,13 @@ func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.Res
 func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	serviceToken, err := client.CreateAccessServiceToken(ctx, rc, cloudflare.CreateAccessServiceTokenParams{Name: d.Get("name").(string)})
+	serviceToken, err := client.CreateAccessServiceToken(ctx, identifier, cloudflare.CreateAccessServiceTokenParams{Name: d.Get("name").(string)})
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating access service token: %w", err))
 	}
@@ -112,12 +113,12 @@ func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.R
 func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	serviceToken, err := client.UpdateAccessServiceToken(ctx, rc, cloudflare.UpdateAccessServiceTokenParams{
+	serviceToken, err := client.UpdateAccessServiceToken(ctx, identifier, cloudflare.UpdateAccessServiceTokenParams{
 		UUID: d.Id(),
 		Name: d.Get("name").(string),
 	})
@@ -134,12 +135,12 @@ func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.R
 func resourceCloudflareAccessServiceTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	_, err = client.DeleteAccessServiceToken(ctx, rc, d.Id())
+	_, err = client.DeleteAccessServiceToken(ctx, identifier, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting access service token: %w", err))
 	}

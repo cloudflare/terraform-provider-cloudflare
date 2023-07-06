@@ -37,13 +37,12 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessIdentityProvider, err := client.GetAccessIdentityProvider(ctx, rc, d.Id())
-
+	accessIdentityProvider, err := client.GetAccessIdentityProvider(ctx, identifier, d.Id())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -86,15 +85,14 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Identity Provider from struct: %+v", identityProvider))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessIdentityProvider, err := client.CreateAccessIdentityProvider(ctx, rc, identityProvider)
-
+	accessIdentityProvider, err := client.CreateAccessIdentityProvider(ctx, identifier, identityProvider)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Identity Provider for ID %q: %w", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("failed to create Access Identity Provider: %w", err))
 	}
 
 	d.SetId(accessIdentityProvider.ID)
@@ -123,12 +121,12 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Identity Provider from struct: %+v", updatedAccessIdentityProvider))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessIdentityProvider, err := client.UpdateAccessIdentityProvider(ctx, rc, updatedAccessIdentityProvider)
+	accessIdentityProvider, err := client.UpdateAccessIdentityProvider(ctx, identifier, updatedAccessIdentityProvider)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Access Identity Provider for ID %q: %w", d.Id(), err))
 	}
@@ -145,12 +143,12 @@ func resourceCloudflareAccessIdentityProviderDelete(ctx context.Context, d *sche
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Identity Provider using ID: %s", d.Id()))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	_, err = client.DeleteAccessIdentityProvider(ctx, rc, d.Id())
+	_, err = client.DeleteAccessIdentityProvider(ctx, identifier, d.Id())
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting Access Identity Provider for ID %q: %w", d.Id(), err))
 	}

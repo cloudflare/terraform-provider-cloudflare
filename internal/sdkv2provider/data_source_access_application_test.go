@@ -3,14 +3,12 @@ package sdkv2provider
 import (
 	"fmt"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccCloudflareAccessApplicationDataSourceAccount_Name(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
@@ -48,7 +46,6 @@ func testAccCheckCloudflareAccessApplicationAccount_Name(accountID, name, domain
 }
 
 func TestAccCloudflareAccessApplicationDataSourceAccount_Domain(t *testing.T) {
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{

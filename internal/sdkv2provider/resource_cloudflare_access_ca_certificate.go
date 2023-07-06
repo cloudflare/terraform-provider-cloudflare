@@ -34,15 +34,14 @@ func resourceCloudflareAccessCACertificate() *schema.Resource {
 func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessCACert, err := client.CreateAccessCACertificate(ctx, rc, cloudflare.CreateAccessCACertificateParams{ApplicationID: d.Get("application_id").(string)})
-
+	accessCACert, err := client.CreateAccessCACertificate(ctx, identifier, cloudflare.CreateAccessCACertificateParams{ApplicationID: d.Get("application_id").(string)})
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", rc.Level, rc.Identifier, err))
+		return diag.FromErr(fmt.Errorf("error creating Access CA Certificate for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	d.SetId(accessCACert.ID)
@@ -53,12 +52,12 @@ func resourceCloudflareAccessCACertificateCreate(ctx context.Context, d *schema.
 func resourceCloudflareAccessCACertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	applicationID := d.Get("application_id").(string)
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessCACert, err := client.GetAccessCACertificate(ctx, rc, applicationID)
+	accessCACert, err := client.GetAccessCACertificate(ctx, identifier, applicationID)
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -86,12 +85,12 @@ func resourceCloudflareAccessCACertificateDelete(ctx context.Context, d *schema.
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare CA Certificate using ID: %s", d.Id()))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	err = client.DeleteAccessCACertificate(ctx, rc, applicationID)
+	err = client.DeleteAccessCACertificate(ctx, identifier, applicationID)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -111,7 +110,7 @@ func resourceCloudflareAccessCACertificateImport(ctx context.Context, d *schema.
 
 	identifierType, identifierID, applicationID := attributes[0], attributes[1], attributes[2]
 
-	if AccessIdentifierType(identifierType) != AccountType && AccessIdentifierType(identifierType) != ZoneType {
+	if !contains([]string{"zone", "account"}, identifierType) {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"account/accountID/applicationID\" or \"zone/zoneID/applicationID\"", d.Id())
 	}
 

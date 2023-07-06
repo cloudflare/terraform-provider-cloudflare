@@ -27,7 +27,7 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: AccountType, Value: accountID}),
+				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "application_id"),
@@ -54,7 +54,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, AccessIdentifier{Type: ZoneType, Value: zoneID}),
+				Config: testAccCloudflareAccessCACertificateBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttrSet(name, "application_id"),
@@ -66,7 +66,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 	})
 }
 
-func testAccCloudflareAccessCACertificateBasic(resourceName, domain string, identifier AccessIdentifier) string {
+func testAccCloudflareAccessCACertificateBasic(resourceName, domain string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
 	name     = "%[1]s"
@@ -77,7 +77,7 @@ resource "cloudflare_access_application" "%[1]s" {
 resource "cloudflare_access_ca_certificate" "%[1]s" {
   %[3]s_id       = "%[4]s"
   application_id = cloudflare_access_application.%[1]s.id
-}`, resourceName, domain, identifier.Type, identifier.Value)
+}`, resourceName, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessCACertificateDestroy(s *terraform.State) error {

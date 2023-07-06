@@ -44,13 +44,12 @@ func resourceCloudflareAccessOrganizationNoop(ctx context.Context, d *schema.Res
 func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	organization, _, err := client.GetAccessOrganization(ctx, rc, cloudflare.GetAccessOrganizationParams{})
-
+	organization, _, err := client.GetAccessOrganization(ctx, identifier, cloudflare.GetAccessOrganizationParams{})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error fetching access organization: %w", err))
 	}
@@ -85,14 +84,14 @@ func resourceCloudflareAccessOrganizationUpdate(ctx context.Context, d *schema.R
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Organization from struct: %+v", updatedAccessOrganization))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	_, err = client.UpdateAccessOrganization(ctx, rc, updatedAccessOrganization)
+	_, err = client.UpdateAccessOrganization(ctx, identifier, updatedAccessOrganization)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Organization for %s %q: %w", rc.Level, rc.Identifier, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Organization for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	return resourceCloudflareAccessOrganizationRead(ctx, d, meta)

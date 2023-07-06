@@ -76,14 +76,14 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	accessApplication, err := client.CreateAccessApplication(ctx, rc, newAccessApplication)
+	accessApplication, err := client.CreateAccessApplication(ctx, identifier, newAccessApplication)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %w", rc.Level, rc.Identifier, err))
+		return diag.FromErr(fmt.Errorf("error creating Access Application for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	d.SetId(accessApplication.ID)
@@ -94,11 +94,12 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	accessApplication, err := client.GetAccessApplication(ctx, rc, d.Id())
+
+	accessApplication, err := client.GetAccessApplication(ctx, identifier, d.Id())
 
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
@@ -194,15 +195,14 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accessApplication, err := client.UpdateAccessApplication(ctx, rc, updatedAccessApplication)
-
+	accessApplication, err := client.UpdateAccessApplication(ctx, identifier, updatedAccessApplication)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %w", rc.Level, rc.Identifier, err))
+		return diag.FromErr(fmt.Errorf("error updating Access Application for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	if accessApplication.ID == "" {
@@ -218,14 +218,14 @@ func resourceCloudflareAccessApplicationDelete(ctx context.Context, d *schema.Re
 
 	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Access Application using ID: %s", appID))
 
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	err = client.DeleteAccessApplication(ctx, rc, appID)
+	err = client.DeleteAccessApplication(ctx, identifier, appID)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %w", rc.Level, rc.Identifier, err))
+		return diag.FromErr(fmt.Errorf("error deleting Access Application for %s %q: %w", identifier.Level, identifier.Identifier, err))
 	}
 
 	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)

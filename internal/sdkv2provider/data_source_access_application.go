@@ -51,14 +51,14 @@ func dataSourceCloudflareAccessApplication() *schema.Resource {
 
 func dataSourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	rc, err := initResourceContainer(d)
+	identifier, err := initIdentifier(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	name := d.Get("name").(string)
 	domain := d.Get("domain").(string)
 
-	applications, _, err := client.ListAccessApplications(ctx, rc, cloudflare.ListAccessApplicationsParams{})
+	applications, _, err := client.ListAccessApplications(ctx, identifier, cloudflare.ListAccessApplicationsParams{})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error listing Access Applications: %w", err))
 	}

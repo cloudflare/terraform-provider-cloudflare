@@ -28,29 +28,27 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
-	accountRC := cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID"))
 
-	accountCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), accountRC, cloudflare.ListAccessMutualTLSCertificatesParams{})
+	accountCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
 	}
 
 	for _, cert := range accountCerts {
-		err := client.DeleteAccessMutualTLSCertificate(context.Background(), accountRC, cert.ID)
+		err := client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(accountID), cert.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in account ID: %s", cert.ID, accountID))
 		}
 	}
 
-	zoneRC := cloudflare.ZoneIdentifier(os.Getenv("CLOUDFLARE_ZONE_ID"))
-	zoneCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), zoneRC, cloudflare.ListAccessMutualTLSCertificatesParams{})
+	zoneCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
 	}
 
 	for _, cert := range zoneCerts {
-		err := client.DeleteAccessMutualTLSCertificate(context.Background(), zoneRC, cert.ID)
+		err := client.DeleteAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(zoneID), cert.ID)
 
 		if err != nil {
 			tflog.Error(ctx, fmt.Sprintf("Failed to delete Cloudflare Access Mutual TLS certificate (%s) in zone ID: %s", cert.ID, zoneID))
@@ -82,7 +80,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: AccountType, Value: accountID}, cert, domain),
+				Config: testAccessMutualTLSCertificateConfigBasic(rnd, cloudflare.AccountIdentifier(accountID), cert, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -91,7 +89,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccessMutualTLSCertificateUpdated(rnd, AccessIdentifier{Type: AccountType, Value: accountID}, cert),
+				Config: testAccessMutualTLSCertificateUpdated(rnd, cloudflare.AccountIdentifier(accountID), cert),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -124,7 +122,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessMutualTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessMutualTLSCertificateConfigBasic(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}, cert, domain),
+				Config: testAccessMutualTLSCertificateConfigBasic(rnd, cloudflare.ZoneIdentifier(zoneID), cert, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -133,7 +131,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccessMutualTLSCertificateUpdated(rnd, AccessIdentifier{Type: ZoneType, Value: zoneID}, cert),
+				Config: testAccessMutualTLSCertificateUpdated(rnd, cloudflare.ZoneIdentifier(zoneID), cert),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -154,14 +152,14 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 		}
 
 		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
-			_, err := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
+			_, err := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("AccessMutualTLSCertificate still exists")
 			}
 		}
 
 		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
-			_, err := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
+			_, err := client.GetAccessMutualTLSCertificate(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 			if err == nil {
 				return fmt.Errorf("AccessMutualTLSCertificate still exists")
 			}
@@ -171,7 +169,7 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 	return nil
 }
 
-func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier AccessIdentifier, cert, domain string) string {
+func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier *cloudflare.ResourceContainer, cert, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	name                 = "%[1]s"
@@ -179,10 +177,10 @@ resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	associated_hostnames = ["%[5]s"]
 	certificate          = "%[4]s"
 }
-`, rnd, identifier.Type, identifier.Value, cert, domain)
+`, rnd, identifier.Type, identifier.Identifier, cert, domain)
 }
 
-func testAccessMutualTLSCertificateUpdated(rnd string, identifier AccessIdentifier, cert string) string {
+func testAccessMutualTLSCertificateUpdated(rnd string, identifier *cloudflare.ResourceContainer, cert string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	name                 = "%[1]s"
@@ -190,5 +188,5 @@ resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 	associated_hostnames = []
 	certificate          = "%[4]s"
 }
-`, rnd, identifier.Type, identifier.Value, cert)
+`, rnd, identifier.Type, identifier.Identifier, cert)
 }
