@@ -143,6 +143,21 @@ func TestBrowserTTLValidation(t *testing.T) {
 				}
 			})
 
+			t.Run("passes valid ttl value of 0", func(t *testing.T) {
+				t.Parallel()
+
+				resp := &validator.ObjectResponse{}
+				req := constructBrowserTTLObjectRequest("override_origin", big.NewFloat(0))
+				browserValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: nil,
+				}
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+
 			t.Run("passes valid ttl values", func(t *testing.T) {
 				t.Parallel()
 
