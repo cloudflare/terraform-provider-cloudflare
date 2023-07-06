@@ -99,8 +99,7 @@ func (v BrowserTTLValidator) ValidateObject(ctx context.Context, req validator.O
 	}
 
 	if parameter.Mode.ValueString() == "override_origin" {
-		if parameter.Default.ValueInt64() <= 0 {
-
+		if (parameter.Default.IsNull()) || (parameter.Default.ValueInt64() < 0) {
 			resp.Diagnostics.AddAttributeError(
 				req.Path,
 				errInvalidConfiguration,
