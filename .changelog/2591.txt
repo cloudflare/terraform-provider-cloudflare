@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: support browser_ttl.value of 0 (corresponding to No cache)
+```
