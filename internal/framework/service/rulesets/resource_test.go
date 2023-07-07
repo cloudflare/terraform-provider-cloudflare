@@ -1,16 +1,66 @@
 package rulesets_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+// sharedClient returns a common Cloudflare client setup needed for the
+// sweeper functions.
+func sharedClient() (*cloudflare.API, error) {
+	client, err := cloudflare.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
+
+	if err != nil {
+		return client, err
+	}
+
+	return client, nil
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_ruleset", &resource.Sweeper{
+		Name: "cloudflare_ruleset",
+		F: func(region string) error {
+			client, err := sharedClient()
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+			if err != nil {
+				return fmt.Errorf("error establishing client: %s", err)
+			}
+
+			ctx := context.Background()
+			accountRulesets, _ := client.ListAccountRulesets(ctx, accountID)
+			for _, ruleset := range accountRulesets {
+				if ruleset.Kind != "managed" {
+					client.DeleteAccountRuleset(ctx, accountID, ruleset.ID)
+				}
+			}
+
+			zoneRulesets, _ := client.ListZoneRulesets(ctx, zoneID)
+			for _, ruleset := range zoneRulesets {
+				if ruleset.Kind != "managed" {
+					client.DeleteAccountRuleset(ctx, zoneID, ruleset.ID)
+				}
+			}
+
+			return nil
+		},
+	})
+}
 
 func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
