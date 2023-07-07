@@ -129,6 +129,15 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccCloudflareLoadBalancer_SessionAffinityIPCookie(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
