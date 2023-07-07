@@ -29,7 +29,6 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
 	accountCerts, _, err := client.ListAccessMutualTLSCertificates(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessMutualTLSCertificatesParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Access Mutual TLS certificates: %s", err))
