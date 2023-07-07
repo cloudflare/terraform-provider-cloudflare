@@ -214,7 +214,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Description: "Name of the project.",
 			Type:        schema.TypeString,
 			Required:    true,
-			ForceNew:    true,
 		},
 		"subdomain": {
 			Description: "The Cloudflare subdomain associated with the project.",
