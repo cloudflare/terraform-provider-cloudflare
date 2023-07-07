@@ -9,6 +9,10 @@ ENHANCEMENTS:
 * resource/cloudflare_access_ca_certificate: remove redundant `certificate_id` from `Import` requirements as it is never used ([#2547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2547))
 * resource/cloudflare_load_balancer_monitor: Add example import. ([#2572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2572))
 
+BUG FIXES:
+
+* resource/cloudflare_load_balancer: fix import of load_balancer when rules included overrides or fixed_response ([#2571](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2571))
+
 DEPENDENCIES:
 
 * provider: bumps dependabot/fetch-metadata from 1.5.1 to 1.6.0 ([#2557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2557))
