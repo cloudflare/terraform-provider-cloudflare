@@ -564,6 +564,8 @@ func TestAccCloudflareRecord_MXNull(t *testing.T) {
 }
 
 func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
+	skipForDefaultZone(t, "Pending automating setup from https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/.")
+
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
@@ -979,7 +981,7 @@ func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
  		zone_id = "%[1]s"
 	   	name    = "%[2]s"
 	   	type    = "DNSKEY"
-	  
+
 	   	data {
 			algorithm  = 2
 		 	flags      = 2371
