@@ -2,5 +2,8 @@
 resource/cloudflare_notification_policy: Add support for `pages_event_alert` alert type
 ```
 ```release-note:breaking-change
-resource/cloudflare_pages_project: `deployment_configs` attribute now required
+resource/cloudflare_pages_project: `deployment_configs` is now required
+```
+```release-note:enhancement
+resource/cloudflare_pages_project: Allow renaming projects without destroying and recreating
 ```

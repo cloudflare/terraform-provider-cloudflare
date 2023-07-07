@@ -230,7 +230,6 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -316,7 +315,6 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

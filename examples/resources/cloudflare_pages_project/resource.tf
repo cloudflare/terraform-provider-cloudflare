@@ -3,6 +3,10 @@ resource "cloudflare_pages_project" "basic_project" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
   production_branch = "main"
+   deployment_configs {
+      preview {}
+      production {}
+  }
 }
 
 # Pages project with managing build config
@@ -16,6 +20,10 @@ resource "cloudflare_pages_project" "build_config" {
     root_dir            = ""
     web_analytics_tag   = "cee1c73f6e4743d0b5e6bb1a0bcaabcc"
     web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
+  }
+   deployment_configs {
+      preview {}
+      production {}
   }
 }
 
@@ -37,6 +45,10 @@ resource "cloudflare_pages_project" "source_config" {
       preview_branch_includes       = ["dev", "preview"]
       preview_branch_excludes       = ["main", "prod"]
     }
+  }
+   deployment_configs {
+      preview {}
+      production {}
   }
 }
 

@@ -21,6 +21,10 @@ resource "cloudflare_pages_project" "basic_project" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
   production_branch = "main"
+   deployment_configs {
+      preview {}
+      production {}
+  }
 }
 
 # Pages project with managing build config
@@ -34,6 +38,10 @@ resource "cloudflare_pages_project" "build_config" {
     root_dir            = ""
     web_analytics_tag   = "cee1c73f6e4743d0b5e6bb1a0bcaabcc"
     web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
+  }
+   deployment_configs {
+      preview {}
+      production {}
   }
 }
 
@@ -55,6 +63,10 @@ resource "cloudflare_pages_project" "source_config" {
       preview_branch_includes       = ["dev", "preview"]
       preview_branch_excludes       = ["main", "prod"]
     }
+  }
+   deployment_configs {
+      preview {}
+      production {}
   }
 }
 
@@ -207,13 +219,13 @@ resource "cloudflare_pages_project" "deployment_configs" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `name` (String) Name of the project. **Modifying this attribute will force creation of a new resource.**
+- `deployment_configs` (Block List, Min: 1, Max: 1) Configuration for deployments in a project. (see [below for nested schema](#nestedblock--deployment_configs))
+- `name` (String) Name of the project.
 - `production_branch` (String) The name of the branch that is used for the production environment.
 
 ### Optional
 
 - `build_config` (Block List, Max: 1) Configuration for the project build process. Read more about the build configuration in the [developer documentation](https://developers.cloudflare.com/pages/platform/build-configuration). (see [below for nested schema](#nestedblock--build_config))
-- `deployment_configs` (Block List, Max: 1) Configuration for deployments in a project. (see [below for nested schema](#nestedblock--deployment_configs))
 - `source` (Block List, Max: 1) Configuration for the project source. Read more about the source configuration in the [developer documentation](https://developers.cloudflare.com/pages/platform/branch-build-controls/). (see [below for nested schema](#nestedblock--source))
 
 ### Read-Only
@@ -222,18 +234,6 @@ resource "cloudflare_pages_project" "deployment_configs" {
 - `domains` (List of String) A list of associated custom domains for the project.
 - `id` (String) The ID of this resource.
 - `subdomain` (String) The Cloudflare subdomain associated with the project.
-
-<a id="nestedblock--build_config"></a>
-### Nested Schema for `build_config`
-
-Optional:
-
-- `build_command` (String) Command used to build project.
-- `destination_dir` (String) Output directory of the build.
-- `root_dir` (String) Your project's root directory, where Cloudflare runs the build command. If your site is not in a subdirectory, leave this path value empty.
-- `web_analytics_tag` (String) The classifying tag for analytics.
-- `web_analytics_token` (String) The auth token for analytics.
-
 
 <a id="nestedblock--deployment_configs"></a>
 ### Nested Schema for `deployment_configs`
@@ -324,6 +324,18 @@ Optional:
 - `environment` (String) The name of the Worker environment to bind to.
 
 
+
+
+<a id="nestedblock--build_config"></a>
+### Nested Schema for `build_config`
+
+Optional:
+
+- `build_command` (String) Command used to build project.
+- `destination_dir` (String) Output directory of the build.
+- `root_dir` (String) Your project's root directory, where Cloudflare runs the build command. If your site is not in a subdirectory, leave this path value empty.
+- `web_analytics_tag` (String) The classifying tag for analytics.
+- `web_analytics_token` (String) The auth token for analytics.
 
 
 <a id="nestedblock--source"></a>
