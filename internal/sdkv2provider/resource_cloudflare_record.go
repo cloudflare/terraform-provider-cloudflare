@@ -431,12 +431,11 @@ func transformToCloudflareDNSData(recordType string, id string, value interface{
 	switch {
 	case id == "flags":
 		switch {
-		case strings.ToUpper(recordType) == "SRV",
-			strings.ToUpper(recordType) == "DNSKEY":
+		case strings.ToUpper(recordType) == "SRV":
 			newValue, err = value.(string), nil
 		case strings.ToUpper(recordType) == "NAPTR":
 			newValue, err = value.(string), nil
-		case strings.ToUpper(recordType) == "CAA":
+		case strings.ToUpper(recordType) == "CAA", strings.ToUpper(recordType) == "DNSKEY":
 			// this is required because "flags" is shared however, it comes from
 			// the API as a float64 but the Terraform internal type is string 😢.
 			switch value.(type) {
