@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -74,4 +75,16 @@ func TestAccSkipForDefaultAccount(t *testing.T, reason string) {
 	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
 		t.Skipf("Skipping acceptance test for default account (%s). %s", testAccCloudflareAccountID, reason)
 	}
+}
+
+// sharedClient returns a common Cloudflare client setup needed for the
+// sweeper functions.
+func SharedClient() (*cloudflare.API, error) {
+	client, err := cloudflare.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
+
+	if err != nil {
+		return client, err
+	}
+
+	return client, nil
 }
