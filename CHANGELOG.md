@@ -1,7 +1,12 @@
 ## 4.10.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `clouflare_access_application` ([#2547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2547))
+
 ENHANCEMENTS:
 
+* resource/cloudflare_access_ca_certificate: remove redundant `certificate_id` from `Import` requirements as it is never used ([#2547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2547))
 * resource/cloudflare_load_balancer_monitor: Add example import. ([#2572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2572))
 
 DEPENDENCIES:
