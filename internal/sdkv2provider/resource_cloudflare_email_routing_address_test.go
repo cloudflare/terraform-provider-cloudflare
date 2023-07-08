@@ -22,15 +22,16 @@ func TestAccTestEmailRoutingAddress(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_email_routing_address." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	email := os.Getenv("CLOUDFLARE_EMAIL")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testEmailRoutingAddressConfig(rnd, accountID, "jb+terraform-email-routing@cloudflare.com"),
+				Config: testEmailRoutingAddressConfig(rnd, accountID, email),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "email", "jb+terraform-email-routing@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "email", email),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 				),
 			},

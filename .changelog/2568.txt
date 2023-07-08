@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: fix importing of DNSKEY record types
+```

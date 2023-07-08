@@ -80,7 +80,6 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
 	accessApplication, err := client.CreateAccessApplication(ctx, identifier, newAccessApplication)
 
 	if err != nil {

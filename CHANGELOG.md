@@ -1,8 +1,18 @@
 ## 4.10.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `clouflare_access_application` ([#2547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2547))
+
 ENHANCEMENTS:
 
+* resource/cloudflare_access_ca_certificate: remove redundant `certificate_id` from `Import` requirements as it is never used ([#2547](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2547))
 * resource/cloudflare_load_balancer_monitor: Add example import. ([#2572](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2572))
+
+BUG FIXES:
+
+* resource/cloudflare_load_balancer: fix import of load_balancer when rules included overrides or fixed_response ([#2571](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2571))
+* resource/cloudflare_record: fix importing of DNSKEY record types ([#2568](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2568))
 
 DEPENDENCIES:
 

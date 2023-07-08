@@ -1,0 +1,6 @@
+```release-note:new-data-source
+clouflare_access_application
+```
+```release-note:enhancement
+resource/cloudflare_access_ca_certificate: remove redundant `certificate_id` from `Import` requirements as it is never used
+```

@@ -1,6 +1,7 @@
 package rulesets_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -8,9 +9,48 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_ruleset", &resource.Sweeper{
+		Name: "cloudflare_ruleset",
+		F: func(region string) error {
+			client, err := acctest.SharedClient()
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+			if err != nil {
+				return fmt.Errorf("error establishing client: %s", err)
+			}
+
+			ctx := context.Background()
+			accountRulesets, _ := client.ListAccountRulesets(ctx, accountID)
+			for _, ruleset := range accountRulesets {
+				if ruleset.Kind != "managed" {
+					err := client.DeleteAccountRuleset(ctx, accountID, ruleset.ID)
+					if err != nil {
+						tflog.Error(ctx, fmt.Sprintf("failed to delete ruleset %q: %s", ruleset.ID, err))
+					}
+				}
+			}
+
+			zoneRulesets, _ := client.ListZoneRulesets(ctx, zoneID)
+			for _, ruleset := range zoneRulesets {
+				if ruleset.Kind != "managed" {
+					err := client.DeleteZoneRuleset(ctx, zoneID, ruleset.ID)
+					if err != nil {
+						tflog.Error(ctx, fmt.Sprintf("failed to delete ruleset %q: %s", ruleset.ID, err))
+					}
+				}
+			}
+
+			return nil
+		},
+	})
+}
 
 func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF

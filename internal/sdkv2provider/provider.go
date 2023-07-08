@@ -154,6 +154,7 @@ func New(version string) func() *schema.Provider {
 			},
 
 			DataSourcesMap: map[string]*schema.Resource{
+				"cloudflare_access_application":          dataSourceCloudflareAccessApplication(),
 				"cloudflare_access_identity_provider":    dataSourceCloudflareAccessIdentityProvider(),
 				"cloudflare_account_roles":               dataSourceCloudflareAccountRoles(),
 				"cloudflare_accounts":                    dataSourceCloudflareAccounts(),

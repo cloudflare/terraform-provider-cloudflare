@@ -56,13 +56,13 @@ jobs:
         key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
     - name: Pre-Sweeper (SDKv2)
       run: go test ./internal/sdkv2provider -v -sweep="1"
-    # - name: Pre-Sweeper (Framework)
-    #   run: go test ./internal/framework -v -sweep="1"
+    - name: Pre-Sweeper (Framework)
+      run: go test ./internal/framework/... -v -sweep="1"
     - name: Run acceptance tests
       run: make testacc
     - name: Post-Sweeper (SDKv2)
       if: ${{ always() }}
       run: go test ./internal/sdkv2provider -v -sweep="1"
-    # - name: Post-Sweeper (Framework)
-    #   if: ${{ always() }}
-    #   run: go test ./internal/framework -v -sweep="1"
+    - name: Post-Sweeper (Framework)
+      if: ${{ always() }}
+      run: go test ./internal/framework/... -v -sweep="1"
