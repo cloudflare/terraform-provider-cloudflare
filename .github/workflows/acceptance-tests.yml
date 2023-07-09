@@ -65,4 +65,4 @@ jobs:
       run: go test ./internal/sdkv2provider -v -sweep="1"
     - name: Post-Sweeper (Framework)
       if: ${{ always() }}
-      run: go test ./internal/framework/... -v -sweep="1"
+      run: go test ./internal/framework/service/... -v -sweep="1"
