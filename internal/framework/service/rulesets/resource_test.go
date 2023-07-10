@@ -9,10 +9,13 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
 
 func init() {
 	resource.AddTestSweepers("cloudflare_ruleset", &resource.Sweeper{
@@ -23,16 +26,20 @@ func init() {
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 			if err != nil {
-				return fmt.Errorf("error establishing client: %s", err)
+				return fmt.Errorf("error establishing client: %w", err)
 			}
 
 			ctx := context.Background()
-			accountRulesets, _ := client.ListAccountRulesets(ctx, accountID)
+			accountRulesets, err := client.ListAccountRulesets(ctx, accountID)
+			if err != nil {
+				return fmt.Errorf("failed to fetch rulesets: %w", err)
+			}
+
 			for _, ruleset := range accountRulesets {
 				if ruleset.Kind != "managed" {
 					err := client.DeleteAccountRuleset(ctx, accountID, ruleset.ID)
 					if err != nil {
-						tflog.Error(ctx, fmt.Sprintf("failed to delete ruleset %q: %s", ruleset.ID, err))
+						return fmt.Errorf("failed to delete ruleset %q: %w", ruleset.ID, err)
 					}
 				}
 			}
@@ -42,7 +49,7 @@ func init() {
 				if ruleset.Kind != "managed" {
 					err := client.DeleteZoneRuleset(ctx, zoneID, ruleset.ID)
 					if err != nil {
-						tflog.Error(ctx, fmt.Sprintf("failed to delete ruleset %q: %s", ruleset.ID, err))
+						return fmt.Errorf("failed to delete ruleset %q: %w", ruleset.ID, err)
 					}
 				}
 			}
