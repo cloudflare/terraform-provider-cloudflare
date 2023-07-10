@@ -9,13 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-const testPagesProjectEmptyDeploymentConfig = `
-deployment_configs {
-	preview {}
-	production {}
-}
-`
-
 func testPagesProjectSource(resourceID, accountID, projectName, repoOwner, repoName string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_pages_project" "%[1]s" {
@@ -36,9 +29,8 @@ func testPagesProjectSource(resourceID, accountID, projectName, repoOwner, repoN
 				preview_branch_excludes = ["main", "prod"]
 			}
 		  }
-		  %[6]s
 		}
-		`, resourceID, accountID, projectName, repoOwner, repoName, testPagesProjectEmptyDeploymentConfig)
+		`, resourceID, accountID, projectName, repoOwner, repoName)
 }
 
 func testPagesProjectBuildConfig(resourceID, accountID string) string {
@@ -54,9 +46,8 @@ func testPagesProjectBuildConfig(resourceID, accountID string) string {
 			web_analytics_tag = "cee1c73f6e4743d0b5e6bb1a0bcaabcc"
 			web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
 		  }
-		  %[4]s
 		}
-		`, resourceID, accountID, resourceID, testPagesProjectEmptyDeploymentConfig)
+		`, resourceID, accountID, resourceID)
 }
 
 func testPagesProjectDeploymentConfig(resourceID, accountID, projectName string) string {
@@ -146,10 +137,9 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  production_branch = "main"
-		%[3]s
 		}
 
-		`, resourceID, accountID, testPagesProjectEmptyDeploymentConfig)
+		`, resourceID, accountID)
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
