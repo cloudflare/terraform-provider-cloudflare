@@ -13,6 +13,7 @@ BUG FIXES:
 
 * resource/cloudflare_load_balancer: fix import of load_balancer when rules included overrides or fixed_response ([#2571](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2571))
 * resource/cloudflare_record: fix importing of DNSKEY record types ([#2568](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2568))
+* resource/cloudflare_ruleset: Fix detection of conflicting entrypoint rulesets ([#2566](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2566))
 
 DEPENDENCIES:
 
