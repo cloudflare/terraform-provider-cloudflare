@@ -73,13 +73,13 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
         categories {
           category = "wordpress"
           action   = "block"
-          status   = "enabled"
+          enabled  = true
         }
 
         categories {
           category = "joomla"
           action   = "block"
-          status   = "enabled"
+          enabled  = true
         }
       }
     }
