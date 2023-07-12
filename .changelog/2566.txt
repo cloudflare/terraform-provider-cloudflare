@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: Fix detection of conflicting entrypoint rulesets
+```
