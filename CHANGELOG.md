@@ -1,5 +1,9 @@
 ## 4.11.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.1 to 0.11.2 ([#2616](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2616))
+
 ## 4.10.0 (12th July, 2023)
 
 FEATURES:
