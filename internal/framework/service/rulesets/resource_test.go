@@ -2289,6 +2289,7 @@ func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithOverrideOrigin(t
 func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -2296,6 +2297,21 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *test
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsExclude(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "set cache settings for the request"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.default", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.exclude.0", "example"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "false"),
+				),
 			},
 		},
 	})
@@ -2304,6 +2320,7 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *test
 func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringIncludeKeys(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -2311,6 +2328,21 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringIncludeKeys(t *test
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsInclude(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "set cache settings for the request"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.default", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.query_string.0.include.0", "another_example"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "false"),
+				),
 			},
 		},
 	})
@@ -4294,7 +4326,7 @@ func testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStrings
 	return fmt.Sprintf(`
 	resource "cloudflare_ruleset" "cache_settings_example" {
 		zone_id     = "%[2]s"
-    name        = "%[1]s"
+    	name        = "%[1]s"
 		description = "set cache settings for the request"
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
@@ -4327,7 +4359,7 @@ func testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStrings
 	return fmt.Sprintf(`
 	resource "cloudflare_ruleset" "cache_settings_example" {
 		zone_id     = "%[2]s"
-    name        = "%[1]s"
+    	name        = "%[1]s"
 		description = "set cache settings for the request"
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
