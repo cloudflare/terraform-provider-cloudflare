@@ -18,8 +18,8 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune"}, false),
-			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune"})),
+			ValidateFunc: validation.StringInSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "client_certificate", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune", "sentinelone_s2s"}, false),
+			Description:  fmt.Sprintf("The device posture rule type. %s", renderAvailableDocumentationValuesStringSlice([]string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "client_certificate", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune", "sentinelone_s2s"})),
 		},
 		"name": {
 			Type:        schema.TypeString,
@@ -181,6 +181,39 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "The number of issues for kolide.",
+					},
+					"certificate_id": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The UUID of a Cloudflare managed certificate.",
+					},
+					"cn": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The common name for a certificate.",
+					},
+					"active_threats": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "The number of active threats from SentinelOne.",
+					},
+					"network_status": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"connected", "disconnected", "disconnecting", "connecting"}, true),
+						Description:  fmt.Sprintf("The network status from SentinelOne. %s", renderAvailableDocumentationValuesStringSlice([]string{"connected", "disconnected", "disconnecting", "connecting"})),
+					},
+					"infected": {
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Computed:    true,
+						Description: "True if SentinelOne device is infected.",
+					},
+					"is_active": {
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Computed:    true,
+						Description: "True if SentinelOne device is active.",
 					},
 				},
 			},
