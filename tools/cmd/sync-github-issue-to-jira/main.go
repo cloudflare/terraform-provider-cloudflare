@@ -75,6 +75,7 @@ var (
 		"service/tunnel",
 		"service/load_balancing",
 		"service/cache",
+		"service/iam",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -118,7 +119,11 @@ var (
 		"service/cache": {
 			teamName: "Content Delivery (Cache)",
 			manager:  "charwood",
-		},		
+		},	
+		"service/iam": {
+			teamName: "Identity and Access Management",
+			manager:  "bnelson",
+		},	
 	}
 )
 
