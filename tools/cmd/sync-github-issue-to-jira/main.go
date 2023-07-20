@@ -76,6 +76,7 @@ var (
 		"service/load_balancing",
 		"service/cache",
 		"service/iam",
+		"service/spectrum",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -124,6 +125,10 @@ var (
 			teamName: "Identity and Access Management",
 			manager:  "bnelson",
 		},	
+		"service/spectrum": {
+			teamName: "Spectrum",
+			manager:  "njones",
+		},
 	}
 )
 
