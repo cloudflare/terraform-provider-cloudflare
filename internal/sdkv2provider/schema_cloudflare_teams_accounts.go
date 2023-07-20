@@ -44,6 +44,11 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "Indicator that decryption of TLS traffic is enabled.",
 		},
+		"protocol_detection_enabled": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Indicator that protocol detection is enabled.",
+		},
 		"activity_log_enabled": {
 			Type:        schema.TypeBool,
 			Optional:    true,

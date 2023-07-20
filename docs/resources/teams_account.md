@@ -15,8 +15,9 @@ resource defines configuration for secure web gateway.
 
 ```terraform
 resource "cloudflare_teams_account" "example" {
-  account_id          = "f037e56e89293a057740de681ac9abbe"
-  tls_decrypt_enabled = true
+  account_id                 = "f037e56e89293a057740de681ac9abbe"
+  tls_decrypt_enabled        = true
+  protocol_detection_enabled = true
 
   block_page {
     footer_text      = "hello"
@@ -79,6 +80,7 @@ resource "cloudflare_teams_account" "example" {
 - `payload_log` (Block List, Max: 1) Configuration for DLP Payload Logging. (see [below for nested schema](#nestedblock--payload_log))
 - `proxy` (Block List, Max: 1) Configuration block for specifying which protocols are proxied. (see [below for nested schema](#nestedblock--proxy))
 - `tls_decrypt_enabled` (Boolean) Indicator that decryption of TLS traffic is enabled.
+- `protocol_detection_enabled` (Boolean) Indicator that protocol detection is enabled.
 - `url_browser_isolation_enabled` (Boolean) Safely browse websites in Browser Isolation through a URL.
 
 ### Read-Only
