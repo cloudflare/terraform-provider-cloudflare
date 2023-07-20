@@ -1,0 +1,21 @@
+name: Check for maintainer only files
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  maintainer-only-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'tools/go.mod'
+      - run: make tools
+      - run: go run cmd/maintainer-only-file-check/main.go ${{ github.event.pull_request.number }}
+        working-directory: ./tools
+        env:
+          GITHUB_OWNER: cloudflare
+          GITHUB_REPO: terraform-provider-cloudflare
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

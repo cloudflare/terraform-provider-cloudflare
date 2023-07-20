@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zone_dnssec: don't try to enable DNSSEC when state is "pending"
+```

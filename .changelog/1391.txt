@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_ruleset: add skip support for `products` and `phases`
+```

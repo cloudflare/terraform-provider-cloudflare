@@ -1,0 +1,23 @@
+
+name: Generate registry documentation
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Generate CHANGELOG"]
+    branches: [master]
+    types: 
+      - completed
+jobs:
+  make-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make docs
+      - run: |
+          if [[ `git status --porcelain` ]]; then
+            git config --local user.email docsbot@cloudflare.com
+            git config --local user.name docsbot
+            git add docs/
+            git commit -m "build registry documentation"
+            git push
+          fi

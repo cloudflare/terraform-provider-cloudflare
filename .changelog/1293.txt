@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_argo_tunnel: update CNAME to use `cfargotunnel.com`
+```

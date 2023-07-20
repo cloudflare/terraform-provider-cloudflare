@@ -1,0 +1,34 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+~> Certificate packs are not able to be updated in place and if
+you require a zero downtime rotation, you need to use Terraform's meta-arguments
+for [`lifecycle`](https://www.terraform.io/docs/configuration/resources.html#lifecycle-lifecycle-customizations) blocks.
+`create_before_destroy` should be suffice for most scenarios (exceptions are
+things like missing entitlements, high ranking domain). To completely
+de-risk rotations, use you can create multiple resources using a 2-phase change
+where you have both resources live at once and you remove the old one once
+you've confirmed the certificate is available.
+
+## Example Usage
+
+{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
+
+While supported, importing isn't recommended and it is advised to replace the
+certificate entirely instead.

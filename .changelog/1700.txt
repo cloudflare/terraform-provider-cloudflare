@@ -1,0 +1,7 @@
+```release-note:new-resource
+resource/cloudflare_list: Added support for generic list types, including redirect lists.
+```
+
+```release-note:note
+resource/cloudflare_ip_list: Deprecated cloudflare_ip_list in favor of cloudflare_list.
+```

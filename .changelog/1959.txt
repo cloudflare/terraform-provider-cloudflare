@@ -1,0 +1,7 @@
+```release-note:breaking-change
+resource/cloudflare_load_balancer: Migrate session_affinity_attributes from TypeMap to TypeSet
+```
+
+```release-note:breaking-change
+resource/cloudflare_load_balancer: `session_affinity_attributes.drain_duration` is now `TypeInt` instead of `TypeString`
+```

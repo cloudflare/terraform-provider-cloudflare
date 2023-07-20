@@ -1,0 +1,11 @@
+```release-note:note
+`cloudflare_ruleset` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state. Along with this, you will need to update any references to `status` which was the previous workaround for the `enabled` values. If you have `status = "enabled"` you will need to replace it with `enabled = true` and similar for `status = "disabled"` to be replaced with `enabled = false`.
+```
+
+```release-note:breaking-change
+resource/cloudflare_ruleset: `status` has been removed in favour of `enabled` now that the workaround for zero values is no longer required
+```
+
+```release-note:internal
+resource/cloudflare_ruleset: migrate from SDKv2 to `terraform-plugin-framework`
+```

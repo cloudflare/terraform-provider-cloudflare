@@ -1,0 +1,3 @@
+```release-note:enhancement
+ resource/cloudflare_waiting_room_settings: add support for waiting room zone-level settings.
+ ```

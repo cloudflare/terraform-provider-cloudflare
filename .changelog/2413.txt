@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_turnstile_widget: align schema to match what is returned by the API and fix updating the widget
+```

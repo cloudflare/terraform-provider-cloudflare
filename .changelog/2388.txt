@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: ensure custom cache keys using query parameters are defined as known values for state handling
+```

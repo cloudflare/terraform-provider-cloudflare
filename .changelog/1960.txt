@@ -1,0 +1,7 @@
+```release-note:note
+datasource/api_token_permission_groups: `permissions` attribute has been deprecated in favour of individual resource level attributes.
+```
+
+```release-note:bug
+datasource/api_token_permission_groups: add `user`, `account` and `zone` attributes to contain only those specific resource level permissions.
+```

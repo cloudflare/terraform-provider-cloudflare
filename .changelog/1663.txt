@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_teams_rule: Fixes issue with rule precedence updates by using a generated version of precendence in API calls to reduce clashing versions
+```

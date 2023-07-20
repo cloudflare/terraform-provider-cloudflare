@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_spectrum_application: prevent panic when configuration does not include `edge_ips.connectivity`
+```

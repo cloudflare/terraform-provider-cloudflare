@@ -1,0 +1,3 @@
+```release:enhancement
+resource/cloudflare_rate_limit: add support for managed_challenge action
+```

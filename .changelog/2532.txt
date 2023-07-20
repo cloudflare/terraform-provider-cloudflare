@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_teams_rules: handle state correctly when `rules_setting` is empty
+```

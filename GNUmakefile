@@ -1,13 +1,24 @@
 TEST?=$$(go list ./...)
 GOFMT_FILES?=$$(find . -name '*.go')
-WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=cloudflare
-VERSION=$(shell git describe --tags --always)
+VERSION?=$(shell git describe --tags --always)
+DEV_VERSION=99.0.0
+CLOUDFLARE_GO_VERSION?=master
+INCLUDE_VERSION_IN_FILENAME?=false
 
 default: build
 
-build: fmtcheck
-	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/version.ProviderVersion=$(VERSION)"
+install: vet fmtcheck
+	go install -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/main.version=$(VERSION)"
+
+build: vet fmtcheck
+	@if $(INCLUDE_VERSION_IN_FILENAME); then \
+	    go build -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/main.version=$(VERSION)" -o terraform-provider-cloudflare_$(VERSION); \
+		echo "==> Successfully built terraform-provider-cloudflare_$(VERSION)"; \
+	else \
+		go build -ldflags="-X github.com/cloudflare/terraform-provider-cloudflare/main.version=$(VERSION)" -o terraform-provider-cloudflare; \
+		echo "==> Successfully built terraform-provider-cloudflare"; \
+	fi
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
@@ -21,9 +32,35 @@ test: fmtcheck
 testacc: fmtcheck
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m -parallel 1
 
+lint: tools terraform-provider-lint golangci-lint
+
+terraform-provider-lint: tools
+	$$(go env GOPATH)/bin/tfproviderlintx \
+	 -R001=false \
+	 -R003=false \
+	 -R012=false \
+	 -S006=false \
+	 -S014=false \
+	 -S020=false \
+	 -S022=false \
+	 -S023=false \
+	 -AT001=false \
+	 -AT002=false \
+	 -AT003=false \
+	 -AT006=false \
+	 -AT012=false \
+	 -R013=false \
+	 -XAT001=false \
+	 -XR001=false \
+	 -XR003=false \
+	 -XR004=false \
+	 -XS001=false \
+	 -XS002=false \
+	 ./...
+
 vet:
-	@echo "go vet ."
-	@go vet ./... ; if [ $$? -eq 1 ]; then \
+	@echo "==> Running go vet ."
+	@go vet ./... ; if [ $$? -ne 0 ]; then \
 		echo ""; \
 		echo "Vet found suspicious constructs. Please check the reported constructs"; \
 		echo "and fix them if necessary before submitting the code for review."; \
@@ -33,12 +70,6 @@ vet:
 fmt:
 	gofmt -w $(GOFMT_FILES)
 
-fmtcheck:
-	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
-
-errcheck:
-	@sh -c "'$(CURDIR)/scripts/errcheck.sh'"
-
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
 		echo "ERROR: Set TEST to a specific package. For example,"; \
@@ -47,38 +78,31 @@ test-compile:
 	fi
 	go test -c $(TEST) $(TESTARGS)
 
-website:
-ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
-	echo "$(WEBSITE_REPO) not found in your GOPATH (necessary for layouts and assets), get-ting..."
-	git clone https://$(WEBSITE_REPO) $(GOPATH)/src/$(WEBSITE_REPO)
-endif
-	ln -sf ../../../../ext/providers/cloudflare/website/docs $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/docs/providers/cloudflare
-	ln -sf ../../../ext/providers/cloudflare/website/cloudflare.erb $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/layouts/cloudflare.erb
-	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
+clean-dev:
+	@echo "==> Removing development version ($(DEV_VERSION))"
+	@rm -f terraform-provider-cloudflare_$(DEV_VERSION)
 
-website-test:
-ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
-	echo "$(WEBSITE_REPO) not found in your GOPATH (necessary for layouts and assets), get-ting..."
-	git clone https://$(WEBSITE_REPO) $(GOPATH)/src/$(WEBSITE_REPO)
-endif
-	ln -sf ../../../../ext/providers/cloudflare/website/docs $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/docs/providers/cloudflare
-	ln -sf ../../../ext/providers/cloudflare/website/cloudflare.erb $(GOPATH)/src/github.com/hashicorp/terraform-website/content/source/layouts/cloudflare.erb
-	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
+build-dev: clean-dev
+	@echo "==> Building development version ($(DEV_VERSION))"
+	go build -gcflags="all=-N -l" -o terraform-provider-cloudflare_$(DEV_VERSION)
 
-os = $(shell go env GOOS)
-arch = $(shell go env GOARCH)
-dev_version = 99.0.0
-provider_path = registry.terraform.io/cloudflare/cloudflare/$(dev_version)/$(os)_$(arch)/
+generate-changelog:
+	@echo "==> Generating changelog..."
+	@sh -c "'$(CURDIR)/scripts/generate-changelog.sh'"
 
-build-and-install-dev-version:
-	go build -o terraform-provider-cloudflare_$(dev_version)
-ifeq ($(os), darwin)
-	mkdir -p ~/Library/Application\ Support/io.terraform/plugins/$(provider_path)
-	cp terraform-provider-cloudflare_$(dev_version) ~/Library/Application\ Support/io.terraform/plugins/$(provider_path)
-endif
-ifeq ($(os), linux)
-	mkdir -p /usr/local/share/terraform/plugins/$(provider_path)
-	cp terraform-provider-cloudflare_$(dev_version) /usr/local/share/terraform/plugins/$(provider_path)
-endif
+golangci-lint:
+	@golangci-lint run ./$(PKG_NAME)/... --config .golintci.yml
 
-.PHONY: build test sweep testacc vet fmt fmtcheck errcheck test-compile website website-test build-and-install-dev-version
+tools:
+	@echo "==> Installing development tooling..."
+	go generate -tags tools tools/tools.go
+
+update-go-client:
+	@echo "==> Updating the cloudflare-go client to $(CLOUDFLARE_GO_VERSION)"
+	go get github.com/cloudflare/cloudflare-go@$(CLOUDFLARE_GO_VERSION)
+	go mod tidy
+
+docs: tools
+	@sh -c "'$(CURDIR)/scripts/generate-docs.sh'"
+
+.PHONY: build install test sweep testacc lint terraform-provider-lint vet fmt fmtcheck errcheck test-compilebuild-dev clean-dev generate-changelog golangci-lint tools update-go-client docs

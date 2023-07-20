@@ -1,0 +1,3 @@
+```release-note:note
+provider: split schema definition from resource CRUD operations
+```

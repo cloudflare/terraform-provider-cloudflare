@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: Validation of ttls for action_parameters with edge_ttl or browser_ttl mode of override_origin
+```

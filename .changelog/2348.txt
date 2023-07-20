@@ -1,0 +1,3 @@
+```release-note:bug
+datasource/cloudflare_devices: Fix cloudflare_devices data source to return devices correctly and not error
+```

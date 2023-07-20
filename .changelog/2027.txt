@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_custom_hostname: remove `ForceNew` on `wait_for_ssl_pending_validation`
+```

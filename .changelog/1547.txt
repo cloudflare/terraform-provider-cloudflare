@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zone: don't get stuck in endless loop for partner zone rate plans
+```

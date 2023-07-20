@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_custom_ssl: check GeoRestrictions is not nil before attempting to compare it
+```

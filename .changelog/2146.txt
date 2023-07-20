@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_teams_accounts: adds support for `mailto_address` and `mailto_subject` blockpage settings
+```

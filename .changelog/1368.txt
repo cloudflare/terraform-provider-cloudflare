@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_api_token: modified_on is now read correctly
+```

@@ -31,3 +31,6 @@ website/vendor
 !command/test-fixtures/**/.terraform
 
 terraform-provider-cloudflare
+dist/*
+.envrc
+.flox/

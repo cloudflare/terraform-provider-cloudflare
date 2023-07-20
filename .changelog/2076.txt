@@ -1,0 +1,3 @@
+```release-note:bug
+resource/access_application: fix issue where session_duration always showed a diff for bookmark apps
+```

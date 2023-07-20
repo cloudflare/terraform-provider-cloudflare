@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_tunnel_config: add support for origin config on ingress rule and access
+```

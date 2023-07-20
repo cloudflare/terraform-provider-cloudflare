@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_policy: handle empty `nil` values for building policies
+```

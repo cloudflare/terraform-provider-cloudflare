@@ -1,0 +1,23 @@
+name: Semgrep
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+jobs:
+  semgrep:
+    name: Scan
+    runs-on: ubuntu-latest
+    container:
+      image: returntocorp/semgrep
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - uses: actions/checkout@v3
+      - run: semgrep ci --config .semgrep.yml
+        env:
+          # only trigger for files in this change
+          SEMGREP_BASELINE_BRANCH: ${{ github.head_ref }}

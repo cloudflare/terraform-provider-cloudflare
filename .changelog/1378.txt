@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_firewall_rule: add support for managed_challenge action
+```

@@ -1,0 +1,3 @@
+```release-note:internal
+test: swap SDKv2 testing harness to github.com/hashicorp/terraform-plugin-testing
+```
