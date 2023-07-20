@@ -1,4 +1,4 @@
-package cloudflare
+package sdkv2provider
 
 import (
 	"context"
@@ -9,11 +9,8 @@ import (
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/version"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 const scriptContentForSecret = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
@@ -28,9 +25,9 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 	workerSecretTestScriptName = generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheckAccount(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckCloudflareWorkerSecretDestroy,
+		PreCheck:          func() { testAccPreCheckAccount(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText),
@@ -51,8 +48,11 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 			continue
 		}
 
-		params := getRequestParamsFromResource(rs)
-		secretResponse, err := client.ListWorkersSecrets(context.Background(), params.ScriptName)
+		params := cloudflare.ListWorkersSecretsParams{
+			ScriptName: rs.Primary.Attributes["name"],
+		}
+
+		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountID), params)
 
 		if err != nil {
 			return err
@@ -84,7 +84,12 @@ func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name 
 func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, secretText string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
-		secretResponse, err := client.ListWorkersSecrets(context.Background(), scriptName)
+		params := cloudflare.ListWorkersSecretsParams{
+			ScriptName: scriptName,
+		}
+
+		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountID), params)
+
 		if err != nil {
 			return err
 		}
@@ -143,14 +148,7 @@ func createCloudflareClient() (*cloudflare.API, error) {
 	options := []cloudflare.Option{}
 
 	httpClient := cleanhttp.DefaultClient()
-	httpClient.Transport = logging.NewTransport("Cloudflare", httpClient.Transport)
 	options = append(options, cloudflare.HTTPClient(httpClient))
-
-	tfUserAgent := httpclient.TerraformUserAgent("0.11+compatible")
-	providerUserAgent := fmt.Sprintf("terraform-provider-cloudflare/%s", version.ProviderVersion)
-	ua := fmt.Sprintf("%s %s", tfUserAgent, providerUserAgent)
-
-	options = append(options, cloudflare.UserAgent(ua))
 	options = append(options, cloudflare.UsingAccount(os.Getenv("CLOUDFLARE_ACCOUNT_ID")))
 
 	apiToken := os.Getenv("CLOUDFLARE_TOKEN")
