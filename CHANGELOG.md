@@ -4,6 +4,11 @@ FEATURES:
 
 * **New Resource:** `cloudflare_regional_tiered_cache` ([#2624](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2624))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_integration: add support for managing `sentinelone_s2s` third party posture provider. ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
+* resource/cloudflare_device_posture_rule: add ability to create client_certificate and sentinelone_s2s posture rule ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.72.0 to 0.73.0 ([#2626](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2626))
