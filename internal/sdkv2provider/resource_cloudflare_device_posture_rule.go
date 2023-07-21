@@ -228,6 +228,24 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if issueCount, ok := d.GetOk("input.0.issue_count"); ok {
 			input.IssueCount = issueCount.(string)
 		}
+		if certificateId, ok := d.GetOk("input.0.certificate_id"); ok {
+			input.CertificateID = certificateId.(string)
+		}
+		if commonName, ok := d.GetOk("input.0.cn"); ok {
+			input.CommonName = commonName.(string)
+		}
+		if activeThreats, ok := d.GetOk("input.0.active_threats"); ok {
+			input.ActiveThreats = activeThreats.(int)
+		}
+		if networkStatus, ok := d.GetOk("input.0.network_status"); ok {
+			input.NetworkStatus = networkStatus.(string)
+		}
+		if infected, ok := d.GetOk("input.0.infected"); ok {
+			input.Infected = infected.(bool)
+		}
+		if isActive, ok := d.GetOk("input.0.is_active"); ok {
+			input.IsActive = isActive.(bool)
+		}
 		rule.Input = input
 	}
 }
@@ -287,6 +305,12 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"version_operator":   input.VersionOperator,
 		"count_operator":     input.CountOperator,
 		"issue_count":        input.IssueCount,
+		"certificate_id":     input.CertificateID,
+		"cn":                 input.CommonName,
+		"active_threats":     input.ActiveThreats,
+		"network_status":     input.NetworkStatus,
+		"infected":           input.Infected,
+		"is_active":          input.IsActive,
 	}
 
 	return []map[string]interface{}{m}

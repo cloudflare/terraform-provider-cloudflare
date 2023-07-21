@@ -20,6 +20,7 @@ const (
 	uptycs      = "uptycs"
 	intune      = "intune"
 	kolide      = "kolide"
+	sentinelone = "sentinelone_s2s"
 )
 
 func resourceCloudflareDevicePostureIntegration() *schema.Resource {
@@ -228,6 +229,14 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 			}
 			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
 				return fmt.Errorf("client_secret has to be of type string")
+			}
+			integration.Config = config
+		case sentinelone:
+			if config.ClientSecret, ok = d.Get("config.0.client_secret").(string); !ok {
+				return fmt.Errorf("client_secret has to be of type string")
+			}
+			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
+				return fmt.Errorf("api_url has to be of type string")
 			}
 			integration.Config = config
 		default:
