@@ -35,7 +35,7 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/google/go-cmp v0.5.9
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
-	github.com/hashicorp/terraform-plugin-framework v1.3.2
+	github.com/hashicorp/terraform-plugin-framework v1.3.3
 	github.com/hashicorp/terraform-plugin-framework-validators v0.10.0
 	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/hashicorp/terraform-plugin-mux v0.11.2
