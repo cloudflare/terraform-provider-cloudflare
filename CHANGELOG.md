@@ -1,7 +1,13 @@
 ## 4.11.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_regional_tiered_cache` ([#2624](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2624))
+
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.72.0 to 0.73.0 ([#2626](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2626))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.2 to 1.3.3 ([#2627](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2627))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.1 to 0.11.2 ([#2616](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2616))
 
 ## 4.10.0 (12th July, 2023)
