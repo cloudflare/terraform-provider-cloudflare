@@ -21,7 +21,7 @@ var (
 )
 
 type serviceOwner struct {
-	manager  string
+	owner    string
 	teamName string
 }
 
@@ -46,6 +46,7 @@ type IssueFields struct {
 	MyTeam      IssueValue   `json:"customfield_14803"`
 	SLA         IssueValue   `json:"customfield_15031"`
 	IssueType   IssueName    `json:"issuetype"`
+	Components  []IssueName  `json:"components"`
 }
 
 type InternalIssue struct {
@@ -65,54 +66,70 @@ var (
 
 	// List of services that we permit syncing internally.
 	allowedServiceLabels = []string{
-		"provider/internals", 
-		"service/zones", 
-		"service/access", 
-		"service/logs", 
+		"provider/internals",
+
+		"service/access",
+		"service/cache",
+		"service/iam",
+		"service/load_balancing",
+		"service/logs",
+		"service/spectrum",
 		"service/tls",
+		"service/tunnel",
 		"service/turnstile",
 		"service/workers",
-		"service/tunnel",
-		"service/load_balancing",
+		"service/zones",
 	}
 
 	// Mapping of service label to owning internal team.
 	serviceOwnership = map[string]serviceOwner{
 		"provider/internals": {
 			teamName: "API & Zones",
-			manager:  "rupalim",
+			owner:    "rupalim",
 		},
 		"service/zones": {
 			teamName: "API & Zones",
-			manager:  "rupalim",
+			owner:    "rupalim",
 		},
 		"service/access": {
 			teamName: "Access",
-			manager:  "jroyal",
+			owner:    "jroyal",
 		},
 		"service/logs": {
 			teamName: "Logs",
-			manager:  "duc",
+			owner:    "duc",
 		},
 		"service/tls": {
 			teamName: "SSL / TLS",
-			manager:  "mihir",
+			owner:    "mihir",
 		},
 		"service/turnstile": {
 			teamName: "Challenges and Turnstile",
-			manager: "opayne",
+			owner:    "opayne",
 		},
 		"service/workers": {
 			teamName: "Workers Core Platform",
-			manager:  "laszlo",
+			owner:    "laszlo",
 		},
 		"service/tunnel": {
 			teamName: "Tunnel/Teams Routing",
-			manager:  "joliveirinha",
+			owner:    "joliveirinha",
 		},
 		"service/load_balancing": {
 			teamName: "Load Balancing",
-			manager:  "laurence",
+			owner:    "laurence",
+		},
+		"service/cache": {
+			teamName: "Content Delivery (Cache)",
+			owner:    "charwood",
+		},
+		"service/iam": {
+			teamName: "Identity and Access Management",
+			owner:    "bnelson",
+		},
+		"service/spectrum": {
+			teamName: "Spectrum",
+			owner:    "njones",
 		},
 	}
 )
@@ -192,17 +209,18 @@ func main() {
 		os.Exit(0)
 	}
 
-	serviceOwner := serviceOwnership[serviceLabel]
+	service := serviceOwnership[serviceLabel]
 
 	newIssue := InternalIssue{Fields: IssueFields{
 		Project:     IssueKey{Key: "CUSTESC"},
 		Summary:     *issue.Title,
 		Description: jirafyBodyMarkdown(issue),
-		Teams:       []IssueValue{{Value: serviceOwner.teamName}},
-		EngOwner:    IssueName{Name: serviceOwner.manager},
+		Teams:       []IssueValue{{Value: service.teamName}},
+		EngOwner:    IssueName{Name: service.owner},
 		SLA:         IssueValue{Value: "Pro / Free"},
 		MyTeam:      IssueValue{Value: "Other"},
 		IssueType:   IssueName{Name: "Bug"},
+		Components:  []IssueName{{Name: "SDK & Client API Libraries"}},
 	}}
 
 	res, err := json.Marshal(newIssue)

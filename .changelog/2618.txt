@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_device_posture_integration: add support for managing `sentinelone_s2s` third party posture provider.
+```
+
+```release-note:enhancement
+resource/cloudflare_device_posture_rule: add ability to create client_certificate and sentinelone_s2s posture rule
+```

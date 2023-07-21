@@ -1,14 +1,49 @@
 package turnstile_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func TestMain(m *testing.M) {
+	resource.TestMain(m)
+}
+
+func init() {
+	resource.AddTestSweepers("cloudflare_turnstile_widget", &resource.Sweeper{
+		Name: "cloudflare_turnstile_widget",
+		F: func(region string) error {
+			client, err := acctest.SharedClient()
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+			if err != nil {
+				return fmt.Errorf("error establishing client: %w", err)
+			}
+
+			ctx := context.Background()
+			widgets, _, err := client.ListTurnstileWidgets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListTurnstileWidgetParams{})
+			if err != nil {
+				return fmt.Errorf("failed to fetch turnstile widgets: %w", err)
+			}
+
+			for _, widget := range widgets {
+				err := client.DeleteTurnstileWidget(ctx, cloudflare.AccountIdentifier(accountID), widget.SiteKey)
+				if err != nil {
+					return fmt.Errorf("failed to delete turnstile widget %q: %w", widget.SiteKey, err)
+				}
+			}
+
+			return nil
+		},
+	})
+}
 
 func TestAccCloudflareTurnstileWidget_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()

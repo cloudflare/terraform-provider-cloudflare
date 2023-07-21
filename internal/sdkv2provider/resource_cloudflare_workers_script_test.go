@@ -200,12 +200,17 @@ resource "cloudflare_worker_script" "%[1]s" {
 
 func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyID, r2AccessKeySecret string) string {
 	return fmt.Sprintf(`
+	resource "cloudflare_r2_bucket" "%[1]s" {
+		account_id = "%[3]s"
+		name       = "%[1]s"
+	}
+
 	resource "cloudflare_logpush_job" "%[1]s" {
 		enabled          = true
 		account_id       = "%[3]s"
 		name             = "%[1]s"
 		logpull_options  = "fields=Event,EventTimestampMs,Outcome,Exceptions,Logs,ScriptName"
-		destination_conf = "r2://terraform-acctest/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
+		destination_conf = "r2://${cloudflare_r2_bucket.%[1]s.name}/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
 		dataset          = "workers_trace_events"
 	}
 
