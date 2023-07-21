@@ -73,7 +73,7 @@ Optional:
 - `infected` (Boolean) True if SentinelOne device is infected.
 - `is_active` (Boolean) True if SentinelOne device is active.
 - `issue_count` (String) The number of issues for kolide.
-- `network_status` (String) The network status from SentinelOne. Available values: `connected`, `disconnected`, `disconnecting`, `connecting`
+- `network_status` (String) The network status from SentinelOne. Available values: `connected`, `disconnected`, `disconnecting`, `connecting`.
 - `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
 - `os_distro_name` (String) The operating system excluding version information.
