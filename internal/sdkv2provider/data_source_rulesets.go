@@ -1119,12 +1119,14 @@ func dataSourceCloudflareRulesetsRead(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	var rulesetsList []cloudflare.Ruleset
+	var identifier *cloudflare.ResourceContainer
 	if accountID != "" {
-		rulesetsList, err = client.ListAccountRulesets(ctx, accountID)
+		identifier = cloudflare.AccountIdentifier(accountID)
 	} else {
-		rulesetsList, err = client.ListZoneRulesets(ctx, zoneID)
+		identifier = cloudflare.ZoneIdentifier(zoneID)
 	}
+
+	rulesetsList, err := client.ListRulesets(ctx, identifier, cloudflare.ListRulesetsParams{})
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -1159,12 +1161,7 @@ func dataSourceCloudflareRulesetsRead(ctx context.Context, d *schema.ResourceDat
 		}
 
 		if includeRules {
-			var fullRuleset cloudflare.Ruleset
-			if accountID != "" {
-				fullRuleset, err = client.GetAccountRuleset(ctx, accountID, ruleset.ID)
-			} else {
-				fullRuleset, err = client.GetZoneRuleset(ctx, zoneID, ruleset.ID)
-			}
+			fullRuleset, err := client.GetRuleset(ctx, identifier, ruleset.ID)
 			if err != nil {
 				return diag.FromErr(err)
 			}
