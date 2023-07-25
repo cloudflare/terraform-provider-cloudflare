@@ -343,13 +343,17 @@ func flattenGeoPools(pools map[string][]string, geoType string, hashResourceMap 
 }
 
 func flattenSessionAffinityAttrs(properties *cloudflare.SessionAffinityAttributes) *schema.Set {
+	headers := make([]interface{}, 0)
+	for _, header := range properties.Headers {
+		headers = append(headers, header)
+	}
 	flattened := []interface{}{
 		map[string]interface{}{
 			"drain_duration":         properties.DrainDuration,
 			"samesite":               properties.SameSite,
 			"secure":                 properties.Secure,
 			"zero_downtime_failover": properties.ZeroDowntimeFailover,
-			"headers":                properties.Headers,
+			"headers":                headers,
 			"require_all_headers":    properties.RequireAllHeaders,
 		},
 	}
@@ -550,7 +554,11 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 							saaOverride.ZeroDowntimeFailover = v.(string)
 							lbr.Overrides.SessionAffinityAttrs = saaOverride
 						case "headers":
-							saaOverride.Headers = v.([]string)
+							headers := []string{}
+							for _, header := range v.([]interface{}) {
+								headers = append(headers, header.(string))
+							}
+							saaOverride.Headers = headers
 							lbr.Overrides.SessionAffinityAttrs = saaOverride
 						case "require_all_headers":
 							requireAllHeaders := v.(bool)
@@ -695,7 +703,7 @@ func expandSessionAffinityAttrs(set interface{}) *cloudflare.SessionAffinityAttr
 			case "zero_downtime_failover":
 				cfSessionAffinityAttrs.ZeroDowntimeFailover = v.(string)
 			case "headers":
-				cfSessionAffinityAttrs.Headers = v.([]string)
+				cfSessionAffinityAttrs.Headers = expandInterfaceToStringList(v)
 			case "require_all_headers":
 				cfSessionAffinityAttrs.RequireAllHeaders = v.(bool)
 			}
