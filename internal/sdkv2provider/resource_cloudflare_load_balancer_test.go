@@ -166,6 +166,46 @@ func TestAccCloudflareLoadBalancer_SessionAffinityIPCookie(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
+	t.Parallel()
+	var loadBalancer cloudflare.LoadBalancer
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinityHeader(zoneID, zone, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
+					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
+					// explicitly verify that our session_affinity has been set
+					resource.TestCheckResourceAttr(name, "session_affinity", "header"),
+					resource.TestCheckResourceAttr(name, "session_affinity_ttl", "1800"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.#", "1"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.samesite", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.secure", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.drain_duration", "60"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.zero_downtime_failover", "temporary"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.headers.#", "1"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.headers.0", "x-custom"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.require_all_headers", "true"),
+					// dont check that other specified values are set, this will be evident by lack
+					// of plan diff some values will get empty values
+					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "country_pools.#", "0"),
+					resource.TestCheckResourceAttr(name, "region_pools.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
 	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
@@ -661,6 +701,26 @@ resource "cloudflare_load_balancer" "%[3]s" {
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   session_affinity = "ip_cookie"
+}`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerConfigSessionAffinityHeader(zoneID, zone, id string) string {
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
+resource "cloudflare_load_balancer" "%[3]s" {
+  zone_id = "%[1]s"
+  name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
+  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
+  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
+  session_affinity = "header"
+  session_affinity_ttl = 1800
+  session_affinity_attributes {
+    samesite = "Auto"
+    secure = "Auto"
+    drain_duration = 60
+    zero_downtime_failover = "temporary"
+	headers = ["x-custom"]
+	require_all_headers = true
+  }
 }`, zoneID, zone, id)
 }
 
