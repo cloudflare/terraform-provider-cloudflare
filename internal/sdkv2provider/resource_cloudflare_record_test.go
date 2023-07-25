@@ -540,6 +540,29 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_SVCB(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "data.0.priority", "2"),
+					resource.TestCheckResourceAttr(name, "data.0.target", "foo"),
+					resource.TestCheckResourceAttr(name, "data.0.value", `alpn="h3,h2"`),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRecord_MXNull(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -934,6 +957,21 @@ resource "cloudflare_record" "%[2]s" {
 		priority = "1"
 		target   = "."
 		value    = "alpn=\"h2\""
+	}
+	ttl = 300
+}`, zoneID, rnd)
+}
+
+func testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[2]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	type = "SVCB"
+	data {
+		priority = "2"
+		target   = "foo"
+		value    = "alpn=\"h3,h2\""
 	}
 	ttl = 300
 }`, zoneID, rnd)
