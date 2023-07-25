@@ -204,7 +204,6 @@ func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
 			},
 		},
 	})
-
 }
 
 func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
