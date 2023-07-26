@@ -1,6 +1,6 @@
 ## 4.12.0 (Unreleased)
 
-## 4.11.0 (Unreleased)
+## 4.11.0 (26th July, 2023)
 
 FEATURES:
 
