@@ -529,10 +529,17 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 						include, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.Include)
 						checkPresence, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.CheckPresence)
 						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 {
+							var excludeOrigin types.Bool
+							if !reflect.ValueOf(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin).IsNil() {
+								excludeOrigin = flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin)
+							} else {
+								excludeOrigin = types.BoolNull()
+							}
+
 							key.Header = []*ActionParameterCacheKeyCustomKeyHeaderModel{{
 								Include:       include,
 								CheckPresence: checkPresence,
-								ExcludeOrigin: flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin),
+								ExcludeOrigin: excludeOrigin,
 							}}
 						}
 					}
