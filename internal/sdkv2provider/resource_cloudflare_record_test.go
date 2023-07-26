@@ -555,7 +555,7 @@ func TestAccCloudflareRecord_SVCB(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "data.0.priority", "2"),
-					resource.TestCheckResourceAttr(name, "data.0.target", "foo"),
+					resource.TestCheckResourceAttr(name, "data.0.target", "foo."),
 					resource.TestCheckResourceAttr(name, "data.0.value", `alpn="h3,h2"`),
 				),
 			},
@@ -970,7 +970,7 @@ resource "cloudflare_record" "%[2]s" {
 	type = "SVCB"
 	data {
 		priority = "2"
-		target   = "foo"
+		target   = "foo."
 		value    = "alpn=\"h3,h2\""
 	}
 	ttl = 300
