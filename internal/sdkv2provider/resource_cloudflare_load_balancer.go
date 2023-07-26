@@ -746,22 +746,29 @@ func expandLocationStrategy(set interface{}) *cloudflare.LocationStrategy {
 }
 
 func expandRandomSteering(set interface{}) *cloudflare.RandomSteering {
-	var cfRandomSteering cloudflare.RandomSteering
 
-	if l := set.(*schema.Set).List(); len(l) > 0 {
-		for k, v := range l[len(l)-1].(map[string]interface{}) {
+	for _, l := range set.(*schema.Set).List() {
+		var cfRandomSteering cloudflare.RandomSteering
+		for k, v := range l.(map[string]interface{}) {
 			switch k {
 			case "pool_weights":
 				poolWeights := make(map[string]float64)
 				for poolID, poolWeight := range v.(map[string]interface{}) {
 					poolWeights[poolID] = poolWeight.(float64)
 				}
-				cfRandomSteering.PoolWeights = poolWeights
+				if len(poolWeights) > 0 {
+					cfRandomSteering.PoolWeights = poolWeights
+				}
 			case "default_weight":
 				cfRandomSteering.DefaultWeight = v.(float64)
 			}
 		}
+
+		// only return a non nil value if something was set
+		if cfRandomSteering.DefaultWeight != 0 || cfRandomSteering.PoolWeights != nil {
+			return &cfRandomSteering
+		}
 	}
 
-	return &cfRandomSteering
+	return nil
 }
