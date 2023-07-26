@@ -9,6 +9,7 @@ ENHANCEMENTS:
 * resource/cloudflare_device_posture_integration: add support for managing `sentinelone_s2s` third party posture provider. ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
 * resource/cloudflare_device_posture_rule: add ability to create client_certificate and sentinelone_s2s posture rule ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
 * resource/cloudflare_load_balancer: support header session affinity policy ([#2521](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2521))
+* resource/record: Allow SVCB DNS record ([#2632](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2632))
 
 DEPENDENCIES:
 
