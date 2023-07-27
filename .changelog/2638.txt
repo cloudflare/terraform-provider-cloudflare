@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_custom_hostname: Fix customhostnames from waiting for SSL with `wait_for_ssl_pending_validation` if SSL status is `active`
+```
