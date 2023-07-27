@@ -1,5 +1,9 @@
 ## 4.12.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_load_balancer: handle inconsistent sorting bug in `schema.HashResource` resulting in resources incorrectly being updated when no changes have been made ([#2635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2635))
+
 ## 4.11.0 (26th July, 2023)
 
 FEATURES:
