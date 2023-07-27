@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_custom_hostname: prevent infinite loop when `wait_for_ssl_pending_validation` is set if SSL status is already `active`
+```
