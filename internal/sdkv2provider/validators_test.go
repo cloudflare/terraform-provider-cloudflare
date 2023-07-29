@@ -7,6 +7,8 @@ import (
 )
 
 func TestValidateRecordType(t *testing.T) {
+	t.Parallel()
+
 	validTypes := map[string]*bool{
 		"A":     cloudflare.BoolPtr(true),
 		"AAAA":  cloudflare.BoolPtr(true),
@@ -44,6 +46,8 @@ func TestValidateRecordType(t *testing.T) {
 }
 
 func TestValidateRecordName(t *testing.T) {
+	t.Parallel()
+
 	validNames := map[string]string{
 		"A":    "192.168.0.1",
 		"AAAA": "2001:0db8:0000:0000:0000:0000:0000:0000",
@@ -65,5 +69,56 @@ func TestValidateRecordName(t *testing.T) {
 		if err := validateRecordContent(k, v); err == nil {
 			t.Fatalf("%q should be invalid content for type %q", v, k)
 		}
+	}
+}
+
+func TestValidateZoneID(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		description string
+		given       string
+		error       bool
+	}{
+		{
+			"invalid zone ID with empty value",
+			"",
+			true,
+		},
+		{
+			"invalid zone ID with text only value",
+			"this is a test",
+			true,
+		},
+		{
+			"invalid zone ID with mixed case value",
+			"0DA42C8D2132A9DDaf714f9e7c920711",
+			true,
+		},
+		{
+			"valid zone ID with lower case value",
+			"0da42c8d2132a9ddaf714f9e7c920711",
+			false,
+		},
+		{
+			"valid zone ID with upper case value",
+			"0DA42C8D2132A9DDAF714F9E7C920711",
+			false,
+		},
+	}
+
+	for _, tc := range cases {
+		tc := tc
+		t.Run(tc.description, func(t *testing.T) {
+			t.Parallel()
+
+			err := validateZoneID(tc.given)
+			if err != nil && !tc.error {
+				t.Fatalf("expected %q to be a valid zone ID", tc.given)
+			}
+			if err == nil && tc.error {
+				t.Fatalf("expected %q to be an invalid zone ID", tc.given)
+			}
+		})
 	}
 }

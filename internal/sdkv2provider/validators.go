@@ -4,11 +4,18 @@ import (
 	"fmt"
 	"net"
 	"net/url"
+	"regexp"
 	"strings"
 )
 
-var allowedHTTPMethods = []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "_ALL_"}
-var allowedSchemes = []string{"HTTP", "HTTPS", "_ALL_"}
+var (
+	allowedHTTPMethods = []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "_ALL_"}
+	allowedSchemes     = []string{"HTTP", "HTTPS", "_ALL_"}
+
+	// A typical Zone ID is a 32 characters long alpha-numeric
+	// string that closely resembles an MD5 checksum.
+	zoneIDRegexp = regexp.MustCompile(`^([0-9a-f]{32}|[0-9A-F]{32})$`)
+)
 
 // validateRecordType ensures that the cloudflare record type is valid.
 func validateRecordType(t string, proxied bool) error {
@@ -73,4 +80,13 @@ func validateURL(v interface{}, k string) (s []string, errors []error) {
 		errors = append(errors, fmt.Errorf("%q: %w", k, err))
 	}
 	return
+}
+
+// validateZoneID ensures that the given Zone ID is valid.
+func validateZoneID(value string) error {
+	if matched := zoneIDRegexp.MatchString(value); !matched {
+		return fmt.Errorf("must be a valid Zone ID, got: %s", value)
+	}
+
+	return nil
 }
