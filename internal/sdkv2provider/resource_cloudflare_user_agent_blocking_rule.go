@@ -102,7 +102,7 @@ func resourceCloudflareUserAgentBlockingRulesImport(ctx context.Context, d *sche
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/userAgentBlockingRuleID\"", d.Id())
 	}
 
-        zoneID, userAgentBlockingRuleID := idAttr[0], idAttr[1]
+	zoneID, userAgentBlockingRuleID := idAttr[0], idAttr[1]
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare User Agent Blocking Rule: id %s for account %s", userAgentBlockingRuleID, zoneID))
 
