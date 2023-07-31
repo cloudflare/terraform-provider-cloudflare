@@ -1,5 +1,9 @@
 ## 4.12.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_user_agent_blocking_rules: add support for importing resources ([#2640](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2640))
+
 BUG FIXES:
 
 * resource/cloudflare_custom_hostname: prevent infinite loop when `wait_for_ssl_pending_validation` is set if SSL status is already `active` ([#2638](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2638))
