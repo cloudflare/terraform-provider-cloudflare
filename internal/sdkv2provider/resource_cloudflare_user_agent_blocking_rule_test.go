@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareUserAgentBlockingRule(t *testing.T) {
+func TestAccCloudflareUserAgentBlockingRule_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the UA
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -20,6 +20,7 @@ func TestAccCloudflareUserAgentBlockingRule(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_user_agent_blocking_rule.%s", rnd)
 
@@ -39,6 +40,12 @@ func TestAccCloudflareUserAgentBlockingRule(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "configuration.0.target", "ua"),
 					resource.TestCheckResourceAttr(name, "configuration.0.value", "Mozilla"),
 				),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+				ImportState:         true,
+				ImportStateVerify:   true,
 			},
 		},
 		CheckDestroy: testAccCheckCloudflareUserAgentBlockingRulesDestroy,
