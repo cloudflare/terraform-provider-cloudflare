@@ -4,17 +4,12 @@ subcategory: ""
 description: |-
   Provides a Cloudflare data source to look up Cache Reserve
   status for a given zone.
-  Requires Cache Reserve subscription.
 ---
 
 # cloudflare_zone_cache_reserve (Data Source)
 
-~> Requires Cache Reserve subscription.
-
-Provides a Cloudflare data source to look up [Cache Reserve][cache-reserve]
+Provides a Cloudflare data source to look up Cache Reserve
 status for a given zone.
-
-[cache-reserve]: https://developers.cloudflare.com/cache/advanced-configuration/cache-reserve
 
 ## Example Usage
 
@@ -35,3 +30,5 @@ data "cloudflare_zone_cache_reserve" "example" {
 
 - `enabled` (Boolean) The status of Cache Reserve support.
 - `id` (String) The ID of this resource.
+
+

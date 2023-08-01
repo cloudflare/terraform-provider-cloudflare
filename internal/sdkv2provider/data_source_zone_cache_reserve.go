@@ -38,8 +38,6 @@ func dataSourceCloudflareZoneCacheReserve() *schema.Resource {
 		Description: heredoc.Doc(`
 			Provides a Cloudflare data source to look up Cache Reserve
 			status for a given zone.
-
-			Requires Cache Reserve subscription.
 		`),
 	}
 }

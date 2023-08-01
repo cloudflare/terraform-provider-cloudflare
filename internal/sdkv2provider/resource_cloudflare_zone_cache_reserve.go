@@ -34,8 +34,6 @@ func resourceCloudflareZoneCacheReserve() *schema.Resource {
 			files in Cloudflare's persistent object storage buckets.
 
 			Note: Using Cache Reserve without Tiered Cache is not recommended.
-
-			Requires Cache Reserve subscription.
 		`),
 	}
 }
