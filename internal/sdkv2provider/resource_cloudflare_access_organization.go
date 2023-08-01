@@ -66,6 +66,13 @@ func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.Res
 		return diag.FromErr(fmt.Errorf("error setting Access Organization Login Design configuration: %w", loginDesignErr))
 	}
 
+	if &organization.CustomPages != nil {
+		customPages := convertCustomPageStructToSchema(ctx, d, &organization.CustomPages)
+		if customPagesErr := d.Set("custom_pages", customPages); customPagesErr != nil {
+			return diag.FromErr(fmt.Errorf("error setting Access Organization Custom Pages configuration: %w", customPagesErr))
+		}
+	}
+
 	return nil
 }
 
@@ -81,6 +88,11 @@ func resourceCloudflareAccessOrganizationUpdate(ctx context.Context, d *schema.R
 	}
 	loginDesign := convertLoginDesignSchemaToStruct(d)
 	updatedAccessOrganization.LoginDesign = *loginDesign
+
+	if _, ok := d.GetOk("custom_pages"); ok {
+		customPagesStruct := convertCustomPageSchemaToStruct(d)
+		updatedAccessOrganization.CustomPages = *customPagesStruct
+	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Organization from struct: %+v", updatedAccessOrganization))
 

@@ -1,0 +1,3 @@
+```release-note:new-resource
+Adds the ability to create an Access Custom Page as well as associate a custom page with an Access Organization or Application.
+```

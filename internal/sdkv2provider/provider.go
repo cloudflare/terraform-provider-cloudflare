@@ -177,6 +177,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_access_ca_certificate":                  resourceCloudflareAccessCACertificate(),
 				"cloudflare_access_group":                           resourceCloudflareAccessGroup(),
 				"cloudflare_access_identity_provider":               resourceCloudflareAccessIdentityProvider(),
+				"cloudflare_access_custom_page":                     resourceCloudflareAccessCustomPage(),
 				"cloudflare_access_keys_configuration":              resourceCloudflareAccessKeysConfiguration(),
 				"cloudflare_access_mutual_tls_certificate":          resourceCloudflareAccessMutualTLSCertificate(),
 				"cloudflare_access_organization":                    resourceCloudflareAccessOrganization(),
