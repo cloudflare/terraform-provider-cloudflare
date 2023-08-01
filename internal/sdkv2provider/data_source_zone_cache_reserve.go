@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -56,7 +57,7 @@ func dataSourceCloudflareZoneCacheReserveRead(ctx context.Context, d *schema.Res
 	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("enabled", output.Value == cacheReserveEnabled)
 
-	d.SetId(stringChecksum(output.ModifiedOn.String()))
+	d.SetId(stringChecksum(fmt.Sprintf("%s/cache-reserve", zoneID)))
 
 	return nil
 }
