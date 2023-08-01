@@ -123,10 +123,6 @@ func resourceCloudflareZoneCacheReserveDelete(ctx context.Context, d *schema.Res
 func resourceCloudflareZoneCacheReserveImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	zoneID := d.Id()
 
-	// Ensure that only a valid Zone ID will be used.
-	if err := validateZoneID(zoneID); err != nil {
-		return nil, err
-	}
 	d.SetId(stringChecksum(fmt.Sprintf("%s/cache-reserve", zoneID)))
 	d.Set(consts.ZoneIDSchemaKey, zoneID)
 

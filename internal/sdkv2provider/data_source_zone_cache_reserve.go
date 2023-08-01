@@ -21,13 +21,6 @@ func dataSourceCloudflareZoneCacheReserve() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: consts.ZoneIDSchemaDescription,
-				ValidateFunc: func(value any, key string) (_ []string, errs []error) {
-					// Ensure that a valid Zone ID was passed.
-					if err := validateZoneID(value.(string)); err != nil {
-						errs = append(errs, err)
-					}
-					return
-				},
 			},
 			"enabled": {
 				Type:        schema.TypeBool,

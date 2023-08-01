@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -13,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareZoneCacheReserve_Simple(t *testing.T) {
+func TestAccCloudflareZoneCacheReserve_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zone_cache_reserve.%s", rnd)
@@ -42,23 +41,6 @@ func TestAccCloudflareZoneCacheReserve_Simple(t *testing.T) {
 			},
 		},
 		CheckDestroy: testAccCheckCloudflareZoneCacheReserveDestroy(zoneID),
-	})
-}
-
-func TestAccCloudflareZoneCacheReserve_Error(t *testing.T) {
-	rnd := generateRandomResourceName()
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config:      testAccCloudflareZoneCacheReserveConfig("this is a test", rnd, false),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta("must be a valid Zone ID, got: this is a test")),
-			},
-		},
 	})
 }
 
