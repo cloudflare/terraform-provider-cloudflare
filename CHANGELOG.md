@@ -1,10 +1,5 @@
 ## 4.12.0 (Unreleased)
 
-FEATURES:
-
-* **New Data Source:** `cloudflare_zone_cache_reserve` ([#2642](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2642))
-* **New Resource:** `cloudflare_zone_cache_reserve` ([#2642](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2642))
-
 ENHANCEMENTS:
 
 * resource/cloudflare_user_agent_blocking_rules: add support for importing resources ([#2640](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2640))
