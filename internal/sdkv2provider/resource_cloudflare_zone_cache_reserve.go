@@ -18,6 +18,8 @@ const (
 	cacheReserveDisabled = "off"
 )
 
+var cacheReserveNotFoundError *cloudflare.NotFoundError
+
 func resourceCloudflareZoneCacheReserve() *schema.Resource {
 	return &schema.Resource{
 		Schema:        resourceCloudflareZoneCacheReserveSchema(),
@@ -58,8 +60,8 @@ func resourceCloudflareZoneCacheReserveRead(ctx context.Context, d *schema.Resou
 	params := cloudflare.GetCacheReserveParams{}
 	output, err := client.GetCacheReserve(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 	if err != nil {
-		var notFoundError *cloudflare.NotFoundError
-		if errors.As(err, &notFoundError) {
+		// Zone does not exist?
+		if errors.As(err, &cacheReserveNotFoundError) {
 			tflog.Warn(ctx, "zone could not be found", map[string]interface{}{
 				"zone_id": zoneID,
 			})
@@ -114,6 +116,13 @@ func resourceCloudflareZoneCacheReserveDelete(ctx context.Context, d *schema.Res
 	}
 	_, err := client.UpdateCacheReserve(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 	if err != nil {
+		// Zone does not exist or already had been deleted?
+		if errors.As(err, &cacheReserveNotFoundError) {
+			tflog.Warn(ctx, "zone could not be found", map[string]interface{}{
+				"zone_id": zoneID,
+			})
+			return nil
+		}
 		return diag.Errorf("unable to delete Cache Reserve for zone %q: %s", zoneID, err)
 	}
 
