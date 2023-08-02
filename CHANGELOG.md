@@ -16,6 +16,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.28 to 1.13.31 ([#2648](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2648))
 * provider: bumps golang.org/x/net from 0.12.0 to 0.13.0 ([#2646](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2646))
 
 ## 4.11.0 (26th July, 2023)
