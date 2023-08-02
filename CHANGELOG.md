@@ -9,6 +9,10 @@ BUG FIXES:
 * resource/cloudflare_custom_hostname: prevent infinite loop when `wait_for_ssl_pending_validation` is set if SSL status is already `active` ([#2638](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2638))
 * resource/cloudflare_load_balancer: handle inconsistent sorting bug in `schema.HashResource` resulting in resources incorrectly being updated when no changes have been made ([#2635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2635))
 
+DEPENDENCIES:
+
+* provider: bumps golang.org/x/net from 0.12.0 to 0.13.0 ([#2646](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2646))
+
 ## 4.11.0 (26th July, 2023)
 
 FEATURES:
