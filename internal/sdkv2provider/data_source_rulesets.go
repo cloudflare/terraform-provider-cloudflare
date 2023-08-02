@@ -50,11 +50,6 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringInSlice(cloudflare.RulesetPhaseValues(), false),
 			Description:  fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
 		},
-		"shareable_entitlement_name": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Name of entitlement that is shareable between entities.",
-		},
 		"rules": {
 			Type:        schema.TypeList,
 			Optional:    true,
