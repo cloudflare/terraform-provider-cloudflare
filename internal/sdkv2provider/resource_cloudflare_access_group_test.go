@@ -292,6 +292,35 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessGroupWithIDPAuthContext(t *testing.T) {
+	rnd := generateRandomResourceName()
+	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	ctxID := generateRandomResourceName()
+	ctxACID := "c1"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupWithIDPAuthContext(accountID, rnd, ctxID, ctxACID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(groupName, cloudflare.AccountIdentifier(accountID), &accessGroup),
+					resource.TestCheckResourceAttr(groupName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(groupName, "name", rnd),
+					resource.TestCheckResourceAttrSet(groupName, "require.0.auth_context.0.identity_provider_id"),
+					resource.TestCheckResourceAttr(groupName, "require.0.auth_context.0.id", ctxID),
+					resource.TestCheckResourceAttr(groupName, "require.0.auth_context.0.ac_id", ctxACID),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	rnd := generateRandomResourceName()
@@ -490,6 +519,36 @@ resource "cloudflare_access_group" "%[2]s" {
     }
   }
 }`, accountID, rnd, githubOrg, team)
+}
+
+func testAccCloudflareAccessGroupWithIDPAuthContext(accountID, rnd, authCtxID, authCtxACID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[2]s" {
+  account_id = "%[1]s"
+  name = "%[2]s"
+  type = "azureAD"
+  config {
+    client_id = "test"
+    client_secret = "secret"
+  }
+}
+
+resource "cloudflare_access_group" "%[2]s" {
+  account_id = "%[1]s"
+  name = "%[2]s"
+
+  include {
+    any_valid_service_token = true
+  }
+
+  require {
+    auth_context { 
+      id = "%[3]s"
+      ac_id = "%[4]s"
+      identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
+    }
+  }
+}`, accountID, rnd, authCtxID, authCtxACID)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {

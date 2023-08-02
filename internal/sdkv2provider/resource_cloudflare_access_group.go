@@ -320,6 +320,19 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					KeysURL:     eeCfg["keys_url"].(string),
 				}})
 			}
+		} else if accessGroupType == "auth_context" {
+			for _, v := range values.([]interface{}) {
+				ctxCfg := v.(map[string]interface{})
+				group = append(group, cloudflare.AccessGroupAzureAuthContext{AuthContext: struct {
+					ID                 string `json:"id"`
+					IdentityProviderID string `json:"identity_provider_id"`
+					ACID               string `json:"ac_id"`
+				}{
+					ID:                 ctxCfg["id"].(string),
+					IdentityProviderID: ctxCfg["identity_provider_id"].(string),
+					ACID:               ctxCfg["ac_id"].(string),
+				}})
+			}
 		} else {
 			for _, value := range values.([]interface{}) {
 				switch accessGroupType {
@@ -401,6 +414,9 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	externalEvaluationURL := ""
 	externalEvaluationKeysURL := ""
 	devicePostureRuleIDs := []string{}
+	authCtxID := ""
+	authCtxIDPID := ""
+	authCtxACID := ""
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -498,6 +514,11 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				for _, dprID := range groupValue.(map[string]interface{}) {
 					devicePostureRuleIDs = append(devicePostureRuleIDs, dprID.(string))
 				}
+			case "auth_context":
+				ctxCfg := groupValue.(map[string]interface{})
+				authCtxIDPID = ctxCfg["identity_provider_id"].(string)
+				authCtxID = ctxCfg["id"].(string)
+				authCtxACID = ctxCfg["ac_id"].(string)
 			default:
 				tflog.Debug(ctx, fmt.Sprintf("Access Group key %q not transformed", groupKey))
 			}
@@ -595,6 +616,16 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 			map[string]interface{}{
 				"evaluate_url": externalEvaluationURL,
 				"keys_url":     externalEvaluationKeysURL,
+			},
+		}
+	}
+
+	if authCtxID != "" && authCtxACID != "" && authCtxIDPID != "" {
+		groupMap["auth_context"] = []interface{}{
+			map[string]interface{}{
+				"id":                   authCtxID,
+				"ac_id":                authCtxACID,
+				"identity_provider_id": authCtxIDPID,
 			},
 		}
 	}
