@@ -7,6 +7,8 @@ import (
 )
 
 func TestValidateRecordType(t *testing.T) {
+	t.Parallel()
+
 	validTypes := map[string]*bool{
 		"A":     cloudflare.BoolPtr(true),
 		"AAAA":  cloudflare.BoolPtr(true),
@@ -44,6 +46,8 @@ func TestValidateRecordType(t *testing.T) {
 }
 
 func TestValidateRecordName(t *testing.T) {
+	t.Parallel()
+
 	validNames := map[string]string{
 		"A":    "192.168.0.1",
 		"AAAA": "2001:0db8:0000:0000:0000:0000:0000:0000",
