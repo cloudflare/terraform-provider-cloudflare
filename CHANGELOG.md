@@ -1,10 +1,50 @@
-## 4.11.0 (Unreleased)
+## 4.12.0 (Unreleased)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_ruleset: remove `shareable_entitlement_name` per the Go library changes since it hasn't ever been controllable by users ([#2652](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2652))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_zone_cache_reserve` ([#2642](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2642))
+* **New Resource:** `cloudflare_zone_cache_reserve` ([#2642](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2642))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_user_agent_blocking_rules: add support for importing resources ([#2640](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2640))
+
+BUG FIXES:
+
+* resource/cloudflare_custom_hostname: prevent infinite loop when `wait_for_ssl_pending_validation` is set if SSL status is already `active` ([#2638](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2638))
+* resource/cloudflare_load_balancer: handle inconsistent sorting bug in `schema.HashResource` resulting in resources incorrectly being updated when no changes have been made ([#2635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2635))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.29 to 1.18.32 ([#2651](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2651))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.28 to 1.13.31 ([#2648](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2648))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.37.0 to 1.38.1 ([#2650](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2650))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.73.0 to 0.74.0 ([#2652](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2652))
+* provider: bumps golang.org/x/net from 0.12.0 to 0.13.0 ([#2646](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2646))
+
+## 4.11.0 (26th July, 2023)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_regional_tiered_cache` ([#2624](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2624))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_integration: add support for managing `sentinelone_s2s` third party posture provider. ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
+* resource/cloudflare_device_posture_rule: add ability to create client_certificate and sentinelone_s2s posture rule ([#2618](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2618))
+* resource/cloudflare_load_balancer: support header session affinity policy ([#2521](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2521))
+* resource/record: Allow SVCB DNS record ([#2632](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2632))
 
 DEPENDENCIES:
 
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.72.0 to 0.73.0 ([#2626](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2626))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.2 to 1.3.3 ([#2627](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2627))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.1 to 0.11.2 ([#2616](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2616))
+* provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.3.0 to 1.4.0 ([#2631](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2631))
 
 ## 4.10.0 (12th July, 2023)
 

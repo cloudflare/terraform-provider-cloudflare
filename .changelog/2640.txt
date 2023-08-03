@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_user_agent_blocking_rules: add support for importing resources
+```
