@@ -236,6 +236,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_mtls_certificate":                       resourceCloudflareMTLSCertificate(),
 				"cloudflare_notification_policy_webhooks":           resourceCloudflareNotificationPolicyWebhook(),
 				"cloudflare_notification_policy":                    resourceCloudflareNotificationPolicy(),
+				"cloudflare_observatory_scheduled_test":             resourceCloudflareObservatoryScheduledTest(),
 				"cloudflare_origin_ca_certificate":                  resourceCloudflareOriginCACertificate(),
 				"cloudflare_page_rule":                              resourceCloudflarePageRule(),
 				"cloudflare_pages_domain":                           resourceCloudflarePagesDomain(),
