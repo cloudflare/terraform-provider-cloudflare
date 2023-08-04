@@ -165,6 +165,7 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 		loadBalancer.Description = description.(string)
 	}
 
+	loadBalancer.RegionPools = map[string][]string{}
 	if regionPools, ok := d.GetOk("region_pools"); ok {
 		expandedRegionPools, err := expandGeoPools(regionPools, "region")
 		if err != nil {
@@ -173,6 +174,7 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 		loadBalancer.RegionPools = expandedRegionPools
 	}
 
+	loadBalancer.CountryPools = map[string][]string{}
 	if countryPools, ok := d.GetOk("country_pools"); ok {
 		expandedCountryPools, err := expandGeoPools(countryPools, "country")
 		if err != nil {
@@ -181,6 +183,7 @@ func resourceCloudflareLoadBalancerUpdate(ctx context.Context, d *schema.Resourc
 		loadBalancer.CountryPools = expandedCountryPools
 	}
 
+	loadBalancer.PopPools = map[string][]string{}
 	if popPools, ok := d.GetOk("pop_pools"); ok {
 		expandedPopPools, err := expandGeoPools(popPools, "pop")
 		if err != nil {
