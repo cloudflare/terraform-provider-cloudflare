@@ -232,6 +232,14 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Default:     false,
 			Description: "Option to return a 401 status code in service authentication rules on failed requests.",
 		},
+		"custom_pages": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "The custom pages selected for the application.",
+		},
 	}
 }
 

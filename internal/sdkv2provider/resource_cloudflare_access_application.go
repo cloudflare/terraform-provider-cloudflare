@@ -58,6 +58,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		newAccessApplication.AllowedIdps = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
+	if value, ok := d.GetOk("custom_pages"); ok {
+		newAccessApplication.CustomPages = expandInterfaceToStringList(value.(*schema.Set).List())
+	}
+
 	if value, ok := d.GetOk("self_hosted_domains"); ok {
 		newAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
@@ -127,6 +131,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("logo_url", accessApplication.LogoURL)
 	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
 	d.Set("service_auth_401_redirect", accessApplication.ServiceAuth401Redirect)
+	d.Set("custom_pages", accessApplication.CustomPages)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -174,6 +179,10 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 
 	if value, ok := d.GetOk("allowed_idps"); ok {
 		updatedAccessApplication.AllowedIdps = expandInterfaceToStringList(value.(*schema.Set).List())
+	}
+
+	if value, ok := d.GetOk("custom_pages"); ok {
+		updatedAccessApplication.CustomPages = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
 	if value, ok := d.GetOk("self_hosted_domains"); ok {

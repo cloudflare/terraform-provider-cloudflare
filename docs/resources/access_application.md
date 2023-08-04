@@ -63,6 +63,7 @@ resource "cloudflare_access_application" "staging_app" {
 - `cors_headers` (Block List) CORS configuration for the Access Application. See below for reference structure. (see [below for nested schema](#nestedblock--cors_headers))
 - `custom_deny_message` (String) Option that returns a custom error message when a user is denied access to the application.
 - `custom_deny_url` (String) Option that redirects to a custom URL when a user is denied access to the application.
+- `custom_pages` (Set of String) The custom pages selected for the application.
 - `domain` (String) The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.
 - `enable_binding_cookie` (Boolean) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
 - `http_only_cookie_attribute` (Boolean) Option to add the `HttpOnly` cookie flag to access tokens.
