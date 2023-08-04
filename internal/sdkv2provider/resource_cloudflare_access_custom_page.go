@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -18,6 +19,10 @@ func resourceCloudflareAccessCustomPage() *schema.Resource {
 		ReadContext:   resourceCloudflareAccessCustomPageRead,
 		UpdateContext: resourceCloudflareAccessCustomPageUpdate,
 		DeleteContext: resourceCloudflareAccessCustomPageDelete,
+		Description: heredoc.Doc(`
+			Provides a resource to customize the pages your end users will see
+			when trying to reach applications behind Cloudflare Access.
+		`),
 	}
 }
 
