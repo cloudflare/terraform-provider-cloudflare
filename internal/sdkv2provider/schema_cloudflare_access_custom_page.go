@@ -1,6 +1,8 @@
 package sdkv2provider
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -31,6 +33,7 @@ func resourceCloudflareAccessCustomPageSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"identity_denied", "forbidden"}, false),
+			Description:  fmt.Sprintf("Type of Access custom page to create. %s", renderAvailableDocumentationValuesStringSlice([]string{"identity_denied", "forbidden"})),
 		},
 		"custom_html": {
 			Type:        schema.TypeString,
