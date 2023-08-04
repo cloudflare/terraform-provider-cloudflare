@@ -24,6 +24,7 @@ DEPENDENCIES:
 * provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.28 to 1.13.31 ([#2648](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2648))
 * provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.37.0 to 1.38.1 ([#2650](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2650))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.73.0 to 0.74.0 ([#2652](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2652))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.10.0 to 0.11.0 ([#2658](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2658))
 * provider: bumps golang.org/x/net from 0.12.0 to 0.13.0 ([#2646](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2646))
 
 ## 4.11.0 (26th July, 2023)
