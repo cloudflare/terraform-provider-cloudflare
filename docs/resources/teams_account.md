@@ -78,9 +78,9 @@ resource "cloudflare_teams_account" "example" {
 - `fips` (Block List, Max: 1) Configure compliance with Federal Information Processing Standards. (see [below for nested schema](#nestedblock--fips))
 - `logging` (Block List, Max: 1) (see [below for nested schema](#nestedblock--logging))
 - `payload_log` (Block List, Max: 1) Configuration for DLP Payload Logging. (see [below for nested schema](#nestedblock--payload_log))
+- `protocol_detection_enabled` (Boolean) Indicator that protocol detection is enabled.
 - `proxy` (Block List, Max: 1) Configuration block for specifying which protocols are proxied. (see [below for nested schema](#nestedblock--proxy))
 - `tls_decrypt_enabled` (Boolean) Indicator that decryption of TLS traffic is enabled.
-- `protocol_detection_enabled` (Boolean) Indicator that protocol detection is enabled.
 - `url_browser_isolation_enabled` (Boolean) Safely browse websites in Browser Isolation through a URL.
 
 ### Read-Only
