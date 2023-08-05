@@ -30,6 +30,7 @@ DEPENDENCIES:
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.3 to 1.3.4 ([#2657](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2657))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.10.0 to 0.11.0 ([#2658](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2658))
 * provider: bumps golang.org/x/net from 0.12.0 to 0.13.0 ([#2646](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2646))
+* provider: bumps golang.org/x/net from 0.13.0 to 0.14.0 ([#2661](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2661))
 
 ## 4.11.0 (26th July, 2023)
 
