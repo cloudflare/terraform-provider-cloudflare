@@ -71,6 +71,15 @@ func resourceCloudflareListImport(ctx context.Context, d *schema.ResourceData, m
 	d.SetId(listID)
 	d.Set(consts.AccountIDSchemaKey, accountID)
 
+	var itemData []map[string]interface{}
+	var item map[string]interface{}
+	item = make(map[string]interface{})
+
+	item["comment"] = "Trigger import"
+
+	itemData = append(itemData, item)
+	d.Set("item", itemData)
+
 	resourceCloudflareListRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
