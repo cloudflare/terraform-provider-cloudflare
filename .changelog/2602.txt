@@ -1,0 +1,9 @@
+```release-note:enhancement
+resource/cloudflare_notification_policy: Add support for `pages_event_alert` alert type
+```
+```release-note:bug
+resource/cloudflare_pages_project: `deployment_configs` are now computed
+```
+```release-note:enhancement
+resource/cloudflare_pages_project: Allow renaming projects without destroying and recreating
+```
