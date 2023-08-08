@@ -241,6 +241,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_spectrum_application":                   resourceCloudflareSpectrumApplication(),
 				"cloudflare_split_tunnel":                           resourceCloudflareSplitTunnel(),
 				"cloudflare_static_route":                           resourceCloudflareStaticRoute(),
+				"cloudflare_bot_management":                         resourceCloudflareBotManagement(),
 				"cloudflare_teams_account":                          resourceCloudflareTeamsAccount(),
 				"cloudflare_teams_list":                             resourceCloudflareTeamsList(),
 				"cloudflare_teams_location":                         resourceCloudflareTeamsLocation(),
