@@ -14,6 +14,8 @@ ENHANCEMENTS:
 
 * resource/cloudflare_access_application: adds the ability to associate a custom page with an application. ([#2643](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2643))
 * resource/cloudflare_access_organization: adds the ability to associate a custom page with an organization. ([#2643](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2643))
+* resource/cloudflare_notification_policy: Add support for `pages_event_alert` alert type ([#2602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2602))
+* resource/cloudflare_pages_project: Allow renaming projects without destroying and recreating ([#2602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2602))
 * resource/cloudflare_teams_account: Adds support for protocol detection feature ([#2625](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2625))
 * resource/cloudflare_user_agent_blocking_rules: add support for importing resources ([#2640](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2640))
 
@@ -21,6 +23,7 @@ BUG FIXES:
 
 * resource/cloudflare_custom_hostname: prevent infinite loop when `wait_for_ssl_pending_validation` is set if SSL status is already `active` ([#2638](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2638))
 * resource/cloudflare_load_balancer: handle inconsistent sorting bug in `schema.HashResource` resulting in resources incorrectly being updated when no changes have been made ([#2635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2635))
+* resource/cloudflare_pages_project: `deployment_configs` are now computed ([#2602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2602))
 
 DEPENDENCIES:
 
