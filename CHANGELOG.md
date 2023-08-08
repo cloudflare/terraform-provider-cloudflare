@@ -14,6 +14,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_access_application: adds the ability to associate a custom page with an application. ([#2643](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2643))
 * resource/cloudflare_access_organization: adds the ability to associate a custom page with an organization. ([#2643](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2643))
+* resource/cloudflare_teams_account: Adds support for protocol detection feature ([#2625](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2625))
 * resource/cloudflare_user_agent_blocking_rules: add support for importing resources ([#2640](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2640))
 
 BUG FIXES:
