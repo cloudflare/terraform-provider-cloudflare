@@ -1,4 +1,6 @@
-## 4.12.0 (Unreleased)
+## 4.13.0 (Unreleased)
+
+## 4.12.0 (9th August, 2023)
 
 BREAKING CHANGES:
 
