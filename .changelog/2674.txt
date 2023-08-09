@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_device_posture_integration: update support for managing `tanium_s2s` third party posture provider.
+```
+
+```release-note:enhancement
+resource/cloudflare_device_posture_rule: update support for new fields for tanium_s2s posture rule.
+```
