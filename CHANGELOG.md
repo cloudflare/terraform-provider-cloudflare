@@ -1,5 +1,9 @@
 ## 4.13.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps goreleaser/goreleaser-action from 4.3.0 to 4.4.0 ([#2675](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2675))
+
 ## 4.12.0 (9th August, 2023)
 
 BREAKING CHANGES:
