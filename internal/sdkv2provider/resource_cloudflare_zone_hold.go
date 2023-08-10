@@ -2,10 +2,9 @@ package sdkv2provider
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -44,23 +43,26 @@ func resourceCloudflareZoneHoldCreate(ctx context.Context, d *schema.ResourceDat
 	hold := d.Get("hold").(bool)
 
 	if hold {
-		url := fmt.Sprintf("/zones/%s/hold", zoneID)
+		params := cloudflare.CreateZoneHoldParams{}
 		if d.Get("include_subdomains") != nil {
-			url = fmt.Sprintf("%s?include_subdomains=%v", url, d.Get("include_subdomains").(bool))
+			sub := d.Get("include_subdomains").(bool)
+			params.IncludeSubdomains = &sub
 		}
-		data := map[string]interface{}{
-			"hold": hold,
-		}
-		_, err := client.Raw(ctx, "PUT", url, data, http.Header{})
+		_, err := client.CreateZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error creating zone Hold for zone ID %q: %w", zoneID, err))
 		}
 	} else {
-		url := fmt.Sprintf("/zones/%s/hold", zoneID)
+		params := cloudflare.DeleteZoneHoldParams{}
 		if d.Get("hold_after") != nil {
-			url = fmt.Sprintf("%s?hold_after=%v", url, d.Get("hold_after").(string))
+			holdAfter := d.Get("hold_after").(string)
+			t, err := time.Parse(time.RFC3339, holdAfter)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("error parsing hold_after %q: %w", holdAfter, err))
+			}
+			params.HoldAfter = &t
 		}
-		_, err := client.Raw(ctx, "DELETE", url, nil, http.Header{})
+		_, err := client.DeleteZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error removing zone Hold for zone ID %q: %w", zoneID, err))
 		}
@@ -78,7 +80,7 @@ func resourceCloudflareZoneHoldRead(ctx context.Context, d *schema.ResourceData,
 
 	tflog.Info(ctx, fmt.Sprintf("Reading Cloudflare Zone Hold: id %s for zone %s", d.Id(), zoneID))
 
-	r, err := client.Raw(ctx, "GET", fmt.Sprintf("/zones/%s/hold", zoneID), nil, http.Header{})
+	r, err := client.GetZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.GetZoneHoldParams{})
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -89,19 +91,11 @@ func resourceCloudflareZoneHoldRead(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(fmt.Errorf("error finding zone Hold %q: %w", d.Id(), err))
 	}
 
-	var response ZoneHold
-	err = json.Unmarshal(r, &response)
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing response for id %q", d.Id()))
-	}
-
-	tflog.Debug(ctx, fmt.Sprintf("zoneHoldResponse: %#v", response))
-
 	d.SetId(zoneID)
 	d.Set(consts.ZoneIDSchemaKey, d.Id())
-	d.Set("hold", response.Hold)
-	d.Set("hold_after", response.HoldAfter)
-	d.Set("include_subdomains", response.IncludeSubdomains)
+	d.Set("hold", r.Hold)
+	d.Set("hold_after", r.HoldAfter.Format(time.RFC3339))
+	d.Set("include_subdomains", r.IncludeSubdomains)
 	return nil
 }
 
@@ -111,23 +105,26 @@ func resourceCloudflareZoneHoldUpdate(ctx context.Context, d *schema.ResourceDat
 	hold := d.Get("hold").(bool)
 
 	if hold {
-		url := fmt.Sprintf("/zones/%s/hold", zoneID)
+		params := cloudflare.CreateZoneHoldParams{}
 		if d.Get("include_subdomains") != nil {
-			url = fmt.Sprintf("%s?include_subdomains=%v", url, d.Get("include_subdomains").(bool))
+			sub := d.Get("include_subdomains").(bool)
+			params.IncludeSubdomains = &sub
 		}
-		data := map[string]interface{}{
-			"hold": hold,
-		}
-		_, err := client.Raw(ctx, "PUT", url, data, http.Header{})
+		_, err := client.CreateZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error creating zone Hold for zone ID %q: %w", zoneID, err))
 		}
 	} else {
-		url := fmt.Sprintf("/zones/%s/hold", zoneID)
+		params := cloudflare.DeleteZoneHoldParams{}
 		if d.Get("hold_after") != nil {
-			url = fmt.Sprintf("%s?hold_after=%v", url, d.Get("hold_after").(string))
+			holdAfter := d.Get("hold_after").(string)
+			t, err := time.Parse(time.RFC3339, holdAfter)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("error parsing hold_after %q: %w", holdAfter, err))
+			}
+			params.HoldAfter = &t
 		}
-		_, err := client.Raw(ctx, "DELETE", url, nil, http.Header{})
+		_, err := client.DeleteZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error removing zone Hold for zone ID %q: %w", zoneID, err))
 		}
@@ -146,11 +143,16 @@ func resourceCloudflareZoneHoldDelete(ctx context.Context, d *schema.ResourceDat
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Zone Hold: id %s for zone %s", d.Id(), zoneID))
 
-	url := fmt.Sprintf("/zones/%s/hold", zoneID)
+	params := cloudflare.DeleteZoneHoldParams{}
 	if d.Get("hold_after") != nil {
-		url = fmt.Sprintf("%s?hold_after=%v", url, d.Get("hold_after").(string))
+		holdAfter := d.Get("hold_after").(string)
+		t, err := time.Parse(time.RFC3339, holdAfter)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing hold_after %q: %w", holdAfter, err))
+		}
+		params.HoldAfter = &t
 	}
-	_, err := client.Raw(ctx, "DELETE", url, nil, http.Header{})
+	_, err := client.DeleteZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error removing zone Hold for zone ID %q: %w", zoneID, err))
 	}
