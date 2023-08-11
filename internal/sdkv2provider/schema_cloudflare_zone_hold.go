@@ -15,18 +15,18 @@ func resourceCloudflareZoneHoldSchema() map[string]*schema.Schema {
 		"hold": {
 			Type:        schema.TypeBool,
 			Required:    true,
-			Description: "If true, the zone hold will be enabled. If false, the zone hold will be disabled.",
+			Description: "Enablement status of the zone hold.",
 		},
 		"include_subdomains": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "If provided, the zone hold will extend to block any subdomain of the given zone, as well as SSL4SaaS Custom Hostnames.",
+			Description: "Whether to extend to block any subdomain of the given zone.",
 		},
 		"hold_after": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Computed:    true,
-			Description: "If provided, the hold will be temporarily disabled, then automatically re-enabled by the system at the time specified in this RFC3339-formatted timestamp. Otherwise, the hold will be disabled indefinitely.",
+			Description: "The RFC3339 compatible timestamp when to automatically re-enable the zone hold.",
 		},
 	}
 }
