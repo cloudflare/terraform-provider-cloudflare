@@ -1,3 +1,3 @@
-```release-note:enhancement
-resource/zone_hold: Add Zone hold
+```release-note:new-resource
+cloudflare_zone_hold
 ```
