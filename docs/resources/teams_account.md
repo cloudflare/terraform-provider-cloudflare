@@ -15,8 +15,8 @@ resource defines configuration for secure web gateway.
 
 ```terraform
 resource "cloudflare_teams_account" "example" {
-  account_id          = "f037e56e89293a057740de681ac9abbe"
-  tls_decrypt_enabled = true
+  account_id                 = "f037e56e89293a057740de681ac9abbe"
+  tls_decrypt_enabled        = true
   protocol_detection_enabled = true
 
   block_page {

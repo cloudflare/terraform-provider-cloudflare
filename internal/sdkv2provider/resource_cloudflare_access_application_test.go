@@ -185,6 +185,15 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.sp_entity_id", "saas-app.example"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
+
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.#", "2"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name", "email"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name_format", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.source.0.name", "user_email"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.name", "rank"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.source.0.name", "rank"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.friendly_name", "Rank"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.required", "true"),
 				),
 			},
 		},
@@ -549,6 +558,21 @@ resource "cloudflare_access_application" "%[1]s" {
     consumer_service_url = "https://saas-app.example/sso/saml/consume"
     sp_entity_id  = "saas-app.example"
     name_id_format =  "email"
+	custom_attribute {
+		name = "email"
+		name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
+		source {
+			name = "user_email"
+		}
+	}
+	custom_attribute {
+		name = "rank"
+		required = true
+		friendly_name = "Rank"
+		source {
+			name = "rank"
+		}
+	}
   }
   auto_redirect_to_identity = false
 }
