@@ -1044,6 +1044,44 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_RequestOriginPortWithoutHost(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRulesetOriginPortWithoutOrigin(rnd, "example HTTP request origin", zoneID, zoneName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "example HTTP request origin"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_origin"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.host_header", rnd+"."+zoneName),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin.0.port", "80"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_TransformationRuleURIPath(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -3168,6 +3206,30 @@ func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) str
         }
         sni {
           value = "%[1]s.%[4]s"
+        }
+      }
+      expression = "(http.request.uri.path matches \"^/api/\")"
+      description = "example http request origin"
+      enabled = true
+    }
+  }`, rnd, name, zoneID, zoneName)
+}
+
+func testAccCheckCloudflareRulesetOriginPortWithoutOrigin(rnd, name, zoneID, zoneName string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+    zone_id  = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_origin"
+
+    rules {
+      action = "route"
+      action_parameters {
+        host_header = "%[1]s.%[4]s"
+        origin {
+          port = 80
         }
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
