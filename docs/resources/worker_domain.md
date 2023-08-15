@@ -37,4 +37,10 @@ resource "cloudflare_worker_domain" "example" {
 
 - `id` (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_worker_domain.example <account_id>/<worker_domain_id>
+```

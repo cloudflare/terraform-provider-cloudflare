@@ -1,4 +1,20 @@
-## 4.12.0 (Unreleased)
+## 4.13.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: adds support for custom saml attributes in saas access apps ([#2676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2676))
+* resource/cloudflare_worker_domain: add support for `Import` operations ([#2679](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2679))
+
+BUG FIXES:
+
+* resource/cloudflare_access_group: Fix issue where saml rules would not read the IDP id from the API ([#2683](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2683))
+* resource/cloudflare_rulest: allow configuring an origin `Port` value without the `Host` (and vice versa) ([#2677](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2677))
+
+DEPENDENCIES:
+
+* provider: bumps goreleaser/goreleaser-action from 4.3.0 to 4.4.0 ([#2675](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2675))
+
+## 4.12.0 (9th August, 2023)
 
 BREAKING CHANGES:
 
@@ -22,6 +38,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_custom_hostname: prevent infinite loop when `wait_for_ssl_pending_validation` is set if SSL status is already `active` ([#2638](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2638))
+* resource/cloudflare_load_balancer: fix full deletion of pop_pools, region_pools, country_pools on update ([#2673](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2673))
 * resource/cloudflare_load_balancer: handle inconsistent sorting bug in `schema.HashResource` resulting in resources incorrectly being updated when no changes have been made ([#2635](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2635))
 * resource/cloudflare_pages_project: `deployment_configs` are now computed ([#2602](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2602))
 

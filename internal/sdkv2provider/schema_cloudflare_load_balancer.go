@@ -653,7 +653,6 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		"pop_pools": {
 			Type:        schema.TypeSet,
 			Optional:    true,
-			Computed:    true,
 			Elem:        loadBalancerPopPoolElem,
 			Description: "A set containing mappings of Cloudflare Point-of-Presence (PoP) identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). This feature is only available to enterprise customers.",
 		},
@@ -661,7 +660,6 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		"country_pools": {
 			Type:        schema.TypeSet,
 			Optional:    true,
-			Computed:    true,
 			Elem:        loadBalancerCountryPoolElem,
 			Description: "A set containing mappings of country codes to a list of pool IDs (ordered by their failover priority) for the given country.",
 		},
@@ -669,7 +667,6 @@ func resourceCloudflareLoadBalancerSchema() map[string]*schema.Schema {
 		"region_pools": {
 			Type:        schema.TypeSet,
 			Optional:    true,
-			Computed:    true,
 			Elem:        loadBalancerRegionPoolElem,
 			Description: "A set containing mappings of region codes to a list of pool IDs (ordered by their failover priority) for the given region.",
 		},
