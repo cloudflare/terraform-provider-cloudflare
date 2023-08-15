@@ -59,6 +59,7 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 				"http_alert_origin_error",
 				"load_balancing_health_alert",
 				"load_balancing_pool_enablement_alert",
+				"pages_event_alert",
 				"real_origin_monitoring",
 				"scriptmonitor_alert_new_code_change_detections",
 				"scriptmonitor_alert_new_hosts",

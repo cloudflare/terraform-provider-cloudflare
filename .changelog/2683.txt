@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_group: Fix issue where saml rules would not read the IDP id from the API
+```
