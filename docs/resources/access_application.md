@@ -107,7 +107,29 @@ Required:
 
 Optional:
 
+- `custom_attribute` (Block List) Custom attribute mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_attribute))
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application. Defaults to `email`.
+
+<a id="nestedblock--saas_app--custom_attribute"></a>
+### Nested Schema for `saas_app.custom_attribute`
+
+Required:
+
+- `source` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--saas_app--custom_attribute--source))
+
+Optional:
+
+- `friendly_name` (String) A friendly name for the attribute as provided to the SaaS app.
+- `name` (String) The name of the attribute as provided to the SaaS app.
+- `name_format` (String) A globally unique name for an identity or service provider.
+- `required` (Boolean) True if the attribute must be always present.
+
+<a id="nestedblock--saas_app--custom_attribute--source"></a>
+### Nested Schema for `saas_app.custom_attribute.source`
+
+Required:
+
+- `name` (String) The name of the attribute as provided by the IDP.
 
 ## Import
 

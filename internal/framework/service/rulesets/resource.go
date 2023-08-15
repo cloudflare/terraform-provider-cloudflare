@@ -624,8 +624,8 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 
 			if ruleResponse.ActionParameters.Origin != nil {
 				rule.ActionParameters[0].Origin = []*ActionParameterOriginModel{{
-					Host: types.StringValue(ruleResponse.ActionParameters.Origin.Host),
-					Port: types.Int64Value(int64(ruleResponse.ActionParameters.Origin.Port)),
+					Host: flatteners.String(ruleResponse.ActionParameters.Origin.Host),
+					Port: flatteners.Int64(int64(ruleResponse.ActionParameters.Origin.Port)),
 				}}
 			}
 
