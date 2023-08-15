@@ -7,6 +7,7 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_access_application: adds support for custom saml attributes in saas access apps ([#2676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2676))
+* resource/cloudflare_access_service_token: add support for managing `Duration` ([#2647](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2647))
 * resource/cloudflare_device_posture_integration: update support for managing `tanium_s2s` third party posture provider. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
 * resource/cloudflare_device_posture_rule: update support for new fields for tanium_s2s posture rule. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
 * resource/cloudflare_worker_domain: add support for `Import` operations ([#2679](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2679))
