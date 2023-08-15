@@ -7,6 +7,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_access_group: Fix issue where saml rules would not read the IDP id from the API ([#2683](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2683))
 * resource/cloudflare_rulest: allow configuring an origin `Port` value without the `Host` (and vice versa) ([#2677](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2677))
 
 DEPENDENCIES:
