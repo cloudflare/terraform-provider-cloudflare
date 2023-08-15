@@ -12,6 +12,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.74.0 to 0.75.0 ([#2685](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2685))
 * provider: bumps goreleaser/goreleaser-action from 4.3.0 to 4.4.0 ([#2675](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2675))
 
 ## 4.12.0 (9th August, 2023)
