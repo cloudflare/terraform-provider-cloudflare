@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/cloudflare/cloudflare-go v0.74.0
+	github.com/cloudflare/cloudflare-go v0.75.0
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -66,6 +66,7 @@ require (
 	github.com/aws/smithy-go v1.14.1 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hashicorp/go-checkpoint v0.5.0 // indirect
