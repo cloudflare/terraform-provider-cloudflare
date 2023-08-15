@@ -1,0 +1,11 @@
+```release-note:new-resource
+cloudflare_access_custom_page
+```
+
+```release-note:enhancement
+resource/cloudflare_access_application: adds the ability to associate a custom page with an application.
+```
+
+```release-note:enhancement
+resource/cloudflare_access_organization: adds the ability to associate a custom page with an organization.
+```

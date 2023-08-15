@@ -87,6 +87,25 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"custom_pages": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "Custom pages for your Zero Trust organization.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"identity_denied": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The id of the identity denied page",
+					},
+					"forbidden": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The id of the forbidden page",
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -102,6 +121,42 @@ func convertLoginDesignSchemaToStruct(d *schema.ResourceData) *cloudflare.Access
 	}
 
 	return &LoginDesign
+}
+
+func convertCustomPageSchemaToStruct(d *schema.ResourceData) *cloudflare.AccessOrganizationCustomPages {
+	CustomPages := cloudflare.AccessOrganizationCustomPages{}
+
+	if _, ok := d.GetOk("custom_pages.0"); ok {
+		identityDenied := d.Get("custom_pages.0.identity_denied").(string)
+		if identityDenied != "" {
+			CustomPages.IdentityDenied = cloudflare.AccessCustomPageType(identityDenied)
+		}
+		forbidden := d.Get("custom_pages.0.forbidden").(string)
+		if forbidden != "" {
+			CustomPages.Forbidden = cloudflare.AccessCustomPageType(forbidden)
+		}
+	}
+
+	return &CustomPages
+}
+
+func convertCustomPageStructToSchema(ctx context.Context, d *schema.ResourceData, customPages *cloudflare.AccessOrganizationCustomPages) []interface{} {
+	var onImport bool
+	var ok bool
+	if onImport, ok = ctx.Value(orgAccessImportCtxKey).(bool); !ok {
+		onImport = false
+	}
+
+	if _, ok := d.GetOk("custom_pages"); !ok && !onImport {
+		return []interface{}{}
+	}
+
+	m := map[string]interface{}{
+		"identity_denied": string(customPages.IdentityDenied),
+		"forbidden":       string(customPages.Forbidden),
+	}
+
+	return []interface{}{m}
 }
 
 func convertLoginDesignStructToSchema(ctx context.Context, d *schema.ResourceData, loginDesign *cloudflare.AccessOrganizationLoginDesign) []interface{} {

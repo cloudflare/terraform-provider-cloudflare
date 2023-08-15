@@ -119,32 +119,38 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:        schema.TypeMap,
 				Description: "Environment variables for Pages Functions.",
 				Optional:    true,
+				Default:     map[string]interface{}{},
 			},
 			"secrets": {
 				Type:        schema.TypeMap,
 				Description: "Encrypted environment variables for Pages Functions.",
 				Optional:    true,
 				Sensitive:   true,
+				Default:     map[string]interface{}{},
 			},
 			"kv_namespaces": {
 				Type:        schema.TypeMap,
 				Description: "KV namespaces used for Pages Functions.",
 				Optional:    true,
+				Default:     map[string]interface{}{},
 			},
 			"durable_object_namespaces": {
 				Type:        schema.TypeMap,
 				Description: "Durable Object namespaces used for Pages Functions.",
 				Optional:    true,
+				Default:     map[string]interface{}{},
 			},
 			"d1_databases": {
 				Type:        schema.TypeMap,
 				Description: "D1 Databases used for Pages Functions.",
 				Optional:    true,
+				Default:     map[string]interface{}{},
 			},
 			"r2_buckets": {
 				Type:        schema.TypeMap,
 				Description: "R2 Buckets used for Pages Functions.",
 				Optional:    true,
+				Default:     map[string]interface{}{},
 			},
 			"compatibility_date": {
 				Type:        schema.TypeString,
@@ -191,12 +197,14 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				MaxItems:    1,
 				Optional:    true,
 				Description: "Configuration for placement in the Cloudflare Pages project.",
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"mode": {
 							Description: "Placement Mode for the Pages Function.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 					},
 				},
@@ -214,7 +222,6 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Description: "Name of the project.",
 			Type:        schema.TypeString,
 			Required:    true,
-			ForceNew:    true,
 		},
 		"subdomain": {
 			Description: "The Cloudflare subdomain associated with the project.",
@@ -257,20 +264,23 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			Description: "Configuration for deployments in a project.",
 			Type:        schema.TypeList,
 			MaxItems:    1,
+			Computed:    true,
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"preview": {
 						Description: "Configuration for preview deploys.",
 						Type:        schema.TypeList,
-						Required:    true,
+						Computed:    true,
+						Optional:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},
 					"production": {
 						Description: "Configuration for production deploys.",
 						Type:        schema.TypeList,
-						Required:    true,
+						Computed:    true,
+						Optional:    true,
 						Elem:        &deploymentConfig,
 						MaxItems:    1,
 					},

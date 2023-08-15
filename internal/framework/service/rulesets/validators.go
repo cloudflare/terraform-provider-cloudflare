@@ -27,10 +27,10 @@ func (v sbfmDeprecationWarningValidator) ValidateString(ctx context.Context, req
 		return
 	}
 
-	if req.ConfigValue.ValueString() == string(cloudflare.RulesetPhaseSuperBotFightMode) {
+	if req.ConfigValue.ValueString() == string(cloudflare.RulesetPhaseHTTPRequestSBFM) {
 		resp.Diagnostics.AddAttributeWarning(
 			req.Path,
-			fmt.Sprintf(`%q phase will soon be deprecated in the "cloudflare_ruleset" resource`, string(cloudflare.RulesetPhaseSuperBotFightMode)),
+			fmt.Sprintf(`%q phase will soon be deprecated in the "cloudflare_ruleset" resource`, string(cloudflare.RulesetPhaseHTTPRequestSBFM)),
 			v.Description(ctx),
 		)
 
