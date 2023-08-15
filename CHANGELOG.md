@@ -1,8 +1,14 @@
 ## 4.13.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_zone_hold` ([#2671](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2671))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_access_application: adds support for custom saml attributes in saas access apps ([#2676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2676))
+* resource/cloudflare_device_posture_integration: update support for managing `tanium_s2s` third party posture provider. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
+* resource/cloudflare_device_posture_rule: update support for new fields for tanium_s2s posture rule. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
 * resource/cloudflare_worker_domain: add support for `Import` operations ([#2679](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2679))
 
 BUG FIXES:
