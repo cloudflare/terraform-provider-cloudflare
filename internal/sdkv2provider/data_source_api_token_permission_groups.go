@@ -3,9 +3,9 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"github.com/cloudflare/cloudflare-go"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -40,6 +40,11 @@ func dataSourceCloudflareApiTokenPermissionGroups() *schema.Resource {
 				Type:        schema.TypeMap,
 				Description: "Map of permissions for user level resources.",
 			},
+			"r2": {
+				Computed:    true,
+				Type:        schema.TypeMap,
+				Description: "Map of permissions for r2 level resources.",
+			},
 		},
 	}
 }
@@ -53,11 +58,12 @@ func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *sc
 		return diag.FromErr(fmt.Errorf("error listing API Token Permission Groups: %w", err))
 	}
 
-	permissionDetails := make(map[string]interface{}, 0)
-	zoneScopes := make(map[string]interface{}, 0)
-	accountScopes := make(map[string]interface{}, 0)
-	userScopes := make(map[string]interface{}, 0)
-	ids := []string{}
+	permissionDetails := make(map[string]interface{})
+	zoneScopes := make(map[string]interface{})
+	accountScopes := make(map[string]interface{})
+	userScopes := make(map[string]interface{})
+	r2Scopes := make(map[string]interface{})
+	var ids []string
 
 	for _, v := range permissions {
 		// This is for backwards compatibility and shouldn't be used going forward
@@ -72,6 +78,8 @@ func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *sc
 			zoneScopes[v.Name] = v.ID
 		case "com.cloudflare.api.user":
 			userScopes[v.Name] = v.ID
+		case "com.cloudflare.edge.r2.bucket":
+			r2Scopes[v.Name] = v.ID
 		default:
 			tflog.Warn(ctx, fmt.Sprintf("unknown permission scope found: %s", v.Scopes[0]))
 		}
@@ -91,6 +99,9 @@ func dataSourceCloudflareApiTokenPermissionGroupsRead(ctx context.Context, d *sc
 
 	if err = d.Set("permissions", permissionDetails); err != nil {
 		return diag.FromErr(fmt.Errorf("error setting API Token Permission Groups: %w", err))
+	}
+	if err = d.Set("r2", r2Scopes); err != nil {
+		return diag.FromErr(fmt.Errorf("error setting API Token Permission Groups for R2: %w", err))
 	}
 
 	d.SetId(stringListChecksum(ids))
