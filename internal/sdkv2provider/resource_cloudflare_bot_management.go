@@ -41,14 +41,50 @@ func resourceCloudflareBotManagementCreate(ctx context.Context, d *schema.Resour
 
 func resourceCloudflareBotManagementRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
-
-	bm, err := client.GetBotManagement(ctx, cloudflare.ZoneIdentifier(zoneID))
+	bm, err := client.GetBotManagement(ctx, cloudflare.ZoneIdentifier(d.Id()))
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to fetch Bot Management Configuration: %w", err))
+		return diag.FromErr(fmt.Errorf("failed to fetch bot management configuration: %w", err))
 	}
 
-	parseBotManagementResource(bm, d)
+	if bm.EnableJS != nil {
+		d.Set("enable_js", bm.EnableJS)
+	}
+
+	if bm.FightMode != nil {
+		d.Set("fight_mode", bm.FightMode)
+	}
+
+	if bm.SBFMDefinitelyAutomated != nil {
+		d.Set("sbfm_definitely_automated", bm.SBFMDefinitelyAutomated)
+	}
+
+	if bm.SBFMLikelyAutomated != nil {
+		d.Set("sbfm_likely_automated", bm.SBFMLikelyAutomated)
+	}
+
+	if bm.SBFMVerifiedBots != nil {
+		d.Set("sbfm_verified_bots", bm.SBFMVerifiedBots)
+	}
+
+	if bm.SBFMStaticResourceProtection != nil {
+		d.Set("sbfm_static_resource_protection", bm.SBFMStaticResourceProtection)
+	}
+
+	if bm.OptimizeWordpress != nil {
+		d.Set("optimize_wordpress", bm.OptimizeWordpress)
+	}
+
+	if bm.SuppressSessionScore != nil {
+		d.Set("suppress_session_score", bm.SuppressSessionScore)
+	}
+
+	if bm.AutoUpdateModel != nil {
+		d.Set("auto_update_model", bm.AutoUpdateModel)
+	}
+
+	if bm.UsingLatestModel != nil {
+		d.Set("using_latest_model", bm.UsingLatestModel)
+	}
 
 	return nil
 }
@@ -59,14 +95,12 @@ func resourceCloudflareBotManagementUpdate(ctx context.Context, d *schema.Resour
 
 	params := buildBotManagementParams(d)
 
-	bm, err := client.UpdateBotManagement(ctx, cloudflare.ZoneIdentifier(zoneID), params)
+	_, err := client.UpdateBotManagement(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, "failed to update Bot Management Configuration"))
+		return diag.FromErr(errors.Wrap(err, "failed to update bot management configuration"))
 	}
 
-	parseBotManagementResource(bm, d)
-
-	return nil
+	return resourceCloudflareBotManagementRead(ctx, d, meta)
 }
 
 // Deletion of bot management configuration is not something we support, we will use a dumby handler for now
@@ -77,12 +111,7 @@ func resourceCloudflareBotManagementDelete(ctx context.Context, d *schema.Resour
 func resourceCloudflareBotManagementImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.SetId(d.Id())
 
-	bm, err := client.GetBotManagement(ctx, cloudflare.ZoneIdentifier(zoneID))
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch Bot Management Configuration %s", zoneID)
-	}
-
-	parseBotManagementResource(bm, d)
+	resourceCloudflareBotManagementRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -121,37 +150,4 @@ func buildBotManagementParams(d *schema.ResourceData) cloudflare.UpdateBotManage
 	}
 
 	return bm
-}
-
-func parseBotManagementResource(bm cloudflare.BotManagement, d *schema.ResourceData) {
-	if bm.EnableJS != nil {
-		d.Set("enable_js", bm.EnableJS)
-	}
-	if bm.FightMode != nil {
-		d.Set("fight_mode", bm.FightMode)
-	}
-	if bm.SBFMDefinitelyAutomated != nil {
-		d.Set("sbfm_definitely_automated", bm.SBFMDefinitelyAutomated)
-	}
-	if bm.SBFMLikelyAutomated != nil {
-		d.Set("sbfm_likely_automated", bm.SBFMLikelyAutomated)
-	}
-	if bm.SBFMVerifiedBots != nil {
-		d.Set("sbfm_verified_bots", bm.SBFMVerifiedBots)
-	}
-	if bm.SBFMStaticResourceProtection != nil {
-		d.Set("sbfm_static_resource_protection", bm.SBFMStaticResourceProtection)
-	}
-	if bm.OptimizeWordpress != nil {
-		d.Set("optimize_wordpress", bm.OptimizeWordpress)
-	}
-	if bm.SuppressSessionScore != nil {
-		d.Set("suppress_session_score", bm.SuppressSessionScore)
-	}
-	if bm.AutoUpdateModel != nil {
-		d.Set("auto_update_model", *bm.AutoUpdateModel)
-	}
-	if bm.UsingLatestModel != nil {
-		d.Set("using_latest_model", bm.UsingLatestModel)
-	}
 }
