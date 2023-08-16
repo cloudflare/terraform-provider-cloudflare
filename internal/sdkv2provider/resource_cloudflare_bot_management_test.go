@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestZoneBotManagement_SBFM(t *testing.T) {
+func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -49,7 +49,7 @@ func TestZoneBotManagement_SBFM(t *testing.T) {
 	})
 }
 
-func TestZoneBotManagement_Unentitled(t *testing.T) {
+func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -81,7 +81,7 @@ func testCloudflareBotManagementSBFM(resourceName, rnd string, bm cloudflare.Bot
 	return fmt.Sprintf(`
 	resource "cloudflare_bot_management" "%[1]s" {
 		zone_id = "%[2]s"
-		
+
 		enable_js = "%[3]t"
 
 		sbfm_definitely_automated = "%[4]s"
