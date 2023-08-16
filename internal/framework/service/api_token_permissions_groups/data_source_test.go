@@ -1,4 +1,4 @@
-package api_token_permissions_groups
+package api_token_permissions_groups_test
 
 import (
 	"fmt"

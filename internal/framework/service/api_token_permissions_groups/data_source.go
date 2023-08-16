@@ -2,12 +2,14 @@ package api_token_permissions_groups
 
 import (
 	"context"
+	"crypto/md5"
 	"fmt"
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"sort"
+	"strings"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -23,7 +25,7 @@ type APITokenPermissionsGroupDataSource struct {
 }
 
 func (r *APITokenPermissionsGroupDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_token_permissions_group"
+	resp.TypeName = req.ProviderTypeName + "_api_token_permission_groups"
 }
 
 func (r *APITokenPermissionsGroupDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -64,11 +66,11 @@ func (r *APITokenPermissionsGroupDataSource) Read(ctx context.Context, req datas
 		return
 	}
 
-	permissionDetails := make(map[string]attr.Value)
-	zoneScopes := make(map[string]attr.Value)
-	accountScopes := make(map[string]attr.Value)
-	userScopes := make(map[string]attr.Value)
-	r2Scopes := make(map[string]attr.Value)
+	permissionDetails := make(map[string]types.String)
+	zoneScopes := make(map[string]types.String)
+	accountScopes := make(map[string]types.String)
+	userScopes := make(map[string]types.String)
+	r2Scopes := make(map[string]types.String)
 	var ids []string
 
 	for _, v := range permissions {
@@ -90,36 +92,26 @@ func (r *APITokenPermissionsGroupDataSource) Read(ctx context.Context, req datas
 			tflog.Warn(ctx, fmt.Sprintf("unknown permission scope found: %s", v.Scopes[0]))
 		}
 	}
-	permissionsMap, errDiag := types.MapValue(types.StringType, permissionDetails)
-	if errDiag.HasError() {
-		return
-	}
-	data.Permissions = permissionsMap
-
-	zoneMap, errDiag := types.MapValue(types.StringType, zoneScopes)
-	if errDiag.HasError() {
-		return
-	}
-	data.Zone = zoneMap
-
-	accountMap, errDiag := types.MapValue(types.StringType, accountScopes)
-	if errDiag.HasError() {
-		return
-	}
-	data.Account = accountMap
-
-	userMap, errDiag := types.MapValue(types.StringType, userScopes)
-	if errDiag.HasError() {
-		return
-	}
-	data.User = userMap
-
-	r2Map, errDiag := types.MapValue(types.StringType, r2Scopes)
-	if errDiag.HasError() {
-		return
-	}
-	data.R2 = r2Map
+	data.ID = types.StringValue(stringListChecksum(ids))
+	data.Permissions = permissionDetails
+	data.Zone = zoneScopes
+	data.Account = accountScopes
+	data.User = userScopes
+	data.R2 = r2Scopes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
 
+func stringListChecksum(s []string) string {
+	sort.Strings(s)
+	return stringChecksum(strings.Join(s, ""))
+}
+
+// stringChecksum takes a string and returns the checksum of the string.
+func stringChecksum(s string) string {
+	h := md5.New()
+	h.Write([]byte(s))
+	bs := h.Sum(nil)
+
+	return fmt.Sprintf("%x", bs)
 }
