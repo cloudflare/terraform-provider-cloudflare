@@ -32,6 +32,8 @@ func resourceCloudflareBotManagement() *schema.Resource {
 }
 
 func resourceCloudflareBotManagementCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	d.SetId(d.Get(consts.ZoneIDSchemaKey).(string))
+
 	return resourceCloudflareBotManagementUpdate(ctx, d, meta)
 }
 
@@ -71,8 +73,7 @@ func resourceCloudflareBotManagementDelete(ctx context.Context, d *schema.Resour
 }
 
 func resourceCloudflareBotManagementImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	client := meta.(*cloudflare.API)
-	zoneID := d.Id()
+	d.SetId(d.Id())
 
 	bm, err := client.GetBotManagement(ctx, cloudflare.ZoneIdentifier(zoneID))
 	if err != nil {
