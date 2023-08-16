@@ -23,7 +23,9 @@ func resourceCloudflareBotManagement() *schema.Resource {
 			StateContext: resourceCloudflareBotManagementImport,
 		},
 		Description: heredoc.Doc(`Provides a resource to configure Bot Management.
+
 		Specifically, this resource can be used to manage:
+
 		- **Bot Fight Mode**
 		- **Super Bot Fight Mode**
 		- **Bot Management for Enterprise**
