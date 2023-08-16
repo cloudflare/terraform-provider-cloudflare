@@ -103,13 +103,15 @@ func resourceCloudflareBotManagementUpdate(ctx context.Context, d *schema.Resour
 	return resourceCloudflareBotManagementRead(ctx, d, meta)
 }
 
-// Deletion of bot management configuration is not something we support, we will use a dumby handler for now
+// Deletion of bot management configuration is not something we support, we will
+// use a dummy handler for now.
 func resourceCloudflareBotManagementDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
 
 func resourceCloudflareBotManagementImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	d.SetId(d.Id())
+	d.Set(consts.ZoneIDSchemaKey, d.Id())
 
 	resourceCloudflareBotManagementRead(ctx, d, meta)
 

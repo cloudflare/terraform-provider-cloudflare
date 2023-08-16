@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -57,7 +58,7 @@ func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 	bmEntConfig := cloudflare.BotManagement{
 		EnableJS:             cloudflare.BoolPtr(true),
 		SuppressSessionScore: cloudflare.BoolPtr(false),
-		AutoUpdateModel:      cloudflare.BoolPtr(true),
+		AutoUpdateModel:      cloudflare.BoolPtr(false),
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -72,6 +73,7 @@ func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
 					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "false"),
 				),
+				ExpectError: regexp.MustCompile("zone not entitled to disable"),
 			},
 		},
 	})
