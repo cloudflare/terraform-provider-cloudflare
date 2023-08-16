@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Resource:** `cloudflare_zone_hold` ([#2671](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2671))
+* **New Resource:** `introduce bot management resource` ([#2672](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2672))
 
 ENHANCEMENTS:
 
