@@ -12,7 +12,7 @@ import (
 
 func TestZoneBotManagement_SBFM(t *testing.T) {
 	rnd := generateRandomResourceName()
-	resourceID := "cloudflare_api_shield." + rnd
+	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	sbfmConfig := cloudflare.BotManagement{
@@ -46,7 +46,7 @@ func TestZoneBotManagement_SBFM(t *testing.T) {
 
 func TestZoneBotManagement_Unentitled(t *testing.T) {
 	rnd := generateRandomResourceName()
-	resourceID := "cloudflare_api_shield." + rnd
+	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	bmEntConfig := cloudflare.BotManagement{
