@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.32 to 1.13.33
+```
