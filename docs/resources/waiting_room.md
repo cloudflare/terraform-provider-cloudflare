@@ -47,6 +47,7 @@ resource "cloudflare_waiting_room" "example" {
 
 ### Optional
 
+- `queueing_status_code` (Number) HTTP status code returned to a user while in the queue.
 - `additional_routes` (Block List) A list of additional hostname and paths combination to be applied on the waiting room. (see [below for nested schema](#nestedblock--additional_routes))
 - `cookie_suffix` (String) A cookie suffix to be appended to the Cloudflare waiting room cookie name.
 - `custom_page_html` (String) This is a templated html file that will be rendered at the edge.
@@ -57,7 +58,6 @@ resource "cloudflare_waiting_room" "example" {
 - `path` (String) The path within the host to enable the waiting room on. Defaults to `/`.
 - `queue_all` (Boolean) If queue_all is true, then all traffic will be sent to the waiting room.
 - `queueing_method` (String) The queueing method used by the waiting room. Available values: `fifo`, `random`, `passthrough`, `reject`. Defaults to `fifo`.
-- `queueing_status_code` (Number) HTTP status code returned to a user while in the queue. Defaults to `200`.
 - `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the origin. Defaults to `5`.
 - `suspended` (Boolean) Suspends the waiting room.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))

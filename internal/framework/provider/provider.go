@@ -317,6 +317,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 
 func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+
 		user.NewDataSource,
 	}
 }
