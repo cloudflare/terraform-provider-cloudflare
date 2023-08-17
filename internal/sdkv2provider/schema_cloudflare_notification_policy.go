@@ -300,6 +300,30 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: "Protocol to alert on for dos.",
 				},
+				"project_id": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Identifier of pages project.",
+				},
+				"environment": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Environment of pages.",
+				},
+				"event": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Pages event to alert.",
+				},
 				"event_source": {
 					Type: schema.TypeSet,
 					Elem: &schema.Schema{
