@@ -215,6 +215,8 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_firewall_rule":                          resourceCloudflareFirewallRule(),
 				"cloudflare_gre_tunnel":                             resourceCloudflareGRETunnel(),
 				"cloudflare_healthcheck":                            resourceCloudflareHealthcheck(),
+				"cloudflare_hostname_tls_setting":                   resourceCloudflareHostnameTLSSetting(),
+				"cloudflare_hostname_tls_setting_ciphers":           resourceCloudflareHostnameTLSSettingCiphers(),
 				"cloudflare_ipsec_tunnel":                           resourceCloudflareIPsecTunnel(),
 				"cloudflare_list_item":                              resourceCloudflareListItem(),
 				"cloudflare_list":                                   resourceCloudflareList(),
