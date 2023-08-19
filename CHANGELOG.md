@@ -23,9 +23,11 @@ DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2 from 1.20.1 to 1.20.2 ([#2695](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2695))
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.33 to 1.18.34 ([#2697](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2697))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.34 to 1.18.35 ([#2706](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2706))
 * provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.32 to 1.13.33 ([#2696](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2696))
 * provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.33 to 1.13.34 ([#2703](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2703))
 * provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.2 to 1.38.3 ([#2698](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2698))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.3 to 1.38.4 ([#2705](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2705))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.74.0 to 0.75.0 ([#2685](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2685))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.4 to 1.3.5 ([#2699](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2699))
 * provider: bumps goreleaser/goreleaser-action from 4.3.0 to 4.4.0 ([#2675](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2675))
