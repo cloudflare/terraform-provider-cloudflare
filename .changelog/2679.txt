@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_worker_domain: add support for `Import` operations
+```

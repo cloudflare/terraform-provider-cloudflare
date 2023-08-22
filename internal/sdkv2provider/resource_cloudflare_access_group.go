@@ -501,6 +501,9 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				samlAttrName := samlCfg["attribute_name"].(string)
 				samlAttrValue := samlCfg["attribute_value"].(string)
 				s := map[string]string{"attribute_name": samlAttrName, "attribute_value": samlAttrValue}
+				if idpID, ok := samlCfg["identity_provider_id"].(string); ok {
+					s["identity_provider_id"] = idpID
+				}
 				samlGroups = append(samlGroups, s)
 			case "external_evaluation":
 				eeCfg := groupValue.(map[string]interface{})

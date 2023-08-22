@@ -246,6 +246,15 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if isActive, ok := d.GetOk("input.0.is_active"); ok {
 			input.IsActive = isActive.(bool)
 		}
+		if eidLastSeen, ok := d.GetOk("input.0.eid_last_seen"); ok {
+			input.EidLastSeen = eidLastSeen.(string)
+		}
+		if riskLevel, ok := d.GetOk("input.0.risk_level"); ok {
+			input.RiskLevel = riskLevel.(string)
+		}
+		if totalScore, ok := d.GetOk("input.0.total_score"); ok {
+			input.TotalScore = totalScore.(int)
+		}
 		rule.Input = input
 	}
 }
@@ -311,6 +320,9 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"network_status":     input.NetworkStatus,
 		"infected":           input.Infected,
 		"is_active":          input.IsActive,
+		"eid_last_seen":      input.EidLastSeen,
+		"risk_level":         input.RiskLevel,
+		"total_score":        input.TotalScore,
 	}
 
 	return []map[string]interface{}{m}

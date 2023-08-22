@@ -1,10 +1,8 @@
-# Create a CSR and generate a CA certificate
 resource "tls_private_key" "example" {
   algorithm = "RSA"
 }
 
 resource "tls_cert_request" "example" {
-  key_algorithm   = tls_private_key.example.algorithm
   private_key_pem = tls_private_key.example.private_key_pem
 
   subject {

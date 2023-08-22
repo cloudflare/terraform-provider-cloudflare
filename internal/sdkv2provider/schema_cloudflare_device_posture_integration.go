@@ -24,7 +24,7 @@ func resourceCloudflareDevicePostureIntegrationSchema() map[string]*schema.Schem
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{ws1, uptycs, crowdstrike, intune, kolide, sentinelone}, false),
-			Description:  fmt.Sprintf("The device posture integration type. %s", renderAvailableDocumentationValuesStringSlice([]string{ws1, uptycs, crowdstrike, intune, kolide, sentinelone})),
+			Description:  fmt.Sprintf("The device posture integration type. %s", renderAvailableDocumentationValuesStringSlice([]string{ws1, uptycs, crowdstrike, intune, kolide, sentinelone, tanium})),
 		},
 		"identifier": {
 			Type:     schema.TypeString,

@@ -1,0 +1,7 @@
+```release-note:new-resource
+cloudflare_zone_cache_reserve
+```
+
+```release-note:new-data-source
+cloudflare_zone_cache_reserve
+```

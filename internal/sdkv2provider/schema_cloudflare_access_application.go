@@ -165,6 +165,49 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						ValidateFunc: validation.StringInSlice([]string{"email", "id"}, false),
 						Description:  "The format of the name identifier sent to the SaaS application.",
 					},
+					"custom_attribute": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "Custom attribute mapped from IDPs.",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"name": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "The name of the attribute as provided to the SaaS app.",
+								},
+								"name_format": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "A globally unique name for an identity or service provider.",
+								},
+								"friendly_name": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "A friendly name for the attribute as provided to the SaaS app.",
+								},
+								"required": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "True if the attribute must be always present.",
+								},
+								"source": {
+									Type:     schema.TypeList,
+									Required: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"name": {
+												Type:        schema.TypeString,
+												Required:    true,
+												Description: "The name of the attribute as provided by the IDP.",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -231,6 +274,14 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Default:     false,
 			Description: "Option to return a 401 status code in service authentication rules on failed requests.",
+		},
+		"custom_pages": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "The custom pages selected for the application.",
 		},
 	}
 }
@@ -312,15 +363,57 @@ func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.Acces
 	return []interface{}{m}
 }
 
+func convertSAMLAttributeSchemaToStruct(data map[string]interface{}) cloudflare.SAMLAttributeConfig {
+	var cfg cloudflare.SAMLAttributeConfig
+	cfg.Name, _ = data["name"].(string)
+	cfg.NameFormat, _ = data["name_format"].(string)
+	cfg.Required, _ = data["required"].(bool)
+	cfg.FriendlyName, _ = data["friendly_name"].(string)
+	sourcesSlice, _ := data["source"].([]interface{})
+	if len(sourcesSlice) != 0 {
+		sourceMap, ok := sourcesSlice[0].(map[string]interface{})
+		if ok {
+			cfg.Source.Name, _ = sourceMap["name"].(string)
+		}
+	}
+
+	return cfg
+}
+
 func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplication {
 	SaasConfig := cloudflare.SaasApplication{}
 	if _, ok := d.GetOk("saas_app"); ok {
 		SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
 		SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
 		SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
-	}
 
+		customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
+		for _, customAttributes := range customAttributes {
+			attributeAsMap := customAttributes.(map[string]interface{})
+			SaasConfig.CustomAttributes = append(SaasConfig.CustomAttributes, convertSAMLAttributeSchemaToStruct(attributeAsMap))
+		}
+	}
 	return &SaasConfig
+}
+
+func convertSAMLAttributeStructToSchema(attr cloudflare.SAMLAttributeConfig) map[string]interface{} {
+	m := make(map[string]interface{})
+	if attr.Name != "" {
+		m["name"] = attr.Name
+	}
+	if attr.NameFormat != "" {
+		m["name_format"] = attr.NameFormat
+	}
+	if attr.Required {
+		m["required"] = true
+	}
+	if attr.FriendlyName != "" {
+		m["friendly_name"] = attr.FriendlyName
+	}
+	if attr.Source.Name != "" {
+		m["source"] = []interface{}{map[string]interface{}{"name": attr.Source.Name}}
+	}
+	return m
 }
 
 func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasApplication) []interface{} {
@@ -332,6 +425,14 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 		"sp_entity_id":         app.SPEntityID,
 		"consumer_service_url": app.ConsumerServiceUrl,
 		"name_id_format":       app.NameIDFormat,
+	}
+
+	var customAttributes []interface{}
+	for _, attr := range app.CustomAttributes {
+		customAttributes = append(customAttributes, convertSAMLAttributeStructToSchema(attr))
+	}
+	if len(customAttributes) != 0 {
+		m["custom_attribute"] = customAttributes
 	}
 
 	return []interface{}{m}

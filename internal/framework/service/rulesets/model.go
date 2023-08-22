@@ -3,15 +3,14 @@ package rulesets
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
 type RulesetResourceModel struct {
-	AccountID                types.String  `tfsdk:"account_id"`
-	Description              types.String  `tfsdk:"description"`
-	ID                       types.String  `tfsdk:"id"`
-	Kind                     types.String  `tfsdk:"kind"`
-	Name                     types.String  `tfsdk:"name"`
-	Phase                    types.String  `tfsdk:"phase"`
-	Rules                    []*RulesModel `tfsdk:"rules"`
-	ShareableEntitlementName types.String  `tfsdk:"shareable_entitlement_name"`
-	ZoneID                   types.String  `tfsdk:"zone_id"`
+	AccountID   types.String  `tfsdk:"account_id"`
+	Description types.String  `tfsdk:"description"`
+	ID          types.String  `tfsdk:"id"`
+	Kind        types.String  `tfsdk:"kind"`
+	Name        types.String  `tfsdk:"name"`
+	Phase       types.String  `tfsdk:"phase"`
+	Rules       []*RulesModel `tfsdk:"rules"`
+	ZoneID      types.String  `tfsdk:"zone_id"`
 }
 
 type RulesModel struct {

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_waiting_room: Add `queueing_status_code` to the Waiting Room resource
+```

@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
+func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
@@ -22,7 +22,7 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
+	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
@@ -37,6 +37,18 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+				),
+			},
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
 				),
 			},
 		},
@@ -54,60 +66,18 @@ func TestAccCloudflareAccessServiceTokenCreate(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// Service Tokens endpoint does not yet support the API tokens and it
-	// results in misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
-	resourceName := strings.Split(name, ".")[1]
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
-		},
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", resourceName),
-				),
-			},
-			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.AccountIdentifier(accountID)),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
-				),
-			},
-		},
-	})
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID)),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
 				),
 			},
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName+"-updated", cloudflare.ZoneIdentifier(zoneID)),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", resourceName+"-updated"),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
 				),
 			},
 		},
@@ -128,7 +98,7 @@ func TestAccCloudflareAccessServiceTokenUpdate(t *testing.T) {
 // 	rnd := generateRandomResourceName()
 // 	var initialState terraform.ResourceState
 
-// 	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
+// 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 // 	resourceName := strings.Split(name, ".")[1]
 // 	expirationTime := 365
 
@@ -195,7 +165,7 @@ func testAccCheckCloudflareAccessServiceTokenRenewed(n string, oldResourceState 
 	}
 }
 
-func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
+func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// Service Tokens endpoint does not yet support the API tokens and it
 	// results in misleading state error messages.
@@ -204,7 +174,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_service_token.tf-acc-%s", rnd)
+	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
@@ -223,6 +193,7 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
 				),
 			},
 		},
@@ -241,6 +212,83 @@ func TestAccCloudflareAccessServiceTokenDelete(t *testing.T) {
 					resource.TestCheckResourceAttrSet(name, "client_id"),
 					resource.TestCheckResourceAttrSet(name, "client_secret"),
 					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// Service Tokens endpoint does not yet support the API tokens and it
+	// results in misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
+	resourceName := strings.Split(name, ".")[1]
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName, resourceName, cloudflare.AccountIdentifier(accountID), "forever"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "forever"),
+				),
+			},
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName, resourceName, cloudflare.AccountIdentifier(accountID), "8760h"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
+				),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID), "forever"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "forever"),
+				),
+			},
+			{
+				Config: testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID), "8760h"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttrSet(name, "client_id"),
+					resource.TestCheckResourceAttrSet(name, "client_secret"),
+					resource.TestCheckResourceAttrSet(name, "expires_at"),
+					resource.TestCheckResourceAttr(name, "duration", "8760h"),
 				),
 			},
 		},
@@ -254,6 +302,16 @@ resource "cloudflare_access_service_token" "%[1]s" {
   name     = "%[2]s"
   min_days_for_renewal = "0"
 }`, resourceName, tokenName, identifier.Type, identifier.Identifier)
+}
+
+func testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer, duration string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_service_token" "%[1]s" {
+  %[3]s_id = "%[4]s"
+  name     = "%[2]s"
+  min_days_for_renewal = "0"
+  duration = "%[5]s"
+}`, resourceName, tokenName, identifier.Type, identifier.Identifier, duration)
 }
 
 func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {

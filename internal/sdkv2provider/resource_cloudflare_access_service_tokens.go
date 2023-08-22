@@ -79,6 +79,7 @@ func resourceCloudflareAccessServiceTokenRead(ctx context.Context, d *schema.Res
 			d.Set("name", token.Name)
 			d.Set("client_id", token.ClientID)
 			d.Set("expires_at", token.ExpiresAt.Format(time.RFC3339))
+			d.Set("duration", token.Duration)
 		}
 	}
 
@@ -93,7 +94,12 @@ func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.R
 		return diag.FromErr(err)
 	}
 
-	serviceToken, err := client.CreateAccessServiceToken(ctx, identifier, cloudflare.CreateAccessServiceTokenParams{Name: d.Get("name").(string)})
+	params := cloudflare.CreateAccessServiceTokenParams{Name: d.Get("name").(string)}
+	if value, ok := d.GetOk("duration"); ok {
+		params.Duration = value.(string)
+	}
+
+	serviceToken, err := client.CreateAccessServiceToken(ctx, identifier, params)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating access service token: %w", err))
@@ -104,6 +110,7 @@ func resourceCloudflareAccessServiceTokenCreate(ctx context.Context, d *schema.R
 	d.Set("client_id", serviceToken.ClientID)
 	d.Set("client_secret", serviceToken.ClientSecret)
 	d.Set("expires_at", serviceToken.ExpiresAt.Format(time.RFC3339))
+	d.Set("duration", serviceToken.Duration)
 
 	resourceCloudflareAccessServiceTokenRead(ctx, d, meta)
 
@@ -118,10 +125,16 @@ func resourceCloudflareAccessServiceTokenUpdate(ctx context.Context, d *schema.R
 		return diag.FromErr(err)
 	}
 
-	serviceToken, err := client.UpdateAccessServiceToken(ctx, identifier, cloudflare.UpdateAccessServiceTokenParams{
+	params := cloudflare.UpdateAccessServiceTokenParams{
 		UUID: d.Id(),
 		Name: d.Get("name").(string),
-	})
+	}
+
+	if d.HasChange("duration") {
+		params.Duration = d.Get("duration").(string)
+	}
+
+	serviceToken, err := client.UpdateAccessServiceToken(ctx, identifier, params)
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating access service token: %w", err))
