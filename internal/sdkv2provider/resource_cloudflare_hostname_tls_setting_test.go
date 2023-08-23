@@ -56,13 +56,14 @@ func testSweepCloudflareHostnameTLSSettings(r string) error {
 	return nil
 }
 
-func TestAccCloudflareHostnameTLSSetting(t *testing.T) {
+func TestAccCloudflareHostnameTLSSetting_Basic(t *testing.T) {
 	t.Parallel()
 	var htlss cloudflare.HostnameTLSSetting
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_hostname_tls_setting." + rnd
 
-	resourceName := "cloudflare_hostname_tls_setting." + "custom_setting"
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -70,7 +71,7 @@ func TestAccCloudflareHostnameTLSSetting(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHostnameTLSSettingConfig(zoneID, "*.abc."+hostname, "min_tls_version", "1.2"),
+				Config: testAccCheckCloudflareHostnameTLSSettingConfig(zoneID, fmt.Sprintf("%s.%s", rnd, hostname), "min_tls_version", "1.2", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHostnameTLSSettingExists(resourceName, &htlss),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
@@ -81,15 +82,15 @@ func TestAccCloudflareHostnameTLSSetting(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareHostnameTLSSettingConfig(zoneID, hostname, setting, value string) string {
+func testAccCheckCloudflareHostnameTLSSettingConfig(zoneID, hostname, setting, value, rnd string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_hostname_tls_setting" "custom_setting" {
+resource "cloudflare_hostname_tls_setting" "%[5]s" {
 	zone_id	= "%[1]s"
 	hostname = "%[2]s"
 	setting = "%[3]s"
 	value = "%[4]s"
 }
-`, zoneID, hostname, setting, value)
+`, zoneID, hostname, setting, value, rnd)
 }
 
 func testAccCheckCloudflareHostnameTLSSettingExists(name string, htlss *cloudflare.HostnameTLSSetting) resource.TestCheckFunc {

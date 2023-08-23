@@ -53,13 +53,14 @@ func testSweepCloudflareHostnameTLSSettingsCiphers(r string) error {
 	return nil
 }
 
-func TestAccCloudflareHostnameTLSSettingCiphers(t *testing.T) {
+func TestAccCloudflareHostnameTLSSettingCiphers_Basic(t *testing.T) {
 	t.Parallel()
 	var htlss cloudflare.HostnameTLSSettingCiphers
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
+	rnd := generateRandomResourceName()
 
-	resourceName := "cloudflare_hostname_tls_setting_ciphers." + "custom_setting"
+	resourceName := "cloudflare_hostname_tls_setting_ciphers." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -67,7 +68,7 @@ func TestAccCloudflareHostnameTLSSettingCiphers(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareHostnameTLSSettingCiphersConfig(zoneID, "*.abc."+hostname, []string{"ECDHE-RSA-AES128-GCM-SHA256"}),
+				Config: testAccCheckCloudflareHostnameTLSSettingCiphersConfig(zoneID, fmt.Sprintf("%s.%s", rnd, hostname), []string{"ECDHE-RSA-AES128-GCM-SHA256"}, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHostnameTLSSettingCiphersExists(resourceName, &htlss),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
@@ -78,14 +79,14 @@ func TestAccCloudflareHostnameTLSSettingCiphers(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareHostnameTLSSettingCiphersConfig(zoneID, hostname string, value []string) string {
+func testAccCheckCloudflareHostnameTLSSettingCiphersConfig(zoneID, hostname string, value []string, rnd string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_hostname_tls_setting_ciphers" "custom_setting" {
+	resource "cloudflare_hostname_tls_setting_ciphers" "%[4]s" {
 		zone_id	= "%[1]s"
 		hostname = "%[2]s"
 		value = %[3]q
 	}
-	`, zoneID, hostname, value)
+	`, zoneID, hostname, value, rnd)
 }
 
 func testAccCheckCloudflareHostnameTLSSettingCiphersExists(name string, htlss *cloudflare.HostnameTLSSettingCiphers) resource.TestCheckFunc {

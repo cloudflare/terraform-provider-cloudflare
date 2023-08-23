@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -33,19 +34,21 @@ func resourceCloudflareHostnameTLSSetting() *schema.Resource {
 func resourceCloudflareHostnameTLSSettingUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
-	zoneIDrc := cloudflare.ZoneIdentifier(zoneID)
+	setting := d.Get("setting").(string)
+	hostname := d.Get("hostname").(string)
 
 	updateParams := cloudflare.UpdateHostnameTLSSettingParams{
-		Setting:  d.Get("setting").(string),
-		Hostname: d.Get("hostname").(string),
+		Setting:  setting,
+		Hostname: hostname,
 		Value:    d.Get("value").(string),
 	}
 
-	_, err := client.UpdateHostnameTLSSetting(ctx, zoneIDrc, updateParams)
+	_, err := client.UpdateHostnameTLSSetting(ctx, cloudflare.ZoneIdentifier(zoneID), updateParams)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to update hostname tls setting"))
 	}
-	d.SetId("-")
+
+	d.SetId(stringChecksum(zoneID + "/" + hostname + "/" + setting))
 	return resourceCloudflareHostnameTLSSettingRead(ctx, d, meta)
 }
 
@@ -54,9 +57,10 @@ func resourceCloudflareHostnameTLSSettingRead(ctx context.Context, d *schema.Res
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 	zoneIDrc := cloudflare.ZoneIdentifier(zoneID)
 	hostname := d.Get("hostname").(string)
+	setting := d.Get("setting").(string)
 
 	listParams := cloudflare.ListHostnameTLSSettingsParams{
-		Setting:  d.Get("setting").(string),
+		Setting:  setting,
 		Hostname: []string{hostname},
 	}
 
@@ -69,10 +73,12 @@ func resourceCloudflareHostnameTLSSettingRead(ctx context.Context, d *schema.Res
 		}
 		return diag.FromErr(fmt.Errorf("error finding hostname tls setting %q: %w", hostname, err))
 	}
+
 	if resultInfo.Count == 0 {
 		diag.FromErr(fmt.Errorf("hostname tls setting %q not found", hostname))
 	}
-	d.SetId("-")
+
+	d.SetId(stringChecksum(zoneID + "/" + hostname + "/" + setting))
 	d.Set("hostname", record[0].Hostname)
 	d.Set("value", record[0].Value)
 	d.Set("created_at", record[0].CreatedAt.Format(time.RFC3339Nano))
@@ -100,7 +106,14 @@ func resourceCloudflareHostnameTLSSettingDelete(ctx context.Context, d *schema.R
 }
 
 func resourceCloudflareHostnameTLSSettingImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	d.SetId("-")
+	attributes := strings.SplitN(d.Id(), "/", 3)
+
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/hostname/setting\"", d.Id())
+	}
+
+	d.SetId(stringChecksum(attributes[0] + "/" + attributes[1] + "/" + attributes[2]))
+
 	resourceCloudflareHostnameTLSSettingRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }

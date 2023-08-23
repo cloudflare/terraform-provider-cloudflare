@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -33,20 +34,21 @@ func resourceCloudflareHostnameTLSSettingCiphers() *schema.Resource {
 func resourceCloudflareHostnameTLSSettingCiphersUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
-	zoneIDrc := cloudflare.ZoneIdentifier(zoneID)
+	hostname := d.Get("hostname").(string)
 
 	updateParams := cloudflare.UpdateHostnameTLSSettingCiphersParams{
-		Hostname: d.Get("hostname").(string),
+		Hostname: hostname,
 	}
 	if value, ok := d.GetOk("value"); ok {
 		updateParams.Value = expandInterfaceToStringList(value.([]interface{}))
 	}
 
-	_, err := client.UpdateHostnameTLSSettingCiphers(ctx, zoneIDrc, updateParams)
+	_, err := client.UpdateHostnameTLSSettingCiphers(ctx, cloudflare.ZoneIdentifier(zoneID), updateParams)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "failed to update hostname tls setting"))
 	}
-	d.SetId("-")
+
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", zoneID, hostname)))
 	return resourceCloudflareHostnameTLSSettingCiphersRead(ctx, d, meta)
 }
 
@@ -73,7 +75,8 @@ func resourceCloudflareHostnameTLSSettingCiphersRead(ctx context.Context, d *sch
 	if resultInfo.Count == 0 {
 		diag.FromErr(fmt.Errorf("hostname tls setting %q not found", hostname))
 	}
-	d.SetId("-")
+
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", zoneID, hostname)))
 	d.Set("hostname", record[0].Hostname)
 	d.Set("value", record[0].Value)
 	d.Set("created_at", record[0].CreatedAt.Format(time.RFC3339Nano))
@@ -85,14 +88,13 @@ func resourceCloudflareHostnameTLSSettingCiphersRead(ctx context.Context, d *sch
 func resourceCloudflareHostnameTLSSettingCiphersDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
-	zoneIDrc := cloudflare.ZoneIdentifier(zoneID)
 	hostname := d.Get("hostname").(string)
 
 	deleteParams := cloudflare.DeleteHostnameTLSSettingCiphersParams{
 		Hostname: hostname,
 	}
 
-	_, err := client.DeleteHostnameTLSSettingCiphers(ctx, zoneIDrc, deleteParams)
+	_, err := client.DeleteHostnameTLSSettingCiphers(ctx, cloudflare.ZoneIdentifier(zoneID), deleteParams)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting hostname tls setting hostname %q in zone %q: %w", hostname, zoneID, err))
 	}
@@ -100,7 +102,13 @@ func resourceCloudflareHostnameTLSSettingCiphersDelete(ctx context.Context, d *s
 }
 
 func resourceCloudflareHostnameTLSSettingCiphersImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	d.SetId("-")
+	attributes := strings.SplitN(d.Id(), "/", 2)
+
+	if len(attributes) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/hostname\"", d.Id())
+	}
+
+	d.SetId(stringChecksum(attributes[0] + "/" + attributes[1]))
 	resourceCloudflareHostnameTLSSettingCiphersRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
 }
