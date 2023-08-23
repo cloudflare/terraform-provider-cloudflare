@@ -102,6 +102,7 @@ Optional:
 - `claims` (List of String)
 - `client_id` (String)
 - `client_secret` (String)
+- `conditional_access_enabled` (Boolean)
 - `directory_id` (String)
 - `email_attribute_name` (String)
 - `idp_public_cert` (String)

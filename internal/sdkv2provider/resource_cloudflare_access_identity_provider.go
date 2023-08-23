@@ -225,6 +225,7 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 		IDPConfig.SupportGroups = d.Get("config.0.support_groups").(bool)
 		IDPConfig.TokenURL = d.Get("config.0.token_url").(string)
 		IDPConfig.PKCEEnabled = cloudflare.BoolPtr(d.Get("config.0.pkce_enabled").(bool))
+		IDPConfig.ConditionalAccessEnabled = d.Get("config.0.conditional_access_enabled").(bool)
 	}
 
 	return IDPConfig, nil
@@ -255,29 +256,30 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 	}
 
 	m := map[string]interface{}{
-		"api_token":            options.APIToken,
-		"apps_domain":          options.AppsDomain,
-		"attributes":           attributes,
-		"auth_url":             options.AuthURL,
-		"centrify_account":     options.CentrifyAccount,
-		"centrify_app_id":      options.CentrifyAppID,
-		"certs_url":            options.CertsURL,
-		"client_id":            options.ClientID,
-		"client_secret":        options.ClientSecret,
-		"claims":               options.Claims,
-		"scopes":               options.Scopes,
-		"directory_id":         options.DirectoryID,
-		"email_attribute_name": options.EmailAttributeName,
-		"idp_public_cert":      options.IdpPublicCert,
-		"issuer_url":           options.IssuerURL,
-		"okta_account":         options.OktaAccount,
-		"onelogin_account":     options.OneloginAccount,
-		"redirect_url":         options.RedirectURL,
-		"sign_request":         options.SignRequest,
-		"sso_target_url":       options.SsoTargetURL,
-		"support_groups":       options.SupportGroups,
-		"token_url":            options.TokenURL,
-		"pkce_enabled":         options.PKCEEnabled,
+		"api_token":                  options.APIToken,
+		"apps_domain":                options.AppsDomain,
+		"attributes":                 attributes,
+		"auth_url":                   options.AuthURL,
+		"centrify_account":           options.CentrifyAccount,
+		"centrify_app_id":            options.CentrifyAppID,
+		"certs_url":                  options.CertsURL,
+		"client_id":                  options.ClientID,
+		"client_secret":              options.ClientSecret,
+		"claims":                     options.Claims,
+		"scopes":                     options.Scopes,
+		"directory_id":               options.DirectoryID,
+		"email_attribute_name":       options.EmailAttributeName,
+		"idp_public_cert":            options.IdpPublicCert,
+		"issuer_url":                 options.IssuerURL,
+		"okta_account":               options.OktaAccount,
+		"onelogin_account":           options.OneloginAccount,
+		"redirect_url":               options.RedirectURL,
+		"sign_request":               options.SignRequest,
+		"sso_target_url":             options.SsoTargetURL,
+		"support_groups":             options.SupportGroups,
+		"token_url":                  options.TokenURL,
+		"pkce_enabled":               options.PKCEEnabled,
+		"conditional_access_enabled": options.ConditionalAccessEnabled,
 	}
 
 	return []interface{}{m}

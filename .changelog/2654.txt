@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_access_group: add support for AccessGroupAzureAuthContext
+```
+
+```release-note:enhancement
+resource/cloudflare_access_identity_provider: add conditional_access_enabled attr
+```
