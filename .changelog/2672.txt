@@ -1,3 +1,3 @@
 ```release-note:new-resource
-introduce bot management resource
+cloudflare_bot_management
 ```
