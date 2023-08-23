@@ -33,9 +33,9 @@ resource "cloudflare_hostname_tls_setting_ciphers" "example" {
 
 ### Read-Only
 
-- `created_at` (String) **Modifying this attribute will force creation of a new resource.**
+- `created_at` (String)
 - `id` (String) The ID of this resource.
-- `updated_at` (String) **Modifying this attribute will force creation of a new resource.**
+- `updated_at` (String)
 
 ## Import
 

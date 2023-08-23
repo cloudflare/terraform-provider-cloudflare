@@ -34,12 +34,10 @@ func resourceCloudflareHostnameTLSSettingCiphersSchema() map[string]*schema.Sche
 		"created_at": {
 			Type:     schema.TypeString,
 			Computed: true,
-			ForceNew: true,
 		},
 		"updated_at": {
 			Type:     schema.TypeString,
 			Computed: true,
-			ForceNew: true,
 		},
 	}
 }
