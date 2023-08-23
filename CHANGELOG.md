@@ -2,15 +2,21 @@
 
 FEATURES:
 
+* **New Data Source:** `cloudflare_user` ([#2691](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2691))
+* **New Resource:** `cloudflare_hostname_tls_setting` ([#2700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2700))
+* **New Resource:** `cloudflare_hostname_tls_setting_ciphers` ([#2700](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2700))
 * **New Resource:** `cloudflare_zone_hold` ([#2671](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2671))
 * **New Resource:** `introduce bot management resource` ([#2672](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2672))
 
 ENHANCEMENTS:
 
 * resource/cloudflare_access_application: adds support for custom saml attributes in saas access apps ([#2676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2676))
+* resource/cloudflare_access_group: add support for AccessGroupAzureAuthContext ([#2654](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2654))
+* resource/cloudflare_access_identity_provider: add conditional_access_enabled attr ([#2654](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2654))
 * resource/cloudflare_access_service_token: add support for managing `Duration` ([#2647](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2647))
 * resource/cloudflare_device_posture_integration: update support for managing `tanium_s2s` third party posture provider. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
 * resource/cloudflare_device_posture_rule: update support for new fields for tanium_s2s posture rule. ([#2674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2674))
+* resource/cloudflare_notification_policy: Add possibility to configure Pages Alerts. ([#2694](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2694))
 * resource/cloudflare_waiting_room: Add `queueing_status_code` to the Waiting Room resource ([#2666](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2666))
 * resource/cloudflare_worker_domain: add support for `Import` operations ([#2679](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2679))
 

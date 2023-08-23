@@ -91,7 +91,7 @@ generate-changelog:
 	@sh -c "'$(CURDIR)/scripts/generate-changelog.sh'"
 
 golangci-lint:
-	@golangci-lint run ./$(PKG_NAME)/... --config .golintci.yml
+	@golangci-lint run ./internal/... --config .golintci.yml
 
 tools:
 	@echo "==> Installing development tooling..."

@@ -86,6 +86,7 @@ resource "cloudflare_access_group" "example" {
 Optional:
 
 - `any_valid_service_token` (Boolean)
+- `auth_context` (Block List) (see [below for nested schema](#nestedblock--include--auth_context))
 - `auth_method` (String)
 - `azure` (Block List) (see [below for nested schema](#nestedblock--include--azure))
 - `certificate` (Boolean)
@@ -105,6 +106,16 @@ Optional:
 - `okta` (Block List) (see [below for nested schema](#nestedblock--include--okta))
 - `saml` (Block List) (see [below for nested schema](#nestedblock--include--saml))
 - `service_token` (List of String)
+
+<a id="nestedblock--include--auth_context"></a>
+### Nested Schema for `include.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of the Authentication Context.
+- `id` (String) The ID of the Authentication Context.
+- `identity_provider_id` (String) The ID of the Azure Identity provider.
+
 
 <a id="nestedblock--include--azure"></a>
 ### Nested Schema for `include.azure`
@@ -169,6 +180,7 @@ Optional:
 Optional:
 
 - `any_valid_service_token` (Boolean)
+- `auth_context` (Block List) (see [below for nested schema](#nestedblock--exclude--auth_context))
 - `auth_method` (String)
 - `azure` (Block List) (see [below for nested schema](#nestedblock--exclude--azure))
 - `certificate` (Boolean)
@@ -188,6 +200,16 @@ Optional:
 - `okta` (Block List) (see [below for nested schema](#nestedblock--exclude--okta))
 - `saml` (Block List) (see [below for nested schema](#nestedblock--exclude--saml))
 - `service_token` (List of String)
+
+<a id="nestedblock--exclude--auth_context"></a>
+### Nested Schema for `exclude.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of the Authentication Context.
+- `id` (String) The ID of the Authentication Context.
+- `identity_provider_id` (String) The ID of the Azure Identity provider.
+
 
 <a id="nestedblock--exclude--azure"></a>
 ### Nested Schema for `exclude.azure`
@@ -252,6 +274,7 @@ Optional:
 Optional:
 
 - `any_valid_service_token` (Boolean)
+- `auth_context` (Block List) (see [below for nested schema](#nestedblock--require--auth_context))
 - `auth_method` (String)
 - `azure` (Block List) (see [below for nested schema](#nestedblock--require--azure))
 - `certificate` (Boolean)
@@ -271,6 +294,16 @@ Optional:
 - `okta` (Block List) (see [below for nested schema](#nestedblock--require--okta))
 - `saml` (Block List) (see [below for nested schema](#nestedblock--require--saml))
 - `service_token` (List of String)
+
+<a id="nestedblock--require--auth_context"></a>
+### Nested Schema for `require.auth_context`
+
+Required:
+
+- `ac_id` (String) The ACID of the Authentication Context.
+- `id` (String) The ID of the Authentication Context.
+- `identity_provider_id` (String) The ID of the Azure Identity provider.
+
 
 <a id="nestedblock--require--azure"></a>
 ### Nested Schema for `require.azure`
