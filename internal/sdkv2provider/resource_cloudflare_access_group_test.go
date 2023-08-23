@@ -263,7 +263,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
+func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 	rnd := generateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	githubOrg := "Terraform-Cloudflare-Provider-Test-Org"
@@ -292,7 +292,7 @@ func TestAccCloudflareAccessGroupWithIDP(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessGroupWithIDPAuthContext(t *testing.T) {
+func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 	rnd := generateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	ctxID := generateRandomResourceName()
@@ -530,6 +530,7 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
   config {
     client_id = "test"
     client_secret = "secret"
+	directory_id = "foo"
   }
 }
 
@@ -542,7 +543,7 @@ resource "cloudflare_access_group" "%[2]s" {
   }
 
   require {
-    auth_context { 
+    auth_context {
       id = "%[3]s"
       ac_id = "%[4]s"
       identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
