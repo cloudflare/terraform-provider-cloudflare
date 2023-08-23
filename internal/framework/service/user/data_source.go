@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"fmt"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -47,14 +48,18 @@ func (r *CloudflareUserDataSource) Read(ctx context.Context, req datasource.Read
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	user, err := r.client.UserDetails(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("unable to retrieve user details", err.Error())
 		return
 	}
-	data.ID = types.StringValue(user.ID)
-	data.Email = types.StringValue(user.Email)
-	data.Username = types.StringValue(user.Username)
+
+	data = CloudflareUserDataSourceModel{
+		ID:       types.StringValue(user.ID),
+		Email:    types.StringValue(user.Email),
+		Username: types.StringValue(user.Username),
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
