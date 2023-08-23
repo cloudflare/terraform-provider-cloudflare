@@ -10,6 +10,8 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* datasource/api_token_permission_groups: Add R2 scopes ([#2687](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2687))
+* datasource/api_token_permission_groups: Convert to plugin framework ([#2687](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2687))
 * resource/cloudflare_access_application: adds support for custom saml attributes in saas access apps ([#2676](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2676))
 * resource/cloudflare_access_group: add support for AccessGroupAzureAuthContext ([#2654](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2654))
 * resource/cloudflare_access_identity_provider: add conditional_access_enabled attr ([#2654](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2654))
