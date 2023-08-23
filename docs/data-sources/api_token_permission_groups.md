@@ -38,8 +38,9 @@ output "user_memberships_read_id" {
 ### Read-Only
 
 - `account` (Map of String) Map of permissions for account level resources.
-- `id` (String) The ID of this resource.
+- `id` (String) Checksum of permissions.
 - `permissions` (Map of String, Deprecated) Map of all permissions available. Should not be used as some permissions will overlap resource scope. Instead, use resource level specific attributes.
+- `r2` (Map of String) Map of permissions for r2 level resources.
 - `user` (Map of String) Map of permissions for user level resources.
 - `zone` (Map of String) Map of permissions for zone level resources.
 

@@ -11,6 +11,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
@@ -317,6 +318,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 
 func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		api_token_permissions_groups.NewDataSource,
 		user.NewDataSource,
 	}
 }
