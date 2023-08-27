@@ -86,6 +86,20 @@ func resourceCloudflareLoadBalancerMonitorSchema() map[string]*schema.Schema {
 			Description: "Do not validate the certificate when monitor use HTTPS.  Only valid if `type` is \"http\" or \"https\"",
 		},
 
+		"consecutive_down": {
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     0,
+			Description: "To be marked unhealthy the monitored origin must fail this healthcheck N consecutive times.",
+		},
+
+		"consecutive_up": {
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     0,
+			Description: "To be marked healthy the monitored origin must pass this healthcheck N consecutive times.",
+		},
+
 		"expected_body": {
 			Type:        schema.TypeString,
 			Optional:    true,
