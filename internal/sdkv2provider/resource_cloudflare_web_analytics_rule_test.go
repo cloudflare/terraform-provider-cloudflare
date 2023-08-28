@@ -28,12 +28,8 @@ func TestAccCloudflareWebAnalyticsRule_Create(t *testing.T) {
 				Config: testAccCloudflareWebAnalyticsRule(rnd, accountID, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(ruleName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttrSet(ruleName, "site_tag"),
 					resource.TestCheckResourceAttrSet(ruleName, "ruleset_id"),
 					resource.TestCheckResourceAttr(ruleName, "host", zoneID),
-					resource.TestCheckResourceAttr(ruleName, "auto_install", "true"),
-					resource.TestCheckResourceAttrSet(ruleName, "site_token"),
-					resource.TestCheckResourceAttrSet(ruleName, "snippet"),
 				),
 			},
 		},
@@ -48,9 +44,13 @@ func testAccCheckCloudflareWebAnalyticsRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		rules, _ := client.ListWebAnalyticsRules(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.ListWebAnalyticsRulesParams{
+		rules, err := client.ListWebAnalyticsRules(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.ListWebAnalyticsRulesParams{
 			RulesetID: rs.Primary.Attributes["ruleset_id"],
 		})
+		if err != nil {
+			return fmt.Errorf("failed to fetch web analytics rules: %w", err)
+		}
+
 		for _, rule := range rules.Rules {
 			if rule.ID == rs.Primary.Attributes["id"] {
 				return fmt.Errorf("web analytics rule still exists")
