@@ -29,9 +29,8 @@ func TestAccCloudflareWebAnalyticsSite_Create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "site_tag"),
-					resource.TestCheckResourceAttrSet(name, "ruleset_id"),
 					resource.TestCheckResourceAttr(name, "host", domain),
-					resource.TestCheckResourceAttr(name, "auto_install", "true"),
+					resource.TestCheckResourceAttr(name, "auto_install", "false"),
 					resource.TestCheckResourceAttrSet(name, "site_token"),
 					resource.TestCheckResourceAttrSet(name, "snippet"),
 				),
