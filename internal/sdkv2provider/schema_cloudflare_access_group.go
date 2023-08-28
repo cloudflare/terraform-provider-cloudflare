@@ -71,7 +71,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 		},
 		"ip_list": {
 			Type:        schema.TypeList,
-			Description: "The ID of a previously created IP list.",
+			Description: "The ID of an existing IP list to reference.",
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
