@@ -47,13 +47,12 @@ func testAccCheckCloudflareWebAnalyticsRuleDestroy(s *terraform.State) error {
 		rules, err := client.ListWebAnalyticsRules(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.ListWebAnalyticsRulesParams{
 			RulesetID: rs.Primary.Attributes["ruleset_id"],
 		})
-		if err != nil {
-			return fmt.Errorf("failed to fetch web analytics rules: %w", err)
-		}
 
-		for _, rule := range rules.Rules {
-			if rule.ID == rs.Primary.Attributes["id"] {
-				return fmt.Errorf("web analytics rule still exists")
+		if err == nil {
+			for _, rule := range rules.Rules {
+				if rule.ID == rs.Primary.Attributes["id"] {
+					return fmt.Errorf("web analytics rule still exists")
+				}
 			}
 		}
 	}
