@@ -1,0 +1,7 @@
+```release-note:new-resource
+cloudflare_web_analytics_site
+```
+
+```release-note:new-resource
+cloudflare_web_analytics_rule
+```
