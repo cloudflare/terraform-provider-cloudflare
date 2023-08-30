@@ -1,5 +1,14 @@
 ## 4.14.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_web_analytics_rule` ([#2686](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2686))
+* **New Resource:** `cloudflare_web_analytics_site` ([#2686](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2686))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_group: Improve documentation for access_group usage ([#2718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2718))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.36 to 1.18.37 ([#2714](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2714))

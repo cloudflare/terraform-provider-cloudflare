@@ -261,6 +261,8 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_waiting_room_settings":                  resourceCloudflareWaitingRoomSettings(),
 				"cloudflare_waiting_room":                           resourceCloudflareWaitingRoom(),
 				"cloudflare_web3_hostname":                          resourceCloudflareWeb3Hostname(),
+				"cloudflare_web_analytics_rule":                     resourceCloudflareWebAnalyticsRule(),
+				"cloudflare_web_analytics_site":                     resourceCloudflareWebAnalyticsSite(),
 				"cloudflare_worker_cron_trigger":                    resourceCloudflareWorkerCronTrigger(),
 				"cloudflare_worker_domain":                          resourceCloudflareWorkerDomain(),
 				"cloudflare_worker_route":                           resourceCloudflareWorkerRoute(),

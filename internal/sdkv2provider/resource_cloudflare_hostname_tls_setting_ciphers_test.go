@@ -119,6 +119,7 @@ func testAccCheckCloudflareHostnameTLSSettingCiphersExists(name string, htlss *c
 
 func testAccCheckCloudflareHostnameTLSSettingCiphersDestroy(s *terraform.State) error {
 	// sleep in order to allow htlss to enter active state before being deleted
+	// lintignore: R018
 	time.Sleep(time.Second)
 	client := testAccProvider.Meta().(*cloudflare.API)
 	for _, rs := range s.RootModule().Resources {
