@@ -105,8 +105,8 @@ Optional:
 - `github` (Block List) (see [below for nested schema](#nestedblock--include--github))
 - `group` (List of String)
 - `gsuite` (Block List) (see [below for nested schema](#nestedblock--include--gsuite))
-- `ip` (List of String)
-- `ip_list` (List of String)
+- `ip` (List of String) An IPv4 or IPv6 CIDR block.
+- `ip_list` (List of String) The ID of an existing IP list to reference.
 - `login_method` (List of String)
 - `okta` (Block List) (see [below for nested schema](#nestedblock--include--okta))
 - `saml` (Block List) (see [below for nested schema](#nestedblock--include--saml))
@@ -212,8 +212,8 @@ Optional:
 - `github` (Block List) (see [below for nested schema](#nestedblock--exclude--github))
 - `group` (List of String)
 - `gsuite` (Block List) (see [below for nested schema](#nestedblock--exclude--gsuite))
-- `ip` (List of String)
-- `ip_list` (List of String)
+- `ip` (List of String) An IPv4 or IPv6 CIDR block.
+- `ip_list` (List of String) The ID of an existing IP list to reference.
 - `login_method` (List of String)
 - `okta` (Block List) (see [below for nested schema](#nestedblock--exclude--okta))
 - `saml` (Block List) (see [below for nested schema](#nestedblock--exclude--saml))
@@ -306,8 +306,8 @@ Optional:
 - `github` (Block List) (see [below for nested schema](#nestedblock--require--github))
 - `group` (List of String)
 - `gsuite` (Block List) (see [below for nested schema](#nestedblock--require--gsuite))
-- `ip` (List of String)
-- `ip_list` (List of String)
+- `ip` (List of String) An IPv4 or IPv6 CIDR block.
+- `ip_list` (List of String) The ID of an existing IP list to reference.
 - `login_method` (List of String)
 - `okta` (Block List) (see [below for nested schema](#nestedblock--require--okta))
 - `saml` (Block List) (see [below for nested schema](#nestedblock--require--saml))
