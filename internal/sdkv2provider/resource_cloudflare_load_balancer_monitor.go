@@ -43,8 +43,8 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 		Type:             d.Get("type").(string),
 		Interval:         d.Get("interval").(int),
 		Retries:          d.Get("retries").(int),
-		Consecutive_up:   d.Get("consecutive_up").(int),
-		Consecutive_down: d.Get("consecutive_down").(int),
+		ConsecutiveUp:   d.Get("consecutive_up").(int),
+		ConsecutiveDown: d.Get("consecutive_down").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -131,8 +131,8 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 		Type:             d.Get("type").(string),
 		Interval:         d.Get("interval").(int),
 		Retries:          d.Get("retries").(int),
-		Consecutive_up:   d.Get("consecutive_up").(int),
-		Consecutive_down: d.Get("consecutive_down").(int),
+		ConsecutiveUp:   d.Get("consecutive_up").(int),
+		ConsecutiveDown: d.Get("consecutive_down").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -250,8 +250,8 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schem
 
 	d.Set("description", loadBalancerMonitor.Description)
 	d.Set("interval", loadBalancerMonitor.Interval)
-	d.Set("consecutive_up", loadBalancerMonitor.Consecutive_up)
-	d.Set("consecutive_down", loadBalancerMonitor.Consecutive_down)
+	d.Set("consecutive_up", loadBalancerMonitor.ConsecutiveUp)
+	d.Set("consecutive_down", loadBalancerMonitor.ConsecutiveDown)
 	d.Set("method", loadBalancerMonitor.Method)
 	d.Set("port", int(loadBalancerMonitor.Port))
 	d.Set("retries", loadBalancerMonitor.Retries)
