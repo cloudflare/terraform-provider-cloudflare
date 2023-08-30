@@ -314,10 +314,6 @@ func notificationPolicyFilterSchema() *schema.Schema {
 						Type: schema.TypeString,
 					},
 					Optional: true,
-					ValidateFunc: validation.StringInSlice([]string{
-						"ENVIRONMENT_PREVIEW",
-						"ENVIRONMENT_PRODUCTION",
-					}, false),
 					Description: fmt.Sprintf("Environment of pages. %s", renderAvailableDocumentationValuesStringSlice([]string{
 						"ENVIRONMENT_PREVIEW",
 						"ENVIRONMENT_PRODUCTION",
@@ -329,11 +325,6 @@ func notificationPolicyFilterSchema() *schema.Schema {
 						Type: schema.TypeString,
 					},
 					Optional: true,
-					ValidateFunc: validation.StringInSlice([]string{
-						"EVENT_DEPLOYMENT_STARTED",
-						"EVENT_DEPLOYMENT_FAILED",
-						"EVENT_DEPLOYMENT_SUCCESS",
-					}, false),
 					Description: fmt.Sprintf("Pages event to alert. %s", renderAvailableDocumentationValuesStringSlice([]string{
 						"EVENT_DEPLOYMENT_STARTED",
 						"EVENT_DEPLOYMENT_FAILED",
