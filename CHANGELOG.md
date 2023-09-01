@@ -12,6 +12,7 @@ ENHANCEMENTS:
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.36 to 1.18.37 ([#2714](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2714))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.37 to 1.18.38 ([#2731](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2731))
 * provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.35 to 1.13.36 ([#2732](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2732))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.75.0 to 0.76.0 ([#2726](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2726))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework-validators from 0.11.0 to 0.12.0 ([#2727](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2727))
