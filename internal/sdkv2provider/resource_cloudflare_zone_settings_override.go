@@ -34,6 +34,7 @@ var fetchAsSingleSetting = []string{
 	"image_resizing",
 	"early_hints",
 	"origin_max_http_version",
+	"fonts",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
