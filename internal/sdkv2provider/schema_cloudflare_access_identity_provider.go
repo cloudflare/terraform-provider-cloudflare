@@ -38,6 +38,7 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 		"config": {
 			Type:        schema.TypeList,
 			Optional:    true,
+			Computed:    true,
 			Description: "Provider configuration from the [developer documentation](https://developers.cloudflare.com/access/configuring-identity-providers/).",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -136,7 +137,6 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 					},
 					"redirect_url": {
 						Type:     schema.TypeString,
-						Optional: true,
 						Computed: true,
 					},
 					"sign_request": {
@@ -169,6 +169,7 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 		"scim_config": {
 			Type:        schema.TypeList,
 			Optional:    true,
+			Computed:    true,
 			Description: "Configuration for SCIM settings for a given IDP",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{

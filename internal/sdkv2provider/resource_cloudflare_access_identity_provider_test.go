@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -73,6 +74,12 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "onetimepin"),
+					resource.TestCheckResourceAttrWith(resourceName, "config.0.redirect_url", func(value string) error {
+						if !strings.HasSuffix(value, ".cloudflareaccess.com/cdn-cgi/access/callback") {
+							return fmt.Errorf("expected redirect_url to be a Cloudflare Access URL, got %s", value)
+						}
+						return nil
+					}),
 				),
 			},
 		},
@@ -90,6 +97,12 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "onetimepin"),
+					resource.TestCheckResourceAttrWith(resourceName, "config.0.redirect_url", func(value string) error {
+						if !strings.HasSuffix(value, ".cloudflareaccess.com/cdn-cgi/access/callback") {
+							return fmt.Errorf("expected redirect_url to be a Cloudflare Access URL, got %s", value)
+						}
+						return nil
+					}),
 				),
 			},
 		},
@@ -222,6 +235,42 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_access_identity_provider." + rnd
+
+	checkFn := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+		resource.TestCheckResourceAttr(resourceName, "name", rnd),
+		resource.TestCheckResourceAttr(resourceName, "type", "github"),
+		resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
+		resource.TestCheckResourceAttrSet(resourceName, "config.0.client_secret"),
+	)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
+				Check:  checkFn,
+			},
+			{
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				Check:               checkFn,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[1]s" {
@@ -283,7 +332,6 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 		client_id      = "test"
 		client_secret  = "test"
 		directory_id   = "directory"
-		redirect_url   = "https://terraform-cfapi.cloudflareaccess.com/cdn-cgi/access/callback"
 		support_groups = true
 		conditional_access_enabled = true
 	}

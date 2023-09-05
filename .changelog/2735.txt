@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_identity_provider: Fix access IDPs not importing config obj 
+```
