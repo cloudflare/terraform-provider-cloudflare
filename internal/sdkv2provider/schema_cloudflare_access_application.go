@@ -239,7 +239,12 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 		"custom_deny_url": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Option that redirects to a custom URL when a user is denied access to the application.",
+			Description: "Option that redirects to a custom URL when a user is denied access to the application via identity based rules.",
+		},
+		"custom_non_identity_deny_url": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Option that redirects to a custom URL when a user is denied access to the application via non identity rules.",
 		},
 		"http_only_cookie_attribute": {
 			Type:        schema.TypeBool,

@@ -274,6 +274,7 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "custom_deny_message", "denied!"),
 					resource.TestCheckResourceAttr(name, "custom_deny_url", "https://www.cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "custom_non_identity_deny_url", "https://www.blocked.com"),
 				),
 			},
 		},
@@ -624,6 +625,7 @@ resource "cloudflare_access_application" "%[1]s" {
   session_duration          = "24h"
   custom_deny_message       = "denied!"
   custom_deny_url           = "https://www.cloudflare.com"
+	custom_non_identity_deny_url = "https://www.blocked.com"
 }
 `, rnd, zoneID, domain)
 }

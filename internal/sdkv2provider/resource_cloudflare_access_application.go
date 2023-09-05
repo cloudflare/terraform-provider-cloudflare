@@ -38,20 +38,21 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	appType := d.Get("type").(string)
 
 	newAccessApplication := cloudflare.CreateAccessApplicationParams{
-		Name:                    d.Get("name").(string),
-		Domain:                  d.Get("domain").(string),
-		Type:                    cloudflare.AccessApplicationType(appType),
-		SessionDuration:         d.Get("session_duration").(string),
-		AutoRedirectToIdentity:  cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
-		EnableBindingCookie:     cloudflare.BoolPtr(d.Get("enable_binding_cookie").(bool)),
-		CustomDenyMessage:       d.Get("custom_deny_message").(string),
-		CustomDenyURL:           d.Get("custom_deny_url").(string),
-		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
-		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
-		LogoURL:                 d.Get("logo_url").(string),
-		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
-		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
-		ServiceAuth401Redirect:  cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		Name:                     d.Get("name").(string),
+		Domain:                   d.Get("domain").(string),
+		Type:                     cloudflare.AccessApplicationType(appType),
+		SessionDuration:          d.Get("session_duration").(string),
+		AutoRedirectToIdentity:   cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
+		EnableBindingCookie:      cloudflare.BoolPtr(d.Get("enable_binding_cookie").(bool)),
+		CustomDenyMessage:        d.Get("custom_deny_message").(string),
+		CustomDenyURL:            d.Get("custom_deny_url").(string),
+		CustomNonIdentityDenyURL: d.Get("custom_non_identity_deny_url").(string),
+		HttpOnlyCookieAttribute:  cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
+		SameSiteCookieAttribute:  d.Get("same_site_cookie_attribute").(string),
+		LogoURL:                  d.Get("logo_url").(string),
+		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
+		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
+		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
 	}
 
 	if value, ok := d.GetOk("allowed_idps"); ok {
@@ -124,6 +125,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
 	d.Set("custom_deny_message", accessApplication.CustomDenyMessage)
 	d.Set("custom_deny_url", accessApplication.CustomDenyURL)
+	d.Set("custom_non_identity_deny_url", accessApplication.CustomNonIdentityDenyURL)
 	d.Set("allowed_idps", accessApplication.AllowedIdps)
 	d.Set("http_only_cookie_attribute", cloudflare.Bool(accessApplication.HttpOnlyCookieAttribute))
 	d.Set("same_site_cookie_attribute", accessApplication.SameSiteCookieAttribute)
@@ -156,21 +158,22 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	appType := d.Get("type").(string)
 
 	updatedAccessApplication := cloudflare.UpdateAccessApplicationParams{
-		ID:                      d.Id(),
-		Name:                    d.Get("name").(string),
-		Domain:                  d.Get("domain").(string),
-		Type:                    cloudflare.AccessApplicationType(appType),
-		SessionDuration:         d.Get("session_duration").(string),
-		AutoRedirectToIdentity:  cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
-		EnableBindingCookie:     cloudflare.BoolPtr(d.Get("enable_binding_cookie").(bool)),
-		CustomDenyMessage:       d.Get("custom_deny_message").(string),
-		CustomDenyURL:           d.Get("custom_deny_url").(string),
-		HttpOnlyCookieAttribute: cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
-		SameSiteCookieAttribute: d.Get("same_site_cookie_attribute").(string),
-		LogoURL:                 d.Get("logo_url").(string),
-		SkipInterstitial:        cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
-		AppLauncherVisible:      cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
-		ServiceAuth401Redirect:  cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		ID:                       d.Id(),
+		Name:                     d.Get("name").(string),
+		Domain:                   d.Get("domain").(string),
+		Type:                     cloudflare.AccessApplicationType(appType),
+		SessionDuration:          d.Get("session_duration").(string),
+		AutoRedirectToIdentity:   cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
+		EnableBindingCookie:      cloudflare.BoolPtr(d.Get("enable_binding_cookie").(bool)),
+		CustomDenyMessage:        d.Get("custom_deny_message").(string),
+		CustomDenyURL:            d.Get("custom_deny_url").(string),
+		CustomNonIdentityDenyURL: d.Get("custom_non_identity_deny_url").(string),
+		HttpOnlyCookieAttribute:  cloudflare.BoolPtr(d.Get("http_only_cookie_attribute").(bool)),
+		SameSiteCookieAttribute:  d.Get("same_site_cookie_attribute").(string),
+		LogoURL:                  d.Get("logo_url").(string),
+		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
+		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
+		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
 	}
 
 	if appType != "saas" {
