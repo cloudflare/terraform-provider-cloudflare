@@ -36,6 +36,11 @@ func TestAccCloudflareTotalTLS(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "certificate_authority", "google"),
 				),
 			},
+			{
+				ImportState:       true,
+				ImportStateVerify: true,
+				ResourceName:      name,
+			},
 		},
 	})
 }

@@ -18,6 +18,9 @@ func resourceCloudflareTotalTLS() *schema.Resource {
 		ReadContext:   resourceCloudflareTotalSSLRead,
 		UpdateContext: resourceCloudflareTotalSSLUpdate,
 		DeleteContext: resourceCloudflareTotalSSLDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTotalSSLImport,
+		},
 		Description: heredoc.Doc(`
 			Provides a resource which manages Total TLS for a zone.
 		`),
@@ -39,6 +42,15 @@ func resourceCloudflareTotalSSLUpdate(ctx context.Context, d *schema.ResourceDat
 	}
 	d.SetId(zoneID)
 	return resourceCloudflareTotalSSLRead(ctx, d, meta)
+}
+
+func resourceCloudflareTotalSSLImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	d.SetId(d.Id())
+	d.Set(consts.ZoneIDSchemaKey, d.Id())
+
+	resourceCloudflareTotalSSLRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func resourceCloudflareTotalSSLRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
