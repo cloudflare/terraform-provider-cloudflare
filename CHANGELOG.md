@@ -22,6 +22,7 @@ DEPENDENCIES:
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.27.0 to 2.28.0 ([#2719](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2719))
 * provider: bumps github.com/hashicorp/terraform-plugin-testing from 1.4.0 to 1.5.1 ([#2730](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2730))
 * provider: bumps golang.org/x/net from 0.14.0 to 0.15.0 ([#2739](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2739))
+* provider: bumps goreleaser/goreleaser-action from 4.4.0 to 4.6.0 ([#2742](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2742))
 
 ## 4.13.0 (23rd August, 2023)
 
