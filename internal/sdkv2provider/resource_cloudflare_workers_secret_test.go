@@ -6,8 +6,6 @@ import (
 	"os"
 	"testing"
 
-	cleanhttp "github.com/hashicorp/go-cleanhttp"
-
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -41,8 +39,6 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 			},
 		},
 	})
-
-	deleteWorker()
 }
 
 func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
@@ -73,19 +69,19 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name string, secretText string, accountId string) string {
-	err := createWorker()
-
-	if err != nil {
-		panic(err)
-	}
-
 	return fmt.Sprintf(`
+	resource "cloudflare_worker_script" "%[2]s" {
+		account_id = "%[4]s"
+		name       = "%[1]s"
+		content    = "%[5]s"
+    }
+
 	resource "cloudflare_worker_secret" "%[2]s" {
 		account_id  = "%[4]s"
-		script_name = "%[1]s"
+		script_name = cloudflare_worker_script.%[2]s.name
 		name 		= "%[2]s"
 		secret_text	= "%[3]s"
-	}`, scriptName, name, secretText, accountId)
+	}`, scriptName, name, secretText, accountId, scriptContentForSecret)
 }
 
 func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, accountId string) resource.TestCheckFunc {
@@ -109,60 +105,4 @@ func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, ac
 
 		return fmt.Errorf("Worker secret with name %s not found against Worker Script %s", name, scriptName)
 	}
-}
-
-func createWorker() error {
-	client, err := createCloudflareClient()
-	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = client.UploadWorker(context.Background(), cloudflare.AccountIdentifier(accountId), cloudflare.CreateWorkerParams{
-		ScriptName: workerSecretTestScriptName,
-		Script:     scriptContentForSecret,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func deleteWorker() error {
-	client, err := createCloudflareClient()
-	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	if err != nil {
-		return err
-	}
-
-	err = client.DeleteWorker(context.Background(), cloudflare.AccountIdentifier(accountId), cloudflare.DeleteWorkerParams{
-		ScriptName: workerSecretTestScriptName,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func createCloudflareClient() (*cloudflare.API, error) {
-	options := []cloudflare.Option{}
-
-	httpClient := cleanhttp.DefaultClient()
-	options = append(options, cloudflare.HTTPClient(httpClient))
-
-	apiToken := os.Getenv("CLOUDFLARE_API_TOKEN")
-
-	client, err := cloudflare.NewWithAPIToken(apiToken, options...)
-
-	if err != nil {
-		return nil, fmt.Errorf("Error creating Cloudflare client directly: %s ", err)
-	}
-
-	return client, nil
 }

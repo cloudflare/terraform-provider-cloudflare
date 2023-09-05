@@ -23,7 +23,7 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: heredoc.Doc("Provides a Cloudflare worker secret resource. This resource is ideal for cases where a worker is not deployed through terraform, such as with wrangler. Should not be used with a `cloudflare_worker_script` resource as they conflict."),
+		Description: heredoc.Doc("Provides a Cloudflare worker secret resource"),
 	}
 }
 
