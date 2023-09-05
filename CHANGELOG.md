@@ -9,6 +9,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_access_group: Improve documentation for access_group usage ([#2718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2718))
 
+BUG FIXES:
+
+* resource/cloudflare_access_identity_provider: Fix access IDPs not importing config obj ([#2735](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2735))
+
 DEPENDENCIES:
 
 * provider: bumps actions/checkout from 3 to 4 ([#2736](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2736))
