@@ -15,6 +15,7 @@ import (
 
 func resourceCloudflareWorkerSecret() *schema.Resource {
 	return &schema.Resource{
+		Schema:        resourceCloudflareWorkerSecretSchema(),
 		CreateContext: resourceCloudflareWorkerSecretCreate,
 		ReadContext:   resourceCloudflareWorkerSecretRead,
 		UpdateContext: resourceCloudflareWorkerSecretCreate,
@@ -23,32 +24,6 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Description: heredoc.Doc("Provides a Cloudflare worker secret resource."),
-		Schema: map[string]*schema.Schema{
-			consts.AccountIDSchemaKey: {
-				Description: consts.AccountIDSchemaDescription,
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"script_name": {
-				Type:        schema.TypeString,
-				ForceNew:    true,
-				Required:    true,
-				Description: "The name of the Worker script to associate the secret with.",
-			},
-			"name": {
-				Type:        schema.TypeString,
-				ForceNew:    true,
-				Required:    true,
-				Description: "The name of the Worker secret.",
-			},
-			"secret_text": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Sensitive:   true,
-				Description: "The text of the Worker secret, this cannot be read back after creation and is stored encrypted .",
-			},
-		},
 	}
 }
 
