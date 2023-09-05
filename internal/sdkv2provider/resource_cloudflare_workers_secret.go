@@ -17,12 +17,18 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCloudflareWorkerSecretCreate,
 		ReadContext:   resourceCloudflareWorkerSecretRead,
+		UpdateContext: resourceCloudflareWorkerSecretCreate,
 		DeleteContext: resourceCloudflareWorkerSecretDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Description: heredoc.Doc("Provides a Cloudflare worker secret resource."),
 		Schema: map[string]*schema.Schema{
+			consts.AccountIDSchemaKey: {
+				Description: consts.AccountIDSchemaDescription,
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"script_name": {
 				Type:        schema.TypeString,
 				ForceNew:    true,
