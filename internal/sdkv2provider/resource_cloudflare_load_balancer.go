@@ -343,12 +343,18 @@ func flattenGeoPools(pools map[string][]string, geoType string, hashResourceMap 
 }
 
 func flattenSessionAffinityAttrs(properties *cloudflare.SessionAffinityAttributes) *schema.Set {
+	headers := make([]interface{}, 0)
+	for _, header := range properties.Headers {
+		headers = append(headers, header)
+	}
 	flattened := []interface{}{
 		map[string]interface{}{
 			"drain_duration":         properties.DrainDuration,
 			"samesite":               properties.SameSite,
 			"secure":                 properties.Secure,
 			"zero_downtime_failover": properties.ZeroDowntimeFailover,
+			"headers":                headers,
+			"require_all_headers":    properties.RequireAllHeaders,
 		},
 	}
 	return schema.NewSet(schema.HashResource(loadBalancerSessionAffinityAttributesElem), flattened)
@@ -547,6 +553,17 @@ func expandRules(rdata interface{}) ([]*cloudflare.LoadBalancerRule, error) {
 						case "zero_downtime_failover":
 							saaOverride.ZeroDowntimeFailover = v.(string)
 							lbr.Overrides.SessionAffinityAttrs = saaOverride
+						case "headers":
+							headers := []string{}
+							for _, header := range v.([]interface{}) {
+								headers = append(headers, header.(string))
+							}
+							saaOverride.Headers = headers
+							lbr.Overrides.SessionAffinityAttrs = saaOverride
+						case "require_all_headers":
+							requireAllHeaders := v.(bool)
+							saaOverride.RequireAllHeaders = &requireAllHeaders
+							lbr.Overrides.SessionAffinityAttrs = saaOverride
 						}
 					}
 				}
@@ -685,6 +702,10 @@ func expandSessionAffinityAttrs(set interface{}) *cloudflare.SessionAffinityAttr
 				cfSessionAffinityAttrs.DrainDuration = v.(int)
 			case "zero_downtime_failover":
 				cfSessionAffinityAttrs.ZeroDowntimeFailover = v.(string)
+			case "headers":
+				cfSessionAffinityAttrs.Headers = expandInterfaceToStringList(v)
+			case "require_all_headers":
+				cfSessionAffinityAttrs.RequireAllHeaders = v.(bool)
 			}
 		}
 	}
@@ -725,22 +746,29 @@ func expandLocationStrategy(set interface{}) *cloudflare.LocationStrategy {
 }
 
 func expandRandomSteering(set interface{}) *cloudflare.RandomSteering {
-	var cfRandomSteering cloudflare.RandomSteering
 
-	if l := set.(*schema.Set).List(); len(l) > 0 {
-		for k, v := range l[len(l)-1].(map[string]interface{}) {
+	for _, l := range set.(*schema.Set).List() {
+		var cfRandomSteering cloudflare.RandomSteering
+		for k, v := range l.(map[string]interface{}) {
 			switch k {
 			case "pool_weights":
 				poolWeights := make(map[string]float64)
 				for poolID, poolWeight := range v.(map[string]interface{}) {
 					poolWeights[poolID] = poolWeight.(float64)
 				}
-				cfRandomSteering.PoolWeights = poolWeights
+				if len(poolWeights) > 0 {
+					cfRandomSteering.PoolWeights = poolWeights
+				}
 			case "default_weight":
 				cfRandomSteering.DefaultWeight = v.(float64)
 			}
 		}
+
+		// only return a non nil value if something was set
+		if cfRandomSteering.DefaultWeight != 0 || cfRandomSteering.PoolWeights != nil {
+			return &cfRandomSteering
+		}
 	}
 
-	return &cfRandomSteering
+	return nil
 }

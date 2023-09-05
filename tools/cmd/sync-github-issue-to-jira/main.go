@@ -73,6 +73,7 @@ var (
 		"service/iam",
 		"service/load_balancing",
 		"service/logs",
+		"service/pages",
 		"service/spectrum",
 		"service/tls",
 		"service/tunnel",
@@ -131,6 +132,10 @@ var (
 			teamName: "Spectrum",
 			owner:    "njones",
 		},
+		"service/pages": {
+			teamName: "Cloudflare Pages",
+			owner:    "nrogers",
+		},		
 	}
 )
 

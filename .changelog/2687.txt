@@ -1,0 +1,7 @@
+```release-note:enhancement
+datasource/api_token_permission_groups: Add R2 scopes
+```
+
+```release-note:enhancement
+datasource/api_token_permission_groups: Convert to plugin framework
+```

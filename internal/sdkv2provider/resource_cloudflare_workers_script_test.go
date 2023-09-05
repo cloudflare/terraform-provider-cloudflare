@@ -7,6 +7,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -82,6 +86,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
+			testAccCheckCloudflareWorkerScriptCreateBucket(t, rnd)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
@@ -102,16 +107,53 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 	})
 }
 
-// Create a bucket before creating a worker script binding.
-// When a cloudflare_r2_bucket resource is added, we can switch to that instead
+// We can't currently use `cloudflare_r2_bucket` here due to not being able to
+// mix V5 and V6 protocol resources without circular dependencies. In an ideal
+// world, this would all be handled by the inbuilt resource.
 func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 	client := testAccProvider.Meta().(*cloudflare.API)
 	_, err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateR2BucketParameters{Name: rnd})
 	if err != nil {
 		t.Fatalf("unable to create test bucket named %s: %v", rnd, err)
 	}
+
 	t.Cleanup(func() {
-		err := client.DeleteR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), rnd)
+		accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
+		accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
+
+		r2Resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+			return aws.Endpoint{
+				URL: fmt.Sprintf("https://%s.r2.cloudflarestorage.com", accountID),
+			}, nil
+		})
+
+		cfg, err := config.LoadDefaultConfig(context.TODO(),
+			config.WithEndpointResolverWithOptions(r2Resolver),
+			config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyId, accessKeySecret, "")),
+		)
+		if err != nil {
+			t.Error(err)
+		}
+
+		s3client := s3.NewFromConfig(cfg)
+		listObjectsOutput, err := s3client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
+			Bucket: &rnd,
+		})
+		if err != nil {
+			t.Error(err)
+		}
+
+		for _, object := range listObjectsOutput.Contents {
+			_, err = s3client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+				Bucket: &rnd,
+				Key:    object.Key,
+			})
+			if err != nil {
+				t.Error(err)
+			}
+		}
+
+		err = client.DeleteR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), rnd)
 		if err != nil {
 			t.Errorf("Failed to clean up bucket named %s: %v", rnd, err)
 		}
@@ -200,17 +242,12 @@ resource "cloudflare_worker_script" "%[1]s" {
 
 func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyID, r2AccessKeySecret string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_r2_bucket" "%[1]s" {
-		account_id = "%[3]s"
-		name       = "%[1]s"
-	}
-
 	resource "cloudflare_logpush_job" "%[1]s" {
 		enabled          = true
 		account_id       = "%[3]s"
 		name             = "%[1]s"
 		logpull_options  = "fields=Event,EventTimestampMs,Outcome,Exceptions,Logs,ScriptName"
-		destination_conf = "r2://${cloudflare_r2_bucket.%[1]s.name}/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
+		destination_conf = "r2://%[1]s/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
 		dataset          = "workers_trace_events"
 	}
 

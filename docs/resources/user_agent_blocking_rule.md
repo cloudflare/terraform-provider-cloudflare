@@ -57,4 +57,10 @@ Required:
 - `target` (String) The configuration target for this rule. You must set the target to ua for User Agent Blocking rules.
 - `value` (String) The exact user agent string to match. This value will be compared to the received User-Agent HTTP header value.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_user_agent_blocking_rule.example <zone_id>/<user_agent_blocking_rule_id>
+```

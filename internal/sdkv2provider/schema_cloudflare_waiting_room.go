@@ -170,5 +170,12 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+
+		"queueing_status_code": {
+			Description: "HTTP status code returned to a user while in the queue.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     200,
+		},
 	}
 }

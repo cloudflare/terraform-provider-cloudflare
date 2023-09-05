@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
@@ -22,7 +23,7 @@ func resourceCloudflareUserAgentBlockingRules() *schema.Resource {
 		UpdateContext: resourceCloudflareUserAgentBlockingRulesUpdate,
 		DeleteContext: resourceCloudflareUserAgentBlockingRulesDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: nil,
+			StateContext: resourceCloudflareUserAgentBlockingRulesImport,
 		},
 		Description: heredoc.Doc(`
 			Provides a resource to manage User Agent Blocking Rules.
@@ -93,6 +94,24 @@ func resourceCloudflareUserAgentBlockingRulesDelete(ctx context.Context, d *sche
 	}
 
 	return resourceCloudflareUserAgentBlockingRulesRead(ctx, d, meta)
+}
+
+func resourceCloudflareUserAgentBlockingRulesImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	if len(idAttr) != 2 {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/userAgentBlockingRuleID\"", d.Id())
+	}
+
+	zoneID, userAgentBlockingRuleID := idAttr[0], idAttr[1]
+
+	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare User Agent Blocking Rule: id %s for account %s", userAgentBlockingRuleID, zoneID))
+
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
+	d.SetId(userAgentBlockingRuleID)
+
+	resourceCloudflareUserAgentBlockingRulesRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func buildUserAgentBlockingRules(d *schema.ResourceData) cloudflare.UserAgentRule {

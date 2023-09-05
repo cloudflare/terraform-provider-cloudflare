@@ -41,7 +41,7 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 		Name:           d.Get("name").(string),
 		Origins:        expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
 		Enabled:        d.Get("enabled").(bool),
-		MinimumOrigins: d.Get("minimum_origins").(int),
+		MinimumOrigins: cloudflare.IntPtr(d.Get("minimum_origins").(int)),
 	}
 
 	if lat, ok := d.GetOk("latitude"); ok {
@@ -105,7 +105,7 @@ func resourceCloudflareLoadBalancerPoolUpdate(ctx context.Context, d *schema.Res
 		Name:           d.Get("name").(string),
 		Origins:        expandLoadBalancerOrigins(d.Get("origins").(*schema.Set)),
 		Enabled:        d.Get("enabled").(bool),
-		MinimumOrigins: d.Get("minimum_origins").(int),
+		MinimumOrigins: cloudflare.IntPtr(d.Get("minimum_origins").(int)),
 	}
 
 	if lat, ok := d.GetOk("latitude"); ok {

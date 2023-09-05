@@ -44,6 +44,7 @@ resource "cloudflare_access_service_token" "my_app" {
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
+- `duration` (String) Length of time the service token is valid for. Available values: `8760h`, `17520h`, `43800h`, `87600h`, `forever`.
 - `min_days_for_renewal` (Number) Refresh the token if terraform is run within the specified amount of days before expiration. Defaults to `0`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 

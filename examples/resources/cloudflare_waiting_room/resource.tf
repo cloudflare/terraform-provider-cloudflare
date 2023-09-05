@@ -16,4 +16,6 @@ resource "cloudflare_waiting_room" "example" {
   additional_routes {
     host = "shop2.example.com"
   }
+
+  queueing_status_code  = 200
 }

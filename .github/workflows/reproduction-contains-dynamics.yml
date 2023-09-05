@@ -10,7 +10,7 @@ jobs:
   reproduction-contains-dynamics:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Add comment to issue about not using dynamic expressions
         uses: peter-evans/create-or-update-comment@v3
         with:

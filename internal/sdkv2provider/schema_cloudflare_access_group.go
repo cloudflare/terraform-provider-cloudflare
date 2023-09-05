@@ -62,15 +62,17 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 			},
 		},
 		"ip": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Type:        schema.TypeList,
+			Description: "An IPv4 or IPv6 CIDR block.",
+			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
 		},
 		"ip_list": {
-			Type:     schema.TypeList,
-			Optional: true,
+			Type:        schema.TypeList,
+			Description: "The ID of an existing IP list to reference.",
+			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
@@ -245,6 +247,32 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					"keys_url": {
 						Type:     schema.TypeString,
 						Optional: true,
+					},
+				},
+			},
+		},
+		"auth_context": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"id": {
+						Type:        schema.TypeString,
+						Description: "The ID of the Authentication Context.",
+						Required:    true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+					"identity_provider_id": {
+						Type:        schema.TypeString,
+						Description: "The ID of the Azure Identity provider",
+						Required:    true,
+					},
+					"ac_id": {
+						Type:        schema.TypeString,
+						Description: "The ACID of the Authentication Context",
+						Required:    true,
 					},
 				},
 			},

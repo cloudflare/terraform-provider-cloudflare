@@ -215,6 +215,22 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Computed:    true,
 						Description: "True if SentinelOne device is active.",
 					},
+					"eid_last_seen": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The datetime a device last seen in RFC 3339 format from Tanium.",
+					},
+					"risk_level": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"low", "medium", "high", "critical"}, true),
+						Description:  fmt.Sprintf("The risk level from Tanium. %s", renderAvailableDocumentationValuesStringSlice([]string{"low", "medium", "high", "critical"})),
+					},
+					"total_score": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "The total score from Tanium.",
+					},
 				},
 			},
 		},

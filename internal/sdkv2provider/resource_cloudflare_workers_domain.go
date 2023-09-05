@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -19,6 +20,9 @@ func resourceCloudflareWorkerDomain() *schema.Resource {
 		ReadContext:   resourceCloudflareWorkerDomainRead,
 		UpdateContext: resourceCloudflareWorkerDomainUpdate,
 		DeleteContext: resourceCloudflareWorkerDomainDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareWorkerDomainImport,
+		},
 		Description: heredoc.Doc(
 			"Creates a Worker Custom Domain.",
 		),
@@ -92,4 +96,22 @@ func resourceCloudflareWorkerDomainDelete(ctx context.Context, d *schema.Resourc
 	}
 
 	return nil
+}
+
+func resourceCloudflareWorkerDomainImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var accountID string
+	var workersDomainID string
+	if len(idAttr) == 2 {
+		accountID = idAttr[0]
+		workersDomainID = idAttr[1]
+		d.Set(consts.AccountIDSchemaKey, accountID)
+		d.SetId(workersDomainID)
+	} else {
+		return nil, fmt.Errorf("invalid id (%q) specified, should be in format \"account/workersDomainID\"", d.Id())
+	}
+
+	resourceCloudflareWorkerDomainRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }

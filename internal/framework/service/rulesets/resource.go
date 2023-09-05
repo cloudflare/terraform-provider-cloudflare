@@ -75,7 +75,6 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	rulesetDescription := data.Description.ValueString()
 	rulesetKind := data.Kind.ValueString()
 	rulesetPhase := data.Phase.ValueString()
-	rulesetShareableEntitlementName := data.ShareableEntitlementName.ValueString()
 
 	var identifier *cloudflare.ResourceContainer
 	if accountID.ValueString() != "" {
@@ -124,11 +123,10 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	rs := cloudflare.CreateRulesetParams{
-		Name:                     rulesetName,
-		Description:              rulesetDescription,
-		Kind:                     rulesetKind,
-		Phase:                    rulesetPhase,
-		ShareableEntitlementName: rulesetShareableEntitlementName,
+		Name:        rulesetName,
+		Description: rulesetDescription,
+		Kind:        rulesetKind,
+		Phase:       rulesetPhase,
 	}
 
 	rulesetData := data.toRuleset(ctx)
@@ -306,12 +304,11 @@ func (r *RulesetResource) ImportState(ctx context.Context, req resource.ImportSt
 // representation using the proposed config.
 func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.StringValue, in cloudflare.Ruleset) *RulesetResourceModel {
 	data := RulesetResourceModel{
-		ID:                       types.StringValue(in.ID),
-		Description:              types.StringValue(in.Description),
-		Name:                     types.StringValue(in.Name),
-		Kind:                     types.StringValue(in.Kind),
-		Phase:                    types.StringValue(in.Phase),
-		ShareableEntitlementName: flatteners.String(in.ShareableEntitlementName),
+		ID:          types.StringValue(in.ID),
+		Description: types.StringValue(in.Description),
+		Name:        types.StringValue(in.Name),
+		Kind:        types.StringValue(in.Kind),
+		Phase:       types.StringValue(in.Phase),
 	}
 
 	var ruleState []*RulesModel
@@ -529,10 +526,17 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 						include, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.Include)
 						checkPresence, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.CheckPresence)
 						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 {
+							var excludeOrigin types.Bool
+							if !reflect.ValueOf(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin).IsNil() {
+								excludeOrigin = flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin)
+							} else {
+								excludeOrigin = types.BoolNull()
+							}
+
 							key.Header = []*ActionParameterCacheKeyCustomKeyHeaderModel{{
 								Include:       include,
 								CheckPresence: checkPresence,
-								ExcludeOrigin: flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin),
+								ExcludeOrigin: excludeOrigin,
 							}}
 						}
 					}
@@ -620,8 +624,8 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 
 			if ruleResponse.ActionParameters.Origin != nil {
 				rule.ActionParameters[0].Origin = []*ActionParameterOriginModel{{
-					Host: types.StringValue(ruleResponse.ActionParameters.Origin.Host),
-					Port: types.Int64Value(int64(ruleResponse.ActionParameters.Origin.Port)),
+					Host: flatteners.String(ruleResponse.ActionParameters.Origin.Host),
+					Port: flatteners.Int64(int64(ruleResponse.ActionParameters.Origin.Port)),
 				}}
 			}
 

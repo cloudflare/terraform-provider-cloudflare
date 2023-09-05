@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bumps actions/checkout from 3 to 4
+```

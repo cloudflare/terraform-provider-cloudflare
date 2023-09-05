@@ -159,6 +159,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+					"conditional_access_enabled": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 				},
 			},
 		},

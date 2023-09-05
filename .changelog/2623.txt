@@ -1,0 +1,3 @@
+```release-note:bug
+resrouce/cloudflare_ruleset: Resolves bug with exclude_origin always being false by default
+```

@@ -64,6 +64,12 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
+	if configuration.Settings.ProtocolDetection != nil {
+		if err := d.Set("protocol_detection_enabled", configuration.Settings.ProtocolDetection.Enabled); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account protocol detection enablement: %w", err))
+		}
+	}
+
 	if err := d.Set("activity_log_enabled", configuration.Settings.ActivityLog.Enabled); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing account activity log enablement: %w", err))
 	}
@@ -136,6 +142,12 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	tlsDecrypt, ok := d.GetOkExists("tls_decrypt_enabled")
 	if ok {
 		updatedTeamsAccount.Settings.TLSDecrypt = &cloudflare.TeamsTLSDecrypt{Enabled: tlsDecrypt.(bool)}
+	}
+
+	//nolint:staticcheck
+	protocolDetection, ok := d.GetOkExists("protocol_detection_enabled")
+	if ok {
+		updatedTeamsAccount.Settings.ProtocolDetection = &cloudflare.TeamsProtocolDetection{Enabled: protocolDetection.(bool)}
 	}
 
 	//nolint:staticcheck

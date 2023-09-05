@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_rulest: allow configuring an origin `Port` value without the `Host` (and vice versa)
+```

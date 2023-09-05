@@ -59,6 +59,7 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 				"http_alert_origin_error",
 				"load_balancing_health_alert",
 				"load_balancing_pool_enablement_alert",
+				"pages_event_alert",
 				"real_origin_monitoring",
 				"scriptmonitor_alert_new_code_change_detections",
 				"scriptmonitor_alert_new_hosts",
@@ -298,6 +299,37 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					},
 					Optional:    true,
 					Description: "Protocol to alert on for dos.",
+				},
+				"project_id": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Identifier of pages project.",
+				},
+				"environment": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+					Description: fmt.Sprintf("Environment of pages. %s", renderAvailableDocumentationValuesStringSlice([]string{
+						"ENVIRONMENT_PREVIEW",
+						"ENVIRONMENT_PRODUCTION",
+					})),
+				},
+				"event": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+					Description: fmt.Sprintf("Pages event to alert. %s", renderAvailableDocumentationValuesStringSlice([]string{
+						"EVENT_DEPLOYMENT_STARTED",
+						"EVENT_DEPLOYMENT_FAILED",
+						"EVENT_DEPLOYMENT_SUCCESS",
+					})),
 				},
 				"event_source": {
 					Type: schema.TypeSet,

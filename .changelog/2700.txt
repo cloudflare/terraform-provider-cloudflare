@@ -1,0 +1,7 @@
+```release-note:new-resource
+cloudflare_hostname_tls_setting
+```
+
+```release-note:new-resource
+cloudflare_hostname_tls_setting_ciphers
+```

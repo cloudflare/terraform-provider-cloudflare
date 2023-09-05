@@ -190,6 +190,8 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 }
 
 func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
+	skipForDefaultAccount(t, "Pending investigation into automating Azure IDP.")
+
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
@@ -209,6 +211,7 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "azureAD"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.directory_id", "directory"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.condtional_access_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.user_deprovision", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scim_config.0.seat_deprovision", "true"),
@@ -282,6 +285,7 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 		directory_id   = "directory"
 		redirect_url   = "https://terraform-cfapi.cloudflareaccess.com/cdn-cgi/access/callback"
 		support_groups = true
+		conditional_access_enabled = true
 	}
 	scim_config {
 		enabled                  = true
