@@ -17,9 +17,9 @@ func TestAccCloudflareWorkerSecret_Import(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText),
+				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, secretText),
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
 				),
 			},
 		},

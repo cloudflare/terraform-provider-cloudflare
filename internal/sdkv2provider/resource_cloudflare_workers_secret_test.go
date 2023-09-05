@@ -30,9 +30,9 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText),
+				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, secretText),
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
 				),
 			},
 		},
@@ -66,7 +66,7 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name string, secretText string) string {
+func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name string, secretText string, accountId string) string {
 	err := createWorker()
 
 	if err != nil {
@@ -75,20 +75,21 @@ func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name 
 
 	return fmt.Sprintf(`
 	resource "cloudflare_worker_secret" "%[2]s" {
+		account_id  = "%[4]s"
 		script_name = "%[1]s"
 		name 		= "%[2]s"
 		secret_text	= "%[3]s"
-	}`, scriptName, name, secretText)
+	}`, scriptName, name, secretText, accountId)
 }
 
-func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, secretText string) resource.TestCheckFunc {
+func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, accountId string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
 		params := cloudflare.ListWorkersSecretsParams{
 			ScriptName: scriptName,
 		}
 
-		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountID), params)
+		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountId), params)
 
 		if err != nil {
 			return err
@@ -111,11 +112,10 @@ func createWorker() error {
 		panic(err)
 	}
 
-	scriptRequestParams := cloudflare.WorkerRequestParams{
+	_, err = client.UploadWorker(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName: workerSecretTestScriptName,
-	}
-
-	_, err = client.UploadWorker(&scriptRequestParams, scriptContentForSecret)
+		Script:     scriptContentForSecret,
+	})
 
 	if err != nil {
 		return err
@@ -131,11 +131,9 @@ func deleteWorker() error {
 		return err
 	}
 
-	scriptRequestParams := cloudflare.WorkerRequestParams{
+	err = client.DeleteWorker(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.DeleteWorkerParams{
 		ScriptName: workerSecretTestScriptName,
-	}
-
-	_, err = client.DeleteWorker(&scriptRequestParams)
+	})
 
 	if err != nil {
 		return err
@@ -149,9 +147,8 @@ func createCloudflareClient() (*cloudflare.API, error) {
 
 	httpClient := cleanhttp.DefaultClient()
 	options = append(options, cloudflare.HTTPClient(httpClient))
-	options = append(options, cloudflare.UsingAccount(os.Getenv("CLOUDFLARE_ACCOUNT_ID")))
 
-	apiToken := os.Getenv("CLOUDFLARE_TOKEN")
+	apiToken := os.Getenv("CLOUDFLARE_API_TOKEN")
 
 	client, err := cloudflare.NewWithAPIToken(apiToken, options...)
 
