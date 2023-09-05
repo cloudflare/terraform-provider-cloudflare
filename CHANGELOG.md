@@ -7,6 +7,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: Add custom_non_identity_deny_url field ([#2721](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2721))
 * resource/cloudflare_access_group: Improve documentation for access_group usage ([#2718](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2718))
 * resource/cloudflare_total_tls: add support for importing existing resources ([#2734](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2734))
 
