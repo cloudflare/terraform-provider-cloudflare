@@ -24,6 +24,4 @@ func TestAccCloudflareWorkerSecret_Import(t *testing.T) {
 			},
 		},
 	})
-
-	deleteWorker()
 }
