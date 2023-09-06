@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_identity_provider: Fix cloudflare_access_identity_provider incorrectly discards SCIM configuration secret
+```

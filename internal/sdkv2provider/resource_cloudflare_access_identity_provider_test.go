@@ -2,9 +2,11 @@ package sdkv2provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -271,6 +273,90 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_access_identity_provider." + rnd
+
+	checkFn := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttrWith(resourceName, "scim_config.0.secret", func(value string) error {
+			if value == "" {
+				return errors.New("secret is empty")
+			}
+
+			checkRedactedRegex := regexp.MustCompile(`^\*+$`)
+			if checkRedactedRegex.MatchString(value) {
+				return errors.New("secret was redacted")
+			}
+			return nil
+		}),
+	)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				Check:  checkFn,
+			},
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				Check:  checkFn,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_Creation(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_access_identity_provider." + rnd
+
+	checkFn := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttrWith(resourceName, "scim_config.0.secret", func(value string) error {
+			if value == "" {
+				return errors.New("secret is empty")
+			}
+
+			checkRedactedRegex := regexp.MustCompile(`^\*+$`)
+			if checkRedactedRegex.MatchString(value) {
+				return errors.New("secret was redacted")
+			}
+			return nil
+		}),
+	)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureADNoSCIM(accountID, rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "scim_config.0.secret", ""),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
+				Check:  checkFn,
+			},
+			{
+				Config: testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, rnd),
+				Check:  checkFn,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_identity_provider" "%[1]s" {
@@ -340,6 +426,44 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 		group_member_deprovision = true
 		seat_deprovision         = true
 		user_deprovision         = true
+	}
+}`, accountID, name)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[2]s" {
+	account_id = "%[1]s"
+	name       = "%[2]s"
+	type       = "azureAD"
+	config {
+		client_id      = "test2"
+		client_secret  = "test2"
+		directory_id   = "directory"
+		support_groups = true
+		conditional_access_enabled = true
+	}
+	scim_config {
+		enabled                  = true
+		group_member_deprovision = true
+		seat_deprovision         = false
+		user_deprovision         = true
+	}
+}`, accountID, name)
+}
+
+func testAccCheckCloudflareAccessIdentityProviderAzureADNoSCIM(accountID, name string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_identity_provider" "%[2]s" {
+	account_id = "%[1]s"
+	name       = "%[2]s"
+	type       = "azureAD"
+	config {
+		client_id      = "test"
+		client_secret  = "test"
+		directory_id   = "directory"
+		support_groups = true
+		conditional_access_enabled = true
 	}
 }`, accountID, name)
 }
