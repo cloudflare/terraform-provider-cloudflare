@@ -61,6 +61,8 @@ resource "cloudflare_load_balancer_monitor" "example" {
 ### Optional
 
 - `allow_insecure` (Boolean) Do not validate the certificate when monitor use HTTPS.  Only valid if `type` is "http" or "https".
+- `consecutive_down` (Number) To be marked unhealthy the monitored origin must fail this healthcheck N consecutive times. Defaults to `0`.
+- `consecutive_up` (Number) To be marked healthy the monitored origin must pass this healthcheck N consecutive times. Defaults to `0`.
 - `description` (String) Free text description.
 - `expected_body` (String) A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. Only valid if `type` is "http" or "https".
 - `expected_codes` (String) The expected HTTP response code or code range of the health check. Eg `2xx`. Only valid and required if `type` is "http" or "https".

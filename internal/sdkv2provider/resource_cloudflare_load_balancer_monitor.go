@@ -39,10 +39,12 @@ func resourceCloudflareLoadBalancerPoolMonitorCreate(ctx context.Context, d *sch
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
-		Timeout:  d.Get("timeout").(int),
-		Type:     d.Get("type").(string),
-		Interval: d.Get("interval").(int),
-		Retries:  d.Get("retries").(int),
+		Timeout:         d.Get("timeout").(int),
+		Type:            d.Get("type").(string),
+		Interval:        d.Get("interval").(int),
+		Retries:         d.Get("retries").(int),
+		ConsecutiveUp:   d.Get("consecutive_up").(int),
+		ConsecutiveDown: d.Get("consecutive_down").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -124,11 +126,13 @@ func resourceCloudflareLoadBalancerPoolMonitorUpdate(ctx context.Context, d *sch
 	client := meta.(*cloudflare.API)
 
 	loadBalancerMonitor := cloudflare.LoadBalancerMonitor{
-		ID:       d.Id(),
-		Timeout:  d.Get("timeout").(int),
-		Type:     d.Get("type").(string),
-		Interval: d.Get("interval").(int),
-		Retries:  d.Get("retries").(int),
+		ID:              d.Id(),
+		Timeout:         d.Get("timeout").(int),
+		Type:            d.Get("type").(string),
+		Interval:        d.Get("interval").(int),
+		Retries:         d.Get("retries").(int),
+		ConsecutiveUp:   d.Get("consecutive_up").(int),
+		ConsecutiveDown: d.Get("consecutive_down").(int),
 	}
 
 	if description, ok := d.GetOk("description"); ok {
@@ -246,6 +250,8 @@ func resourceCloudflareLoadBalancerPoolMonitorRead(ctx context.Context, d *schem
 
 	d.Set("description", loadBalancerMonitor.Description)
 	d.Set("interval", loadBalancerMonitor.Interval)
+	d.Set("consecutive_up", loadBalancerMonitor.ConsecutiveUp)
+	d.Set("consecutive_down", loadBalancerMonitor.ConsecutiveDown)
 	d.Set("method", loadBalancerMonitor.Method)
 	d.Set("port", int(loadBalancerMonitor.Port))
 	d.Set("retries", loadBalancerMonitor.Retries)
