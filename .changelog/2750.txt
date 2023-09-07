@@ -1,0 +1,3 @@
+```release-note:bug
+resource/pages_project: force replace when changing pages source
+```
