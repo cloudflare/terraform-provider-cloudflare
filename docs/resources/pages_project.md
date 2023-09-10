@@ -344,13 +344,13 @@ Required:
 Optional:
 
 - `deployments_enabled` (Boolean) Toggle deployments on this repo. Defaults to `true`.
-- `owner` (String) Project owner username.
+- `owner` (String) Project owner username. **Modifying this attribute will force creation of a new resource.**
 - `pr_comments_enabled` (Boolean) Enable Pages to comment on Pull Requests. Defaults to `true`.
 - `preview_branch_excludes` (List of String) Branches will be excluded from automatic deployment.
 - `preview_branch_includes` (List of String) Branches will be included for automatic deployment.
 - `preview_deployment_setting` (String) Preview Deployment Setting. Defaults to `all`.
 - `production_deployment_enabled` (Boolean) Enable production deployments. Defaults to `true`.
-- `repo_name` (String) Project repository name.
+- `repo_name` (String) Project repository name. **Modifying this attribute will force creation of a new resource.**
 
 ## Import
 
