@@ -1,5 +1,9 @@
 ## 4.15.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: Add support for a new Browser Mode that allows bypass of downstream caches ([#2756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2756))
+
 BUG FIXES:
 
 * resource/pages_project: force replace when changing pages source ([#2750](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2750))
