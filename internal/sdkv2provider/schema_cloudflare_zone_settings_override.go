@@ -510,7 +510,7 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed:     true,
 	},
 
-	"proxy_read_timeout": {
+	"read_timeout": {
 		Type:     schema.TypeString,
 		Optional: true,
 		Computed: true,

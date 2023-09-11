@@ -233,6 +233,10 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: fmt.Sprintf("Products to target with the actions. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetActionParameterProductValues())),
 									},
+									"read_timeout": schema.Int64Attribute{
+										Optional:            true,
+										MarkdownDescription: "Specifies a maximum timeout for reading content from an origin server.",
+									},
 									"request_fields": schema.SetAttribute{
 										ElementType:         types.StringType,
 										Optional:            true,

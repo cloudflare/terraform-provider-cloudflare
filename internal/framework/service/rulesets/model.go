@@ -60,6 +60,7 @@ type ActionParametersModel struct {
 	Phases                  types.Set                                    `tfsdk:"phases"`
 	Polish                  types.String                                 `tfsdk:"polish"`
 	Products                types.Set                                    `tfsdk:"products"`
+	ReadTimeout             types.Int64                                  `tfsdk:"read_timeout"`
 	RequestFields           types.Set                                    `tfsdk:"request_fields"`
 	RespectStrongEtags      types.Bool                                   `tfsdk:"respect_strong_etags"`
 	Response                []*ActionParameterResponseModel              `tfsdk:"response"`
