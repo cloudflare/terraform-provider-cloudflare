@@ -554,7 +554,7 @@ Optional:
 
 Required:
 
-- `mode` (String) Mode of the browser TTL.
+- `mode` (String) Mode of the browser TTL. Available values: `override_origin`, `respect_origin`, `bypass`
 
 Optional:
 

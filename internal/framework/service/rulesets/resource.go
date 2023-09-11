@@ -352,6 +352,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				ServerSideExcludes:      flatteners.Bool(ruleResponse.ActionParameters.ServerSideExcludes),
 				StatusCode:              flatteners.Int64(int64(ruleResponse.ActionParameters.StatusCode)),
 				SXG:                     flatteners.Bool(ruleResponse.ActionParameters.SXG),
+				OriginCacheControl:      flatteners.Bool(ruleResponse.ActionParameters.OriginCacheControl),
 				OriginErrorPagePassthru: flatteners.Bool(ruleResponse.ActionParameters.OriginErrorPagePassthru),
 				RespectStrongEtags:      flatteners.Bool(ruleResponse.ActionParameters.RespectStrongETags),
 				Version:                 flatteners.String(cloudflare.String(ruleResponse.ActionParameters.Version)),
@@ -917,6 +918,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 
 		if !ap.OriginErrorPagePassthru.IsNull() {
 			rr.ActionParameters.OriginErrorPagePassthru = cloudflare.BoolPtr(ap.OriginErrorPagePassthru.ValueBool())
+		}
+
+		if !ap.OriginCacheControl.IsNull() {
+			rr.ActionParameters.OriginCacheControl = cloudflare.BoolPtr(ap.OriginCacheControl.ValueBool())
 		}
 
 		if !ap.RespectStrongEtags.IsNull() {

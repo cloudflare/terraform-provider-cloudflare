@@ -219,6 +219,10 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Turn on or off the Cloudflare Opportunistic Encryption feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.",
 									},
+									"origin_cache_control": schema.BoolAttribute{
+										Optional:            true,
+										MarkdownDescription: "Enable or disable the use of a more compliant Cache Control parsing mechanism, enabled by default for most zones.",
+									},
 									"phases": schema.SetAttribute{
 										ElementType:         types.StringType,
 										Optional:            true,

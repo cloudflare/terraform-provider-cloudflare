@@ -55,6 +55,7 @@ type ActionParametersModel struct {
 	Mirage                  types.Bool                                   `tfsdk:"mirage"`
 	OpportunisticEncryption types.Bool                                   `tfsdk:"opportunistic_encryption"`
 	Origin                  []*ActionParameterOriginModel                `tfsdk:"origin"`
+	OriginCacheControl      types.Bool                                   `tfsdk:"origin_cache_control"`
 	OriginErrorPagePassthru types.Bool                                   `tfsdk:"origin_error_page_passthru"`
 	Overrides               []*ActionParameterOverridesModel             `tfsdk:"overrides"`
 	Phases                  types.Set                                    `tfsdk:"phases"`
