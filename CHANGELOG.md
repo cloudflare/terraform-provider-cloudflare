@@ -6,6 +6,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_list: Fix import for cloudflare_list resource ([#2663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2663))
 * resource/pages_project: force replace when changing pages source ([#2750](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2750))
 
 DEPENDENCIES:
