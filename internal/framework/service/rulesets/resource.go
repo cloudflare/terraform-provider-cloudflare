@@ -359,6 +359,14 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				Version:                 flatteners.String(cloudflare.String(ruleResponse.ActionParameters.Version)),
 			})
 
+			if !reflect.ValueOf(ruleResponse.ActionParameters.AdditionalCacheablePorts).IsNil() {
+				var ports []attr.Value
+				for _, s := range ruleResponse.ActionParameters.AdditionalCacheablePorts {
+					ports = append(ports, types.Int64Value((int64(s))))
+				}
+				rule.ActionParameters[0].AdditionalCacheablePorts = flatteners.Int64Set(ports)
+			}
+
 			if !reflect.ValueOf(ruleResponse.ActionParameters.Polish).IsNil() {
 				rule.ActionParameters[0].Polish = flatteners.String(ruleResponse.ActionParameters.Polish.String())
 			}
@@ -848,6 +856,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 
 		if !ap.StatusCode.IsNull() {
 			rr.ActionParameters.StatusCode = uint16(ap.StatusCode.ValueInt64())
+		}
+
+		if !ap.AdditionalCacheablePorts.IsNull() {
+			rr.ActionParameters.AdditionalCacheablePorts = expanders.Int64Set(ctx, ap.AdditionalCacheablePorts)
 		}
 
 		if !ap.AutomaticHTTPSRewrites.IsNull() {

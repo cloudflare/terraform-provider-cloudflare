@@ -473,6 +473,14 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 									Optional:    true,
 									Description: "Whether to cache if expression matches.",
 								},
+								"additional_cacheable_ports": {
+									Type:        schema.TypeSet,
+									Optional:    true,
+									Description: "Allows for the ability to support caching on non-standard ports.",
+									Elem: &schema.Schema{
+										Type: schema.TypeInt,
+									},
+								},
 								"automatic_https_rewrites": {
 									Type:        schema.TypeBool,
 									Optional:    true,
