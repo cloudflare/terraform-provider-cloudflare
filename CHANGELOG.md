@@ -11,6 +11,7 @@ BUG FIXES:
 
 DEPENDENCIES:
 
+* provider: bumps crazy-max/ghaction-import-gpg from 5 to 6 ([#2758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2758))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.5 to 1.4.0 ([#2745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2745))
 * provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.2 to 0.12.0 ([#2746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2746))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.28.0 to 2.29.0 ([#2748](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2748))
