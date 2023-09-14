@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: Updates the cast to a pointer to match changes in the SDK
+```

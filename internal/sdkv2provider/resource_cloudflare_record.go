@@ -306,7 +306,7 @@ func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if comment, ok := d.GetOk("comment"); ok {
-		updateRecord.Comment = comment.(string)
+		updateRecord.Comment = cloudflare.StringPtr(comment.(string))
 	}
 
 	tags := []string{}
