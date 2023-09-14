@@ -637,7 +637,7 @@ Optional:
 
 Required:
 
-- `mode` (String) Mode of the edge TTL.
+- `mode` (String) Mode of the edge TTL. Available values: `override_origin`, `respect_origin`, `bypass_by_default`
 
 Optional:
 

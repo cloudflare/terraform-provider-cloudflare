@@ -95,6 +95,42 @@ func TestEdgeTTLValidation(t *testing.T) {
 				}
 			})
 		})
+
+		t.Run("bypass by default mode is specified", func(t *testing.T) {
+			t.Parallel()
+
+			t.Run("errors when ttl is passed", func(t *testing.T) {
+				t.Parallel()
+
+				resp := &validator.ObjectResponse{}
+				req := constructEdgeTTLObjectRequest("bypass_by_default", big.NewFloat(1))
+				edgeValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: diag.Diagnostics{
+						diag.NewAttributeErrorDiagnostic(path.Root("edge_ttl"), "invalid configuration", "cannot set default ttl when using mode 'bypass_by_default'"),
+					},
+				}
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+
+			t.Run("passes without ttl", func(t *testing.T) {
+				t.Parallel()
+
+				resp := &validator.ObjectResponse{}
+				req := constructEdgeTTLObjectRequest("bypass_by_default", nil)
+				edgeValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: nil,
+				}
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+		})
 	})
 }
 

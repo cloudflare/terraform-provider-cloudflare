@@ -465,7 +465,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 											Attributes: map[string]schema.Attribute{
 												"mode": schema.StringAttribute{
 													Required:            true,
-													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin")},
+													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin", "bypass_by_default")},
 													MarkdownDescription: "Mode of the edge TTL.",
 												},
 												"default": schema.Int64Attribute{
