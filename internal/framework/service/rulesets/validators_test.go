@@ -177,6 +177,42 @@ func TestBrowserTTLValidation(t *testing.T) {
 				}
 			})
 		})
+
+		t.Run("bypass mode is specified", func(t *testing.T) {
+			t.Parallel()
+
+			t.Run("errors when ttl is passed", func(t *testing.T) {
+				t.Parallel()
+
+				resp := &validator.ObjectResponse{}
+				req := constructBrowserTTLObjectRequest("bypass", big.NewFloat(1))
+				browserValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: diag.Diagnostics{
+						diag.NewAttributeErrorDiagnostic(path.Root("browser_ttl"), "invalid configuration", "cannot set default ttl when using mode 'bypass'"),
+					},
+				}
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+
+			t.Run("passes without ttl", func(t *testing.T) {
+				t.Parallel()
+
+				resp := &validator.ObjectResponse{}
+				req := constructBrowserTTLObjectRequest("bypass", nil)
+				browserValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: nil,
+				}
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+		})
 	})
 }
 

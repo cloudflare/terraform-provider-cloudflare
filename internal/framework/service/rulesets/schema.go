@@ -219,6 +219,10 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Turn on or off the Cloudflare Opportunistic Encryption feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.",
 									},
+									"origin_cache_control": schema.BoolAttribute{
+										Optional:            true,
+										MarkdownDescription: "Enable or disable the use of a more compliant Cache Control parsing mechanism, enabled by default for most zones.",
+									},
 									"phases": schema.SetAttribute{
 										ElementType:         types.StringType,
 										Optional:            true,
@@ -232,6 +236,10 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										ElementType:         types.StringType,
 										Optional:            true,
 										MarkdownDescription: fmt.Sprintf("Products to target with the actions. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetActionParameterProductValues())),
+									},
+									"read_timeout": schema.Int64Attribute{
+										Optional:            true,
+										MarkdownDescription: "Specifies a maximum timeout for reading content from an origin server.",
 									},
 									"request_fields": schema.SetAttribute{
 										ElementType:         types.StringType,
@@ -519,8 +527,8 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 											Attributes: map[string]schema.Attribute{
 												"mode": schema.StringAttribute{
 													Required:            true,
-													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin")},
-													MarkdownDescription: "Mode of the browser TTL.",
+													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin", "bypass")},
+													MarkdownDescription: fmt.Sprintf("Mode of the browser TTL. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"override_origin", "respect_origin", "bypass"})),
 												},
 												"default": schema.Int64Attribute{
 													Optional:            true,

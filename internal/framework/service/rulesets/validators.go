@@ -107,5 +107,13 @@ func (v BrowserTTLValidator) ValidateObject(ctx context.Context, req validator.O
 				fmt.Sprintf("using mode '%s' requires setting a default for ttl", parameter.Mode.ValueString()),
 			)
 		}
+	} else if parameter.Mode.ValueString() == "bypass" {
+		if !parameter.Default.IsNull() {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				errInvalidConfiguration,
+				fmt.Sprintf("cannot set default ttl when using mode '%s'", parameter.Mode.ValueString()),
+			)
+		}
 	}
 }

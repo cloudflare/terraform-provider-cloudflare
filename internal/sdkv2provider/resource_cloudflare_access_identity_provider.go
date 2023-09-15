@@ -57,12 +57,12 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 	d.Set("name", accessIdentityProvider.Name)
 	d.Set("type", accessIdentityProvider.Type)
 
-	config := convertStructToSchema(d, accessIdentityProvider.Config)
+	config := convertAccessIDPConfigStructToSchema(accessIdentityProvider.Config)
 	if configErr := d.Set("config", config); configErr != nil {
 		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider configuration: %w", configErr))
 	}
 
-	scimConfig := convertScimConfigStructToSchema(d, accessIdentityProvider.ScimConfig)
+	scimConfig := convertAccessIDPScimConfigStructToSchema(accessIdentityProvider.ScimConfig)
 	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
 		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider scim configuration: %w", scimConfigErr))
 	}
@@ -245,11 +245,7 @@ func convertScimConfigSchemaToStruct(d *schema.ResourceData) cloudflare.AccessId
 	return ScimConfig
 }
 
-func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIdentityProviderConfiguration) []interface{} {
-	if _, ok := d.GetOk("config"); !ok {
-		return []interface{}{}
-	}
-
+func convertAccessIDPConfigStructToSchema(options cloudflare.AccessIdentityProviderConfiguration) []interface{} {
 	attributes := make([]string, 0)
 	for _, value := range options.Attributes {
 		attributes = append(attributes, value)
@@ -285,11 +281,7 @@ func convertStructToSchema(d *schema.ResourceData, options cloudflare.AccessIden
 	return []interface{}{m}
 }
 
-func convertScimConfigStructToSchema(d *schema.ResourceData, options cloudflare.AccessIdentityProviderScimConfiguration) []interface{} {
-	if _, ok := d.GetOk("scim_config"); !ok {
-		return []interface{}{}
-	}
-
+func convertAccessIDPScimConfigStructToSchema(options cloudflare.AccessIdentityProviderScimConfiguration) []interface{} {
 	m := map[string]interface{}{
 		"enabled":                  options.Enabled,
 		"secret":                   options.Secret,

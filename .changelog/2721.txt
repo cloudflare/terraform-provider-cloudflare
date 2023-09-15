@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_application: Add custom_non_identity_deny_url field
+```
