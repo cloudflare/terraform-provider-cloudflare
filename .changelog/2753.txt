@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_ruleset: Add support for the use of Origin Cache Control in the Rulesets API
+```

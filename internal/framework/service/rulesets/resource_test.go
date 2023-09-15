@@ -1836,6 +1836,7 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.device_type", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.geo", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin_cache_control", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin_error_page_passthru", "false"),
 				),
 			},
@@ -3962,6 +3963,7 @@ func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID stri
 				}
 			}
 		}
+		origin_cache_control = true
 		origin_error_page_passthru = false
       }
 	  expression = "true"
