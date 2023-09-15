@@ -56,7 +56,7 @@ func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Created Cloudflare Workers secret with ID: %s", d.Id()))
 
-	return nil
+	return resourceCloudflareWorkerSecretRead(ctx, d, meta)
 }
 
 func resourceCloudflareWorkerSecretDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
