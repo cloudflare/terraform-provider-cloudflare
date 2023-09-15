@@ -665,6 +665,11 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"read_timeout": {
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Description: "Sets the timeout value for reading content from an origin server.",
+								},
 								"respect_strong_etags": {
 									Type:        schema.TypeBool,
 									Optional:    true,

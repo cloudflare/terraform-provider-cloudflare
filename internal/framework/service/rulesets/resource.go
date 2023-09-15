@@ -355,6 +355,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				OriginCacheControl:      flatteners.Bool(ruleResponse.ActionParameters.OriginCacheControl),
 				OriginErrorPagePassthru: flatteners.Bool(ruleResponse.ActionParameters.OriginErrorPagePassthru),
 				RespectStrongEtags:      flatteners.Bool(ruleResponse.ActionParameters.RespectStrongETags),
+				ReadTimeout:             flatteners.Int64(int64(cloudflare.Uint(ruleResponse.ActionParameters.ReadTimeout))),
 				Version:                 flatteners.String(cloudflare.String(ruleResponse.ActionParameters.Version)),
 			})
 
@@ -899,6 +900,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 
 		if !ap.SXG.IsNull() {
 			rr.ActionParameters.SXG = cloudflare.BoolPtr(ap.SXG.ValueBool())
+		}
+
+		if !ap.ReadTimeout.IsNull() {
+			rr.ActionParameters.ReadTimeout = cloudflare.UintPtr(uint(ap.ReadTimeout.ValueInt64()))
 		}
 
 		if !ap.Polish.IsNull() {
