@@ -833,6 +833,11 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"origin_cache_control": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Sets a more compliant mode for parsing Cache Control headers",
+								},
 								"origin_error_page_passthru": {
 									Type:        schema.TypeBool,
 									Optional:    true,
