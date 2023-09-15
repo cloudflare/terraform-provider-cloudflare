@@ -61,7 +61,7 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 		}
 
 		if len(secretResponse.Result) > 0 {
-			return fmt.Errorf("Worker secret with name %s still exists against Work Script %s", secretResponse.Result[0].Name, params.ScriptName)
+			return fmt.Errorf("worker secret with name %s still exists against Worker Script %s", secretResponse.Result[0].Name, params.ScriptName)
 		}
 	}
 
@@ -103,6 +103,6 @@ func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, ac
 			}
 		}
 
-		return fmt.Errorf("Worker secret with name %s not found against Worker Script %s", name, scriptName)
+		return fmt.Errorf("worker secret with name %s not found against Worker Script %s", name, scriptName)
 	}
 }
