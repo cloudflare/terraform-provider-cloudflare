@@ -55,11 +55,13 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 							Description: "Project owner username.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 						},
 						"repo_name": {
 							Description: "Project repository name.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 						},
 						"production_branch": {
 							Description: "Project production branch name.",

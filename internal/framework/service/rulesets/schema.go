@@ -523,8 +523,8 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 											Attributes: map[string]schema.Attribute{
 												"mode": schema.StringAttribute{
 													Required:            true,
-													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin")},
-													MarkdownDescription: "Mode of the browser TTL.",
+													Validators:          []validator.String{stringvalidator.OneOf("override_origin", "respect_origin", "bypass")},
+													MarkdownDescription: fmt.Sprintf("Mode of the browser TTL. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"override_origin", "respect_origin", "bypass"})),
 												},
 												"default": schema.Int64Attribute{
 													Optional:            true,

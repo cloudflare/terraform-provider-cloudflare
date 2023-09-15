@@ -350,6 +350,46 @@ func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareList_Import(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
+	// endpoint does not yet support the API tokens.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var list cloudflare.List
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareListBasicIP(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListExists(name, &list),
+					resource.TestCheckResourceAttr(name, "item.#", "1"),
+				),
+			},
+			{
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(name, "item[0].value[0].ip"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareListIPListOrdered(ID, name, description, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_list" "%[1]s" {
