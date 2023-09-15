@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
+	"strings"
 )
 
 func resourceCloudflareWorkerSecret() *schema.Resource {
@@ -20,15 +21,31 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 		UpdateContext: resourceCloudflareWorkerSecretCreate,
 		DeleteContext: resourceCloudflareWorkerSecretDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceCloudflareWorkerSecretImport,
 		},
 		Description: heredoc.Doc("Provides a Cloudflare worker secret resource"),
 	}
 }
 
 func resourceCloudflareWorkerSecretRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// Always return nil, as secrets cannot be read back from the Cloudflare Worker API as it currently stands.
-	return nil
+	client := meta.(*cloudflare.API)
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+
+	secrets, err := client.ListWorkersSecrets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersSecretsParams{
+		ScriptName: d.Get("script_name").(string),
+	})
+	if err != nil {
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("Error listing worker secrets")))
+	}
+
+	for _, secret := range secrets.Result {
+		if secret.Name == d.Get("name") {
+			return nil
+		}
+
+	}
+
+	return diag.FromErr(errors.Wrap(err, fmt.Sprintf("worker secret %s not found", d.Get("name"))))
 }
 
 func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -78,4 +95,23 @@ func resourceCloudflareWorkerSecretDelete(ctx context.Context, d *schema.Resourc
 	}
 
 	return nil
+}
+
+func resourceCloudflareWorkerSecretImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	attributes := strings.SplitN(d.Id(), "/", 3)
+
+	if len(attributes) != 3 {
+		return nil, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/scriptName/secretName"`, d.Id())
+	}
+
+	accountID, scriptName, secretName := attributes[0], attributes[1], attributes[2]
+
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", scriptName, secretName)))
+	d.Set("name", secretName)
+	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.Set("script_name", scriptName)
+
+	resourceCloudflareWorkerSecretRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
