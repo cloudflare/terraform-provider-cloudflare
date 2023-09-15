@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"log"
-
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -55,7 +54,7 @@ func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.Resourc
 
 	d.SetId(stringChecksum(fmt.Sprintf("%s/%s", scriptName, name)))
 
-	log.Printf("[INFO] Cloudflare Workers Secret ID: %s", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Created Cloudflare Workers secret with ID: %s", d.Id()))
 
 	return nil
 }
@@ -71,7 +70,7 @@ func resourceCloudflareWorkerSecretDelete(ctx context.Context, d *schema.Resourc
 		ScriptName: scriptName,
 	}
 
-	log.Printf("[INFO] Deleting Cloudflare Workers secret with id: %+v", d.Id())
+	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers secret with id: %s", d.Id()))
 
 	_, err := client.DeleteWorkersSecret(context.Background(), cloudflare.AccountIdentifier(accountID), params)
 	if err != nil {
