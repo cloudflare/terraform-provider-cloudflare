@@ -79,6 +79,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		newAccessApplication.SaasApplication = convertSaasSchemaToStruct(d)
 	}
 
+	if value, ok := d.GetOk("tags"); ok {
+		newAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
 
 	identifier, err := initIdentifier(d)
@@ -134,6 +138,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("app_launcher_visible", accessApplication.AppLauncherVisible)
 	d.Set("service_auth_401_redirect", accessApplication.ServiceAuth401Redirect)
 	d.Set("custom_pages", accessApplication.CustomPages)
+	d.Set("tags", accessApplication.Tags)
 
 	corsConfig := convertCORSStructToSchema(d, accessApplication.CorsHeaders)
 	if corsConfigErr := d.Set("cors_headers", corsConfig); corsConfigErr != nil {
@@ -203,6 +208,10 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	if _, ok := d.GetOk("saas_app"); ok {
 		saasConfig := convertSaasSchemaToStruct(d)
 		updatedAccessApplication.SaasApplication = saasConfig
+	}
+
+	if value, ok := d.GetOk("tags"); ok {
+		updatedAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Application from struct: %+v", updatedAccessApplication))

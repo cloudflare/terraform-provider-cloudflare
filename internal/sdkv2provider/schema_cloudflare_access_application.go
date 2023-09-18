@@ -288,6 +288,14 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			},
 			Description: "The custom pages selected for the application.",
 		},
+		"tags": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "The itags associated with the application.",
+		},
 	}
 }
 
