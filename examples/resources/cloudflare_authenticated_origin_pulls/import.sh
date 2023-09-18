@@ -1,5 +1,5 @@
 # Authenticated Origin Pull configuration
-$ terraform import cloudflare_authenticated_origin_pulls.my_aop <zone_id>//
+$ terraform import cloudflare_authenticated_origin_pulls.example <zone_id>
 
 # Per-Zone Authenticated Origin Pull configuration
 $ terraform import cloudflare_authenticated_origin_pulls.my_per_zone_aop <zone_id>/<certificate_id>/
