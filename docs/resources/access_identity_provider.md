@@ -110,12 +110,15 @@ Optional:
 - `okta_account` (String)
 - `onelogin_account` (String)
 - `pkce_enabled` (Boolean)
-- `redirect_url` (String)
 - `scopes` (List of String)
 - `sign_request` (Boolean)
 - `sso_target_url` (String)
 - `support_groups` (Boolean)
 - `token_url` (String)
+
+Read-Only:
+
+- `redirect_url` (String)
 
 
 <a id="nestedblock--scim_config"></a>
