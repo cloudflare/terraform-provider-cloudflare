@@ -1,3 +1,3 @@
 ```release-note:enhancement
-resource/cloudflare_authenticated_origin_pulls: Improve documentation for cloudflare_authenticated_origin_pulls and origin_pulls_certificate
+resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation
 ```
