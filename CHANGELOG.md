@@ -3,10 +3,13 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_ruleset: Add support for a new Browser Mode that allows bypass of downstream caches ([#2756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2756))
+* resource/cloudflare_ruleset: Add support for the use of Origin Cache Control in the Rulesets API ([#2753](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2753))
+* resource/cloudflare_ruleset: Add support for the use of Proxy Read Timeout field in Rulesets API ([#2755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2755))
 
 BUG FIXES:
 
 * resource/cloudflare_list: Fix import for cloudflare_list resource ([#2663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2663))
+* resource/cloudflare_record: Updates the cast to a pointer to match changes in the SDK ([#2763](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2763))
 * resource/pages_project: force replace when changing pages source ([#2750](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2750))
 
 DEPENDENCIES:

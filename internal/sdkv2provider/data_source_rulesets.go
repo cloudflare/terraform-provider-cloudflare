@@ -665,6 +665,11 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"read_timeout": {
+									Type:        schema.TypeInt,
+									Optional:    true,
+									Description: "Sets the timeout value for reading content from an origin server.",
+								},
 								"respect_strong_etags": {
 									Type:        schema.TypeBool,
 									Optional:    true,
@@ -827,6 +832,11 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 											},
 										},
 									},
+								},
+								"origin_cache_control": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Sets a more compliant mode for parsing Cache Control headers",
 								},
 								"origin_error_page_passthru": {
 									Type:        schema.TypeBool,
