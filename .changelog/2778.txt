@@ -1,0 +1,3 @@
+```release-note:bug
+datasource/account_roles: update internal methods to ensure we auto paginate results
+```
