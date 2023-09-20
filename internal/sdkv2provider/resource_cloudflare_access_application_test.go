@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -570,10 +570,11 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
@@ -587,6 +588,42 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "tags.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{Config: testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "app_launcher"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "header_bg_color", "#000000"),
+					resource.TestCheckResourceAttr(name, "bg_color", "#00000"),
+					resource.TestCheckResourceAttr(name, "app_launcher_logo_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
+					resource.TestCheckResourceAttr(name, "landing_page_design.#", "1"),
+					resource.TestCheckResourceAttr(name, "landing_page_design.0.title", "title"),
+					resource.TestCheckResourceAttr(name, "landing_page_design.0.message", "message"),
+					resource.TestCheckResourceAttr(name, "landing_page_design.0.button_color", "#000000"),
+					resource.TestCheckResourceAttr(name, "landing_page_design.0.button_text_color", "#000000"),
+					resource.TestCheckResourceAttr(name, "landing_page_design.0.image_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
+					resource.TestCheckResourceAttr(name, "footer_links.#", "1"),
+					resource.TestCheckResourceAttr(name, "footer_links.0.name", "footer link"),
+					resource.TestCheckResourceAttr(name, "footer_links.0.url", "https://www.cloudflare.com"),
 				),
 			},
 		},
@@ -834,6 +871,36 @@ resource "cloudflare_access_application" "%[1]s" {
   logo_url          		 = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
 }
 `, rnd, zoneID, domain)
+}
+
+func testAccessApplicationWithAppLauncherCustomizationFields(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_access_application" "%[1]s" {
+			name             = "%[1]s-updated"
+			zone_id          = "%[2]s"
+			domain           = "%[1]s.example.com"
+			type             = "app_launcher"
+			session_duration = "24h"
+			app_launcher_visible = true
+			app_launcher_logo_url = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
+			bg_color = "#000000"
+			header_bg_color = "#000000"
+
+			footer_links {
+				name = "footer link"
+				url = "https://www.cloudflare.com"
+			}
+		
+
+			landing_page_design {
+				title = "title"
+				message = "message"
+				button_color = "#000000"
+				image_url = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
+				button_text_color = "#000000"
+			}
+	}
+	`, rnd, zoneID)
 }
 
 func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {

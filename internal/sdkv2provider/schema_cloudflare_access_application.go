@@ -2,9 +2,9 @@ package sdkv2provider
 
 import (
 	"fmt"
+	"github.com/cloudflare/cloudflare-go"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -311,6 +311,75 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			},
 			Description: "The itags associated with the application.",
 		},
+		"app_launcher_logo_url": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The logo URL of the app launcher.",
+		},
+		"header_bg_color": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The background color of the header bar in the app launcher.",
+		},
+		"bg_color": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The background color of the app launcher.",
+		},
+		"footer_links": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"name": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The name of the footer link.",
+					},
+					"url": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The URL of the footer link.",
+					},
+				},
+			},
+			Description: "The footer links of the app launcher.",
+		},
+		"landing_page_design": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The landing page design of the app launcher.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"title": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The title of the landing page.",
+					},
+					"message": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The message of the landing page.",
+					},
+					"button_text_color": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The button text color of the landing page.",
+					},
+					"button_color": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The button color of the landing page.",
+					},
+					"image_url": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The URL of the image to be displayed in the landing page.",
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -422,6 +491,73 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 		}
 	}
 	return &SaasConfig
+}
+
+func convertLandingPageDesignSchemaToStruct(d *schema.ResourceData) *cloudflare.AccessLandingPageDesign {
+	LandingPageDesign := cloudflare.AccessLandingPageDesign{}
+	if _, ok := d.GetOk("landing_page_design"); ok {
+		LandingPageDesign.ButtonColor = d.Get("landing_page_design.0.button_color").(string)
+		LandingPageDesign.ButtonTextColor = d.Get("landing_page_design.0.button_text_color").(string)
+		LandingPageDesign.Title = d.Get("landing_page_design.0.title").(string)
+		LandingPageDesign.Message = d.Get("landing_page_design.0.message").(string)
+		LandingPageDesign.ImageURL = d.Get("landing_page_design.0.image_url").(string)
+	}
+	return &LandingPageDesign
+}
+
+func convertFooterLinksSchemaToStruct(d *schema.ResourceData) []cloudflare.AccessFooterLink {
+	var footerLinks []cloudflare.AccessFooterLink
+	if _, ok := d.GetOk("footer_links"); ok {
+		footerLinksInterface := d.Get("footer_links").(*schema.Set).List()
+		for _, footerLinkInterface := range footerLinksInterface {
+			footerLink := footerLinkInterface.(map[string]interface{})
+			footerLinks = append(footerLinks, cloudflare.AccessFooterLink{
+				Name: footerLink["name"].(string),
+				URL:  footerLink["url"].(string),
+			})
+		}
+	}
+	return footerLinks
+}
+
+func convertLandingPageDesignStructToSchema(d *schema.ResourceData, design *cloudflare.AccessLandingPageDesign) []interface{} {
+	if _, ok := d.GetOk("landing_page_design"); !ok {
+		return []interface{}{}
+	}
+
+	if design == nil {
+		return []interface{}{}
+	}
+
+	m := map[string]interface{}{
+		"button_color":      design.ButtonColor,
+		"button_text_color": design.ButtonTextColor,
+		"title":             design.Title,
+		"message":           design.Message,
+		"image_url":         design.ImageURL,
+	}
+
+	return []interface{}{m}
+}
+
+func convertFooterLinksStructToSchema(d *schema.ResourceData, footerLinks []cloudflare.AccessFooterLink) []interface{} {
+	if _, ok := d.GetOk("footer_links"); !ok {
+		return []interface{}{}
+	}
+
+	if footerLinks == nil {
+		return []interface{}{}
+	}
+
+	var footerLinksInterface []interface{}
+	for _, footerLink := range footerLinks {
+		footerLinksInterface = append(footerLinksInterface, map[string]interface{}{
+			"name": footerLink.Name,
+			"url":  footerLink.URL,
+		})
+	}
+
+	return footerLinksInterface
 }
 
 func convertSAMLAttributeStructToSchema(attr cloudflare.SAMLAttributeConfig) map[string]interface{} {
