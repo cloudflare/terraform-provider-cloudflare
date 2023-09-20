@@ -17,12 +17,14 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 		"bundle_method": {
         	Type:         schema.TypeString,
         	Optional:     true,
+        	ForceNew:    true,
         	Default:      "ubiquitous",
         	Description:  fmt.Sprintf("A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it. %s", renderAvailableDocumentationValuesStringSlice([]string{"ubiquitous", "optimal", "force"})),
         },
 		"certificate": {
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 			Description: "The zone's SSL certificate or SSL certificate and intermediate(s).",
 		},
 		"host": {
