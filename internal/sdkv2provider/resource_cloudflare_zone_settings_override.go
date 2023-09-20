@@ -173,6 +173,10 @@ func flattenZoneSettings(ctx context.Context, d *schema.ResourceData, settings [
 			s.ID = "zero_rtt"
 		}
 
+		if s.ID == "first_party_fonts" {
+			s.ID = "fonts"
+		}
+
 		if !settingInSchema(s.ID) {
 			log.Printf("[WARN] Value not in schema returned from API zone settings (is it new?) - %q : %#v", s.ID, s.Value)
 			continue
