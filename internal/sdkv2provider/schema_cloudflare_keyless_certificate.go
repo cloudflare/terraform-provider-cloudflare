@@ -49,5 +49,10 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 			Optional:     true,
 			Description: "Whether or not the Keyless SSL is on or off.",
 		},
+		"status": {
+			Description: "Status of the keyless SSL",
+			Type:        schema.TypeString,
+			Computed:    true,
+		},
 	}
 }
