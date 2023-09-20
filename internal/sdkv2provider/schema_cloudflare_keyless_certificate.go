@@ -1,6 +1,8 @@
 package sdkv2provider
 
 import (
+    "fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -15,8 +17,7 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 		"bundle_method": {
         	Type:         schema.TypeString,
         	Optional:     true,
-        	Default:      "ubiquitous"
-        	ValidateFunc: validation.StringInSlice([]string{"ubiquitous", "optimal", "force"}, false),
+        	Default:      "ubiquitous",
         	Description:  fmt.Sprintf("A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it. %s", renderAvailableDocumentationValuesStringSlice([]string{"ubiquitous", "optimal", "force"})),
         },
 		"certificate": {
@@ -38,7 +39,7 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 			Type:         schema.TypeInt,
 			Optional:     true,
 			ValidateFunc: validation.IntBetween(0, 65535),
-			Default:      24008
+			Default:      24008,
 			Description:  "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
 		},
 		"enabled": {

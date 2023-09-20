@@ -16,7 +16,7 @@ func TestAccCloudflareKeylessSSL_Create(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare.keyless_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare.keyless_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -26,10 +26,10 @@ func TestAccCloudflareKeylessSSL_Create(t *testing.T) {
 			{
 				Config: testAccCloudflareKeylessCertificate(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "port", "24008"),
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
-					resource.TestCheckResourceAttr(name, "name", resourceName),
+					resource.TestCheckResourceAttr(name, "name", name),
 					resource.TestCheckResourceAttr(name, "host", domain),
 				),
 			},
@@ -45,10 +45,10 @@ func testAccCheckCloudflareKeylessCertificateDestroy(s *terraform.State) error {
 			continue
 		}
 
-		keylessCertificates, err := client.ListKeylessSSL(context.Background(), cloudflare.ZoneIdentifier(zoneID))
+		keylessCertificates, err := client.ListKeylessSSL(context.Background(), zoneID)
 
 		if err == nil {
-			for _, keylessCertificate := range rules.keylessCertificates {
+			for _, keylessCertificate := range keylessCertificates {
 				if keylessCertificate.ID == rs.Primary.Attributes["id"] {
 					return fmt.Errorf("Keyless SSL still exists")
 				}
