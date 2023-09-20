@@ -149,24 +149,28 @@ func resourceCloudflareAuthenticatedOriginPullsImport(ctx context.Context, d *sc
 	// split the id so we can lookup
 	idAttr := strings.SplitN(d.Id(), "/", 3)
 
-	if len(idAttr) != 3 {
-		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/certID/hostname\"", d.Id())
-	}
-	zoneID, certID, hostname := idAttr[0], idAttr[1], idAttr[2]
-	d.Set(consts.ZoneIDSchemaKey, zoneID)
-
-	// Set attributes based on inputs which informs which form of AOP to use
+	var zoneID string
+	var certID string
+	var hostname string
 	var checksum string
-	if hostname != "" && certID != "" {
+
+	if len(idAttr) == 1 {
+		zoneID = idAttr[0]
+		checksum = stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
+	} else if len(idAttr) == 2 {
+		zoneID, certID = idAttr[0], idAttr[1]
+		d.Set("authenticated_origin_pulls_certificate", certID)
+		checksum = stringChecksum(fmt.Sprintf("PerZoneAOP/%s/%s", zoneID, certID))
+	} else if len(idAttr) == 3 {
+		zoneID, certID, hostname = idAttr[0], idAttr[1], idAttr[2]
 		d.Set("hostname", hostname)
 		d.Set("authenticated_origin_pulls_certificate", certID)
 		checksum = stringChecksum(fmt.Sprintf("PerHostnameAOP/%s/%s/%s", zoneID, hostname, certID))
-	} else if certID != "" {
-		d.Set("authenticated_origin_pulls_certificate", certID)
-		checksum = stringChecksum(fmt.Sprintf("PerZoneAOP/%s/%s", zoneID, certID))
 	} else {
-		checksum = stringChecksum(fmt.Sprintf("GlobalAOP/%s/", zoneID))
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be maximum 3 id specified for import", d.Id())
 	}
+
+	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.SetId(checksum)
 	resourceCloudflareAuthenticatedOriginPullsRead(ctx, d, meta)
 	return []*schema.ResourceData{d}, nil
