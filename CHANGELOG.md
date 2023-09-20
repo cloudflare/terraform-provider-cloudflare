@@ -1,5 +1,9 @@
 ## 4.16.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
+
 ## 4.15.0 (20th September, 2023)
 
 ENHANCEMENTS:
