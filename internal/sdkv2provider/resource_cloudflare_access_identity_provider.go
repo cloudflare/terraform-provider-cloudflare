@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -145,8 +144,7 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 	}
 
 	scimSecret := d.Get("scim_config.0.secret").(string)
-	checkRedactedRegex := regexp.MustCompile(`^\*+$`)
-	if accessIdentityProvider.ScimConfig.Secret != "" && !checkRedactedRegex.MatchString(accessIdentityProvider.ScimConfig.Secret) {
+	if accessIdentityProvider.ScimConfig.Secret != "" && !strings.Contains(accessIdentityProvider.ScimConfig.Secret, "*") {
 		scimSecret = accessIdentityProvider.ScimConfig.Secret
 	}
 

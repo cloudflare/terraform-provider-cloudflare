@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -285,10 +284,10 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 				return errors.New("secret is empty")
 			}
 
-			checkRedactedRegex := regexp.MustCompile(`^\*+$`)
-			if checkRedactedRegex.MatchString(value) {
+			if strings.Contains(value, "*") {
 				return errors.New("secret was redacted")
 			}
+
 			return nil
 		}),
 	)
@@ -324,10 +323,10 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 				return errors.New("secret is empty")
 			}
 
-			checkRedactedRegex := regexp.MustCompile(`^\*+$`)
-			if checkRedactedRegex.MatchString(value) {
+			if strings.Contains(value, "*") {
 				return errors.New("secret was redacted")
 			}
+
 			return nil
 		}),
 	)
