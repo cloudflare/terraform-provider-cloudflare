@@ -62,7 +62,10 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider configuration: %w", configErr))
 	}
 
-	scimConfig := convertAccessIDPScimConfigStructToSchema(accessIdentityProvider.ScimConfig)
+	// We need to get the current secret and set that in the state as it is only
+	// returned initially when the resource was created. The value read from the
+	// server will always be redacted.
+	scimConfig := convertAccessIDPScimConfigStructToSchema(d.Get("scim_config.0.secret").(string), accessIdentityProvider.ScimConfig)
 	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
 		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider scim configuration: %w", scimConfigErr))
 	}
@@ -96,6 +99,11 @@ func resourceCloudflareAccessIdentityProviderCreate(ctx context.Context, d *sche
 	}
 
 	d.SetId(accessIdentityProvider.ID)
+
+	scimConfig := convertAccessIDPScimConfigStructToSchema(accessIdentityProvider.ScimConfig.Secret, accessIdentityProvider.ScimConfig)
+	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider scim configuration: %w", scimConfigErr))
+	}
 
 	return resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
 }
@@ -133,6 +141,16 @@ func resourceCloudflareAccessIdentityProviderUpdate(ctx context.Context, d *sche
 
 	if accessIdentityProvider.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find Access Identity Provider ID in update response; resource was empty"))
+	}
+
+	scimSecret := d.Get("scim_config.0.secret").(string)
+	if accessIdentityProvider.ScimConfig.Secret != "" && !strings.Contains(accessIdentityProvider.ScimConfig.Secret, "*") {
+		scimSecret = accessIdentityProvider.ScimConfig.Secret
+	}
+
+	scimConfig := convertAccessIDPScimConfigStructToSchema(scimSecret, accessIdentityProvider.ScimConfig)
+	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider scim configuration: %w", scimConfigErr))
 	}
 
 	return resourceCloudflareAccessIdentityProviderRead(ctx, d, meta)
@@ -287,10 +305,10 @@ func convertAccessIDPConfigStructToSchema(options cloudflare.AccessIdentityProvi
 	return []interface{}{m}
 }
 
-func convertAccessIDPScimConfigStructToSchema(options cloudflare.AccessIdentityProviderScimConfiguration) []interface{} {
+func convertAccessIDPScimConfigStructToSchema(secret string, options cloudflare.AccessIdentityProviderScimConfiguration) []interface{} {
 	m := map[string]interface{}{
 		"enabled":                  options.Enabled,
-		"secret":                   options.Secret,
+		"secret":                   secret,
 		"user_deprovision":         options.UserDeprovision,
 		"seat_deprovision":         options.SeatDeprovision,
 		"group_member_deprovision": options.GroupMemberDeprovision,

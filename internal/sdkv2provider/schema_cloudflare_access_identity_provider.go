@@ -190,9 +190,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Optional: true,
 					},
 					"secret": {
-						Type:     schema.TypeString,
-						Optional: true,
-						Computed: true,
+						Type:      schema.TypeString,
+						Optional:  true,
+						Computed:  true,
+						Sensitive: true,
 					},
 					"user_deprovision": {
 						Type:     schema.TypeBool,

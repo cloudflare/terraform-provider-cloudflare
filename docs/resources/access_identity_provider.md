@@ -132,7 +132,7 @@ Optional:
 - `enabled` (Boolean)
 - `group_member_deprovision` (Boolean)
 - `seat_deprovision` (Boolean)
-- `secret` (String)
+- `secret` (String, Sensitive)
 - `user_deprovision` (Boolean)
 
 ## Import
