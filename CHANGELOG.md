@@ -4,6 +4,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
 
+BUG FIXES:
+
+* resource/cloudflare_access_identity_provider: Fix cloudflare_access_identity_provider incorrectly discards SCIM configuration secret ([#2744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2744))
+
 ## 4.15.0 (20th September, 2023)
 
 ENHANCEMENTS:
