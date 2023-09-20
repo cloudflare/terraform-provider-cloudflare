@@ -1,10 +1,10 @@
 package sdkv2provider
 
 import (
-    "fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"fmt"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
@@ -15,12 +15,12 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"bundle_method": {
-        	Type:         schema.TypeString,
-        	Optional:     true,
-        	ForceNew:    true,
-        	Default:      "ubiquitous",
-        	Description:  fmt.Sprintf("A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it. %s", renderAvailableDocumentationValuesStringSlice([]string{"ubiquitous", "optimal", "force"})),
-        },
+			Type:        schema.TypeString,
+			Optional:    true,
+			ForceNew:    true,
+			Default:     "ubiquitous",
+			Description: fmt.Sprintf("A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it. %s", renderAvailableDocumentationValuesStringSlice([]string{"ubiquitous", "optimal", "force"})),
+		},
 		"certificate": {
 			Type:        schema.TypeString,
 			Required:    true,
@@ -29,7 +29,7 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 		},
 		"host": {
 			Type:        schema.TypeString,
-			Required:     true,
+			Required:    true,
 			Description: "The keyless SSL host",
 		},
 		"name": {
@@ -45,8 +45,8 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 			Description:  "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
 		},
 		"enabled": {
-		    Type:        schema.TypeBool,
-			Optional:     true,
+			Type:        schema.TypeBool,
+			Optional:    true,
 			Description: "Whether or not the Keyless SSL is on or off.",
 		},
 		"status": {

@@ -1,53 +1,53 @@
 package sdkv2provider
 
 import (
-    "context"
-    "fmt"
-    "strings"
+	"context"
+	"fmt"
+	"strings"
 
-    cloudflare "github.com/cloudflare/cloudflare-go"
-    "github.com/MakeNowJust/heredoc/v2"
+	"github.com/MakeNowJust/heredoc/v2"
+	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-    "github.com/pkg/errors"
+	"github.com/pkg/errors"
 )
 
 func resourceCloudflareKeylessCertificate() *schema.Resource {
-    return &schema.Resource{
-        Schema: resourceCloudflareKeylessCertificateSchema(),
-        CreateContext: resourceCloudflareKeylessCertificateCreate,
-        ReadContext:   resourceCloudflareKeylessCertificateRead,
-        UpdateContext: resourceCloudflareKeylessCertificateUpdate,
-        DeleteContext: resourceCloudflareKeylessCertificateDelete,
-       		Importer: &schema.ResourceImporter{
-       			StateContext: resourceCloudflareKeylessCertificateImport,
-       		},
-       		Description: heredoc.Doc(`
+	return &schema.Resource{
+		Schema:        resourceCloudflareKeylessCertificateSchema(),
+		CreateContext: resourceCloudflareKeylessCertificateCreate,
+		ReadContext:   resourceCloudflareKeylessCertificateRead,
+		UpdateContext: resourceCloudflareKeylessCertificateUpdate,
+		DeleteContext: resourceCloudflareKeylessCertificateDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareKeylessCertificateImport,
+		},
+		Description: heredoc.Doc(`
        			Provides a resource, that manages Keyless certificates.
        		`),
-    }
+	}
 }
 
 func resourceCloudflareKeylessCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-   	client := meta.(*cloudflare.API)
-   	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	client := meta.(*cloudflare.API)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
-   	request :=  cloudflare.KeylessSSLCreateRequest{
-                  		Name: d.Get("name").(string),
-                  		Host: d.Get("host").(string),
-                  		Port: d.Get("port").(int),
-                  		Certificate: d.Get("certificate").(string),
-                  		BundleMethod: d.Get("bundle_method").(string),
-                  	}
+	request := cloudflare.KeylessSSLCreateRequest{
+		Name:         d.Get("name").(string),
+		Host:         d.Get("host").(string),
+		Port:         d.Get("port").(int),
+		Certificate:  d.Get("certificate").(string),
+		BundleMethod: d.Get("bundle_method").(string),
+	}
 
-   	keylessSSL, err := client.CreateKeylessSSL(ctx, zoneID, request)
-   	if err != nil {
-   		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Keyless SSL")))
-   	}
+	keylessSSL, err := client.CreateKeylessSSL(ctx, zoneID, request)
+	if err != nil {
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Keyless SSL")))
+	}
 
-   	d.SetId(keylessSSL.ID)
+	d.SetId(keylessSSL.ID)
 
 	return resourceCloudflareKeylessCertificateRead(ctx, d, meta)
 }
@@ -80,12 +80,12 @@ func resourceCloudflareKeylessCertificateUpdate(ctx context.Context, d *schema.R
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
-   	request :=  cloudflare.KeylessSSLUpdateRequest{
-                  		Name: d.Get("name").(string),
-                  		Host: d.Get("host").(string),
-                  		Port: d.Get("port").(int),
-                  		Enabled: cloudflare.BoolPtr(d.Get("enabled").(bool)),
-                  	}
+	request := cloudflare.KeylessSSLUpdateRequest{
+		Name:    d.Get("name").(string),
+		Host:    d.Get("host").(string),
+		Port:    d.Get("port").(int),
+		Enabled: cloudflare.BoolPtr(d.Get("enabled").(bool)),
+	}
 
 	_, err := client.UpdateKeylessSSL(ctx, zoneID, d.Id(), request)
 	if err != nil {
@@ -96,13 +96,13 @@ func resourceCloudflareKeylessCertificateUpdate(ctx context.Context, d *schema.R
 }
 
 func resourceCloudflareKeylessCertificateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
- 	client := meta.(*cloudflare.API)
- 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	client := meta.(*cloudflare.API)
+	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
- 	err := client.DeleteKeylessSSL(ctx, zoneID, d.Id())
- 	if err != nil {
- 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to delete Keyless SSL")))
- 	}
+	err := client.DeleteKeylessSSL(ctx, zoneID, d.Id())
+	if err != nil {
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to delete Keyless SSL")))
+	}
 
 	return resourceCloudflareKeylessCertificateRead(ctx, d, meta)
 }
