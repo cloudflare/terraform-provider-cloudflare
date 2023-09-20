@@ -1,4 +1,33 @@
-## 4.15.0 (Unreleased)
+## 4.16.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
+
+## 4.15.0 (20th September, 2023)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_identity_provider: Support email_claim_name, Okta authorization_server_id, and pingone ([#2765](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2765))
+* resource/cloudflare_ruleset: Add support for a new Browser Mode that allows bypass of downstream caches ([#2756](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2756))
+* resource/cloudflare_ruleset: Add support for the use of Origin Cache Control in the Rulesets API ([#2753](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2753))
+* resource/cloudflare_ruleset: Add support for the use of Proxy Read Timeout field in Rulesets API ([#2755](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2755))
+
+BUG FIXES:
+
+* resource/cloudflare_list: Fix import for cloudflare_list resource ([#2663](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2663))
+* resource/cloudflare_record: Updates the cast to a pointer to match changes in the SDK ([#2763](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2763))
+* resource/pages_project: force replace when changing pages source ([#2750](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2750))
+
+DEPENDENCIES:
+
+* provider: bumps crazy-max/ghaction-import-gpg from 5 to 6 ([#2758](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2758))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.39 to 1.18.40 ([#2775](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2775))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.76.0 to 0.77.0 ([#2761](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2761))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.3.5 to 1.4.0 ([#2745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2745))
+* provider: bumps github.com/hashicorp/terraform-plugin-mux from 0.11.2 to 0.12.0 ([#2746](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2746))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.28.0 to 2.29.0 ([#2748](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2748))
+* provider: bumps goreleaser/goreleaser-action from 4.6.0 to 5.0.0 ([#2757](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2757))
 
 ## 4.14.0 (6th September, 2023)
 

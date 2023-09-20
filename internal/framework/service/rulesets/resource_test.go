@@ -1815,6 +1815,7 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.1.status_code_range.0.to", "300"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.browser_ttl.0.mode", "respect_origin"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.serve_stale.0.disable_stale_while_updating", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.read_timeout", "2000"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.respect_strong_etags", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.ignore_query_strings_order", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.cache_deception_armor", "true"),
@@ -1836,6 +1837,7 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.device_type", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.geo", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin_cache_control", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin_error_page_passthru", "false"),
 				),
 			},
@@ -2304,6 +2306,50 @@ func TestAccCloudflareRuleset_CacheSettingsInvalidEdgeTTLWithOverrideOrigin(t *t
 			{
 				Config:      testAccCloudflareRulesetCacheSettingsInvalidDefaultEdgeTTLOverrideOrigin(rnd, zoneID),
 				ExpectError: regexp.MustCompile("using mode 'override_origin' requires setting a default for ttl"),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsBrowserTTLWithBypass(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsBypassBrowser(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "description", "set cache settings for the request"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.browser_ttl.0.mode", "bypass"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithBypass(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCloudflareRulesetCacheSettingsBypassBrowserInvalid(rnd, zoneID),
+				ExpectError: regexp.MustCompile("cannot set default ttl when using mode 'bypass'"),
 			},
 		},
 	})
@@ -3893,6 +3939,7 @@ func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID stri
 			disable_stale_while_updating = true
 		}
 		respect_strong_etags = true
+		read_timeout = 2000
 		cache_key {
 			ignore_query_strings_order = false
 			cache_deception_armor = true
@@ -3918,6 +3965,7 @@ func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID stri
 				}
 			}
 		}
+		origin_cache_control = true
 		origin_error_page_passthru = false
       }
 	  expression = "true"
@@ -4613,6 +4661,55 @@ func testAccCloudflareRulesetCacheSettingsHandleHeaderExcludeOriginFalse(rnd, zo
 					exclude_origin = false
 				  }
 		      }
+			}
+		  }
+		}
+	  }
+	`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsBypassBrowser(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "%[1]s" {
+		zone_id     = "%[2]s"
+    	name        = "%[1]s"
+		description = "set cache settings for the request"
+		kind        = "zone"
+		phase       = "http_request_cache_settings"
+		rules {
+		  action      = "set_cache_settings"
+		  description = "example"
+		  enabled     = true
+		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
+		  action_parameters {
+			cache = true
+			browser_ttl {
+			  mode    = "bypass"
+			}
+		  }
+		}
+	  }
+	`, rnd, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsBypassBrowserInvalid(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+	resource "cloudflare_ruleset" "%[1]s" {
+		zone_id     = "%[2]s"
+    	name        = "%[1]s"
+		description = "set cache settings for the request"
+		kind        = "zone"
+		phase       = "http_request_cache_settings"
+		rules {
+		  action      = "set_cache_settings"
+		  description = "example"
+		  enabled     = true
+		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
+		  action_parameters {
+			cache = true
+			browser_ttl {
+			  mode    = "bypass"
+			  default = 100
 			}
 		  }
 		}

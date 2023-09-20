@@ -234,10 +234,13 @@ func convertSchemaToStruct(d *schema.ResourceData) (cloudflare.AccessIdentityPro
 		IDPConfig.ClientSecret = d.Get("config.0.client_secret").(string)
 		IDPConfig.DirectoryID = d.Get("config.0.directory_id").(string)
 		IDPConfig.EmailAttributeName = d.Get("config.0.email_attribute_name").(string)
+		IDPConfig.EmailClaimName = d.Get("config.0.email_claim_name").(string)
 		IDPConfig.IdpPublicCert = d.Get("config.0.idp_public_cert").(string)
 		IDPConfig.IssuerURL = d.Get("config.0.issuer_url").(string)
 		IDPConfig.OktaAccount = d.Get("config.0.okta_account").(string)
+		IDPConfig.OktaAuthorizationServerID = d.Get("config.0.authorization_server_id").(string)
 		IDPConfig.OneloginAccount = d.Get("config.0.onelogin_account").(string)
+		IDPConfig.PingEnvID = d.Get("config.0.ping_env_id").(string)
 		IDPConfig.RedirectURL = d.Get("config.0.redirect_url").(string)
 		IDPConfig.SignRequest = d.Get("config.0.sign_request").(bool)
 		IDPConfig.SsoTargetURL = d.Get("config.0.sso_target_url").(string)
@@ -275,6 +278,7 @@ func convertAccessIDPConfigStructToSchema(options cloudflare.AccessIdentityProvi
 		"apps_domain":                options.AppsDomain,
 		"attributes":                 attributes,
 		"auth_url":                   options.AuthURL,
+		"authorization_server_id":    options.OktaAuthorizationServerID,
 		"centrify_account":           options.CentrifyAccount,
 		"centrify_app_id":            options.CentrifyAppID,
 		"certs_url":                  options.CertsURL,
@@ -284,10 +288,12 @@ func convertAccessIDPConfigStructToSchema(options cloudflare.AccessIdentityProvi
 		"scopes":                     options.Scopes,
 		"directory_id":               options.DirectoryID,
 		"email_attribute_name":       options.EmailAttributeName,
+		"email_claim_name":           options.EmailClaimName,
 		"idp_public_cert":            options.IdpPublicCert,
 		"issuer_url":                 options.IssuerURL,
 		"okta_account":               options.OktaAccount,
 		"onelogin_account":           options.OneloginAccount,
+		"ping_env_id":                options.PingEnvID,
 		"redirect_url":               options.RedirectURL,
 		"sign_request":               options.SignRequest,
 		"sso_target_url":             options.SsoTargetURL,
