@@ -8,6 +8,10 @@ BUG FIXES:
 
 * resource/cloudflare_access_identity_provider: Fix cloudflare_access_identity_provider incorrectly discards SCIM configuration secret ([#2744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2744))
 
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.40 to 1.18.41 ([#2781](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2781))
+
 ## 4.15.0 (20th September, 2023)
 
 ENHANCEMENTS:
