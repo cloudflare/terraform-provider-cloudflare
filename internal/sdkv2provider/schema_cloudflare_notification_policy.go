@@ -34,6 +34,7 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Required: true,
 			ValidateFunc: validation.StringInSlice([]string{
+				"advanced_http_alert_error",
 				"access_custom_certificate_expiration_type",
 				"advanced_ddos_attack_l4_alert",
 				"advanced_ddos_attack_l7_alert",
@@ -184,6 +185,12 @@ func notificationPolicyFilterSchema() *schema.Schema {
 		Description: "An optional nested block of filters that applies to the selected `alert_type`. A key-value map that specifies the type of filter and the values to match against (refer to the alert type block for available fields).",
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
+				"actions": {
+					Type:        schema.TypeSet,
+					Elem:        &schema.Schema{Type: schema.TypeString},
+					Optional:    true,
+					Description: "Targeted actions for alert.",
+				},
 				"status": {
 					Type:        schema.TypeSet,
 					Elem:        &schema.Schema{Type: schema.TypeString},
@@ -251,6 +258,22 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					},
 					Optional:    true,
 					Description: "A numerical limit. Example: `99.9`.",
+				},
+				"where": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Filter for alert.",
+				},
+				"group_by": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Alert grouping.",
 				},
 				"alert_trigger_preferences": {
 					Type: schema.TypeSet,

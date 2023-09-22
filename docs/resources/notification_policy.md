@@ -103,12 +103,14 @@ Read-Only:
 
 Optional:
 
+- `actions` (Set of String) Targeted actions for alert.
 - `alert_trigger_preferences` (Set of String) Alert trigger preferences. Example: `slo`.
 - `enabled` (Set of String) State of the pool to alert on.
 - `environment` (Set of String) Environment of pages. Available values: `ENVIRONMENT_PREVIEW`, `ENVIRONMENT_PRODUCTION`.
 - `event` (Set of String) Pages event to alert. Available values: `EVENT_DEPLOYMENT_STARTED`, `EVENT_DEPLOYMENT_FAILED`, `EVENT_DEPLOYMENT_SUCCESS`.
 - `event_source` (Set of String) Source configuration to alert on for pool or origin.
 - `event_type` (Set of String) Stream event type to alert on.
+- `group_by` (Set of String) Alert grouping.
 - `health_check_id` (Set of String) Identifier health check. Required when using `filters.0.status`.
 - `input_id` (Set of String) Stream input id to alert on.
 - `limit` (Set of String) A numerical limit. Example: `100`.
@@ -125,6 +127,7 @@ Optional:
 - `status` (Set of String) Status to alert on.
 - `target_hostname` (Set of String) Target host to alert on for dos.
 - `target_zone_name` (Set of String) Target domain to alert on.
+- `where` (Set of String) Filter for alert.
 - `zones` (Set of String) A list of zone identifiers.
 
 
