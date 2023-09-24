@@ -7,6 +7,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_access_identity_provider: Fix cloudflare_access_identity_provider incorrectly discards SCIM configuration secret ([#2744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2744))
+* resource/cloudflare_notification_policy: handle manually deleted policies by removing them from state ([#2791](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2791))
 
 DEPENDENCIES:
 
