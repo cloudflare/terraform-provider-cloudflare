@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -56,6 +57,11 @@ func resourceCloudflareNotificationPolicyRead(ctx context.Context, d *schema.Res
 
 	name := d.Get("name").(string)
 	if err != nil {
+		var notFoundError *cloudflare.NotFoundError
+		if errors.As(err, &notFoundError) {
+			d.SetId("")
+			return nil
+		}
 		return diag.FromErr(fmt.Errorf("error retrieving notification policy %s: %w", name, err))
 	}
 
