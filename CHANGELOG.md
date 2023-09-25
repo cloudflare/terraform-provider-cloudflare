@@ -3,6 +3,8 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
+* resource/cloudflare_notification_policy: Add `advanced_http_alert_error` alert_type ([#2789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2789))
+* resource/cloudflare_notification_policy: Implement the `group_by`, `where` and `actions` options ([#2789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2789))
 
 BUG FIXES:
 
