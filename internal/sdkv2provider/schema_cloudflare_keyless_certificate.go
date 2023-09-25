@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -30,27 +31,27 @@ func resourceCloudflareKeylessCertificateSchema() map[string]*schema.Schema {
 		"host": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "The keyless SSL host",
+			Description: "The KeyLess SSL host.",
 		},
 		"name": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "The keyless SSL name",
+			Description: "The KeyLess SSL name.",
 		},
 		"port": {
 			Type:         schema.TypeInt,
 			Optional:     true,
 			ValidateFunc: validation.IntBetween(0, 65535),
 			Default:      24008,
-			Description:  "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
+			Description:  "The KeyLess SSL port used to communicate between Cloudflare and the client's KeyLess SSL server.",
 		},
 		"enabled": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Whether or not the Keyless SSL is on or off.",
+			Description: "Whether the KeyLess SSL is on.",
 		},
 		"status": {
-			Description: "Status of the keyless SSL",
+			Description: "Status of the KeyLess SSL.",
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
