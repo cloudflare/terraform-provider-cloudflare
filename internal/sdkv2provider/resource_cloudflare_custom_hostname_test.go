@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -92,7 +93,8 @@ func TestAccCloudflareCustomHostname_WithCertificate(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 
-	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{rnd + "." + domain})
+	expiry := time.Now().Add(time.Hour * 1)
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{rnd + "." + domain}, expiry)
 	if err != nil {
 		t.Error(err)
 	}
