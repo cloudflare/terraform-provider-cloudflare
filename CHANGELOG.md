@@ -1,5 +1,9 @@
 ## 4.16.0 (Unreleased)
 
+BREAKING CHANGES:
+
+* resource/cloudflare_spectrum_application: Remove default values, make `edge_ips` parameter optional. ([#2629](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2629))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
