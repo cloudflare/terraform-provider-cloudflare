@@ -84,6 +84,7 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 				"zone_aop_custom_certificate_expiration_type",
 			}, false),
 			Description: fmt.Sprintf("The event type that will trigger the dispatch of a notification. See the developer documentation for descriptions of [available alert types](https://developers.cloudflare.com/fundamentals/notifications/notification-available/). %s", renderAvailableDocumentationValuesStringSlice([]string{
+				"advanced_http_alert_error",
 				"access_custom_certificate_expiration_type",
 				"advanced_ddos_attack_l4_alert",
 				"advanced_ddos_attack_l7_alert",
