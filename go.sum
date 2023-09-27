@@ -50,8 +50,8 @@ github.com/bufbuild/protocompile v0.4.0 h1:LbFKd2XowZvQ/kajzguUp2DC9UEIQhIq77fZZ
 github.com/bwesterb/go-ristretto v1.2.3/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
 github.com/cloudflare/circl v1.3.3 h1:fE/Qz0QdIGqeWfnwq0RE0R7MI51s0M2E4Ga9kq5AEMs=
 github.com/cloudflare/circl v1.3.3/go.mod h1:5XYMA4rFBvNIrhs50XuiBJ15vF2pZn4nnUKZrLbUZFA=
-github.com/cloudflare/cloudflare-go v0.77.0 h1:bVUGkSKdXEz8+u2Yj3ASqZsqlcsPkeB+PDqVs9OE7TY=
-github.com/cloudflare/cloudflare-go v0.77.0/go.mod h1:R+Q/Im0G0MzKJxj3eXOBBE8xpnchVA9tSiQwOEvfW4Y=
+github.com/cloudflare/cloudflare-go v0.78.0 h1:xMPdjJ+e2tGNUkw5LyduPlsMCaILEoN1Kqq/uEMx78w=
+github.com/cloudflare/cloudflare-go v0.78.0/go.mod h1:R+Q/Im0G0MzKJxj3eXOBBE8xpnchVA9tSiQwOEvfW4Y=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
