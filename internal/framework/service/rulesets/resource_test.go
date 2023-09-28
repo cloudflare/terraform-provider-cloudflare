@@ -1880,6 +1880,36 @@ func TestAccCloudflareRuleset_CacheSettingsOptionalsEmpty(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_CacheSettingsOnlyExludeOrigin(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsOnlyExludeOrigin(rnd, "my basic cache settings ruleset", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "my basic cache settings ruleset"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.include.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.check_presence.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_CacheSettingsEdgeTTLRespectOrigin(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -3993,6 +4023,40 @@ func testAccCloudflareRulesetCacheSettingsOptionalsEmpty(rnd, accountID, zoneID 
 		}
 		browser_ttl {
 			mode = "respect_origin"
+		}
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsOnlyExludeOrigin(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		edge_ttl {
+			mode = "override_origin"
+			default = 60
+		}
+		browser_ttl {
+			mode = "respect_origin"
+		}
+		cache_key {
+			custom_key {
+				header {
+					exclude_origin = true
+				}
+			}
 		}
       }
 	  expression = "true"
