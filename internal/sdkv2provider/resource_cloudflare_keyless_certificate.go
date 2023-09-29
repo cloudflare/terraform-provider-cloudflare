@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+    "github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -42,14 +43,33 @@ func resourceCloudflareKeylessCertificateCreate(ctx context.Context, d *schema.R
 		BundleMethod: d.Get("bundle_method").(string),
 	}
 
-	keylessSSL, err := client.CreateKeylessSSL(ctx, zoneID, request)
+	res, err := client.CreateKeylessSSL(ctx, zoneID, request)
+
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to create Keyless SSL")))
 	}
 
-	d.SetId(keylessSSL.ID)
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutCreate), func() *retry.RetryError {
+		keylessSSL, err := client.KeylessSSL(ctx, zoneID, res.ID)
+		if err != nil {
+			return retry.NonRetryableError(fmt.Errorf("failed to fetch keyless certificate: %w", err))
+		}
 
-	return resourceCloudflareKeylessCertificateRead(ctx, d, meta)
+		if keylessSSL.Status != "active" {
+			return retry.RetryableError(fmt.Errorf("waiting for the keyless certificate to become active"))
+		}
+
+		d.SetId(res.ID)
+
+		resourceCloudflareCustomSslRead(ctx, d, meta)
+		return nil
+	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
+	}
+
+	return nil
 }
 
 func resourceCloudflareKeylessCertificateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -102,6 +122,27 @@ func resourceCloudflareKeylessCertificateDelete(ctx context.Context, d *schema.R
 	err := client.DeleteKeylessSSL(ctx, zoneID, d.Id())
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to delete Keyless SSL")))
+	}
+
+	retryErr := retry.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *retry.RetryError {
+		err := client.DeleteKeylessSSL(ctx, zoneID, d.Id())
+
+		if err != nil {
+			var requestError *cloudflare.RequestError
+			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 12132) {
+				return retry.RetryableError(errors.New("Keyless certificate is not yet removed"))
+			} else {
+				return retry.NonRetryableError(fmt.Errorf("error deleting Keyless certificate for %s %q: %w", zoneID, d.Id(), err))
+			}
+		}
+
+		d.SetId("")
+
+		return nil
+	})
+
+	if retryErr != nil {
+		return diag.FromErr(retryErr)
 	}
 
 	return nil
