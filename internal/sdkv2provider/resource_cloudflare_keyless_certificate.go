@@ -124,27 +124,6 @@ func resourceCloudflareKeylessCertificateDelete(ctx context.Context, d *schema.R
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to delete Keyless SSL")))
 	}
 
-	retryErr := retry.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *retry.RetryError {
-		err := client.DeleteKeylessSSL(ctx, zoneID, d.Id())
-
-		if err != nil {
-			var requestError *cloudflare.RequestError
-			if errors.As(err, &requestError) && sliceContainsInt(requestError.ErrorCodes(), 12132) {
-				return retry.RetryableError(errors.New("Keyless certificate is not yet removed"))
-			} else {
-				return retry.NonRetryableError(fmt.Errorf("error deleting Keyless certificate for %s %q: %w", zoneID, d.Id(), err))
-			}
-		}
-
-		d.SetId("")
-
-		return nil
-	})
-
-	if retryErr != nil {
-		return diag.FromErr(retryErr)
-	}
-
 	return nil
 }
 
