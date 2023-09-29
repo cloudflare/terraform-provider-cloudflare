@@ -104,7 +104,7 @@ func resourceCloudflareKeylessCertificateDelete(ctx context.Context, d *schema.R
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("failed to delete Keyless SSL")))
 	}
 
-	return resourceCloudflareKeylessCertificateRead(ctx, d, meta)
+	return nil
 }
 
 func resourceCloudflareKeylessCertificateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
