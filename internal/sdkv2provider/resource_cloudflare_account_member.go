@@ -106,7 +106,7 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	for _, r := range memberRoles {
-		accountRole, _ := client.AccountRole(ctx, accountID, r.(string))
+		accountRole, _ := client.GetAccountRole(ctx, cloudflare.AccountIdentifier(accountID), r.(string))
 		accountRoles = append(accountRoles, accountRole)
 	}
 
