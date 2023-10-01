@@ -76,7 +76,7 @@ In Terraform you could do the following to convert to usable types (string, bool
 ```go
 fooService := &foo.ExampleService{
     Foo: cloudflare.StringPtr("example"), // returns a string pointer
-    Bar: clouflare.BoolPtr(false)         // returns a boolean pointer
+    Bar: cloudflare.BoolPtr(false)         // returns a boolean pointer
 }
 
 // ... use `fooService`
