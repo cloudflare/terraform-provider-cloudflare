@@ -16,6 +16,7 @@ BUG FIXES:
 * resource/cloudflare_access_identity_provider: Fix cloudflare_access_identity_provider incorrectly discards SCIM configuration secret ([#2744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2744))
 * resource/cloudflare_notification_policy: handle manually deleted policies by removing them from state ([#2791](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2791))
 * resource/cloudflare_ruleset: ability to use exclude_origin=true in cache_key.custom_key.header without the need of specifying include or check_presence. ([#2802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2802))
+* resource/cloudflare_ruleset: mark `requests_to_origin` required for ratelimit blocks ([#2808](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2808))
 
 DEPENDENCIES:
 
