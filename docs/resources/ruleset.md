@@ -508,11 +508,13 @@ Optional:
 - `mirage` (Boolean) Turn on or off Cloudflare Mirage of the Cloudflare Speed app.
 - `opportunistic_encryption` (Boolean) Turn on or off the Cloudflare Opportunistic Encryption feature of the Edge Certificates tab in the Cloudflare SSL/TLS app.
 - `origin` (Block List) List of properties to change request origin. (see [below for nested schema](#nestedblock--rules--action_parameters--origin))
+- `origin_cache_control` (Boolean) Enable or disable the use of a more compliant Cache Control parsing mechanism, enabled by default for most zones.
 - `origin_error_page_passthru` (Boolean) Pass-through error page for origin.
 - `overrides` (Block List) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
 - `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_config_settings`, `http_custom_errors`, `http_log_custom_fields`, `http_ratelimit`, `http_request_cache_settings`, `http_request_dynamic_redirect`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_sbfm`, `http_request_transform`, `http_response_compression`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`.
 - `polish` (String) Apply options from the Polish feature of the Cloudflare Speed app.
 - `products` (Set of String) Products to target with the actions. Available values: `bic`, `hot`, `ratelimit`, `securityLevel`, `uablock`, `waf`, `zonelockdown`.
+- `read_timeout` (Number) Specifies a maximum timeout for reading content from an origin server.
 - `request_fields` (Set of String) List of request headers to include as part of custom fields logging, in lowercase.
 - `respect_strong_etags` (Boolean) Respect strong ETags.
 - `response` (Block List) List of parameters that configure the response given to end users. (see [below for nested schema](#nestedblock--rules--action_parameters--response))
@@ -635,11 +637,11 @@ Optional:
 
 Required:
 
-- `mode` (String) Mode of the edge TTL.
+- `mode` (String) Mode of the edge TTL. Available values: `override_origin`, `respect_origin`, `bypass_by_default`
 
 Optional:
 
-- `default` (Number) Default edge TTL
+- `default` (Number) Default edge TTL.
 - `status_code_ttl` (Block List) Edge TTL for the status codes. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl--status_code_ttl))
 
 <a id="nestedblock--rules--action_parameters--edge_ttl--status_code_ttl"></a>
@@ -827,6 +829,10 @@ Optional:
 <a id="nestedblock--rules--ratelimit"></a>
 ### Nested Schema for `rules.ratelimit`
 
+Required:
+
+- `requests_to_origin` (Boolean) Whether to include requests to origin within the Rate Limiting count.
+
 Optional:
 
 - `characteristics` (Set of String) List of parameters that define how Cloudflare tracks the request rate for this rule.
@@ -834,7 +840,6 @@ Optional:
 - `mitigation_timeout` (Number) Once the request rate is reached, the Rate Limiting rule blocks further requests for the period of time defined in this field.
 - `period` (Number) The period of time to consider (in seconds) when evaluating the request rate.
 - `requests_per_period` (Number) The number of requests over the period of time that will trigger the Rate Limiting rule.
-- `requests_to_origin` (Boolean) Whether to include requests to origin within the Rate Limiting count.
 - `score_per_period` (Number) The maximum aggregate score over the period of time that will trigger Rate Limiting rule.
 - `score_response_header_name` (String) Name of HTTP header in the response, set by the origin server, with the score for the current request.
 

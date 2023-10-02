@@ -32,8 +32,8 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"centrify", "facebook", "google-apps", "oidc", "github", "google", "saml", "linkedin", "azureAD", "okta", "onetimepin", "onelogin", "yandex"}, false),
-			Description:  fmt.Sprintf("The provider type to use. %s", renderAvailableDocumentationValuesStringSlice([]string{"centrify", "facebook", "google-apps", "oidc", "github", "google", "saml", "linkedin", "azureAD", "okta", "onetimepin", "onelogin", "yandex"})),
+			ValidateFunc: validation.StringInSlice([]string{"azureAD", "centrify", "facebook", "github", "google", "google-apps", "linkedin", "oidc", "okta", "onelogin", "onetimepin", "pingone", "saml", "yandex"}, false),
+			Description:  fmt.Sprintf("The provider type to use. %s", renderAvailableDocumentationValuesStringSlice([]string{"azureAD", "centrify", "facebook", "github", "google", "google-apps", "linkedin", "oidc", "okta", "onelogin", "onetimepin", "pingone", "saml", "yandex"})),
 		},
 		"config": {
 			Type:        schema.TypeList,
@@ -59,6 +59,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Computed: true,
 					},
 					"auth_url": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"authorization_server_id": {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
@@ -96,6 +100,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						},
 						Computed: true,
 					},
+					"email_claim_name": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 					"scopes": {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -132,6 +140,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Optional: true,
 					},
 					"onelogin_account": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"ping_env_id": {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
@@ -178,9 +190,10 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Optional: true,
 					},
 					"secret": {
-						Type:     schema.TypeString,
-						Optional: true,
-						Computed: true,
+						Type:      schema.TypeString,
+						Optional:  true,
+						Computed:  true,
+						Sensitive: true,
 					},
 					"user_deprovision": {
 						Type:     schema.TypeBool,
