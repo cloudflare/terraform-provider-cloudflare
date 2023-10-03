@@ -43,7 +43,7 @@ func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 	})
 }
 
-func TestAccAPIShieldOperation_ForceNew(t *testing.T) {
+func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
