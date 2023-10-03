@@ -1,4 +1,6 @@
-## 4.16.0 (Unreleased)
+## 4.17.0 (Unreleased)
+
+## 4.16.0 (4th October, 2023)
 
 BREAKING CHANGES:
 
