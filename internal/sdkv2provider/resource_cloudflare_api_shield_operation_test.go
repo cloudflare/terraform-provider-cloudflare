@@ -4,15 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"os"
-	"testing"
 )
 
-func TestAccAPIShieldOperation_Create(t *testing.T) {
+func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
 	// endpoint does not yet support the API tokens without an explicit scope.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -22,6 +23,7 @@ func TestAccAPIShieldOperation_Create(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -29,12 +31,12 @@ func TestAccAPIShieldOperation_Create(t *testing.T) {
 		CheckDestroy:      testAccCheckAPIShieldOperationDelete,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: "api.cloudflare.com", Endpoint: "/client/v4/zones"}),
+				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: domain, Endpoint: "/example/path"}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
-					resource.TestCheckResourceAttr(resourceID, "host", "api.cloudflare.com"),
-					resource.TestCheckResourceAttr(resourceID, "endpoint", "/client/v4/zones"),
+					resource.TestCheckResourceAttr(resourceID, "host", domain),
+					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
 				),
 			},
 		},
@@ -51,6 +53,7 @@ func TestAccAPIShieldOperation_ForceNew(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -58,21 +61,21 @@ func TestAccAPIShieldOperation_ForceNew(t *testing.T) {
 		CheckDestroy:      testAccCheckAPIShieldOperationDelete,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: "api.cloudflare.com", Endpoint: "/client/v4/zones"}),
+				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: domain, Endpoint: "/example/path"}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "method", "GET"),
-					resource.TestCheckResourceAttr(resourceID, "host", "api.cloudflare.com"),
-					resource.TestCheckResourceAttr(resourceID, "endpoint", "/client/v4/zones"),
+					resource.TestCheckResourceAttr(resourceID, "host", domain),
+					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
 				),
 			},
 			{
-				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "POST", Host: "api.cloudflare.com", Endpoint: "/client/v4/zones"}),
+				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "POST", Host: domain, Endpoint: "/example/path"}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "method", "POST"), // check that we've 'updated' the value
-					resource.TestCheckResourceAttr(resourceID, "host", "api.cloudflare.com"),
-					resource.TestCheckResourceAttr(resourceID, "endpoint", "/client/v4/zones"),
+					resource.TestCheckResourceAttr(resourceID, "host", domain),
+					resource.TestCheckResourceAttr(resourceID, "endpoint", "/example/path"),
 				),
 			},
 		},
