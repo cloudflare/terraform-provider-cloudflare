@@ -4,6 +4,10 @@ BREAKING CHANGES:
 
 * resource/cloudflare_spectrum_application: Remove default values, make `edge_ips` parameter optional. ([#2629](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2629))
 
+FEATURES:
+
+* **New Resource:** `cloudflare_api_shield_operation` ([#2760](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2760))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
