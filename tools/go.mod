@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	github.com/bflad/tfproviderlint v0.28.1
-	github.com/client9/misspell v0.3.4
 	github.com/cloudflare/cloudflare-go v0.49.0
 	github.com/cweill/gotests v1.6.0
 	github.com/go-delve/delve v1.9.1
@@ -12,6 +11,7 @@ require (
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/hashicorp/go-changelog v0.0.0-20220725223603-47c24a026bde
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
+	github.com/ramya-rao-a/go-outline v0.0.0-20210608161538-9736a4bde949
 	github.com/rogpeppe/godef v1.1.2
 	github.com/stamblerre/gocode v1.0.0
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1
@@ -168,7 +168,6 @@ require (
 	github.com/quasilyte/gogrep v0.0.0-20220120141003-628d8b3623b5 // indirect
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95 // indirect
 	github.com/quasilyte/stdinfo v0.0.0-20220114132959-f7386bf02567 // indirect
-	github.com/ramya-rao-a/go-outline v0.0.0-20210608161538-9736a4bde949 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/russross/blackfriday v1.6.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
