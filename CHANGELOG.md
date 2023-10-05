@@ -1,5 +1,9 @@
 ## 4.17.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_zone_settings_override: Add support for `fonts` ([#2773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2773))
+
 ## 4.16.0 (4th October, 2023)
 
 BREAKING CHANGES:
