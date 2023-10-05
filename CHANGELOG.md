@@ -1,17 +1,39 @@
-## 4.16.0 (Unreleased)
+## 4.17.0 (Unreleased)
+
+## 4.16.0 (4th October, 2023)
+
+BREAKING CHANGES:
+
+* resource/cloudflare_spectrum_application: Remove default values, make `edge_ips` parameter optional. ([#2629](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2629))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_api_shield_operation` ([#2760](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2760))
 
 ENHANCEMENTS:
 
 * resource/cloudflare_authenticated_origin_pulls: Improve import, update documentation ([#2771](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2771))
+* resource/cloudflare_notification_policy: Add `advanced_http_alert_error` alert_type ([#2789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2789))
+* resource/cloudflare_notification_policy: Implement the `group_by`, `where` and `actions` options ([#2789](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2789))
+* resource/cloudflare_ruleset: Add support for cache bypass by default in Edge TTL modes ([#2764](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2764))
 
 BUG FIXES:
 
 * resource/cloudflare_access_identity_provider: Fix cloudflare_access_identity_provider incorrectly discards SCIM configuration secret ([#2744](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2744))
+* resource/cloudflare_notification_policy: handle manually deleted policies by removing them from state ([#2791](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2791))
+* resource/cloudflare_ruleset: ability to use exclude_origin=true in cache_key.custom_key.header without the need of specifying include or check_presence. ([#2802](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2802))
+* resource/cloudflare_ruleset: mark `requests_to_origin` required for ratelimit blocks ([#2808](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2808))
 
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.40 to 1.18.41 ([#2781](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2781))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.41 to 1.18.42 ([#2792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2792))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.18.42 to 1.18.43 ([#2811](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2811))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.39 to 1.13.40 ([#2793](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2793))
+* provider: bumps github.com/aws/aws-sdk-go-v2/credentials from 1.13.40 to 1.13.41 ([#2810](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2810))
 * provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.38.5 to 1.39.0 ([#2782](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2782))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.39.0 to 1.40.0 ([#2795](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2795))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.77.0 to 0.78.0 ([#2797](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2797))
 
 ## 4.15.0 (20th September, 2023)
 

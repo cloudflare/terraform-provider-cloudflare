@@ -188,6 +188,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_account":                                resourceCloudflareAccount(),
 				"cloudflare_address_map":                            resourceCloudflareAddressMap(),
 				"cloudflare_api_shield":                             resourceCloudflareAPIShield(),
+				"cloudflare_api_shield_operation":                   resourceCloudflareAPIShieldOperation(),
 				"cloudflare_api_token":                              resourceCloudflareApiToken(),
 				"cloudflare_argo":                                   resourceCloudflareArgo(),
 				"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),
