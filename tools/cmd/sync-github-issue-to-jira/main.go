@@ -51,6 +51,7 @@ type IssueFields struct {
 	EscalationChannel IssueValue   `json:"customfield_18514"`
 	StepsToReplicate  string       `json:"customfield_17004"`
 	UserID            string       `json:"customfield_21112"`
+	Template          IssueValue   `json:"customfield_21039"`
 	IssueType         IssueName    `json:"issuetype"`
 	Components        []IssueName  `json:"components"`
 }
@@ -238,6 +239,7 @@ func main() {
 		EscalationChannel: IssueValue{Value: "Untriaged"},
 		StepsToReplicate:  "n/a",
 		UserID:            "0",
+		Template:          IssueValue{Value: "Yes"},
 	}}
 
 	res, err := json.Marshal(newIssue)
