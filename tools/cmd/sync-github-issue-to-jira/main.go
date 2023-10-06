@@ -274,7 +274,7 @@ func main() {
 	json.Unmarshal([]byte(body), &createdIssue)
 
 	if resp.StatusCode != http.StatusCreated {
-		fmt.Println(fmt.Sprintf("failed to create new JIRA issue"))
+		fmt.Println(fmt.Sprintf("failed to create new JIRA issue: %s", body))
 		os.Exit(1)
 	}
 
