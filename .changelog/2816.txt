@@ -1,0 +1,3 @@
+```release-note:enhancement
+provider: Allow user agent string to be configurable via an environment variable
+```
