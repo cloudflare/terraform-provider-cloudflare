@@ -38,15 +38,19 @@ type IssueKey struct {
 }
 
 type IssueFields struct {
-	Project     IssueKey     `json:"project"`
-	Summary     string       `json:"summary"`
-	Description string       `json:"description"`
-	Teams       []IssueValue `json:"customfield_13100"`
-	EngOwner    IssueName    `json:"customfield_16304"`
-	MyTeam      IssueValue   `json:"customfield_14803"`
-	SLA         IssueValue   `json:"customfield_15031"`
-	IssueType   IssueName    `json:"issuetype"`
-	Components  []IssueName  `json:"components"`
+	Project           IssueKey     `json:"project"`
+	Summary           string       `json:"summary"`
+	Description       string       `json:"description"`
+	Teams             []IssueValue `json:"customfield_13100"`
+	EngOwner          IssueName    `json:"customfield_16304"`
+	MyTeam            IssueValue   `json:"customfield_14803"`
+	SLA               IssueValue   `json:"customfield_15031"`
+	Segment           IssueValue   `json:"customfield_21110"`
+	Impact            IssueValue   `json:"customfield_21008"`
+	Urgency           IssueValue   `json:"customfield_21009"`
+	EscalationChannel IssueValue   `json:"customfield_18514"`
+	IssueType         IssueName    `json:"issuetype"`
+	Components        []IssueName  `json:"components"`
 }
 
 type InternalIssue struct {
@@ -80,7 +84,6 @@ var (
 		"service/turnstile",
 		"service/workers",
 		"service/zones",
-		"service/bot_management",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -136,12 +139,7 @@ var (
 		"service/pages": {
 			teamName: "Cloudflare Pages",
 			owner:    "nrogers",
-		},	
-		"service/bot_management": {
-			teamName: "Bot Management",
-			owner:    "ali",
-		},	
-		
+		},
 	}
 )
 
@@ -223,15 +221,19 @@ func main() {
 	service := serviceOwnership[serviceLabel]
 
 	newIssue := InternalIssue{Fields: IssueFields{
-		Project:     IssueKey{Key: "CUSTESC"},
-		Summary:     *issue.Title,
-		Description: jirafyBodyMarkdown(issue),
-		Teams:       []IssueValue{{Value: service.teamName}},
-		EngOwner:    IssueName{Name: service.owner},
-		SLA:         IssueValue{Value: "Pro / Free"},
-		MyTeam:      IssueValue{Value: "Other"},
-		IssueType:   IssueName{Name: "Bug"},
-		Components:  []IssueName{{Name: "SDK & Client API Libraries"}},
+		Project:           IssueKey{Key: "CUSTESC"},
+		Summary:           *issue.Title,
+		Description:       jirafyBodyMarkdown(issue),
+		Teams:             []IssueValue{{Value: service.teamName}},
+		EngOwner:          IssueName{Name: service.owner},
+		SLA:               IssueValue{Value: "Pro / Free"},
+		MyTeam:            IssueValue{Value: "Other"},
+		IssueType:         IssueName{Name: "Bug"},
+		Components:        []IssueName{{Name: "SDK & Client API Libraries"}},
+		Segment:           IssueValue{Value: "None"},
+		Impact:            IssueValue{Value: "Low"},
+		Urgency:           IssueValue{Value: "Low"},
+		EscalationChannel: IssueValue{Value: "Untriaged"},
 	}}
 
 	res, err := json.Marshal(newIssue)
