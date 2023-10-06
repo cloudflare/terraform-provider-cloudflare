@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"os"
 	"regexp"
 	"strconv"
 	"testing"
@@ -234,7 +235,14 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
-	ua := fmt.Sprintf(consts.UserAgentDefault, req.TerraformVersion, meta.SDKVersionString(), p.version)
+	var ua string
+	userAgentString, ok := os.LookupEnv(consts.UserAgentEnvVarKey)
+	if !ok {
+		ua = fmt.Sprintf(consts.UserAgentDefault, req.TerraformVersion, meta.SDKVersionString(), p.version)
+	} else {
+		ua = userAgentString
+	}
+
 	options = append(options, cloudflare.UserAgent(ua))
 
 	config := Config{Options: options}

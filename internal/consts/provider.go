@@ -89,6 +89,9 @@ const (
 
 	UserAgentDefault = "terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s"
 
+	// Configurable user agent string
+	UserAgentEnvVarKey = "CLOUDFLARE_PROVIDER_USER_AGENT"
+
 	// Schema key for the account ID configuration.
 	AccountIDSchemaKey = "account_id"
 

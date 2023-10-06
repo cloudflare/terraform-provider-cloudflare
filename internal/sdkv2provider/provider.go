@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -377,7 +378,14 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 
 		options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
-		ua := fmt.Sprintf(consts.UserAgentDefault, p.TerraformVersion, meta.SDKVersionString(), version)
+		var ua string
+		userAgentString, ok := os.LookupEnv(consts.UserAgentEnvVarKey)
+		if !ok {
+			ua = fmt.Sprintf(consts.UserAgentDefault, p.TerraformVersion, meta.SDKVersionString(), version)
+		} else {
+			ua = userAgentString
+		}
+
 		options = append(options, cloudflare.UserAgent(ua))
 
 		config := Config{Options: options}
