@@ -42,9 +42,7 @@ type IssueFields struct {
 	Summary           string       `json:"summary"`
 	Description       string       `json:"description"`
 	Teams             []IssueValue `json:"customfield_13100"`
-	EngOwner          IssueName    `json:"customfield_16304"`
 	MyTeam            IssueValue   `json:"customfield_14803"`
-	SLA               IssueValue   `json:"customfield_15031"`
 	Segment           IssueValue   `json:"customfield_21110"`
 	Impact            IssueValue   `json:"customfield_21008"`
 	Urgency           IssueValue   `json:"customfield_21009"`
@@ -228,8 +226,6 @@ func main() {
 		Summary:           *issue.Title,
 		Description:       jirafyBodyMarkdown(issue),
 		Teams:             []IssueValue{{Value: service.teamName}},
-		EngOwner:          IssueName{Name: service.owner},
-		SLA:               IssueValue{Value: "Pro / Free"},
 		MyTeam:            IssueValue{Value: "Other"},
 		IssueType:         IssueName{Name: "Bug"},
 		Components:        []IssueName{{Name: "SDK & Client API Libraries"}},
