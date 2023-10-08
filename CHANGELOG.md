@@ -4,6 +4,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_zone_settings_override: Add support for `fonts` ([#2773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2773))
 
+BUG FIXES:
+
+* resource/cloudflare_pages_project: Fix 'preview_branch_includes' always showing it has changes if not provided ([#2796](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2796))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.0 to 1.21.1 ([#2820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2820))
