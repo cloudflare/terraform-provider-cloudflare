@@ -125,7 +125,7 @@ func buildBotManagementParams(d *schema.ResourceData) cloudflare.UpdateBotManage
 		bm.EnableJS = cloudflare.BoolPtr(val.(bool))
 	}
 	if val, exists := d.GetOkExists("fight_mode"); exists {
-		bm.EnableJS = cloudflare.BoolPtr(val.(bool))
+		bm.FightMode = cloudflare.BoolPtr(val.(bool))
 	}
 
 	if val, exists := d.GetOkExists("sbfm_definitely_automated"); exists {
