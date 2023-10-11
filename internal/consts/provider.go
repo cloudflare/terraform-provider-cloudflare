@@ -87,7 +87,7 @@ const (
 	// Deprecated: Use resource specific account ID values instead.
 	AccountIDEnvVarKey = "CLOUDFLARE_ACCOUNT_ID"
 
-	UserAgentDefault = "terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s"
+	UserAgentDefault = "terraform-provider-cloudflare/%s terraform-plugin-%s/%s"
 
 	// Schema key for the account ID configuration.
 	AccountIDSchemaKey = "account_id"
