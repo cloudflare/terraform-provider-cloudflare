@@ -46,7 +46,7 @@ const (
 	// Schema key for the User Agent operator suffix.
 	UserAgentOperatorSuffixSchemaKey = "user_agent_operator_suffix"
 
-	// Environment variable key for the User Agent operator suffix
+	// Environment variable key for the User Agent operator suffix.
 	UserAgentOperatorSuffixEnvVarKey = "CLOUDFLARE_USER_AGENT_OPERATOR_SUFFIX"
 
 	// Schema key for the requests per second configuration.
