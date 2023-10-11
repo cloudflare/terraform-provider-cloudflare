@@ -85,6 +85,7 @@ var (
 		"service/turnstile",
 		"service/workers",
 		"service/zones",
+		"service/bot_management",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -140,6 +141,10 @@ var (
 		"service/pages": {
 			teamName: "Cloudflare Pages",
 			owner:    "nrogers",
+		},
+		"service/bot_management": {
+			teamName: "Bot Management",
+			owner:    "ali",
 		},
 	}
 )
