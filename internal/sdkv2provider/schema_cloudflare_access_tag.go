@@ -30,6 +30,7 @@ func resourceCloudflareAccessTagSchema() map[string]*schema.Schema {
 			Type:        schema.TypeInt,
 			Optional:    true,
 			Description: "Number of apps associated with the tag.",
+			Computed:    true,
 		},
 	}
 }
