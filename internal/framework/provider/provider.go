@@ -239,9 +239,11 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
+	pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-framework")
 	userAgentParams := utils.UserAgentBuilderParams{
 		ProviderVersion: &p.version,
 		PluginType:      cloudflare.StringPtr("terraform-plugin-framework"),
+		PluginVersion:   pluginVersion,
 	}
 	if !data.UserAgentOperatorSuffix.IsNull() {
 		userAgentParams.OperatorSuffix = cloudflare.StringPtr(data.UserAgentOperatorSuffix.String())

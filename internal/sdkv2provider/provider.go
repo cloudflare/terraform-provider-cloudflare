@@ -16,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 )
 
 func init() {
@@ -383,10 +382,11 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 
 		options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
+		pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-sdk/v2")
 		userAgentParams := utils.UserAgentBuilderParams{
 			ProviderVersion: cloudflare.StringPtr(version),
 			PluginType:      cloudflare.StringPtr("terraform-plugin-sdk"),
-			PluginVersion:   cloudflare.StringPtr(meta.SDKVersionString()),
+			PluginVersion:   pluginVersion,
 		}
 		if v, ok := d.GetOk(consts.UserAgentOperatorSuffixSchemaKey); ok {
 			userAgentParams.OperatorSuffix = cloudflare.StringPtr(v.(string))

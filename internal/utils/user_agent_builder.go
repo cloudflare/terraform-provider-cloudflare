@@ -5,11 +5,24 @@ import (
 )
 
 type UserAgentBuilderParams struct {
-	ProviderVersion  *string
-	PluginVersion    *string
-	PluginType       *string
+	// Version of `terraform-provider-cloudflare`.
+	ProviderVersion *string
+
+	// Version of `terraform-plugin-*` libraries that we rely on for the internal
+	// operations.
+	PluginVersion *string
+
+	// Which plugin is in use. Currently only available options are
+	// `terraform-plugin-sdk` and `terraform-plugin-framework`.
+	PluginType *string
+
+	// Version of Terraform that is initiating the operation. Mutually exclusive
+	// with `OperatorSuffix`.
 	TerraformVersion *string
-	OperatorSuffix   *string
+
+	// Customised operation suffix to append to the user agent for identifying
+	// traffic. Mutually exclusive with `TerraformVersion`.
+	OperatorSuffix *string
 }
 
 func (p *UserAgentBuilderParams) String() string {
@@ -37,6 +50,8 @@ func (p *UserAgentBuilderParams) String() string {
 	return ua
 }
 
+// BuildUserAgent takes the `UserAgentBuilderParams` and contextually builds
+// a HTTP user agent for making API calls.
 func BuildUserAgent(params UserAgentBuilderParams) string {
 	return params.String()
 }
