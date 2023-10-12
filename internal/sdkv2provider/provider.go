@@ -199,6 +199,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_api_shield":                             resourceCloudflareAPIShield(),
 				"cloudflare_api_shield_operation":                   resourceCloudflareAPIShieldOperation(),
 				"cloudflare_api_shield_schema":                      resourceCloudflareAPIShieldSchemas(),
+				"cloudflare_api_shield_schema_validation_settings":  resourceCloudflareAPIShieldSchemaValidationSettings(),
 				"cloudflare_api_token":                              resourceCloudflareApiToken(),
 				"cloudflare_argo":                                   resourceCloudflareArgo(),
 				"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),
