@@ -422,10 +422,9 @@ func convertSAMLAttributeStructToSchema(attr cloudflare.SAMLAttributeConfig) map
 }
 
 func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasApplication) []interface{} {
-	if _, ok := d.GetOk("saas_app"); !ok {
+	if app == nil {
 		return []interface{}{}
 	}
-
 	m := map[string]interface{}{
 		"sp_entity_id":         app.SPEntityID,
 		"consumer_service_url": app.ConsumerServiceUrl,

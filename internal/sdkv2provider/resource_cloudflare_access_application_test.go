@@ -200,6 +200,54 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithSaas_Import(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_application." + rnd
+
+	checkFn := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+		resource.TestCheckResourceAttr(name, "name", rnd),
+		resource.TestCheckResourceAttr(name, "type", "saas"),
+		resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+		resource.TestCheckResourceAttr(name, "saas_app.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.sp_entity_id", "saas-app.example"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
+
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.#", "2"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name", "email"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name_format", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.source.0.name", "user_email"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.name", "rank"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.source.0.name", "rank"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.friendly_name", "Rank"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.1.required", "true"),
+	)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID),
+				Check:  checkFn,
+			},
+			{
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ResourceName:        name,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				Check:               checkFn,
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
