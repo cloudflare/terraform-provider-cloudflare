@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_pages_project: Fix 'preview_branch_includes' always showing it has changes if not provided
+```
