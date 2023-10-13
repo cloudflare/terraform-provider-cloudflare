@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_list_item: Fix issue where multiple cloudflare_list_item resources created in a loop were assigned the same ID
+```
