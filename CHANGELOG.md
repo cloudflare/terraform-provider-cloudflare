@@ -2,12 +2,17 @@
 
 ENHANCEMENTS:
 
+* provider: allow defining a user agent operator suffix through the schema field (`user_agent_operator_suffix`) and via the environment variable (`CLOUDFLARE_USER_AGENT_OPERATOR_SUFFIX`) ([#2831](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2831))
 * resource/cloudflare_zone_settings_override: Add support for `fonts` ([#2773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2773))
 
 BUG FIXES:
 
 * resource/cloudflare_bot_management: fix fight mode not being sent to API ([#2833](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2833))
 * resource/cloudflare_pages_project: Fix 'preview_branch_includes' always showing it has changes if not provided ([#2796](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2796))
+
+INTERNAL:
+
+* provider: updated user agent string to now be `terraform-provider-cloudflare/<version> <plugin> <operator suffix>` ([#2831](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2831))
 
 DEPENDENCIES:
 
