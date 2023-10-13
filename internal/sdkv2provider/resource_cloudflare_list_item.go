@@ -55,7 +55,15 @@ func resourceCloudflareListItemCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("unable to create list item on list id %s: %w", listID, err))
 	}
 
-	newestItem := mostRecentlyCreatedItem(createListItemResponse)
+	expectedIP := d.Get("ip").(string)
+	filteredItems := []cloudflare.ListItem{}
+	for _, item := range createListItemResponse {
+		if *item.IP == expectedIP {
+			filteredItems = append(filteredItems, item)
+		}
+	}
+
+	newestItem := mostRecentlyCreatedItem(filteredItems)
 	d.SetId(newestItem.ID)
 
 	return nil
