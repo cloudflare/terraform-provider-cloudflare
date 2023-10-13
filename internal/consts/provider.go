@@ -43,6 +43,12 @@ const (
 	// Default value for the API base path.
 	APIBasePathDefault = "/client/v4"
 
+	// Schema key for the User Agent operator suffix.
+	UserAgentOperatorSuffixSchemaKey = "user_agent_operator_suffix"
+
+	// Environment variable key for the User Agent operator suffix.
+	UserAgentOperatorSuffixEnvVarKey = "CLOUDFLARE_USER_AGENT_OPERATOR_SUFFIX"
+
 	// Schema key for the requests per second configuration.
 	RPSSchemaKey = "rps"
 
@@ -86,8 +92,6 @@ const (
 	//
 	// Deprecated: Use resource specific account ID values instead.
 	AccountIDEnvVarKey = "CLOUDFLARE_ACCOUNT_ID"
-
-	UserAgentDefault = "terraform/%s terraform-plugin-sdk/%s terraform-provider-cloudflare/%s"
 
 	// Schema key for the account ID configuration.
 	AccountIDSchemaKey = "account_id"
