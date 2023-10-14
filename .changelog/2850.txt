@@ -1,7 +1,3 @@
 ```release-note:new-resource
 resource/d1: Adds support for D1 databases
 ```
-
-```release-note:enhancement
-resource/ruleset: Adds note about logging only valid for skip action
-```
