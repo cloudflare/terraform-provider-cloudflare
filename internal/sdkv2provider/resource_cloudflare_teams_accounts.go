@@ -106,6 +106,18 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error parsing teams account device settings: %w", err))
 	}
 
+	sshSessionLogSettings, _, err := client.GetAuditSSHSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetAuditSSHSettingsParams{})
+	if err == nil {
+		if err := d.Set("ssh_session_log", flattenSSHSessionLogSettings(&sshSessionLogSettings)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing payload log settings: %w", err))
+		}
+	} else {
+		var notFoundError *cloudflare.NotFoundError
+		if !errors.As(err, &notFoundError) {
+			return diag.FromErr(fmt.Errorf("error finding SSH session account settings %q: %w", d.Id(), err))
+		}
+	}
+
 	payloadLogSettings, err := client.GetDLPPayloadLogSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetDLPPayloadLogSettingsParams{})
 	if err == nil {
 		if err := d.Set("payload_log", flattenPayloadLogSettings(&payloadLogSettings)); err != nil {
@@ -130,6 +142,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
 	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
 	payloadLogSettings := inflatePayloadLogSettings(d.Get("payload_log"))
+	sshSessionLogSettings := inflateSSHSessionLogSettings(d.Get("ssh_session_log"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
 		Settings: cloudflare.TeamsAccountSettings{
 			Antivirus: antivirusConfig,
@@ -177,6 +190,12 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	if deviceConfig != nil {
 		if _, err := client.TeamsAccountDeviceUpdateConfiguration(ctx, accountID, *deviceConfig); err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err))
+		}
+	}
+
+	if sshSessionLogSettings != nil {
+		if _, err := client.UpdateAuditSSHSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAuditSSHSettingsParams{PublicKey: sshSessionLogSettings.PublicKey}); err != nil {
+			return diag.FromErr(fmt.Errorf("error updating SSH session account settings %q: %w", accountID, err))
 		}
 	}
 
@@ -377,6 +396,24 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 		GatewayProxyEnabled:                deviceSettings["tcp"].(bool),
 		GatewayProxyUDPEnabled:             deviceSettings["udp"].(bool),
 		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
+	}
+}
+func flattenSSHSessionLogSettings(logSettings *cloudflare.AuditSSHSettings) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"public_key": logSettings.PublicKey,
+	}}
+}
+
+func inflateSSHSessionLogSettings(payloadLog interface{}) *cloudflare.AuditSSHSettings {
+	payloadLogList := payloadLog.([]interface{})
+	if len(payloadLogList) != 1 {
+		return nil
+	}
+
+	payloadLogMap := payloadLogList[0].(map[string]interface{})
+	publicKey := payloadLogMap["public_key"].(string)
+	return &cloudflare.AuditSSHSettings{
+		PublicKey: publicKey,
 	}
 }
 
