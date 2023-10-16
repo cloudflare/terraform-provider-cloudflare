@@ -185,6 +185,9 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.sp_entity_id", "saas-app.example"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.idp_entity_id"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.public_key"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.sso_endpoint"),
 
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.#", "2"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name", "email"),
