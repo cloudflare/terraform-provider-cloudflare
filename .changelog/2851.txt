@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: Add note that logging is only supported with the skip action
+```

@@ -185,6 +185,9 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.sp_entity_id", "saas-app.example"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.idp_entity_id"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.public_key"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.sso_endpoint"),
 
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.#", "2"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name", "email"),
@@ -558,6 +561,32 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "tags.#", "1"),
 				),
 			},
 		},
@@ -1079,4 +1108,21 @@ func testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(re
       }
   }
   `, resourceID, zone, zoneID)
+}
+
+func testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain string, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_tag" "%[1]s" {
+  account_id = "%[4]s"
+  name = "%[1]s"
+}
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+ 	tags             = [cloudflare_access_tag.%[1]s.id]
+}
+`, rnd, zoneID, domain, accountID)
 }

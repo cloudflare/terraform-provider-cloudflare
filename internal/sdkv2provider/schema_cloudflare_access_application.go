@@ -208,6 +208,21 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 							},
 						},
 					},
+					"idp_entity_id": {
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "The unique identifier for the SaaS application.",
+					},
+					"public_key": {
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "The public certificate that will be used to verify identities.",
+					},
+					"sso_endpoint": {
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "The endpoint where the SaaS application will send login requests.",
+					},
 				},
 			},
 		},
@@ -287,6 +302,14 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				Type: schema.TypeString,
 			},
 			Description: "The custom pages selected for the application.",
+		},
+		"tags": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "The itags associated with the application.",
 		},
 	}
 }
@@ -429,6 +452,9 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 		"sp_entity_id":         app.SPEntityID,
 		"consumer_service_url": app.ConsumerServiceUrl,
 		"name_id_format":       app.NameIDFormat,
+		"idp_entity_id":        app.IDPEntityID,
+		"public_key":           app.PublicKey,
+		"sso_endpoint":         app.SSOEndpoint,
 	}
 
 	var customAttributes []interface{}
