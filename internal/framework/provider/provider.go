@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
@@ -328,6 +329,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
+		d1.NewResource,
 	}
 }
 
