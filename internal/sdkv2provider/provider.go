@@ -189,6 +189,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_access_policy":                          resourceCloudflareAccessPolicy(),
 				"cloudflare_access_rule":                            resourceCloudflareAccessRule(),
 				"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
+				"cloudflare_access_tag":                             resourceCloudflareAccessTag(),
 				"cloudflare_account_member":                         resourceCloudflareAccountMember(),
 				"cloudflare_account":                                resourceCloudflareAccount(),
 				"cloudflare_address_map":                            resourceCloudflareAddressMap(),

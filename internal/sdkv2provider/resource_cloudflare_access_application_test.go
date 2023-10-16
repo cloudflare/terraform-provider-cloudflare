@@ -519,6 +519,32 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "tags.#", "1"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
@@ -1034,4 +1060,21 @@ func testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(re
       }
   }
   `, resourceID, zone, zoneID)
+}
+
+func testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain string, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_tag" "%[1]s" {
+  account_id = "%[4]s"
+  name = "%[1]s"
+}
+resource "cloudflare_access_application" "%[1]s" {
+  zone_id                   = "%[2]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[3]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+ 	tags             = [cloudflare_access_tag.%[1]s.id]
+}
+`, rnd, zoneID, domain, accountID)
 }
