@@ -111,6 +111,12 @@ Optional:
 - `custom_attribute` (Block List) Custom attribute mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_attribute))
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application. Defaults to `email`.
 
+Read-Only:
+
+- `idp_entity_id` (String) The unique identifier for the SaaS application.
+- `public_key` (String) The public certificate that will be used to verify identities.
+- `sso_endpoint` (String) The endpoint where the SaaS application will send login requests.
+
 <a id="nestedblock--saas_app--custom_attribute"></a>
 ### Nested Schema for `saas_app.custom_attribute`
 

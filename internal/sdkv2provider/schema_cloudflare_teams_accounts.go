@@ -76,6 +76,15 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			},
 			Description: "Configuration block for specifying which protocols are proxied.",
 		},
+		"ssh_session_log": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: sshSessionLogSchema,
+			},
+			Description: "Configuration for SSH Session Logging.",
+		},
 		"payload_log": {
 			Type:     schema.TypeList,
 			MaxItems: 1,
@@ -229,6 +238,14 @@ var loggingEnabledSchema = map[string]*schema.Schema{
 	"log_blocks": {
 		Type:     schema.TypeBool,
 		Required: true,
+	},
+}
+
+var sshSessionLogSchema = map[string]*schema.Schema{
+	"public_key": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "Public key used to encrypt ssh session.",
 	},
 }
 

@@ -945,7 +945,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							},
 						},
 						"logging": schema.ListNestedBlock{
-							MarkdownDescription: "List parameters to configure how the rule generates logs.",
+							MarkdownDescription: "List parameters to configure how the rule generates logs. Only valid for skip action.",
 							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
