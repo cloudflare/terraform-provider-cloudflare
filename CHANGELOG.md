@@ -1,5 +1,9 @@
 ## 4.17.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_d1_database` ([#2850](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2850))
+
 ENHANCEMENTS:
 
 * provider: allow defining a user agent operator suffix through the schema field (`user_agent_operator_suffix`) and via the environment variable (`CLOUDFLARE_USER_AGENT_OPERATOR_SUFFIX`) ([#2831](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2831))
