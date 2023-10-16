@@ -48,7 +48,7 @@ func resourceCloudflareObservatoryScheduledTestCreate(ctx context.Context, d *sc
 		return diag.FromErr(fmt.Errorf("error creating observatory scheduled test %q: %w", d.Id(), err))
 	}
 
-	d.SetId(fmt.Sprintf("%s:%s", test.Schedule.URL, test.Schedule.Region))
+	d.SetId(stringChecksum(fmt.Sprintf("%s:%s", test.Schedule.URL, test.Schedule.Region)))
 
 	return resourceCloudflareObservatoryScheduledTestRead(ctx, d, meta)
 }
@@ -70,7 +70,7 @@ func resourceCloudflareObservatoryScheduledTestRead(ctx context.Context, d *sche
 		}
 		return diag.FromErr(fmt.Errorf("error getting observatory scheduled test %q: %w", d.Id(), err))
 	}
-	d.SetId(fmt.Sprintf("%s:%s", schedule.URL, schedule.Region))
+	d.SetId(stringChecksum(fmt.Sprintf("%s:%s", schedule.URL, schedule.Region)))
 	d.Set("url", schedule.URL)
 	d.Set("region", schedule.Region)
 	d.Set("frequency", schedule.Frequency)
@@ -115,7 +115,7 @@ func resourceCloudflareObservatoryScheduledTestImport(ctx context.Context, d *sc
 		return nil, fmt.Errorf("failed to fetch web analytics site: %s", url)
 	}
 
-	d.SetId(fmt.Sprintf("%s:%s", schedule.URL, schedule.Region))
+	d.SetId(stringChecksum(fmt.Sprintf("%s:%s", schedule.URL, schedule.Region)))
 	d.Set(consts.ZoneIDSchemaKey, zoneID)
 	d.Set("url", schedule.URL)
 	d.Set("region", schedule.Region)

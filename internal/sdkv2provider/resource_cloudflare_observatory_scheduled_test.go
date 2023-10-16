@@ -28,7 +28,7 @@ func TestAccCloudflareObservatoryScheduledTest_Create(t *testing.T) {
 				Config: testAccCloudflareObservatoryScheduledTest(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "url", domain),
+					resource.TestCheckResourceAttr(name, "url", domain+"/"),
 					resource.TestCheckResourceAttr(name, "region", "us-central1"),
 					resource.TestCheckResourceAttr(name, "frequency", "DAILY"),
 				),
@@ -45,7 +45,7 @@ func testAccCheckCloudflareObservatoryScheduledTestDestroy(s *terraform.State) e
 			continue
 		}
 
-		_, err := client.ObservatoryScheduledPageTest(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), cloudflare.ObservatoryScheduledPageTestParams{
+		_, err := client.GetObservatoryScheduledPageTest(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), cloudflare.GetObservatoryScheduledPageTestParams{
 			URL:    rs.Primary.Attributes["url"],
 			Region: rs.Primary.Attributes["region"],
 		})
