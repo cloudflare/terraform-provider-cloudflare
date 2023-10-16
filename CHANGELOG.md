@@ -2,6 +2,7 @@
 
 FEATURES:
 
+* **New Resource:** `cloudflare_access_tag` ([#2776](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2776))
 * **New Resource:** `cloudflare_d1_database` ([#2850](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2850))
 * **New Resource:** `cloudflare_observatory_scheduled_test` ([#2807](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2807))
 
@@ -9,6 +10,7 @@ ENHANCEMENTS:
 
 * provider: allow defining a user agent operator suffix through the schema field (`user_agent_operator_suffix`) and via the environment variable (`CLOUDFLARE_USER_AGENT_OPERATOR_SUFFIX`) ([#2831](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2831))
 * resource/cloudflare_access_application: Add idp_entity_id, public_key and sso_endpoint attributes to saas_app ([#2838](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2838))
+* resource/cloudflare_access_application: adds the ability to associate a tag with an application. ([#2776](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2776))
 * resource/cloudflare_teams_accounts: Add support for setting ssh encryption key in ZT settings ([#2826](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2826))
 * resource/cloudflare_zone_settings_override: Add support for `fonts` ([#2773](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2773))
 
