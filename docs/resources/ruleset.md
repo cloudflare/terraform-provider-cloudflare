@@ -482,6 +482,7 @@ Read-Only:
 
 Optional:
 
+- `additional_cacheable_ports` (Set of Number) Specifies uncommon ports to allow cacheable assets to be served from.
 - `algorithms` (Block List) Compression algorithms to use in order of preference. (see [below for nested schema](#nestedblock--rules--action_parameters--algorithms))
 - `automatic_https_rewrites` (Boolean) Turn on or off Cloudflare Automatic HTTPS rewrites.
 - `autominify` (Block List) Indicate which file extensions to minify automatically. (see [below for nested schema](#nestedblock--rules--action_parameters--autominify))

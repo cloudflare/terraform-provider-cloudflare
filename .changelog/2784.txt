@@ -1,0 +1,3 @@
+```release-note:new-resource
+cloudflare_api_shield_schema
+```

@@ -75,6 +75,7 @@ resource "cloudflare_access_application" "staging_app" {
 - `service_auth_401_redirect` (Boolean) Option to return a 401 status code in service authentication rules on failed requests. Defaults to `false`.
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`. Defaults to `24h`.
 - `skip_interstitial` (Boolean) Option to skip the authorization interstitial when using the CLI. Defaults to `false`.
+- `tags` (Set of String) The itags associated with the application.
 - `type` (String) The application type. Available values: `app_launcher`, `bookmark`, `biso`, `dash_sso`, `saas`, `self_hosted`, `ssh`, `vnc`, `warp`. Defaults to `self_hosted`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 

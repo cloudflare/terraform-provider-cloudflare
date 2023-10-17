@@ -17,3 +17,15 @@ func StringSet(in []attr.Value) basetypes.SetValue {
 	}
 	return types.SetValueMust(types.StringType, in)
 }
+
+// Int64Set accepts a `[]attr.Value` and returns a `basetypes.SetValue`. The
+// return type automatically handles `SetNull` for empty results and coercing
+// all element values to a string if there are any elements.
+//
+// nolint: contextcheck
+func Int64Set(in []attr.Value) basetypes.SetValue {
+	if len(in) == 0 {
+		return types.SetNull(types.Int64Type)
+	}
+	return types.SetValueMust(types.Int64Type, in)
+}

@@ -1829,6 +1829,7 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.additional_cacheable_ports.0", "8443"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.mode", "override_origin"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.default", "60"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.edge_ttl.0.status_code_ttl.#", "2"),
@@ -4049,6 +4050,7 @@ func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID stri
     rules {
       action = "set_cache_settings"
       action_parameters {
+		additional_cacheable_ports = [8443]
 		edge_ttl {
 			mode = "override_origin"
 			default = 60
