@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Resource:** `cloudflare_access_tag` ([#2776](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2776))
+* **New Resource:** `cloudflare_api_shield_schema` ([#2784](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2784))
 * **New Resource:** `cloudflare_d1_database` ([#2850](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2850))
 * **New Resource:** `cloudflare_observatory_scheduled_test` ([#2807](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2807))
 
