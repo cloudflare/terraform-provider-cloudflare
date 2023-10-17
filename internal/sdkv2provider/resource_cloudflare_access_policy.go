@@ -110,6 +110,10 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 		d.Set("approval_required", accessPolicy.ApprovalRequired)
 	}
 
+	if accessPolicy.SessionDuration != nil {
+		d.Set("session_duration", accessPolicy.SessionDuration)
+	}
+
 	if len(accessPolicy.ApprovalGroups) != 0 {
 		approvalGroups := make([]map[string]interface{}, 0, len(accessPolicy.ApprovalGroups))
 		for _, apiApprovalGroup := range accessPolicy.ApprovalGroups {
@@ -127,10 +131,11 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 	newAccessPolicy := cloudflare.CreateAccessPolicyParams{
-		ApplicationID: appID,
-		Name:          d.Get("name").(string),
-		Precedence:    d.Get("precedence").(int),
-		Decision:      d.Get("decision").(string),
+		ApplicationID:   appID,
+		Name:            d.Get("name").(string),
+		Precedence:      d.Get("precedence").(int),
+		Decision:        d.Get("decision").(string),
+		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
 	}
 
 	exclude := d.Get("exclude").([]interface{})
@@ -175,11 +180,12 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 	updatedAccessPolicy := cloudflare.UpdateAccessPolicyParams{
-		ApplicationID: appID,
-		PolicyID:      d.Id(),
-		Name:          d.Get("name").(string),
-		Precedence:    d.Get("precedence").(int),
-		Decision:      d.Get("decision").(string),
+		ApplicationID:   appID,
+		PolicyID:        d.Id(),
+		Name:            d.Get("name").(string),
+		Precedence:      d.Get("precedence").(int),
+		Decision:        d.Get("decision").(string),
+		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
 	}
 
 	exclude := d.Get("exclude").([]interface{})
@@ -267,51 +273,4 @@ func resourceCloudflareAccessPolicyImport(ctx context.Context, d *schema.Resourc
 	resourceCloudflareAccessPolicyRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-// appendConditionalAccessPolicyFields determines which of the
-// conditional policy enforcement fields it should append to the
-// AccessPolicy by iterating over the provided values and generating the
-// correct structs.
-func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *schema.ResourceData) cloudflare.AccessPolicy {
-	exclude := d.Get("exclude").([]interface{})
-	for _, value := range exclude {
-		if value != nil {
-			policy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	require := d.Get("require").([]interface{})
-	for _, value := range require {
-		if value != nil {
-			policy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	include := d.Get("include").([]interface{})
-	for _, value := range include {
-		if value != nil {
-			policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	isolationRequired := d.Get("isolation_required").(bool)
-	policy.IsolationRequired = &isolationRequired
-
-	purposeJustificationRequired := d.Get("purpose_justification_required").(bool)
-	policy.PurposeJustificationRequired = &purposeJustificationRequired
-
-	purposeJustificationPrompt := d.Get("purpose_justification_prompt").(string)
-	policy.PurposeJustificationPrompt = &purposeJustificationPrompt
-
-	approvalRequired := d.Get("approval_required").(bool)
-	policy.ApprovalRequired = &approvalRequired
-
-	approvalGroups := d.Get("approval_group").([]interface{})
-	for _, approvalGroup := range approvalGroups {
-		approvalGroupAsMap := approvalGroup.(map[string]interface{})
-		policy.ApprovalGroups = append(policy.ApprovalGroups, schemaAccessPolicyApprovalGroupToAPI(approvalGroupAsMap))
-	}
-
-	return policy
 }

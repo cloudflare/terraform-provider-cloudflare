@@ -367,6 +367,7 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
+					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
 				),
 			},
 		},
@@ -387,6 +388,7 @@ func testAccessPolicyEmailDomainConfig(resourceID, zone, accountID string) strin
       account_id     = "%[3]s"
       decision       = "allow"
       precedence     = "1"
+      session_duration = "12h"
 
       include {
         email_domain = ["example.com"]

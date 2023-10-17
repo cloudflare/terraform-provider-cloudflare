@@ -36,6 +36,7 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "login_design.0.logo_path", "https://example.com/logo.png"),
 					resource.TestCheckResourceAttr(name, "login_design.0.header_text", "My header text"),
 					resource.TestCheckResourceAttr(name, "login_design.0.footer_text", "My footer text"),
+					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
 				),
 				ResourceName:     name,
 				ImportState:      true,
@@ -84,6 +85,7 @@ func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID string) strin
 			is_ui_read_only = false
 			user_seat_expiration_inactive_time = "1460h"
 			auto_redirect_to_identity = false
+			session_duration = "12h"
 
 			login_design {
 				background_color = "#FFFFFF"
