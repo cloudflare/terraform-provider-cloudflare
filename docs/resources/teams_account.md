@@ -80,6 +80,7 @@ resource "cloudflare_teams_account" "example" {
 - `payload_log` (Block List, Max: 1) Configuration for DLP Payload Logging. (see [below for nested schema](#nestedblock--payload_log))
 - `protocol_detection_enabled` (Boolean) Indicator that protocol detection is enabled.
 - `proxy` (Block List, Max: 1) Configuration block for specifying which protocols are proxied. (see [below for nested schema](#nestedblock--proxy))
+- `ssh_session_log` (Block List, Max: 1) Configuration for SSH Session Logging. (see [below for nested schema](#nestedblock--ssh_session_log))
 - `tls_decrypt_enabled` (Boolean) Indicator that decryption of TLS traffic is enabled.
 - `url_browser_isolation_enabled` (Boolean) Safely browse websites in Browser Isolation through a URL.
 
@@ -182,6 +183,14 @@ Required:
 - `root_ca` (Boolean) Whether root ca is enabled account wide for ZT clients.
 - `tcp` (Boolean) Whether gateway proxy is enabled on gateway devices for TCP traffic.
 - `udp` (Boolean) Whether gateway proxy is enabled on gateway devices for UDP traffic.
+
+
+<a id="nestedblock--ssh_session_log"></a>
+### Nested Schema for `ssh_session_log`
+
+Required:
+
+- `public_key` (String) Public key used to encrypt ssh session.
 
 ## Import
 
