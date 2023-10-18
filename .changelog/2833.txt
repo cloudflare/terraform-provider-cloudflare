@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_bot_management: fix fight mode not being sent to API
+```

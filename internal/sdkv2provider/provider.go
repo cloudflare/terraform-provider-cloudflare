@@ -16,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 )
 
 func init() {
@@ -151,6 +150,12 @@ func New(version string) func() *schema.Provider {
 					Optional:    true,
 					Description: fmt.Sprintf("Configure the base path used by the API client. Alternatively, can be configured using the `%s` environment variable.", consts.APIBasePathEnvVarKey),
 				},
+
+				consts.UserAgentOperatorSuffixSchemaKey: {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: fmt.Sprintf("A value to append to the HTTP User Agent for all API calls. This value is not something most users need to modify however, if you are using a non-standard provider or operator configuration, this is recommended to assist in uniquely identifying your traffic. **Setting this value will remove the Terraform version from the HTTP User Agent string and may have unintended consequences**. Alternatively, can be configured using the `%s` environment variable.", consts.UserAgentOperatorSuffixEnvVarKey),
+				},
 			},
 
 			DataSourcesMap: map[string]*schema.Resource{
@@ -184,11 +189,13 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_access_policy":                          resourceCloudflareAccessPolicy(),
 				"cloudflare_access_rule":                            resourceCloudflareAccessRule(),
 				"cloudflare_access_service_token":                   resourceCloudflareAccessServiceToken(),
+				"cloudflare_access_tag":                             resourceCloudflareAccessTag(),
 				"cloudflare_account_member":                         resourceCloudflareAccountMember(),
 				"cloudflare_account":                                resourceCloudflareAccount(),
 				"cloudflare_address_map":                            resourceCloudflareAddressMap(),
 				"cloudflare_api_shield":                             resourceCloudflareAPIShield(),
 				"cloudflare_api_shield_operation":                   resourceCloudflareAPIShieldOperation(),
+				"cloudflare_api_shield_schema":                      resourceCloudflareAPIShieldSchemas(),
 				"cloudflare_api_token":                              resourceCloudflareApiToken(),
 				"cloudflare_argo":                                   resourceCloudflareArgo(),
 				"cloudflare_authenticated_origin_pulls_certificate": resourceCloudflareAuthenticatedOriginPullsCertificate(),
@@ -231,6 +238,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_mtls_certificate":                       resourceCloudflareMTLSCertificate(),
 				"cloudflare_notification_policy_webhooks":           resourceCloudflareNotificationPolicyWebhook(),
 				"cloudflare_notification_policy":                    resourceCloudflareNotificationPolicy(),
+				"cloudflare_observatory_scheduled_test":             resourceCloudflareObservatoryScheduledTest(),
 				"cloudflare_origin_ca_certificate":                  resourceCloudflareOriginCACertificate(),
 				"cloudflare_page_rule":                              resourceCloudflarePageRule(),
 				"cloudflare_pages_domain":                           resourceCloudflarePagesDomain(),
@@ -377,8 +385,18 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 
 		options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
-		ua := fmt.Sprintf(consts.UserAgentDefault, p.TerraformVersion, meta.SDKVersionString(), version)
-		options = append(options, cloudflare.UserAgent(ua))
+		pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-sdk/v2")
+		userAgentParams := utils.UserAgentBuilderParams{
+			ProviderVersion: cloudflare.StringPtr(version),
+			PluginType:      cloudflare.StringPtr("terraform-plugin-sdk"),
+			PluginVersion:   pluginVersion,
+		}
+		if v, ok := d.GetOk(consts.UserAgentOperatorSuffixSchemaKey); ok {
+			userAgentParams.OperatorSuffix = cloudflare.StringPtr(v.(string))
+		} else {
+			userAgentParams.TerraformVersion = cloudflare.StringPtr(p.TerraformVersion)
+		}
+		options = append(options, cloudflare.UserAgent(userAgentParams.String()))
 
 		config := Config{Options: options}
 

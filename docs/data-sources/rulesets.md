@@ -84,6 +84,7 @@ Read-Only:
 
 Read-Only:
 
+- `additional_cacheable_ports` (Set of Number)
 - `automatic_https_rewrites` (Boolean)
 - `autominify` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--autominify))
 - `bic` (Boolean)

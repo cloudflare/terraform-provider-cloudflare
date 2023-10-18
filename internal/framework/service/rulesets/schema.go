@@ -154,6 +154,11 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							MarkdownDescription: "List of parameters that configure the behavior of the ruleset rule action.",
 							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
+									"additional_cacheable_ports": schema.SetAttribute{
+										ElementType:         types.Int64Type,
+										Optional:            true,
+										MarkdownDescription: "Specifies uncommon ports to allow cacheable assets to be served from.",
+									},
 									"automatic_https_rewrites": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Turn on or off Cloudflare Automatic HTTPS rewrites.",
@@ -945,7 +950,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							},
 						},
 						"logging": schema.ListNestedBlock{
-							MarkdownDescription: "List parameters to configure how the rule generates logs.",
+							MarkdownDescription: "List parameters to configure how the rule generates logs. Only valid for skip action.",
 							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{

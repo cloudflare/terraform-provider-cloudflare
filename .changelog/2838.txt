@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_application: Add idp_entity_id, public_key and sso_endpoint attributes to saas_app
+```
