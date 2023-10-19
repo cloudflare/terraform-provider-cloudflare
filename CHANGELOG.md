@@ -1,5 +1,9 @@
 ## 4.18.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: add support for `casb_findings` dataset ([#2859](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2859))
+
 ## 4.17.0 (18th October, 2023)
 
 FEATURES:
