@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_identity_provider: Support email_claim_name, Okta authorization_server_id, and pingone
+```

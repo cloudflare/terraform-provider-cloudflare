@@ -38,15 +38,20 @@ type IssueKey struct {
 }
 
 type IssueFields struct {
-	Project     IssueKey     `json:"project"`
-	Summary     string       `json:"summary"`
-	Description string       `json:"description"`
-	Teams       []IssueValue `json:"customfield_13100"`
-	EngOwner    IssueName    `json:"customfield_16304"`
-	MyTeam      IssueValue   `json:"customfield_14803"`
-	SLA         IssueValue   `json:"customfield_15031"`
-	IssueType   IssueName    `json:"issuetype"`
-	Components  []IssueName  `json:"components"`
+	Project           IssueKey     `json:"project"`
+	Summary           string       `json:"summary"`
+	Description       string       `json:"description"`
+	Teams             []IssueValue `json:"customfield_13100"`
+	MyTeam            IssueValue   `json:"customfield_14803"`
+	Segment           IssueValue   `json:"customfield_21110"`
+	Impact            IssueValue   `json:"customfield_21008"`
+	Urgency           IssueValue   `json:"customfield_21009"`
+	EscalationChannel IssueValue   `json:"customfield_18514"`
+	StepsToReplicate  string       `json:"customfield_17004"`
+	UserID            string       `json:"customfield_21112"`
+	Template          IssueValue   `json:"customfield_21039"`
+	IssueType         IssueName    `json:"issuetype"`
+	Components        []IssueName  `json:"components"`
 }
 
 type InternalIssue struct {
@@ -80,6 +85,7 @@ var (
 		"service/turnstile",
 		"service/workers",
 		"service/zones",
+		"service/bot_management",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -135,7 +141,11 @@ var (
 		"service/pages": {
 			teamName: "Cloudflare Pages",
 			owner:    "nrogers",
-		},		
+		},
+		"service/bot_management": {
+			teamName: "Bot Management",
+			owner:    "ali",
+		},
 	}
 )
 
@@ -217,15 +227,20 @@ func main() {
 	service := serviceOwnership[serviceLabel]
 
 	newIssue := InternalIssue{Fields: IssueFields{
-		Project:     IssueKey{Key: "CUSTESC"},
-		Summary:     *issue.Title,
-		Description: jirafyBodyMarkdown(issue),
-		Teams:       []IssueValue{{Value: service.teamName}},
-		EngOwner:    IssueName{Name: service.owner},
-		SLA:         IssueValue{Value: "Pro / Free"},
-		MyTeam:      IssueValue{Value: "Other"},
-		IssueType:   IssueName{Name: "Bug"},
-		Components:  []IssueName{{Name: "SDK & Client API Libraries"}},
+		Project:           IssueKey{Key: "CUSTESC"},
+		Summary:           *issue.Title,
+		Description:       jirafyBodyMarkdown(issue),
+		Teams:             []IssueValue{{Value: service.teamName}},
+		MyTeam:            IssueValue{Value: "Other"},
+		IssueType:         IssueName{Name: "Bug"},
+		Components:        []IssueName{{Name: "SDK & Client API Libraries"}},
+		Segment:           IssueValue{Value: "PAYGO (Free, Pro, Business)"},
+		Impact:            IssueValue{Value: "Low"},
+		Urgency:           IssueValue{Value: "Low"},
+		EscalationChannel: IssueValue{Value: "Untriaged"},
+		StepsToReplicate:  "n/a",
+		UserID:            "0",
+		Template:          IssueValue{Value: "Yes"},
 	}}
 
 	res, err := json.Marshal(newIssue)
@@ -260,7 +275,7 @@ func main() {
 	json.Unmarshal([]byte(body), &createdIssue)
 
 	if resp.StatusCode != http.StatusCreated {
-		fmt.Println(fmt.Sprintf("failed to create new JIRA issue"))
+		fmt.Println(fmt.Sprintf("failed to create new JIRA issue: %s", body))
 		os.Exit(1)
 	}
 

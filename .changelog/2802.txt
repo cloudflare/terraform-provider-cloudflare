@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: ability to use exclude_origin=true in cache_key.custom_key.header without the need of specifying include or check_presence.
+```

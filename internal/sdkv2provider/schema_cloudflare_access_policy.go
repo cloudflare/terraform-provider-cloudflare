@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -87,6 +88,20 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Type:     schema.TypeList,
 			Optional: true,
 			Elem:     AccessPolicyApprovalGroupElement,
+		},
+		"session_duration": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "24h",
+			ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+				v := val.(string)
+				_, err := time.ParseDuration(v)
+				if err != nil {
+					errs = append(errs, fmt.Errorf(`%q only supports "ns", "us" (or "µs"), "ms", "s", "m", or "h" as valid units`, key))
+				}
+				return
+			},
+			Description: "How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`",
 		},
 	}
 }

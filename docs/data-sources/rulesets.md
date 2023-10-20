@@ -84,6 +84,7 @@ Read-Only:
 
 Read-Only:
 
+- `additional_cacheable_ports` (Set of Number)
 - `automatic_https_rewrites` (Boolean)
 - `autominify` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--autominify))
 - `bic` (Boolean)
@@ -109,11 +110,13 @@ Read-Only:
 - `mirage` (Boolean)
 - `opportunistic_encryption` (Boolean)
 - `origin` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--origin))
+- `origin_cache_control` (Boolean)
 - `origin_error_page_passthru` (Boolean)
 - `overrides` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--overrides))
 - `phases` (Set of String)
 - `polish` (String)
 - `products` (Set of String)
+- `read_timeout` (Number)
 - `request_fields` (Set of String)
 - `respect_strong_etags` (Boolean)
 - `response` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--response))

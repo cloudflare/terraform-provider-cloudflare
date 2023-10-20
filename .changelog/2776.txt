@@ -1,0 +1,7 @@
+```release-note:new-resource
+cloudflare_access_tag
+```
+
+```release-note:enhancement
+resource/cloudflare_access_application: adds the ability to associate a tag with an application.
+```

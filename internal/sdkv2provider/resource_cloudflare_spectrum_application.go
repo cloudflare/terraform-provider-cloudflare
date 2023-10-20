@@ -118,8 +118,10 @@ func resourceCloudflareSpectrumApplicationRead(ctx context.Context, d *schema.Re
 		}
 	}
 
-	if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
-		tflog.Warn(ctx, fmt.Sprintf("Error setting Edge IPs on spectrum application %q: %s", d.Id(), err))
+	if application.EdgeIPs != nil {
+		if err := d.Set("edge_ips", flattenEdgeIPs(application.EdgeIPs)); err != nil {
+			tflog.Warn(ctx, fmt.Sprintf("Error setting Edge IPs on spectrum application %q: %s", d.Id(), err))
+		}
 	}
 
 	d.Set("tls", application.TLS)
@@ -222,8 +224,10 @@ func flattenOriginPortRange(port *cloudflare.SpectrumApplicationOriginPort) []ma
 }
 
 func flattenEdgeIPs(edgeIPs *cloudflare.SpectrumApplicationEdgeIPs) []map[string]interface{} {
-	flattened := map[string]interface{}{
-		"type": edgeIPs.Type.String(),
+	flattened := map[string]interface{}{}
+
+	if edgeIPs.Type != "" {
+		flattened["type"] = edgeIPs.Type
 	}
 
 	if edgeIPs.Connectivity != nil {
@@ -280,14 +284,15 @@ func applicationFromResource(d *schema.ResourceData) cloudflare.SpectrumApplicat
 		application.ArgoSmartRouting = argoSmartRouting.(bool)
 	}
 
-	application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{}
+	if _, ok := d.GetOk("edge_ips"); ok {
+		application.EdgeIPs = &cloudflare.SpectrumApplicationEdgeIPs{}
+		application.EdgeIPs.Type = edgeIPsTypeFromString(d.Get("edge_ips.0.type").(string))
+	}
 
 	if d.Get("edge_ips.0.connectivity").(string) != "" {
 		c := edgeIPsConnectivityFromString(d.Get("edge_ips.0.connectivity").(string))
 		application.EdgeIPs.Connectivity = &c
 	}
-
-	application.EdgeIPs.Type = edgeIPsTypeFromString(d.Get("edge_ips.0.type").(string))
 
 	if ips, ok := d.GetOk("edge_ips.0.ips"); ok {
 		for _, value := range ips.(*schema.Set).List() {

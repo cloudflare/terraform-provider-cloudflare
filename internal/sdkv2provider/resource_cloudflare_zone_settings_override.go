@@ -34,6 +34,7 @@ var fetchAsSingleSetting = []string{
 	"image_resizing",
 	"early_hints",
 	"origin_max_http_version",
+	"fonts",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -170,6 +171,10 @@ func flattenZoneSettings(ctx context.Context, d *schema.ResourceData, settings [
 	for _, s := range settings {
 		if s.ID == "0rtt" { // NOTE: 0rtt is an invalid attribute in HCLs grammar.  Remap to `zero_rtt`
 			s.ID = "zero_rtt"
+		}
+
+		if s.ID == "first_party_fonts" {
+			s.ID = "fonts"
 		}
 
 		if !settingInSchema(s.ID) {

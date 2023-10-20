@@ -371,6 +371,12 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				rule.ActionParameters[0].SSL = flatteners.String(ruleResponse.ActionParameters.SSL.String())
 			}
 
+			var ports []attr.Value
+			for _, s := range ruleResponse.ActionParameters.AdditionalCacheablePorts {
+				ports = append(ports, types.Int64Value((int64(s))))
+			}
+			rule.ActionParameters[0].AdditionalCacheablePorts = flatteners.Int64Set(ports)
+
 			var phases []attr.Value
 			for _, s := range ruleResponse.ActionParameters.Phases {
 				phases = append(phases, types.StringValue(s))
@@ -527,14 +533,13 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 					if ruleResponse.ActionParameters.CacheKey.CustomKey.Header != nil {
 						include, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.Include)
 						checkPresence, _ := basetypes.NewSetValueFrom(ctx, types.StringType, ruleResponse.ActionParameters.CacheKey.CustomKey.Header.CheckPresence)
-						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 {
-							var excludeOrigin types.Bool
-							if !reflect.ValueOf(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin).IsNil() {
-								excludeOrigin = flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin)
-							} else {
-								excludeOrigin = types.BoolNull()
-							}
-
+						var excludeOrigin types.Bool
+						if !reflect.ValueOf(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin).IsNil() {
+							excludeOrigin = flatteners.Bool(ruleResponse.ActionParameters.CacheKey.CustomKey.Header.ExcludeOrigin)
+						} else {
+							excludeOrigin = types.BoolNull()
+						}
+						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 || excludeOrigin.ValueBool() {
 							key.Header = []*ActionParameterCacheKeyCustomKeyHeaderModel{{
 								Include:       include,
 								CheckPresence: checkPresence,
@@ -848,6 +853,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 
 		if !ap.StatusCode.IsNull() {
 			rr.ActionParameters.StatusCode = uint16(ap.StatusCode.ValueInt64())
+		}
+
+		if !ap.AdditionalCacheablePorts.IsNull() {
+			rr.ActionParameters.AdditionalCacheablePorts = expanders.Int64Set(ctx, ap.AdditionalCacheablePorts)
 		}
 
 		if !ap.AutomaticHTTPSRewrites.IsNull() {

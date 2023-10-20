@@ -24,8 +24,8 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 
 		"traffic_type": {
 			Type:         schema.TypeString,
-			Default:      "direct",
 			Optional:     true,
+			Computed:     true,
 			ValidateFunc: validation.StringInSlice([]string{"direct", "http", "https"}, false),
 			Description:  fmt.Sprintf("Sets application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"direct", "http", "https"})),
 		},
@@ -109,7 +109,7 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 		"tls": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			Default:      "off",
+			Computed:     true,
 			ValidateFunc: validation.StringInSlice([]string{"off", "flexible", "full", "strict"}, false),
 			Description:  fmt.Sprintf("TLS configuration option for Cloudflare to connect to your origin. %s", renderAvailableDocumentationValuesStringSlice([]string{"off", "flexible", "full", "strict"})),
 		},
@@ -117,14 +117,14 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 		"ip_firewall": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Default:     true,
+			Computed:    true,
 			Description: "Enables the IP Firewall for this application.",
 		},
 
 		"proxy_protocol": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			Default:      "off",
+			Computed:     true,
 			Description:  fmt.Sprintf("Enables a proxy protocol to the origin. %s", renderAvailableDocumentationValuesStringSlice([]string{"off", "v1", "v2", "simple"})),
 			ValidateFunc: validation.StringInSlice([]string{"off", "v1", "v2", "simple"}, false),
 		},
@@ -132,6 +132,7 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 		"edge_ips": {
 			Type:        schema.TypeList,
 			Optional:    true,
+			Computed:    true,
 			MaxItems:    1,
 			Description: "The anycast edge IP configuration for the hostname of this application.",
 			Elem: &schema.Resource{
@@ -161,7 +162,7 @@ func resourceCloudflareSpectrumApplicationSchema() map[string]*schema.Schema {
 		"argo_smart_routing": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Default:     false,
+			Computed:    true,
 			Description: "Enables Argo Smart Routing.",
 		},
 	}

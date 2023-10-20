@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_notification_policy: Implement the `group_by`, `where` and `actions` options
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: Add `advanced_http_alert_error` alert_type
+```

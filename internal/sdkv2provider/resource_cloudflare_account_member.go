@@ -8,10 +8,11 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 )
 
 func resourceCloudflareAccountMember() *schema.Resource {
@@ -106,7 +107,7 @@ func resourceCloudflareAccountMemberUpdate(ctx context.Context, d *schema.Resour
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	for _, r := range memberRoles {
-		accountRole, _ := client.AccountRole(ctx, accountID, r.(string))
+		accountRole, _ := client.GetAccountRole(ctx, cloudflare.AccountIdentifier(accountID), r.(string))
 		accountRoles = append(accountRoles, accountRole)
 	}
 

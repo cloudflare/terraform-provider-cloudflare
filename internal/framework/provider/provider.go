@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
@@ -31,7 +32,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
 	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 )
 
 // Ensure CloudflareProvider satisfies various provider interfaces.
@@ -47,17 +47,18 @@ type CloudflareProvider struct {
 
 // CloudflareProviderModel describes the provider data model.
 type CloudflareProviderModel struct {
-	APIKey            types.String `tfsdk:"api_key"`
-	APIUserServiceKey types.String `tfsdk:"api_user_service_key"`
-	Email             types.String `tfsdk:"email"`
-	MinBackOff        types.Int64  `tfsdk:"min_backoff"`
-	RPS               types.Int64  `tfsdk:"rps"`
-	APIBasePath       types.String `tfsdk:"api_base_path"`
-	APIToken          types.String `tfsdk:"api_token"`
-	Retries           types.Int64  `tfsdk:"retries"`
-	MaxBackoff        types.Int64  `tfsdk:"max_backoff"`
-	APIClientLogging  types.Bool   `tfsdk:"api_client_logging"`
-	APIHostname       types.String `tfsdk:"api_hostname"`
+	APIKey                  types.String `tfsdk:"api_key"`
+	APIUserServiceKey       types.String `tfsdk:"api_user_service_key"`
+	Email                   types.String `tfsdk:"email"`
+	MinBackOff              types.Int64  `tfsdk:"min_backoff"`
+	RPS                     types.Int64  `tfsdk:"rps"`
+	APIBasePath             types.String `tfsdk:"api_base_path"`
+	APIToken                types.String `tfsdk:"api_token"`
+	Retries                 types.Int64  `tfsdk:"retries"`
+	MaxBackoff              types.Int64  `tfsdk:"max_backoff"`
+	APIClientLogging        types.Bool   `tfsdk:"api_client_logging"`
+	APIHostname             types.String `tfsdk:"api_hostname"`
+	UserAgentOperatorSuffix types.String `tfsdk:"user_agent_operator_suffix"`
 }
 
 func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -137,6 +138,11 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 			consts.APIBasePathSchemaKey: schema.StringAttribute{
 				Optional:            true,
 				MarkdownDescription: fmt.Sprintf("Configure the base path used by the API client. Alternatively, can be configured using the `%s` environment variable.", consts.APIBasePathEnvVarKey),
+			},
+
+			consts.UserAgentOperatorSuffixSchemaKey: schema.StringAttribute{
+				Optional:            true,
+				MarkdownDescription: fmt.Sprintf("A value to append to the HTTP User Agent for all API calls. This value is not something most users need to modify however, if you are using a non-standard provider or operator configuration, this is recommended to assist in uniquely identifying your traffic. **Setting this value will remove the Terraform version from the HTTP User Agent string and may have unintended consequences**. Alternatively, can be configured using the `%s` environment variable.", consts.UserAgentOperatorSuffixEnvVarKey),
 			},
 		},
 	}
@@ -234,8 +240,18 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
 
-	ua := fmt.Sprintf(consts.UserAgentDefault, req.TerraformVersion, meta.SDKVersionString(), p.version)
-	options = append(options, cloudflare.UserAgent(ua))
+	pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-framework")
+	userAgentParams := utils.UserAgentBuilderParams{
+		ProviderVersion: &p.version,
+		PluginType:      cloudflare.StringPtr("terraform-plugin-framework"),
+		PluginVersion:   pluginVersion,
+	}
+	if !data.UserAgentOperatorSuffix.IsNull() {
+		userAgentParams.OperatorSuffix = cloudflare.StringPtr(data.UserAgentOperatorSuffix.String())
+	} else {
+		userAgentParams.TerraformVersion = cloudflare.StringPtr(req.TerraformVersion)
+	}
+	options = append(options, cloudflare.UserAgent(userAgentParams.String()))
 
 	config := Config{Options: options}
 
@@ -313,6 +329,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
+		d1.NewResource,
 	}
 }
 

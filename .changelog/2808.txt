@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: mark `requests_to_origin` required for ratelimit blocks
+```

@@ -74,7 +74,7 @@ resource "cloudflare_access_identity_provider" "okta" {
 ### Required
 
 - `name` (String) Friendly name of the Access Identity Provider configuration.
-- `type` (String) The provider type to use. Available values: `centrify`, `facebook`, `google-apps`, `oidc`, `github`, `google`, `saml`, `linkedin`, `azureAD`, `okta`, `onetimepin`, `onelogin`, `yandex`.
+- `type` (String) The provider type to use. Available values: `azureAD`, `centrify`, `facebook`, `github`, `google`, `google-apps`, `linkedin`, `oidc`, `okta`, `onelogin`, `onetimepin`, `pingone`, `saml`, `yandex`.
 
 ### Optional
 
@@ -96,6 +96,7 @@ Optional:
 - `apps_domain` (String)
 - `attributes` (List of String)
 - `auth_url` (String)
+- `authorization_server_id` (String)
 - `centrify_account` (String)
 - `centrify_app_id` (String)
 - `certs_url` (String)
@@ -105,17 +106,22 @@ Optional:
 - `conditional_access_enabled` (Boolean)
 - `directory_id` (String)
 - `email_attribute_name` (String)
+- `email_claim_name` (String)
 - `idp_public_cert` (String)
 - `issuer_url` (String)
 - `okta_account` (String)
 - `onelogin_account` (String)
+- `ping_env_id` (String)
 - `pkce_enabled` (Boolean)
-- `redirect_url` (String)
 - `scopes` (List of String)
 - `sign_request` (Boolean)
 - `sso_target_url` (String)
 - `support_groups` (Boolean)
 - `token_url` (String)
+
+Read-Only:
+
+- `redirect_url` (String)
 
 
 <a id="nestedblock--scim_config"></a>
@@ -126,7 +132,7 @@ Optional:
 - `enabled` (Boolean)
 - `group_member_deprovision` (Boolean)
 - `seat_deprovision` (Boolean)
-- `secret` (String)
+- `secret` (String, Sensitive)
 - `user_deprovision` (Boolean)
 
 ## Import

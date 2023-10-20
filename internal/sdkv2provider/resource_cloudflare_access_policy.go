@@ -94,20 +94,13 @@ func resourceCloudflareAccessPolicyRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("failed to set include attribute: %w", err))
 	}
 
-	if accessPolicy.IsolationRequired != nil {
-		d.Set("isolation_required", accessPolicy.IsolationRequired)
-	}
+	d.Set("isolation_required", accessPolicy.IsolationRequired)
+	d.Set("purpose_justification_required", accessPolicy.PurposeJustificationRequired)
+	d.Set("purpose_justification_prompt", accessPolicy.PurposeJustificationPrompt)
+	d.Set("approval_required", accessPolicy.ApprovalRequired)
 
-	if accessPolicy.PurposeJustificationRequired != nil {
-		d.Set("purpose_justification_required", accessPolicy.PurposeJustificationRequired)
-	}
-
-	if accessPolicy.PurposeJustificationPrompt != nil {
-		d.Set("purpose_justification_prompt", accessPolicy.PurposeJustificationPrompt)
-	}
-
-	if accessPolicy.ApprovalRequired != nil {
-		d.Set("approval_required", accessPolicy.ApprovalRequired)
+	if accessPolicy.SessionDuration != nil {
+		d.Set("session_duration", accessPolicy.SessionDuration)
 	}
 
 	if len(accessPolicy.ApprovalGroups) != 0 {
@@ -127,10 +120,11 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 	newAccessPolicy := cloudflare.CreateAccessPolicyParams{
-		ApplicationID: appID,
-		Name:          d.Get("name").(string),
-		Precedence:    d.Get("precedence").(int),
-		Decision:      d.Get("decision").(string),
+		ApplicationID:   appID,
+		Name:            d.Get("name").(string),
+		Precedence:      d.Get("precedence").(int),
+		Decision:        d.Get("decision").(string),
+		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
 	}
 
 	exclude := d.Get("exclude").([]interface{})
@@ -154,6 +148,24 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 		}
 	}
 
+	isolationRequired := d.Get("isolation_required").(bool)
+	newAccessPolicy.IsolationRequired = &isolationRequired
+
+	purposeJustificationRequired := d.Get("purpose_justification_required").(bool)
+	newAccessPolicy.PurposeJustificationRequired = &purposeJustificationRequired
+
+	purposeJustificationPrompt := d.Get("purpose_justification_prompt").(string)
+	newAccessPolicy.PurposeJustificationPrompt = &purposeJustificationPrompt
+
+	approvalRequired := d.Get("approval_required").(bool)
+	newAccessPolicy.ApprovalRequired = &approvalRequired
+
+	approvalGroups := d.Get("approval_group").([]interface{})
+	for _, approvalGroup := range approvalGroups {
+		approvalGroupAsMap := approvalGroup.(map[string]interface{})
+		newAccessPolicy.ApprovalGroups = append(newAccessPolicy.ApprovalGroups, schemaAccessPolicyApprovalGroupToAPI(approvalGroupAsMap))
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy))
 
 	identifier, err := initIdentifier(d)
@@ -175,11 +187,12 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	appID := d.Get("application_id").(string)
 	updatedAccessPolicy := cloudflare.UpdateAccessPolicyParams{
-		ApplicationID: appID,
-		PolicyID:      d.Id(),
-		Name:          d.Get("name").(string),
-		Precedence:    d.Get("precedence").(int),
-		Decision:      d.Get("decision").(string),
+		ApplicationID:   appID,
+		PolicyID:        d.Id(),
+		Name:            d.Get("name").(string),
+		Precedence:      d.Get("precedence").(int),
+		Decision:        d.Get("decision").(string),
+		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
 	}
 
 	exclude := d.Get("exclude").([]interface{})
@@ -201,6 +214,24 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 		if value != nil {
 			updatedAccessPolicy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
 		}
+	}
+
+	isolationRequired := d.Get("isolation_required").(bool)
+	updatedAccessPolicy.IsolationRequired = &isolationRequired
+
+	purposeJustificationRequired := d.Get("purpose_justification_required").(bool)
+	updatedAccessPolicy.PurposeJustificationRequired = &purposeJustificationRequired
+
+	purposeJustificationPrompt := d.Get("purpose_justification_prompt").(string)
+	updatedAccessPolicy.PurposeJustificationPrompt = &purposeJustificationPrompt
+
+	approvalRequired := d.Get("approval_required").(bool)
+	updatedAccessPolicy.ApprovalRequired = &approvalRequired
+
+	approvalGroups := d.Get("approval_group").([]interface{})
+	for _, approvalGroup := range approvalGroups {
+		approvalGroupAsMap := approvalGroup.(map[string]interface{})
+		updatedAccessPolicy.ApprovalGroups = append(updatedAccessPolicy.ApprovalGroups, schemaAccessPolicyApprovalGroupToAPI(approvalGroupAsMap))
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Policy from struct: %+v", updatedAccessPolicy))
@@ -267,51 +298,4 @@ func resourceCloudflareAccessPolicyImport(ctx context.Context, d *schema.Resourc
 	resourceCloudflareAccessPolicyRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-// appendConditionalAccessPolicyFields determines which of the
-// conditional policy enforcement fields it should append to the
-// AccessPolicy by iterating over the provided values and generating the
-// correct structs.
-func appendConditionalAccessPolicyFields(policy cloudflare.AccessPolicy, d *schema.ResourceData) cloudflare.AccessPolicy {
-	exclude := d.Get("exclude").([]interface{})
-	for _, value := range exclude {
-		if value != nil {
-			policy.Exclude = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	require := d.Get("require").([]interface{})
-	for _, value := range require {
-		if value != nil {
-			policy.Require = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	include := d.Get("include").([]interface{})
-	for _, value := range include {
-		if value != nil {
-			policy.Include = BuildAccessGroupCondition(value.(map[string]interface{}))
-		}
-	}
-
-	isolationRequired := d.Get("isolation_required").(bool)
-	policy.IsolationRequired = &isolationRequired
-
-	purposeJustificationRequired := d.Get("purpose_justification_required").(bool)
-	policy.PurposeJustificationRequired = &purposeJustificationRequired
-
-	purposeJustificationPrompt := d.Get("purpose_justification_prompt").(string)
-	policy.PurposeJustificationPrompt = &purposeJustificationPrompt
-
-	approvalRequired := d.Get("approval_required").(bool)
-	policy.ApprovalRequired = &approvalRequired
-
-	approvalGroups := d.Get("approval_group").([]interface{})
-	for _, approvalGroup := range approvalGroups {
-		approvalGroupAsMap := approvalGroup.(map[string]interface{})
-		policy.ApprovalGroups = append(policy.ApprovalGroups, schemaAccessPolicyApprovalGroupToAPI(approvalGroupAsMap))
-	}
-
-	return policy
 }
