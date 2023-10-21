@@ -172,6 +172,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_record":                     dataSourceCloudflareRecord(),
 				"cloudflare_rulesets":                   dataSourceCloudflareRulesets(),
 				"cloudflare_zone_cache_reserve":         dataSourceCloudflareZoneCacheReserve(),
+				"cloudflare_tunnel":                     dataSourceCloudflareTunnel(),
 				"cloudflare_zone_dnssec":                dataSourceCloudflareZoneDNSSEC(),
 				"cloudflare_zone":                       dataSourceCloudflareZone(),
 				"cloudflare_zones":                      dataSourceCloudflareZones(),
