@@ -47,7 +47,7 @@ func resourceCloudflareWorkerSecretRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
-	return diag.Errorf(fmt.Sprintf("worker secret %s not found", d.Get("name")))
+	return diag.Errorf(fmt.Sprintf("worker secret %s not found for script %s", secretName, scriptName))
 }
 
 func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
