@@ -1,5 +1,9 @@
 ## 4.18.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_tunnel` ([#2866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2866))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_load_balancer: Add support for least_connections steering ([#2818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2818))
