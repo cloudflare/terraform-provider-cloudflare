@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareTunneVirtualNetworkMatchName(t *testing.T) {
+func TestAccCloudflareTunneVirtualNetwork_MatchName(t *testing.T) {
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
@@ -18,7 +18,7 @@ func TestAccCloudflareTunneVirtualNetworkMatchName(t *testing.T) {
 			{
 				Config: testCloudflareTunnelVirtualNetworkMatchName(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel_virtual_network.example", "comment", "test"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel_virtual_network."+rnd, "comment", "test"),
 				),
 			},
 		},
@@ -28,14 +28,15 @@ func TestAccCloudflareTunneVirtualNetworkMatchName(t *testing.T) {
 func testCloudflareTunnelVirtualNetworkMatchName(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return fmt.Sprintf(`
-resource "cloudflare_tunnel_virtual_network" "example" {
+resource "cloudflare_tunnel_virtual_network" "%[2]s" {
 	account_id = "%[1]s"
-	name       = %[2]q
+	name       = "%[2]s"
 	comment     = "test"
 }
-data "cloudflare_tunnel_virtual_network" "example" {
-	account_id = cloudflare_tunnel_virtual_network.example.account_id
-	name       = cloudflare_tunnel_virtual_network.example.name
+data "cloudflare_tunnel_virtual_network" "%[2]s" {
+	account_id = cloudflare_tunnel_virtual_network.%[2]s.account_id
+	name       = cloudflare_tunnel_virtual_network.%[2]s.name
+	depends_on = ["cloudflare_tunnel_virtual_network.%[2]s"]
 }
 `, accountID, name)
 }
