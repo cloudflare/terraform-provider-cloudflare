@@ -66,7 +66,7 @@ func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.Resourc
 		ScriptName: scriptName,
 	}
 
-	_, err := client.SetWorkersSecret(context.Background(), cloudflare.AccountIdentifier(accountID), params)
+	_, err := client.SetWorkersSecret(ctx, cloudflare.AccountIdentifier(accountID), params)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker secret"))
 	}
@@ -91,7 +91,7 @@ func resourceCloudflareWorkerSecretDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers secret with id: %s", d.Id()))
 
-	_, err := client.DeleteWorkersSecret(context.Background(), cloudflare.AccountIdentifier(accountID), params)
+	_, err := client.DeleteWorkersSecret(ctx, cloudflare.AccountIdentifier(accountID), params)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error deleting worker secret"))
 	}
