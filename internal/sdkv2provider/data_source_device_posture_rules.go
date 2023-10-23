@@ -113,14 +113,16 @@ func dataSourceCloudflareDevicePostureRuleRead(ctx context.Context, d *schema.Re
 			"schedule":    rule.Schedule,
 			"expiration":  rule.Expiration,
 		})
-
 	}
+
 	if len(matchedRules) == 0 {
 		return diag.Errorf("no Device Posture Rules matching name %q type %q", name, typ)
 	}
+
 	if err = d.Set("rules", matchedRules); err != nil {
 		return diag.FromErr(fmt.Errorf("error setting matched rules: %w", err))
 	}
+
 	d.SetId(stringListChecksum(ruleIds))
 	return nil
 }
