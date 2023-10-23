@@ -10,7 +10,7 @@ package tools
 //go:generate go install github.com/hashicorp/go-changelog/cmd/changelog-build
 //go:generate go install github.com/google/go-github/github
 //go:generate go install golang.org/x/oauth2
-//go:generate go install golang.org/x/tools/gopls
+//go:generate go install golang.org/x/tools/gopls@latest
 //go:generate go install github.com/rogpeppe/godef
 //go:generate go install github.com/ramya-rao-a/go-outline
 //go:generate go install github.com/cweill/gotests/gotests
