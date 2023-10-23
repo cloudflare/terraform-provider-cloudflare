@@ -70,7 +70,7 @@ func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name 
 		account_id = "%[4]s"
 		name       = "%[1]s"
 		content    = "%[5]s"
-    }
+	}
 
 	resource "cloudflare_worker_secret" "%[2]s" {
 		account_id  = "%[4]s"
