@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Data Source:** `cloudflare_tunnel` ([#2866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2866))
+* **New Data Source:** `cloudflare_tunnel_virtual_network` ([#2867](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2867))
 
 ENHANCEMENTS:
 
