@@ -25,23 +25,23 @@ func dataSourceCloudflareTunnel() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the tunnel",
+				Description: "Name of the tunnel.",
 				ForceNew:    true,
 			},
 			"id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "ID of the tunnel",
+				Description: "ID of the tunnel.",
 			},
 			"status": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The status of the tunnel. Possible values: inactive, degraded, healthy, down",
+				Description: fmt.Sprintf("The status of the tunnel. %s", renderAvailableDocumentationValuesStringSlice([]string{"inactive", "degraded", "healthy", "down"})),
 			},
 			"tunnel_type": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The type of the tunnel. Possible values: cfd_tunnel, warp_connector",
+				Description: fmt.Sprintf("The type of the tunnel.. %s", renderAvailableDocumentationValuesStringSlice([]string{"cfd_tunnel", "warp_connector"})),
 			},
 			"remote_config": {
 				Type:        schema.TypeBool,
@@ -49,18 +49,19 @@ func dataSourceCloudflareTunnel() *schema.Resource {
 				Description: "Whether the tunnel can be configured remotely from the Zero Trust dashboard.",
 			},
 		},
+		Description: "Use this datasource to lookup a tunnel in an account.",
 	}
 }
 
 func dataSourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	tflog.Debug(ctx, fmt.Sprintf("Reading Tunnel"))
+	tflog.Debug(ctx, "Reading Tunnel")
 	client := meta.(*cloudflare.API)
 	accID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	name := d.Get("name").(string)
 	tunnels, _, err := client.ListTunnels(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelListParams{Name: name})
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to fetch Argo Tunnel: %w", err))
+		return diag.FromErr(fmt.Errorf("failed to fetch Tunnel: %w", err))
 	}
 	if len(tunnels) == 0 {
 		return diag.FromErr(fmt.Errorf("No tunnels with name: %s", name))
