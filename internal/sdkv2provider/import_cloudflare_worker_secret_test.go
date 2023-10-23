@@ -1,25 +1,41 @@
 package sdkv2provider
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccCloudflareWorkerSecret_Import(t *testing.T) {
-	name := generateRandomResourceName()
+	secretName := generateRandomResourceName()
+	resourceName := "cloudflare_worker_secret." + secretName
 	secretText := generateRandomResourceName()
 	workerSecretTestScriptName = generateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
+				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, secretName, secretText, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, secretName, accountID),
+				),
+			},
+			{
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("%s/%s/", accountID, workerSecretTestScriptName),
+				ImportState:         true,
+				ImportStateVerify:   true,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, secretName, accountID),
 				),
 			},
 		},
