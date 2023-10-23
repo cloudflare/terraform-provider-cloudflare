@@ -18,7 +18,7 @@ func TestAccCloudflareTunneVirtualNetworkMatchName(t *testing.T) {
 			{
 				Config: testCloudflareTunnelVirtualNetworkMatchName(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel.example", "comment", "test"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel_virtual_network.example", "comment", "test"),
 				),
 			},
 		},
@@ -33,9 +33,9 @@ resource "cloudflare_tunnel_virtual_network" "example" {
 	name       = %[2]q
 	comment     = "test"
 }
-data "cloudflare_tunnel" "example" {
-	account_id = cloudflare_tunnel.example.account_id
-	name       = cloudflare_tunnel.example.name
+data "cloudflare_tunnel_virtual_network" "example" {
+	account_id = cloudflare_tunnel_virtual_network.example.account_id
+	name       = cloudflare_tunnel_virtual_network.example.name
 }
 `, accountID, name)
 }
