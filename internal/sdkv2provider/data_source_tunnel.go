@@ -41,7 +41,7 @@ func dataSourceCloudflareTunnel() *schema.Resource {
 			"tunnel_type": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: fmt.Sprintf("The type of the tunnel.. %s", renderAvailableDocumentationValuesStringSlice([]string{"cfd_tunnel", "warp_connector"})),
+				Description: fmt.Sprintf("The type of the tunnel. %s", renderAvailableDocumentationValuesStringSlice([]string{"cfd_tunnel", "warp_connector"})),
 			},
 			"remote_config": {
 				Type:        schema.TypeBool,

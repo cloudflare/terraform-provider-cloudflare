@@ -31,6 +31,6 @@ data "cloudflare_tunnel" "example" {
 - `id` (String) ID of the tunnel.
 - `remote_config` (Boolean) Whether the tunnel can be configured remotely from the Zero Trust dashboard.
 - `status` (String) The status of the tunnel. Available values: `inactive`, `degraded`, `healthy`, `down`.
-- `tunnel_type` (String) The type of the tunnel.. Available values: `cfd_tunnel`, `warp_connector`.
+- `tunnel_type` (String) The type of the tunnel. Available values: `cfd_tunnel`, `warp_connector`.
 
 
