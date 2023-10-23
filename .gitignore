@@ -34,3 +34,4 @@ terraform-provider-cloudflare
 dist/*
 .envrc
 .flox/
+.vscode/private.env
