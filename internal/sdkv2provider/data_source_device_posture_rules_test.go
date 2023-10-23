@@ -29,7 +29,7 @@ func TestAccCloudflareDevicePostureRulesDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.type", "file"),
 					resource.TestCheckResourceAttr(name, "rules.0.description", "check for /dev/random"),
 					resource.TestCheckResourceAttr(name, "rules.0.schedule", "1h"),
-					resource.TestCheckNoResourceAttr(name, "rules.0.expiration"),
+					resource.TestCheckResourceAttr(name, "rules.0.expiration", ""),
 				),
 			},
 		},
