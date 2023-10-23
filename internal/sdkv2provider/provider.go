@@ -164,6 +164,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_account_roles":              dataSourceCloudflareAccountRoles(),
 				"cloudflare_accounts":                   dataSourceCloudflareAccounts(),
 				"cloudflare_devices":                    dataSourceCloudflareDevices(),
+				"cloudflare_device_posture_rules":       dataSourceCloudflareDevicePostureRules(),
 				"cloudflare_ip_ranges":                  dataSourceCloudflareIPRanges(),
 				"cloudflare_list":                       dataSourceCloudflareList(),
 				"cloudflare_lists":                      dataSourceCloudflareLists(),
