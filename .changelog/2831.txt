@@ -1,0 +1,7 @@
+```release-note:internal
+provider: updated user agent string to now be `terraform-provider-cloudflare/<version> <plugin> <operator suffix>`
+```
+
+```release-note:enhancement
+provider: allow defining a user agent operator suffix through the schema field (`user_agent_operator_suffix`) and via the environment variable (`CLOUDFLARE_USER_AGENT_OPERATOR_SUFFIX`)
+```

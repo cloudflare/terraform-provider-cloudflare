@@ -1,12 +1,16 @@
 package sdkv2provider
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
@@ -367,6 +371,7 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
+					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
 				),
 			},
 		},
@@ -387,6 +392,7 @@ func testAccessPolicyEmailDomainConfig(resourceID, zone, accountID string) strin
       account_id     = "%[3]s"
       decision       = "allow"
       precedence     = "1"
+      session_duration = "12h"
 
       include {
         email_domain = ["example.com"]
@@ -711,6 +717,7 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 			{
 				Config: testAccessPolicyPurposeJustificationConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessPolicyHasPJ(name, cloudflare.AccountIdentifier(accountID)),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
 					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
@@ -718,6 +725,44 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCheckCloudflareAccessPolicyHasPJ(n string, accessIdentifier *cloudflare.ResourceContainer) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No AccessPolicy ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		var foundAccessPolicy cloudflare.AccessPolicy
+		var err error
+
+		foundAccessPolicy, err = client.GetAccessPolicy(context.Background(), accessIdentifier, cloudflare.GetAccessPolicyParams{ApplicationID: rs.Primary.Attributes["application_id"], PolicyID: rs.Primary.ID})
+		if err != nil {
+			return err
+		}
+
+		if foundAccessPolicy.ID != rs.Primary.ID {
+			return fmt.Errorf("AccessPolicy not found")
+		}
+
+		if !(foundAccessPolicy.PurposeJustificationPrompt != nil && *foundAccessPolicy.PurposeJustificationPrompt == rs.Primary.Attributes["purpose_justification_prompt"]) {
+			return fmt.Errorf("AccessPolicy is missing purpose_justification_prompt")
+		}
+
+		pjRequired, _ := strconv.ParseBool(rs.Primary.Attributes["purpose_justification_required"])
+
+		if !(foundAccessPolicy.PurposeJustificationRequired != nil && *foundAccessPolicy.PurposeJustificationRequired == pjRequired) {
+			return fmt.Errorf("AccessPolicy is missing purpose_justification_required")
+		}
+
+		return nil
+	}
 }
 
 func testAccessPolicyPurposeJustificationConfig(resourceID, zone, accountID string) string {
@@ -761,6 +806,7 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 			{
 				Config: testAccessPolicyApprovalGroupConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessPolicyHasApprovalGroups(name, cloudflare.AccountIdentifier(accountID)),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
 					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
@@ -775,6 +821,44 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCheckCloudflareAccessPolicyHasApprovalGroups(n string, accessIdentifier *cloudflare.ResourceContainer) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No AccessPolicy ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		var foundAccessPolicy cloudflare.AccessPolicy
+		var err error
+
+		foundAccessPolicy, err = client.GetAccessPolicy(context.Background(), accessIdentifier, cloudflare.GetAccessPolicyParams{ApplicationID: rs.Primary.Attributes["application_id"], PolicyID: rs.Primary.ID})
+		if err != nil {
+			return err
+		}
+
+		if foundAccessPolicy.ID != rs.Primary.ID {
+			return fmt.Errorf("AccessPolicy not found")
+		}
+
+		if !(foundAccessPolicy.ApprovalGroups != nil) {
+			return fmt.Errorf("AccessPolicy is missing approval_groups")
+		}
+
+		approvalRequired, _ := strconv.ParseBool(rs.Primary.Attributes["approval_required"])
+
+		if !(foundAccessPolicy.ApprovalRequired != nil && *foundAccessPolicy.ApprovalRequired == approvalRequired) {
+			return fmt.Errorf("AccessPolicy is missing approval_required")
+		}
+
+		return nil
+	}
 }
 
 func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) string {
