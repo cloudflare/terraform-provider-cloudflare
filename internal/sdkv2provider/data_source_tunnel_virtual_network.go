@@ -32,11 +32,12 @@ func dataSourceCloudflareTunnelVirtualNetwork() *schema.Resource {
 				Computed:    true,
 			},
 			"is_default": {
-				Description: "If true, only include deleted virtual networks. If false, exclude deleted virtual networks. If empty, all virtual networks will be included",
+				Description: "If true, only include deleted virtual networks. If false, exclude deleted virtual networks. If empty, all virtual networks will be included.",
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
 		},
+		Description: "Use this datasource to lookup a tunnel virtual network in an account.",
 	}
 }
 
