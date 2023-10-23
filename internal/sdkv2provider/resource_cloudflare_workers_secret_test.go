@@ -56,11 +56,7 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 
 		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountId), params)
 
-		if err != nil {
-			return err
-		}
-
-		if len(secretResponse.Result) > 0 {
+		if err == nil {
 			return fmt.Errorf("worker secret with name %s still exists against Worker Script %s", secretResponse.Result[0].Name, params.ScriptName)
 		}
 	}
