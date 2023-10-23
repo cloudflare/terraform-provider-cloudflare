@@ -118,6 +118,40 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 	})
 }
 
+func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastConnections(t *testing.T) {
+	// multiple instances of this config would conflict but we only use it once
+	t.Parallel()
+	testStartTime := time.Now().UTC()
+	var loadBalancerPool cloudflare.LoadBalancerPool
+	rnd := generateRandomResourceName()
+	name := "cloudflare_load_balancer_pool." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastConnections(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
+					// dont check that specified values are set, this will be evident by lack of plan diff
+					// some values will get empty values
+					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
+					resource.TestCheckResourceAttr(name, "header.#", "0"),
+					resource.TestCheckResourceAttr(name, "origin_steering.#", "1"),
+					resource.TestCheckTypeSetElemNestedAttrs(name, "origin_steering.*", map[string]string{
+						"policy": "least_connections",
+					}),
+					// also expect api to generate some values
+					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
@@ -317,6 +351,24 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   }
   origin_steering {
     policy = "least_outstanding_requests"
+  }
+}`, id, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastConnections(id, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_pool" "%[1]s" {
+  account_id = "%[2]s"
+  name = "my-tf-pool-basic-%[1]s"
+  latitude = 12.3
+  longitude = 55
+  origins {
+    name = "example-1"
+    address = "192.0.2.1"
+    enabled = true
+  }
+  origin_steering {
+    policy = "least_connections"
   }
 }`, id, accountID)
 }
