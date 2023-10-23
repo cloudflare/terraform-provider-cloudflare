@@ -50,10 +50,10 @@ func dataSourceCloudflareTunnelVirtualNetworkRead(ctx context.Context, d *schema
 		Name: d.Get("name").(string),
 	})
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to fetch Cloudflare TunnelVirtualNetwork: %w", err))
+		return diag.FromErr(fmt.Errorf("failed to fetch Tunnel Virtual Networks: %w", err))
 	}
 	if len(tvn) == 0 {
-		return diag.FromErr(fmt.Errorf("No TunnelVirtualNetwork with name: %s", d.Get("name").(string)))
+		return diag.FromErr(fmt.Errorf("No Tunnel Virtual Networks found with name: %s", d.Get("name").(string)))
 	}
 
 	network := tvn[0]
