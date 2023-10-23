@@ -10,7 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 )
 
-func TestAccCloudflareDevicePostureRulesDataSource(t *testing.T) {
+func TestAccCloudflareDevicePostureRules_DataSource(t *testing.T) {
 	rnd := generateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	name := fmt.Sprintf("data.cloudflare_device_posture_rules.%s", rnd)
