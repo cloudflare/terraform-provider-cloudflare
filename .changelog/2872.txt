@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_organization: Remove default value for 'session_duration'
+```
