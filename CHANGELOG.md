@@ -15,6 +15,7 @@ ENHANCEMENTS:
 DEPENDENCIES:
 
 * ci: drop separate misspell installation ([#2814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2814))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.4.1 to 1.4.2 ([#2876](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2876))
 
 ## 4.17.0 (18th October, 2023)
 
