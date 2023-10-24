@@ -24,6 +24,55 @@ func TestAccCloudflareRulesetsProviderDataSource_PreventZoneIdAndAccountIdConfli
 	})
 }
 
+func testCloudflareRulesetsProviderDataSourceConfigRatelimit(rnd, name string) string {
+	return fmt.Sprintf(`
+data "cloudflare_rulesets" "%[1]s" {
+  account_id = "123abc"
+  zone_id = "456def"
+  kind        = "zone"
+  name        = "%[2]s"
+  description = "a_description"
+  phase       = "http_ratelimit"
+
+
+  rules {
+      action = "managed_challenge"
+      ratelimit {
+        characteristics = [
+          "cf.colo.id",
+          "ip.src",
+        ]
+        period              = 60
+        requests_per_period = 1000
+        requests_to_origin  = false
+        mitigation_timeout  = 0
+      }
+      expression = "http.host eq \"example.com\""
+      description = "a_rule_description"
+      enabled     = true
+  }
+}
+`, rnd, name)
+}
+
+func TestAccCloudflareRulesetsProviderDataSource_ConfigRatelimit(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("data.cloudflare_rulesets.%s", rnd)
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareRulesetsProviderDataSourceConfigRatelimit(rnd, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "rulesets.0.rules.0.mitigation_timeout", "0"),
+					resource.TestCheckResourceAttr(name, "rulesets.0.rules.0.action", "managed_challenge"),
+				),
+			},
+		},
+	})
+}
+
 func testCloudflareRulesetsProviderDataSourceConfigConflictingFields(rnd string) string {
 	return fmt.Sprintf(`
 data "cloudflare_rulesets" "%[1]s" {

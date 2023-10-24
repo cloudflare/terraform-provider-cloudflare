@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_rulesets: Allow zero to not default to null for mitigation_timeout
+```
