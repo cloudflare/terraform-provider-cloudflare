@@ -34,7 +34,7 @@ require (
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/aws/aws-sdk-go-v2 v1.21.2
-	github.com/aws/aws-sdk-go-v2/config v1.19.0
+	github.com/aws/aws-sdk-go-v2/config v1.19.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.43
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.40.2
 	github.com/google/go-cmp v0.6.0
@@ -47,17 +47,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 )
 
-require (
-	github.com/Masterminds/goutils v1.1.1 // indirect
-	github.com/Masterminds/semver/v3 v3.1.1 // indirect
-	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
-	github.com/bflad/gopaniccheck v0.1.0 // indirect
-	github.com/huandu/xstrings v1.3.2 // indirect
-	github.com/imdario/mergo v0.3.15 // indirect
-	github.com/shopspring/decimal v1.2.0 // indirect
-	github.com/spf13/cast v1.3.1 // indirect
-	golang.org/x/tools v0.8.0 // indirect
-)
+require golang.org/x/tools v0.8.0 // indirect
 
 require (
 	github.com/ProtonMail/go-crypto v0.0.0-20230717121422-5aa5874ade95 // indirect
@@ -76,7 +66,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2 // indirect
 	github.com/aws/smithy-go v1.15.0 // indirect
-	github.com/bflad/tfproviderlint v0.29.0
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
