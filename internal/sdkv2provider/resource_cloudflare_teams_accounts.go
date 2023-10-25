@@ -84,6 +84,9 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		if err := d.Set("url_browser_isolation_enabled", configuration.Settings.BrowserIsolation.UrlBrowserIsolationEnabled); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing account url browser isolation enablement: %w", err))
 		}
+		if err := d.Set("non_identity_browser_isolation_enabled", configuration.Settings.BrowserIsolation.NonIdentityEnabled); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account non-identity browser isolation enablement: %w", err))
+		}
 	}
 
 	logSettings, err := client.TeamsAccountLoggingConfiguration(ctx, accountID)
@@ -169,10 +172,9 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 		updatedTeamsAccount.Settings.ActivityLog = &cloudflare.TeamsActivityLog{Enabled: activtyLog.(bool)}
 	}
 
-	//nolint:staticcheck
-	browserIsolation, ok := d.GetOkExists("url_browser_isolation_enabled")
-	if ok {
-		updatedTeamsAccount.Settings.BrowserIsolation = &cloudflare.BrowserIsolation{UrlBrowserIsolationEnabled: browserIsolation.(bool)}
+	updatedTeamsAccount.Settings.BrowserIsolation = &cloudflare.BrowserIsolation{
+		UrlBrowserIsolationEnabled: cloudflare.BoolPtr(d.Get("url_browser_isolation_enabled").(bool)),
+		NonIdentityEnabled:         cloudflare.BoolPtr(d.Get("non_identity_browser_isolation_enabled").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount))

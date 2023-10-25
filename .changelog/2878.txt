@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/cloudflare_teams_account: Add non_identity_browser_isolation_enabled field
+resource/cloudflare_teams_account: Fix url_browser_isolation_enabled field (bool -> *bool)
+```
