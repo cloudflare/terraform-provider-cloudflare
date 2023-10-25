@@ -67,6 +67,7 @@ resource "cloudflare_teams_account" "%[1]s" {
   tls_decrypt_enabled = true
   protocol_detection_enabled = true
   activity_log_enabled = true
+  url_browser_isolation_enabled = true
   block_page {
     name = "%[1]s"
     enabled = true

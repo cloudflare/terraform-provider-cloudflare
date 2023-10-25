@@ -150,7 +150,7 @@ func TestAccFirewallRuleWithUnicodeAndHTMLEntity(t *testing.T) {
 			{
 				Config: testAccFirewallRuleWithUnicodeAndHTMLEntityConfig(rnd, zoneID, "true", "this is a 'test'", expression, "allow", "1"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "description", "this is a \u0026#39;test\u0026#39;"),
+					resource.TestCheckResourceAttr(name, "description", "this is a 'test'"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "action", "allow"),
 					resource.TestCheckResourceAttr(name, "priority", "1"),

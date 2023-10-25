@@ -121,7 +121,7 @@ func TestAccFilterHTMLEntity(t *testing.T) {
 			{
 				Config: testFilterWithHTMLEntityConfig(rnd, zoneID, "true", "this is a 'test'", filter),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "description", "this is a \u0026#39;test\u0026#39;"),
+					resource.TestCheckResourceAttr(name, "description", "this is a 'test'"),
 				),
 				ExpectNonEmptyPlan: false,
 			},
