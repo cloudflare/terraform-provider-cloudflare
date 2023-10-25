@@ -418,7 +418,6 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 		client_secret  = "test"
 		directory_id   = "directory"
 		support_groups = true
-		conditional_access_enabled = true
 	}
 	scim_config {
 		enabled                  = true
@@ -440,7 +439,6 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 		client_secret  = "test2"
 		directory_id   = "directory"
 		support_groups = true
-		conditional_access_enabled = true
 	}
 	scim_config {
 		enabled                  = true
@@ -462,7 +460,6 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
 		client_secret  = "test"
 		directory_id   = "directory"
 		support_groups = true
-		conditional_access_enabled = true
 	}
 }`, accountID, name)
 }

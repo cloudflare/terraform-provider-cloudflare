@@ -106,7 +106,7 @@ func TestAccCertificatePack_WaitForActive(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "advanced"),
 					resource.TestCheckResourceAttr(name, "hosts.#", "2"),
 					resource.TestCheckResourceAttr(name, "validation_method", "txt"),
-					resource.TestCheckResourceAttr(name, "validity_days", "365"),
+					resource.TestCheckResourceAttr(name, "validity_days", "90"),
 					resource.TestCheckResourceAttr(name, "certificate_authority", "lets_encrypt"),
 					resource.TestCheckResourceAttr(name, "cloudflare_branding", "false"),
 					resource.TestCheckResourceAttr(name, "wait_for_active_status", "true"),
@@ -126,7 +126,7 @@ resource "cloudflare_certificate_pack" "%[3]s" {
     "%[2]s"
   ]
   validation_method = "txt"
-  validity_days = 365
+  validity_days = 90
   certificate_authority = "lets_encrypt"
   cloudflare_branding = false
   wait_for_active_status = true
