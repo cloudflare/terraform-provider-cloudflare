@@ -23,6 +23,7 @@ DEPENDENCIES:
 * ci: drop separate misspell installation ([#2814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2814))
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.19.0 to 1.19.1 ([#2877](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2877))
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.79.0 to 0.80.0 ([#2883](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2883))
+* provider: bumps github.com/google/uuid from 1.3.1 to 1.4.0 ([#2889](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2889))
 * provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.4.1 to 1.4.2 ([#2876](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2876))
 
 ## 4.17.0 (18th October, 2023)
