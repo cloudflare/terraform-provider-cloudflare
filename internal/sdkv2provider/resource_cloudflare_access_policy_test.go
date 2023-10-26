@@ -982,6 +982,7 @@ func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string)
 		protocol_detection_enabled = true
 		activity_log_enabled = true
 		url_browser_isolation_enabled = true
+		non_identity_browser_isolation_enabled = false
 		block_page {
 		  name = "%[1]s"
 		  enabled = true
