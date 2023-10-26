@@ -10,6 +10,10 @@ resource "cloudflare_teams_account" "example" {
     background_color = "#000000"
   }
 
+  body_scanning {
+    inspection_mode = "deep"
+  }
+
   antivirus {
     enabled_download_phase = true
     enabled_upload_phase   = false

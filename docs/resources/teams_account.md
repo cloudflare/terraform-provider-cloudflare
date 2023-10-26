@@ -26,6 +26,10 @@ resource "cloudflare_teams_account" "example" {
     background_color = "#000000"
   }
 
+  body_scanning {
+    inspection_mode = "deep"
+  }
+
   antivirus {
     enabled_download_phase = true
     enabled_upload_phase   = false
@@ -75,6 +79,7 @@ resource "cloudflare_teams_account" "example" {
 - `activity_log_enabled` (Boolean) Whether to enable the activity log.
 - `antivirus` (Block List, Max: 1) Configuration block for antivirus traffic scanning. (see [below for nested schema](#nestedblock--antivirus))
 - `block_page` (Block List, Max: 1) Configuration for a custom block page. (see [below for nested schema](#nestedblock--block_page))
+- `body_scanning` (Block List, Max: 1) Configuration for body scanning. (see [below for nested schema](#nestedblock--body_scanning))
 - `fips` (Block List, Max: 1) Configure compliance with Federal Information Processing Standards. (see [below for nested schema](#nestedblock--fips))
 - `logging` (Block List, Max: 1) (see [below for nested schema](#nestedblock--logging))
 - `non_identity_browser_isolation_enabled` (Boolean) Enable non-identity onramp for Browser Isolation. Defaults to `false`.
@@ -112,6 +117,14 @@ Optional:
 - `mailto_address` (String) Admin email for users to contact.
 - `mailto_subject` (String) Subject line for emails created from block page.
 - `name` (String) Name of block page configuration.
+
+
+<a id="nestedblock--body_scanning"></a>
+### Nested Schema for `body_scanning`
+
+Required:
+
+- `inspection_mode` (String) Body scanning inspection mode. Available values: `deep`, `shallow`.
 
 
 <a id="nestedblock--fips"></a>
