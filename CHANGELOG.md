@@ -12,6 +12,7 @@ ENHANCEMENTS:
 * resource/cloudflare_load_balancer_pool: Add support for least_connections origin steering ([#2818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2818))
 * resource/cloudflare_logpush_job: add support for `casb_findings` dataset ([#2859](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2859))
 * resource/cloudflare_teams_account: Add `non_identity_browser_isolation_enabled` field ([#2878](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2878))
+* resource/cloudflare_teams_account: add support for `body_scanning` config ([#2887](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2887))
 
 BUG FIXES:
 
