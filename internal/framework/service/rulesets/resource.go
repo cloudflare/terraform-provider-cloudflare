@@ -730,7 +730,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				Period:                  flatteners.Int64(int64(ruleResponse.RateLimit.Period)),
 				RequestsPerPeriod:       flatteners.Int64(int64(ruleResponse.RateLimit.RequestsPerPeriod)),
 				RequestsToOrigin:        flatteners.Bool(cloudflare.BoolPtr(ruleResponse.RateLimit.RequestsToOrigin)),
-				MitigationTimeout:       flatteners.Int64(int64(ruleResponse.RateLimit.MitigationTimeout)),
+				MitigationTimeout:       types.Int64Value(int64(ruleResponse.RateLimit.MitigationTimeout)),
 				ScorePerPeriod:          flatteners.Int64(int64(ruleResponse.RateLimit.ScorePerPeriod)),
 				ScoreResponseHeaderName: flatteners.String(ruleResponse.RateLimit.ScoreResponseHeaderName),
 				CountingExpression:      flatteners.String(ruleResponse.RateLimit.CountingExpression),
