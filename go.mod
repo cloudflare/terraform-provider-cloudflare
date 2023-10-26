@@ -6,7 +6,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/cloudflare/cloudflare-go v0.80.0
 	github.com/fatih/color v1.15.0 // indirect
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.4.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.5.0 // indirect
