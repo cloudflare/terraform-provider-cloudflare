@@ -57,7 +57,14 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 		"url_browser_isolation_enabled": {
 			Type:        schema.TypeBool,
 			Optional:    true,
+			Default:     false,
 			Description: "Safely browse websites in Browser Isolation through a URL.",
+		},
+		"non_identity_browser_isolation_enabled": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable non-identity onramp for Browser Isolation.",
 		},
 		"logging": {
 			Type:     schema.TypeList,
