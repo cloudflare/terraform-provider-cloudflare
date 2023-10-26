@@ -993,6 +993,9 @@ func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string)
 		  mailto_subject = "hello"
 		  mailto_address = "test@cloudflare.com"
 		}
+		body_scanning {
+		  inspection_mode = "deep"
+		}
 		fips {
 		  tls = true
 		}

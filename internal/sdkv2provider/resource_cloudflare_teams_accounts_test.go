@@ -42,6 +42,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "block_page.0.mailto_address", "test@cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "block_page.0.background_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "block_page.0.logo_path", "https://example.com"),
+					resource.TestCheckResourceAttr(name, "body_scanning.0.inspection_mode", "deep"),
 					resource.TestCheckResourceAttr(name, "logging.0.redact_pii", "true"),
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.dns.0.log_all", "false"),
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.dns.0.log_blocks", "true"),
@@ -79,6 +80,9 @@ resource "cloudflare_teams_account" "%[1]s" {
     background_color = "#000000"
 	mailto_subject = "hello"
 	mailto_address = "test@cloudflare.com"
+  }
+  body_scanning {
+    inspection_mode = "deep"
   }
   fips {
     tls = true
