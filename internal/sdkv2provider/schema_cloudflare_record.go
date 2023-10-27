@@ -255,7 +255,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 		"proxied": {
 			Optional:    true,
 			Type:        schema.TypeBool,
-			Description: "Whether the record gets Cloudflare's origin protection.",
+			Description: "Whether the record gets Cloudflare's origin protection; defaults to `false`.",
 		},
 
 		"created_on": {

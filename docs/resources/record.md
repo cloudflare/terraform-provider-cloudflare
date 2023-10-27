@@ -53,7 +53,7 @@ resource "cloudflare_record" "_sip_tls" {
 - `comment` (String) Comments or notes about the DNS record. This field has no effect on DNS responses.
 - `data` (Block List, Max: 1) Map of attributes that constitute the record value. Conflicts with `value`. (see [below for nested schema](#nestedblock--data))
 - `priority` (Number) The priority of the record.
-- `proxied` (Boolean) Whether the record gets Cloudflare's origin protection.
+- `proxied` (Boolean) Whether the record gets Cloudflare's origin protection; defaults to `false`.
 - `tags` (Set of String) Custom tags for the DNS record.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `ttl` (Number) The TTL of the record.
