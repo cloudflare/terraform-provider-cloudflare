@@ -77,6 +77,7 @@ resource "cloudflare_worker_script" "my_script" {
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `logpush` (Boolean) Enabling allows Worker events to be sent to a defined Logpush destination.
 - `module` (Boolean) Whether to upload Worker as a module.
+- `placement` (Block Set) (see [below for nested schema](#nestedblock--placement))
 - `plain_text_binding` (Block Set) (see [below for nested schema](#nestedblock--plain_text_binding))
 - `queue_binding` (Block Set) (see [below for nested schema](#nestedblock--queue_binding))
 - `r2_bucket_binding` (Block Set) (see [below for nested schema](#nestedblock--r2_bucket_binding))
@@ -104,6 +105,14 @@ Required:
 
 - `name` (String) The global variable for the binding in your Worker code.
 - `namespace_id` (String) ID of the KV namespace you want to use.
+
+
+<a id="nestedblock--placement"></a>
+### Nested Schema for `placement`
+
+Required:
+
+- `mode` (String) The placement mode for the Worker (e.g. 'smart').
 
 
 <a id="nestedblock--plain_text_binding"></a>
