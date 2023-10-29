@@ -101,7 +101,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "compatibility_flags.#", "2"),
 					resource.TestCheckResourceAttr(name, "compatibility_flags.0", compatibilityFlags[0]),
 					resource.TestCheckResourceAttr(name, "logpush", "true"),
-					resource.TestCheckResourceAttr(name, "placement.mode", "smart"),
+					resource.TestCheckResourceAttr(name, "placement.0.mode", "smart"),
 				),
 			},
 		},
@@ -112,6 +112,17 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 // mix V5 and V6 protocol resources without circular dependencies. In an ideal
 // world, this would all be handled by the inbuilt resource.
 func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
+	accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
+	accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
+
+	if accessKeyId == "" {
+		t.Fatal("CLOUDFLARE_R2_ACCESS_KEY_ID must be set for this acceptance test")
+	}
+
+	if accessKeyId == "" {
+		t.Fatal("CLOUDFLARE_R2_ACCESS_KEY_SECRET must be set for this acceptance test")
+	}
+
 	client := testAccProvider.Meta().(*cloudflare.API)
 	_, err := client.CreateR2Bucket(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.CreateR2BucketParameters{Name: rnd})
 	if err != nil {
@@ -119,9 +130,6 @@ func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 	}
 
 	t.Cleanup(func() {
-		accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
-		accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
-
 		r2Resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 			return aws.Endpoint{
 				URL: fmt.Sprintf("https://%s.r2.cloudflarestorage.com", accountID),
