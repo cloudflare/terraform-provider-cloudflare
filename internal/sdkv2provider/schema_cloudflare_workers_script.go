@@ -1,8 +1,11 @@
 package sdkv2provider
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 var kvNamespaceBindingResource = &schema.Resource{
@@ -134,9 +137,10 @@ var queueBindingResource = &schema.Resource{
 var placementResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"mode": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Description: "The placement mode for the Worker (e.g. 'smart').",
+			Type:         schema.TypeString,
+			Required:     true,
+			ValidateFunc: validation.StringInSlice([]string{"smart"}, false),
+			Description:  fmt.Sprintf("The placement mode for the Worker. %s", renderAvailableDocumentationValuesStringSlice([]string{"smart"})),
 		},
 	},
 }
@@ -184,9 +188,9 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Description: "Enabling allows Worker events to be sent to a defined Logpush destination.",
 		},
 		"placement": {
-			Type:        schema.TypeSet,
-			Optional:    true,
-			Elem:        placementResource,
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     placementResource,
 		},
 		"plain_text_binding": {
 			Type:     schema.TypeSet,

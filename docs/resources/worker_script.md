@@ -112,7 +112,7 @@ Required:
 
 Required:
 
-- `mode` (String) The placement mode for the Worker (e.g. 'smart').
+- `mode` (String) The placement mode for the Worker. Available values: `smart`.
 
 
 <a id="nestedblock--plain_text_binding"></a>
