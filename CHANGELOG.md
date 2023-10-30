@@ -5,6 +5,7 @@ FEATURES:
 * **New Data Source:** `cloudflare_device_posture_rules` ([#2868](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2868))
 * **New Data Source:** `cloudflare_tunnel` ([#2866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2866))
 * **New Data Source:** `cloudflare_tunnel_virtual_network` ([#2867](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2867))
+* **New Resource:** `cloudflare_api_shield_schema_validation_settings` ([#2841](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2841))
 
 ENHANCEMENTS:
 
