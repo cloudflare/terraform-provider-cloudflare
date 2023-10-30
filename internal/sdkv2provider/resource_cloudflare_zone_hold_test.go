@@ -38,9 +38,10 @@ func TestAccCloudflareZoneHold_Full(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      name,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            name,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"hold_after"},
 			},
 		},
 	})

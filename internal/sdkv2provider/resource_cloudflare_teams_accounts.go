@@ -52,6 +52,12 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
+	if configuration.Settings.BodyScanning != nil {
+		if err := d.Set("body_scanning", flattenBodyScanningConfig(configuration.Settings.BodyScanning)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account body scanning config: %w", err))
+		}
+	}
+
 	if configuration.Settings.Antivirus != nil {
 		if err := d.Set("antivirus", flattenAntivirusConfig(configuration.Settings.Antivirus)); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing account antivirus config: %w", err))
@@ -83,6 +89,9 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 	if configuration.Settings.BrowserIsolation != nil {
 		if err := d.Set("url_browser_isolation_enabled", configuration.Settings.BrowserIsolation.UrlBrowserIsolationEnabled); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing account url browser isolation enablement: %w", err))
+		}
+		if err := d.Set("non_identity_browser_isolation_enabled", configuration.Settings.BrowserIsolation.NonIdentityEnabled); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account non-identity browser isolation enablement: %w", err))
 		}
 	}
 
@@ -137,6 +146,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	blockPageConfig := inflateBlockPageConfig(d.Get("block_page"))
+	bodyScanningConfig := inflateBodyScanningConfig(d.Get("body_scanning"))
 	fipsConfig := inflateFIPSConfig(d.Get("fips"))
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
@@ -145,9 +155,10 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	sshSessionLogSettings := inflateSSHSessionLogSettings(d.Get("ssh_session_log"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
 		Settings: cloudflare.TeamsAccountSettings{
-			Antivirus: antivirusConfig,
-			BlockPage: blockPageConfig,
-			FIPS:      fipsConfig,
+			Antivirus:    antivirusConfig,
+			BlockPage:    blockPageConfig,
+			FIPS:         fipsConfig,
+			BodyScanning: bodyScanningConfig,
 		},
 	}
 
@@ -169,10 +180,9 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 		updatedTeamsAccount.Settings.ActivityLog = &cloudflare.TeamsActivityLog{Enabled: activtyLog.(bool)}
 	}
 
-	//nolint:staticcheck
-	browserIsolation, ok := d.GetOkExists("url_browser_isolation_enabled")
-	if ok {
-		updatedTeamsAccount.Settings.BrowserIsolation = &cloudflare.BrowserIsolation{UrlBrowserIsolationEnabled: browserIsolation.(bool)}
+	updatedTeamsAccount.Settings.BrowserIsolation = &cloudflare.BrowserIsolation{
+		UrlBrowserIsolationEnabled: cloudflare.BoolPtr(d.Get("url_browser_isolation_enabled").(bool)),
+		NonIdentityEnabled:         cloudflare.BoolPtr(d.Get("non_identity_browser_isolation_enabled").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount))
@@ -270,6 +280,24 @@ func inflateBlockPageConfig(blockPage interface{}) *cloudflare.TeamsBlockPage {
 		Name:            blockPageMap["name"].(string),
 		MailtoSubject:   blockPageMap["mailto_subject"].(string),
 		MailtoAddress:   blockPageMap["mailto_address"].(string),
+	}
+}
+
+func flattenBodyScanningConfig(bodyScanningConfig *cloudflare.TeamsBodyScanning) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"inspection_mode": bodyScanningConfig.InspectionMode,
+	}}
+}
+
+func inflateBodyScanningConfig(bodyScanning interface{}) *cloudflare.TeamsBodyScanning {
+	bodyScanningList := bodyScanning.([]interface{})
+	if len(bodyScanningList) != 1 {
+		return nil
+	}
+
+	bodyScanningMap := bodyScanningList[0].(map[string]interface{})
+	return &cloudflare.TeamsBodyScanning{
+		InspectionMode: bodyScanningMap["inspection_mode"].(string),
 	}
 }
 

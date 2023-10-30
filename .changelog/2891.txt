@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_observatory_scheduled_test: Add missing 'asia-south1' region
+```

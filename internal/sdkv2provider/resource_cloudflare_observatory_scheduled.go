@@ -45,7 +45,7 @@ func resourceCloudflareObservatoryScheduledTestCreate(ctx context.Context, d *sc
 	test, err := client.CreateObservatoryScheduledPageTest(ctx, cloudflare.ZoneIdentifier(zoneID), params)
 
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error creating observatory scheduled test %q: %w", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error creating observatory scheduled test %q: %w", params.URL, err))
 	}
 
 	d.SetId(stringChecksum(fmt.Sprintf("%s:%s", test.Schedule.URL, test.Schedule.Region)))
