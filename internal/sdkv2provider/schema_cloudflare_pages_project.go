@@ -93,6 +93,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
+							Computed: true,
 						},
 						"preview_branch_excludes": {
 							Description: "Branches will be excluded from automatic deployment.",
@@ -101,6 +102,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
+							Computed: true,
 						},
 						"preview_deployment_setting": {
 							Description:  "Preview Deployment Setting.",

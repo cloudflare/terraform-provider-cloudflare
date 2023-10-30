@@ -1,12 +1,16 @@
 package sdkv2provider
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
@@ -367,6 +371,7 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
+					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
 				),
 			},
 		},
@@ -387,6 +392,7 @@ func testAccessPolicyEmailDomainConfig(resourceID, zone, accountID string) strin
       account_id     = "%[3]s"
       decision       = "allow"
       precedence     = "1"
+      session_duration = "12h"
 
       include {
         email_domain = ["example.com"]
@@ -711,6 +717,7 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 			{
 				Config: testAccessPolicyPurposeJustificationConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessPolicyHasPJ(name, cloudflare.AccountIdentifier(accountID)),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
 					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
@@ -718,6 +725,44 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCheckCloudflareAccessPolicyHasPJ(n string, accessIdentifier *cloudflare.ResourceContainer) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No AccessPolicy ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		var foundAccessPolicy cloudflare.AccessPolicy
+		var err error
+
+		foundAccessPolicy, err = client.GetAccessPolicy(context.Background(), accessIdentifier, cloudflare.GetAccessPolicyParams{ApplicationID: rs.Primary.Attributes["application_id"], PolicyID: rs.Primary.ID})
+		if err != nil {
+			return err
+		}
+
+		if foundAccessPolicy.ID != rs.Primary.ID {
+			return fmt.Errorf("AccessPolicy not found")
+		}
+
+		if !(foundAccessPolicy.PurposeJustificationPrompt != nil && *foundAccessPolicy.PurposeJustificationPrompt == rs.Primary.Attributes["purpose_justification_prompt"]) {
+			return fmt.Errorf("AccessPolicy is missing purpose_justification_prompt")
+		}
+
+		pjRequired, _ := strconv.ParseBool(rs.Primary.Attributes["purpose_justification_required"])
+
+		if !(foundAccessPolicy.PurposeJustificationRequired != nil && *foundAccessPolicy.PurposeJustificationRequired == pjRequired) {
+			return fmt.Errorf("AccessPolicy is missing purpose_justification_required")
+		}
+
+		return nil
+	}
 }
 
 func testAccessPolicyPurposeJustificationConfig(resourceID, zone, accountID string) string {
@@ -761,6 +806,7 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 			{
 				Config: testAccessPolicyApprovalGroupConfig(rnd, zone, accountID),
 				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessPolicyHasApprovalGroups(name, cloudflare.AccountIdentifier(accountID)),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "purpose_justification_required", "true"),
 					resource.TestCheckResourceAttr(name, "purpose_justification_prompt", "Why should we let you in?"),
@@ -775,6 +821,44 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCheckCloudflareAccessPolicyHasApprovalGroups(n string, accessIdentifier *cloudflare.ResourceContainer) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No AccessPolicy ID is set")
+		}
+
+		client := testAccProvider.Meta().(*cloudflare.API)
+		var foundAccessPolicy cloudflare.AccessPolicy
+		var err error
+
+		foundAccessPolicy, err = client.GetAccessPolicy(context.Background(), accessIdentifier, cloudflare.GetAccessPolicyParams{ApplicationID: rs.Primary.Attributes["application_id"], PolicyID: rs.Primary.ID})
+		if err != nil {
+			return err
+		}
+
+		if foundAccessPolicy.ID != rs.Primary.ID {
+			return fmt.Errorf("AccessPolicy not found")
+		}
+
+		if !(foundAccessPolicy.ApprovalGroups != nil) {
+			return fmt.Errorf("AccessPolicy is missing approval_groups")
+		}
+
+		approvalRequired, _ := strconv.ParseBool(rs.Primary.Attributes["approval_required"])
+
+		if !(foundAccessPolicy.ApprovalRequired != nil && *foundAccessPolicy.ApprovalRequired == approvalRequired) {
+			return fmt.Errorf("AccessPolicy is missing approval_required")
+		}
+
+		return nil
+	}
 }
 
 func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) string {
@@ -892,10 +976,69 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 
 func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
+	resource "cloudflare_teams_account" "%[1]s" {
+		account_id = "%[3]s"
+		tls_decrypt_enabled = true
+		protocol_detection_enabled = true
+		activity_log_enabled = true
+		url_browser_isolation_enabled = true
+		non_identity_browser_isolation_enabled = false
+		block_page {
+		  name = "%[1]s"
+		  enabled = true
+		  footer_text = "hello"
+		  header_text = "hello"
+		  logo_path = "https://example.com"
+		  background_color = "#000000"
+		  mailto_subject = "hello"
+		  mailto_address = "test@cloudflare.com"
+		}
+		body_scanning {
+		  inspection_mode = "deep"
+		}
+		fips {
+		  tls = true
+		}
+		antivirus {
+		  enabled_download_phase = true
+		  enabled_upload_phase = false
+		  fail_closed = true
+		}
+		proxy {
+		  tcp = true
+		  udp = false
+		  root_ca = true
+		}
+		logging {
+		  redact_pii = true
+		  settings_by_rule_type {
+			dns {
+			  log_all = false
+			  log_blocks = true
+			}
+			http {
+			  log_all = true
+			  log_blocks = true
+			}
+			l4 {
+			  log_all = false
+			  log_blocks = true
+			}
+		  }
+		}
+		ssh_session_log {
+		  public_key = "testvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
+		}
+		payload_log {
+		  public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
+		}
+	  }
+
     resource "cloudflare_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
+	  depends_on = ["cloudflare_teams_account.%[1]s"]
     }
 
     resource "cloudflare_access_policy" "%[1]s" {

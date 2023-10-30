@@ -1,0 +1,6 @@
+```release-note:enhancement
+resource/cloudflare_access_organization: Add session_duration field
+```
+```release-note:enhancement
+resource/cloudflare_access_policy: Add session_duration field
+```

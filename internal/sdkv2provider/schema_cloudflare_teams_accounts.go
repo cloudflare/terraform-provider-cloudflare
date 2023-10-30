@@ -1,8 +1,11 @@
 package sdkv2provider
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
@@ -19,6 +22,15 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Description: "Configuration for a custom block page.",
 			Elem: &schema.Resource{
 				Schema: blockPageSchema,
+			},
+		},
+		"body_scanning": {
+			Type:        schema.TypeList,
+			MaxItems:    1,
+			Optional:    true,
+			Description: "Configuration for body scanning.",
+			Elem: &schema.Resource{
+				Schema: bodyScanningSchema,
 			},
 		},
 		"fips": {
@@ -57,7 +69,14 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 		"url_browser_isolation_enabled": {
 			Type:        schema.TypeBool,
 			Optional:    true,
+			Default:     false,
 			Description: "Safely browse websites in Browser Isolation through a URL.",
+		},
+		"non_identity_browser_isolation_enabled": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable non-identity onramp for Browser Isolation.",
 		},
 		"logging": {
 			Type:     schema.TypeList,
@@ -75,6 +94,15 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 				Schema: proxySchema,
 			},
 			Description: "Configuration block for specifying which protocols are proxied.",
+		},
+		"ssh_session_log": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: sshSessionLogSchema,
+			},
+			Description: "Configuration for SSH Session Logging.",
 		},
 		"payload_log": {
 			Type:     schema.TypeList,
@@ -136,6 +164,19 @@ var blockPageSchema = map[string]*schema.Schema{
 		Type:        schema.TypeString,
 		Optional:    true,
 		Description: "Subject line for emails created from block page.",
+	},
+}
+
+var inspectionModeOptions = []string{"deep", "shallow"}
+var bodyScanningSchema = map[string]*schema.Schema{
+	"inspection_mode": {
+		Type:         schema.TypeString,
+		Required:     true,
+		ValidateFunc: validation.StringInSlice(inspectionModeOptions, false),
+		Description: fmt.Sprintf(
+			"Body scanning inspection mode. %s",
+			renderAvailableDocumentationValuesStringSlice(inspectionModeOptions),
+		),
 	},
 }
 
@@ -229,6 +270,14 @@ var loggingEnabledSchema = map[string]*schema.Schema{
 	"log_blocks": {
 		Type:     schema.TypeBool,
 		Required: true,
+	},
+}
+
+var sshSessionLogSchema = map[string]*schema.Schema{
+	"public_key": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "Public key used to encrypt ssh session.",
 	},
 }
 

@@ -1,0 +1,3 @@
+```release-note:dependency
+ci: drop separate misspell installation
+```

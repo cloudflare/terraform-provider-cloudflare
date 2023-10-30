@@ -52,6 +52,12 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
+	if configuration.Settings.BodyScanning != nil {
+		if err := d.Set("body_scanning", flattenBodyScanningConfig(configuration.Settings.BodyScanning)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account body scanning config: %w", err))
+		}
+	}
+
 	if configuration.Settings.Antivirus != nil {
 		if err := d.Set("antivirus", flattenAntivirusConfig(configuration.Settings.Antivirus)); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing account antivirus config: %w", err))
@@ -84,6 +90,9 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		if err := d.Set("url_browser_isolation_enabled", configuration.Settings.BrowserIsolation.UrlBrowserIsolationEnabled); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing account url browser isolation enablement: %w", err))
 		}
+		if err := d.Set("non_identity_browser_isolation_enabled", configuration.Settings.BrowserIsolation.NonIdentityEnabled); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account non-identity browser isolation enablement: %w", err))
+		}
 	}
 
 	logSettings, err := client.TeamsAccountLoggingConfiguration(ctx, accountID)
@@ -106,6 +115,18 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error parsing teams account device settings: %w", err))
 	}
 
+	sshSessionLogSettings, _, err := client.GetAuditSSHSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetAuditSSHSettingsParams{})
+	if err == nil {
+		if err := d.Set("ssh_session_log", flattenSSHSessionLogSettings(&sshSessionLogSettings)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing payload log settings: %w", err))
+		}
+	} else {
+		var notFoundError *cloudflare.NotFoundError
+		if !errors.As(err, &notFoundError) {
+			return diag.FromErr(fmt.Errorf("error finding SSH session account settings %q: %w", d.Id(), err))
+		}
+	}
+
 	payloadLogSettings, err := client.GetDLPPayloadLogSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetDLPPayloadLogSettingsParams{})
 	if err == nil {
 		if err := d.Set("payload_log", flattenPayloadLogSettings(&payloadLogSettings)); err != nil {
@@ -125,16 +146,19 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	blockPageConfig := inflateBlockPageConfig(d.Get("block_page"))
+	bodyScanningConfig := inflateBodyScanningConfig(d.Get("body_scanning"))
 	fipsConfig := inflateFIPSConfig(d.Get("fips"))
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
 	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
 	payloadLogSettings := inflatePayloadLogSettings(d.Get("payload_log"))
+	sshSessionLogSettings := inflateSSHSessionLogSettings(d.Get("ssh_session_log"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
 		Settings: cloudflare.TeamsAccountSettings{
-			Antivirus: antivirusConfig,
-			BlockPage: blockPageConfig,
-			FIPS:      fipsConfig,
+			Antivirus:    antivirusConfig,
+			BlockPage:    blockPageConfig,
+			FIPS:         fipsConfig,
+			BodyScanning: bodyScanningConfig,
 		},
 	}
 
@@ -156,10 +180,9 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 		updatedTeamsAccount.Settings.ActivityLog = &cloudflare.TeamsActivityLog{Enabled: activtyLog.(bool)}
 	}
 
-	//nolint:staticcheck
-	browserIsolation, ok := d.GetOkExists("url_browser_isolation_enabled")
-	if ok {
-		updatedTeamsAccount.Settings.BrowserIsolation = &cloudflare.BrowserIsolation{UrlBrowserIsolationEnabled: browserIsolation.(bool)}
+	updatedTeamsAccount.Settings.BrowserIsolation = &cloudflare.BrowserIsolation{
+		UrlBrowserIsolationEnabled: cloudflare.BoolPtr(d.Get("url_browser_isolation_enabled").(bool)),
+		NonIdentityEnabled:         cloudflare.BoolPtr(d.Get("non_identity_browser_isolation_enabled").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Account configuration from struct: %+v", updatedTeamsAccount))
@@ -177,6 +200,12 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	if deviceConfig != nil {
 		if _, err := client.TeamsAccountDeviceUpdateConfiguration(ctx, accountID, *deviceConfig); err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err))
+		}
+	}
+
+	if sshSessionLogSettings != nil {
+		if _, err := client.UpdateAuditSSHSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateAuditSSHSettingsParams{PublicKey: sshSessionLogSettings.PublicKey}); err != nil {
+			return diag.FromErr(fmt.Errorf("error updating SSH session account settings %q: %w", accountID, err))
 		}
 	}
 
@@ -251,6 +280,24 @@ func inflateBlockPageConfig(blockPage interface{}) *cloudflare.TeamsBlockPage {
 		Name:            blockPageMap["name"].(string),
 		MailtoSubject:   blockPageMap["mailto_subject"].(string),
 		MailtoAddress:   blockPageMap["mailto_address"].(string),
+	}
+}
+
+func flattenBodyScanningConfig(bodyScanningConfig *cloudflare.TeamsBodyScanning) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"inspection_mode": bodyScanningConfig.InspectionMode,
+	}}
+}
+
+func inflateBodyScanningConfig(bodyScanning interface{}) *cloudflare.TeamsBodyScanning {
+	bodyScanningList := bodyScanning.([]interface{})
+	if len(bodyScanningList) != 1 {
+		return nil
+	}
+
+	bodyScanningMap := bodyScanningList[0].(map[string]interface{})
+	return &cloudflare.TeamsBodyScanning{
+		InspectionMode: bodyScanningMap["inspection_mode"].(string),
 	}
 }
 
@@ -377,6 +424,24 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 		GatewayProxyEnabled:                deviceSettings["tcp"].(bool),
 		GatewayProxyUDPEnabled:             deviceSettings["udp"].(bool),
 		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
+	}
+}
+func flattenSSHSessionLogSettings(logSettings *cloudflare.AuditSSHSettings) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"public_key": logSettings.PublicKey,
+	}}
+}
+
+func inflateSSHSessionLogSettings(payloadLog interface{}) *cloudflare.AuditSSHSettings {
+	payloadLogList := payloadLog.([]interface{})
+	if len(payloadLogList) != 1 {
+		return nil
+	}
+
+	payloadLogMap := payloadLogList[0].(map[string]interface{})
+	publicKey := payloadLogMap["public_key"].(string)
+	return &cloudflare.AuditSSHSettings{
+		PublicKey: publicKey,
 	}
 }
 

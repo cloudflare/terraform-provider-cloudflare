@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: fix import of cloudflare_access_application not reading saas_app config
+```

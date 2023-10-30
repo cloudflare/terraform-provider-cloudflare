@@ -36,7 +36,7 @@ func resourceCloudflareZoneHoldCreate(ctx context.Context, d *schema.ResourceDat
 
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
-	_, err := client.CreateZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.CreateZoneHoldParams{
+	hold, err := client.CreateZoneHold(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.CreateZoneHoldParams{
 		IncludeSubdomains: cloudflare.BoolPtr(d.Get("include_subdomains").(bool)),
 	})
 
@@ -45,6 +45,10 @@ func resourceCloudflareZoneHoldCreate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	d.SetId(zoneID)
+
+	if hold.HoldAfter != nil {
+		d.Set("hold_after", hold.HoldAfter.Format(time.RFC3339Nano))
+	}
 
 	return resourceCloudflareZoneHoldRead(ctx, d, meta)
 }

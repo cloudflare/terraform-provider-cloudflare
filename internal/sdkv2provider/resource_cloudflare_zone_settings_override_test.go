@@ -38,6 +38,7 @@ func TestAccCloudflareZoneSettingsOverride_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "settings.0.security_level", "high"),
 					resource.TestCheckResourceAttr(name, "settings.0.early_hints", "on"),
 					resource.TestCheckResourceAttr(name, "settings.0.h2_prioritization", "on"),
+					resource.TestCheckResourceAttr(name, "settings.0.fonts", "on"),
 					resource.TestCheckResourceAttr(name, "settings.0.origin_max_http_version", "2"),
 					resource.TestCheckResourceAttr(name, "settings.0.zero_rtt", "off"),
 					resource.TestCheckResourceAttr(name, "settings.0.universal_ssl", "off"),
@@ -202,6 +203,7 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		opportunistic_encryption = "on"
 		automatic_https_rewrites = "on"
 		h2_prioritization = "on"
+		fonts = "on"
 		origin_max_http_version = "2"
 		universal_ssl = "off"
 		minify {

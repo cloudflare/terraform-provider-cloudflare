@@ -371,6 +371,12 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				rule.ActionParameters[0].SSL = flatteners.String(ruleResponse.ActionParameters.SSL.String())
 			}
 
+			var ports []attr.Value
+			for _, s := range ruleResponse.ActionParameters.AdditionalCacheablePorts {
+				ports = append(ports, types.Int64Value((int64(s))))
+			}
+			rule.ActionParameters[0].AdditionalCacheablePorts = flatteners.Int64Set(ports)
+
 			var phases []attr.Value
 			for _, s := range ruleResponse.ActionParameters.Phases {
 				phases = append(phases, types.StringValue(s))
@@ -724,7 +730,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				Period:                  flatteners.Int64(int64(ruleResponse.RateLimit.Period)),
 				RequestsPerPeriod:       flatteners.Int64(int64(ruleResponse.RateLimit.RequestsPerPeriod)),
 				RequestsToOrigin:        flatteners.Bool(cloudflare.BoolPtr(ruleResponse.RateLimit.RequestsToOrigin)),
-				MitigationTimeout:       flatteners.Int64(int64(ruleResponse.RateLimit.MitigationTimeout)),
+				MitigationTimeout:       types.Int64Value(int64(ruleResponse.RateLimit.MitigationTimeout)),
 				ScorePerPeriod:          flatteners.Int64(int64(ruleResponse.RateLimit.ScorePerPeriod)),
 				ScoreResponseHeaderName: flatteners.String(ruleResponse.RateLimit.ScoreResponseHeaderName),
 				CountingExpression:      flatteners.String(ruleResponse.RateLimit.CountingExpression),
@@ -847,6 +853,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 
 		if !ap.StatusCode.IsNull() {
 			rr.ActionParameters.StatusCode = uint16(ap.StatusCode.ValueInt64())
+		}
+
+		if !ap.AdditionalCacheablePorts.IsNull() {
+			rr.ActionParameters.AdditionalCacheablePorts = expanders.Int64Set(ctx, ap.AdditionalCacheablePorts)
 		}
 
 		if !ap.AutomaticHTTPSRewrites.IsNull() {

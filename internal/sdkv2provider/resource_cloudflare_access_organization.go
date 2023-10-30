@@ -60,6 +60,7 @@ func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.Res
 	d.Set("ui_read_only_toggle_reason", organization.UIReadOnlyToggleReason)
 	d.Set("user_seat_expiration_inactive_time", organization.UserSeatExpirationInactiveTime)
 	d.Set("auto_redirect_to_identity", organization.AutoRedirectToIdentity)
+	d.Set("session_duration", organization.SessionDuration)
 
 	loginDesign := convertLoginDesignStructToSchema(ctx, d, &organization.LoginDesign)
 	if loginDesignErr := d.Set("login_design", loginDesign); loginDesignErr != nil {
@@ -85,6 +86,7 @@ func resourceCloudflareAccessOrganizationUpdate(ctx context.Context, d *schema.R
 		IsUIReadOnly:                   cloudflare.BoolPtr(d.Get("is_ui_read_only").(bool)),
 		UserSeatExpirationInactiveTime: d.Get("user_seat_expiration_inactive_time").(string),
 		AutoRedirectToIdentity:         cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
+		SessionDuration:                cloudflare.StringPtr(d.Get("session_duration").(string)),
 	}
 	loginDesign := convertLoginDesignSchemaToStruct(d)
 	updatedAccessOrganization.LoginDesign = *loginDesign
