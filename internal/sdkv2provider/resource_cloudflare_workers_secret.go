@@ -23,7 +23,7 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareWorkerSecretImport,
 		},
-		Description: heredoc.Doc("Provides a Cloudflare worker secret resource"),
+		Description: heredoc.Doc("Provides a Cloudflare Worker secret resource."),
 	}
 }
 
