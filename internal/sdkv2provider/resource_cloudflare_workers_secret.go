@@ -21,7 +21,7 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 		UpdateContext: resourceCloudflareWorkerSecretCreate,
 		DeleteContext: resourceCloudflareWorkerSecretDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceCloudflareWorkerSecretImport,
 		},
 		Description: heredoc.Doc("Provides a Cloudflare worker secret resource"),
 	}
@@ -29,9 +29,9 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 
 func resourceCloudflareWorkerSecretRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
-	accountID, scriptName, secretName, err := resourceCloudflareWorkerSecretParseId(d.Id())
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	secrets, err := client.ListWorkersSecrets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListWorkersSecretsParams{
-		ScriptName: scriptName,
+		ScriptName: d.Get("script_name").(string),
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("Error listing worker secrets")))
@@ -39,15 +39,12 @@ func resourceCloudflareWorkerSecretRead(ctx context.Context, d *schema.ResourceD
 
 	for _, secret := range secrets.Result {
 		tflog.Info(ctx, fmt.Sprintf("Found secret %s", secret.Name))
-		if secret.Name == secretName {
-			d.Set("name", secretName)
-			d.Set(consts.AccountIDSchemaKey, accountID)
-			d.Set("script_name", scriptName)
+		if secret.Name == d.Get("name") {
 			return nil
 		}
 	}
 
-	return diag.Errorf(fmt.Sprintf("worker secret %s not found for script %s", secretName, scriptName))
+	return diag.Errorf(fmt.Sprintf("worker secret %s not found for script %s", d.Get("name"), d.Get("script_name")))
 }
 
 func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -71,7 +68,7 @@ func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(errors.Wrap(err, "error creating worker secret"))
 	}
 
-	d.SetId(fmt.Sprintf("%s/%s/%s", accountID, scriptName, name))
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s/%s", accountID, scriptName, name)))
 
 	tflog.Info(ctx, fmt.Sprintf("Created Cloudflare Workers secret with ID: %s", d.Id()))
 
@@ -99,12 +96,21 @@ func resourceCloudflareWorkerSecretDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceCloudflareWorkerSecretParseId(id string) (string, string, string, error) {
-	attributes := strings.SplitN(id, "/", 3)
+func resourceCloudflareWorkerSecretImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	attributes := strings.SplitN(d.Id(), "/", 3)
 
 	if len(attributes) != 3 {
-		return "", "", "", fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/scriptName/secretName"`, id)
+		return []*schema.ResourceData{nil}, fmt.Errorf(`invalid id (%q) specified, should be in format "accountID/scriptName/secretName"`, d.Id())
 	}
 
-	return attributes[0], attributes[1], attributes[2], nil
+	accountID, scriptName, secretName := attributes[0], attributes[1], attributes[2]
+
+	d.SetId(stringChecksum(fmt.Sprintf("%s/%s/%s", accountID, scriptName, secretName)))
+	d.Set("name", secretName)
+	d.Set(consts.AccountIDSchemaKey, accountID)
+	d.Set("script_name", scriptName)
+
+	resourceCloudflareWorkerSecretRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }

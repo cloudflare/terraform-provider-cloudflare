@@ -30,10 +30,10 @@ func TestAccCloudflareWorkerSecret_Import(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/%s/", accountID, workerSecretTestScriptName),
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:      resourceName,
+				ImportStateId:     fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, secretName),
+				ImportState:       true,
+				ImportStateVerify: true,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, secretName, accountID),
 				),
