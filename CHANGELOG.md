@@ -3,6 +3,7 @@
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#2899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2899))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.40.2 to 1.41.0 ([#2897](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2897))
 
 ## 4.18.0 (1st November, 2023)
 
