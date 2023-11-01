@@ -10,15 +10,16 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareKeylessSSL_Create(t *testing.T) {
+func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare.keyless_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare_keyless_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -30,8 +31,8 @@ func TestAccCloudflareKeylessSSL_Create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "port", "24008"),
-					resource.TestCheckResourceAttr(name, "enabled", "true"),
-					resource.TestCheckResourceAttr(name, "name", name),
+					resource.TestCheckResourceAttr(name, "enabled", "false"),
+					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "host", domain),
 				),
 			},
@@ -47,15 +48,22 @@ func testAccCheckCloudflareKeylessCertificateDestroy(s *terraform.State) error {
 			continue
 		}
 
-		keylessCertificates, err := client.ListKeylessSSL(context.Background(), zoneID)
+		ctx := context.Background()
+		retry.RetryContext(ctx, time.Second*10, func() *retry.RetryError {
+			keylessCertificates, err := client.ListKeylessSSL(ctx, zoneID)
+			if err != nil {
+				return retry.NonRetryableError(fmt.Errorf("failed to fetch keyless certificate: %w", err))
+			}
 
-		if err == nil {
 			for _, keylessCertificate := range keylessCertificates {
 				if keylessCertificate.ID == rs.Primary.Attributes["id"] {
-					return fmt.Errorf("Keyless SSL still exists")
+					return retry.RetryableError(fmt.Errorf("keyless certificate cleanup is processing"))
 				}
 			}
-		}
+
+			return nil
+		})
+
 	}
 
 	return nil
@@ -72,7 +80,6 @@ resource "cloudflare_keyless_certificate" "%[1]s" {
   name          = "%[1]s"
   host          = "%[3]s"
   port          = 24008
-  enabled       = true
   certificate   = <<EOT
 %[4]s
   EOT
