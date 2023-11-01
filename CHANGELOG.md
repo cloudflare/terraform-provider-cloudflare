@@ -1,5 +1,9 @@
 ## 4.19.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#2899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2899))
+
 ## 4.18.0 (1st November, 2023)
 
 FEATURES:
