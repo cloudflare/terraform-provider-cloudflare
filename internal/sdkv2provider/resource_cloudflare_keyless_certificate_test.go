@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"testing"
@@ -49,7 +50,7 @@ func testAccCheckCloudflareKeylessCertificateDestroy(s *terraform.State) error {
 		}
 
 		ctx := context.Background()
-		retry.RetryContext(ctx, time.Second*10, func() *retry.RetryError {
+		err := retry.RetryContext(ctx, time.Second*10, func() *retry.RetryError {
 			keylessCertificates, err := client.ListKeylessSSL(ctx, zoneID)
 			if err != nil {
 				return retry.NonRetryableError(fmt.Errorf("failed to fetch keyless certificate: %w", err))
@@ -63,7 +64,9 @@ func testAccCheckCloudflareKeylessCertificateDestroy(s *terraform.State) error {
 
 			return nil
 		})
-
+		if err != nil {
+			return errors.New("failed to initiate retries for Keyless SSL deletion")
+		}
 	}
 
 	return nil
