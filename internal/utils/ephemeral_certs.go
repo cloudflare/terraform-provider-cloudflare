@@ -48,7 +48,7 @@ func pemBlockForKey(priv interface{}) *pem.Block {
 // In most cases, this will not generate a usable combination but is enough for
 // test assertions. This method *should not* be considered suitable for real
 // certificates.
-func GenerateEphemeralCertAndKey(hostnames []string) (certificate string, key string, err error) {
+func GenerateEphemeralCertAndKey(hostnames []string, expiry time.Time) (certificate string, key string, err error) {
 	priv, err := ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
 	if err != nil {
 		log.Fatal(err)
@@ -60,7 +60,7 @@ func GenerateEphemeralCertAndKey(hostnames []string) (certificate string, key st
 			Organization: []string{"Acme Co"},
 		},
 		NotBefore:             time.Now(),
-		NotAfter:              time.Now().Add(time.Hour * 1),
+		NotAfter:              expiry,
 		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
