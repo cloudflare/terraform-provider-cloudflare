@@ -361,11 +361,11 @@ func notificationPolicyFilterSchema() *schema.Schema {
 				"incident_impact": {
 					Type: schema.TypeSet,
 					Elem: &schema.Schema{
-						Type: schema.TypeString,
+						Type:         schema.TypeString,
+						ValidateFunc: validation.StringInSlice(notificationPolicyIncidentImpactLevels, false),
 					},
-					Optional:     true,
-					ValidateFunc: validation.StringInSlice(notificationPolicyIncidentImpactLevels, false),
-					Description:  fmt.Sprintf("The incident impact level that will trigger the dispatch of a notification. %s", renderAvailableDocumentationValuesStringSlice(notificationPolicyIncidentImpactLevels)),
+					Optional:    true,
+					Description: fmt.Sprintf("The incident impact level that will trigger the dispatch of a notification. %s", renderAvailableDocumentationValuesStringSlice(notificationPolicyIncidentImpactLevels)),
 				},
 			},
 		},
