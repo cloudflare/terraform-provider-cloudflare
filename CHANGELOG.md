@@ -4,6 +4,10 @@ FEATURES:
 
 * **New Resource:** `cloudflare_keyless_certificate` ([#2779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2779))
 
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add support for `incident_alert` type ([#2901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2901))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#2899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2899))
