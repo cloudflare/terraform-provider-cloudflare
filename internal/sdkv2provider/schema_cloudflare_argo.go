@@ -20,6 +20,7 @@ func resourceCloudflareArgoSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 			Optional:     true,
 			Description:  fmt.Sprintf("Whether tiered caching is enabled. %s", renderAvailableDocumentationValuesStringSlice([]string{"on", "off"})),
+			Deprecated:   "tiered_caching has been deprecated in favour of using `cloudflare_tiered_cache` resource instead.",
 		},
 		"smart_routing": {
 			Type:         schema.TypeString,
