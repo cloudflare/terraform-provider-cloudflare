@@ -117,6 +117,7 @@ Optional:
 - `limit` (Set of String) A numerical limit. Example: `100`.
 - `megabits_per_second` (Set of String) Megabits per second threshold for dos alert.
 - `new_health` (Set of String) Health status to alert on for pool or origin.
+- `new_status` (Set of String) The new tunnel status that will trigger the dispatch of a notification. Available values: `TUNNEL_STATUS_TYPE_HEALTHY`, `TUNNEL_STATUS_TYPE_DEGRADED`, `TUNNEL_STATUS_TYPE_DOWN`.
 - `packets_per_second` (Set of String) Packets per second threshold for dos alert.
 - `pool_id` (Set of String) Load balancer pool identifier.
 - `product` (Set of String) Product name. Available values: `worker_requests`, `worker_durable_objects_requests`, `worker_durable_objects_duration`, `worker_durable_objects_data_transfer`, `worker_durable_objects_stored_data`, `worker_durable_objects_storage_deletes`, `worker_durable_objects_storage_writes`, `worker_durable_objects_storage_reads`.
@@ -128,6 +129,7 @@ Optional:
 - `status` (Set of String) Status to alert on.
 - `target_hostname` (Set of String) Target host to alert on for dos.
 - `target_zone_name` (Set of String) Target domain to alert on.
+- `tunnel_id` (Set of String) Tunnel identifier.
 - `where` (Set of String) Filter for alert.
 - `zones` (Set of String) A list of zone identifiers.
 

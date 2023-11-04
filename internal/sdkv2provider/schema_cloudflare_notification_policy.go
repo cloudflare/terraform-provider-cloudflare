@@ -68,6 +68,12 @@ var notificationPolicyIncidentImpactLevels = []string{
 	"INCIDENT_IMPACT_CRITICAL",
 }
 
+var notificationPolicyTunnelStatus = []string{
+	"TUNNEL_STATUS_TYPE_HEALTHY",
+	"TUNNEL_STATUS_TYPE_DEGRADED",
+	"TUNNEL_STATUS_TYPE_DOWN",
+}
+
 func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
@@ -366,6 +372,21 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					},
 					Optional:    true,
 					Description: fmt.Sprintf("The incident impact level that will trigger the dispatch of a notification. %s", renderAvailableDocumentationValuesStringSlice(notificationPolicyIncidentImpactLevels)),
+				},
+				"tunnel_id": {
+					Type:        schema.TypeSet,
+					Elem:        &schema.Schema{Type: schema.TypeString},
+					Optional:    true,
+					Description: "Tunnel identifier.",
+				},
+				"new_status": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type:         schema.TypeString,
+						ValidateFunc: validation.StringInSlice(notificationPolicyTunnelStatus, false),
+					},
+					Optional:    true,
+					Description: fmt.Sprintf("The new tunnel status that will trigger the dispatch of a notification. %s", renderAvailableDocumentationValuesStringSlice(notificationPolicyTunnelStatus)),
 				},
 			},
 		},
