@@ -1,3 +1,3 @@
 ```release-note:note
-add deprecation message to Argo resource tiered_caching attribute
+resource/cloudflare_argo: `tiered_caching` attribute is deprecated in favour of the dedicated `cloudflare_tiered_cache` resource.
 ```
