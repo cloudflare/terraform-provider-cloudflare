@@ -1,5 +1,9 @@
 ## 4.19.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_argo: `tiered_caching` attribute is deprecated in favour of the dedicated `cloudflare_tiered_cache` resource. ([#2906](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2906))
+
 FEATURES:
 
 * **New Resource:** `cloudflare_keyless_certificate` ([#2779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2779))
@@ -15,6 +19,7 @@ DEPENDENCIES:
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.19.1 to 1.20.0 ([#2898](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2898))
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.20.0 to 1.21.0 ([#2902](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2902))
 * provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.21.0 to 1.22.0 ([#2908](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2908))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.22.0 to 1.22.1 ([#2912](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2912))
 * provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.40.2 to 1.41.0 ([#2897](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2897))
 * provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.41.0 to 1.42.0 ([#2905](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2905))
 
