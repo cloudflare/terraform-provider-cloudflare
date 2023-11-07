@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_teams_rule: Add support for resolver policies
+```
