@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/cloudflare/cloudflare-go v0.80.0
+	github.com/cloudflare/cloudflare-go v0.81.0
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/google/uuid v1.4.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -28,7 +28,7 @@ require (
 	golang.org/x/net v0.17.0
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
+	golang.org/x/time v0.4.0 // indirect
 )
 
 require (
