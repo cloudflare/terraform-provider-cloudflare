@@ -43,15 +43,31 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy request: %q: %w", accountID, err))
 	}
 
-	policy, err := client.CreateDeviceSettingsPolicy(ctx, accountID, req)
+	policy, err := client.CreateDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateDeviceSettingsPolicyParams{
+		DisableAutoFallback: req.DisableAutoFallback,
+		CaptivePortal:       req.CaptivePortal,
+		AllowModeSwitch:     req.AllowModeSwitch,
+		SwitchLocked:        req.SwitchLocked,
+		AllowUpdates:        req.AllowUpdates,
+		AutoConnect:         req.AutoConnect,
+		AllowedToLeave:      req.AllowedToLeave,
+		SupportURL:          req.SupportURL,
+		ServiceModeV2:       req.ServiceModeV2,
+		Precedence:          req.Precedence,
+		Name:                req.Name,
+		Match:               req.Match,
+		Enabled:             req.Enabled,
+		ExcludeOfficeIps:    req.ExcludeOfficeIps,
+		Description:         req.Description,
+	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy %q: %w", accountID, err))
 	}
 
-	if policy.Result.PolicyID == nil {
+	if policy.PolicyID == nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy: returned policyID was missing after creating policy for account: %q", accountID))
 	}
-	d.SetId(fmt.Sprintf("%s/%s", accountID, *policy.Result.PolicyID))
+	d.SetId(fmt.Sprintf("%s/%s", accountID, *policy.PolicyID))
 	return resourceCloudflareDeviceSettingsPolicyRead(ctx, d, meta)
 }
 
@@ -68,9 +84,42 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 	}
 
 	if policyID == "" {
-		_, err = client.UpdateDefaultDeviceSettingsPolicy(ctx, accountID, req)
+		_, err = client.UpdateDefaultDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateDefaultDeviceSettingsPolicyParams{
+			DisableAutoFallback: req.DisableAutoFallback,
+			CaptivePortal:       req.CaptivePortal,
+			AllowModeSwitch:     req.AllowModeSwitch,
+			SwitchLocked:        req.SwitchLocked,
+			AllowUpdates:        req.AllowUpdates,
+			AutoConnect:         req.AutoConnect,
+			AllowedToLeave:      req.AllowedToLeave,
+			SupportURL:          req.SupportURL,
+			ServiceModeV2:       req.ServiceModeV2,
+			Precedence:          req.Precedence,
+			Name:                req.Name,
+			Match:               req.Match,
+			Enabled:             req.Enabled,
+			ExcludeOfficeIps:    req.ExcludeOfficeIps,
+			Description:         req.Description,
+		})
 	} else {
-		_, err = client.UpdateDeviceSettingsPolicy(ctx, accountID, policyID, req)
+		_, err = client.UpdateDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateDeviceSettingsPolicyParams{
+			PolicyID:            cloudflare.StringPtr(policyID),
+			DisableAutoFallback: req.DisableAutoFallback,
+			CaptivePortal:       req.CaptivePortal,
+			AllowModeSwitch:     req.AllowModeSwitch,
+			SwitchLocked:        req.SwitchLocked,
+			AllowUpdates:        req.AllowUpdates,
+			AutoConnect:         req.AutoConnect,
+			AllowedToLeave:      req.AllowedToLeave,
+			SupportURL:          req.SupportURL,
+			ServiceModeV2:       req.ServiceModeV2,
+			Precedence:          req.Precedence,
+			Name:                req.Name,
+			Match:               req.Match,
+			Enabled:             req.Enabled,
+			ExcludeOfficeIps:    req.ExcludeOfficeIps,
+			Description:         req.Description,
+		})
 	}
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error updating Cloudflare device settings policy %q: %w", accountID, err))
@@ -84,77 +133,77 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	_, policyID := parseDevicePolicyID(d.Id())
 
-	var policy cloudflare.DeviceSettingsPolicyResponse
+	var policy cloudflare.DeviceSettingsPolicy
 	var err error
 	if policyID == "" {
-		policy, err = client.GetDefaultDeviceSettingsPolicy(ctx, accountID)
+		policy, err = client.GetDefaultDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetDefaultDeviceSettingsPolicyParams{})
 	} else {
-		policy, err = client.GetDeviceSettingsPolicy(ctx, accountID, policyID)
+		policy, err = client.GetDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetDeviceSettingsPolicyParams{PolicyID: cloudflare.StringPtr(policyID)})
 	}
 
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error reading device settings policy %q %s: %w", accountID, policyID, err))
 	}
 
-	if err := d.Set("disable_auto_fallback", policy.Result.DisableAutoFallback); err != nil {
+	if err := d.Set("disable_auto_fallback", policy.DisableAutoFallback); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing disable_auto_fallback"))
 	}
-	if err := d.Set("captive_portal", policy.Result.CaptivePortal); err != nil {
+	if err := d.Set("captive_portal", policy.CaptivePortal); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing captive_portal"))
 	}
-	if err := d.Set("allow_mode_switch", policy.Result.AllowModeSwitch); err != nil {
+	if err := d.Set("allow_mode_switch", policy.AllowModeSwitch); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing allow_mode_switch"))
 	}
-	if err := d.Set("switch_locked", policy.Result.SwitchLocked); err != nil {
+	if err := d.Set("switch_locked", policy.SwitchLocked); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing switch_locked"))
 	}
-	if err := d.Set("allow_updates", policy.Result.AllowUpdates); err != nil {
+	if err := d.Set("allow_updates", policy.AllowUpdates); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing allow_updates"))
 	}
-	if err := d.Set("auto_connect", policy.Result.AutoConnect); err != nil {
+	if err := d.Set("auto_connect", policy.AutoConnect); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing auto_connect"))
 	}
-	if err := d.Set("allowed_to_leave", policy.Result.AllowedToLeave); err != nil {
+	if err := d.Set("allowed_to_leave", policy.AllowedToLeave); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing allowed_to_leave"))
 	}
-	if err := d.Set("support_url", policy.Result.SupportURL); err != nil {
+	if err := d.Set("support_url", policy.SupportURL); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing support_url"))
 	}
-	if err := d.Set("default", policy.Result.Default); err != nil {
+	if err := d.Set("default", policy.Default); err != nil {
 		return diag.FromErr(fmt.Errorf("error setting default"))
 	}
-	if err := d.Set("service_mode_v2_mode", policy.Result.ServiceModeV2.Mode); err != nil {
+	if err := d.Set("service_mode_v2_mode", policy.ServiceModeV2.Mode); err != nil {
 		return diag.FromErr(fmt.Errorf("error setting service_mode_v2_mode"))
 	}
-	if err := d.Set("service_mode_v2_port", policy.Result.ServiceModeV2.Port); err != nil {
+	if err := d.Set("service_mode_v2_port", policy.ServiceModeV2.Port); err != nil {
 		return diag.FromErr(fmt.Errorf("error setting service_mode_v2_port"))
 	}
-	if err := d.Set("exclude_office_ips", policy.Result.ExcludeOfficeIps); err != nil {
+	if err := d.Set("exclude_office_ips", policy.ExcludeOfficeIps); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing exclude_office_ips"))
 	}
 	// ignore setting forbidden fields for default policies
-	if policy.Result.Name != nil {
-		if err := d.Set("name", policy.Result.Name); err != nil {
+	if policy.Name != nil {
+		if err := d.Set("name", policy.Name); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing name"))
 		}
 	}
-	if policy.Result.Description != nil {
-		if err := d.Set("description", policy.Result.Description); err != nil {
+	if policy.Description != nil {
+		if err := d.Set("description", policy.Description); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing description"))
 		}
 	}
-	if policy.Result.Precedence != nil {
-		if err := d.Set("precedence", apiToProviderRulePrecedence(uint64(*policy.Result.Precedence), d.Get("name").(string))); err != nil {
+	if policy.Precedence != nil {
+		if err := d.Set("precedence", apiToProviderRulePrecedence(uint64(*policy.Precedence), d.Get("name").(string))); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing precedence"))
 		}
 	}
-	if policy.Result.Match != nil {
-		if err := d.Set("match", policy.Result.Match); err != nil {
+	if policy.Match != nil {
+		if err := d.Set("match", policy.Match); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing match"))
 		}
 	}
-	if policy.Result.Enabled != nil {
-		if err := d.Set("enabled", policy.Result.Enabled); err != nil {
+	if policy.Enabled != nil {
+		if err := d.Set("enabled", policy.Enabled); err != nil {
 			return diag.FromErr(fmt.Errorf("error parsing enabled"))
 		}
 	}
@@ -195,7 +244,7 @@ func resourceCloudflareDeviceSettingsPolicyDelete(ctx context.Context, d *schema
 		}}
 	}
 
-	if _, err := client.DeleteDeviceSettingsPolicy(ctx, accountID, policyID); err != nil {
+	if _, err := client.DeleteDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), policyID); err != nil {
 		return diag.FromErr(fmt.Errorf("error deleting device settings policy %q: %w", accountID, err))
 	}
 
@@ -204,10 +253,10 @@ func resourceCloudflareDeviceSettingsPolicyDelete(ctx context.Context, d *schema
 	return nil
 }
 
-func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.DeviceSettingsPolicyRequest, error) {
+func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.DeviceSettingsPolicy, error) {
 	defaultPolicy := (d.Get("default").(bool) || d.Id() == d.Get(consts.AccountIDSchemaKey).(string))
 
-	req := cloudflare.DeviceSettingsPolicyRequest{
+	req := cloudflare.DeviceSettingsPolicy{
 		DisableAutoFallback: cloudflare.BoolPtr(d.Get("disable_auto_fallback").(bool)),
 		CaptivePortal:       cloudflare.IntPtr(d.Get("captive_portal").(int)),
 		AllowModeSwitch:     cloudflare.BoolPtr(d.Get("allow_mode_switch").(bool)),
