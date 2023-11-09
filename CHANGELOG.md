@@ -12,6 +12,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_notification_policy: Add support for `incident_alert` type ([#2901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2901))
 
+BUG FIXES:
+
+* resource/cloudflare_list_item: ensure each `item` has its own ID and is not based on the latest created entry ([#2922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2922))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#2899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2899))
