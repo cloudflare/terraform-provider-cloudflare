@@ -15,6 +15,7 @@ jobs:
         uses: dependabot/fetch-metadata@v1.6.0
       - uses: actions/checkout@v4
       - run: |
+          echo $JSON
           gh pr checkout $PR_URL
           cat << EOF > .changelog/$PR_NUMBER.txt
           \`\`\`release-note:dependency
@@ -31,5 +32,6 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           DEP_NAME: ${{ steps.dependabot-metadata.outputs.dependency-names }}
+          JSON: ${{ steps.dependabot-metadata.outputs.updated-dependencies-json }}
           DEP_PREV_VERSION: ${{ steps.dependabot-metadata.outputs.previous-version }}
           DEP_NEXT_VERSION: ${{ steps.dependabot-metadata.outputs.new-version }}
