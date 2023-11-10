@@ -26,6 +26,7 @@ jobs:
           done <<< "$output"
           
           for value in ${updates[@]}; do
+          value="${value//Updates/updates}"
           cat << EOF >> .changelog/$PR_NUMBER.txt
           \`\`\`release-note:dependency
           provider: $value
