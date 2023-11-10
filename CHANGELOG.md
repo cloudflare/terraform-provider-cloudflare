@@ -30,6 +30,9 @@ DEPENDENCIES:
 * provider: bumps github.com/cloudflare/cloudflare-go from 0.80.0 to 0.81.0 ([#2919](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2919))
 * provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.29.0 to 2.30.0 ([#2925](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2925))
 * provider: bumps golang.org/x/net from 0.17.0 to 0.18.0 ([#2921](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2921))
+* provider: updates `github.com/aws/aws-sdk-go-v2/config` from 1.22.2 to 1.23.0 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+* provider: updates `github.com/aws/aws-sdk-go-v2/service/s3` from 1.42.0 to 1.42.1 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+* provider: updates `github.com/aws/aws-sdk-go-v2` from 1.22.1 to 1.22.2 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
 
 ## 4.18.0 (1st November, 2023)
 
