@@ -16,6 +16,10 @@ BUG FIXES:
 
 * resource/cloudflare_list_item: ensure each `item` has its own ID and is not based on the latest created entry ([#2922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2922))
 
+INTERNAL:
+
+* provider: prevent new resources and datasources from being created with `terraform-plugin-sdk` ([#2871](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2871))
+
 DEPENDENCIES:
 
 * provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#2899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2899))
