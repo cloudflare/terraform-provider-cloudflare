@@ -1,0 +1,3 @@
+```release-note:internal
+provider: prevent new resources and datasources from being created with `terraform-plugin-sdk`
+```

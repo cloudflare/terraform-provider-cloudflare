@@ -18,6 +18,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
+const (
+	MAXIMUM_NUMBER_OF_ENTITIES_REACHED_SUMMARY = "You've attempted to add a new %[1]s to the `terraform-plugin-sdkv2` which is no longer considered suitable for use."
+	MAXIMUM_NUMBER_OF_ENTITIES_REACHED_DETAIL  = "Due the number of known internal issues with `terraform-plugin-sdkv2` (most notably handling of zero values), we are no longer recommending using it and instead, advise using `terraform-plugin-framework` exclusively. If you must use terraform-plugin-sdkv2 for this new %[1]s you should first discuss it with a maintainer to fully understand the impact and potential ramifications. Only then should you bump %[2]s to include your %[1]s."
+	MAXIMUM_ALLOWED_SDKV2_RESOURCES            = 110
+	MAXIMUM_ALLOWED_SDKV2_DATASOURCES          = 19
+)
+
 func init() {
 	schema.DescriptionKind = schema.StringMarkdown
 
@@ -316,6 +323,26 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			baseHostname      string
 			basePath          string
 		)
+
+		if len(p.ResourcesMap) > MAXIMUM_ALLOWED_SDKV2_RESOURCES {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf(MAXIMUM_NUMBER_OF_ENTITIES_REACHED_SUMMARY, "resource"),
+				Detail:   fmt.Sprintf(MAXIMUM_NUMBER_OF_ENTITIES_REACHED_DETAIL, "resource", "MAXIMUM_ALLOWED_SDKV2_RESOURCES"),
+			})
+
+			return nil, diags
+		}
+
+		if len(p.DataSourcesMap) > MAXIMUM_ALLOWED_SDKV2_DATASOURCES {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf(MAXIMUM_NUMBER_OF_ENTITIES_REACHED_SUMMARY, "datasource"),
+				Detail:   fmt.Sprintf(MAXIMUM_NUMBER_OF_ENTITIES_REACHED_DETAIL, "datasource", "MAXIMUM_ALLOWED_SDKV2_DATASOURCES"),
+			})
+
+			return nil, diags
+		}
 
 		if d.Get(consts.APIHostnameSchemaKey).(string) != "" {
 			baseHostname = d.Get(consts.APIHostnameSchemaKey).(string)
