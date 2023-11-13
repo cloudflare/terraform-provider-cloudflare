@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareListItem_Exists(t *testing.T) {
+func TestAccCloudflareListItem_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -32,6 +32,40 @@ func TestAccCloudflareListItem_Exists(t *testing.T) {
 					testAccCheckCloudflareListItemExists(name, rnd, &ListItem),
 					resource.TestCheckResourceAttr(
 						name, "ip", "192.0.2.0"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var ListItem cloudflare.ListItem
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareIPListItemMultipleEntries(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListItemExists(name+"_1", rnd, &ListItem),
+					resource.TestCheckResourceAttr(name+"_1", "ip", "192.0.2.0"),
+
+					testAccCheckCloudflareListItemExists(name+"_2", rnd, &ListItem),
+					resource.TestCheckResourceAttr(name+"_2", "ip", "192.0.2.1"),
+
+					testAccCheckCloudflareListItemExists(name+"_3", rnd, &ListItem),
+					resource.TestCheckResourceAttr(name+"_3", "ip", "192.0.2.2"),
+
+					testAccCheckCloudflareListItemExists(name+"_4", rnd, &ListItem),
+					resource.TestCheckResourceAttr(name+"_4", "ip", "192.0.2.3"),
 				),
 			},
 		},
@@ -98,11 +132,49 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
     description         = "list named %[2]s"
     kind                = "ip"
   }
-  
+
   resource "cloudflare_list_item" "%[1]s" {
     account_id = "%[4]s"
 	list_id    = cloudflare_list.%[2]s.id
 	ip         = "192.0.2.0"
+	comment    = "%[3]s"
+  } `, ID, name, comment, accountID)
+}
+
+func testAccCheckCloudflareIPListItemMultipleEntries(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "ip"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_1" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	ip         = "192.0.2.0"
+	comment    = "%[3]s"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_2" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	ip         = "192.0.2.1"
+	comment    = "%[3]s"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_3" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	ip         = "192.0.2.2"
+	comment    = "%[3]s"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_4" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	ip         = "192.0.2.3"
 	comment    = "%[3]s"
   } `, ID, name, comment, accountID)
 }
@@ -141,7 +213,7 @@ func testAccCheckCloudflareBadListItemType(ID, name, comment, accountID string) 
     description         = "list named %[2]s"
     kind                = "redirect"
   }
-  
+
   resource "cloudflare_list_item" "%[2]s" {
     account_id = "%[4]s"
 	list_id    = cloudflare_list.%[2]s.id

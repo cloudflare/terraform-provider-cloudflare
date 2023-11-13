@@ -1,10 +1,19 @@
 version: 2
 updates:
-- package-ecosystem: gomod
+- package-ecosystem: "gomod"
   directory: "/"
   schedule:
-    interval: daily
+    interval: "daily"
+  groups:
+    # group the AWS SDK version bumps together 
+    aws:
+      patterns:
+        - "*aws-sdk-go*"
 - package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "daily"
+- package-ecosystem: "docker"
   directory: "/"
   schedule:
     interval: "daily"

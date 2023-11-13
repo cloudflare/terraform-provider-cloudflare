@@ -131,6 +131,17 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 	}
 }
 
+func getPlacement(d *schema.ResourceData) cloudflare.Placement {
+	for _, rawData := range d.Get("placement").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+		return cloudflare.Placement{
+			Mode: cloudflare.PlacementMode(data["mode"].(string)),
+		}
+	}
+
+	return cloudflare.Placement{}
+}
+
 func getCompatibilityFlags(d *schema.ResourceData) []string {
 	compatibilityFlags := make([]string, 0)
 	for _, item := range d.Get("compatibility_flags").(*schema.Set).List() {
@@ -167,6 +178,8 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	logpush := d.Get("logpush").(bool)
 
+	placement := getPlacement(d)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:         scriptData.Params.ScriptName,
 		Script:             scriptBody,
@@ -175,6 +188,7 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 		Module:             d.Get("module").(bool),
 		Bindings:           bindings,
 		Logpush:            &logpush,
+		Placement:          &placement,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
@@ -344,6 +358,8 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	logpush := d.Get("logpush").(bool)
 
+	placement := getPlacement(d)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
 		ScriptName:         scriptData.Params.ScriptName,
 		Script:             scriptBody,
@@ -352,6 +368,7 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 		Module:             d.Get("module").(bool),
 		Bindings:           bindings,
 		Logpush:            &logpush,
+		Placement:          &placement,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating worker script"))

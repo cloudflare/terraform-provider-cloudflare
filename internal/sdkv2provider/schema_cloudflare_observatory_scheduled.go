@@ -31,6 +31,7 @@ var observatoryTestRegions = []string{
 	"europe-west8",
 	"europe-west9",
 	"asia-east1",
+	"asia-south1",
 	"asia-southeast1",
 	"me-west1",
 	"australia-southeast1",

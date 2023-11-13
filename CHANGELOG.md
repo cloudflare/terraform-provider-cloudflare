@@ -1,16 +1,70 @@
-## 4.18.0 (Unreleased)
+## 4.19.0 (Unreleased)
+
+NOTES:
+
+* resource/cloudflare_argo: `tiered_caching` attribute is deprecated in favour of the dedicated `cloudflare_tiered_cache` resource. ([#2906](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2906))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_keyless_certificate` ([#2779](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2779))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add support for `incident_alert` type ([#2901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2901))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: ensure each `item` has its own ID and is not based on the latest created entry ([#2922](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2922))
+
+DEPENDENCIES:
+
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.21.2 to 1.22.0 ([#2899](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2899))
+* provider: bumps github.com/aws/aws-sdk-go-v2 from 1.22.0 to 1.22.1 ([#2904](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2904))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.19.1 to 1.20.0 ([#2898](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2898))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.20.0 to 1.21.0 ([#2902](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2902))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.21.0 to 1.22.0 ([#2908](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2908))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.22.0 to 1.22.1 ([#2912](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2912))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.22.1 to 1.22.2 ([#2917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2917))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.40.2 to 1.41.0 ([#2897](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2897))
+* provider: bumps github.com/aws/aws-sdk-go-v2/service/s3 from 1.41.0 to 1.42.0 ([#2905](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2905))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.80.0 to 0.81.0 ([#2919](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2919))
+* provider: bumps github.com/hashicorp/terraform-plugin-sdk/v2 from 2.29.0 to 2.30.0 ([#2925](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2925))
+* provider: bumps golang.org/x/net from 0.17.0 to 0.18.0 ([#2921](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2921))
+* provider: updates `github.com/aws/aws-sdk-go-v2/config` from 1.22.2 to 1.23.0 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+* provider: updates `github.com/aws/aws-sdk-go-v2/service/s3` from 1.42.0 to 1.42.1 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+* provider: updates `github.com/aws/aws-sdk-go-v2` from 1.22.1 to 1.22.2 ([#2931](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2931))
+
+## 4.18.0 (1st November, 2023)
 
 FEATURES:
 
 * **New Data Source:** `cloudflare_device_posture_rules` ([#2868](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2868))
 * **New Data Source:** `cloudflare_tunnel` ([#2866](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2866))
 * **New Data Source:** `cloudflare_tunnel_virtual_network` ([#2867](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2867))
+* **New Resource:** `cloudflare_api_shield_operation_schema_validation_settings` ([#2852](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2852))
+* **New Resource:** `cloudflare_api_shield_schema_validation_settings` ([#2841](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2841))
 
 ENHANCEMENTS:
 
 * resource/cloudflare_load_balancer: Add support for least_connections steering ([#2818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2818))
 * resource/cloudflare_load_balancer_pool: Add support for least_connections origin steering ([#2818](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2818))
 * resource/cloudflare_logpush_job: add support for `casb_findings` dataset ([#2859](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2859))
+* resource/cloudflare_teams_account: Add `non_identity_browser_isolation_enabled` field ([#2878](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2878))
+* resource/cloudflare_teams_account: add support for `body_scanning` config ([#2887](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2887))
+* resource/cloudflare_workers_script: add support for `placement` config ([#2893](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2893))
+
+BUG FIXES:
+
+* resource/cloudflare_observatory_scheduled_test: Add missing 'asia-south1' region ([#2891](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2891))
+* resource/cloudflare_rulesets: Allow zero to not default to null for mitigation_timeout ([#2874](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2874))
+
+DEPENDENCIES:
+
+* ci: drop separate misspell installation ([#2814](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2814))
+* provider: bumps github.com/aws/aws-sdk-go-v2/config from 1.19.0 to 1.19.1 ([#2877](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2877))
+* provider: bumps github.com/cloudflare/cloudflare-go from 0.79.0 to 0.80.0 ([#2883](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2883))
+* provider: bumps github.com/google/uuid from 1.3.1 to 1.4.0 ([#2889](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2889))
+* provider: bumps github.com/hashicorp/terraform-plugin-framework from 1.4.1 to 1.4.2 ([#2876](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2876))
 
 ## 4.17.0 (18th October, 2023)
 

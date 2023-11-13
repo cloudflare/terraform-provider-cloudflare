@@ -28,7 +28,7 @@ func TestAccCloudflareObservatoryScheduledTest_Create(t *testing.T) {
 				Config: testAccCloudflareObservatoryScheduledTest(rnd, zoneID, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "url", domain+"/"),
+					resource.TestCheckResourceAttr(name, "url", domain+"/"+rnd),
 					resource.TestCheckResourceAttr(name, "region", "us-central1"),
 					resource.TestCheckResourceAttr(name, "frequency", "DAILY"),
 				),
@@ -61,7 +61,7 @@ func testAccCloudflareObservatoryScheduledTest(resourceName, zoneID, domain stri
 	return fmt.Sprintf(`
 resource "cloudflare_observatory_scheduled_test" "%[1]s" {
   zone_id   = "%[2]s"
-  url       = "%[3]s"
+  url       = "%[3]s/%[1]s"
   region    = "us-central1"
   frequency = "DAILY"
 }

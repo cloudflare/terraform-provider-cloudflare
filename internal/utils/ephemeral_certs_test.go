@@ -2,12 +2,13 @@ package utils
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateEphemeralCertAndKey(t *testing.T) {
-	cert, key, err := GenerateEphemeralCertAndKey([]string{"example.com"})
+	cert, key, err := GenerateEphemeralCertAndKey([]string{"example.com"}, time.Now().Add(time.Hour*1))
 
 	assert.NotEqual(t, "", cert)
 	assert.NotEqual(t, "", key)
