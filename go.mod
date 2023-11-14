@@ -34,8 +34,8 @@ require (
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/aws/aws-sdk-go-v2 v1.22.2
-	github.com/aws/aws-sdk-go-v2/config v1.24.0
-	github.com/aws/aws-sdk-go-v2/credentials v1.15.2
+	github.com/aws/aws-sdk-go-v2/config v1.25.0
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.42.1
 	github.com/google/go-cmp v0.6.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
