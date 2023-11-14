@@ -1,4 +1,6 @@
-## 4.19.0 (Unreleased)
+## 4.20.0 (Unreleased)
+
+## 4.19.0 (15th November, 2023)
 
 NOTES:
 
