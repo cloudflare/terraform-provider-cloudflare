@@ -85,10 +85,10 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 		},
 		"type": {
 			Type:         schema.TypeString,
-			ValidateFunc: validation.StringInSlice([]string{"full", "partial"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"full", "partial", "secondary"}, false),
 			Default:      "full",
 			Optional:     true,
-			Description:  fmt.Sprintf("A full zone implies that DNS is hosted with Cloudflare. A partial zone is typically a partner-hosted zone or a CNAME setup. %s", renderAvailableDocumentationValuesStringSlice([]string{"full", "partial"})),
+			Description:  fmt.Sprintf("A full zone implies that DNS is hosted with Cloudflare. A partial zone is typically a partner-hosted zone or a CNAME setup. %s", renderAvailableDocumentationValuesStringSlice([]string{"full", "partial", "secondary"})),
 		},
 		"name_servers": {
 			Type:     schema.TypeList,
