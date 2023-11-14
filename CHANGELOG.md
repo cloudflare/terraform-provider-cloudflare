@@ -11,6 +11,7 @@ FEATURES:
 ENHANCEMENTS:
 
 * resource/cloudflare_notification_policy: Add support for `incident_alert` type ([#2901](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2901))
+* resource/cloudflare_zone: add support for `secondary` zone types ([#2939](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2939))
 
 BUG FIXES:
 
