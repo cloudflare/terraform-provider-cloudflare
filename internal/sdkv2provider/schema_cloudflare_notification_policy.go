@@ -367,6 +367,14 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: fmt.Sprintf("The incident impact level that will trigger the dispatch of a notification. %s", renderAvailableDocumentationValuesStringSlice(notificationPolicyIncidentImpactLevels)),
 				},
+				"new_status": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Tunnel health status to alert on.",
+				},
 			},
 		},
 	}
