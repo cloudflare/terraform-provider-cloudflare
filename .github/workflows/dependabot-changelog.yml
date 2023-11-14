@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          echo $JSON
           gh pr checkout $PR_URL
           output=$(gh pr view $PR_URL | grep 'Updates')
           
