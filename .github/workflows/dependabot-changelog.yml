@@ -12,24 +12,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          gh pr checkout $PR_URL
-          output=$(gh pr view $PR_URL | grep 'Updates')
-          
+          title=$(gh pr view $PR_URL --json title | jq -r .title)
+
+          # "group with" is the title used when dependabot has a grouped update.
+          if [[ "$title" == *"group with"* ]]; then
+            output=$(gh pr view $PR_URL | grep 'Updates')
+          else
+            # clean out the 'build(deps): ' prefix.
+            output="${title//build(deps): /}"
+          fi
+
           IFS=$'\n'
-          
+
           while read -r line; do
             updates+=("$line")
           done <<< "$output"
-          
+
           for value in ${updates[@]}; do
-          value="${value//Updates/updates}"
+          value="${value//Updates/bump}"
           cat << EOF >> .changelog/$PR_NUMBER.txt
           \`\`\`release-note:dependency
           provider: $value
           \`\`\`
           EOF
           done
-          
+
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
           git add .changelog/$PR_NUMBER.txt
