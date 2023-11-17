@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
+          set -x
+          
           gh pr checkout $PR_URL
           
           title=$(gh pr view $PR_URL --json title | jq -r .title)
