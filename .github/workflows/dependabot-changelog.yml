@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
+      - uses: actions/checkout@v4
       - run: |
           gh pr checkout $PR_URL
           
