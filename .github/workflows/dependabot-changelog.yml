@@ -10,8 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v4
       - run: |
+          gh pr checkout $PR_URL
+          
           title=$(gh pr view $PR_URL --json title | jq -r .title)
 
           # "group with" is the title used when dependabot has a grouped update.
