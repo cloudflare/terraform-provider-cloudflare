@@ -193,7 +193,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 				Type:         schema.TypeString,
 				Description:  "Usage model used for Pages Functions.",
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled", "standard"}, false),
 				Default:      "bundled",
 			},
 			"placement": {
