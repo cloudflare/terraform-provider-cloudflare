@@ -96,7 +96,7 @@ Read-Only:
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_certificate_pack.example 1d5fdc9e88c8a8c4518b068cd94331fe/8fda82e2-6af9-4eb2-992a-5ab65b792ef1
+$ terraform import cloudflare_certificate_pack.example <zone_id>/<certificate_pack_id>
 ```
 
 While supported, importing isn't recommended and it is advised to replace the
