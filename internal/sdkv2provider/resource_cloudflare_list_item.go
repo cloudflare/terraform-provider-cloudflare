@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -117,7 +118,11 @@ func resourceCloudflareListItemRead(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if listItem.Hostname != nil {
-		d.Set("url_hostname", listItem.Hostname.UrlHostname)
+		d.Set("hostname", []interface{}{
+			map[string]interface{}{
+				"url_hostname": listItem.Hostname.UrlHostname,
+			},
+		})
 	}
 
 	if listItem.Redirect != nil {
@@ -204,11 +209,11 @@ func getSearchTerm(d *schema.ResourceData) string {
 	}
 
 	if hostname, ok := d.GetOk("hostname"); ok {
-		return hostname.(string)
+		return hostname.([]interface{})[0].(map[string]interface{})["url_hostname"].(string)
 	}
 
 	if asn, ok := d.GetOk("asn"); ok {
-		return asn.(string)
+		return strconv.Itoa(asn.(int))
 	}
 
 	return ""
