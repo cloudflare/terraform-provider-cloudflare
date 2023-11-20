@@ -7,7 +7,10 @@ BUG FIXES:
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.1 to 1.25.3 ([#2948](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2948))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.3 to 1.25.4 ([#2953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2953))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.42.2 to 1.43.0 ([#2948](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2948))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.43.0 to 1.43.1 ([#2953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2953))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.0 to 1.23.1 ([#2953](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2953))
 * provider: bump github.com/hashicorp/terraform-plugin-go from 0.19.0 to 0.19.1 ([#2942](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2942))
 * provider: updates `github.com/aws/aws-sdk-go-v2/config` from 1.24.0 to 1.25.1 ([#2945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2945))
 * provider: updates `github.com/aws/aws-sdk-go-v2/service/s3` from 1.42.1 to 1.42.2 ([#2945](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2945))
