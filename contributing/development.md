@@ -33,7 +33,7 @@ To run a subset of the acceptance test suite, you can run
 ```sh
 TESTARGS='-run "^<regex target of tests>" -count 1 -parallel 1' make testacc
 # Example
-# TESTARGS='-run "^TestAccTestPagesProject" -count 1 -parallel 1' make testacc
+TESTARGS='-run "^TestAccTestPagesProject" -count 1 -parallel 1' make testacc
 ```
 
 You can also install other optional (but great to have tools) using `make tools`.

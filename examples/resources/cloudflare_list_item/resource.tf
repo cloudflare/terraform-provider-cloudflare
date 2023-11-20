@@ -1,3 +1,4 @@
+# IP List
 resource "cloudflare_list" "example_ip_list" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "example_list"
@@ -13,9 +14,16 @@ resource "cloudflare_list_item" "example_ip_item" {
   ip         = "192.0.2.0"
 }
 
+# Redirect List
+resource "cloudflare_list" "example_redirect_list" {
+  account_id  = "f037e56e89293a057740de681ac9abbe"
+  name        = "example_list"
+  description = "example Redirects for a list"
+  kind        = "redirect"
+}
 
 # Redirect List Item
-resource "cloudflare_list_item" "test_two" {
+resource "cloudflare_list_item" "example_redirect_item" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   list_id    = cloudflare_list.example_ip_list.id
   redirect {
@@ -26,7 +34,7 @@ resource "cloudflare_list_item" "test_two" {
   }
 }
 
-# ASN list
+# ASN List
 resource "cloudflare_list" "example_asn_list" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "example_asn_list"
@@ -42,7 +50,7 @@ resource "cloudflare_list_item" "example_asn_item" {
   asn         = 6789
 }
 
-# Hostname list
+# Hostname List
 resource "cloudflare_list" "example_hostname_list" {
   account_id  = "f037e56e89293a057740de681ac9abbe"
   name        = "example_hostname_list"
@@ -55,5 +63,7 @@ resource "cloudflare_list_item" "example_hostname_item" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   list_id    = cloudflare_list.example_hostname_list.id
   comment    = "List Item Comment"
-  asn         = "example.com"
+  hostname {
+    url_hostname = "example.com"
+  }
 }

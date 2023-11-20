@@ -124,6 +124,60 @@ func TestAccCloudflareListItem_BadListItemType(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareListItem_ASN(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var ListItem cloudflare.ListItem
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareASNListItem(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListItemExists(name, rnd, &ListItem),
+					resource.TestCheckResourceAttr(
+						name, "asn", "1"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareListItem_Hostname(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var ListItem cloudflare.ListItem
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameListItem(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListItemExists(name, rnd, &ListItem),
+					resource.TestCheckResourceAttr(
+						name, "hostname.#", "1"),
+					resource.TestCheckResourceAttr(
+						name, "hostname.0.url_hostname", "example.com"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_list" "%[2]s" {
@@ -219,5 +273,41 @@ func testAccCheckCloudflareBadListItemType(ID, name, comment, accountID string) 
 	list_id    = cloudflare_list.%[2]s.id
 	ip         = "192.0.2.0"
 	comment    = "%[3]s"
+  } `, ID, name, comment, accountID)
+}
+
+func testAccCheckCloudflareASNListItem(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "asn"
+  }
+
+  resource "cloudflare_list_item" "%[1]s" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	asn = 1
+	comment    = "%[3]s"
+  } `, ID, name, comment, accountID)
+}
+
+func testAccCheckCloudflareHostnameListItem(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "hostname"
+  }
+
+  resource "cloudflare_list_item" "%[1]s" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	hostname {
+		url_hostname = "example.com"
+	}
   } `, ID, name, comment, accountID)
 }
