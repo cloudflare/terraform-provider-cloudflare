@@ -1,18 +1,34 @@
-# Predefined profile
-resource "cloudflare_dlp_profile" "example_predefined" {
+# Predefined profile must be imported, cannot be created
+resource "cloudflare_dlp_profile" "creds" {
   account_id          = "0da42c8d2132a9ddaf714f9e7c920711"
-  name                = "Example Predefined Profile"
+  name                = "Credentials and Secrets"
   type                = "predefined"
-  allowed_match_count = 0
+  allowed_match_count = 3
 
   entry {
-    name    = "Mastercard Card Number"
     enabled = true
+    name    = "Amazon AWS Access Key ID"
+    id      = "d8fcfc9c-773c-405e-8426-21ecbb67ba93"
   }
-
   entry {
-    name    = "Union Pay Card Number"
     enabled = false
+    id      = "2c0e33e1-71da-40c8-aad3-32e674ad3d96"
+    name    = "Amazon AWS Secret Access Key"
+  }
+  entry {
+    enabled = true
+    id      = "4e92c006-3802-4dff-bbe1-8e1513b1c92a"
+    name    = "Microsoft Azure Client Secret"
+  }
+  entry {
+    enabled = false
+    id      = "5c713294-2375-4904-abcf-e4a15be4d592"
+    name    = "SSH Private Key"
+  }
+  entry {
+    enabled = true
+    id      = "6c6579e4-d832-42d5-905c-8e53340930f2"
+    name    = "Google GCP API Key"
   }
 }
 
