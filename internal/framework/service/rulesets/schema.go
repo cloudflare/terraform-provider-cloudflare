@@ -3,6 +3,7 @@ package rulesets
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -922,7 +923,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										MarkdownDescription: "Criteria for counting HTTP requests to trigger the Rate Limiting action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.",
 									},
 									"requests_to_origin": schema.BoolAttribute{
-										Required:            true,
+										Optional:            true,
+										Computed:            true,
+										Default:             booldefault.StaticBool(false),
 										MarkdownDescription: "Whether to include requests to origin within the Rate Limiting count.",
 									},
 								},

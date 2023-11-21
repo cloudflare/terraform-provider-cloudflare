@@ -706,30 +706,6 @@ func TestAccCloudflareRuleset_WAFManagedRulesetWithPayloadLogging(t *testing.T) 
 	})
 }
 
-func TestAccCloudflareRuleset_RateLimitMissingRequiredRequestsToOrigin(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config:      testAccCheckCloudflareRulesetRateLimitMissingRequiredRequestsToOrigin(rnd, "example HTTP rate limit", zoneID, zoneName),
-				ExpectError: regexp.MustCompile("Missing required argument"),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
@@ -3457,40 +3433,6 @@ func testAccCheckCloudflareRulesetRateLimit(rnd, name, zoneID, zoneName string) 
         requests_per_period = 100
         mitigation_timeout = 60
         requests_to_origin = true
-      }
-      expression = "(http.request.uri.path matches \"^/api/\")"
-      description = "example http rate limit"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
-}
-
-func testAccCheckCloudflareRulesetRateLimitMissingRequiredRequestsToOrigin(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_ratelimit"
-
-    rules {
-      action = "block"
-      action_parameters {
-        response {
-          status_code = 418
-          content_type = "text/plain"
-          content = "test content"
-        }
-      }
-      ratelimit {
-        characteristics = [
-          "cf.colo.id",
-          "ip.src"
-        ]
-        period = 60
-        requests_per_period = 100
-        mitigation_timeout = 60
       }
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http rate limit"
