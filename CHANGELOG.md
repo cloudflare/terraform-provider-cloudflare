@@ -2,6 +2,13 @@
 
 ENHANCEMENTS:
 
+* resource/cloudflare_notification_policy: add support for `brand_protection_alert` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `brand_protection_digest` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `logo_match_alert` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `magic_tunnel_health_check_event` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `maintenance_event_notification` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `mtls_certificate_store_certificate_expiration_type` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
+* resource/cloudflare_notification_policy: add support for `radar_notification` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
 * resource/cloudflare_pages_project: support `standard` usage model for functions ([#2949](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2949))
 * resource/cloudflare_ruleset: make rate limiting `requests_to_origin` optional with a default value of `false` to match the API behaviour ([#2954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2954))
 
