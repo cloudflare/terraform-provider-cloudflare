@@ -1,5 +1,9 @@
 ## 4.20.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: make rate limiting `requests_to_origin` optional with a default value of `false` to match the API behaviour ([#2954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2954))
+
 BUG FIXES:
 
 * resource/cloudflare_list_item: fix list_item for `asn` and `hostname` types ([#2951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2951))
