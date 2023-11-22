@@ -8,6 +8,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_list_item: fix list_item for `asn` and `hostname` types ([#2951](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2951))
+* resource/cloudflare_notification_policy: Fix missing new_status filter required by tunnel_health_event policies ([#2390](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2390))
 
 DEPENDENCIES:
 
