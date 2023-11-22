@@ -117,6 +117,7 @@ Optional:
 - `limit` (Set of String) A numerical limit. Example: `100`.
 - `megabits_per_second` (Set of String) Megabits per second threshold for dos alert.
 - `new_health` (Set of String) Health status to alert on for pool or origin.
+- `new_status` (Set of String) Tunnel health status to alert on.
 - `packets_per_second` (Set of String) Packets per second threshold for dos alert.
 - `pool_id` (Set of String) Load balancer pool identifier.
 - `product` (Set of String) Product name. Available values: `worker_requests`, `worker_durable_objects_requests`, `worker_durable_objects_duration`, `worker_durable_objects_data_transfer`, `worker_durable_objects_stored_data`, `worker_durable_objects_storage_deletes`, `worker_durable_objects_storage_writes`, `worker_durable_objects_storage_reads`.
