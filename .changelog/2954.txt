@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_ruleset: make rate limiting `requests_to_origin` optional with a default value of `false` to match the API behaviour
+```

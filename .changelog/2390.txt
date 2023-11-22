@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_notification_policy: Fix missing new_status filter required by tunnel_health_event policies
+```
