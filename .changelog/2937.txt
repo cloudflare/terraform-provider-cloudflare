@@ -1,0 +1,27 @@
+```release-note:enhancement
+resource/cloudflare_notification_policy: add support for `brand_protection_alert` alert type
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: add support for `brand_protection_digest` alert type
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: add support for `logo_match_alert` alert type
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: add support for `magic_tunnel_health_check_event` alert type
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: add support for `maintenance_event_notification` alert type
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: add support for `mtls_certificate_store_certificate_expiration_type` alert type
+```
+
+```release-note:enhancement
+resource/cloudflare_notification_policy: add support for `radar_notification` alert type
+```
