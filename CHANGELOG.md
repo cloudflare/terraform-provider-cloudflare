@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 
+* resource/cloudflare_pages_project: support `standard` usage model for functions ([#2949](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2949))
 * resource/cloudflare_ruleset: make rate limiting `requests_to_origin` optional with a default value of `false` to match the API behaviour ([#2954](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2954))
 
 BUG FIXES:
