@@ -28,7 +28,7 @@ func testEmailRoutingRuleCatchAllConfig(resourceID, zoneID string, enabled bool)
 		`, resourceID, zoneID, enabled)
 }
 
-func TestAccTestEmailRoutingCatchAll(t *testing.T) {
+func TestAccCloudflareEmailRoutingCatchAll(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_email_routing_catch_all." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

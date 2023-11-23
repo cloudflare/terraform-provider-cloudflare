@@ -18,7 +18,7 @@ func testEmailRoutingAddressConfig(resourceID, accountID, email string) string {
 		`, resourceID, accountID, email)
 }
 
-func TestAccTestEmailRoutingAddress(t *testing.T) {
+func TestAccCloudflareEmailRoutingAddress(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_email_routing_address." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

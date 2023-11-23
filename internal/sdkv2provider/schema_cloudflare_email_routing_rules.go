@@ -1,6 +1,8 @@
 package sdkv2provider
 
 import (
+	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -42,7 +44,7 @@ func resourceCloudflareEmailRoutingRuleSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
-						Description:  "Type of matcher.",
+						Description:  fmt.Sprintf("Type of matcher. %s", renderAvailableDocumentationValuesStringSlice([]string{"literal", "all"})),
 						Type:         schema.TypeString,
 						Required:     true,
 						ValidateFunc: validation.StringInSlice([]string{"literal", "all"}, true),
@@ -68,15 +70,15 @@ func resourceCloudflareEmailRoutingRuleSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
-						Description:  "Type of supported action.",
+						Description:  fmt.Sprintf("Type of supported action. %s", renderAvailableDocumentationValuesStringSlice([]string{"forward", "worker", "drop"})),
 						Type:         schema.TypeString,
 						Required:     true,
-						ValidateFunc: validation.StringInSlice([]string{"forward", "worker"}, true),
+						ValidateFunc: validation.StringInSlice([]string{"forward", "worker", "drop"}, true),
 					},
 					"value": {
-						Description: "An array with items in the following form.",
+						Description: "An array with items in the following form. Only required when `type` is `forward` or `worker`.",
 						Type:        schema.TypeList,
-						Required:    true,
+						Optional:    true,
 						Elem: &schema.Schema{
 							Type:         schema.TypeString,
 							ValidateFunc: validation.StringLenBetween(0, 90),

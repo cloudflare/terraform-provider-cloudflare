@@ -46,8 +46,10 @@ func buildMatchersAndActions(d *schema.ResourceData) (matchers []cloudflare.Emai
 			action := item.(map[string]interface{})
 			ruleAction := cloudflare.EmailRoutingRuleAction{}
 			ruleAction.Type = action["type"].(string)
-			for _, value := range action["value"].([]interface{}) {
-				ruleAction.Value = append(ruleAction.Value, value.(string))
+			if val, ok := action["value"]; ok {
+				for _, value := range val.([]interface{}) {
+					ruleAction.Value = append(ruleAction.Value, value.(string))
+				}
 			}
 
 			actions = append(actions, ruleAction)
