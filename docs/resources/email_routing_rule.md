@@ -54,7 +54,7 @@ resource "cloudflare_email_routing_rule" "main" {
 
 Required:
 
-- `type` (String) Type of supported action.
+- `type` (String) Type of supported action. Available values: `forward`, `worker`, `drop`.
 - `value` (List of String) An array with items in the following form.
 
 
@@ -63,7 +63,7 @@ Required:
 
 Required:
 
-- `type` (String) Type of matcher.
+- `type` (String) Type of matcher. Available values: `literal`, `all`.
 
 Optional:
 
