@@ -2,6 +2,8 @@
 
 ENHANCEMENTS:
 
+* resource/cloudflare_email_routing_rule: `action.value` is now optional to support `drop` rules not requiring it ([#2449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2449))
+* resource/cloudflare_email_routing_rule: add action type `drop` ([#2449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2449))
 * resource/cloudflare_notification_policy: add support for `brand_protection_alert` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
 * resource/cloudflare_notification_policy: add support for `brand_protection_digest` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
 * resource/cloudflare_notification_policy: add support for `logo_match_alert` alert type ([#2937](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2937))
