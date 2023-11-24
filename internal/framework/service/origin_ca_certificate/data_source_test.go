@@ -15,14 +15,14 @@ import (
 )
 
 func TestAccCloudflareUserDataSource(t *testing.T) {
-	name := "data.cloudflare_origin_ca_certificate.example"
-
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	csr, err := generateCSR(zoneName)
 	if err != nil {
 		t.Errorf("unable to generate CSR: %v", err)
 		return
 	}
+
+	name := fmt.Sprintf("data.cloudflare_origin_ca_certificate.%s", zoneName)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -73,8 +73,8 @@ resource "cloudflare_origin_ca_certificate" "%[1]s" {
 	requested_validity = 7
 }
 
-data "cloudflare_origin_ca_root_certificate" "example" {
-	id = cloudflare_origin_ca_certificate.example.id
+data "cloudflare_origin_ca_root_certificate" "%[1]s" {
+	id = cloudflare_origin_ca_certificate.%[1]s.id
 }
 `, zoneName, csr)
 }
