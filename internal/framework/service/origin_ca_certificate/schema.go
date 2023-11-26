@@ -14,7 +14,7 @@ func (r *CloudflareOriginCACertificateDataSource) Schema(ctx context.Context, re
 		MarkdownDescription: "Use this data source to retrieve an existing origin ca certificate.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The user's unique identifier.",
+				Description: "The Origin CA Certificate unique identifier.",
 				Computed:    true,
 			},
 			"certificate": schema.StringAttribute{
