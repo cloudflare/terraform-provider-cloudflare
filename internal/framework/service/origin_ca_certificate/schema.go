@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -32,7 +33,7 @@ func (r *CloudflareOriginCACertificateDataSource) Schema(ctx context.Context, re
 			},
 			"request_type": schema.StringAttribute{
 				Computed:    true,
-				Description: fmt.Sprintf("The signature type desired on the certificate. %v", []string{"origin-rsa", "origin-ecc", "keyless-certificate"}),
+				Description: fmt.Sprintf("The signature type desired on the certificate. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"origin-rsa", "origin-ecc", "keyless-certificate"})),
 			},
 			"revoked_at": schema.StringAttribute{
 				Computed:    true,
