@@ -27,7 +27,7 @@ func (r *CloudflareOriginCACertificateDataSource) Schema(ctx context.Context, re
 			},
 			"expires_on": schema.StringAttribute{
 				Computed:    true,
-				Description: "The datetime when the certificate will expire.",
+				Description: "The timestamp when the certificate will expire.",
 			},
 			"hostnames": schema.ListAttribute{
 				Computed:    true,
