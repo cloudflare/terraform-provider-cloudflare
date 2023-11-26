@@ -1,8 +1,6 @@
 package sdkv2provider
 
 import (
-	"fmt"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -107,7 +105,7 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 							Computed: true,
 						},
 						"preview_deployment_setting": {
-							Description:  fmt.Sprintf("Preview Deployment Setting. %s", renderAvailableDocumentationValuesStringSlice([]string{"custom", "all", "none"})),
+							Description:  "Preview Deployment Setting.",
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"custom", "all", "none"}, false),
@@ -193,9 +191,9 @@ func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 			},
 			"usage_model": {
 				Type:         schema.TypeString,
-				Description:  fmt.Sprintf("Usage model used for Pages Functions. %s", renderAvailableDocumentationValuesStringSlice([]string{"unbound", "bundled", "standard"})),
+				Description:  "Usage model used for Pages Functions.",
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled", "standard"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"unbound", "bundled"}, false),
 				Default:      "bundled",
 			},
 			"placement": {
