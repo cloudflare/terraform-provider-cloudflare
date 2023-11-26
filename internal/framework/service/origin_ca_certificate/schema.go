@@ -15,15 +15,11 @@ func (r *CloudflareOriginCACertificateDataSource) Schema(ctx context.Context, re
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The Origin CA Certificate unique identifier.",
-				Computed:    true,
+				Required:    true,
 			},
 			"certificate": schema.StringAttribute{
 				Computed:    true,
 				Description: "The Origin CA certificate.",
-			},
-			"csr": schema.StringAttribute{
-				Computed:    true,
-				Description: "The Certificate Signing Request. Must be newline-encoded.",
 			},
 			"expires_on": schema.StringAttribute{
 				Computed:    true,
@@ -37,11 +33,6 @@ func (r *CloudflareOriginCACertificateDataSource) Schema(ctx context.Context, re
 			"request_type": schema.StringAttribute{
 				Computed:    true,
 				Description: fmt.Sprintf("The signature type desired on the certificate. %v", []string{"origin-rsa", "origin-ecc", "keyless-certificate"}),
-			},
-			"requested_validity": schema.Int64Attribute{
-				Optional:    true,
-				Computed:    true,
-				Description: fmt.Sprintf("The number of days for which the certificate should be valid. %v", []int{7, 30, 90, 365, 730, 1095, 5475}),
 			},
 			"revoked_at": schema.StringAttribute{
 				Computed:    true,

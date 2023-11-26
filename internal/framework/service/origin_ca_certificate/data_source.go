@@ -58,13 +58,11 @@ func (r *CloudflareOriginCACertificateDataSource) Read(ctx context.Context, req 
 	}
 
 	data = CloudflareOriginCACertificateModel{
-		ID:                types.StringValue(cert.ID),
-		Certificate:       types.StringValue(cert.Certificate),
-		CSR:               types.StringValue(cert.CSR),
-		ExpiresOn:         types.StringValue(cert.ExpiresOn.String()),
-		RequestType:       types.StringValue(cert.RequestType),
-		RequestedValidity: types.Int64Value(int64(cert.RequestValidity)),
-		RevokedAt:         types.StringValue(cert.RevokedAt.String()),
+		ID:          types.StringValue(cert.ID),
+		Certificate: types.StringValue(cert.Certificate),
+		ExpiresOn:   types.StringValue(cert.ExpiresOn.String()),
+		RequestType: types.StringValue(cert.RequestType),
+		RevokedAt:   types.StringValue(cert.RevokedAt.String()),
 	}
 
 	elements := make([]attr.Value, 0, len(cert.Hostnames))
