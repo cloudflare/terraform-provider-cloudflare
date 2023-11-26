@@ -1,0 +1,3 @@
+```release-note:new-data-source
+cloudflare_origin_ca_certificate
+```
