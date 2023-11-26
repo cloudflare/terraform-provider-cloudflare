@@ -11,10 +11,12 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccCloudflareOriginCACertificateDataSource(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	csr, err := generateCSR(zoneName)
 	if err != nil {
@@ -22,19 +24,16 @@ func TestAccCloudflareOriginCACertificateDataSource(t *testing.T) {
 		return
 	}
 
-	name := fmt.Sprintf("data.cloudflare_origin_ca_certificate.%s", zoneName)
-
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareOriginCACertificateDataSource_Basic(zoneName, csr),
+				Config: testAccCheckCloudflareOriginCACertificateDataSource_Basic(rnd, zoneName, csr),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "request_type", "origin-rsa"),
-					resource.TestCheckResourceAttr(name, "requested_validity", "7"),
-					resource.TestCheckResourceAttr(name, "hostnames.#", "1"),
-					resource.TestCheckResourceAttr(name, "hostnames.0", "example.com"),
+					resource.TestCheckResourceAttr("data.cloudflare_origin_ca_certificate."+rnd, "request_type", "origin-rsa"),
+					resource.TestCheckResourceAttr("data.cloudflare_origin_ca_certificate."+rnd, "hostnames.#", "2"),
+					resource.TestCheckResourceAttrSet("data.cloudflare_origin_ca_certificate."+rnd, "certificate"),
 				),
 			},
 		},
@@ -63,18 +62,18 @@ func generateCSR(zone string) (string, error) {
 	return string(csrPem), nil
 }
 
-func testAccCheckCloudflareOriginCACertificateDataSource_Basic(zoneName string, csr string) string {
+func testAccCheckCloudflareOriginCACertificateDataSource_Basic(rnd, zoneName, csr string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_origin_ca_certificate" "%[1]s" {
 	csr                = <<EOT
-%[2]sEOT
-	hostnames          = [ "%[1]s", "*.%[1]s" ]
+%[3]sEOT
+	hostnames          = [ "%[2]s", "*.%[2]s" ]
 	request_type       = "origin-rsa"
 	requested_validity = 7
 }
 
-data "cloudflare_origin_ca_root_certificate" "%[1]s" {
+data "cloudflare_origin_ca_certificate" "%[1]s" {
 	id = cloudflare_origin_ca_certificate.%[1]s.id
 }
-`, zoneName, csr)
+`, rnd, zoneName, csr)
 }
