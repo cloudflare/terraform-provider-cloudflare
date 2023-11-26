@@ -30,6 +30,6 @@ data "cloudflare_origin_ca_certificate" "example" {
 - `expires_on` (String) The timestamp when the certificate will expire.
 - `hostnames` (List of String) A list of hostnames or wildcard names bound to the certificate.
 - `request_type` (String) The signature type desired on the certificate. [origin-rsa origin-ecc keyless-certificate]
-- `revoked_at` (String) The datetime when the certificate was revoked.
+- `revoked_at` (String) The timestamp when the certificate was revoked.
 
 
