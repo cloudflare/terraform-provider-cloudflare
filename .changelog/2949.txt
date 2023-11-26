@@ -1,3 +1,0 @@
-```release-note:enhancement
-resource/cloudflare_pages_project: support `standard` usage model for functions
-```
