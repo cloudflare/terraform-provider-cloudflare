@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareUserDataSource(t *testing.T) {
+func TestAccCloudflareOriginCACertificateDataSource(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	csr, err := generateCSR(zoneName)
 	if err != nil {
