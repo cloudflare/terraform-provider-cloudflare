@@ -1,5 +1,9 @@
 ## 4.20.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_origin_ca_certificate` ([#2961](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2961))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_email_routing_rule: `action.value` is now optional to support `drop` rules not requiring it ([#2449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2449))
