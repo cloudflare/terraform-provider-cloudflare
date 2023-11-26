@@ -873,11 +873,11 @@ resource "cloudflare_access_application" "%[1]s" {
 `, rnd, zoneID, domain)
 }
 
-func testAccessApplicationWithAppLauncherCustomizationFields(rnd, zoneID string) string {
+func testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_access_application" "%[1]s" {
-			name             = "%[1]s-updated"
-			zone_id          = "%[2]s"
+			name             = "%[1]s"
+			account_id       = "%[2]s"
 			domain           = "%[1]s.example.com"
 			type             = "app_launcher"
 			session_duration = "24h"
@@ -890,7 +890,7 @@ func testAccessApplicationWithAppLauncherCustomizationFields(rnd, zoneID string)
 				name = "footer link"
 				url = "https://www.cloudflare.com"
 			}
-		
+
 
 			landing_page_design {
 				title = "title"
@@ -900,7 +900,7 @@ func testAccessApplicationWithAppLauncherCustomizationFields(rnd, zoneID string)
 				button_text_color = "#000000"
 			}
 	}
-	`, rnd, zoneID)
+	`, rnd, accountID)
 }
 
 func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
