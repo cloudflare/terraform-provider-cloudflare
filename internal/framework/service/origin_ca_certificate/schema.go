@@ -36,7 +36,7 @@ func (r *CloudflareOriginCACertificateDataSource) Schema(ctx context.Context, re
 			},
 			"revoked_at": schema.StringAttribute{
 				Computed:    true,
-				Description: "The datetime when the certificate was revoked.",
+				Description: "The timestamp when the certificate was revoked.",
 			},
 		},
 	}
