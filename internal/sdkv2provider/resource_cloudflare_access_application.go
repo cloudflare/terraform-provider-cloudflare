@@ -84,7 +84,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	}
 	if appType == "app_launcher" {
 		newAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
-			LogoURL:               d.Get("logo_url").(string),
+			LogoURL:               d.Get("app_launcher_logo_url").(string),
 			BackgroundColor:       d.Get("bg_color").(string),
 			HeaderBackgroundColor: d.Get("header_bg_color").(string),
 		}
@@ -249,7 +249,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	}
 	if appType == "app_launcher" {
 		updatedAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
-			LogoURL:               d.Get("logo_url").(string),
+			LogoURL:               d.Get("app_launcher_logo_url").(string),
 			BackgroundColor:       d.Get("bg_color").(string),
 			HeaderBackgroundColor: d.Get("header_bg_color").(string),
 		}

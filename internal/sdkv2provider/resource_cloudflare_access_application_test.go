@@ -609,11 +609,11 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 			{Config: testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "name", "App Launcher"),
 					resource.TestCheckResourceAttr(name, "type", "app_launcher"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "header_bg_color", "#000000"),
-					resource.TestCheckResourceAttr(name, "bg_color", "#00000"),
+					resource.TestCheckResourceAttr(name, "bg_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "app_launcher_logo_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
 					resource.TestCheckResourceAttr(name, "landing_page_design.#", "1"),
 					resource.TestCheckResourceAttr(name, "landing_page_design.0.title", "title"),
@@ -876,12 +876,10 @@ resource "cloudflare_access_application" "%[1]s" {
 func testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_access_application" "%[1]s" {
-			name             = "%[1]s"
 			account_id       = "%[2]s"
-			domain           = "%[1]s.example.com"
 			type             = "app_launcher"
 			session_duration = "24h"
-			app_launcher_visible = true
+			app_launcher_visible = false
 			app_launcher_logo_url = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
 			bg_color = "#000000"
 			header_bg_color = "#000000"

@@ -34,8 +34,9 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 		},
 		"name": {
 			Type:        schema.TypeString,
-			Required:    true,
+			Computed:    true,
 			Description: "Friendly name of the Access Application.",
+			Optional:    true,
 		},
 		"domain": {
 			Type:        schema.TypeString,
