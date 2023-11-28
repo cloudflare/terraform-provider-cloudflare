@@ -22,6 +22,7 @@ const (
 	moduleContent     = `export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm       = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 	compatibilityDate = "2023-03-19"
+	d1DatabaseID      = "f558dd73-d16b-4918-8e3d-1f3a3b557606"
 )
 
 var (
@@ -64,7 +65,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET", "MY_QUEUE", "MY_DATABASE"}),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET", "MY_QUEUE"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -94,7 +95,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccesKeyID, r2AccesKeySecret),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
+					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_DATABASE"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", moduleContent),
 					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
@@ -139,6 +140,7 @@ func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 		cfg, err := config.LoadDefaultConfig(context.TODO(),
 			config.WithEndpointResolverWithOptions(r2Resolver),
 			config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyId, accessKeySecret, "")),
+			config.WithDefaultRegion("auto"),
 		)
 		if err != nil {
 			t.Error(err)
@@ -241,11 +243,6 @@ resource "cloudflare_worker_script" "%[1]s" {
     environment = "production"
   }
 
-  d1_database_binding {
-	name = "MY_DATABASE"
-	database_id = "cef5331f-e5c7-4c8a-a415-7908ae45f92a"
-  }
-
   queue_binding {
     binding         = "MY_QUEUE"
     queue = cloudflare_queue.%[1]s.name
@@ -277,8 +274,13 @@ resource "cloudflare_worker_script" "%[1]s" {
 		mode = "smart"
 	}
 
+	d1_database_binding {
+		name = "MY_DATABASE"
+		database_id = "%[8]s"
+	}
+
 	depends_on = [cloudflare_logpush_job.%[1]s]
-}`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret)
+}`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret, d1DatabaseID)
 }
 
 func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
