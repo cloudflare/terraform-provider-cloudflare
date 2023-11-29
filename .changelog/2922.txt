@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_list_item: ensure each `item` has its own ID and is not based on the latest created entry
+```

@@ -10,17 +10,35 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
-      - name: Fetch dependabot metadata
-        id: dependabot-metadata
-        uses: dependabot/fetch-metadata@v1.6.0
       - uses: actions/checkout@v4
       - run: |
           gh pr checkout $PR_URL
-          cat << EOF > .changelog/$PR_NUMBER.txt
+          
+          title=$(gh pr view $PR_URL --json title | jq -r .title)
+
+          # "group with" is the title used when dependabot has a grouped update.
+          if [[ "$title" == *"group with"* ]]; then
+            output=$(gh pr view $PR_URL | grep 'Updates')
+          else
+            # clean out the 'build(deps): ' prefix.
+            output="${title//build(deps): /}"
+          fi
+
+          IFS=$'\n'
+
+          while read -r line; do
+            updates+=("$line")
+          done <<< "$output"
+
+          for value in ${updates[@]}; do
+          value="${value//Updates/bump}"
+          cat << EOF >> .changelog/$PR_NUMBER.txt
           \`\`\`release-note:dependency
-          provider: bumps $DEP_NAME from $DEP_PREV_VERSION to $DEP_NEXT_VERSION
+          provider: $value
           \`\`\`
           EOF
+          done
+
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
           git add .changelog/$PR_NUMBER.txt
@@ -30,6 +48,3 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          DEP_NAME: ${{ steps.dependabot-metadata.outputs.dependency-names }}
-          DEP_PREV_VERSION: ${{ steps.dependabot-metadata.outputs.previous-version }}
-          DEP_NEXT_VERSION: ${{ steps.dependabot-metadata.outputs.new-version }}

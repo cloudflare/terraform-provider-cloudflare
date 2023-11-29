@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_list_item: fix list_item for `asn` and `hostname` types
+```

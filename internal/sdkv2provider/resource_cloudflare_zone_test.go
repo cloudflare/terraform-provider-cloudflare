@@ -88,7 +88,7 @@ func TestAccCloudflareZone_PartialSetup(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithPartialSetup(rnd, "foo.net", "true", "false", "free", accountID),
+				Config: testZoneConfigWithTypeSetup(rnd, "foo.net", "true", "false", "free", accountID, "partial"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone", "foo.net"),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
@@ -110,7 +110,7 @@ func TestAccCloudflareZone_FullSetup(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithExplicitFullSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(name, "paused", "true"),
@@ -213,13 +213,37 @@ func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithExplicitFullSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "false", "false", "enterprise", accountID),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "false", "false", "enterprise", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
 					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
 					resource.TestCheckResourceAttr(name, "type", "full"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareZone_Secondary(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "secondary"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.%s", rnd, zoneName)),
+					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
+					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
+					resource.TestCheckResourceAttr(name, "type", "secondary"),
 				),
 			},
 		},
@@ -256,10 +280,10 @@ func TestAccCloudflareZone_SetType(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testZoneConfigWithExplicitFullSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "full"),
 			},
 			{
-				Config: testZoneConfigWithPartialSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID),
+				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "partial"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
@@ -268,7 +292,7 @@ func TestAccCloudflareZone_SetType(t *testing.T) {
 	})
 }
 
-func testZoneConfigWithPartialSetup(resourceID, zoneName, paused, jumpStart, plan, accountID string) string {
+func testZoneConfigWithTypeSetup(resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType string) string {
 	return fmt.Sprintf(`
 				resource "cloudflare_zone" "%[1]s" {
 					account_id = "%[6]s"
@@ -276,18 +300,6 @@ func testZoneConfigWithPartialSetup(resourceID, zoneName, paused, jumpStart, pla
 					paused = %[3]s
 					jump_start = %[4]s
 					plan = "%[5]s"
-					type = "partial"
-				}`, resourceID, zoneName, paused, jumpStart, plan, accountID)
-}
-
-func testZoneConfigWithExplicitFullSetup(resourceID, zoneName, paused, jumpStart, plan, accountID string) string {
-	return fmt.Sprintf(`
-				resource "cloudflare_zone" "%[1]s" {
-					account_id = "%[6]s"
-					zone = "%[2]s"
-					paused = %[3]s
-					jump_start = %[4]s
-					plan = "%[5]s"
-					type = "full"
-				}`, resourceID, zoneName, paused, jumpStart, plan, accountID)
+					type = "%[7]s"
+				}`, resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType)
 }

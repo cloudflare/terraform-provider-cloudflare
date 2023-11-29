@@ -187,7 +187,7 @@ func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
 			}
 		} else {
 			// For fallback domains on a non-default device settings policy, only need to check for the deletion of the policy.
-			_, err := client.GetDeviceSettingsPolicy(context.Background(), accountID, policyID)
+			_, err := client.GetDeviceSettingsPolicy(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetDeviceSettingsPolicyParams{PolicyID: cloudflare.StringPtr(policyID)})
 			if err == nil {
 				return fmt.Errorf("device settings policy still exists")
 			}

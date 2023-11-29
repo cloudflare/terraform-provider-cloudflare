@@ -87,6 +87,7 @@ var (
 		"service/zones",
 		"service/bot_management",
 		"service/addressing",
+		"service/zero_trust_devices",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -150,6 +151,10 @@ var (
 		"service/addressing": {
 			teamName: "Address",
 			owner: "jabley",
+		},
+		"service/zero_trust_devices": {
+			teamName: "ZT Device Services",
+			owner: "suhrit",
 		},
 	}
 )

@@ -4,6 +4,11 @@ updates:
   directory: "/"
   schedule:
     interval: "daily"
+  groups:
+    # group the AWS SDK version bumps together 
+    aws:
+      patterns:
+        - "*aws-sdk-go*"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:

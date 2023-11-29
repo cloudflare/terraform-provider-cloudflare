@@ -38,7 +38,7 @@ func resourceCloudflareListItemSchema() map[string]*schema.Schema {
 		"hostname": {
 			Type:         schema.TypeList,
 			ExactlyOneOf: []string{"ip", "redirect", "hostname", "asn"},
-			Description:  "Redirect configuration to store in the list.",
+			Description:  "Hostname to store in the list.",
 			Optional:     true,
 			MaxItems:     1,
 			ForceNew:     true,

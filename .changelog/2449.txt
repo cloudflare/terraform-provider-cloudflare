@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_email_routing_rule: add action type `drop`
+```
+
+```release-note:enhancement
+resource/cloudflare_email_routing_rule: `action.value` is now optional to support `drop` rules not requiring it
+```

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -47,7 +48,7 @@ func resourceCloudflareListItemCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("items of type %s can not be added to lists of type %s", listItemType, list.Kind))
 	}
 
-	createListItemResponse, err := client.CreateListItem(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListCreateItemParams{
+	_, err = client.CreateListItem(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListCreateItemParams{
 		ID:   listID,
 		Item: buildListItemCreateRequest(d),
 	})
@@ -55,8 +56,19 @@ func resourceCloudflareListItemCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(fmt.Errorf("unable to create list item on list id %s: %w", listID, err))
 	}
 
-	newestItem := mostRecentlyCreatedItem(createListItemResponse)
-	d.SetId(newestItem.ID)
+	// this is extremely inefficient however, it's the only option as the list
+	// service uses a polling model and does not expose the ID.
+	searchTerm := getSearchTerm(d)
+	items, err := client.ListListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListListItemsParams{
+		ID:     listID,
+		Search: searchTerm,
+	})
+
+	if len(items) != 1 {
+		return diag.FromErr(fmt.Errorf("failed to match exactly one list item: %w", err))
+	}
+
+	d.SetId(items[0].ID)
 
 	return nil
 }
@@ -106,7 +118,11 @@ func resourceCloudflareListItemRead(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if listItem.Hostname != nil {
-		d.Set("url_hostname", listItem.Hostname.UrlHostname)
+		d.Set("hostname", []interface{}{
+			map[string]interface{}{
+				"url_hostname": listItem.Hostname.UrlHostname,
+			},
+		})
 	}
 
 	if listItem.Redirect != nil {
@@ -176,6 +192,28 @@ func listItemType(d *schema.ResourceData) string {
 
 	if _, ok := d.GetOk("asn"); ok {
 		return "asn"
+	}
+
+	return ""
+}
+
+// getSearchTerm takes the schema and works out which "type" we are looking for
+// and returns it.
+func getSearchTerm(d *schema.ResourceData) string {
+	if ip, ok := d.GetOk("ip"); ok {
+		return ip.(string)
+	}
+
+	if redirect, ok := d.GetOk("redirect"); ok {
+		return redirect.(string)
+	}
+
+	if hostname, ok := d.GetOk("hostname"); ok {
+		return hostname.([]interface{})[0].(map[string]interface{})["url_hostname"].(string)
+	}
+
+	if asn, ok := d.GetOk("asn"); ok {
+		return strconv.Itoa(asn.(int))
 	}
 
 	return ""

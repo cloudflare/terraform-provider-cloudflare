@@ -31,9 +31,13 @@ $ make testacc
 To run a subset of the acceptance test suite, you can run
 
 ```sh
+# SDKv2 example
 TESTARGS='-run "^<regex target of tests>" -count 1 -parallel 1' make testacc
-# Example
-# TESTARGS='-run "^TestAccTestPagesProject" -count 1 -parallel 1' make testacc
+TESTARGS='-run "^TestAccTestPagesProject" -count 1 -parallel 1' make testacc
+
+# Framework example
+TEST=./internal/framework/service/rulesets TESTARGS='-run "^<regex target of tests>" -count 1' make testacc
+TEST=./internal/framework/service/rulesets TESTARGS='-run "^TestAccCloudflareRuleset_" -count 1' make testacc
 ```
 
 You can also install other optional (but great to have tools) using `make tools`.

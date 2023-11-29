@@ -169,7 +169,11 @@ func testAccCheckCloudflareDeviceSettingsPolicyDestroy(s *terraform.State) error
 			return nil
 		}
 
-		_, err := client.GetDeviceSettingsPolicy(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], policyID)
+		_, err := client.GetDeviceSettingsPolicy(
+			context.Background(),
+			cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]),
+			cloudflare.GetDeviceSettingsPolicyParams{PolicyID: cloudflare.StringPtr(policyID)},
+		)
 		if err == nil {
 			return fmt.Errorf("Device Posture Integration still exists")
 		}
