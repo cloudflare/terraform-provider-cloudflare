@@ -106,5 +106,16 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 			Type:        schema.TypeBool,
 			Optional:    true,
 		},
+		"lan_allow_minutes": {
+			Description: "The amount of time in minutes a user is allowed access to their LAN.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"lan_allow_subnet_size": {
+			Description: "The size of the subnet for the local access network.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Default:     24,
+		},
 	}
 }
