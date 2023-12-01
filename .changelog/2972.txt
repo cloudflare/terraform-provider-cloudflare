@@ -1,0 +1,3 @@
+```release-note:docs-correction
+Correction in docs
+```
