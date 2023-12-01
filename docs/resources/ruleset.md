@@ -250,7 +250,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
       ]
     }
 
-    expression  = "(http.host eq \"example.host.com\")"
+    expression  = "true"
     description = "log custom fields rule"
     enabled     = true
   }
