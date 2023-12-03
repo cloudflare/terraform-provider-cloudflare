@@ -48,7 +48,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(
-						path.Expression(path.MatchRoot((consts.ZoneIDSchemaKey))),
+						path.Expression(path.MatchRoot(consts.ZoneIDSchemaKey)),
 					),
 				},
 			},
@@ -57,13 +57,13 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(
-						path.Expression(path.MatchRoot((consts.AccountIDSchemaKey))),
+						path.Expression(path.MatchRoot(consts.AccountIDSchemaKey)),
 					),
 				},
 			},
 			"name": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Name of the ruleset.",
+				MarkdownDescription: "Name of the ruleset." + utils.RenderRequireReplaceDocumentationString(),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 					stringplanmodifier.UseStateForUnknown(),
@@ -97,7 +97,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 					stringplanmodifier.RequiresReplace(),
 					stringplanmodifier.UseStateForUnknown(),
 				},
-				MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
+				MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())) + utils.RenderRequireReplaceDocumentationString(),
 			},
 		},
 		Blocks: map[string]schema.Block{

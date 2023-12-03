@@ -2,6 +2,7 @@ package r2_bucket
 
 import (
 	"context"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -31,7 +32,7 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 			"name": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "The name of the R2 bucket.",
+				MarkdownDescription: "The name of the R2 bucket." + utils.RenderRequireReplaceDocumentationString(),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -39,7 +40,7 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 			"location": schema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "The location hint of the R2 bucket.",
+				MarkdownDescription: "The location hint of the R2 bucket." + utils.RenderRequireReplaceDocumentationString(),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},

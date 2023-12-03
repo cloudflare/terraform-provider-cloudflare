@@ -1,24 +1,21 @@
-package d1
+package email_routing_address
 
 import (
 	"context"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"regexp"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-func (r *DatabaseResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
-			The [D1 Database](https://developers.cloudflare.com/d1/) resource allows you to manage Cloudflare D1 databases.
+			The [Email Routing Address](https://developers.cloudflare.com/email-routing/setup/email-routing-addresses/#destination-addresses) resource allows you to manage Cloudflare Email Routing Destination Addresses.
 	`),
 
 		Attributes: map[string]schema.Attribute{
@@ -29,26 +26,28 @@ func (r *DatabaseResource) Schema(ctx context.Context, req resource.SchemaReques
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			consts.IDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: consts.IDSchemaDescription,
+			"tag": schema.StringAttribute{
+				MarkdownDescription: "Destination address identifier.",
 				Computed:            true,
 			},
-			"name": schema.StringAttribute{
+			"email": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "The name of the D1 Database." + utils.RenderRequireReplaceDocumentationString(),
+				MarkdownDescription: "The contact email address of the user." + utils.RenderRequireReplaceDocumentationString(),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
-				Validators: []validator.String{
-					stringvalidator.RegexMatches(
-						regexp.MustCompile(`^[a-z0-9][a-z0-9-_]*$`),
-						"must contain only lowercase alphanumeric characters",
-					),
-				},
 			},
-			"version": schema.StringAttribute{
+			"verified": schema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "The backend version of the database.",
+				MarkdownDescription: "The date and time the destination address has been verified. Null means not verified yet.",
+			},
+			"created": schema.StringAttribute{
+				Computed:            true,
+				MarkdownDescription: "The date and time the destination address has been created.",
+			},
+			"modified": schema.StringAttribute{
+				Computed:            true,
+				MarkdownDescription: "The date and time the destination address has been modified.",
 			},
 		},
 	}

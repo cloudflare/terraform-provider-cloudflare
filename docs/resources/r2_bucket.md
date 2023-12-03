@@ -26,11 +26,11 @@ resource "cloudflare_r2_bucket" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `name` (String) The name of the R2 bucket.
+- `name` (String) The name of the R2 bucket. **Modifying this attribute will force creation of a new resource.**
 
 ### Optional
 
-- `location` (String) The location hint of the R2 bucket.
+- `location` (String) The location hint of the R2 bucket. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

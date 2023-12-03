@@ -26,8 +26,8 @@ resource "cloudflare_d1_database" "example" {
 
 ### Required
 
-- `account_id` (String) The account identifier to target for the resource.
-- `name` (String) The name of the D1 Database.
+- `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+- `name` (String) The name of the D1 Database. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

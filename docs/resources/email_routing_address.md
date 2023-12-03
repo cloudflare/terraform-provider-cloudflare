@@ -2,12 +2,12 @@
 page_title: "cloudflare_email_routing_address Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a resource for managing Email Routing Addresses.
+  The Email Routing Address https://developers.cloudflare.com/email-routing/setup/email-routing-addresses/#destination-addresses resource allows you to manage Cloudflare Email Routing Destination Addresses.
 ---
 
 # cloudflare_email_routing_address (Resource)
 
-Provides a resource for managing Email Routing Addresses.
+The [Email Routing Address](https://developers.cloudflare.com/email-routing/setup/email-routing-addresses/#destination-addresses) resource allows you to manage Cloudflare Email Routing Destination Addresses.
 
 ## Example Usage
 
@@ -28,9 +28,14 @@ resource "cloudflare_email_routing_address" "example" {
 ### Read-Only
 
 - `created` (String) The date and time the destination address has been created.
-- `id` (String) The ID of this resource.
-- `modified` (String) The date and time the destination address was last modified.
+- `modified` (String) The date and time the destination address has been modified.
 - `tag` (String) Destination address identifier.
 - `verified` (String) The date and time the destination address has been verified. Null means not verified yet.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_filter.example <account_id>/<email_tag>
+```
