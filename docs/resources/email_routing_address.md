@@ -28,6 +28,7 @@ resource "cloudflare_email_routing_address" "example" {
 ### Read-Only
 
 - `created` (String) The date and time the destination address has been created.
+- `id` (String, Deprecated) The identifier of this resource.
 - `modified` (String) The date and time the destination address has been modified.
 - `tag` (String) Destination address identifier.
 - `verified` (String) The date and time the destination address has been verified. Null means not verified yet.

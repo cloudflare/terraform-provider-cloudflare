@@ -57,7 +57,6 @@ func TestAccCloudflareEmailRoutingAddress(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareEmailRoutingAddress(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttrSet(resourceName, "tag"),
 					resource.TestCheckResourceAttr(resourceName, "email", "user@example.com"),
 				),
@@ -76,6 +75,6 @@ func testAccCheckCloudflareEmailRoutingAddress(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_email_routing_address" "%[1]s" {
     account_id = "%[2]s"
-    email      = "user1@example.com"
+    email      = "user@example.com"
   }`, rnd, accountID)
 }

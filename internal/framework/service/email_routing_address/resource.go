@@ -126,6 +126,7 @@ func buildEmailRoutingAddressModel(accountID types.String, address cloudflare.Em
 	}
 	return &EmailRoutingAddressModel{
 		AccountID: accountID,
+		ID:        types.StringValue(address.Tag),
 		Tag:       types.StringValue(address.Tag),
 		Email:     types.StringValue(address.Email),
 		Verified:  types.StringValue(verifiedTime),

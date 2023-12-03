@@ -26,6 +26,11 @@ func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.S
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
+			consts.IDSchemaKey: schema.StringAttribute{
+				MarkdownDescription: consts.IDSchemaDescription,
+				Computed:            true,
+				DeprecationMessage:  "This attribute is deprecated and will be removed in a future release. Please use the `tag` attribute instead.",
+			},
 			"tag": schema.StringAttribute{
 				MarkdownDescription: "Destination address identifier.",
 				Computed:            true,
