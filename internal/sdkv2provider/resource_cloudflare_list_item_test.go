@@ -178,6 +178,38 @@ func TestAccCloudflareListItem_Hostname(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareListItem_Redirect(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	var ListItem cloudflare.ListItem
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameRedirectItem(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareListItemExists(name, rnd, &ListItem),
+					resource.TestCheckResourceAttr(
+						name, "redirect.#", "1"),
+					resource.TestCheckResourceAttr(
+						name, "redirect.0.source_url", "example.com/"),
+					resource.TestCheckResourceAttr(
+						name, "redirect.0.target_url", "https://example1.com"),
+					resource.TestCheckResourceAttr(
+						name, "redirect.0.status_code", "301"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_list" "%[2]s" {
@@ -308,6 +340,27 @@ func testAccCheckCloudflareHostnameListItem(ID, name, comment, accountID string)
 	comment    = "%[3]s"
 	hostname {
 		url_hostname = "example.com"
+	}
+  } `, ID, name, comment, accountID)
+}
+
+func testAccCheckCloudflareHostnameRedirectItem(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "redirect"
+  }
+
+  resource "cloudflare_list_item" "%[1]s" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	redirect {
+		source_url = "example.com/"
+		target_url = "https://example1.com"
+		status_code = 301
 	}
   } `, ID, name, comment, accountID)
 }
