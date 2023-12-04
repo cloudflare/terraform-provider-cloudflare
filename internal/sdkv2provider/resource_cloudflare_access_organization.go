@@ -2,8 +2,8 @@ package sdkv2provider
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -120,9 +120,13 @@ func resourceCloudflareAccessOrganizationImport(ctx context.Context, d *schema.R
 
 	d.Set(consts.AccountIDSchemaKey, accountID)
 
-	readErr := resourceCloudflareAccessOrganizationRead(ctx, d, meta)
-	if readErr != nil {
-		return nil, errors.New("failed to read Access Organization state")
+	diags := resourceCloudflareAccessOrganizationRead(ctx, d, meta)
+	if diags != nil {
+		errors := []string{}
+		for _, diag := range diags {
+			errors = append(errors, fmt.Sprintf("  * %s: %s", diag.Summary, diag.Detail))
+		}
+		return nil, fmt.Errorf("failed to read Access Organization state:\n%s", strings.Join(errors, "\n"))
 	}
 
 	return []*schema.ResourceData{d}, nil
