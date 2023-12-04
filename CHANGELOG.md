@@ -1,5 +1,9 @@
 ## 4.21.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_tunnel_config: Destroying tunnel configurations now applies an empty configuration rather than deleting the parent cloudflare_tunnel resource ([#2769](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2769))
+
 BUG FIXES:
 
 * resource/cloudflare_list_item: fix issue preventing usage of redirect item type ([#2975](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2975))
