@@ -1,5 +1,9 @@
 ## 4.21.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_list_item: fix issue preventing usage of redirect item type ([#2975](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2975))
+
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.25.10 to 1.25.11 ([#2973](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2973))
