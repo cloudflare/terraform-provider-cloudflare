@@ -59,6 +59,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 				"workers_trace_events",
 				"device_posture_results",
 				"zero_trust_network_sessions",
+				"magic_ids_detections",
 			}, false),
 			Description: fmt.Sprintf(
 				"The kind of the dataset to use with the logpush job. %s",
@@ -78,6 +79,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 					"workers_trace_events",
 					"device_posture_results",
 					"zero_trust_network_sessions",
+					"magic_ids_detections",
 				}),
 			),
 		},
