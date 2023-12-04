@@ -138,7 +138,7 @@ func buildEmailRoutingAddressModel(accountID types.String, address cloudflare.Em
 func (r *EmailRoutingAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	idparts := strings.Split(req.ID, "/")
 	if len(idparts) != 2 {
-		resp.Diagnostics.AddError("error importing email routing destination address", "invalid ID specified. Please specify the ID as \"account_id/tag\"")
+		resp.Diagnostics.AddError("error importing email routing destination address", `invalid ID specified. Please specify the ID as "<account_id>/<email_routing_address_id>"`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(
