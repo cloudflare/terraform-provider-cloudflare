@@ -58,8 +58,10 @@ resource "cloudflare_access_application" "staging_app" {
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
 - `allowed_idps` (Set of String) The identity providers selected for the application.
+- `app_launcher_logo_url` (String) The logo URL of the app launcher.
 - `app_launcher_visible` (Boolean) Option to show/hide applications in App Launcher. Defaults to `true`.
 - `auto_redirect_to_identity` (Boolean) Option to skip identity provider selection if only one is configured in `allowed_idps`. Defaults to `false`.
+- `bg_color` (String) The background color of the app launcher.
 - `cors_headers` (Block List) CORS configuration for the Access Application. See below for reference structure. (see [below for nested schema](#nestedblock--cors_headers))
 - `custom_deny_message` (String) Option that returns a custom error message when a user is denied access to the application.
 - `custom_deny_url` (String) Option that redirects to a custom URL when a user is denied access to the application via identity based rules.
@@ -67,7 +69,10 @@ resource "cloudflare_access_application" "staging_app" {
 - `custom_pages` (Set of String) The custom pages selected for the application.
 - `domain` (String) The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.
 - `enable_binding_cookie` (Boolean) Option to provide increased security against compromised authorization tokens and CSRF attacks by requiring an additional "binding" cookie on requests. Defaults to `false`.
+- `footer_links` (Block Set) The footer links of the app launcher. (see [below for nested schema](#nestedblock--footer_links))
+- `header_bg_color` (String) The background color of the header bar in the app launcher.
 - `http_only_cookie_attribute` (Boolean) Option to add the `HttpOnly` cookie flag to access tokens.
+- `landing_page_design` (Block List, Max: 1) The landing page design of the app launcher. (see [below for nested schema](#nestedblock--landing_page_design))
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
 - `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
@@ -97,6 +102,27 @@ Optional:
 - `allowed_methods` (Set of String) List of methods to expose via CORS.
 - `allowed_origins` (Set of String) List of origins permitted to make CORS requests.
 - `max_age` (Number) The maximum time a preflight request will be cached.
+
+
+<a id="nestedblock--footer_links"></a>
+### Nested Schema for `footer_links`
+
+Optional:
+
+- `name` (String) The name of the footer link.
+- `url` (String) The URL of the footer link.
+
+
+<a id="nestedblock--landing_page_design"></a>
+### Nested Schema for `landing_page_design`
+
+Optional:
+
+- `button_color` (String) The button color of the landing page.
+- `button_text_color` (String) The button text color of the landing page.
+- `image_url` (String) The URL of the image to be displayed in the landing page.
+- `message` (String) The message of the landing page.
+- `title` (String) The title of the landing page.
 
 
 <a id="nestedblock--saas_app"></a>
