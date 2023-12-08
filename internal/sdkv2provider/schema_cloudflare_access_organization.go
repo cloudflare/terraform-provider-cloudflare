@@ -59,7 +59,6 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 		"session_duration": {
 			Type:     schema.TypeString,
 			Optional: true,
-			Default:  "24h",
 			ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
 				v := val.(string)
 				_, err := time.ParseDuration(v)
