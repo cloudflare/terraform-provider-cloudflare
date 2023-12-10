@@ -3,6 +3,8 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_access_application: adds the ability to set customization fields on the app launcher application. ([#2777](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2777))
+* resource/cloudflare_access_organization: remove default value for `session_duration`. ([#2995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2995))
+* resource/cloudflare_access_policy: remove default value for `session_duration`. ([#2995](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2995))
 * resource/cloudflare_logpush_job: add support for `magic_ids_detections`. ([#2983](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2983))
 * resource/cloudflare_tunnel_config: Destroying tunnel configurations now applies an empty configuration rather than deleting the parent cloudflare_tunnel resource ([#2769](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2769))
 
