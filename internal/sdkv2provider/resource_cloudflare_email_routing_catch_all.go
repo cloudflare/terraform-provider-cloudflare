@@ -24,6 +24,40 @@ func resourceCloudflareEmailRoutingCatchAll() *schema.Resource {
 	}
 }
 
+func buildMatchersAndActions(d *schema.ResourceData) (matchers []cloudflare.EmailRoutingRuleMatcher, actions []cloudflare.EmailRoutingRuleAction) {
+	if items, ok := d.GetOk("matcher"); ok {
+		for _, item := range items.(*schema.Set).List() {
+			matcher := item.(map[string]interface{})
+			matcherStruct := cloudflare.EmailRoutingRuleMatcher{
+				Type: matcher["type"].(string),
+			}
+			if val, ok := matcher["field"]; ok {
+				matcherStruct.Field = val.(string)
+			}
+			if val, ok := matcher["value"]; ok {
+				matcherStruct.Value = val.(string)
+			}
+			matchers = append(matchers, matcherStruct)
+		}
+	}
+
+	if items, ok := d.GetOk("action"); ok {
+		for _, item := range items.(*schema.Set).List() {
+			action := item.(map[string]interface{})
+			ruleAction := cloudflare.EmailRoutingRuleAction{}
+			ruleAction.Type = action["type"].(string)
+			if val, ok := action["value"]; ok {
+				for _, value := range val.([]interface{}) {
+					ruleAction.Value = append(ruleAction.Value, value.(string))
+				}
+			}
+
+			actions = append(actions, ruleAction)
+		}
+	}
+	return
+}
+
 func resourceCloudflareEmailRoutingCatchAllRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
