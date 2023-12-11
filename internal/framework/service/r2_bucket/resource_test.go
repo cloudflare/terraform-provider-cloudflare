@@ -34,6 +34,12 @@ func init() {
 			}
 
 			for _, bucket := range buckets {
+				// hard coded bucket name for Worker script acceptance tests
+				// until we can break out the packages without cyclic errors.
+				if bucket.Name == "bnfywlzwpt" {
+					continue
+				}
+
 				err := client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(accountID), bucket.Name)
 				if err != nil {
 					return fmt.Errorf("failed to delete R2 bucket %q: %w", bucket.Name, err)

@@ -59,15 +59,16 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 			},
 		},
 		"input": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Computed:    true,
+			Description: "Required for all rule types except `warp`, `gateway`, and `tanium`.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"id": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The Teams List id.",
+						Description: "The Teams List id. Required for `serial_number` and `unique_client_id` rule types.",
 					},
 					"path": {
 						Type:        schema.TypeString,

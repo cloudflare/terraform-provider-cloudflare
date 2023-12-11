@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_list_item: fix issue preventing usage of redirect item type
+```
