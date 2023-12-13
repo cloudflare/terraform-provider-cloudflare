@@ -59,8 +59,8 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 		Enabled:             req.Enabled,
 		ExcludeOfficeIps:    req.ExcludeOfficeIps,
 		Description:         req.Description,
-		LanAllowMinutes:     req.LanAllowMinutes,
-		LanAllowSubnetSize:  req.LanAllowSubnetSize,
+		LANAllowMinutes:     req.LANAllowMinutes,
+		LANAllowSubnetSize:  req.LANAllowSubnetSize,
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy %q: %w", accountID, err))
@@ -102,8 +102,8 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 			Enabled:             req.Enabled,
 			ExcludeOfficeIps:    req.ExcludeOfficeIps,
 			Description:         req.Description,
-			LanAllowMinutes:     req.LanAllowMinutes,
-			LanAllowSubnetSize:  req.LanAllowSubnetSize,
+			LANAllowMinutes:     req.LANAllowMinutes,
+			LANAllowSubnetSize:  req.LANAllowSubnetSize,
 		})
 	} else {
 		_, err = client.UpdateDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateDeviceSettingsPolicyParams{
@@ -123,8 +123,8 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 			Enabled:             req.Enabled,
 			ExcludeOfficeIps:    req.ExcludeOfficeIps,
 			Description:         req.Description,
-			LanAllowMinutes:     req.LanAllowMinutes,
-			LanAllowSubnetSize:  req.LanAllowSubnetSize,
+			LANAllowMinutes:     req.LANAllowMinutes,
+			LANAllowSubnetSize:  req.LANAllowSubnetSize,
 		})
 	}
 	if err != nil {
@@ -187,10 +187,10 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 	if err := d.Set("exclude_office_ips", policy.ExcludeOfficeIps); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing exclude_office_ips"))
 	}
-	if err := d.Set("lan_allow_minutes", policy.LanAllowMinutes); err != nil {
+	if err := d.Set("lan_allow_minutes", policy.LANAllowMinutes); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing lan_allow_minutes"))
 	}
-	if err := d.Set("lan_allow_subnet_size", policy.LanAllowSubnetSize); err != nil {
+	if err := d.Set("lan_allow_subnet_size", policy.LANAllowSubnetSize); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing lan_allow_subnet_size"))
 	}
 
@@ -283,8 +283,8 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 			Port: d.Get("service_mode_v2_port").(int),
 		},
 		ExcludeOfficeIps:   cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
-		LanAllowMinutes:    cloudflare.UintPtr(d.Get("lan_allow_minutes").(uint)),
-		LanAllowSubnetSize: cloudflare.UintPtr(d.Get("lan_allow_subnet_size").(uint)),
+		LANAllowMinutes:    cloudflare.UintPtr(d.Get("lan_allow_minutes").(uint)),
+		LANAllowSubnetSize: cloudflare.UintPtr(d.Get("lan_allow_subnet_size").(uint)),
 	}
 
 	name := d.Get("name").(string)
