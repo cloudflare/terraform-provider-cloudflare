@@ -272,13 +272,31 @@ func resourceCloudflareTunnelConfigUpdate(ctx context.Context, d *schema.Resourc
 func resourceCloudflareTunnelConfigDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+	tunnelID := d.Get("tunnel_id").(string)
 
-	err := client.DeleteTunnel(ctx, cloudflare.AccountIdentifier(accountID), d.Id())
+	// can't delete a tunnel config, so set an "empty" config instead
+	tunnel := cloudflare.TunnelConfigurationParams{
+		TunnelID: tunnelID,
+		Config: cloudflare.TunnelConfiguration{
+			OriginRequest: cloudflare.OriginRequestConfig{},
+			WarpRouting: &cloudflare.WarpRoutingConfig{
+				Enabled: false,
+			},
+			Ingress: []cloudflare.UnvalidatedIngressRule{
+				{
+					Service: "http_status:404",
+				},
+			},
+		},
+	}
+
+	_, err := client.UpdateTunnelConfiguration(ctx, cloudflare.AccountIdentifier(accountID), tunnel)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting tunnel config %q: %w", d.Id(), err))
+		return diag.FromErr(fmt.Errorf("error clearing tunnel config %q: %w", tunnelID, err))
 	}
 
 	d.SetId("")
+
 	return nil
 }
 

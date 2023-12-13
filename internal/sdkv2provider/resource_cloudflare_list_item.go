@@ -137,14 +137,17 @@ func resourceCloudflareListItemRead(ctx context.Context, d *schema.ResourceData,
 			}
 			return ""
 		}
-
-		d.Set("source_url", listItem.Redirect.SourceUrl)
-		d.Set("include_subdomains", optBoolToString(listItem.Redirect.IncludeSubdomains))
-		d.Set("target_url", listItem.Redirect.TargetUrl)
-		d.Set("status_code", listItem.Redirect.StatusCode)
-		d.Set("preserve_query_string", optBoolToString(listItem.Redirect.PreserveQueryString))
-		d.Set("subpath_matching", optBoolToString(listItem.Redirect.SubpathMatching))
-		d.Set("preserve_path_suffix", optBoolToString(listItem.Redirect.PreservePathSuffix))
+		d.Set("redirect", []interface{}{
+			map[string]interface{}{
+				"source_url":            listItem.Redirect.SourceUrl,
+				"include_subdomains":    optBoolToString(listItem.Redirect.IncludeSubdomains),
+				"target_url":            listItem.Redirect.TargetUrl,
+				"status_code":           listItem.Redirect.StatusCode,
+				"preserve_query_string": optBoolToString(listItem.Redirect.PreserveQueryString),
+				"subpath_matching":      optBoolToString(listItem.Redirect.SubpathMatching),
+				"preserve_path_suffix":  optBoolToString(listItem.Redirect.PreservePathSuffix),
+			},
+		})
 	}
 
 	return nil
@@ -205,7 +208,7 @@ func getSearchTerm(d *schema.ResourceData) string {
 	}
 
 	if redirect, ok := d.GetOk("redirect"); ok {
-		return redirect.(string)
+		return redirect.([]interface{})[0].(map[string]interface{})["source_url"].(string)
 	}
 
 	if hostname, ok := d.GetOk("hostname"); ok {
