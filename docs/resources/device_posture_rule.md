@@ -45,7 +45,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 
 - `description` (String)
 - `expiration` (String) Expire posture results after the specified amount of time. Must be in the format `1h` or `30m`. Valid units are `h` and `m`.
-- `input` (Block List) (see [below for nested schema](#nestedblock--input))
+- `input` (Block List) Required for all rule types except `warp`, `gateway`, and `tanium`. (see [below for nested schema](#nestedblock--input))
 - `match` (Block List) The conditions that the client must match to run the rule. (see [below for nested schema](#nestedblock--match))
 - `name` (String) Name of the device posture rule.
 - `schedule` (String) Tells the client when to run the device posture check. Must be in the format `1h` or `30m`. Valid units are `h` and `m`.
@@ -70,7 +70,7 @@ Optional:
 - `eid_last_seen` (String) The datetime a device last seen in RFC 3339 format from Tanium.
 - `enabled` (Boolean) True if the firewall must be enabled.
 - `exists` (Boolean) Checks if the file should exist.
-- `id` (String) The Teams List id.
+- `id` (String) The Teams List id. Required for `serial_number` and `unique_client_id` rule types.
 - `infected` (Boolean) True if SentinelOne device is infected.
 - `is_active` (Boolean) True if SentinelOne device is active.
 - `issue_count` (String) The number of issues for kolide.

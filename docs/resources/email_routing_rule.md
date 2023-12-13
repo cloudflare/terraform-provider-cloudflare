@@ -54,8 +54,11 @@ resource "cloudflare_email_routing_rule" "main" {
 
 Required:
 
-- `type` (String) Type of supported action.
-- `value` (List of String) An array with items in the following form.
+- `type` (String) Type of supported action. Available values: `forward`, `worker`, `drop`.
+
+Optional:
+
+- `value` (List of String) An array with items in the following form. Only required when `type` is `forward` or `worker`.
 
 
 <a id="nestedblock--matcher"></a>
@@ -63,7 +66,7 @@ Required:
 
 Required:
 
-- `type` (String) Type of matcher.
+- `type` (String) Type of matcher. Available values: `literal`, `all`.
 
 Optional:
 
