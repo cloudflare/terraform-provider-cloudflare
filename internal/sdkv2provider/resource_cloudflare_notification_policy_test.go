@@ -166,7 +166,7 @@ func TestAccCloudflareNotificationPolicy_WithSelectorsAttribute(t *testing.T) {
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.alert_trigger_preferences.*", "zscore_drop"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.group_by.*", "zone"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.selectors.*", "total"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.where.*", "(originStatusCodeFilter eq 200)"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.where.*", "(origin_status_code eq 200)"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.zones.*", zoneID),
 				),
 			},
@@ -244,18 +244,18 @@ func testCheckCloudflareNotificationPolicyWithSelectors(name, accountID, zoneID 
     }
     filters {
 	   alert_trigger_preferences = [
-        "zscore_drop"
-    ]
-    group_by = [
-        "zone"
-    ]
-    selectors = [
-        "total"
-    ]
-    where = [
-        "(origin_status_code eq 200)"
-    ]
-	zones = ["%[3]s"]
+			"zscore_drop"
+		]
+		group_by = [
+			"zone"
+		]
+		selectors = [
+			"total"
+		]
+		where = [
+			"(origin_status_code eq 200)"
+		]
+		zones = ["%[3]s"]
 	}
   }`, name, accountID, zoneID)
 }
