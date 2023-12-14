@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bump github.com/hashicorp/terraform-plugin-go from 0.19.1 to 0.20.0
+```
