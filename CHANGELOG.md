@@ -43,6 +43,7 @@ DEPENDENCIES:
 * provider: bump github.com/cloudflare/cloudflare-go from 0.82.0 to 0.83.0 ([#2988](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2988))
 * provider: bump github.com/google/uuid from 1.4.0 to 1.5.0 ([#3002](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3002))
 * provider: bump github.com/hashicorp/terraform-plugin-testing from 1.5.1 to 1.6.0 ([#2984](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2984))
+* provider: bump github/codeql-action from 2 to 3 ([#3005](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3005))
 
 ## 4.20.0 (November 29th, 2023)
 
