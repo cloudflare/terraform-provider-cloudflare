@@ -166,6 +166,12 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: "Targeted actions for alert.",
 				},
+                                "affected_components": {
+                                        Type:        schema.TypeSet,
+                                        Elem:        &schema.Schema{Type: schema.TypeString},
+                                        Optional:    true,
+                                        Description: "Affected components for alert.",
+                                },
 				"status": {
 					Type:        schema.TypeSet,
 					Elem:        &schema.Schema{Type: schema.TypeString},
