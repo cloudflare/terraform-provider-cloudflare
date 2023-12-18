@@ -514,7 +514,7 @@ Optional:
 - `overrides` (Block List) List of override configurations to apply to the ruleset. (see [below for nested schema](#nestedblock--rules--action_parameters--overrides))
 - `phases` (Set of String) Point in the request/response lifecycle where the ruleset will be created. Available values: `ddos_l4`, `ddos_l7`, `http_config_settings`, `http_custom_errors`, `http_log_custom_fields`, `http_ratelimit`, `http_request_cache_settings`, `http_request_dynamic_redirect`, `http_request_firewall_custom`, `http_request_firewall_managed`, `http_request_late_transform`, `http_request_origin`, `http_request_redirect`, `http_request_sanitize`, `http_request_sbfm`, `http_request_transform`, `http_response_compression`, `http_response_firewall_managed`, `http_response_headers_transform`, `magic_transit`.
 - `polish` (String) Apply options from the Polish feature of the Cloudflare Speed app.
-- `products` (Set of String) Products to target with the actions. Available values: `bic`, `hot`, `ratelimit`, `securityLevel`, `uablock`, `waf`, `zonelockdown`.
+- `products` (Set of String) Products to target with the actions. Available values: `bic`, `hot`, `rateLimit`, `securityLevel`, `uaBlock`, `waf`, `zoneLockdown`.
 - `read_timeout` (Number) Specifies a maximum timeout for reading content from an origin server.
 - `request_fields` (Set of String) List of request headers to include as part of custom fields logging, in lowercase.
 - `respect_strong_etags` (Boolean) Respect strong ETags.
