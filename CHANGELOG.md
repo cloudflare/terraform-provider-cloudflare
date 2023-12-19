@@ -32,6 +32,7 @@ DEPENDENCIES:
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.3 to 1.47.4 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.3 to 1.47.4 ([#2993](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2993))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.4 to 1.47.5 ([#2997](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2997))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.5 to 1.47.6 ([#3016](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3016))
 * provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.1 to 1.23.2 ([#2968](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2968))
 * provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.2 to 1.23.3 ([#2969](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2969))
 * provider: bump `github.com/aws/aws-sdk-go-v2` from 1.23.3 to 1.23.4 ([#2971](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2971))
@@ -46,6 +47,7 @@ DEPENDENCIES:
 * provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.30.0 to 2.31.0 ([#3007](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3007))
 * provider: bump github.com/hashicorp/terraform-plugin-testing from 1.5.1 to 1.6.0 ([#2984](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2984))
 * provider: bump github/codeql-action from 2 to 3 ([#3005](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3005))
+* provider: bump golang.org/x/crypto from 0.14.0 to 0.17.0 in /tools ([#3015](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3015))
 * provider: bump golang.org/x/crypto from 0.16.0 to 0.17.0 ([#3017](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3017))
 
 ## 4.20.0 (November 29th, 2023)
