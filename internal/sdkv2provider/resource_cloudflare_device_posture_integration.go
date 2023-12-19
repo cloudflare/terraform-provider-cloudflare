@@ -247,7 +247,7 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
 				return fmt.Errorf("api_url has to be of type string")
 			}
-			if config.AccessClientId, ok = d.Get("config.0.access_client_id").(string); !ok {
+			if config.AccessClientID, ok = d.Get("config.0.access_client_id").(string); !ok {
 				return fmt.Errorf("access_client_id has to be of type string")
 			}
 			if config.AccessClientSecret, ok = d.Get("config.0.access_client_secret").(string); !ok {
@@ -269,7 +269,7 @@ func convertIntegrationConfigToSchema(input cloudflare.DevicePostureIntegrationC
 		"api_url":              input.ApiUrl,
 		"client_key":           input.ClientKey,
 		"customer_id":          input.CustomerID,
-		"access_client_id":     input.AccessClientId,
+		"access_client_id":     input.AccessClientID,
 		"access_client_secret": input.AccessClientSecret,
 	}
 	return []interface{}{m}
