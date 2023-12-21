@@ -213,7 +213,8 @@ func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.Teams
 		settings.IPCategories == false &&
 		settings.AllowChildBypass == nil &&
 		settings.BypassParentRule == nil &&
-		settings.AuditSSH == nil {
+		settings.AuditSSH == nil &&
+		settings.NotificationSettings == nil {
 		return nil
 	}
 
@@ -230,6 +231,7 @@ func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.Teams
 		"egress":                             flattenTeamsEgressSettings(settings.EgressSettings),
 		"untrusted_cert":                     flattenTeamsUntrustedCertSettings(settings.UntrustedCertSettings),
 		"payload_log":                        flattenTeamsDlpPayloadLogSettings(settings.PayloadLog),
+		"notification_settings":              flattenTeamsNotificationSettings(settings.NotificationSettings),
 	}
 
 	if settings.IPCategories {
@@ -276,6 +278,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 	egressSettings := inflateTeamsEgressSettings(settingsMap["egress"].([]interface{}))
 	payloadLog := inflateTeamsDlpPayloadLogSettings(settingsMap["payload_log"].([]interface{}))
 	untrustedCertSettings := inflateTeamsUntrustedCertSettings(settingsMap["untrusted_cert"].([]interface{}))
+	notificationSettings := inflateTeamsNotificationSettings(settingsMap["notification_settings"].([]interface{}))
 
 	return &cloudflare.TeamsRuleSettings{
 		BlockPageEnabled:                enabled,
@@ -290,6 +293,7 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 		EgressSettings:                  egressSettings,
 		PayloadLog:                      payloadLog,
 		UntrustedCertSettings:           untrustedCertSettings,
+		NotificationSettings:            notificationSettings,
 	}
 }
 
@@ -457,6 +461,22 @@ func flattenTeamsDlpPayloadLogSettings(settings *cloudflare.TeamsDlpPayloadLogSe
 	}}
 }
 
+func flattenTeamsNotificationSettings(settings *cloudflare.TeamsNotificationSettings) []interface{} {
+	if settings == nil {
+		return nil
+	}
+	enabled := false
+	if settings.Enabled != nil {
+		enabled = *settings.Enabled
+	}
+
+	return []interface{}{map[string]interface{}{
+		"enabled":     enabled,
+		"message":     settings.Message,
+		"support_url": settings.SupportURL,
+	}}
+}
+
 func flattenTeamsUntrustedCertSettings(settings *cloudflare.UntrustedCertSettings) []interface{} {
 	if settings == nil {
 		return nil
@@ -497,6 +517,22 @@ func inflateTeamsUntrustedCertSettings(settings interface{}) *cloudflare.Untrust
 
 	return &cloudflare.UntrustedCertSettings{
 		Action: actionValue,
+	}
+}
+
+func inflateTeamsNotificationSettings(settings interface{}) *cloudflare.TeamsNotificationSettings {
+	settingsList := settings.([]interface{})
+	if len(settingsList) != 1 {
+		return nil
+	}
+	settingsMap := settingsList[0].(map[string]interface{})
+	enabled := settingsMap["enabled"].(bool)
+	message := settingsMap["message"].(string)
+	supportUrl := settingsMap["support_url"].(string)
+	return &cloudflare.TeamsNotificationSettings{
+		Enabled:    &enabled,
+		Message:    message,
+		SupportURL: supportUrl,
 	}
 }
 
