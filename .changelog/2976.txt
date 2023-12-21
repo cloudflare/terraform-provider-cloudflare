@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_notification_policy: enable `selector` filter and add `traffic_anomalies_alert` as a policy alert type
+```

@@ -75,6 +75,18 @@ func resourceCloudflareDevicePostureIntegrationSchema() map[string]*schema.Schem
 						Sensitive:   true,
 						Description: "The client key for authenticating API calls.",
 					},
+					"access_client_id": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Sensitive:   true,
+						Description: "The Access client ID to be used as the `Cf-Access-Client-ID` header when making a request to the `api_url`.",
+					},
+					"access_client_secret": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Sensitive:   true,
+						Description: "The Access client secret to be used as the `Cf-Access-Client-Secret` header when making a request to the `api_url`.",
+					},
 				},
 			},
 		},
