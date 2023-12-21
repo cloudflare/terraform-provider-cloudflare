@@ -198,7 +198,7 @@ func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceDa
 }
 
 func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.TeamsRuleSettings) []interface{} {
-	if _, ok := d.GetOkExists("block_page_enabled"); ok &&
+	if _, ok := d.GetOkExists("block_page_enabled"); !ok &&
 		len(settings.OverrideIPs) == 0 &&
 		settings.BlockReason == "" &&
 		settings.OverrideHost == "" &&
