@@ -193,9 +193,9 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Description: "Configure DLP Payload Logging settings for this rule.",
 	},
 	"notification_settings": {
-		Type:        schema.TypeList,
+		Type:     schema.TypeList,
 		MaxItems: 1,
-		Optional:    true,
+		Optional: true,
 		Elem: &schema.Resource{
 			Schema: notificationSettings,
 		},
@@ -220,17 +220,16 @@ var untrustedCertSettings = map[string]*schema.Schema{
 	},
 }
 
-
 var notificationSettings = map[string]*schema.Schema{
 	"enabled": {
-		Type:         schema.TypeBool,
-		Optional:     true,
-		Description:  "Enable notification settings",
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Enable notification settings",
 	},
 	"message": {
-		Type:         schema.TypeString,
-		Optional:     true,
-		Description:  "Notification content",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Notification content",
 	},
 	"support_url": {
 		Type:         schema.TypeBool,

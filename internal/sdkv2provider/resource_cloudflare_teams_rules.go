@@ -469,10 +469,10 @@ func flattenTeamsNotificationSettings(settings *cloudflare.TeamsNotificationSett
 	if settings.Enabled != nil {
 		enabled = *settings.Enabled
 	}
-	
+
 	return []interface{}{map[string]interface{}{
-		"enabled": enabled,
-		"message": settings.Message,
+		"enabled":     enabled,
+		"message":     settings.Message,
 		"support_url": settings.SupportURL,
 	}}
 }
@@ -530,12 +530,11 @@ func inflateTeamsNotificationSettings(settings interface{}) *cloudflare.TeamsNot
 	message := settingsMap["message"].(string)
 	supportUrl := settingsMap["support_url"].(string)
 	return &cloudflare.TeamsNotificationSettings{
-		Enabled: &enabled,
-		Message: message,
+		Enabled:    &enabled,
+		Message:    message,
 		SupportURL: supportUrl,
 	}
 }
-
 
 func providerToApiRulePrecedence(provided int64, ruleName string) int64 {
 	return provided*rulePrecedenceFactor + int64(hashCodeString(ruleName))%rulePrecedenceFactor
