@@ -1,8 +1,10 @@
-package sdkv2provider
+package list_item_test
 
 import (
 	"context"
 	"fmt"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"os"
 	"regexp"
 	"testing"
@@ -13,18 +15,17 @@ import (
 )
 
 func TestAccCloudflareListItem_Basic(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var ListItem cloudflare.ListItem
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Account(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd, accountID),
@@ -39,7 +40,7 @@ func TestAccCloudflareListItem_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -47,10 +48,9 @@ func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Account(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPListItemMultipleEntries(rnd, rnd, rnd, accountID),
@@ -73,7 +73,7 @@ func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Update(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -81,10 +81,9 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Account(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPListItem(rnd, rnd, rnd, accountID),
@@ -106,15 +105,14 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_BadListItemType(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Account(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareBadListItemType(rnd, rnd, rnd, accountID),
@@ -125,7 +123,7 @@ func TestAccCloudflareListItem_BadListItemType(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_ASN(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -133,10 +131,9 @@ func TestAccCloudflareListItem_ASN(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Account(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareASNListItem(rnd, rnd, rnd, accountID),
@@ -151,7 +148,7 @@ func TestAccCloudflareListItem_ASN(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Hostname(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -159,10 +156,9 @@ func TestAccCloudflareListItem_Hostname(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Account(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareHostnameListItem(rnd, rnd, rnd, accountID),
@@ -179,7 +175,7 @@ func TestAccCloudflareListItem_Hostname(t *testing.T) {
 }
 
 func TestAccCloudflareListItem_Redirect(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -187,10 +183,9 @@ func TestAccCloudflareListItem_Redirect(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Account(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareHostnameRedirectItem(rnd, rnd, rnd, accountID),
@@ -276,10 +271,13 @@ func testAccCheckCloudflareListItemExists(n string, name string, listItem *cloud
 		}
 
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("No List ID is set")
+			return fmt.Errorf("no List ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, err := acctest.SharedClient()
+		if err != nil {
+			return fmt.Errorf("error establishing client: %w", err)
+		}
 		foundList, err := client.GetListItem(context.Background(), cloudflare.AccountIdentifier(accountID), listRS.Primary.ID, rs.Primary.ID)
 		if err != nil {
 			return err

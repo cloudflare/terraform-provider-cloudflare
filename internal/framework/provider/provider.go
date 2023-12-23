@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"log"
 	"math"
 	"regexp"
@@ -331,6 +332,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		rulesets.NewResource,
 		turnstile.NewResource,
 		d1.NewResource,
+		list_item.NewResource,
 	}
 }
 
