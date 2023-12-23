@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"log"
 	"math"
 	"regexp"
@@ -14,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"

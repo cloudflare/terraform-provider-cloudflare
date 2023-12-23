@@ -94,11 +94,11 @@ resource "cloudflare_list_item" "example_hostname_item" {
 
 ### Optional
 
-- `asn` (Number) Autonomous system number to include in the list
+- `asn` (Number) Autonomous system number to include in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`.
 - `comment` (String) An optional comment for the item.
-- `hostname` (Block List) Hostname to store in the list. (see [below for nested schema](#nestedblock--hostname))
-- `ip` (String) IP address to include in the list.
-- `redirect` (Block List) Redirect configuration to store in the list. (see [below for nested schema](#nestedblock--redirect))
+- `hostname` (Block List) Hostname to store in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`. (see [below for nested schema](#nestedblock--hostname))
+- `ip` (String) IP address to include in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`.
+- `redirect` (Block List) Redirect configuration to store in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`. (see [below for nested schema](#nestedblock--redirect))
 
 ### Read-Only
 
@@ -109,7 +109,7 @@ resource "cloudflare_list_item" "example_hostname_item" {
 
 Required:
 
-- `url_hostname` (String) The FQDN to match on
+- `url_hostname` (String) The FQDN to match on.
 
 
 <a id="nestedblock--redirect"></a>
@@ -124,8 +124,8 @@ Optional:
 
 - `include_subdomains` (Boolean) Whether the redirect also matches subdomains of the source url.
 - `preserve_path_suffix` (Boolean) Whether the redirect target url should keep the query string of the request's url.
-- `preserve_query_string` (Boolean) Whether to preserve the path suffix when doing subpath matching.
-- `status_code` (Number) The status code of the redirect.
+- `preserve_query_string` (Boolean) Whether the redirect target url should keep the query string of the request's url.
+- `status_code` (Number) The status code to be used when redirecting a request.
 - `subpath_matching` (Boolean) Whether the redirect also matches subpaths of the source url.
 
 ## Import

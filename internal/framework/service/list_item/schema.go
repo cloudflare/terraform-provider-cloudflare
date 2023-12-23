@@ -2,8 +2,10 @@ package list_item
 
 import (
 	"context"
+	"fmt"
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -41,13 +43,12 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 				Computed:            true,
 			},
 			"ip": schema.StringAttribute{
-				MarkdownDescription: "IP address to include in the list.",
+				MarkdownDescription: fmt.Sprintf("IP address to include in the list. %s", utils.RenderMustProviderOnlyOneOfDocumentationValuesStringSlice([]string{"ip", "asn", "redirect", "hostname"})),
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(
 						path.MatchRelative().AtParent().AtName("redirect"),
 						path.MatchRelative().AtParent().AtName("asn"),
-						path.MatchRelative().AtParent().AtName("redirect"),
 						path.MatchRelative().AtParent().AtName("hostname"),
 					),
 				},
@@ -56,13 +57,12 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 				},
 			},
 			"asn": schema.Int64Attribute{
-				MarkdownDescription: "Autonomous system number to include in the list",
+				MarkdownDescription: fmt.Sprintf("Autonomous system number to include in the list. %s", utils.RenderMustProviderOnlyOneOfDocumentationValuesStringSlice([]string{"ip", "asn", "redirect", "hostname"})),
 				Optional:            true,
 				Validators: []validator.Int64{
 					int64validator.ConflictsWith(
 						path.MatchRelative().AtParent().AtName("redirect"),
-						path.MatchRelative().AtParent().AtName("asn"),
-						path.MatchRelative().AtParent().AtName("redirect"),
+						path.MatchRelative().AtParent().AtName("ip"),
 						path.MatchRelative().AtParent().AtName("hostname"),
 					),
 				},
@@ -77,12 +77,11 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 		},
 		Blocks: map[string]schema.Block{
 			"hostname": schema.ListNestedBlock{
-				MarkdownDescription: "Hostname to store in the list.",
+				MarkdownDescription: fmt.Sprintf("Hostname to store in the list. %s", utils.RenderMustProviderOnlyOneOfDocumentationValuesStringSlice([]string{"ip", "asn", "redirect", "hostname"})),
 				Validators: []validator.List{
 					listvalidator.ConflictsWith(
 						path.MatchRelative().AtParent().AtName("redirect"),
 						path.MatchRelative().AtParent().AtName("asn"),
-						path.MatchRelative().AtParent().AtName("redirect"),
 						path.MatchRelative().AtParent().AtName("ip"),
 					),
 				},
@@ -92,19 +91,18 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"url_hostname": schema.StringAttribute{
-							MarkdownDescription: "The FQDN to match on",
+							MarkdownDescription: "The FQDN to match on.",
 							Required:            true,
 						},
 					},
 				},
 			},
 			"redirect": schema.ListNestedBlock{
-				MarkdownDescription: "Redirect configuration to store in the list.",
+				MarkdownDescription: fmt.Sprintf("Redirect configuration to store in the list. %s", utils.RenderMustProviderOnlyOneOfDocumentationValuesStringSlice([]string{"ip", "asn", "redirect", "hostname"})),
 				Validators: []validator.List{
 					listvalidator.ConflictsWith(
-						path.MatchRelative().AtParent().AtName("redirect"),
 						path.MatchRelative().AtParent().AtName("asn"),
-						path.MatchRelative().AtParent().AtName("redirect"),
+						path.MatchRelative().AtParent().AtName("hostname"),
 						path.MatchRelative().AtParent().AtName("ip"),
 					),
 				},
@@ -130,7 +128,7 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 							Optional:            true,
 						},
 						"status_code": schema.Int64Attribute{
-							MarkdownDescription: "The status code of the redirect.",
+							MarkdownDescription: "The status code to be used when redirecting a request.",
 							Optional:            true,
 						},
 						"preserve_path_suffix": schema.BoolAttribute{
@@ -138,7 +136,7 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 							Optional:            true,
 						},
 						"preserve_query_string": schema.BoolAttribute{
-							MarkdownDescription: "Whether to preserve the path suffix when doing subpath matching.",
+							MarkdownDescription: "Whether the redirect target url should keep the query string of the request's url.",
 							Optional:            true,
 						},
 					},
