@@ -52,7 +52,7 @@ func (r *ListItemResource) Configure(ctx context.Context, req resource.Configure
 }
 
 func (r *ListItemResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *ListItemModel
+	var data *ListItemModelV1
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -69,7 +69,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 }
 
 func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ListItemModel
+	var data *ListItemModelV1
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -89,7 +89,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 }
 
 func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *ListItemModel
+	var data *ListItemModelV1
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -112,7 +112,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 }
 
 func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *ListItemModel
+	var data *ListItemModelV1
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -150,8 +150,8 @@ func (r *ListItemResource) ImportState(ctx context.Context, req resource.ImportS
 	)...)
 }
 
-func toListItemModel(accountID string, listID string, item cloudflare.ListItem) *ListItemModel {
-	model := &ListItemModel{
+func toListItemModel(accountID string, listID string, item cloudflare.ListItem) *ListItemModelV1 {
+	model := &ListItemModelV1{
 		AccountID: types.StringValue(accountID),
 		ListID:    types.StringValue(listID),
 		ID:        types.StringValue(item.ID),
@@ -171,7 +171,7 @@ func toListItemModel(accountID string, listID string, item cloudflare.ListItem) 
 		}
 	}
 	if item.Redirect != nil {
-		model.Redirect = []*ListItemRedirectModel{
+		model.Redirect = []*ListItemRedirectModelV1{
 			{
 				SourceURL:           types.StringValue(item.Redirect.SourceUrl),
 				TargetURL:           types.StringValue(item.Redirect.TargetUrl),
@@ -186,7 +186,7 @@ func toListItemModel(accountID string, listID string, item cloudflare.ListItem) 
 	return model
 }
 
-func buildListItemCreateRequest(d *ListItemModel) cloudflare.ListItemCreateRequest {
+func buildListItemCreateRequest(d *ListItemModelV1) cloudflare.ListItemCreateRequest {
 	itemType := listItemType(d)
 
 	request := cloudflare.ListItemCreateRequest{
@@ -217,7 +217,7 @@ func buildListItemCreateRequest(d *ListItemModel) cloudflare.ListItemCreateReque
 	return request
 }
 
-func listItemType(d *ListItemModel) string {
+func listItemType(d *ListItemModelV1) string {
 	if d.IP.ValueString() != "" {
 		return "ip"
 	}
@@ -235,7 +235,7 @@ func listItemType(d *ListItemModel) string {
 
 // getSearchTerm takes the schema and works out which "type" we are looking for
 // and returns it.
-func getSearchTerm(d *ListItemModel) string {
+func getSearchTerm(d *ListItemModelV1) string {
 	if d.IP.ValueString() != "" {
 		return d.IP.ValueString()
 	}
@@ -253,21 +253,21 @@ func getSearchTerm(d *ListItemModel) string {
 	return ""
 }
 
-func getListItemModel(ctx context.Context, client *cloudflare.API, data *ListItemModel) (*ListItemModel, error) {
+func getListItemModel(ctx context.Context, client *cloudflare.API, data *ListItemModelV1) (*ListItemModelV1, error) {
 	listItem, err := client.GetListItem(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ListID.ValueString(), data.ID.ValueString())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
 			tflog.Info(ctx, fmt.Sprintf("List item %s no longer exists", data.ID.ValueString()))
-			return &ListItemModel{}, nil
+			return &ListItemModelV1{}, nil
 		}
-		return &ListItemModel{}, errors.Wrap(err, fmt.Sprintf("error reading List Item with ID %q", data.ID.ValueString()))
+		return &ListItemModelV1{}, errors.Wrap(err, fmt.Sprintf("error reading List Item with ID %q", data.ID.ValueString()))
 	}
 
 	return toListItemModel(data.AccountID.ValueString(), data.ListID.ValueString(), listItem), nil
 }
 
-func createListItem(ctx context.Context, client *cloudflare.API, data *ListItemModel) (cloudflare.ListItem, error) {
+func createListItem(ctx context.Context, client *cloudflare.API, data *ListItemModelV1) (cloudflare.ListItem, error) {
 	listItemType := listItemType(data)
 	listID := data.ListID.ValueString()
 	accountIdentifier := cloudflare.AccountIdentifier(data.AccountID.ValueString())
