@@ -22,7 +22,7 @@ const (
 	moduleContent     = `export default { fetch() { return new Response('Hello world'); }, };`
 	encodedWasm       = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 	compatibilityDate = "2023-03-19"
-	d1DatabaseID      = "f558dd73-d16b-4918-8e3d-1f3a3b557606"
+	d1DatabaseID      = "ce8b95dc-b376-4ff8-9b9e-1801ed6d745d"
 )
 
 var (
