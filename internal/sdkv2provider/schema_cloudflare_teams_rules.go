@@ -232,10 +232,9 @@ var notificationSettings = map[string]*schema.Schema{
 		Description: "Notification content",
 	},
 	"support_url": {
-		Type:         schema.TypeBool,
-		ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesUntrustedCertActionValues(), false),
-		Optional:     true,
-		Description:  "Support URL to show in the notification",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Support URL to show in the notification",
 	},
 }
 
