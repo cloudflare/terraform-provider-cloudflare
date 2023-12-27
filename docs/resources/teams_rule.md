@@ -132,7 +132,7 @@ Optional:
 
 - `enabled` (Boolean) Enable notification settings.
 - `message` (String) Notification content.
-- `support_url` (Boolean) Support URL to show in the notification.
+- `support_url` (String) Support URL to show in the notification.
 
 
 <a id="nestedblock--rule_settings--payload_log"></a>
