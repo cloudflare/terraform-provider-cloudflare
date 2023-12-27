@@ -302,8 +302,8 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"queue":   v.Queue,
 			})
 		case cloudflare.WorkerD1DatabaseBinding:
-			d1DatabaseBindings.Add(map[string]interface{} {
-				"name": name,
+			d1DatabaseBindings.Add(map[string]interface{}{
+				"name":        name,
 				"database_id": v.DatabaseID,
 			})
 		}
