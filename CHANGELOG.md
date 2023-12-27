@@ -1,5 +1,9 @@
 ## 4.22.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_worker_script: adds D1 binding support ([#2960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2960))
+
 BUG FIXES:
 
 * resource/cloudflare_teams_rule: changed type & validation on the notification settings url ([#3030](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3030))
