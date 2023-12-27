@@ -1,3 +1,3 @@
-```release-note:adding_d1_support
-resource/cloudflare_worker_script: Adding D1 support.
+```release-note:enhancement
+resource/cloudflare_worker_script: adds D1 binding support
 ```
