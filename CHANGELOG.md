@@ -1,5 +1,9 @@
 ## 4.22.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_teams_rules: fix block_page_enabled behaviour ([#3010](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3010))
+
 ## 4.21.0 (December 27th, 2023)
 
 ENHANCEMENTS:
