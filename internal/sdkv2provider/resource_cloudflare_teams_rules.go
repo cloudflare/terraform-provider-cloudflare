@@ -74,7 +74,7 @@ func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(fmt.Errorf("error parsing rule version"))
 	}
 
-	if err := d.Set("rule_settings", flattenTeamsRuleSettings(&rule.RuleSettings)); err != nil {
+	if err := d.Set("rule_settings", flattenTeamsRuleSettings(d, &rule.RuleSettings)); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing rule settings"))
 	}
 
@@ -197,15 +197,15 @@ func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceDa
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interface{} {
-	if len(settings.OverrideIPs) == 0 &&
+func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.TeamsRuleSettings) []interface{} {
+	if _, ok := d.GetOkExists("block_page_enabled"); !ok &&
+		len(settings.OverrideIPs) == 0 &&
 		settings.BlockReason == "" &&
 		settings.OverrideHost == "" &&
 		settings.BISOAdminControls == nil &&
 		settings.L4Override == nil &&
 		len(settings.AddHeaders) == 0 &&
 		settings.CheckSession == nil &&
-		settings.BlockPageEnabled == false &&
 		settings.InsecureDisableDNSSECValidation == false &&
 		settings.EgressSettings == nil &&
 		settings.UntrustedCertSettings == nil &&
