@@ -42,7 +42,7 @@ func TestAccCloudflareTeamsRule_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "filters.0", "dns"),
 					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"example.com\")"),
 					resource.TestCheckResourceAttr(name, "rule_settings.#", "1"),
-					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "false"),
+					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_reason", "cuz"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.insecure_disable_dnssec_validation", "false"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.egress.0.ipv4", "203.0.113.1"),
@@ -66,7 +66,7 @@ resource "cloudflare_teams_rule" "%[1]s" {
   filters = ["dns"]
   traffic = "any(dns.domains[*] == \"example.com\")"
   rule_settings {
-    block_page_enabled = false
+    block_page_enabled = true
     block_page_reason = "cuz"
     insecure_disable_dnssec_validation = false
 	egress {

@@ -1,0 +1,4 @@
+```release-note:bug
+resource/cloudflare_teams_rules: fix block_page_enabled behaviour
+```
+
