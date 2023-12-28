@@ -119,19 +119,19 @@ func resourceCloudflareNotificationPolicySchema() map[string]*schema.Schema {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem:        mechanismData,
-			Description: "The email id to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required.",
+			Description: "The email ID to which the notification should be dispatched.",
 		},
 		"webhooks_integration": {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem:        mechanismData,
-			Description: "The unique id of a configured webhooks endpoint to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required.",
+			Description: "The unique ID of a configured webhooks endpoint to which the notification should be dispatched.",
 		},
 		"pagerduty_integration": {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem:        mechanismData,
-			Description: "The unique id of a configured pagerduty endpoint to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required.",
+			Description: "The unique ID of a configured pagerduty endpoint to which the notification should be dispatched.",
 		},
 	}
 }
