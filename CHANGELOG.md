@@ -6,6 +6,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* cloudflare_notification_policy: revert `ExactlyOneOf` ([#3032](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3032))
 * resource/cloudflare_teams_rule: changed type & validation on the notification settings url ([#3030](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3030))
 * resource/cloudflare_teams_rules: fix block_page_enabled behaviour ([#3010](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3010))
 
