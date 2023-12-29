@@ -219,7 +219,14 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
 	list_id    = cloudflare_list.%[2]s.id
 	ip         = "192.0.2.0"
 	comment    = "%[3]s"
-  } `, ID, name, comment, accountID)
+  }
+
+	resource "cloudflare_list_item" "%[1]s_no_comment" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	ip         = "192.0.2.1"
+  } 
+`, ID, name, comment, accountID)
 }
 
 func testAccCheckCloudflareIPListItemMultipleEntries(ID, name, comment, accountID string) string {

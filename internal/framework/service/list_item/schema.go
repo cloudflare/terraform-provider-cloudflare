@@ -86,6 +86,7 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 						path.MatchRelative().AtParent().AtName("asn"),
 						path.MatchRelative().AtParent().AtName("ip"),
 					),
+					listvalidator.SizeAtMost(1),
 				},
 				PlanModifiers: []planmodifier.List{
 					listplanmodifier.RequiresReplace(),
@@ -107,6 +108,7 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 						path.MatchRelative().AtParent().AtName("hostname"),
 						path.MatchRelative().AtParent().AtName("ip"),
 					),
+					listvalidator.SizeAtMost(1),
 				},
 				PlanModifiers: []planmodifier.List{
 					listplanmodifier.RequiresReplace(),

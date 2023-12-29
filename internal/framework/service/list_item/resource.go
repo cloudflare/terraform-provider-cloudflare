@@ -155,7 +155,7 @@ func toListItemModel(accountID string, listID string, item cloudflare.ListItem) 
 		AccountID: types.StringValue(accountID),
 		ListID:    types.StringValue(listID),
 		ID:        types.StringValue(item.ID),
-		Comment:   types.StringValue(item.Comment),
+		Comment:   flatteners.String(item.Comment),
 	}
 	if item.ASN != nil {
 		model.ASN = types.Int64Value(int64(*item.ASN))

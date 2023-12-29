@@ -27,10 +27,10 @@ resource "cloudflare_list_item" "example_redirect_item" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   list_id    = cloudflare_list.example_ip_list.id
   redirect {
-    source_url       = "https://source.tld"
+    source_url       = "https://source.tld/"
     target_url       = "https://target.tld"
     status_code      = 302
-    subpath_matching = "enabled"
+    subpath_matching = true
   }
 }
 
