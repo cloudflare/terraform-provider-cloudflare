@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_teams_rule: Added support for notification settings at teams rule
+```

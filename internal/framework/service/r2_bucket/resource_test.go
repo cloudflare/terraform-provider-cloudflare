@@ -2,10 +2,15 @@ package r2_bucket_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -23,6 +28,17 @@ func init() {
 			client, err := acctest.SharedClient()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
+			accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
+			accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
+
+			if accessKeyId == "" {
+				return errors.New("CLOUDFLARE_R2_ACCESS_KEY_ID must be set for this acceptance test")
+			}
+
+			if accessKeyId == "" {
+				return errors.New("CLOUDFLARE_R2_ACCESS_KEY_SECRET must be set for this acceptance test")
+			}
+
 			if err != nil {
 				return fmt.Errorf("error establishing client: %w", err)
 			}
@@ -34,7 +50,46 @@ func init() {
 			}
 
 			for _, bucket := range buckets {
-				err := client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(accountID), bucket.Name)
+				// hard coded bucket name for Worker script acceptance tests
+				// until we can break out the packages without cyclic errors.
+				if bucket.Name == "bnfywlzwpt" {
+					continue
+				}
+
+				r2Resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+					return aws.Endpoint{
+						URL: fmt.Sprintf("https://%s.r2.cloudflarestorage.com", accountID),
+					}, nil
+				})
+
+				cfg, err := config.LoadDefaultConfig(context.TODO(),
+					config.WithEndpointResolverWithOptions(r2Resolver),
+					config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyId, accessKeySecret, "")),
+					config.WithRegion("auto"),
+				)
+				if err != nil {
+					return err
+				}
+
+				s3client := s3.NewFromConfig(cfg)
+				listObjectsOutput, err := s3client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
+					Bucket: &bucket.Name,
+				})
+				if err != nil {
+					return err
+				}
+
+				for _, object := range listObjectsOutput.Contents {
+					_, err = s3client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+						Bucket: &bucket.Name,
+						Key:    object.Key,
+					})
+					if err != nil {
+						return err
+					}
+				}
+
+				err = client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(accountID), bucket.Name)
 				if err != nil {
 					return fmt.Errorf("failed to delete R2 bucket %q: %w", bucket.Name, err)
 				}

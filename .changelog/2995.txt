@@ -1,0 +1,6 @@
+```release-note:enhancement
+resource/cloudflare_access_policy: remove default value for `session_duration`.
+```
+```release-note:enhancement
+resource/cloudflare_access_organization: remove default value for `session_duration`.
+```
