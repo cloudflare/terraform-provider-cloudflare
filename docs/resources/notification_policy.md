@@ -130,6 +130,7 @@ Optional:
 - `status` (Set of String) Status to alert on.
 - `target_hostname` (Set of String) Target host to alert on for dos.
 - `target_zone_name` (Set of String) Target domain to alert on.
+- `tunnel_id` (Set of String) Tunnel IDs to alert on.
 - `where` (Set of String) Filter for alert.
 - `zones` (Set of String) A list of zone identifiers.
 
