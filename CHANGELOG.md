@@ -1,5 +1,9 @@
 ## 4.22.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_worker_secret` ([#3035](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3035))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_worker_script: adds D1 binding support ([#2960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2960))
