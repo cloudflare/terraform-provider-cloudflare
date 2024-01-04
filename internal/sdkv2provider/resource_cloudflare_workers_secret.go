@@ -3,6 +3,8 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
@@ -10,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
-	"strings"
 )
 
 func resourceCloudflareWorkerSecret() *schema.Resource {
@@ -34,17 +35,16 @@ func resourceCloudflareWorkerSecretRead(ctx context.Context, d *schema.ResourceD
 		ScriptName: d.Get("script_name").(string),
 	})
 	if err != nil {
-		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("Error listing worker secrets")))
+		return diag.FromErr(errors.Wrap(err, fmt.Sprintf("error listing worker secrets")))
 	}
 
 	for _, secret := range secrets.Result {
-		tflog.Info(ctx, fmt.Sprintf("Found secret %s", secret.Name))
 		if secret.Name == d.Get("name") {
 			return nil
 		}
 	}
 
-	return diag.Errorf(fmt.Sprintf("worker secret %s not found for script %s", d.Get("name"), d.Get("script_name")))
+	return diag.Errorf(fmt.Sprintf("worker secret %q not found for script %q", d.Get("name"), d.Get("script_name")))
 }
 
 func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -70,7 +70,7 @@ func resourceCloudflareWorkerSecretCreate(ctx context.Context, d *schema.Resourc
 
 	d.SetId(stringChecksum(fmt.Sprintf("%s/%s/%s", accountID, scriptName, name)))
 
-	tflog.Info(ctx, fmt.Sprintf("Created Cloudflare Workers secret with ID: %s", d.Id()))
+	tflog.Info(ctx, fmt.Sprintf("created Cloudflare Workers secret with ID: %s", d.Id()))
 
 	return resourceCloudflareWorkerSecretRead(ctx, d, meta)
 }
@@ -86,7 +86,7 @@ func resourceCloudflareWorkerSecretDelete(ctx context.Context, d *schema.Resourc
 		ScriptName: scriptName,
 	}
 
-	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Workers secret with id: %s", d.Id()))
+	tflog.Info(ctx, fmt.Sprintf("deleting Cloudflare Workers secret with id: %s", d.Id()))
 
 	_, err := client.DeleteWorkersSecret(ctx, cloudflare.AccountIdentifier(accountID), params)
 	if err != nil {

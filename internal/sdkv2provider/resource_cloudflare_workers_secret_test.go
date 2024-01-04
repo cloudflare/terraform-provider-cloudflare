@@ -37,6 +37,17 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountId),
 				),
 			},
+			{
+				Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountId),
+				ResourceName:            "cloudflare_worker_secret." + name,
+				ImportStateId:           fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, name),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"secret_text"},
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
+				),
+			},
 		},
 	})
 }
@@ -57,7 +68,7 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 		secretResponse, err := client.ListWorkersSecrets(context.Background(), cloudflare.AccountIdentifier(accountId), params)
 
 		if err == nil {
-			return fmt.Errorf("worker secret with name %s still exists against Worker Script %s", secretResponse.Result[0].Name, params.ScriptName)
+			return fmt.Errorf("worker secret %q still exists against %q", secretResponse.Result[0].Name, params.ScriptName)
 		}
 	}
 
@@ -99,6 +110,6 @@ func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, ac
 			}
 		}
 
-		return fmt.Errorf("worker secret with name %s not found against Worker Script %s", name, scriptName)
+		return fmt.Errorf("worker secret with name %q not found against %s", name, scriptName)
 	}
 }
