@@ -28,7 +28,8 @@ func resourceCloudflareWorkerSecretSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Required:    true,
 			Sensitive:   true,
-			Description: "The text of the Worker secret, this cannot be read back after creation and is stored encrypted .",
+			ForceNew:    true,
+			Description: "The text of the Worker secret.",
 		},
 	}
 }
