@@ -6,6 +6,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_notification_policy: Add tunnel_id filter for tunnel_health_event policies ([#3038](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3038))
 * resource/cloudflare_worker_script: adds D1 binding support ([#2960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2960))
 
 BUG FIXES:
