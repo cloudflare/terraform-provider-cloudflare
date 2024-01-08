@@ -25,6 +25,7 @@ DEPENDENCIES:
 * provider: bump github.com/cloudflare/circl from 1.3.3 to 1.3.7 in /tools ([#3048](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3048))
 * provider: bump github.com/cloudflare/cloudflare-go from 0.84.0 to 0.85.0 ([#3034](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3034))
 * provider: bump github.com/go-git/go-git/v5 from 5.4.2 to 5.11.0 in /tools ([#3029](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3029))
+* provider: bump golang.org/x/net from 0.19.0 to 0.20.0 ([#3050](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3050))
 
 ## 4.21.0 (December 27th, 2023)
 
