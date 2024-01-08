@@ -62,7 +62,9 @@ func dlpEntryToSchema(entry cloudflare.DLPEntry) map[string]interface{} {
 	if entry.Name != "" {
 		entrySchema["name"] = entry.Name
 	}
-	entrySchema["enabled"] = entry.Enabled != nil && *entry.Enabled == true
+	if entry.Enabled != nil {
+		entrySchema["enabled"] = *entry.Enabled
+	}
 	if entry.Pattern != nil {
 		entrySchema["pattern"] = []interface{}{dlpPatternToSchema(*entry.Pattern)}
 	}
