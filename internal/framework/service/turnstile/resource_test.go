@@ -109,6 +109,37 @@ func TestAccCloudflareTurnstileWidget_Minimum(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareTurnstileWidget_NoDomains(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_turnstile_widget." + rnd
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareTurnstileWidgetNoDomains(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, "bot_fight_mode", "false"),
+					resource.TestCheckResourceAttr(resourceName, "domains.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "mode", "managed"),
+					resource.TestCheckResourceAttr(resourceName, "region", "world"),
+					resource.TestCheckResourceAttr(resourceName, "offlabel", "false"),
+				),
+			},
+			{
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+				ImportState:         true,
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareTurnstileWidgetBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_turnstile_widget" "%[1]s" {
@@ -127,6 +158,16 @@ func testAccCheckCloudflareTurnstileWidgetMinimum(rnd, accountID string) string 
     account_id     = "%[2]s"
     name        = "%[1]s"
 	domains = [ "example.com" ]
+	mode = "managed"
+  }`, rnd, accountID)
+}
+
+func testAccCheckCloudflareTurnstileWidgetNoDomains(rnd, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_turnstile_widget" "%[1]s" {
+    account_id     = "%[2]s"
+    name        = "%[1]s"
+	domains = [ ]
 	mode = "managed"
   }`, rnd, accountID)
 }
