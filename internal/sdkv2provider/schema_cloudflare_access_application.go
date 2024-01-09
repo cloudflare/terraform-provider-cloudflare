@@ -224,6 +224,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Computed:    true,
 						Description: "The endpoint where the SaaS application will send login requests.",
 					},
+					"default_relay_state": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The relay state used if not provided by the identity provider.",
+					},
 				},
 			},
 		},
@@ -484,6 +489,7 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 		SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
 		SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
 		SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
+		SaasConfig.DefaultRelayState = d.Get("saas_app.0.default_relay_state").(string)
 
 		customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
 		for _, customAttributes := range customAttributes {
@@ -592,6 +598,7 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 		"idp_entity_id":        app.IDPEntityID,
 		"public_key":           app.PublicKey,
 		"sso_endpoint":         app.SSOEndpoint,
+		"default_relay_state":  app.DefaultRelayState,
 	}
 
 	var customAttributes []interface{}
