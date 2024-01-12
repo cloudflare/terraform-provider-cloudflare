@@ -1,5 +1,9 @@
 ## 4.23.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.4.2 to 1.5.0 ([#3058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3058))
+
 ## 4.22.0 (January 10th, 2024)
 
 FEATURES:
