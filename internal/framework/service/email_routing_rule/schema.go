@@ -3,6 +3,7 @@ package email_routing_rule
 import (
 	"context"
 	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -35,7 +36,6 @@ func (r *EmailRoutingRuleResource) Schema(ctx context.Context, req resource.Sche
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "The ID of the email routing rule.",
-				DeprecationMessage:  "This attribute is deprecated and will be removed in a future version. Please use `tag` instead.",
 			},
 			"tag": schema.StringAttribute{
 				Computed:            true,

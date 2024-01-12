@@ -46,7 +46,7 @@ resource "cloudflare_email_routing_rule" "main" {
 
 ### Read-Only
 
-- `id` (String, Deprecated) The ID of the email routing rule.
+- `id` (String) The ID of the email routing rule.
 - `tag` (String) The tag of the email routing rule.
 
 <a id="nestedblock--action"></a>
@@ -78,5 +78,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_email_routing_rule.example <zone_id>/<email_routing_rule_tag>
+$ terraform import cloudflare_email_routing_rule.example <zone_id>/<email_routing_rule_id>
 ```
