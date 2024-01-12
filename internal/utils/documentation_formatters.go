@@ -36,9 +36,3 @@ func RenderAvailableDocumentationValuesIntSlice(s []int) string {
 	}
 	return output
 }
-
-// RenderRequireReplaceDocumentationString returns a string used to indicate that
-// a resource attribute requires replacement when modified.
-func RenderRequireReplaceDocumentationString() string {
-	return " **Modifying this attribute will force creation of a new resource.**"
-}

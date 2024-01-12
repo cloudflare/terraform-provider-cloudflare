@@ -2,8 +2,6 @@ package email_routing_address
 
 import (
 	"context"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -20,7 +18,7 @@ func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.S
 
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: consts.AccountIDSchemaDescription + utils.RenderRequireReplaceDocumentationString(),
+				MarkdownDescription: consts.AccountIDSchemaDescription,
 				Required:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -37,7 +35,7 @@ func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.S
 			},
 			"email": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "The contact email address of the user." + utils.RenderRequireReplaceDocumentationString(),
+				MarkdownDescription: "The contact email address of the user.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},

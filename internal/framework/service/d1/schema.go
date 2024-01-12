@@ -2,7 +2,6 @@ package d1
 
 import (
 	"context"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"regexp"
 
@@ -23,7 +22,7 @@ func (r *DatabaseResource) Schema(ctx context.Context, req resource.SchemaReques
 
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
-				MarkdownDescription: consts.AccountIDSchemaDescription + utils.RenderRequireReplaceDocumentationString(),
+				MarkdownDescription: consts.AccountIDSchemaDescription,
 				Required:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -35,7 +34,7 @@ func (r *DatabaseResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 			"name": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "The name of the D1 Database." + utils.RenderRequireReplaceDocumentationString(),
+				MarkdownDescription: "The name of the D1 Database.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
