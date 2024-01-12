@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_tunnel_config: Destroying tunnel configurations now applies an empty configuration rather than deleting the parent cloudflare_tunnel resource
+```

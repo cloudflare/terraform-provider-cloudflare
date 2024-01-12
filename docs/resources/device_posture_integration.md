@@ -53,6 +53,8 @@ resource "cloudflare_device_posture_integration" "example" {
 
 Optional:
 
+- `access_client_id` (String, Sensitive) The Access client ID to be used as the `Cf-Access-Client-ID` header when making a request to the `api_url`.
+- `access_client_secret` (String, Sensitive) The Access client secret to be used as the `Cf-Access-Client-Secret` header when making a request to the `api_url`.
 - `api_url` (String) The third-party API's URL.
 - `auth_url` (String) The third-party authorization API URL.
 - `client_id` (String) The client identifier for authenticating API calls.

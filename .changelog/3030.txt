@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_teams_rule: changed type & validation on the notification settings url
+```

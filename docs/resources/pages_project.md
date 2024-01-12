@@ -260,7 +260,7 @@ Optional:
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions. Defaults to `map[]`.
 - `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions. Defaults to `map[]`.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--preview--service_binding))
-- `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
+- `usage_model` (String) Usage model used for Pages Functions. Available values: `unbound`, `bundled`, `standard`. Defaults to `bundled`.
 
 <a id="nestedblock--deployment_configs--preview--placement"></a>
 ### Nested Schema for `deployment_configs.preview.placement`
@@ -301,7 +301,7 @@ Optional:
 - `r2_buckets` (Map of String) R2 Buckets used for Pages Functions. Defaults to `map[]`.
 - `secrets` (Map of String, Sensitive) Encrypted environment variables for Pages Functions. Defaults to `map[]`.
 - `service_binding` (Block Set) Services used for Pages Functions. (see [below for nested schema](#nestedblock--deployment_configs--production--service_binding))
-- `usage_model` (String) Usage model used for Pages Functions. Defaults to `bundled`.
+- `usage_model` (String) Usage model used for Pages Functions. Available values: `unbound`, `bundled`, `standard`. Defaults to `bundled`.
 
 <a id="nestedblock--deployment_configs--production--placement"></a>
 ### Nested Schema for `deployment_configs.production.placement`
@@ -348,7 +348,7 @@ Optional:
 - `pr_comments_enabled` (Boolean) Enable Pages to comment on Pull Requests. Defaults to `true`.
 - `preview_branch_excludes` (List of String) Branches will be excluded from automatic deployment.
 - `preview_branch_includes` (List of String) Branches will be included for automatic deployment.
-- `preview_deployment_setting` (String) Preview Deployment Setting. Defaults to `all`.
+- `preview_deployment_setting` (String) Preview Deployment Setting. Available values: `custom`, `all`, `none`. Defaults to `all`.
 - `production_deployment_enabled` (Boolean) Enable production deployments. Defaults to `true`.
 - `repo_name` (String) Project repository name. **Modifying this attribute will force creation of a new resource.**
 

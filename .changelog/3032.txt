@@ -1,0 +1,3 @@
+```release-note:bug
+cloudflare_notification_policy: revert `ExactlyOneOf`
+```

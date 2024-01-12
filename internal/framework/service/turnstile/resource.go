@@ -193,7 +193,7 @@ func buildChallengeModelFromWidget(accountID types.String, widget cloudflare.Tur
 	for _, s := range widget.Domains {
 		domains = append(domains, types.StringValue(s))
 	}
-	built.Domains = flatteners.StringSet(domains)
+	built.Domains = types.SetValueMust(types.StringType, domains)
 
 	return &built
 }
