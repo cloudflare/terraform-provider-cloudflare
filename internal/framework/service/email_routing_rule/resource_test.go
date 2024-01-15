@@ -3,9 +3,10 @@ package email_routing_rule_test
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"os"
 	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -35,9 +36,14 @@ func init() {
 			}
 
 			for _, rule := range rules {
-				_, err := client.DeleteEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), rule.Tag)
-				if err != nil {
-					return fmt.Errorf("failed to delete email routing rule %q: %w", rule.Name, err)
+				for _, matchers := range rule.Matchers {
+					// you cannot delete a catch all rule
+					if matchers.Type != "all" {
+						_, err := client.DeleteEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), rule.Tag)
+						if err != nil {
+							return fmt.Errorf("failed to delete email routing rule %q: %w", rule.Name, err)
+						}
+					}
 				}
 			}
 
