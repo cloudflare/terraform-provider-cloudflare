@@ -36,3 +36,15 @@ func RenderAvailableDocumentationValuesIntSlice(s []int) string {
 	}
 	return output
 }
+
+func RenderMustProviderOnlyOneOfDocumentationValuesStringSlice(s []string) string {
+	output := ""
+	if s != nil && len(s) > 0 {
+		values := make([]string, len(s))
+		for i, c := range s {
+			values[i] = fmt.Sprintf("`%s`", c)
+		}
+		output = fmt.Sprintf("Must provide only one of: %s.", strings.Join(values, ", "))
+	}
+	return output
+}

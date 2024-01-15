@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
@@ -328,19 +329,20 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		d1.NewResource,
+		email_routing_rule.NewResource,
+		list_item.NewResource,
 		r2_bucket.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
-		d1.NewResource,
-		email_routing_rule.NewResource,
 	}
 }
 
 func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		api_token_permissions_groups.NewDataSource,
-		user.NewDataSource,
 		origin_ca_certificate.NewDataSource,
+		user.NewDataSource,
 	}
 }
 
