@@ -9,11 +9,13 @@ BREAKING CHANGES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_email_routing_address: add ability to import ([#2977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2977))
 * resource/cloudflare_email_routing_rule: add ability to import ([#2998](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2998))
 
 INTERNAL:
 
 * cloudflare_email_routing_rule: migrate to plugin framework ([#2998](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2998))
+* resource/cloudflare_email_routing_address: migrate to framework provider ([#2977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2977))
 * resource/cloudflare_list_item: migrate to plugin framework. Due to this migration, we are removing some workaround field values that were previously in place to account for the known zero value issues in the underlying SDKv2. See the release notes for the end user facing changes that need to be made for the internal state migrator to handle the internals. ([#3026](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3026))
 
 DEPENDENCIES:
