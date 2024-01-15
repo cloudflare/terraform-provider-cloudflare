@@ -2,13 +2,13 @@
 page_title: "cloudflare_list_item Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides individual list items (IPs, Redirects) to be used in Edge Rules Engine
+  Provides individual list items (IPs, Redirects, ASNs, Hostnames) to be used in Edge Rules Engine
   across all zones within the same account.
 ---
 
 # cloudflare_list_item (Resource)
 
-Provides individual list items (IPs, Redirects) to be used in Edge Rules Engine
+Provides individual list items (IPs, Redirects, ASNs, Hostnames) to be used in Edge Rules Engine
 across all zones within the same account.
 
 ## Example Usage
@@ -43,10 +43,10 @@ resource "cloudflare_list_item" "example_redirect_item" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   list_id    = cloudflare_list.example_ip_list.id
   redirect {
-    source_url       = "https://source.tld"
+    source_url       = "https://source.tld/"
     target_url       = "https://target.tld"
     status_code      = 302
-    subpath_matching = "enabled"
+    subpath_matching = true
   }
 }
 
@@ -94,15 +94,15 @@ resource "cloudflare_list_item" "example_hostname_item" {
 
 ### Optional
 
-- `asn` (Number) Autonomous system number to include in the list. Must provide only one of `ip`, `redirect`, `hostname`, `asn`. **Modifying this attribute will force creation of a new resource.**
+- `asn` (Number) Autonomous system number to include in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`.
 - `comment` (String) An optional comment for the item.
-- `hostname` (Block List, Max: 1) Hostname to store in the list. Must provide only one of `ip`, `redirect`, `hostname`, `asn`. **Modifying this attribute will force creation of a new resource.** (see [below for nested schema](#nestedblock--hostname))
-- `ip` (String) IP address to include in the list. Must provide only one of `ip`, `redirect`, `hostname`, `asn`. **Modifying this attribute will force creation of a new resource.**
-- `redirect` (Block List, Max: 1) Redirect configuration to store in the list. Must provide only one of `ip`, `redirect`, `hostname`, `asn`. **Modifying this attribute will force creation of a new resource.** (see [below for nested schema](#nestedblock--redirect))
+- `hostname` (Block List) Hostname to store in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`. (see [below for nested schema](#nestedblock--hostname))
+- `ip` (String) IP address to include in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`.
+- `redirect` (Block List) Redirect configuration to store in the list. Must provide only one of: `ip`, `asn`, `redirect`, `hostname`. (see [below for nested schema](#nestedblock--redirect))
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The list item identifier.
 
 <a id="nestedblock--hostname"></a>
 ### Nested Schema for `hostname`
@@ -122,11 +122,11 @@ Required:
 
 Optional:
 
-- `include_subdomains` (String) Whether the redirect also matches subdomains of the source url. Available values: `disabled`, `enabled`.
-- `preserve_path_suffix` (String) Whether to preserve the path suffix when doing subpath matching. Available values: `disabled`, `enabled`.
-- `preserve_query_string` (String) Whether the redirect target url should keep the query string of the request's url. Available values: `disabled`, `enabled`.
+- `include_subdomains` (Boolean) Whether the redirect also matches subdomains of the source url.
+- `preserve_path_suffix` (Boolean) Whether the redirect target url should keep the query string of the request's url.
+- `preserve_query_string` (Boolean) Whether the redirect target url should keep the query string of the request's url.
 - `status_code` (Number) The status code to be used when redirecting a request.
-- `subpath_matching` (String) Whether the redirect also matches subpaths of the source url. Available values: `disabled`, `enabled`.
+- `subpath_matching` (Boolean) Whether the redirect also matches subpaths of the source url.
 
 ## Import
 
