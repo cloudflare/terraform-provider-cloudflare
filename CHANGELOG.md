@@ -1,5 +1,13 @@
 ## 4.23.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_email_routing_rule: add ability to import ([#2998](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2998))
+
+INTERNAL:
+
+* cloudflare_email_routing_rule: migrate to plugin framework ([#2998](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2998))
+
 DEPENDENCIES:
 
 * provider: bump github.com/hashicorp/terraform-plugin-framework from 1.4.2 to 1.5.0 ([#3058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3058))
