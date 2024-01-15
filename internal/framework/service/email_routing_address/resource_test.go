@@ -8,7 +8,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -45,36 +44,42 @@ func init() {
 	})
 }
 
-func TestAccCloudflareEmailRoutingAddress(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_email_routing_address." + rnd
+// Uncomment to run email routing address test cases.
+//
+// See: https://github.com/hashicorp/terraform-plugin-testing/issues/85 why this
+// isn't possible with the current service that doesn't allow immediate
+// deletions.
+//
+// func TestAccCloudflareEmailRoutingAddress_Basic(t *testing.T) {
+// 	rnd := utils.GenerateRandomResourceName()
+// 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+// 	resourceName := "cloudflare_email_routing_address." + rnd
 
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareEmailRoutingAddress(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "tag"),
-					resource.TestCheckResourceAttr(resourceName, "email", "user@example.com"),
-				),
-			},
-			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
-		},
-	})
-}
+// 	resource.ParallelTest(t, resource.TestCase{
+// 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+// 		Steps: []resource.TestStep{
+// 			{
+// 				Config: testAccCheckCloudflareEmailRoutingAddress(rnd, accountID),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttrSet(resourceName, "tag"),
+// 					resource.TestCheckResourceAttr(resourceName, "email", rnd+"@example.com"),
+// 				),
+// 			},
+// 			{
+// 				ResourceName:        resourceName,
+// 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+// 				ImportState:         true,
+// 				ImportStateVerify:   true,
+// 			},
+// 		},
+// 	})
+// }
 
 func testAccCheckCloudflareEmailRoutingAddress(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_email_routing_address" "%[1]s" {
     account_id = "%[2]s"
-    email      = "user@example.com"
+    email      = "%[1]s@example.com"
   }`, rnd, accountID)
 }
