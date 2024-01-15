@@ -68,6 +68,7 @@ Optional:
 - `insecure_disable_dnssec_validation` (Boolean) Disable DNSSEC validation (must be Allow rule).
 - `ip_categories` (Boolean) Turns on IP category based filter on dns if the rule contains dns category checks.
 - `l4override` (Block List, Max: 1) Settings to forward layer 4 traffic. (see [below for nested schema](#nestedblock--rule_settings--l4override))
+- `notification_settings` (Block List, Max: 1) Notification settings on a block rule. (see [below for nested schema](#nestedblock--rule_settings--notification_settings))
 - `override_host` (String) The host to override matching DNS queries with.
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
 - `payload_log` (Block List, Max: 1) Configure DLP Payload Logging settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--payload_log))
@@ -122,6 +123,16 @@ Required:
 
 - `ip` (String) Override IP to forward traffic to.
 - `port` (Number) Override Port to forward traffic to.
+
+
+<a id="nestedblock--rule_settings--notification_settings"></a>
+### Nested Schema for `rule_settings.notification_settings`
+
+Optional:
+
+- `enabled` (Boolean) Enable notification settings.
+- `message` (String) Notification content.
+- `support_url` (String) Support URL to show in the notification.
 
 
 <a id="nestedblock--rule_settings--payload_log"></a>

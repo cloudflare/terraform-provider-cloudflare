@@ -87,7 +87,7 @@ func resourceCloudflareLoadBalancerPoolCreate(ctx context.Context, d *schema.Res
 	}
 
 	if r.ID == "" {
-		return diag.FromErr(fmt.Errorf("cailed to find id in create response; resource was empty"))
+		return diag.FromErr(fmt.Errorf("failed to find id in create response; resource was empty"))
 	}
 
 	d.SetId(r.ID)

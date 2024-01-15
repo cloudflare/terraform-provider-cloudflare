@@ -192,6 +192,15 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		},
 		Description: "Configure DLP Payload Logging settings for this rule.",
 	},
+	"notification_settings": {
+		Type:     schema.TypeList,
+		MaxItems: 1,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: notificationSettings,
+		},
+		Description: "Notification settings on a block rule",
+	},
 }
 
 var payloadLogSettings = map[string]*schema.Schema{
@@ -208,6 +217,24 @@ var untrustedCertSettings = map[string]*schema.Schema{
 		ValidateFunc: validation.StringInSlice(cloudflare.TeamsRulesUntrustedCertActionValues(), false),
 		Optional:     true,
 		Description:  fmt.Sprintf("Action to be taken when the SSL certificate of upstream is invalid. %s", renderAvailableDocumentationValuesStringSlice(cloudflare.TeamsRulesUntrustedCertActionValues())),
+	},
+}
+
+var notificationSettings = map[string]*schema.Schema{
+	"enabled": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Enable notification settings",
+	},
+	"message": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Notification content",
+	},
+	"support_url": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Support URL to show in the notification",
 	},
 }
 

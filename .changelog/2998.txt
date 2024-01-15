@@ -1,0 +1,6 @@
+```release-note:internal
+cloudflare_email_routing_rule: migrate to plugin framework
+```
+```release-note:enhancement
+resource/cloudflare_email_routing_rule: add ability to import
+```

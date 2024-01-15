@@ -14,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
@@ -333,6 +334,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		turnstile.NewResource,
 		d1.NewResource,
 		list_item.NewResource,
+		email_routing_rule.NewResource,
 	}
 }
 
