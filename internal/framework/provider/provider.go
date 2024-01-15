@@ -331,12 +331,12 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		d1.NewResource,
-    email_routing_address.NewResource,
-    email_routing_rule.NewResource,
-    list_item.NewResource,
-    r2_bucket.NewResource,
-    rulesets.NewResource,
-    turnstile.NewResource,
+		email_routing_address.NewResource,
+		email_routing_rule.NewResource,
+		list_item.NewResource,
+		r2_bucket.NewResource,
+		rulesets.NewResource,
+		turnstile.NewResource,
 	}
 }
 
