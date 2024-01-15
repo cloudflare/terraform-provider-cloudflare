@@ -2,12 +2,12 @@
 page_title: "cloudflare_email_routing_rule Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides a resource for managing Email Routing rules.
+  The Email Routing Rule https://developers.cloudflare.com/email-routing/setup/email-routing-addresses/#email-rule-actions resource allows you to create and manage email routing rules for a zone.
 ---
 
 # cloudflare_email_routing_rule (Resource)
 
-Provides a resource for managing Email Routing rules.
+The [Email Routing Rule](https://developers.cloudflare.com/email-routing/setup/email-routing-addresses/#email-rule-actions) resource allows you to create and manage email routing rules for a zone.
 
 ## Example Usage
 
@@ -34,31 +34,31 @@ resource "cloudflare_email_routing_rule" "main" {
 
 ### Required
 
-- `action` (Block Set, Min: 1) List actions patterns. (see [below for nested schema](#nestedblock--action))
-- `matcher` (Block Set, Min: 1) Matching patterns to forward to your actions. (see [below for nested schema](#nestedblock--matcher))
 - `name` (String) Routing rule name.
 - `zone_id` (String) The zone identifier to target for the resource.
 
 ### Optional
 
-- `enabled` (Boolean) Routing rule status.
-- `priority` (Number) Priority of the routing rule.
+- `action` (Block Set) Actions to take when a match is found. (see [below for nested schema](#nestedblock--action))
+- `enabled` (Boolean) Whether the email routing rule is enabled.
+- `matcher` (Block Set) Matching patterns to forward to your actions. (see [below for nested schema](#nestedblock--matcher))
+- `priority` (Number) The priority of the email routing rule.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
-- `tag` (String) Routing rule identifier.
+- `id` (String) The ID of the email routing rule.
+- `tag` (String) The tag of the email routing rule.
 
 <a id="nestedblock--action"></a>
 ### Nested Schema for `action`
 
 Required:
 
-- `type` (String) Type of supported action. Available values: `forward`, `worker`, `drop`.
+- `type` (String) Type of action. Available values: `forward`, `worker`, `drop`
 
 Optional:
 
-- `value` (List of String) An array with items in the following form. Only required when `type` is `forward` or `worker`.
+- `value` (Set of String) Value to match on. Required for `type` of `literal`.
 
 
 <a id="nestedblock--matcher"></a>
@@ -66,11 +66,17 @@ Optional:
 
 Required:
 
-- `type` (String) Type of matcher. Available values: `literal`, `all`.
+- `type` (String) Type of matcher. Available values: `literal`, `all`
 
 Optional:
 
-- `field` (String) Field for type matcher.
-- `value` (String) Value for matcher.
+- `field` (String) Field to match on. Required for `type` of `literal`.
+- `value` (String) Value to match on. Required for `type` of `literal`.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudflare_email_routing_rule.example <zone_id>/<email_routing_rule_id>
+```
