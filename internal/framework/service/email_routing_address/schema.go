@@ -1,7 +1,8 @@
-package r2_bucket
+package email_routing_address
 
 import (
 	"context"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -10,10 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
-			The [R2 Bucket](https://developers.cloudflare.com/r2/) resource allows you to manage Cloudflare R2 buckets.
+			The [Email Routing Address](https://developers.cloudflare.com/email-routing/setup/email-routing-addresses/#destination-addresses) resource allows you to manage Cloudflare Email Routing Destination Addresses.
 	`),
 
 		Attributes: map[string]schema.Attribute{
@@ -28,20 +29,28 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 				MarkdownDescription: consts.IDSchemaDescription,
 				Computed:            true,
 			},
-			"name": schema.StringAttribute{
+			"tag": schema.StringAttribute{
+				MarkdownDescription: "Destination address identifier.",
+				Computed:            true,
+			},
+			"email": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "The name of the R2 bucket.",
+				MarkdownDescription: "The contact email address of the user.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"location": schema.StringAttribute{
-				Optional:            true,
+			"verified": schema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "The location hint of the R2 bucket.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
+				MarkdownDescription: "The date and time the destination address has been verified. Null means not verified yet.",
+			},
+			"created": schema.StringAttribute{
+				Computed:            true,
+				MarkdownDescription: "The date and time the destination address has been created.",
+			},
+			"modified": schema.StringAttribute{
+				Computed:            true,
+				MarkdownDescription: "The date and time the destination address has been modified.",
 			},
 		},
 	}

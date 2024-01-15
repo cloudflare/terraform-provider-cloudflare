@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
@@ -330,6 +331,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		d1.NewResource,
+		email_routing_address.NewResource,
 		email_routing_rule.NewResource,
 		list_item.NewResource,
 		r2_bucket.NewResource,
