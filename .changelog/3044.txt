@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_dlp_profile: Prevent misidentified changes in dlp resources
+```

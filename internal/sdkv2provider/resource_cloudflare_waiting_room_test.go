@@ -8,9 +8,41 @@ import (
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_waiting_room", &resource.Sweeper{
+		Name: "cloudflare_waiting_room",
+		F:    testSweepCloudflareWaitingRoom,
+	})
+}
+
+func testSweepCloudflareWaitingRoom(r string) error {
+	ctx := context.Background()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	resp, err := client.ListWaitingRooms(ctx, zoneID)
+	if err != nil {
+		return err
+	}
+
+	for _, room := range resp {
+		err := client.DeleteWaitingRoom(ctx, zoneID, room.ID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 	t.Parallel()
@@ -115,7 +147,7 @@ resource "cloudflare_waiting_room" "%[1]s" {
     host = "shop2.%[4]s"
   }
 
-  queueing_status_code      = 200 
+  queueing_status_code      = 200
 
   depends_on = [cloudflare_record.%[1]s-shop-1, cloudflare_record.%[1]s-shop-2]
 }

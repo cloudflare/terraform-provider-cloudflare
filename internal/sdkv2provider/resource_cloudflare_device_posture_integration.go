@@ -247,6 +247,12 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
 				return fmt.Errorf("api_url has to be of type string")
 			}
+			if config.AccessClientID, ok = d.Get("config.0.access_client_id").(string); !ok {
+				return fmt.Errorf("access_client_id has to be of type string")
+			}
+			if config.AccessClientSecret, ok = d.Get("config.0.access_client_secret").(string); !ok {
+				return fmt.Errorf("access_client_secret has to be of type string")
+			}
 			integration.Config = config
 		default:
 			return fmt.Errorf("unsupported integration type:%s", integration.Type)
@@ -257,12 +263,14 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 
 func convertIntegrationConfigToSchema(input cloudflare.DevicePostureIntegrationConfig) []interface{} {
 	m := map[string]interface{}{
-		"client_id":     input.ClientID,
-		"client_secret": input.ClientSecret,
-		"auth_url":      input.AuthUrl,
-		"api_url":       input.ApiUrl,
-		"client_key":    input.ClientKey,
-		"customer_id":   input.CustomerID,
+		"client_id":            input.ClientID,
+		"client_secret":        input.ClientSecret,
+		"auth_url":             input.AuthUrl,
+		"api_url":              input.ApiUrl,
+		"client_key":           input.ClientKey,
+		"customer_id":          input.CustomerID,
+		"access_client_id":     input.AccessClientID,
+		"access_client_secret": input.AccessClientSecret,
 	}
 	return []interface{}{m}
 }

@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.47.8 to 1.48.0
+```

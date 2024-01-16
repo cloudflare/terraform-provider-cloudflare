@@ -74,6 +74,7 @@ resource "cloudflare_worker_script" "my_script" {
 - `analytics_engine_binding` (Block Set) (see [below for nested schema](#nestedblock--analytics_engine_binding))
 - `compatibility_date` (String) The date to use for the compatibility flag.
 - `compatibility_flags` (Set of String) Compatibility flags used for Worker Scripts.
+- `d1_database_binding` (Block Set) (see [below for nested schema](#nestedblock--d1_database_binding))
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `logpush` (Boolean) Enabling allows Worker events to be sent to a defined Logpush destination.
 - `module` (Boolean) Whether to upload Worker as a module.
@@ -95,6 +96,15 @@ resource "cloudflare_worker_script" "my_script" {
 Required:
 
 - `dataset` (String) The name of the Analytics Engine dataset to write to.
+- `name` (String) The global variable for the binding in your Worker code.
+
+
+<a id="nestedblock--d1_database_binding"></a>
+### Nested Schema for `d1_database_binding`
+
+Required:
+
+- `database_id` (String) Database ID of D1 database to use.
 - `name` (String) The global variable for the binding in your Worker code.
 
 

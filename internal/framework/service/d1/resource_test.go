@@ -34,6 +34,12 @@ func init() {
 			}
 
 			for _, database := range databases {
+				// hardcoded D1 identifier until we can solve the cyclic import
+				// issues and automatically create this resource.
+				if database.UUID == "ce8b95dc-b376-4ff8-9b9e-1801ed6d745d" {
+					continue
+				}
+
 				err := client.DeleteD1Database(ctx, cloudflare.AccountIdentifier(accountID), database.UUID)
 				if err != nil {
 					return fmt.Errorf("failed to delete D1 database %q: %w", database.Name, err)

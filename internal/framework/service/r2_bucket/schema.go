@@ -2,7 +2,6 @@ package r2_bucket
 
 import (
 	"context"
-
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
