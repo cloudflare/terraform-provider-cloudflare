@@ -75,17 +75,10 @@ resource "cloudflare_notification_policy" "example" {
 ### Optional
 
 - `description` (String) Description of the notification policy.
-<<<<<<< HEAD
-- `email_integration` (Block Set) The email id to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required. Must provide only one of `email_integration`, `webhooks_integration`, `pagerduty_integration`. (see [below for nested schema](#nestedblock--email_integration))
-- `filters` (Block List, Max: 1) An optional nested block of filters that applies to the selected `alert_type`. A key-value map that specifies the type of filter and the values to match against (refer to the alert type block for available fields). (see [below for nested schema](#nestedblock--filters))
-- `pagerduty_integration` (Block Set) The unique id of a configured pagerduty endpoint to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required. Must provide only one of `email_integration`, `webhooks_integration`, `pagerduty_integration`. (see [below for nested schema](#nestedblock--pagerduty_integration))
-- `webhooks_integration` (Block Set) The unique id of a configured webhooks endpoint to which the notification should be dispatched. One of email, webhooks, or PagerDuty mechanisms is required. Must provide only one of `email_integration`, `webhooks_integration`, `pagerduty_integration`. (see [below for nested schema](#nestedblock--webhooks_integration))
-=======
 - `email_integration` (Block Set) The email ID to which the notification should be dispatched. (see [below for nested schema](#nestedblock--email_integration))
 - `filters` (Block List, Max: 1) An optional nested block of filters that applies to the selected `alert_type`. A key-value map that specifies the type of filter and the values to match against (refer to the alert type block for available fields). (see [below for nested schema](#nestedblock--filters))
 - `pagerduty_integration` (Block Set) The unique ID of a configured pagerduty endpoint to which the notification should be dispatched. (see [below for nested schema](#nestedblock--pagerduty_integration))
 - `webhooks_integration` (Block Set) The unique ID of a configured webhooks endpoint to which the notification should be dispatched. (see [below for nested schema](#nestedblock--webhooks_integration))
->>>>>>> 7fd4f9c00907d190bd32c7837261f7973084de28
 
 ### Read-Only
 
