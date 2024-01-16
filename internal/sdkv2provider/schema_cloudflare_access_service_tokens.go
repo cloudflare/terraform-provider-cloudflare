@@ -31,7 +31,7 @@ func resourceCloudflareAccessServiceTokenSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 			ForceNew:    true,
-			Description: "UUID client ID associated with the Service Token.",
+			Description: "Client ID associated with the Service Token (example: `5dcf7758214302822b912e452906149c.access`)",
 		},
 		"client_secret": {
 			Type:        schema.TypeString,
