@@ -50,7 +50,7 @@ resource "cloudflare_access_service_token" "my_app" {
 
 ### Read-Only
 
-- `client_id` (String) UUID client ID associated with the Service Token. **Modifying this attribute will force creation of a new resource.**
+- `client_id` (String) Client ID associated with the Service Token. **Modifying this attribute will force creation of a new resource.**
 - `client_secret` (String, Sensitive) A secret for interacting with Access protocols. **Modifying this attribute will force creation of a new resource.**
 - `expires_at` (String) Date when the token expires.
 - `id` (String) The ID of this resource.
