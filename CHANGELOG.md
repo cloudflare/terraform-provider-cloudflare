@@ -22,6 +22,7 @@ INTERNAL:
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.3 to 1.26.4 ([#3065](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3065))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.85.0 to 0.86.0 ([#3066](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3066))
 * provider: bump github.com/hashicorp/terraform-plugin-framework from 1.4.2 to 1.5.0 ([#3058](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3058))
 
 ## 4.22.0 (January 10th, 2024)
