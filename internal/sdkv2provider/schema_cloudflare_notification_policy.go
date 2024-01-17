@@ -93,7 +93,7 @@ var notificationAffectedComponents = map[string]string{
 func affectedComponentKeys() []string {
 	var keys []string
 
-	for key, _ := range notificationAffectedComponents {
+	for key := range notificationAffectedComponents {
 		keys = append(keys, key)
 	}
 
