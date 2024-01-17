@@ -133,6 +133,7 @@ Required:
 Optional:
 
 - `custom_attribute` (Block List) Custom attribute mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_attribute))
+- `default_relay_state` (String) The relay state used if not provided by the identity provider.
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application. Defaults to `email`.
 
 Read-Only:
