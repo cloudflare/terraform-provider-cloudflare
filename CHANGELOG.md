@@ -11,6 +11,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_email_routing_address: add ability to import ([#2977](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2977))
 * resource/cloudflare_email_routing_rule: add ability to import ([#2998](https://github.com/cloudflare/terraform-provider-cloudflare/issues/2998))
+* resource/cloudflare_notification_policy: Implement the `affected_components` option ([#3009](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3009))
 
 INTERNAL:
 
