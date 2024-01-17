@@ -185,7 +185,12 @@ func expandNotificationPolicyFilter(list []interface{}) map[string][]string {
 	for _, listItem := range list {
 		for k, mapItem := range listItem.(map[string]interface{}) {
 			for _, v := range mapItem.(*schema.Set).List() {
-				filters[k] = append(filters[k], v.(string))
+				switch k {
+				case "affected_components":
+					filters[k] = append(filters[k], notificationAffectedComponents[v.(string)])
+				default:
+					filters[k] = append(filters[k], v.(string))
+				}
 			}
 		}
 	}
@@ -197,8 +202,17 @@ func flattenNotificationPolicyFilter(filters map[string][]string) []interface{} 
 	for k, v := range filters {
 		set := schema.NewSet(schema.HashString, []interface{}{})
 		for _, value := range v {
-			set.Add(value)
+			switch k {
+			case "affected_components":
+				key, found := getMapKey(notificationAffectedComponents, value)
+				if found {
+					set.Add(key)
+				}
+			default:
+				set.Add(value)
+			}
 		}
+
 		filtersMap[k] = set
 	}
 	return []interface{}{filtersMap}
@@ -230,4 +244,15 @@ func setNotificationMechanisms(md []cloudflare.NotificationMechanismData) *schem
 	}
 
 	return schema.NewSet(schema.HashResource(mechanismData), mechanisms)
+}
+
+func getMapKey(m map[string]string, value string) (key string, ok bool) {
+	for k, v := range m {
+		if v == value {
+			key = k
+			ok = true
+			return
+		}
+	}
+	return
 }
