@@ -10,13 +10,14 @@ description: |-
 {{ .Description | trimspace }}
 
 -> If you are using a `source` block configuration, you must first have a
-connected GitHub or GitLab account connected to Cloudflare. See the
-[Getting Started with Pages] documentation on how to link your accounts.
+   connected GitHub or GitLab account connected to Cloudflare. See the
+   [Getting Started with Pages] documentation on how to link your accounts.
 
+{{ if .HasExample -}}
 ## Example Usage
 
-{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
-
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
 {{ .SchemaMarkdown | trimspace }}
 
 ## Import
@@ -25,6 +26,4 @@ connected GitHub or GitLab account connected to Cloudflare. See the
 
 Import is supported using the following syntax:
 
-{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
-
-[Getting Started with Pages]: https://developers.cloudflare.com/pages/get-started/#connect-your-git-provider-to-pages
+{{codefile "shell" .ImportFile}}
