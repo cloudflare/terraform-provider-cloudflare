@@ -9,15 +9,16 @@ description: |-
 
 ## Example Usage
 
-{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
+{{codefile "terraform" .ExampleFile}}
 
 -> Available location values can be found in the [R2 documentation](https://developers.cloudflare.com/r2/buckets/data-location/#available-hints).
 
-
 {{ .SchemaMarkdown | trimspace }}
 
+{{ if .HasImport -}}
 ## Import
 
 Import is supported using the following syntax:
 
-{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
+{{codefile "shell" .ImportFile}}
+{{- end }}

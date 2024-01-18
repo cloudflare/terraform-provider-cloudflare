@@ -17,7 +17,7 @@ resource or swap to `cloudflare_zones` to further filter the results.
 {{ if .HasExample -}}
 ## Example Usage
 
-{{ tffile (printf "%s%s%s" "examples/data-sources/" .Name "/data-source.tf") }}
+{{codefile "terraform" .ExampleFile}}
 {{- end }}
 
 {{ .SchemaMarkdown | trimspace }}

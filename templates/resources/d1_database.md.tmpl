@@ -9,13 +9,15 @@ description: |-
 
 {{ .Description | trimspace }}
 
-!> When a D1 Database is replaced all the data is lost. Please ensure you have a backup of your data before replacing a D1 Database.
+!> When a D1 Database is replaced all the data is lost. Please ensure you have a
+   backup of your data before replacing a D1 Database.
 
 
+{{ if .HasExample -}}
 ## Example Usage
 
-{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
-
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
 {{ .SchemaMarkdown | trimspace }}
 
 ## Import
@@ -23,5 +25,4 @@ description: |-
 
 Import is supported using the following syntax:
 
-{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
-
+{{codefile "shell" .ImportFile}}
