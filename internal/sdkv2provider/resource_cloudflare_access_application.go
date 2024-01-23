@@ -322,10 +322,7 @@ func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.Re
 	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(accessApplicationID)
 
-	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)
-	if readErr != nil {
-		return nil, errors.New("failed to read Access Application state")
-	}
+	resourceCloudflareAccessApplicationRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
