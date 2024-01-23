@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: Fix error handling in `import cloudflare_access_application`
+```
