@@ -283,8 +283,8 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 			Port: d.Get("service_mode_v2_port").(int),
 		},
 		ExcludeOfficeIps:   cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
-		LANAllowMinutes:    cloudflare.UintPtr(d.Get("lan_allow_minutes").(uint)),
-		LANAllowSubnetSize: cloudflare.UintPtr(d.Get("lan_allow_subnet_size").(uint)),
+		LANAllowMinutes:    cloudflare.UintPtr(uint(d.Get("lan_allow_minutes").(int))),
+		LANAllowSubnetSize: cloudflare.UintPtr(uint(d.Get("lan_allow_subnet_size").(int))),
 	}
 
 	name := d.Get("name").(string)
