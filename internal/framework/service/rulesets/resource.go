@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
@@ -320,13 +319,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 			Expression:  flatteners.String(ruleResponse.Expression),
 			Description: types.StringValue(ruleResponse.Description),
 			Enabled:     flatteners.Bool(ruleResponse.Enabled),
-			Version:     flatteners.String(cloudflare.String(ruleResponse.Version)),
-		}
-
-		if ruleResponse.LastUpdated != nil {
-			rule.LastUpdated = types.StringValue(ruleResponse.LastUpdated.String())
-		} else {
-			rule.LastUpdated = types.StringNull()
 		}
 
 		// action_parameters
@@ -356,7 +348,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				OriginErrorPagePassthru: flatteners.Bool(ruleResponse.ActionParameters.OriginErrorPagePassthru),
 				RespectStrongEtags:      flatteners.Bool(ruleResponse.ActionParameters.RespectStrongETags),
 				ReadTimeout:             flatteners.Int64(int64(cloudflare.Uint(ruleResponse.ActionParameters.ReadTimeout))),
-				Version:                 flatteners.String(cloudflare.String(ruleResponse.ActionParameters.Version)),
 			})
 
 			if !reflect.ValueOf(ruleResponse.ActionParameters.Polish).IsNil() {
@@ -787,7 +778,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 	rr := cloudflare.RulesetRule{
 		ID:          r.ID.ValueString(),
 		Ref:         r.Ref.ValueString(),
-		Version:     r.Version.ValueStringPointer(),
 		Action:      r.Action.ValueString(),
 		Expression:  r.Expression.ValueString(),
 		Description: r.Description.ValueString(),
@@ -839,12 +829,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 
 		if !ap.Ruleset.IsNull() {
 			rr.ActionParameters.Ruleset = ap.Ruleset.ValueString()
-		}
-
-		if !ap.Version.IsNull() {
-			if ap.Version.ValueString() != "" {
-				rr.ActionParameters.Version = cloudflare.StringPtr(ap.Version.ValueString())
-			}
 		}
 
 		if !ap.Increment.IsNull() {
@@ -1327,15 +1311,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 		}
 	}
 
-	if !r.LastUpdated.IsNull() {
-		if lastUpdated, err := time.Parse(
-			"2006-01-02 15:04:05.999999999 -0700 MST",
-			r.LastUpdated.ValueString(),
-		); err == nil {
-			rr.LastUpdated = &lastUpdated
-		}
-	}
-
 	return rr
 }
 
@@ -1422,8 +1397,6 @@ func ruleToKey(rule cloudflare.RulesetRule) (string, error) {
 	// include computed fields as a part of the key value.
 	rule.ID = ""
 	rule.Ref = ""
-	rule.Version = nil
-	rule.LastUpdated = nil
 
 	data, err := json.Marshal(rule)
 	if err != nil {

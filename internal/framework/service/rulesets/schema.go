@@ -3,6 +3,7 @@ package rulesets
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -108,15 +109,14 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 						consts.IDSchemaKey: schema.StringAttribute{
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
-						},
-						"version": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "Version of the ruleset to deploy.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"ref": schema.StringAttribute{
 							Optional:            true,
 							Computed:            true,
-							MarkdownDescription: "Rule reference.",
+							MarkdownDescription: "The reference of the rule (the rule ID by default). Example: `my_ref`",
 						},
 						"enabled": schema.BoolAttribute{
 							Optional:            true,
@@ -144,10 +144,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 								stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetRuleActionValues()...),
 							},
 							Optional: true,
-						},
-						"last_updated": schema.StringAttribute{
-							Computed:            true,
-							MarkdownDescription: "The most recent update to this rule.",
 						},
 					},
 					Blocks: map[string]schema.Block{
@@ -302,11 +298,6 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 									"origin_error_page_passthru": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Pass-through error page for origin.",
-									},
-									"version": schema.StringAttribute{
-										Computed:            true,
-										Optional:            true,
-										MarkdownDescription: "Version of the ruleset to deploy.",
 									},
 								},
 								Blocks: map[string]schema.Block{
