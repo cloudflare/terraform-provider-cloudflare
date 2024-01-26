@@ -469,13 +469,11 @@ Optional:
 - `exposed_credential_check` (Block List) List of parameters that configure exposed credential checks. (see [below for nested schema](#nestedblock--rules--exposed_credential_check))
 - `logging` (Block List) List parameters to configure how the rule generates logs. Only valid for skip action. (see [below for nested schema](#nestedblock--rules--logging))
 - `ratelimit` (Block List) List of parameters that configure HTTP rate limiting behaviour. (see [below for nested schema](#nestedblock--rules--ratelimit))
-- `ref` (String) Rule reference.
+- `ref` (String) The reference of the rule (the rule ID by default). Example: `my_ref`
 
 Read-Only:
 
 - `id` (String) Unique rule identifier.
-- `last_updated` (String) The most recent update to this rule.
-- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters"></a>
 ### Nested Schema for `rules.action_parameters`
@@ -532,7 +530,6 @@ Optional:
 - `status_code` (Number) HTTP status code of the custom error response.
 - `sxg` (Boolean) Turn on or off the SXG feature.
 - `uri` (Block List) List of URI properties to configure for the ruleset rule when performing URL rewrite transformations. (see [below for nested schema](#nestedblock--rules--action_parameters--uri))
-- `version` (String) Version of the ruleset to deploy.
 
 <a id="nestedblock--rules--action_parameters--algorithms"></a>
 ### Nested Schema for `rules.action_parameters.algorithms`
