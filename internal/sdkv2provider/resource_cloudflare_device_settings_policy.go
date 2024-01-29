@@ -187,10 +187,10 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 	if err := d.Set("exclude_office_ips", policy.ExcludeOfficeIps); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing exclude_office_ips"))
 	}
-	if err := d.Set("lan_allow_minutes", cloudflare.Uint(policy.LANAllowMinutes)); err != nil {
+	if err := d.Set("lan_allow_minutes", int(cloudflare.Uint(policy.LANAllowMinutes))); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing lan_allow_minutes"))
 	}
-	if err := d.Set("lan_allow_subnet_size", cloudflare.Uint(policy.LANAllowSubnetSize)); err != nil {
+	if err := d.Set("lan_allow_subnet_size", int(cloudflare.Uint(policy.LANAllowSubnetSize))); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing lan_allow_subnet_size"))
 	}
 
