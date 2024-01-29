@@ -57,8 +57,8 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "switch_locked", "true"),
 					resource.TestCheckResourceAttr(name, "exclude_office_ips", "true"),
-					resource.TestCheckResourceAttr(name, "lan_allow_minutes", "120"),
-					resource.TestCheckResourceAttr(name, "lan_allow_subnet_size", "31"),
+					resource.TestCheckResourceAttr(name, "lan_allow_minutes", "30"),
+					resource.TestCheckResourceAttr(name, "lan_allow_subnet_size", "24"),
 				),
 			},
 			{
