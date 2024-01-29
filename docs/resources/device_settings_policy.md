@@ -47,7 +47,7 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
 - `allow_mode_switch` (Boolean) Whether to allow mode switch for this policy.
 - `allow_updates` (Boolean) Whether to allow updates under this policy.
 - `allowed_to_leave` (Boolean) Whether to allow devices to leave the organization. Defaults to `true`.
-- `auto_connect` (Number) The amount of time in minutes to reconnect after having been disabled.
+- `auto_connect` (Number) The amount of time in seconds to reconnect after having been disabled.
 - `captive_portal` (Number) The captive portal value for this policy. Defaults to `180`.
 - `default` (Boolean) Whether the policy refers to the default account policy.
 - `disable_auto_fallback` (Boolean) Whether to disable auto fallback for this policy.
