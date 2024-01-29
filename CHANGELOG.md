@@ -1,5 +1,9 @@
 ## 4.24.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_device_settings_policy: updated docs that `auto_connect` is in seconds, not in minutes ([#3080](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3080))
+
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.48.0 to 1.48.1 ([#3078](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3078))
