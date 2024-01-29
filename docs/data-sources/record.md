@@ -27,6 +27,7 @@ data "cloudflare_record" "example" {
 
 ### Optional
 
+- `content` (String) Content to filter record results on.
 - `priority` (Number) DNS priority to filter record results on.
 - `type` (String) DNS record type to filter record results on. Defaults to `A`.
 
