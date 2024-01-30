@@ -102,7 +102,6 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 
 	if len(records) != 1 && !contains([]string{"MX", "URI"}, searchRecord.Type) {
 		return diag.Errorf("only wanted 1 DNS record. Got %d records", len(records))
-
 	} else {
 		var p uint16
 		if priority, ok := d.GetOkExists("priority"); ok {
