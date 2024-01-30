@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_dlp_profile: fixed plan flapping with DLP custom entries
+```
