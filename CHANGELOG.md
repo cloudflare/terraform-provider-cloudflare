@@ -1,5 +1,9 @@
 ## 4.24.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* datasource/cloudflare_record: Add the option to filter by "content" ([#3084](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3084))
+
 BUG FIXES:
 
 * resource/cloudflare_access_application: leave existence error handling checks to the `Read` operation when performing imports. ([#3075](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3075))
