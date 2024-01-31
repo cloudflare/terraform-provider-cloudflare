@@ -115,7 +115,6 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 			Description: "The size of the subnet for the local access network.",
 			Type:        schema.TypeInt,
 			Optional:    true,
-			Default:     24,
 		},
 	}
 }

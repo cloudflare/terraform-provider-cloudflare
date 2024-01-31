@@ -59,8 +59,6 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 		Enabled:             req.Enabled,
 		ExcludeOfficeIps:    req.ExcludeOfficeIps,
 		Description:         req.Description,
-		LANAllowMinutes:     req.LANAllowMinutes,
-		LANAllowSubnetSize:  req.LANAllowSubnetSize,
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy %q: %w", accountID, err))
@@ -70,6 +68,15 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy: returned policyID was missing after creating policy for account: %q", accountID))
 	}
 	d.SetId(fmt.Sprintf("%s/%s", accountID, *policy.PolicyID))
+
+	// We only want to set a LANAllow* field if it has a non-nil value.
+	// This is to ensure backwards compatibility if the Opt-In Split Tunnel feature is not used.
+	if req.LANAllowMinutes != nil {
+		policy.LANAllowMinutes = req.LANAllowMinutes
+	}
+	if req.LANAllowSubnetSize != nil {
+		policy.LANAllowSubnetSize = req.LANAllowSubnetSize
+	}
 	return resourceCloudflareDeviceSettingsPolicyRead(ctx, d, meta)
 }
 
@@ -187,11 +194,18 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 	if err := d.Set("exclude_office_ips", policy.ExcludeOfficeIps); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing exclude_office_ips"))
 	}
-	if err := d.Set("lan_allow_minutes", int(cloudflare.Uint(policy.LANAllowMinutes))); err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing lan_allow_minutes"))
+
+	// We only want to return / set a lan_allow_* field if it has a non-nil value.
+	// This is to ensure backwards compatibility if the Opt-In Split Tunnel feature is not used.
+	if policy.LANAllowMinutes != nil {
+		if err := d.Set("lan_allow_minutes", int(cloudflare.Uint(policy.LANAllowMinutes))); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing lan_allow_minutes"))
+		}
 	}
-	if err := d.Set("lan_allow_subnet_size", int(cloudflare.Uint(policy.LANAllowSubnetSize))); err != nil {
-		return diag.FromErr(fmt.Errorf("error parsing lan_allow_subnet_size"))
+	if policy.LANAllowSubnetSize != nil {
+		if err := d.Set("lan_allow_subnet_size", int(cloudflare.Uint(policy.LANAllowSubnetSize))); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing lan_allow_subnet_size"))
+		}
 	}
 
 	// ignore setting forbidden fields for default policies
@@ -282,9 +296,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 			Mode: cloudflare.ServiceMode(d.Get("service_mode_v2_mode").(string)),
 			Port: d.Get("service_mode_v2_port").(int),
 		},
-		ExcludeOfficeIps:   cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
-		LANAllowMinutes:    cloudflare.UintPtr(uint(d.Get("lan_allow_minutes").(int))),
-		LANAllowSubnetSize: cloudflare.UintPtr(uint(d.Get("lan_allow_subnet_size").(int))),
+		ExcludeOfficeIps: cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
 	}
 
 	name := d.Get("name").(string)
@@ -321,6 +333,17 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 	if ok {
 		precedenceVal := int(providerToApiRulePrecedence(int64(precedence.(int)), d.Get("name").(string)))
 		req.Precedence = &precedenceVal
+	}
+
+	// We only want to return a lan_allow_* field if it has a non-nil value.
+	// This is to ensure backwards compatibility if the Opt-In Split Tunnel feature is not used.
+	lanAllowMinutes, ok := d.GetOk("lan_allow_minutes")
+	if ok {
+		req.LANAllowMinutes = cloudflare.UintPtr(uint(lanAllowMinutes.(int)))
+	}
+	lanAllowSubnetSize, ok := d.GetOk("lan_allow_subnet_size")
+	if ok {
+		req.LANAllowSubnetSize = cloudflare.UintPtr(uint(lanAllowSubnetSize.(int)))
 	}
 
 	return req, nil
