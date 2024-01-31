@@ -16,6 +16,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
@@ -334,6 +335,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		d1.NewResource,
 		email_routing_address.NewResource,
 		email_routing_rule.NewResource,
+		hyperdrive_config.NewResource,
 		list_item.NewResource,
 		r2_bucket.NewResource,
 		rulesets.NewResource,
