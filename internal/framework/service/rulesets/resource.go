@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
@@ -320,13 +319,6 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 			Expression:  flatteners.String(ruleResponse.Expression),
 			Description: types.StringValue(ruleResponse.Description),
 			Enabled:     flatteners.Bool(ruleResponse.Enabled),
-			Version:     flatteners.String(cloudflare.String(ruleResponse.Version)),
-		}
-
-		if ruleResponse.LastUpdated != nil {
-			rule.LastUpdated = types.StringValue(ruleResponse.LastUpdated.String())
-		} else {
-			rule.LastUpdated = types.StringNull()
 		}
 
 		// action_parameters
@@ -785,12 +777,13 @@ func (r *RulesetResourceModel) toRuleset(ctx context.Context) cloudflare.Ruleset
 // it into an API representation.
 func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 	rr := cloudflare.RulesetRule{
-		ID:          r.ID.ValueString(),
-		Ref:         r.Ref.ValueString(),
-		Version:     r.Version.ValueStringPointer(),
 		Action:      r.Action.ValueString(),
 		Expression:  r.Expression.ValueString(),
 		Description: r.Description.ValueString(),
+	}
+
+	if !r.Ref.IsNull() {
+		rr.Ref = r.Ref.ValueString()
 	}
 
 	if !r.Enabled.IsNull() {
@@ -1324,15 +1317,6 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cloudflare.RulesetRule {
 		rr.ExposedCredentialCheck = &cloudflare.RulesetRuleExposedCredentialCheck{
 			UsernameExpression: e.UsernameExpression.ValueString(),
 			PasswordExpression: e.PasswordExpression.ValueString(),
-		}
-	}
-
-	if !r.LastUpdated.IsNull() {
-		if lastUpdated, err := time.Parse(
-			"2006-01-02 15:04:05.999999999 -0700 MST",
-			r.LastUpdated.ValueString(),
-		); err == nil {
-			rr.LastUpdated = &lastUpdated
 		}
 	}
 

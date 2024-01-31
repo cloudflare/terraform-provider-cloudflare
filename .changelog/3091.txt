@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: improve handling and output of unknown values
+```

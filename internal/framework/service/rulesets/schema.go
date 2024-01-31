@@ -3,6 +3,7 @@ package rulesets
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -108,6 +109,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 						consts.IDSchemaKey: schema.StringAttribute{
 							Computed:            true,
 							MarkdownDescription: "Unique rule identifier.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"version": schema.StringAttribute{
 							Computed:            true,
@@ -117,6 +121,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Optional:            true,
 							Computed:            true,
 							MarkdownDescription: "Rule reference.",
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.UseStateForUnknown(),
+							},
 						},
 						"enabled": schema.BoolAttribute{
 							Optional:            true,
