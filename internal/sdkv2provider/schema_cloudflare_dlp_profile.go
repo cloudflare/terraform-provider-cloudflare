@@ -58,6 +58,14 @@ func resourceCloudflareDLPEntrySchema() map[string]*schema.Schema {
 	}
 }
 
+// Custom hash function used on DLP entries. Extracts the "name" property
+// to provide a stable hash for profile entries and prevent spurious differences
+// between the state/infra.
+func hashResourceCloudflareDLPEntry(i interface{}) int {
+	v := i.(map[string]interface{})
+	return schema.HashString(v["name"])
+}
+
 func resourceCloudflareDLPProfileSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
@@ -91,6 +99,7 @@ func resourceCloudflareDLPProfileSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: resourceCloudflareDLPEntrySchema(),
 			},
+			Set: hashResourceCloudflareDLPEntry,
 		},
 		"allowed_match_count": {
 			Type:         schema.TypeInt,

@@ -113,9 +113,7 @@ func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceDat
 	for _, entry := range dlpProfile.Entries {
 		entries = append(entries, dlpEntryToSchema(entry))
 	}
-	d.Set("entry", schema.NewSet(schema.HashResource(&schema.Resource{
-		Schema: resourceCloudflareDLPEntrySchema(),
-	}), entries))
+	d.Set("entry", schema.NewSet(hashResourceCloudflareDLPEntry, entries))
 
 	return nil
 }
