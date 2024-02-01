@@ -62,6 +62,29 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccCloudflareDefaultDeviceSettingsPolicy(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "allow_mode_switch", "true"),
+					resource.TestCheckResourceAttr(name, "allow_updates", "true"),
+					resource.TestCheckResourceAttr(name, "allowed_to_leave", "true"),
+					resource.TestCheckResourceAttr(name, "auto_connect", "0"),
+					resource.TestCheckResourceAttr(name, "captive_portal", "5"),
+					resource.TestCheckResourceAttr(name, "default", "false"),
+					resource.TestCheckResourceAttr(name, "disable_auto_fallback", "true"),
+					resource.TestCheckResourceAttr(name, "enabled", "true"),
+					resource.TestCheckResourceAttr(name, "match", "identity.email == \"foo@example.com\""),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "description", rnd),
+					resource.TestCheckResourceAttr(name, "precedence", fmt.Sprintf("%d", precedence)),
+					resource.TestCheckResourceAttr(name, "service_mode_v2_mode", "warp"),
+					resource.TestCheckResourceAttr(name, "service_mode_v2_port", "0"),
+					resource.TestCheckResourceAttr(name, "support_url", "https://cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "switch_locked", "true"),
+					resource.TestCheckResourceAttr(name, "exclude_office_ips", "true"),
+				),
+			},
+			{
 				Config: testAccCloudflareDefaultDeviceSettingsPolicy(defaultRnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(defaultName, "id", accountID),
@@ -187,52 +210,4 @@ func testAccCheckCloudflareDeviceSettingsPolicyDestroy(s *terraform.State) error
 	}
 
 	return nil
-}
-
-func testAccCloudflareInvalidLANAllowMinutesDeviceSettingsPolicy(rnd, accountID string, precedence uint64) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_settings_policy" "%[1]s" {
-	account_id                = "%[2]s"
-	allow_mode_switch         = true
-	allow_updates             = true
-	allowed_to_leave          = true
-	auto_connect              = 0
-	captive_portal            = 5
-	disable_auto_fallback     = true
-	enabled                   = true
-	match                     = "identity.email == \"foo@example.com\""
-	name                      = "%[1]s"
-	description			      = "%[4]s"
-	precedence                = %[3]d
-	support_url               = "https://cloudflare.com"
-	switch_locked             = true
-	exclude_office_ips		  = true
-	lan_allow_minutes 		  = 200
-
-}
-`, rnd, accountID, precedence, rnd)
-}
-
-func testAccCloudflareInvalidLANAllowSubnetSizeDeviceSettingsPolicy(rnd, accountID string, precedence uint64) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_settings_policy" "%[1]s" {
-	account_id                = "%[2]s"
-	allow_mode_switch         = true
-	allow_updates             = true
-	allowed_to_leave          = true
-	auto_connect              = 0
-	captive_portal            = 5
-	disable_auto_fallback     = true
-	enabled                   = true
-	match                     = "identity.email == \"foo@example.com\""
-	name                      = "%[1]s"
-	description			      = "%[4]s"
-	precedence                = %[3]d
-	support_url               = "https://cloudflare.com"
-	switch_locked             = true
-	exclude_office_ips		  = true
-	lan_allow_subnet_size     = 35 
-
-}
-`, rnd, accountID, precedence, rnd)
 }
