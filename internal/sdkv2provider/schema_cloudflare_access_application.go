@@ -2,8 +2,9 @@ package sdkv2provider
 
 import (
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
 	"time"
+
+	"github.com/cloudflare/cloudflare-go"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -385,6 +386,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 					},
 				},
 			},
+		},
+		"allow_authenticate_via_warp": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "When set to true, users can authenticate to this application using their WARP session. When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 		},
 	}
 }

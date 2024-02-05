@@ -53,6 +53,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		AllowAuthenticateViaWarp: cloudflare.BoolPtr(d.Get("allow_authenticate_via_warp").(bool)),
 	}
 
 	if value, ok := d.GetOk("allowed_idps"); ok {
@@ -159,6 +160,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("bg_color", accessApplication.AccessAppLauncherCustomization.BackgroundColor)
 	d.Set("header_bg_color", accessApplication.AccessAppLauncherCustomization.HeaderBackgroundColor)
 	d.Set("app_launcher_logo_url", accessApplication.AccessAppLauncherCustomization.LogoURL)
+	d.Set("allow_authenticate_via_warp", accessApplication.AllowAuthenticateViaWarp)
 
 	if _, ok := d.GetOk("footer_links"); ok {
 		footerLinks := convertFooterLinksStructToSchema(d, accessApplication.AccessAppLauncherCustomization.FooterLinks)
@@ -213,6 +215,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		AllowAuthenticateViaWarp: cloudflare.BoolPtr(d.Get("allow_authenticate_via_warp").(bool)),
 	}
 
 	if appType != "saas" {

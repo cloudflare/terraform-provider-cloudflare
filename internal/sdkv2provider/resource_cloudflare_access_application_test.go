@@ -97,6 +97,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "saas_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "true"),
 				),
 			},
 		},
@@ -126,6 +127,7 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "true"),
 				),
 			},
 		},
@@ -641,6 +643,7 @@ resource "cloudflare_access_application" "%[1]s" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
+	allow_authenticate_via_warp = true
 }
 `, rnd, domain, identifier.Type, identifier.Identifier)
 }
