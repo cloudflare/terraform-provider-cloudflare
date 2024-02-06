@@ -1,3 +1,0 @@
-```release-note:enhancement
-resource/cloudflare_device_settings_policy: support Opt-In Split Tunnel feature
-```
