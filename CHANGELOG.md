@@ -8,10 +8,12 @@ BUG FIXES:
 
 * resource/cloudflare_access_application: leave existence error handling checks to the `Read` operation when performing imports. ([#3075](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3075))
 * resource/cloudflare_device_settings_policy: updated docs that `auto_connect` is in seconds, not in minutes ([#3080](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3080))
+* resource/cloudflare_dlp_profile: fixed plan flapping with DLP custom entries ([#3090](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3090))
 
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.48.0 to 1.48.1 ([#3078](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3078))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.86.0 to 0.87.0 ([#3095](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3095))
 * provider: bump github.com/google/uuid from 1.5.0 to 1.6.0 ([#3076](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3076))
 * provider: bump github.com/hashicorp/terraform-plugin-go from 0.20.0 to 0.21.0 ([#3081](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3081))
 * provider: bump github.com/hashicorp/terraform-plugin-mux from 0.13.0 to 0.14.0 ([#3085](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3085))

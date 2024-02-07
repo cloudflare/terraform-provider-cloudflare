@@ -6,6 +6,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func TestAccCloudflareDLPProfile_Custom(t *testing.T) {
@@ -48,6 +49,9 @@ func TestAccCloudflareDLPProfile_Custom_MultipleEntries(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDLPProfileConfigCustomMultipleEntries(accountID, rnd, "custom profile 2"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PostApplyPostRefresh: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -63,10 +67,9 @@ func TestAccCloudflareDLPProfile_Custom_MultipleEntries(t *testing.T) {
 					}),
 
 					resource.TestCheckTypeSetElemNestedAttrs(name, "entry.*", map[string]string{
-						"name":                 fmt.Sprintf("%s_entry1", rnd),
-						"enabled":              "true",
-						"pattern.0.regex":      "^4[0-9]",
-						"pattern.0.validation": "luhn",
+						"name":            fmt.Sprintf("%s_entry1", rnd),
+						"enabled":         "true",
+						"pattern.0.regex": "^4[0-9]",
 					}),
 				),
 			},
@@ -135,7 +138,6 @@ resource "cloudflare_dlp_profile" "%[1]s" {
 	enabled = true
 	pattern {
 		regex = "^4[0-9]"
-		validation = "luhn"
 	}
   }
 
