@@ -1,4 +1,6 @@
-## 4.24.0 (Unreleased)
+## 4.25.0 (Unreleased)
+
+## 4.24.0 (February 7th, 2023)
 
 ENHANCEMENTS:
 
