@@ -1,5 +1,9 @@
 ## 4.25.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bump golang.org/x/net from 0.20.0 to 0.21.0 ([#3108](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3108))
+
 ## 4.24.0 (February 7th, 2023)
 
 ENHANCEMENTS:
