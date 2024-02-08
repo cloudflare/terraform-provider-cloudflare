@@ -100,6 +100,8 @@ func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("health_check_enabled", tunnel.HealthCheck.Enabled)
 	d.Set("health_check_target", tunnel.HealthCheck.Target)
 	d.Set("health_check_type", tunnel.HealthCheck.Type)
+	d.Set("health_check_direction", tunnel.HealthCheck.Direction)
+	d.Set("health_check_rate", tunnel.HealthCheck.Rate)
 	d.Set("allow_null_cipher", tunnel.AllowNullCipher)
 
 	// Set Remote Identities
@@ -176,5 +178,45 @@ func IPsecTunnelFromResource(d *schema.ResourceData) cloudflare.MagicTransitIPse
 		tunnel.AllowNullCipher = allowNullCipher.(bool)
 	}
 
+	healthcheck := IPsecTunnelHealthcheckFromResource(d)
+	if healthcheck != nil {
+		tunnel.HealthCheck = healthcheck
+	}
+
 	return tunnel
+}
+
+func IPsecTunnelHealthcheckFromResource(d *schema.ResourceData) *cloudflare.MagicTransitTunnelHealthcheck {
+	healthcheck := cloudflare.MagicTransitTunnelHealthcheck{}
+
+	healthcheckEnabled, healthcheckEnabledOk := d.GetOk("health_check_enabled")
+	if healthcheckEnabledOk {
+		healthcheck.Enabled = healthcheckEnabled.(bool)
+	}
+
+	healthcheckTarget, healthcheckTargetOk := d.GetOk("health_check_target")
+	if healthcheckTargetOk {
+		healthcheck.Target = healthcheckTarget.(string)
+	}
+
+	healthcheckType, healthcheckTypeOk := d.GetOk("health_check_type")
+	if healthcheckTypeOk {
+		healthcheck.Type = healthcheckType.(string)
+	}
+
+	healthcheckDirection, healthcheckDirectionOk := d.GetOk("health_check_direction")
+	if healthcheckDirectionOk {
+		healthcheck.Direction = healthcheckDirection.(string)
+	}
+
+	healthcheckRate, healthcheckRateOk := d.GetOk("health_check_rate")
+	if healthcheckRateOk {
+		healthcheck.Rate = healthcheckRate.(string)
+	}
+
+	if healthcheckEnabledOk || healthcheckTargetOk || healthcheckTypeOk || healthcheckDirectionOk || healthcheckRateOk {
+		return &healthcheck
+	}
+
+	return nil
 }
