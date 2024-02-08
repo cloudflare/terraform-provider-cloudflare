@@ -6,13 +6,13 @@ type HyperdriveConfigModel struct {
 	AccountID types.String                  `tfsdk:"account_id"`
 	ID        types.String                  `tfsdk:"id"`
 	Name      types.String                  `tfsdk:"name"`
-	Password  types.String                  `tfsdk:"password"`
 	Origin    *HyperdriveConfigOriginModel  `tfsdk:"origin"`
 	Caching   *HyperdriveConfigCachingModel `tfsdk:"caching"`
 }
 
 type HyperdriveConfigOriginModel struct {
 	Database types.String `tfsdk:"database"`
+	Password types.String `tfsdk:"password"`
 	Host     types.String `tfsdk:"host"`
 	Port     types.Int64  `tfsdk:"port"`
 	Scheme   types.String `tfsdk:"scheme"`

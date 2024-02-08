@@ -163,8 +163,8 @@ func testHyperdriveConfigConfig(
 		resource "cloudflare_hyperdrive_config" "%[1]s" {
 			account_id = "%[2]s"
 			name       = "%[3]s"
-			password   = "%[4]s"
 			origin     = {
+				password = "%[4]s"
 				database = "%[5]s"
 				host     = "%[6]s"
 				port     = "%[7]s"
@@ -188,11 +188,11 @@ func testHyperdriveConfigConfigMinimum(
 		resource "cloudflare_hyperdrive_config" "%[1]s" {
 			account_id = "%[2]s"
 			name       = "%[3]s"
-			password   = "%[4]s"
 			origin     = {
-				database = "%[5]s"
-				host     = "%[6]s"
-				port     = "%[7]s"
+				password   = "%[4]s"
+				database   = "%[5]s"
+				host       = "%[6]s"
+				port       = "%[7]s"
 			}
 		}`,
 		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port),

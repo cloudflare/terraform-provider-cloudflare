@@ -62,10 +62,10 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 
 	createHyperdriveConfig, err := r.client.CreateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
 		cloudflare.CreateHyperdriveConfigParams{
-			Name:     config.Name,
-			Password: data.Password.ValueString(),
+			Name: config.Name,
 			Origin: cloudflare.HyperdriveConfigOrigin{
 				Database: config.Origin.Database,
+				Password: config.Origin.Password,
 				Host:     config.Origin.Host,
 				Port:     config.Origin.Port,
 				Scheme:   config.Origin.Scheme,
@@ -121,10 +121,10 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 	config := buildHyperdriveConfigFromModel(ctx, data)
 
 	updatedConfig, err := r.client.UpdateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateHyperdriveConfigParams{
-		Name:     config.Name,
-		Password: data.Password.ValueString(),
+		Name: config.Name,
 		Origin: cloudflare.HyperdriveConfigOrigin{
 			Database: config.Origin.Database,
+			Password: config.Origin.Password,
 			Host:     config.Origin.Host,
 			Port:     config.Origin.Port,
 			Scheme:   config.Origin.Scheme,
@@ -178,6 +178,7 @@ func buildHyperdriveConfigFromModel(ctx context.Context, config *HyperdriveConfi
 		Name: config.Name.ValueString(),
 		Origin: cloudflare.HyperdriveConfigOrigin{
 			Database: config.Origin.Database.ValueString(),
+			Password: config.Origin.Password.ValueString(),
 			Host:     config.Origin.Host.ValueString(),
 			Port:     int(config.Origin.Port.ValueInt64()),
 		},
