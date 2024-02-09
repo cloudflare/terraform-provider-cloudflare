@@ -3,13 +3,14 @@ package zaraz
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
@@ -55,6 +56,12 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"debug_key": schema.StringAttribute{
+							Required: true,
+						},
+						"triggers": schema.MapNestedAttribute{
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: triggerSchema().NestedObject.Attributes,
+							},
 							Required: true,
 						},
 						"tools": schema.MapNestedAttribute{
@@ -127,12 +134,6 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 							Required: true,
 							// ... potentially other fields ...
 						},
-						"triggers": schema.MapNestedAttribute{
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: triggerSchema().NestedObject.Attributes,
-							},
-							Required: true,
-						},
 					},
 				},
 			},
@@ -140,8 +141,8 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 	}
 }
 
-func triggerSchema() schema.MapNestedAttribute {
-	return schema.MapNestedAttribute{
+func triggerSchema() schema.ListNestedAttribute {
+	return schema.ListNestedAttribute{
 		NestedObject: schema.NestedAttributeObject{
 			Attributes: map[string]schema.Attribute{
 				"name": schema.StringAttribute{
@@ -167,8 +168,8 @@ func triggerSchema() schema.MapNestedAttribute {
 	}
 }
 
-func triggerRuleSchema() schema.MapNestedAttribute {
-	return schema.MapNestedAttribute{
+func triggerRuleSchema() schema.ListNestedAttribute {
+	return schema.ListNestedAttribute{
 		NestedObject: schema.NestedAttributeObject{
 			Attributes: map[string]schema.Attribute{
 				"id": schema.StringAttribute{
@@ -186,85 +187,25 @@ func triggerRuleSchema() schema.MapNestedAttribute {
 				"action": schema.StringAttribute{
 					Optional: true,
 				},
-				"settings": schema.StringAttribute{
-					Optional: true,
-				},
-			},
-		},
-	}
-}
-
-func clientRuleSettings() schema.MapNestedAttribute {
-	return schema.MapNestedAttribute{
-		NestedObject: schema.NestedAttributeObject{
-			Attributes: map[string]schema.Attribute{
-				"type": schema.StringAttribute{
-					Required: false,
-					Validators: []validator.String{
+				"settings": schema.MapAttribute{
+					ElementType: types.StringType,
+					Optional:    true,
+					Validators: []validator.Map{mapvalidator.KeysAre(
 						stringvalidator.OneOf(
-							"xpath",
-							"css",
+							"type",
+							"selector",
+							"wait_for_tags",
+							"interval",
+							"limit",
+							"validate",
+							"positions",
+							"variable",
+							"match",
 						),
+					),
 					},
-					Description: "ClickListener setting",
-				},
-				"selector": schema.StringAttribute{
-					Required:    false,
-					Description: "Click Listener/Element Visibility/Form Submission/ setting",
-				},
-				"wait_for_tags": schema.StringAttribute{
-					Required:    false,
-					Description: "ClickListener setting",
-				},
-				"interval": schema.Int64Attribute{
-					Required:    false,
-					Description: "Timer setting",
-				},
-				"limit": schema.Int64Attribute{
-					Required:    false,
-					Description: "Timer setting",
-				},
-				"validate": schema.BoolAttribute{
-					Required:    false,
-					Description: "Form Submission setting",
-				},
-				"positions": schema.StringAttribute{
-					Required:    false,
-					Description: "Scroll Depth setting",
-				},
-				"variable": schema.StringAttribute{
-					Required:    false,
-					Description: "Variable Match setting",
-				},
-				"match": schema.StringAttribute{
-					Required:    false,
-					Description: "Variable Match setting",
 				},
 			},
 		},
 	}
 }
-
-// func configSchema() schema.MapAttribute {
-// 	return schema.MapAttribute{
-// 		ElementType: types.StringType,
-// 		Required:    true,
-// 		// ... potentially other fields ...
-// 	}
-// }
-
-// func configToolSchema() schema.MapNestedAttribute {
-// 	return schema.MapNestedAttribute{
-// 		NestedObject: schema.NestedAttributeObject{
-// 			Attributes: map[string]schema.Attribute{
-// 				"enabled": schema.BoolAttribute{
-// 					Required: true,
-// 				},
-// 				"name": schema.StringAttribute{
-// 					Required: true,
-// 				},
-// 			},
-// 		},
-// 		Optional: true,
-// 	}
-// }
