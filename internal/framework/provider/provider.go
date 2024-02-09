@@ -21,6 +21,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zaraz"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -337,6 +338,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
+		zaraz.NewResource,
 	}
 }
 
@@ -345,6 +347,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_token_permissions_groups.NewDataSource,
 		origin_ca_certificate.NewDataSource,
 		user.NewDataSource,
+		zaraz.NewDataSource,
 	}
 }
 
