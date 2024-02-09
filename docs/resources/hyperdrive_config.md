@@ -50,7 +50,6 @@ resource "cloudflare_hyperdrive_config" "no_defaults" {
 - `account_id` (String) The account identifier to target for the resource.
 - `name` (String) The name of the Hyperdrive configuration.
 - `origin` (Attributes) The origin details for the Hyperdrive configuration. (see [below for nested schema](#nestedatt--origin))
-- `password` (String) The password of the Hyperdrive configuration.
 
 ### Optional
 
@@ -64,12 +63,13 @@ Required:
 
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
+- `password` (String, Sensitive) The password of the Hyperdrive configuration.
 
 Optional:
 
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
-- `scheme` (String) Specifies the URL scheme used to connect to your origin database.
-- `user` (String) The user of your origin database.
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database. If not specified, defaults to `5432`.
+- `scheme` (String) Specifies the URL scheme used to connect to your origin database. If not specified, defaults to `postgres`.
+- `user` (String) The user of your origin database. If not specified, defaults to `postgres`.
 
 
 <a id="nestedatt--caching"></a>
