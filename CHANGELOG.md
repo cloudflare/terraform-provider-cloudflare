@@ -3,6 +3,7 @@
 DEPENDENCIES:
 
 * provider: bump golang.org/x/net from 0.20.0 to 0.21.0 ([#3108](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3108))
+* provider: bump golangci/golangci-lint-action from 3 to 4 ([#3115](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3115))
 
 ## 4.24.0 (February 7th, 2023)
 
