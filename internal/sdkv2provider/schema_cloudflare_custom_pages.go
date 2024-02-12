@@ -35,7 +35,6 @@ func resourceCloudflareCustomPagesSchema() map[string]*schema.Schema {
 				"under_attack",
 				"500_errors",
 				"1000_errors",
-				"always_online",
 				"managed_challenge",
 			}, true),
 			Description: fmt.Sprintf("The type of custom page you wish to update. %s", renderAvailableDocumentationValuesStringSlice([]string{
@@ -48,7 +47,6 @@ func resourceCloudflareCustomPagesSchema() map[string]*schema.Schema {
 				"under_attack",
 				"500_errors",
 				"1000_errors",
-				"always_online",
 				"managed_challenge",
 			})),
 		},
