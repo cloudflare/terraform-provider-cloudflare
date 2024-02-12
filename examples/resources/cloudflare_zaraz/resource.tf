@@ -1,28 +1,3 @@
-terraform {
-  required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 4"
-    }
-  }
-}
-
-provider "cloudflare" {
-  api_token = "joOPhd4H2g3J3CI2_hOJwwgatJWXWixDo2Iww8Au"
-}
-
-variable "zone_id" {
-  default = "cea4663809ffcd5afa285c3fca3d5eef"
-}
-
-variable "account_id" {
-  default = "d4a55165ba5ec426089bd63e723ec25e"
-}
-
-variable "domain" {
-  default = "somesite.xyz"
-}
-
 resource "cloudflare_zaraz_config" "examplecom" {
   zone_id = var.zone_id
   config {
