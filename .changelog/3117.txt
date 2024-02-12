@@ -1,0 +1,3 @@
+```release-note:breaking-change
+resource/cloudflare_custom_pages: Removed the `always_online` variant. This page is never generated anymore, if a requested page is unavailable in the archive the error page that would have been shown if always online wasn't enabled is shown.
+```
