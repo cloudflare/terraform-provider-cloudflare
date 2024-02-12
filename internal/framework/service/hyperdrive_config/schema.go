@@ -7,9 +7,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
@@ -54,22 +52,16 @@ func (r *HyperdriveConfigResource) Schema(ctx context.Context, req resource.Sche
 						Required:            true,
 					},
 					"port": schema.Int64Attribute{
-						MarkdownDescription: "The port (default: 5432 for Postgres) of your origin database. If not specified, defaults to `5432`.",
-						Optional:            true,
-						Default:             int64default.StaticInt64(5432),
-						Computed:            true,
+						MarkdownDescription: "The port (default: 5432 for Postgres) of your origin database.",
+						Required:            true,
 					},
 					"scheme": schema.StringAttribute{
-						MarkdownDescription: "Specifies the URL scheme used to connect to your origin database. If not specified, defaults to `postgres`.",
-						Optional:            true,
-						Default:             stringdefault.StaticString("postgres"),
-						Computed:            true,
+						MarkdownDescription: "Specifies the URL scheme used to connect to your origin database.",
+						Required:            true,
 					},
 					"user": schema.StringAttribute{
-						MarkdownDescription: "The user of your origin database. If not specified, defaults to `postgres`.",
-						Optional:            true,
-						Default:             stringdefault.StaticString("postgres"),
-						Computed:            true,
+						MarkdownDescription: "The user of your origin database.",
+						Required:            true,
 					},
 				},
 			},

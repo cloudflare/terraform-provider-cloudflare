@@ -16,10 +16,13 @@ The [Hyperdrive Config](https://developers.cloudflare.com/hyperdrive/) resource 
 resource "cloudflare_hyperdrive_config" "no_defaults" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "my-hyperdrive-config"
-  password   = "my-password"
   origin     = {
     database = "postgres"
+    password = "my-password"
     host     = "my-database.example.com"
+    port     = 5432
+    scheme   = "postgres"
+    user     = "my-user"
   }
 }
 
@@ -27,9 +30,9 @@ resource "cloudflare_hyperdrive_config" "no_defaults" {
 resource "cloudflare_hyperdrive_config" "no_defaults" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "my-hyperdrive-config"
-  password   = "my-password"
   origin     = {
     database = "postgres"
+    password = "my-password"
     host     = "my-database.example.com"
     port     = 5432
     scheme   = "postgres"
@@ -64,12 +67,9 @@ Required:
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
 - `password` (String, Sensitive) The password of the Hyperdrive configuration.
-
-Optional:
-
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database. If not specified, defaults to `5432`.
-- `scheme` (String) Specifies the URL scheme used to connect to your origin database. If not specified, defaults to `postgres`.
-- `user` (String) The user of your origin database. If not specified, defaults to `postgres`.
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
+- `scheme` (String) Specifies the URL scheme used to connect to your origin database.
+- `user` (String) The user of your origin database.
 
 
 <a id="nestedatt--caching"></a>
