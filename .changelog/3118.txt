@@ -8,8 +8,5 @@ provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.6 to 1.27.0
 provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.16.16 to 1.17.0
 ```
 ```release-note:dependency
-provider: <li><strong>Feature</strong>: bump internal logic for constructing API endpoints. We have added rule-based endpoints and internal model parameters.</li>
-```
-```release-note:dependency
 provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.48.1 to 1.49.0
 ```
