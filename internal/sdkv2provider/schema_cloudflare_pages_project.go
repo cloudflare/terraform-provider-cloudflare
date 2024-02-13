@@ -11,6 +11,11 @@ import (
 func resourceCloudflarePagesProjectSchema() map[string]*schema.Schema {
 	buildConfig := schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"build_caching": {
+				Type:        schema.TypeBool,
+				Description: "Enable build caching for the project.",
+				Optional:    true,
+			},
 			"build_command": {
 				Type:        schema.TypeString,
 				Description: "Command used to build project.",
