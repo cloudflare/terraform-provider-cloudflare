@@ -10,6 +10,11 @@ ENHANCEMENTS:
 
 DEPENDENCIES:
 
+* provider: <li><strong>Feature</strong>: bump internal logic for constructing API endpoints. We have added rule-based endpoints and internal model parameters.</li> ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.6 to 1.27.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.16.16 to 1.17.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.48.1 to 1.49.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.24.1 to 1.25.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
 * provider: bump golang.org/x/net from 0.20.0 to 0.21.0 ([#3108](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3108))
 * provider: bump golangci/golangci-lint-action from 3 to 4 ([#3115](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3115))
 
