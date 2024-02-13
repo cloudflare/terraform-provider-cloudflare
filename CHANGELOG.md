@@ -4,6 +4,10 @@ BREAKING CHANGES:
 
 * resource/cloudflare_custom_pages: Removed the `always_online` variant. This page is never generated anymore, if a requested page is unavailable in the archive the error page that would have been shown if always online wasn't enabled is shown. ([#3117](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3117))
 
+ENHANCEMENTS:
+
+* resource/pages_project: Add `build_caching` attribute ([#3110](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3110))
+
 DEPENDENCIES:
 
 * provider: bump golang.org/x/net from 0.20.0 to 0.21.0 ([#3108](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3108))
