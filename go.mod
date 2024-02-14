@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/cloudflare/cloudflare-go v0.87.0
+	github.com/cloudflare/cloudflare-go v0.88.0
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
