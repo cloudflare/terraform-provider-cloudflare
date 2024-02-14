@@ -118,7 +118,24 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	d.SetId(accessApplication.ID)
 
-	return resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	readApplication := resourceCloudflareAccessApplicationRead(ctx, d, meta)
+
+	// client secret is only returned from the create request and should be stored in state
+	if accessApplication.SaasApplication != nil && accessApplication.SaasApplication.ClientSecret != "" {
+		rawSaasApp, ok := d.GetOk("saas_app")
+		if ok {
+			saasApp, ok := rawSaasApp.([]interface{})
+			if ok {
+				saasAppMap, ok := saasApp[0].(map[string]interface{})
+				if ok {
+					saasAppMap["client_secret"] = accessApplication.SaasApplication.ClientSecret
+					d.Set("saas_app", []interface{}{saasAppMap})
+				}
+			}
+		}
+	}
+
+	return readApplication
 }
 
 func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
