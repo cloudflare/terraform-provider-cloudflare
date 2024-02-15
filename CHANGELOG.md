@@ -6,6 +6,7 @@ BREAKING CHANGES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_teams_account: Add support for extended e-mail matching ([#3089](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3089))
 * resource/pages_project: Add `build_caching` attribute ([#3110](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3110))
 
 DEPENDENCIES:
