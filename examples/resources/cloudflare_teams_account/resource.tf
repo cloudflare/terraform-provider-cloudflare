@@ -49,4 +49,8 @@ resource "cloudflare_teams_account" "example" {
       }
     }
   }
+
+  extended_email_matching {
+    enabled = true
+  }
 }
