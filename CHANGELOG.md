@@ -9,6 +9,10 @@ ENHANCEMENTS:
 * resource/cloudflare_teams_account: Add support for extended e-mail matching ([#3089](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3089))
 * resource/pages_project: Add `build_caching` attribute ([#3110](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3110))
 
+BUG FIXES:
+
+* resource/cloudflare_email_routing_address: add schema migrator ([#3119](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3119))
+
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.26.6 to 1.27.0 ([#3118](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3118))
