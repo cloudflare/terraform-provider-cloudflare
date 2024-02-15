@@ -120,6 +120,9 @@ resource "cloudflare_teams_account" "%[1]s" {
   payload_log {
 	public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
   }
+  extended_email_matching {
+	enabled = true
+  }
 }
 `, rnd, accountID)
 }
