@@ -205,6 +205,15 @@ var antivirusSchema = map[string]*schema.Schema{
 		Required:    true,
 		Description: "Block requests for files that cannot be scanned.",
 	},
+	"notification_settings": {
+		Type:        schema.TypeList,
+		MaxItems:    1,
+		Optional:    true,
+		Description: "Set notifications for antivirus",
+		Elem: &schema.Resource{
+			Schema: notificationSettings,
+		},
+	},
 }
 
 var proxySchema = map[string]*schema.Schema{

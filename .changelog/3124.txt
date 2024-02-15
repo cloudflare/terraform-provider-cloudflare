@@ -1,0 +1,3 @@
+0.```release-note:dependency
+resource/cloudflare_teams_accounts: Added notification settings to teams antivirus settings
+```

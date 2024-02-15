@@ -310,11 +310,15 @@ func inflateBodyScanningConfig(bodyScanning interface{}) *cloudflare.TeamsBodySc
 }
 
 func flattenAntivirusConfig(antivirusConfig *cloudflare.TeamsAntivirus) []interface{} {
-	return []interface{}{map[string]interface{}{
+	settings := map[string]interface{}{
 		"enabled_download_phase": antivirusConfig.EnabledDownloadPhase,
 		"enabled_upload_phase":   antivirusConfig.EnabledUploadPhase,
 		"fail_closed":            antivirusConfig.FailClosed,
-	}}
+	}
+	if antivirusConfig.NotificationSettings != nil {
+		settings["notification_settings"] = flattenTeamsNotificationSettings(antivirusConfig.NotificationSettings)
+	}
+	return []interface{}{settings}
 }
 
 func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) []interface{} {
@@ -333,11 +337,15 @@ func inflateAntivirusConfig(antivirus interface{}) *cloudflare.TeamsAntivirus {
 	}
 
 	avMap := avList[0].(map[string]interface{})
-	return &cloudflare.TeamsAntivirus{
+	settings := &cloudflare.TeamsAntivirus{
 		EnabledDownloadPhase: avMap["enabled_download_phase"].(bool),
 		EnabledUploadPhase:   avMap["enabled_upload_phase"].(bool),
 		FailClosed:           avMap["fail_closed"].(bool),
 	}
+	if ns, ok := avMap["notification_settings"]; ok {
+		settings.NotificationSettings = inflateTeamsNotificationSettings(ns.([]interface{}))
+	}
+	return settings
 }
 
 func flattenFIPSConfig(fips *cloudflare.TeamsFIPS) []interface{} {

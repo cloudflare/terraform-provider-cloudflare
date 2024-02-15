@@ -18,6 +18,11 @@ resource "cloudflare_teams_account" "example" {
     enabled_download_phase = true
     enabled_upload_phase   = false
     fail_closed            = true
+    notification_settings {
+        enabled = true
+        message = "you are blocked"
+        support_url = "https://hello.com/"
+    }
   }
 
   fips {
