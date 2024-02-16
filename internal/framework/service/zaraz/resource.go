@@ -3,6 +3,7 @@ package zaraz
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -48,6 +49,7 @@ func (r *ZarazConfigResource) Configure(ctx context.Context, req resource.Config
 }
 
 func (r *ZarazConfigResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	log.Printf("In create")
 	var data *ZarazConfigModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -58,18 +60,20 @@ func (r *ZarazConfigResource) Create(ctx context.Context, req resource.CreateReq
 
 	rc := cloudflare.ZoneIdentifier(data.ZoneID.ValueString())
 	response, err := r.client.UpdateZarazConfig(ctx, rc, cloudflare.UpdateZarazConfigParams{
-		DebugKey: data.DebugKey.ValueString(),
+		DebugKey: data.Config.DebugKey.ValueString(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create Zaraz config", err.Error())
 		return
 	}
 	data.ZoneID = types.StringValue(data.ZoneID.String())
-	data.DebugKey = types.StringValue(response.Result.DebugKey)
+	data.Config.DebugKey = types.StringValue(response.Result.DebugKey)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZarazConfigResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	log.Printf("In read")
+
 	var data *ZarazConfigModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -86,7 +90,8 @@ func (r *ZarazConfigResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 	data.ZoneID = types.StringValue(data.ZoneID.String())
-	data.DebugKey = types.StringValue(response.Result.DebugKey)
+	data.Config.DebugKey = types.StringValue(response.Result.DebugKey)
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -124,7 +129,7 @@ func (r *ZarazConfigResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 	data.ZoneID = types.StringValue(data.ZoneID.String())
-	data.DebugKey = types.StringValue(response.Result.DebugKey)
+	data.Config.DebugKey = types.StringValue(response.Result.DebugKey)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

@@ -89,4 +89,7 @@ func (d *ZarazConfigDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }

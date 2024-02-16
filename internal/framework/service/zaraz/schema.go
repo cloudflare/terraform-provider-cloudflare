@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -14,11 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
-
-type ZarazConfig struct {
-	DebugKey string               `json:"debugKey"`
-	Tools    map[string]ZarazTool `json:"tools"`
-}
 
 type ZarazTool struct {
 	Enabled   *bool  `json:"enabled"`
@@ -67,31 +63,39 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 						"tools": schema.MapNestedAttribute{
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
-									"enabled": schema.BoolAttribute{
-										Required:            true,
-										MarkdownDescription: "",
-										// ... potentially other fields ...
+									"mode": schema.ObjectAttribute{
+										AttributeTypes: map[string]attr.Type{
+											"light":  types.BoolType,
+											"cloud":  types.BoolType,
+											"sample": types.BoolType,
+											"segment": types.MapType{
+												ElemType: types.NumberType,
+											},
+											"trigger": types.ListType{
+												ElemType: types.StringType,
+											},
+											"ignore_spa": types.BoolType,
+										},
+										Optional: true,
 									},
 									"name": schema.StringAttribute{
 										Required:            true,
 										MarkdownDescription: "",
 										// ... potentially other fields ...
 									},
-									"default_fields": schema.MapAttribute{
-										ElementType: types.StringType,
-										Required:    true,
-									},
-									"default_purpose": schema.StringAttribute{
-										Optional: true,
-									},
-									"library": schema.StringAttribute{
-										Optional: true,
-									},
-									"component": schema.StringAttribute{
+									"type": schema.StringAttribute{
 										Required: true,
+									},
+									"enabled": schema.BoolAttribute{
+										Optional:            true,
+										MarkdownDescription: "",
 										// ... potentially other fields ...
 									},
-									"permissions": schema.ListAttribute{
+									"categories": schema.ListAttribute{
+										ElementType: types.StringType,
+										Optional:    true,
+									},
+									"default_fields": schema.MapAttribute{
 										ElementType: types.StringType,
 										Required:    true,
 									},
@@ -99,6 +103,28 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 										ElementType: types.StringType,
 										Required:    true,
 										// TODO QQ how do we set the type to any ???
+									},
+									"neo_events": schema.ListNestedAttribute{
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"blocking_triggers": schema.ListAttribute{
+													ElementType: types.StringType,
+													Required:    true,
+												},
+												"firing_triggers": schema.ListAttribute{
+													ElementType: types.StringType,
+													Required:    true,
+												},
+												"data": schema.MapAttribute{
+													ElementType: types.StringType,
+													Required:    true,
+												},
+												"action_type": schema.StringAttribute{
+													Required: true,
+												},
+											},
+										},
+										Optional: true,
 									},
 									"actions": schema.MapNestedAttribute{
 										NestedObject: schema.NestedAttributeObject{
@@ -120,14 +146,36 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 												},
 											},
 										},
-										Required: true,
+										Optional: true,
 									},
-									"type": schema.StringAttribute{
-										Required: true,
+									"default_purpose": schema.StringAttribute{
+										Optional: true,
+									},
+									"blocking_triggers": schema.ListAttribute{
+										ElementType: types.StringType,
+										Required:    true,
+									},
+									"library": schema.StringAttribute{
+										Optional: true,
+									},
+									"component": schema.StringAttribute{
+										Optional: true,
+									},
+									"permissions": schema.ListAttribute{
+										ElementType: types.StringType,
+										Optional:    true,
 									},
 									"worker": schema.MapAttribute{
 										ElementType: types.StringType,
 										Optional:    true,
+										Validators: []validator.Map{mapvalidator.KeysAre(
+											stringvalidator.OneOf(
+												"escaped_worker_name",
+												"worker_tag",
+												"mutable_id",
+											),
+										),
+										},
 									},
 								},
 							},
