@@ -36,6 +36,7 @@ func (r *ImagesVariant) Schema(ctx context.Context, req resource.SchemaRequest, 
 			"never_require_signed_urls": schema.BoolAttribute{
 				MarkdownDescription: "Indicates whether the variant can access an image without a signature, regardless of image access control.",
 				Optional:            true,
+				Computed:            true,
 				Default:             booldefault.StaticBool(false),
 			},
 			"options": schema.SingleNestedAttribute{

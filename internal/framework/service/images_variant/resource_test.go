@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareListItem_Basic(t *testing.T) {
+func TestAccCloudflareImagesVariant_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_images_variant.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -25,15 +25,15 @@ func TestAccCloudflareListItem_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareImagesVariantConfigurationBasic(resourceName, accountID),
+				Config: testAccCloudflareImagesVariantConfigurationBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareImagesVariantExists(resourceName, rnd, &ImagesVariant),
 					resource.TestCheckResourceAttr(resourceName, "id", resourceName),
 					resource.TestCheckResourceAttr(resourceName, "never_require_signed_urls", "true"),
-					resource.TestCheckResourceAttr(resourceName, "options[0].fit", "scale-down"),
-					resource.TestCheckResourceAttr(resourceName, "options[0].metadata", "none"),
-					resource.TestCheckResourceAttr(resourceName, "options[0].width", "500"),
-					resource.TestCheckResourceAttr(resourceName, "options[0].height", "500"),
+					resource.TestCheckResourceAttr(resourceName, "options.fit", "scale-down"),
+					resource.TestCheckResourceAttr(resourceName, "options.metadata", "none"),
+					resource.TestCheckResourceAttr(resourceName, "options.width", "500"),
+					resource.TestCheckResourceAttr(resourceName, "options.height", "500"),
 				),
 			},
 			{
@@ -82,7 +82,7 @@ resource "cloudflare_images_variant" "%[1]s" {
 	account_id = "%[2]s"
 	id = "%[1]s"
 	never_require_signed_urls = true
-	options {
+	options = {
 		fit = "scale-down"
 		metadata = "none"
 		width = 500

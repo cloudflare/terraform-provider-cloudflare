@@ -60,10 +60,10 @@ func (r *ImagesVariant) Create(ctx context.Context, req resource.CreateRequest, 
 		ID:                     data.ID.ValueString(),
 		NeverRequireSignedURLs: data.NeverRequireSignedUrls.ValueBoolPointer(),
 		Options: cloudflare.ImagesVariantsOptions{
-			Fit:      data.Options[0].Fit.ValueString(),
-			Metadata: data.Options[0].Metadata.ValueString(),
-			Height:   int(data.Options[0].Height.ValueInt64()),
-			Width:    int(data.Options[0].Width.ValueInt64()),
+			Fit:      data.Options.Fit.ValueString(),
+			Metadata: data.Options.Metadata.ValueString(),
+			Height:   int(data.Options.Height.ValueInt64()),
+			Width:    int(data.Options.Width.ValueInt64()),
 		},
 	})
 
@@ -108,10 +108,10 @@ func (r *ImagesVariant) Update(ctx context.Context, req resource.UpdateRequest, 
 		ID:                     data.ID.ValueString(),
 		NeverRequireSignedURLs: data.NeverRequireSignedUrls.ValueBoolPointer(),
 		Options: cloudflare.ImagesVariantsOptions{
-			Fit:      data.Options[0].Fit.ValueString(),
-			Metadata: data.Options[0].Metadata.ValueString(),
-			Width:    int(data.Options[0].Width.ValueInt64()),
-			Height:   int(data.Options[0].Height.ValueInt64()),
+			Fit:      data.Options.Fit.ValueString(),
+			Metadata: data.Options.Metadata.ValueString(),
+			Width:    int(data.Options.Width.ValueInt64()),
+			Height:   int(data.Options.Height.ValueInt64()),
 		},
 	})
 
@@ -182,13 +182,11 @@ func toImagesVariantModel(accountID string, variantID string, item cloudflare.Im
 		NeverRequireSignedUrls: types.BoolValue(*item.NeverRequireSignedURLs),
 	}
 
-	model.Options = []*ImagesVariantOptionsModel{
-		{
-			Fit:      types.StringValue(item.Options.Fit),
-			Metadata: types.StringValue(item.Options.Metadata),
-			Width:    types.Int64Value(int64(item.Options.Width)),
-			Height:   types.Int64Value(int64(item.Options.Height)),
-		},
+	model.Options = &ImagesVariantOptionsModel{
+		Fit:      types.StringValue(item.Options.Fit),
+		Metadata: types.StringValue(item.Options.Metadata),
+		Width:    types.Int64Value(int64(item.Options.Width)),
+		Height:   types.Int64Value(int64(item.Options.Height)),
 	}
 
 	return &model
