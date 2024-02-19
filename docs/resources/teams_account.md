@@ -34,6 +34,11 @@ resource "cloudflare_teams_account" "example" {
     enabled_download_phase = true
     enabled_upload_phase   = false
     fail_closed            = true
+    notification_settings {
+      enabled     = true
+      message     = "you are blocked"
+      support_url = "https://example.com/blocked"
+    }
   }
 
   fips {
@@ -107,6 +112,20 @@ Required:
 - `enabled_download_phase` (Boolean) Scan on file download.
 - `enabled_upload_phase` (Boolean) Scan on file upload.
 - `fail_closed` (Boolean) Block requests for files that cannot be scanned.
+
+Optional:
+
+- `notification_settings` (Block List, Max: 1) Set notifications for antivirus. (see [below for nested schema](#nestedblock--antivirus--notification_settings))
+
+<a id="nestedblock--antivirus--notification_settings"></a>
+### Nested Schema for `antivirus.notification_settings`
+
+Optional:
+
+- `enabled` (Boolean) Enable notification settings.
+- `message` (String) Notification content.
+- `support_url` (String) Support URL to show in the notification.
+
 
 
 <a id="nestedblock--block_page"></a>
