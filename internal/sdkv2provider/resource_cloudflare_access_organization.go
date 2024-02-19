@@ -61,6 +61,8 @@ func resourceCloudflareAccessOrganizationRead(ctx context.Context, d *schema.Res
 	d.Set("user_seat_expiration_inactive_time", organization.UserSeatExpirationInactiveTime)
 	d.Set("auto_redirect_to_identity", organization.AutoRedirectToIdentity)
 	d.Set("session_duration", organization.SessionDuration)
+	d.Set("warp_auth_session_duration", organization.WarpAuthSessionDuration)
+	d.Set("allow_authenticate_via_warp", organization.AllowAuthenticateViaWarp)
 
 	loginDesign := convertLoginDesignStructToSchema(ctx, d, &organization.LoginDesign)
 	if loginDesignErr := d.Set("login_design", loginDesign); loginDesignErr != nil {
@@ -87,6 +89,8 @@ func resourceCloudflareAccessOrganizationUpdate(ctx context.Context, d *schema.R
 		UserSeatExpirationInactiveTime: d.Get("user_seat_expiration_inactive_time").(string),
 		AutoRedirectToIdentity:         cloudflare.BoolPtr(d.Get("auto_redirect_to_identity").(bool)),
 		SessionDuration:                cloudflare.StringPtr(d.Get("session_duration").(string)),
+		WarpAuthSessionDuration:        cloudflare.StringPtr(d.Get("warp_auth_session_duration").(string)),
+		AllowAuthenticateViaWarp:       cloudflare.BoolPtr(d.Get("allow_authenticate_via_warp").(bool)),
 	}
 	loginDesign := convertLoginDesignSchemaToStruct(d)
 	updatedAccessOrganization.LoginDesign = *loginDesign
