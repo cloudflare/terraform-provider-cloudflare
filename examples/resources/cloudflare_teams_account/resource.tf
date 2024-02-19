@@ -19,9 +19,9 @@ resource "cloudflare_teams_account" "example" {
     enabled_upload_phase   = false
     fail_closed            = true
     notification_settings {
-        enabled = true
-        message = "you are blocked"
-        support_url = "https://hello.com/"
+      enabled     = true
+      message     = "you are blocked"
+      support_url = "https://example.com/blocked"
     }
   }
 
