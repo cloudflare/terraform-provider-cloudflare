@@ -58,7 +58,7 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	config := buildHyperdriveConfigFromModel(ctx, data)
+	config := buildHyperdriveConfigFromModel(data)
 
 	createHyperdriveConfig, err := r.client.CreateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
 		cloudflare.CreateHyperdriveConfigParams{
@@ -118,7 +118,7 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	config := buildHyperdriveConfigFromModel(ctx, data)
+	config := buildHyperdriveConfigFromModel(data)
 
 	updatedConfig, err := r.client.UpdateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateHyperdriveConfigParams{
 		Name: config.Name,
@@ -173,7 +173,7 @@ func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)
 }
 
-func buildHyperdriveConfigFromModel(ctx context.Context, config *HyperdriveConfigModel) cloudflare.HyperdriveConfig {
+func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel) cloudflare.HyperdriveConfig {
 	built := cloudflare.HyperdriveConfig{
 		Name: config.Name.ValueString(),
 		Origin: cloudflare.HyperdriveConfigOrigin{
