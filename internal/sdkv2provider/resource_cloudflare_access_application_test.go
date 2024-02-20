@@ -188,6 +188,8 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.default_relay_state", "https://saas-app.example"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.name_id_transform_jsonata", "$substringBefore(email, '@') & '+sandbox@' & $substringAfter(email, '@')"),
+
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.idp_entity_id"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.public_key"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.sso_endpoint"),
@@ -222,6 +224,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.default_relay_state", "https://saas-app.example"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.name_id_transform_jsonata", "$substringBefore(email, '@') & '+sandbox@' & $substringAfter(email, '@')"),
 
 		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.#", "2"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name", "email"),
@@ -767,6 +770,7 @@ resource "cloudflare_access_application" "%[1]s" {
     sp_entity_id  = "saas-app.example"
     name_id_format =  "email"
 	default_relay_state = "https://saas-app.example"
+	name_id_transform_jsonata = "$substringBefore(email, '@') & '+sandbox@' & $substringAfter(email, '@')"
 	custom_attribute {
 		name = "email"
 		name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"

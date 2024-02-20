@@ -134,6 +134,8 @@ Optional:
 - `custom_attribute` (Block List) Custom attribute mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_attribute))
 - `default_relay_state` (String) The relay state used if not provided by the identity provider.
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application. Defaults to `email`.
+- `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
+ 
 
 Read-Only:
 
