@@ -6,6 +6,7 @@ BREAKING CHANGES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: adds oidc saas application support ([#3133](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3133))
 * resource/cloudflare_access_application: adds the ability to set allow_authenticate_via_warp. ([#3103](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3103))
 * resource/cloudflare_access_organization: adds the ability to set allow_authenticate_via_warp and warp_auth_session_duration. ([#3103](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3103))
 * resource/cloudflare_teams_account: Add support for extended e-mail matching ([#3089](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3089))
