@@ -1,4 +1,6 @@
-## 4.25.0 (Unreleased)
+## 4.26.0 (Unreleased)
+
+## 4.25.0 (February 21st, 2024)
 
 BREAKING CHANGES:
 
