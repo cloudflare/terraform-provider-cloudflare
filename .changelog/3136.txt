@@ -8,8 +8,5 @@ provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.1 to 1.27.2
 provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.1 to 1.17.2
 ```
 ```release-note:dependency
-provider: <li><strong>Feature</strong>: bump to Event Signaling and Management (ESAM) API and documentation.</li>
-```
-```release-note:dependency
 provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.50.2 to 1.50.3
 ```
