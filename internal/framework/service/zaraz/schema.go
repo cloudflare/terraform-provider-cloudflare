@@ -16,11 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
 
-type ZarazTool struct {
-	Enabled   *bool  `json:"enabled"`
-	Component string `json:"component,omitempty"`
-}
-
 func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
@@ -46,144 +41,143 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 					),
 				},
 			},
-		},
-		Blocks: map[string]schema.Block{
-			"config": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"debug_key": schema.StringAttribute{
-							Required: true,
+			"config": schema.SingleNestedAttribute{
+				Attributes: map[string]schema.Attribute{
+					"debug_key": schema.StringAttribute{
+						Required: true,
+					},
+					"zaraz_version": schema.Int64Attribute{
+						Required: true,
+					},
+					"triggers": schema.MapNestedAttribute{
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: triggerSchema().NestedObject.Attributes,
 						},
-						"triggers": schema.MapNestedAttribute{
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: triggerSchema().NestedObject.Attributes,
-							},
-							Required: true,
-						},
-						"tools": schema.MapNestedAttribute{
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"mode": schema.ObjectAttribute{
-										AttributeTypes: map[string]attr.Type{
-											"light":  types.BoolType,
-											"cloud":  types.BoolType,
-											"sample": types.BoolType,
-											"segment": types.MapType{
-												ElemType: types.NumberType,
-											},
-											"trigger": types.ListType{
-												ElemType: types.StringType,
-											},
-											"ignore_spa": types.BoolType,
+						Required: true,
+					},
+					"tools": schema.MapNestedAttribute{
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"mode": schema.ObjectAttribute{
+									AttributeTypes: map[string]attr.Type{
+										"light":  types.BoolType,
+										"cloud":  types.BoolType,
+										"sample": types.BoolType,
+										"segment": types.MapType{
+											ElemType: types.NumberType,
 										},
-										Optional: true,
+										"trigger": types.ListType{
+											ElemType: types.StringType,
+										},
+										"ignore_spa": types.BoolType,
 									},
-									"name": schema.StringAttribute{
-										Required:            true,
-										MarkdownDescription: "",
-										// ... potentially other fields ...
-									},
-									"type": schema.StringAttribute{
-										Required: true,
-									},
-									"enabled": schema.BoolAttribute{
-										Optional:            true,
-										MarkdownDescription: "",
-										// ... potentially other fields ...
-									},
-									"categories": schema.ListAttribute{
-										ElementType: types.StringType,
-										Optional:    true,
-									},
-									"default_fields": schema.MapAttribute{
-										ElementType: types.StringType,
-										Required:    true,
-									},
-									"settings": schema.MapAttribute{
-										ElementType: types.StringType,
-										Required:    true,
-										// TODO QQ how do we set the type to any ???
-									},
-									"neo_events": schema.ListNestedAttribute{
-										NestedObject: schema.NestedAttributeObject{
-											Attributes: map[string]schema.Attribute{
-												"blocking_triggers": schema.ListAttribute{
-													ElementType: types.StringType,
-													Required:    true,
-												},
-												"firing_triggers": schema.ListAttribute{
-													ElementType: types.StringType,
-													Required:    true,
-												},
-												"data": schema.MapAttribute{
-													ElementType: types.StringType,
-													Required:    true,
-												},
-												"action_type": schema.StringAttribute{
-													Required: true,
-												},
+									Optional: true,
+								},
+								"name": schema.StringAttribute{
+									Required:            true,
+									MarkdownDescription: "",
+									// ... potentially other fields ...
+								},
+								"type": schema.StringAttribute{
+									Required: true,
+								},
+								"enabled": schema.BoolAttribute{
+									Optional:            true,
+									MarkdownDescription: "",
+									// ... potentially other fields ...
+								},
+
+								"default_fields": schema.MapAttribute{
+									ElementType: types.StringType,
+									Required:    true,
+								},
+								"settings": schema.MapAttribute{
+									ElementType: types.StringType,
+									Required:    true,
+									// TODO QQ how do we set the type to any ???
+								},
+								"actions": schema.MapNestedAttribute{
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"blocking_triggers": schema.ListAttribute{
+												ElementType: types.StringType,
+												Required:    true,
+											},
+											"firing_triggers": schema.ListAttribute{
+												ElementType: types.StringType,
+												Required:    true,
+											},
+											"data": schema.MapAttribute{
+												ElementType: types.StringType,
+												Required:    true,
+											},
+											"action_type": schema.StringAttribute{
+												Required: true,
 											},
 										},
-										Optional: true,
 									},
-									"actions": schema.MapNestedAttribute{
-										NestedObject: schema.NestedAttributeObject{
-											Attributes: map[string]schema.Attribute{
-												"blocking_triggers": schema.ListAttribute{
-													ElementType: types.StringType,
-													Required:    true,
-												},
-												"firing_triggers": schema.ListAttribute{
-													ElementType: types.StringType,
-													Required:    true,
-												},
-												"data": schema.MapAttribute{
-													ElementType: types.StringType,
-													Required:    true,
-												},
-												"action_type": schema.StringAttribute{
-													Required: true,
-												},
+									Optional: true,
+								},
+								"neo_events": schema.ListNestedAttribute{
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"blocking_triggers": schema.ListAttribute{
+												ElementType: types.StringType,
+												Required:    true,
+											},
+											"firing_triggers": schema.ListAttribute{
+												ElementType: types.StringType,
+												Required:    true,
+											},
+											"data": schema.MapAttribute{
+												ElementType: types.StringType,
+												Required:    true,
+											},
+											"action_type": schema.StringAttribute{
+												Required: true,
 											},
 										},
-										Optional: true,
 									},
-									"default_purpose": schema.StringAttribute{
-										Optional: true,
-									},
-									"blocking_triggers": schema.ListAttribute{
-										ElementType: types.StringType,
-										Required:    true,
-									},
-									"library": schema.StringAttribute{
-										Optional: true,
-									},
-									"component": schema.StringAttribute{
-										Optional: true,
-									},
-									"permissions": schema.ListAttribute{
-										ElementType: types.StringType,
-										Optional:    true,
-									},
-									"worker": schema.MapAttribute{
-										ElementType: types.StringType,
-										Optional:    true,
-										Validators: []validator.Map{mapvalidator.KeysAre(
-											stringvalidator.OneOf(
-												"escaped_worker_name",
-												"worker_tag",
-												"mutable_id",
-											),
-										),
+									Optional: true,
+								},
+								"default_purpose": schema.StringAttribute{
+									Optional: true,
+								},
+								"blocking_triggers": schema.ListAttribute{
+									ElementType: types.StringType,
+									Required:    true,
+								},
+								"library": schema.StringAttribute{
+									Optional: true,
+								},
+								"component": schema.StringAttribute{
+									Optional: true,
+								},
+								"permissions": schema.ListAttribute{
+									ElementType: types.StringType,
+									Optional:    true,
+								},
+								"worker": schema.SingleNestedAttribute{
+									Attributes: map[string]schema.Attribute{
+										"escaped_worker_name": schema.StringAttribute{
+											Required: true,
+										},
+										"worker_tag": schema.StringAttribute{
+											Required: true,
+										},
+										"mutable_id": schema.StringAttribute{
+											Computed: true,
 										},
 									},
+									Optional: true,
 								},
 							},
-							Required: true,
-							// ... potentially other fields ...
 						},
+						Required: true,
+						// ... potentially other fields ...
 					},
 				},
+				Required: true,
 			},
 		},
 	}
@@ -197,6 +191,9 @@ func triggerSchema() schema.ListNestedAttribute {
 					Optional: true,
 				},
 				"description": schema.StringAttribute{
+					Optional: true,
+				},
+				"system": schema.StringAttribute{
 					Optional: true,
 				},
 				"load_rules": schema.ListNestedAttribute{
@@ -221,7 +218,7 @@ func triggerRuleSchema() schema.ListNestedAttribute {
 		NestedObject: schema.NestedAttributeObject{
 			Attributes: map[string]schema.Attribute{
 				"id": schema.StringAttribute{
-					Required: true,
+					Optional: true,
 				},
 				"match": schema.StringAttribute{
 					Optional: true,
