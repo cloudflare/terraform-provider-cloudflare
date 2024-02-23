@@ -10,17 +10,20 @@ description: |-
 {{ .Description | trimspace }}
 
 ~> Since [v3.32.0](https://github.com/cloudflare/terraform-provider-cloudflare/releases/tag/v3.32.0)
-  all authentication schemes are supported for managing Origin CA certificates.
-  Versions prior to v3.32.0 will still need to use [`api_user_service_key`](../index.html#api_user_service_key).
+   all authentication schemes are supported for managing Origin CA certificates.
+   Versions prior to v3.32.0 will still need to use [`api_user_service_key`](../index.html#api_user_service_key).
 
+{{ if .HasExample -}}
 ## Example Usage
 
-{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
-
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
 {{ .SchemaMarkdown | trimspace }}
 
+{{ if .HasImport -}}
 ## Import
 
 Import is supported using the following syntax:
 
-{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
+{{codefile "shell" .ImportFile}}
+{{- end }}

@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Add community note to new Issues
         if: github.event_name == 'issues'
-        uses: peter-evans/create-or-update-comment@v3
+        uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |

@@ -73,7 +73,7 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"auto_connect": {
-			Description: "The amount of time in minutes to reconnect after having been disabled.",
+			Description: "The amount of time in seconds to reconnect after having been disabled.",
 			Type:        schema.TypeInt,
 			Optional:    true,
 		},

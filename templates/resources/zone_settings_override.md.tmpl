@@ -29,8 +29,9 @@ should either be omitted or set to `null` for zones with plans that don't
 support the feature. See the [plan feature matrices](https://www.cloudflare.com/plans/) for details on
 feature support by plan.
 
+{{ if .HasExample -}}
 ## Example Usage
 
-{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
-
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
 {{ .SchemaMarkdown | trimspace }}

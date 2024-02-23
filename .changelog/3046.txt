@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_turnstile_widget: Support empty list of domains
+```

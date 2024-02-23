@@ -21,7 +21,7 @@ import (
 const (
 	MAXIMUM_NUMBER_OF_ENTITIES_REACHED_SUMMARY = "You've attempted to add a new %[1]s to the `terraform-plugin-sdkv2` which is no longer considered suitable for use."
 	MAXIMUM_NUMBER_OF_ENTITIES_REACHED_DETAIL  = "Due the number of known internal issues with `terraform-plugin-sdkv2` (most notably handling of zero values), we are no longer recommending using it and instead, advise using `terraform-plugin-framework` exclusively. If you must use terraform-plugin-sdkv2 for this new %[1]s you should first discuss it with a maintainer to fully understand the impact and potential ramifications. Only then should you bump %[2]s to include your %[1]s."
-	MAXIMUM_ALLOWED_SDKV2_RESOURCES            = 110
+	MAXIMUM_ALLOWED_SDKV2_RESOURCES            = 108
 	MAXIMUM_ALLOWED_SDKV2_DATASOURCES          = 19
 )
 
@@ -225,9 +225,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_device_posture_rule":                             resourceCloudflareDevicePostureRule(),
 				"cloudflare_device_settings_policy":                          resourceCloudflareDeviceSettingsPolicy(),
 				"cloudflare_dlp_profile":                                     resourceCloudflareDLPProfile(),
-				"cloudflare_email_routing_address":                           resourceCloudflareEmailRoutingAddress(),
 				"cloudflare_email_routing_catch_all":                         resourceCloudflareEmailRoutingCatchAll(),
-				"cloudflare_email_routing_rule":                              resourceCloudflareEmailRoutingRule(),
 				"cloudflare_email_routing_settings":                          resourceCloudflareEmailRoutingSettings(),
 				"cloudflare_fallback_domain":                                 resourceCloudflareFallbackDomain(),
 				"cloudflare_filter":                                          resourceCloudflareFilter(),
@@ -238,7 +236,6 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_hostname_tls_setting_ciphers":                    resourceCloudflareHostnameTLSSettingCiphers(),
 				"cloudflare_ipsec_tunnel":                                    resourceCloudflareIPsecTunnel(),
 				"cloudflare_keyless_certificate":                             resourceCloudflareKeylessCertificate(),
-				"cloudflare_list_item":                                       resourceCloudflareListItem(),
 				"cloudflare_list":                                            resourceCloudflareList(),
 				"cloudflare_load_balancer_monitor":                           resourceCloudflareLoadBalancerMonitor(),
 				"cloudflare_load_balancer_pool":                              resourceCloudflareLoadBalancerPool(),
@@ -289,6 +286,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_worker_domain":                                   resourceCloudflareWorkerDomain(),
 				"cloudflare_worker_route":                                    resourceCloudflareWorkerRoute(),
 				"cloudflare_worker_script":                                   resourceCloudflareWorkerScript(),
+				"cloudflare_worker_secret":                                   resourceCloudflareWorkerSecret(),
 				"cloudflare_workers_kv_namespace":                            resourceCloudflareWorkersKVNamespace(),
 				"cloudflare_workers_kv":                                      resourceCloudflareWorkerKV(),
 				"cloudflare_zone_cache_reserve":                              resourceCloudflareZoneCacheReserve(),

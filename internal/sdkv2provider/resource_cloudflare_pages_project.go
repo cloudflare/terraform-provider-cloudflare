@@ -218,6 +218,7 @@ func buildCreatePagesProject(d *schema.ResourceData) cloudflare.CreatePagesProje
 
 	if _, ok := d.GetOk("build_config"); ok {
 		buildConfig := cloudflare.PagesProjectBuildConfig{}
+		buildConfig.BuildCaching = cloudflare.BoolPtr(d.Get("build_config.0.build_caching").(bool))
 		if buildCommand, ok := d.GetOk("build_config.0.build_command"); ok {
 			buildConfig.BuildCommand = buildCommand.(string)
 		}
@@ -301,6 +302,7 @@ func buildUpdatePagesProject(d *schema.ResourceData) cloudflare.UpdatePagesProje
 
 	if _, ok := d.GetOk("build_config"); ok {
 		buildConfig := cloudflare.PagesProjectBuildConfig{}
+		buildConfig.BuildCaching = cloudflare.BoolPtr(d.Get("build_config.0.build_caching").(bool))
 		if buildCommand, ok := d.GetOk("build_config.0.build_command"); ok {
 			buildConfig.BuildCommand = buildCommand.(string)
 		}
@@ -416,6 +418,7 @@ func resourceCloudflarePagesProjectRead(ctx context.Context, d *schema.ResourceD
 	if project.BuildConfig != emptyProjectBuildConfig {
 		var buildConfig []map[string]interface{}
 		buildConfig = append(buildConfig, map[string]interface{}{
+			"build_caching":       project.BuildConfig.BuildCaching,
 			"build_command":       project.BuildConfig.BuildCommand,
 			"destination_dir":     project.BuildConfig.DestinationDir,
 			"root_dir":            project.BuildConfig.RootDir,

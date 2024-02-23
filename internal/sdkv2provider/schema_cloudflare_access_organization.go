@@ -121,6 +121,16 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"allow_authenticate_via_warp": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
+		},
+		"warp_auth_session_duration": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The amount of time that tokens issued for applications will be valid. Must be in the format 30m or 2h45m. Valid time units are: m, h.",
+		},
 	}
 }
 

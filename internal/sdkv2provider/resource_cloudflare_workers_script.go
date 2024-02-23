@@ -321,8 +321,10 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("cannot set plain text bindings (%s): %w", d.Id(), err))
 	}
 
-	if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
-		return diag.FromErr(fmt.Errorf("cannot set secret text bindings (%s): %w", d.Id(), err))
+	if d.HasChange("secret_text_binding") || len(d.Get("secret_text_binding").(*schema.Set).List()) > 0 {
+		if err := d.Set("secret_text_binding", secretTextBindings); err != nil {
+			return diag.FromErr(fmt.Errorf("cannot set secret text bindings (%s): %w", d.Id(), err))
+		}
 	}
 
 	if err := d.Set("webassembly_binding", webAssemblyBindings); err != nil {

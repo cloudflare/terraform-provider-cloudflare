@@ -24,7 +24,7 @@ resource "cloudflare_custom_pages" "example" {
 
 ### Required
 
-- `type` (String) The type of custom page you wish to update. Available values: `basic_challenge`, `waf_challenge`, `waf_block`, `ratelimit_block`, `country_challenge`, `ip_block`, `under_attack`, `500_errors`, `1000_errors`, `always_online`, `managed_challenge`.
+- `type` (String) The type of custom page you wish to update. Available values: `basic_challenge`, `waf_challenge`, `waf_block`, `ratelimit_block`, `country_challenge`, `ip_block`, `under_attack`, `500_errors`, `1000_errors`, `managed_challenge`.
 - `url` (String) URL of where the custom page source is located.
 
 ### Optional

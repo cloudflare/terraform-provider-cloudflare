@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_device_settings_policy: updated docs that `auto_connect` is in seconds, not in minutes
+```

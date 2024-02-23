@@ -36,6 +36,11 @@ func dataSourceCloudflareRecord() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"A", "AAAA", "CAA", "CNAME", "TXT", "SRV", "LOC", "MX", "NS", "SPF", "CERT", "DNSKEY", "DS", "NAPTR", "SMIMEA", "SSHFP", "TLSA", "URI", "PTR", "HTTPS", "SVCB"}, false),
 				Description:  "DNS record type to filter record results on.",
 			},
+			"content": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Content to filter record results on.",
+			},
 			"priority": {
 				Type:             schema.TypeInt,
 				Optional:         true,
@@ -81,8 +86,9 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
 
 	searchRecord := cloudflare.ListDNSRecordsParams{
-		Name: d.Get("hostname").(string),
-		Type: d.Get("type").(string),
+		Name:    d.Get("hostname").(string),
+		Type:    d.Get("type").(string),
+		Content: d.Get("content").(string),
 	}
 
 	records, _, err := client.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(zoneID), searchRecord)

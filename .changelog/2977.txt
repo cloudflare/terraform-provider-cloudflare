@@ -1,0 +1,6 @@
+```release-note:internal
+resource/cloudflare_email_routing_address: migrate to framework provider
+```
+```release-note:enhancement
+resource/cloudflare_email_routing_address: add ability to import
+```

@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: leave existence error handling checks to the `Read` operation when performing imports.
+```

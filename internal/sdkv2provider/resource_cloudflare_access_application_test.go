@@ -97,6 +97,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "saas_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
 				),
 			},
 		},
@@ -126,6 +127,7 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
 					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
 					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
 				),
 			},
 		},
@@ -162,7 +164,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -175,7 +177,7 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID),
+				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
@@ -185,6 +187,7 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.sp_entity_id", "saas-app.example"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.default_relay_state", "https://saas-app.example"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.idp_entity_id"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.public_key"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.sso_endpoint"),
@@ -203,7 +206,7 @@ func TestAccCloudflareAccessApplication_WithSaas(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareAccessApplication_WithSaas_Import(t *testing.T) {
+func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
@@ -218,6 +221,7 @@ func TestAccCloudflareAccessApplication_WithSaas_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(name, "saas_app.0.sp_entity_id", "saas-app.example"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.consumer_service_url", "https://saas-app.example/sso/saml/consume"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.name_id_format", "email"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.default_relay_state", "https://saas-app.example"),
 
 		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.#", "2"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.custom_attribute.0.name", "email"),
@@ -237,7 +241,7 @@ func TestAccCloudflareAccessApplication_WithSaas_Import(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID),
+				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
 				Check:  checkFn,
 			},
 			{
@@ -246,6 +250,95 @@ func TestAccCloudflareAccessApplication_WithSaas_Import(t *testing.T) {
 				ResourceName:        name,
 				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
 				Check:               checkFn,
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "saas"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "saas_app.#", "1"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.auth_type", "oidc"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.0", "https://saas-app.example/sso/oauth2/callback"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.#", "1"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.0", "authorization_code"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.#", "4"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.0", "email"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.1", "groups"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.2", "openid"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.3", "profile"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.app_launcher_url", "https://saas-app.example/sso/login"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.group_filter_regex", ".*"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.client_secret"),
+					resource.TestCheckResourceAttrSet(name, "saas_app.0.public_key"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
+	t.Parallel()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_application." + rnd
+
+	checkFn := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+		resource.TestCheckResourceAttr(name, "name", rnd),
+		resource.TestCheckResourceAttr(name, "type", "saas"),
+		resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+		resource.TestCheckResourceAttr(name, "saas_app.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.auth_type", "oidc"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.0", "https://saas-app.example/sso/oauth2/callback"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.0", "authorization_code"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.#", "4"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.0", "email"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.1", "groups"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.2", "openid"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.3", "profile"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.app_launcher_url", "https://saas-app.example/sso/login"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.group_filter_regex", ".*"),
+	)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
+				Check:  checkFn,
+			},
+			{
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"saas_app.0.client_secret"},
+				ResourceName:            name,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				Check:                   checkFn,
 			},
 		},
 	})
@@ -662,7 +755,7 @@ resource "cloudflare_access_application" "%[1]s" {
 `, rnd, zoneID, domain)
 }
 
-func testAccCloudflareAccessApplicationConfigWithSaas(rnd, accountID string) string {
+func testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
@@ -673,6 +766,7 @@ resource "cloudflare_access_application" "%[1]s" {
     consumer_service_url = "https://saas-app.example/sso/saml/consume"
     sp_entity_id  = "saas-app.example"
     name_id_format =  "email"
+	default_relay_state = "https://saas-app.example"
 	custom_attribute {
 		name = "email"
 		name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
@@ -688,6 +782,26 @@ resource "cloudflare_access_application" "%[1]s" {
 			name = "rank"
 		}
 	}
+  }
+  auto_redirect_to_identity = false
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  account_id       = "%[2]s"
+  name             = "%[1]s"
+  type             = "saas"
+  session_duration = "24h"
+  saas_app {
+	auth_type = "oidc"
+	redirect_uris = ["https://saas-app.example/sso/oauth2/callback"]
+	grant_types = ["authorization_code"]
+	scopes = ["openid", "email", "profile", "groups"]
+	app_launcher_url = "https://saas-app.example/sso/login"
+	group_filter_regex = ".*"
   }
   auto_redirect_to_identity = false
 }

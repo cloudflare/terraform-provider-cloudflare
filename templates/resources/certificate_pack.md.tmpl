@@ -18,17 +18,20 @@ de-risk rotations, use you can create multiple resources using a 2-phase change
 where you have both resources live at once and you remove the old one once
 you've confirmed the certificate is available.
 
+{{ if .HasExample -}}
 ## Example Usage
 
-{{ tffile (printf "%s%s%s" "examples/resources/" .Name "/resource.tf") }}
-
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
 {{ .SchemaMarkdown | trimspace }}
 
+{{ if .HasImport -}}
 ## Import
 
 Import is supported using the following syntax:
 
-{{ codefile "shell" (printf "%s%s%s" "examples/resources/" .Name "/import.sh") }}
+{{codefile "shell" .ImportFile}}
+{{- end }}
 
 While supported, importing isn't recommended and it is advised to replace the
 certificate entirely instead.

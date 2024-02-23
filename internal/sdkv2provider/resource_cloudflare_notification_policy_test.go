@@ -259,3 +259,48 @@ func testCheckCloudflareNotificationPolicyWithSelectors(name, accountID, zoneID 
 	}
   }`, name, accountID, zoneID)
 }
+
+func TestAccCloudflareNotificationPolicy_RemappingAffectedComponents(t *testing.T) {
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_notification_policy." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCheckCloudflareNotificationPolicyWithComponents(rnd, accountID, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "traffic anomalies alert"),
+					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "alert_type", "incident_alert"),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.affected_components.0", "API"),
+				),
+			},
+		},
+	})
+}
+
+func testCheckCloudflareNotificationPolicyWithComponents(name, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_notification_policy" "%[1]s" {
+    name        = "traffic anomalies alert"
+    account_id  = "%[2]s"
+    description = "test description"
+    enabled     =  true
+    alert_type  = "incident_alert"
+	email_integration {
+      name =  ""
+      id   =  "test@example.com"
+    }
+    filters {
+	   affected_components = ["API"]
+	}
+  }`, name, accountID, zoneID)
+}

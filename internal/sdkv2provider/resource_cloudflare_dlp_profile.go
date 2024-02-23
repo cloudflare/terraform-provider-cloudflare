@@ -62,7 +62,9 @@ func dlpEntryToSchema(entry cloudflare.DLPEntry) map[string]interface{} {
 	if entry.Name != "" {
 		entrySchema["name"] = entry.Name
 	}
-	entrySchema["enabled"] = entry.Enabled != nil && *entry.Enabled == true
+	if entry.Enabled != nil {
+		entrySchema["enabled"] = *entry.Enabled
+	}
 	if entry.Pattern != nil {
 		entrySchema["pattern"] = []interface{}{dlpPatternToSchema(*entry.Pattern)}
 	}
@@ -111,9 +113,7 @@ func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceDat
 	for _, entry := range dlpProfile.Entries {
 		entries = append(entries, dlpEntryToSchema(entry))
 	}
-	d.Set("entry", schema.NewSet(schema.HashResource(&schema.Resource{
-		Schema: resourceCloudflareDLPEntrySchema(),
-	}), entries))
+	d.Set("entry", schema.NewSet(hashResourceCloudflareDLPEntry, entries))
 
 	return nil
 }

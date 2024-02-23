@@ -95,6 +95,12 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
+	if configuration.Settings.ExtendedEmailMatching != nil {
+		if err := d.Set("extended_email_matching", flattenExtendedEmailMatchingConfig(configuration.Settings.ExtendedEmailMatching)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account extended email matching config: %w", err))
+		}
+	}
+
 	logSettings, err := client.TeamsAccountLoggingConfiguration(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err))
@@ -149,16 +155,18 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	bodyScanningConfig := inflateBodyScanningConfig(d.Get("body_scanning"))
 	fipsConfig := inflateFIPSConfig(d.Get("fips"))
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
+	extendedEmailMatchingConfig := inflateExtendedEmailMatchingConfig(d.Get("extended_email_matching"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
 	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
 	payloadLogSettings := inflatePayloadLogSettings(d.Get("payload_log"))
 	sshSessionLogSettings := inflateSSHSessionLogSettings(d.Get("ssh_session_log"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
 		Settings: cloudflare.TeamsAccountSettings{
-			Antivirus:    antivirusConfig,
-			BlockPage:    blockPageConfig,
-			FIPS:         fipsConfig,
-			BodyScanning: bodyScanningConfig,
+			Antivirus:             antivirusConfig,
+			BlockPage:             blockPageConfig,
+			FIPS:                  fipsConfig,
+			BodyScanning:          bodyScanningConfig,
+			ExtendedEmailMatching: extendedEmailMatchingConfig,
 		},
 	}
 
@@ -302,11 +310,15 @@ func inflateBodyScanningConfig(bodyScanning interface{}) *cloudflare.TeamsBodySc
 }
 
 func flattenAntivirusConfig(antivirusConfig *cloudflare.TeamsAntivirus) []interface{} {
-	return []interface{}{map[string]interface{}{
+	settings := map[string]interface{}{
 		"enabled_download_phase": antivirusConfig.EnabledDownloadPhase,
 		"enabled_upload_phase":   antivirusConfig.EnabledUploadPhase,
 		"fail_closed":            antivirusConfig.FailClosed,
-	}}
+	}
+	if antivirusConfig.NotificationSettings != nil {
+		settings["notification_settings"] = flattenTeamsNotificationSettings(antivirusConfig.NotificationSettings)
+	}
+	return []interface{}{settings}
 }
 
 func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) []interface{} {
@@ -325,11 +337,15 @@ func inflateAntivirusConfig(antivirus interface{}) *cloudflare.TeamsAntivirus {
 	}
 
 	avMap := avList[0].(map[string]interface{})
-	return &cloudflare.TeamsAntivirus{
+	settings := &cloudflare.TeamsAntivirus{
 		EnabledDownloadPhase: avMap["enabled_download_phase"].(bool),
 		EnabledUploadPhase:   avMap["enabled_upload_phase"].(bool),
 		FailClosed:           avMap["fail_closed"].(bool),
 	}
+	if ns, ok := avMap["notification_settings"]; ok {
+		settings.NotificationSettings = inflateTeamsNotificationSettings(ns.([]interface{}))
+	}
+	return settings
 }
 
 func flattenFIPSConfig(fips *cloudflare.TeamsFIPS) []interface{} {
@@ -461,5 +477,23 @@ func inflatePayloadLogSettings(payloadLog interface{}) *cloudflare.DLPPayloadLog
 	publicKey := payloadLogMap["public_key"].(string)
 	return &cloudflare.DLPPayloadLogSettings{
 		PublicKey: publicKey,
+	}
+}
+
+func flattenExtendedEmailMatchingConfig(config *cloudflare.TeamsExtendedEmailMatching) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"enabled": config.Enabled,
+	}}
+}
+
+func inflateExtendedEmailMatchingConfig(config interface{}) *cloudflare.TeamsExtendedEmailMatching {
+	list := config.([]interface{})
+	if len(list) != 1 {
+		return nil
+	}
+
+	configMap := list[0].(map[string]interface{})
+	return &cloudflare.TeamsExtendedEmailMatching{
+		Enabled: cloudflare.BoolPtr(configMap["enabled"].(bool)),
 	}
 }

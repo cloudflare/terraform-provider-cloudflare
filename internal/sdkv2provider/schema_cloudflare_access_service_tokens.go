@@ -31,7 +31,7 @@ func resourceCloudflareAccessServiceTokenSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 			ForceNew:    true,
-			Description: "UUID client ID associated with the Service Token.",
+			Description: "Client ID associated with the Service Token.",
 		},
 		"client_secret": {
 			Type:        schema.TypeString,
@@ -43,13 +43,13 @@ func resourceCloudflareAccessServiceTokenSchema() map[string]*schema.Schema {
 		"expires_at": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			Description: "Date when the token expires",
+			Description: "Date when the token expires.",
 		},
 		"min_days_for_renewal": {
 			Type:        schema.TypeInt,
 			Optional:    true,
 			Default:     0,
-			Description: "Refresh the token if terraform is run within the specified amount of days before expiration",
+			Description: "Refresh the token if terraform is run within the specified amount of days before expiration.",
 		},
 		"duration": {
 			Type:         schema.TypeString,

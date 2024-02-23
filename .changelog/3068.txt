@@ -1,0 +1,3 @@
+```release-note:provider
+provider: bump github.com/hashicorp/terraform-plugin-docs from v0.0.13 to v0.17.0
+```

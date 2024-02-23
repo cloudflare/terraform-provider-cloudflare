@@ -55,6 +55,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
 	}
 
+	if _, ok := d.GetOk("allow_authenticate_via_warp"); ok {
+		newAccessApplication.AllowAuthenticateViaWarp = cloudflare.BoolPtr(d.Get("allow_authenticate_via_warp").(bool))
+	}
+
 	if value, ok := d.GetOk("allowed_idps"); ok {
 		newAccessApplication.AllowedIdps = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
@@ -114,7 +118,24 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	d.SetId(accessApplication.ID)
 
-	return resourceCloudflareAccessApplicationRead(ctx, d, meta)
+	readApplication := resourceCloudflareAccessApplicationRead(ctx, d, meta)
+
+	// client secret is only returned from the create request and should be stored in state
+	if accessApplication.SaasApplication != nil && accessApplication.SaasApplication.ClientSecret != "" {
+		rawSaasApp, ok := d.GetOk("saas_app")
+		if ok {
+			saasApp, ok := rawSaasApp.([]interface{})
+			if ok {
+				saasAppMap, ok := saasApp[0].(map[string]interface{})
+				if ok {
+					saasAppMap["client_secret"] = accessApplication.SaasApplication.ClientSecret
+					d.Set("saas_app", []interface{}{saasAppMap})
+				}
+			}
+		}
+	}
+
+	return readApplication
 }
 
 func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -159,6 +180,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("bg_color", accessApplication.AccessAppLauncherCustomization.BackgroundColor)
 	d.Set("header_bg_color", accessApplication.AccessAppLauncherCustomization.HeaderBackgroundColor)
 	d.Set("app_launcher_logo_url", accessApplication.AccessAppLauncherCustomization.LogoURL)
+	d.Set("allow_authenticate_via_warp", accessApplication.AllowAuthenticateViaWarp)
 
 	if _, ok := d.GetOk("footer_links"); ok {
 		footerLinks := convertFooterLinksStructToSchema(d, accessApplication.AccessAppLauncherCustomization.FooterLinks)
@@ -213,6 +235,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		AllowAuthenticateViaWarp: cloudflare.BoolPtr(d.Get("allow_authenticate_via_warp").(bool)),
 	}
 
 	if appType != "saas" {
@@ -322,10 +345,7 @@ func resourceCloudflareAccessApplicationImport(ctx context.Context, d *schema.Re
 	d.Set(consts.AccountIDSchemaKey, accountID)
 	d.SetId(accessApplicationID)
 
-	readErr := resourceCloudflareAccessApplicationRead(ctx, d, meta)
-	if readErr != nil {
-		return nil, errors.New("failed to read Access Application state")
-	}
+	resourceCloudflareAccessApplicationRead(ctx, d, meta)
 
 	return []*schema.ResourceData{d}, nil
 }
