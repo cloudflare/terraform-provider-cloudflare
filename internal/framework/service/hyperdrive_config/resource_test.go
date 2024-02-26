@@ -60,12 +60,10 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 		User:     "user",
 	}
 
-	var disabled = false
+	var disabled = true
 
 	var caching = cloudflare.HyperdriveConfigCaching{
-		Disabled:             &disabled,
-		MaxAge:               1,
-		StaleWhileRevalidate: 1,
+		Disabled: &disabled,
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -84,24 +82,21 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "password", "password"),
-					resource.TestCheckResourceAttr(resourceName, "origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.database", "database"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.host", "host.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.port", "5432"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.scheme", "postgres"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.user", "user"),
-					resource.TestCheckResourceAttr(resourceName, "caching.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "caching.0.disabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "caching.0.max_age", "1"),
-					resource.TestCheckResourceAttr(resourceName, "caching.0.stale_while_revalidate", "1"),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
+					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", "user"),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", "password"),
+					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "true"),
 				),
 			},
 			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"origin.password"},
 			},
 		},
 	})
@@ -116,6 +111,8 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 		Database: "database",
 		Host:     "host.example.com",
 		Port:     5432,
+		Scheme:   "postgres",
+		User:     "user",
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -133,24 +130,21 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "password", "password"),
-					resource.TestCheckResourceAttr(resourceName, "origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.database", "database"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.host", "host.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.port", "5432"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.scheme", "postgres"),
-					resource.TestCheckResourceAttr(resourceName, "origin.0.user", "user"),
-					resource.TestCheckResourceAttr(resourceName, "caching.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "caching.0.disabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "caching.0.max_age", "1"),
-					resource.TestCheckResourceAttr(resourceName, "caching.0.stale_while_revalidate", "1"),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
+					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", "user"),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", "password"),
+					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
 				),
 			},
 			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
+				ResourceName:            resourceName,
+				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"origin.password"},
 			},
 		},
 	})
@@ -173,11 +167,9 @@ func testHyperdriveConfigConfig(
 			}
 			caching = {
 				disabled               = %[10]s
-				max_age                = %[11]s
-				stale_while_revalidate = %[12]s
 			}		  
 		}`,
-		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User, fmt.Sprintf("%t", *caching.Disabled), fmt.Sprintf("%d", caching.MaxAge), fmt.Sprintf("%d", caching.StaleWhileRevalidate),
+		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User, fmt.Sprintf("%t", *caching.Disabled),
 	)
 }
 
@@ -193,8 +185,10 @@ func testHyperdriveConfigConfigMinimum(
 				database   = "%[5]s"
 				host       = "%[6]s"
 				port       = "%[7]s"
+				scheme	   = "%[8]s"
+				user       = "%[9]s"
 			}
 		}`,
-		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port),
+		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User,
 	)
 }

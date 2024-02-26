@@ -1,13 +1,16 @@
 package hyperdrive_config
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type HyperdriveConfigModel struct {
-	AccountID types.String                  `tfsdk:"account_id"`
-	ID        types.String                  `tfsdk:"id"`
-	Name      types.String                  `tfsdk:"name"`
-	Origin    *HyperdriveConfigOriginModel  `tfsdk:"origin"`
-	Caching   *HyperdriveConfigCachingModel `tfsdk:"caching"`
+	AccountID types.String                 `tfsdk:"account_id"`
+	ID        types.String                 `tfsdk:"id"`
+	Name      types.String                 `tfsdk:"name"`
+	Origin    *HyperdriveConfigOriginModel `tfsdk:"origin"`
+	Caching   types.Object                 `tfsdk:"caching"`
 }
 
 type HyperdriveConfigOriginModel struct {
@@ -20,7 +23,11 @@ type HyperdriveConfigOriginModel struct {
 }
 
 type HyperdriveConfigCachingModel struct {
-	Disabled             types.Bool  `tfsdk:"disabled"`
-	MaxAge               types.Int64 `tfsdk:"max_age"`
-	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate"`
+	Disabled types.Bool `tfsdk:"disabled"`
+}
+
+func (m HyperdriveConfigCachingModel) AttributeTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"disabled": types.BoolType,
+	}
 }

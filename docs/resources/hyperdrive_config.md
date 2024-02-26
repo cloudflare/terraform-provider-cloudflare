@@ -40,8 +40,6 @@ resource "cloudflare_hyperdrive_config" "no_defaults" {
   }
   caching    = {
     disabled               = false
-    max_age                = 60
-    stale_while_revalidate = 30
   }
 }
 ```
@@ -78,8 +76,6 @@ Required:
 Optional:
 
 - `disabled` (Boolean) Disable caching for this Hyperdrive configuration.
-- `max_age` (Number) The maximum age of the cache.
-- `stale_while_revalidate` (Number) The time to wait before revalidating the cache.
 
 ## Import
 

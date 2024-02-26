@@ -8,9 +8,11 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -51,14 +53,16 @@ func (r *HyperdriveConfigResource) Configure(ctx context.Context, req resource.C
 
 func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *HyperdriveConfigModel
+	var caching *HyperdriveConfigCachingModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(data.Caching.As(ctx, &caching, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	config := buildHyperdriveConfigFromModel(data)
+	config := buildHyperdriveConfigFromModel(data, caching)
 
 	createHyperdriveConfig, err := r.client.CreateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
 		cloudflare.CreateHyperdriveConfigParams{
@@ -72,19 +76,16 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 				User:     config.Origin.User,
 			},
 			Caching: cloudflare.HyperdriveConfigCaching{
-				Disabled:             config.Caching.Disabled,
-				MaxAge:               config.Caching.MaxAge,
-				StaleWhileRevalidate: config.Caching.StaleWhileRevalidate,
+				Disabled: config.Caching.Disabled,
 			},
 		})
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating hyperdrive config", err.Error())
 	}
 
-	data = buildHyperdriveConfigModelFromHyperdriveConfig(
-		data.AccountID,
-		createHyperdriveConfig,
-	)
+	var diags diag.Diagnostics
+	data, diags = buildHyperdriveConfigModelFromHyperdriveConfig(ctx, data, createHyperdriveConfig)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -104,21 +105,25 @@ func (r *HyperdriveConfigResource) Read(ctx context.Context, req resource.ReadRe
 		resp.Diagnostics.AddError("Error reading hyperdrive config", err.Error())
 	}
 
-	data = buildHyperdriveConfigModelFromHyperdriveConfig(data.AccountID, config)
+	var diags diag.Diagnostics
+	data, diags = buildHyperdriveConfigModelFromHyperdriveConfig(ctx, data, config)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *HyperdriveConfigModel
+	var caching *HyperdriveConfigCachingModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(data.Caching.As(ctx, &caching, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	config := buildHyperdriveConfigFromModel(data)
+	config := buildHyperdriveConfigFromModel(data, caching)
 
 	updatedConfig, err := r.client.UpdateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateHyperdriveConfigParams{
 		Name: config.Name,
@@ -131,9 +136,7 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 			User:     config.Origin.User,
 		},
 		Caching: cloudflare.HyperdriveConfigCaching{
-			Disabled:             config.Caching.Disabled,
-			MaxAge:               config.Caching.MaxAge,
-			StaleWhileRevalidate: config.Caching.StaleWhileRevalidate,
+			Disabled: config.Caching.Disabled,
 		},
 	})
 
@@ -141,10 +144,9 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 		resp.Diagnostics.AddError("Error updating hyperdrive config", err.Error())
 	}
 
-	data = buildHyperdriveConfigModelFromHyperdriveConfig(
-		data.AccountID,
-		updatedConfig,
-	)
+	var diags diag.Diagnostics
+	data, diags = buildHyperdriveConfigModelFromHyperdriveConfig(ctx, data, updatedConfig)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -173,7 +175,7 @@ func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)
 }
 
-func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel) cloudflare.HyperdriveConfig {
+func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel, caching *HyperdriveConfigCachingModel) cloudflare.HyperdriveConfig {
 	built := cloudflare.HyperdriveConfig{
 		Name: config.Name.ValueString(),
 		Origin: cloudflare.HyperdriveConfigOrigin{
@@ -192,42 +194,48 @@ func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel) cloudflare.Hy
 		built.Origin.User = config.Origin.User.ValueString()
 	}
 
-	if !config.Caching.Disabled.IsNull() || !config.Caching.MaxAge.IsNull() || !config.Caching.StaleWhileRevalidate.IsNull() {
-		built.Caching = cloudflare.HyperdriveConfigCaching{}
-	}
+	built.Caching = cloudflare.HyperdriveConfigCaching{}
 
-	if !config.Caching.Disabled.IsNull() {
-		built.Caching.Disabled = cloudflare.BoolPtr(config.Caching.Disabled.ValueBool())
-	}
-
-	if !config.Caching.MaxAge.IsNull() {
-		built.Caching.MaxAge = int(config.Caching.MaxAge.ValueInt64())
-	}
-
-	if !config.Caching.StaleWhileRevalidate.IsNull() {
-		built.Caching.StaleWhileRevalidate = int(config.Caching.StaleWhileRevalidate.ValueInt64())
+	if caching != nil && !caching.Disabled.IsNull() {
+		built.Caching.Disabled = cloudflare.BoolPtr(caching.Disabled.ValueBool())
 	}
 
 	return built
 }
 
-func buildHyperdriveConfigModelFromHyperdriveConfig(accountID types.String, config cloudflare.HyperdriveConfig) *HyperdriveConfigModel {
+func buildHyperdriveConfigModelFromHyperdriveConfig(ctx context.Context, data *HyperdriveConfigModel, config cloudflare.HyperdriveConfig) (*HyperdriveConfigModel, diag.Diagnostics) {
+	var scheme = flatteners.String("postgres")
+	if data.Origin != nil {
+		scheme = data.Origin.Scheme
+	}
+
+	var password = flatteners.String("")
+	if data.Origin != nil {
+		password = data.Origin.Password
+	}
+
+	var caching, diags = types.ObjectValueFrom(
+		ctx,
+		HyperdriveConfigCachingModel{}.AttributeTypes(),
+		HyperdriveConfigCachingModel{
+			Disabled: types.BoolValue(*config.Caching.Disabled),
+		},
+	)
+
 	built := HyperdriveConfigModel{
-		AccountID: accountID,
+		AccountID: data.AccountID,
+		ID:        flatteners.String(config.ID),
 		Name:      flatteners.String(config.Name),
 		Origin: &HyperdriveConfigOriginModel{
 			Database: flatteners.String(config.Origin.Database),
 			Host:     flatteners.String(config.Origin.Host),
 			Port:     flatteners.Int64(int64(config.Origin.Port)),
-			Scheme:   flatteners.String(config.Origin.Scheme),
 			User:     flatteners.String(config.Origin.User),
+			Scheme:   scheme,
+			Password: password,
 		},
-		Caching: &HyperdriveConfigCachingModel{
-			Disabled:             flatteners.Bool(config.Caching.Disabled),
-			MaxAge:               flatteners.Int64(int64(config.Caching.MaxAge)),
-			StaleWhileRevalidate: flatteners.Int64(int64(config.Caching.StaleWhileRevalidate)),
-		},
+		Caching: caching,
 	}
 
-	return &built
+	return &built, diags
 }

@@ -26,8 +26,6 @@ resource "cloudflare_hyperdrive_config" "no_defaults" {
   }
   caching    = {
     disabled               = false
-    max_age                = 60
-    stale_while_revalidate = 30
   }
 }
 

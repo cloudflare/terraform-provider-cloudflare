@@ -68,18 +68,12 @@ func (r *HyperdriveConfigResource) Schema(ctx context.Context, req resource.Sche
 			"caching": schema.SingleNestedAttribute{
 				MarkdownDescription: "The caching details for the Hyperdrive configuration.",
 				Optional:            true,
+				Computed:            true,
 				Attributes: map[string]schema.Attribute{
 					"disabled": schema.BoolAttribute{
 						MarkdownDescription: "Disable caching for this Hyperdrive configuration.",
 						Optional:            true,
-					},
-					"max_age": schema.Int64Attribute{
-						MarkdownDescription: "The maximum age of the cache.",
-						Optional:            true,
-					},
-					"stale_while_revalidate": schema.Int64Attribute{
-						MarkdownDescription: "The time to wait before revalidating the cache.",
-						Optional:            true,
+						Computed:            true,
 					},
 				},
 			},
