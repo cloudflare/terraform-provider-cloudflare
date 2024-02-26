@@ -107,7 +107,19 @@ func (r *ZarazConfigResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	resp.Diagnostics.AddError("failed to update Zaraz Config", "Not implemented")
+	tflog.Info(ctx, data.ZoneID.ValueString())
+	rc := cloudflare.ZoneIdentifier(data.ZoneID.ValueString())
+
+	x := data.toZarazConfigParams(ctx)
+	str := spew.Sdump(x)
+	tflog.Info(ctx, fmt.Sprintf("ZARAAAAZ %s", str))
+
+	_, err := r.client.UpdateZarazConfig(ctx, rc, data.toZarazConfigParams(ctx))
+	if err != nil {
+		resp.Diagnostics.AddError("failed to update Zaraz config", err.Error())
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 // Todo: Can we implment Zaraz TF without delete?
