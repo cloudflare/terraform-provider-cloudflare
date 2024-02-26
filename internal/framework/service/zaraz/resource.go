@@ -52,31 +52,26 @@ func (r *ZarazConfigResource) Configure(ctx context.Context, req resource.Config
 }
 
 func (r *ZarazConfigResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	tflog.Info(ctx, "In create")
 	var data *ZarazConfigModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
-		tflog.Info(ctx, "Has an error")
 		return
 	}
 
 	tflog.Info(ctx, data.ZoneID.ValueString())
 	rc := cloudflare.ZoneIdentifier(data.ZoneID.ValueString())
-	tflog.Info(ctx, fmt.Sprintf("Before update config params %s", rc))
 
 	x := data.toZarazConfigParams(ctx)
 	str := spew.Sdump(x)
 	tflog.Info(ctx, fmt.Sprintf("ZARAAAAZ %s", str))
 
-	response, err := r.client.UpdateZarazConfig(ctx, rc, data.toZarazConfigParams(ctx))
+	_, err := r.client.UpdateZarazConfig(ctx, rc, data.toZarazConfigParams(ctx))
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create Zaraz config", err.Error())
 		return
 	}
-	data.ZoneID = types.StringValue(data.ZoneID.String())
-	data.Config.DebugKey = types.StringValue(response.Result.DebugKey)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -90,15 +85,15 @@ func (r *ZarazConfigResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	rc := cloudflare.ZoneIdentifier(data.ZoneID.ValueString())
+	zoneId := data.ZoneID.ValueString()
 
-	response, err := r.client.GetZarazConfig(ctx, rc)
+	rc := cloudflare.ZoneIdentifier(zoneId)
+
+	_, err := r.client.GetZarazConfig(ctx, rc)
 	if err != nil {
-		resp.Diagnostics.AddError("failed reading D1 database", err.Error())
+		resp.Diagnostics.AddError("failed reading Zaraz config", err.Error())
 		return
 	}
-	data.ZoneID = types.StringValue(data.ZoneID.String())
-	data.Config.DebugKey = types.StringValue(response.Result.DebugKey)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -127,17 +122,22 @@ func (r *ZarazConfigResource) Delete(ctx context.Context, req resource.DeleteReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	zoneId := data.ZoneID.ValueString()
+	zoneId = strings.ReplaceAll(zoneId, "\\\"", "")
+	tflog.Info(ctx, fmt.Sprintf("Zone ID %s", zoneId))
+	zoneId = strings.ReplaceAll(zoneId, "\"", "")
+	tflog.Info(ctx, fmt.Sprintf("Zone ID %s", zoneId))
 
-	rc := cloudflare.ZoneIdentifier(data.ZoneID.ValueString())
-	response, err := r.client.UpdateZarazConfig(ctx, rc, cloudflare.UpdateZarazConfigParams{
-		DebugKey: "123",
-	})
-	if err != nil {
-		resp.Diagnostics.AddError("failed to delete Zaraz config", err.Error())
-		return
-	}
-	data.ZoneID = types.StringValue(data.ZoneID.String())
-	data.Config.DebugKey = types.StringValue(response.Result.DebugKey)
+	// TODO call the reset ZarazConfig API here to reset the config
+	// rc := cloudflare.ZoneIdentifier(zoneId)
+	// response, err := r.client.UpdateZarazConfig(ctx, rc, cloudflare.UpdateZarazConfigParams{
+	// 	DebugKey: "123",
+	// })
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to delete Zaraz config", err.Error())
+	// 	return
+	// }
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -165,8 +165,9 @@ func toZarazResourceModel(ctx context.Context, zoneID, accountID basetypes.Strin
 
 func (z *ZarazConfigModel) toZarazConfigParams(ctx context.Context) cloudflare.UpdateZarazConfigParams {
 	zz := cloudflare.UpdateZarazConfigParams{
-		DebugKey:     z.Config.DebugKey.String(),
-		ZarazVersion: z.Config.ZarazVersion.ValueInt64(),
+		DebugKey:      z.Config.DebugKey.ValueString(),
+		ZarazVersion:  z.Config.ZarazVersion.ValueInt64(),
+		HistoryChange: z.Config.HistoryChange.ValueBoolPointer(),
 	}
 
 	if z.Config.Tools != nil {
@@ -181,7 +182,12 @@ func (z *ZarazConfigModel) toZarazConfigParams(ctx context.Context) cloudflare.U
 		zz.Triggers = make(map[string]cloudflare.ZarazTrigger)
 		for triggerId, trigger := range z.Config.Triggers {
 			zz.Triggers[triggerId] = trigger.toZarazTriggerParams(ctx)
+		}
+	}
 
+	if z.Config.Settings != nil {
+		zz.Settings = cloudflare.ZarazConfigSettings{
+			AutoInjectScript: z.Config.Settings.AutoInjectScript.ValueBoolPointer(),
 		}
 	}
 
@@ -189,7 +195,6 @@ func (z *ZarazConfigModel) toZarazConfigParams(ctx context.Context) cloudflare.U
 }
 
 func (zt *ZarazTool) toZarazToolParams(ctx context.Context) cloudflare.ZarazTool {
-	tflog.Info(ctx, "Converting tool")
 	zarazTool := cloudflare.ZarazTool{
 		Name:             zt.Name.ValueString(),
 		Type:             cloudflare.ZarazToolType(zt.Type.ValueString()),
@@ -199,15 +204,27 @@ func (zt *ZarazTool) toZarazToolParams(ctx context.Context) cloudflare.ZarazTool
 		Settings:         zt.Settings,
 		DefaultPurpose:   zt.DefaultPurpose.ValueString(),
 	}
-	tflog.Info(ctx, "after Converting tool")
 
 	zarazTool.Component = zt.Component.ValueString()
 	zarazTool.Library = zt.Library.ValueString()
 	zarazTool.Permissions = zt.Permissions
 	if !reflect.ValueOf(zt.Worker).IsNil() {
 		zarazTool.Worker = &cloudflare.ZarazWorker{
-			WorkerTag:         zt.Worker.WorkerTag,
-			EscapedWorkerName: zt.Worker.EscapedWorkerName,
+			WorkerTag:         zt.Worker.WorkerTag.ValueString(),
+			EscapedWorkerName: zt.Worker.EscapedWorkerName.ValueString(),
+			MutableId:         zt.Worker.MutableId.ValueString(),
+		}
+	}
+
+	if !reflect.ValueOf(zt.Actions).IsNil() {
+		zarazTool.Actions = make(map[string]cloudflare.ZarazAction)
+		for actionID, action := range zt.Actions {
+			zarazTool.Actions[actionID] = cloudflare.ZarazAction{
+				BlockingTriggers: toStringArray(ctx, action.BlockingTriggers),
+				FiringTriggers:   toStringArray(ctx, action.FiringTriggers),
+				Data:             action.Data,
+				ActionType:       action.ActionType.ValueString(),
+			}
 		}
 	}
 
@@ -217,29 +234,34 @@ func (zt *ZarazTool) toZarazToolParams(ctx context.Context) cloudflare.ZarazTool
 
 }
 
+func toStringArray(ctx context.Context, arrayValues []types.String) []string {
+	result := make([]string, len(arrayValues))
+	for index, value := range arrayValues {
+		result[index] = value.ValueString()
+	}
+
+	return result
+}
+
 func (ztr *ZarazTrigger) toZarazTriggerParams(ctx context.Context) cloudflare.ZarazTrigger {
-	tflog.Info(ctx, "Converting trigger")
 	zarazTrigger := cloudflare.ZarazTrigger{
 		Name: ztr.Name.ValueString(),
 	}
-	tflog.Info(ctx, "after Converting trigger")
-
 	zarazTrigger.Description = ztr.Name.ValueString()
-
 	if !reflect.ValueOf(ztr.LoadRules).IsNil() {
-		var len = len(ztr.LoadRules)
-		zarazTrigger.LoadRules = make([]cloudflare.ZarazTriggerRule, len)
+		zarazTrigger.LoadRules = make([]cloudflare.ZarazTriggerRule, 0)
 		for _, rule := range ztr.LoadRules {
 			zarazTrigger.LoadRules = append(zarazTrigger.LoadRules, cloudflare.ZarazTriggerRule{
-				Id: rule.Id.ValueString(),
+				Match: rule.Match.ValueString(),
+				Op:    rule.Op.ValueString(),
+				Value: rule.Value.ValueString(),
 			})
 		}
 	}
 
 	if !reflect.ValueOf(ztr.ExcludeRules).IsNil() {
-		var len = len(ztr.LoadRules)
-		zarazTrigger.ExcludeRules = make([]cloudflare.ZarazTriggerRule, len)
-		for _, rule := range ztr.LoadRules {
+		zarazTrigger.ExcludeRules = make([]cloudflare.ZarazTriggerRule, 0)
+		for _, rule := range ztr.ExcludeRules {
 			zarazTrigger.ExcludeRules = append(zarazTrigger.ExcludeRules, cloudflare.ZarazTriggerRule{
 				Id: rule.Id.ValueString(),
 			})
