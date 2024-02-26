@@ -55,6 +55,56 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 						Required: true,
 					},
+					"settings": schema.SingleNestedAttribute{
+						Attributes: map[string]schema.Attribute{
+							"auto_inject_script": schema.BoolAttribute{
+								Optional: true,
+							},
+							"inject_iframes": schema.BoolAttribute{
+								Optional: true,
+							},
+							"ecommerce": schema.BoolAttribute{
+								Optional: true,
+							},
+							"hide_query_params": schema.BoolAttribute{
+								Optional: true,
+							},
+							"hide_ip_address": schema.BoolAttribute{
+								Optional: true,
+							},
+							"hide_user_agent": schema.BoolAttribute{
+								Optional: true,
+							},
+							"hide_external_referer": schema.BoolAttribute{
+								Optional: true,
+							},
+							"cookie_domain": schema.StringAttribute{
+								Optional: true,
+							},
+							"init_path": schema.StringAttribute{
+								Optional: true,
+							},
+							"script_path": schema.StringAttribute{
+								Optional: true,
+							},
+							"track_path": schema.StringAttribute{
+								Optional: true,
+							},
+							"events_api_path": schema.StringAttribute{
+								Optional: true,
+							},
+							"mc_root_path": schema.StringAttribute{
+								Optional: true,
+							},
+							"context_enricher": schema.StringAttribute{
+								Optional: true,
+							},
+						},
+						Optional: true,
+					},
+					"history_change": schema.BoolAttribute{
+						Optional: true,
+					},
 					"tools": schema.MapNestedAttribute{
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
@@ -166,7 +216,7 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 											Required: true,
 										},
 										"mutable_id": schema.StringAttribute{
-											Computed: true,
+											Optional: true,
 										},
 									},
 									Optional: true,
