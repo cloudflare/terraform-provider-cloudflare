@@ -347,7 +347,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_token_permissions_groups.NewDataSource,
 		origin_ca_certificate.NewDataSource,
 		user.NewDataSource,
-		zaraz.NewDataSource,
 	}
 }
 
