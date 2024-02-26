@@ -227,6 +227,7 @@ resource "cloudflare_pages_project" "deployment_configs" {
 
 Optional:
 
+- `build_caching` (Boolean) Enable build caching for the project.
 - `build_command` (String) Command used to build project.
 - `destination_dir` (String) Output directory of the build.
 - `root_dir` (String) Your project's root directory, where Cloudflare runs the build command. If your site is not in a subdirectory, leave this path value empty.

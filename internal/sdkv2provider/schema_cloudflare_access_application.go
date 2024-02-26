@@ -2,8 +2,9 @@ package sdkv2provider
 
 import (
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
 	"time"
+
+	"github.com/cloudflare/cloudflare-go"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -149,20 +150,81 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Description: "SaaS configuration for the Access Application.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
+					// shared values
+					"auth_type": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"oidc", "saml"}, false),
+						Description:  "",
+					},
+					"public_key": {
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "The public certificate that will be used to verify identities.",
+					},
+
+					// OIDC options
+					"client_id": {
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "The application client id",
+					},
+					"client_secret": {
+						Type:        schema.TypeString,
+						Computed:    true,
+						Description: "The application client secret, only returned on initial apply",
+					},
+					"redirect_uris": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Description: "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
+					},
+					"grant_types": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Computed: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Description: "The OIDC flows supported by this application",
+					},
+					"scopes": {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Computed: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Description: "Define the user information shared with access",
+					},
+					"app_launcher_url": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The URL where this applications tile redirects users",
+					},
+					"group_filter_regex": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
+					},
+
+					// SAML options
 					"sp_entity_id": {
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 						Description: "A globally unique name for an identity or service provider.",
 					},
 					"consumer_service_url": {
 						Type:        schema.TypeString,
-						Required:    true,
+						Optional:    true,
 						Description: "The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.",
 					},
 					"name_id_format": {
 						Type:         schema.TypeString,
 						Optional:     true,
-						Default:      "email",
 						ValidateFunc: validation.StringInSlice([]string{"email", "id"}, false),
 						Description:  "The format of the name identifier sent to the SaaS application.",
 					},
@@ -213,11 +275,6 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Computed:    true,
 						Description: "The unique identifier for the SaaS application.",
-					},
-					"public_key": {
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "The public certificate that will be used to verify identities.",
 					},
 					"sso_endpoint": {
 						Type:        schema.TypeString,
@@ -386,6 +443,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"allow_authenticate_via_warp": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "When set to true, users can authenticate to this application using their WARP session. When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
+		},
 	}
 }
 
@@ -486,15 +548,29 @@ func convertSAMLAttributeSchemaToStruct(data map[string]interface{}) cloudflare.
 func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplication {
 	SaasConfig := cloudflare.SaasApplication{}
 	if _, ok := d.GetOk("saas_app"); ok {
-		SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
-		SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
-		SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
-		SaasConfig.DefaultRelayState = d.Get("saas_app.0.default_relay_state").(string)
+		auth_type := "saml"
+		if raw_auth_type, ok := d.GetOk("saas_app.0.auth_type"); ok {
+			auth_type = raw_auth_type.(string)
+		}
+		SaasConfig.AuthType = auth_type
+		if auth_type == "oidc" {
+			SaasConfig.ClientID = d.Get("saas_app.0.client_id").(string)
+			SaasConfig.AppLauncherURL = d.Get("saas_app.0.app_launcher_url").(string)
+			SaasConfig.RedirectURIs = expandInterfaceToStringList(d.Get("saas_app.0.redirect_uris").(*schema.Set).List())
+			SaasConfig.GrantTypes = expandInterfaceToStringList(d.Get("saas_app.0.grant_types").(*schema.Set).List())
+			SaasConfig.Scopes = expandInterfaceToStringList(d.Get("saas_app.0.scopes").(*schema.Set).List())
+			SaasConfig.GroupFilterRegex = d.Get("saas_app.0.group_filter_regex").(string)
+		} else {
+			SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
+			SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
+			SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
+			SaasConfig.DefaultRelayState = d.Get("saas_app.0.default_relay_state").(string)
 
-		customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
-		for _, customAttributes := range customAttributes {
-			attributeAsMap := customAttributes.(map[string]interface{})
-			SaasConfig.CustomAttributes = append(SaasConfig.CustomAttributes, convertSAMLAttributeSchemaToStruct(attributeAsMap))
+			customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
+			for _, customAttributes := range customAttributes {
+				attributeAsMap := customAttributes.(map[string]interface{})
+				SaasConfig.CustomAttributes = append(SaasConfig.CustomAttributes, convertSAMLAttributeSchemaToStruct(attributeAsMap))
+			}
 		}
 	}
 	return &SaasConfig
@@ -591,23 +667,38 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 	if app == nil {
 		return []interface{}{}
 	}
-	m := map[string]interface{}{
-		"sp_entity_id":         app.SPEntityID,
-		"consumer_service_url": app.ConsumerServiceUrl,
-		"name_id_format":       app.NameIDFormat,
-		"idp_entity_id":        app.IDPEntityID,
-		"public_key":           app.PublicKey,
-		"sso_endpoint":         app.SSOEndpoint,
-		"default_relay_state":  app.DefaultRelayState,
-	}
+	if app.AuthType == "oidc" {
+		m := map[string]interface{}{
+			// client secret not handled here as it is only returned on create
+			"auth_type":          app.AuthType,
+			"client_id":          app.ClientID,
+			"redirect_uris":      app.RedirectURIs,
+			"grant_types":        app.GrantTypes,
+			"scopes":             app.Scopes,
+			"public_key":         app.PublicKey,
+			"group_filter_regex": app.GroupFilterRegex,
+			"app_launcher_url":   app.AppLauncherURL,
+		}
+		return []interface{}{m}
+	} else {
+		m := map[string]interface{}{
+			"sp_entity_id":         app.SPEntityID,
+			"consumer_service_url": app.ConsumerServiceUrl,
+			"name_id_format":       app.NameIDFormat,
+			"idp_entity_id":        app.IDPEntityID,
+			"public_key":           app.PublicKey,
+			"sso_endpoint":         app.SSOEndpoint,
+			"default_relay_state":  app.DefaultRelayState,
+		}
 
-	var customAttributes []interface{}
-	for _, attr := range app.CustomAttributes {
-		customAttributes = append(customAttributes, convertSAMLAttributeStructToSchema(attr))
-	}
-	if len(customAttributes) != 0 {
-		m["custom_attribute"] = customAttributes
-	}
+		var customAttributes []interface{}
+		for _, attr := range app.CustomAttributes {
+			customAttributes = append(customAttributes, convertSAMLAttributeStructToSchema(attr))
+		}
+		if len(customAttributes) != 0 {
+			m["custom_attribute"] = customAttributes
+		}
 
-	return []interface{}{m}
+		return []interface{}{m}
+	}
 }

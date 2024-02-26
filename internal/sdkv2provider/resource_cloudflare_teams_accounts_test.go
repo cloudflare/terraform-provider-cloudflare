@@ -42,6 +42,13 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "block_page.0.mailto_address", "test@cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "block_page.0.background_color", "#000000"),
 					resource.TestCheckResourceAttr(name, "block_page.0.logo_path", "https://example.com"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.enabled_download_phase", "true"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.enabled_upload_phase", "false"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.fail_closed", "true"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.notification_settings.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.notification_settings.0.message", "msg"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.notification_settings.0.support_url", "https://hello.com/"),
+
 					resource.TestCheckResourceAttr(name, "body_scanning.0.inspection_mode", "deep"),
 					resource.TestCheckResourceAttr(name, "logging.0.redact_pii", "true"),
 					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.dns.0.log_all", "false"),
@@ -91,6 +98,11 @@ resource "cloudflare_teams_account" "%[1]s" {
     enabled_download_phase = true
     enabled_upload_phase = false
     fail_closed = true
+	notification_settings {
+		enabled = true
+		message = "msg" 
+		support_url = "https://hello.com/"
+	}
   }
   proxy {
     tcp = true
@@ -119,6 +131,9 @@ resource "cloudflare_teams_account" "%[1]s" {
   }
   payload_log {
 	public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
+  }
+  extended_email_matching {
+	enabled = true
   }
 }
 `, rnd, accountID)

@@ -37,6 +37,8 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "login_design.0.header_text", "My header text"),
 					resource.TestCheckResourceAttr(name, "login_design.0.footer_text", "My footer text"),
 					resource.TestCheckResourceAttr(name, "session_duration", "12h"),
+					resource.TestCheckResourceAttr(name, "warp_auth_session_duration", "36h"),
+					resource.TestCheckResourceAttr(name, "allow_authenticate_via_warp", "false"),
 				),
 				ResourceName:     name,
 				ImportState:      true,
@@ -86,6 +88,8 @@ func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID string) strin
 			user_seat_expiration_inactive_time = "1460h"
 			auto_redirect_to_identity = false
 			session_duration = "12h"
+			warp_auth_session_duration = "36h"
+			allow_authenticate_via_warp = false
 
 			login_design {
 				background_color = "#FFFFFF"

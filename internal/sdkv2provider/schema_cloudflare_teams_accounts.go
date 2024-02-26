@@ -113,6 +113,15 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			},
 			Description: "Configuration for DLP Payload Logging.",
 		},
+		"extended_email_matching": {
+			Type:        schema.TypeList,
+			MaxItems:    1,
+			Optional:    true,
+			Description: "Configuration for extended e-mail matching.",
+			Elem: &schema.Resource{
+				Schema: extendedEmailMatchingSchema,
+			},
+		},
 	}
 }
 
@@ -195,6 +204,15 @@ var antivirusSchema = map[string]*schema.Schema{
 		Type:        schema.TypeBool,
 		Required:    true,
 		Description: "Block requests for files that cannot be scanned.",
+	},
+	"notification_settings": {
+		Type:        schema.TypeList,
+		MaxItems:    1,
+		Optional:    true,
+		Description: "Set notifications for antivirus",
+		Elem: &schema.Resource{
+			Schema: notificationSettings,
+		},
 	},
 }
 
@@ -286,5 +304,13 @@ var payloadLogSchema = map[string]*schema.Schema{
 		Type:        schema.TypeString,
 		Required:    true,
 		Description: "Public key used to encrypt matched payloads.",
+	},
+}
+
+var extendedEmailMatchingSchema = map[string]*schema.Schema{
+	"enabled": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether e-mails should be matched on all variants of user emails (with + or . modifiers) in Firewall policies.",
 	},
 }

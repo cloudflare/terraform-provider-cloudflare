@@ -40,6 +40,7 @@ func testPagesProjectBuildConfig(resourceID, accountID string) string {
 		  name = "%[1]s"
 		  production_branch = "main"
 		  build_config {
+			build_caching = true
 			build_command = "npm run build"
 			destination_dir = "build"
 			root_dir = "/"
@@ -204,6 +205,7 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "build_config.0.build_caching", "true"),
 					resource.TestCheckResourceAttr(name, "build_config.0.build_command", "npm run build"),
 					resource.TestCheckResourceAttr(name, "build_config.0.destination_dir", "build"),
 					resource.TestCheckResourceAttr(name, "build_config.0.root_dir", "/"),
