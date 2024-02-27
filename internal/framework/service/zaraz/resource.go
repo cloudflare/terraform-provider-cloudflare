@@ -199,7 +199,27 @@ func (z *ZarazConfigModel) toZarazConfigParams(ctx context.Context) cloudflare.U
 
 	if z.Config.Settings != nil {
 		zz.Settings = cloudflare.ZarazConfigSettings{
-			AutoInjectScript: z.Config.Settings.AutoInjectScript.ValueBoolPointer(),
+			AutoInjectScript:    z.Config.Settings.AutoInjectScript.ValueBoolPointer(),
+			InjectIframes:       z.Config.Settings.InjectIframes.ValueBoolPointer(),
+			Ecommerce:           z.Config.Settings.Ecommerce.ValueBoolPointer(),
+			HideQueryParams:     z.Config.Settings.HideQueryParams.ValueBoolPointer(),
+			HideIpAddress:       z.Config.Settings.HideIpAddress.ValueBoolPointer(),
+			HideUserAgent:       z.Config.Settings.HideUserAgent.ValueBoolPointer(),
+			HideExternalReferer: z.Config.Settings.HideExternalReferer.ValueBoolPointer(),
+			CookieDomain:        z.Config.Settings.CookieDomain.ValueString(),
+			InitPath:            z.Config.Settings.InitPath.ValueString(),
+			ScriptPath:          z.Config.Settings.ScriptPath.ValueString(),
+			TrackPath:           z.Config.Settings.TrackPath.ValueString(),
+			EventsApiPath:       z.Config.Settings.EventsApiPath.ValueString(),
+			McRootPath:          z.Config.Settings.McRootPath.ValueString(),
+		}
+
+		if !reflect.ValueOf(z.Config.Settings.ContextEnricher).IsNil() {
+			zz.Settings.ContextEnricher = &cloudflare.ZarazWorker{
+				WorkerTag:         z.Config.Settings.ContextEnricher.WorkerTag.ValueString(),
+				EscapedWorkerName: z.Config.Settings.ContextEnricher.EscapedWorkerName.ValueString(),
+				MutableId:         z.Config.Settings.ContextEnricher.MutableId.ValueString(),
+			}
 		}
 	}
 
