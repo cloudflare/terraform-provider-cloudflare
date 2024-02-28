@@ -16,7 +16,7 @@ require (
 	github.com/hashicorp/go-plugin v1.6.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/hcl/v2 v2.19.1 // indirect
-	github.com/hashicorp/terraform-plugin-go v0.21.0
+	github.com/hashicorp/terraform-plugin-go v0.22.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.32.0
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -41,7 +41,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.51.1
 	github.com/google/go-cmp v0.6.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
-	github.com/hashicorp/terraform-plugin-framework v1.5.0
+	github.com/hashicorp/terraform-plugin-framework v1.6.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.12.0
 	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/hashicorp/terraform-plugin-mux v0.14.0
