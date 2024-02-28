@@ -55,11 +55,10 @@ type ZarazTriggerRule struct {
 }
 
 type ZarazTrigger struct {
-	Name         types.String       `tfsdk:"name"`
-	Description  types.String       `tfsdk:"description"`
-	LoadRules    []ZarazTriggerRule `tfsdk:"load_rules"`
-	ExcludeRules []ZarazTriggerRule `tfsdk:"exclude_rules"`
-	System       types.String       `tfsdk:"system"`
+	Name        types.String       `tfsdk:"name"`
+	Description types.String       `tfsdk:"description"`
+	LoadRules   []ZarazTriggerRule `tfsdk:"load_rules"`
+	System      types.String       `tfsdk:"system"`
 }
 
 type ZarazConfig struct {

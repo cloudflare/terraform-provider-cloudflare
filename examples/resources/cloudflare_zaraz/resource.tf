@@ -4,7 +4,6 @@ resource "cloudflare_zaraz_config" "examplecom" {
     debug_key = "sdsdds"
     triggers = {
      trigger1 = {
-        exclude_rules = []
         load_rules = [
           {
             id = "f754b30b-a0c5-4027-b72f-513a7ace637c"

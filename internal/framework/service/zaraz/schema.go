@@ -237,12 +237,6 @@ func triggerSchema() schema.ListNestedAttribute {
 					},
 					Required: true,
 				},
-				"exclude_rules": schema.ListNestedAttribute{
-					NestedObject: schema.NestedAttributeObject{
-						Attributes: triggerRuleSchema().NestedObject.Attributes,
-					},
-					Required: true,
-				},
 			},
 		},
 	}
