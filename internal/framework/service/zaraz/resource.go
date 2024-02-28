@@ -237,6 +237,17 @@ func (zt *ZarazTool) toZarazToolParams(ctx context.Context) cloudflare.ZarazTool
 		DefaultPurpose:   zt.DefaultPurpose.ValueString(),
 	}
 
+	if !reflect.ValueOf(zt.Mode).IsNil() {
+		zarazTool.Mode = &cloudflare.ToolMode{
+			Light:     zt.Mode.Light.ValueBool(),
+			Cloud:     zt.Mode.Cloud.ValueBool(),
+			Sample:    zt.Mode.Sample.ValueBool(),
+			Segment:   zt.Mode.Segment,
+			Trigger:   zt.Mode.Trigger.ValueString(),
+			IgnoreSPA: zt.Mode.IgnoreSPA.ValueBool(),
+		}
+	}
+
 	zarazTool.Component = zt.Component.ValueString()
 	zarazTool.Library = zt.Library.ValueString()
 	zarazTool.Permissions = zt.Permissions
@@ -282,21 +293,65 @@ func (ztr *ZarazTrigger) toZarazTriggerParams(ctx context.Context) cloudflare.Za
 	zarazTrigger.Description = ztr.Name.ValueString()
 	if !reflect.ValueOf(ztr.LoadRules).IsNil() {
 		zarazTrigger.LoadRules = make([]cloudflare.ZarazTriggerRule, 0)
+		tflog.Info(ctx, "TRIGGGEEER RULEEEE")
+
 		for _, rule := range ztr.LoadRules {
-			zarazTrigger.LoadRules = append(zarazTrigger.LoadRules, cloudflare.ZarazTriggerRule{
-				Match: rule.Match.ValueString(),
-				Op:    rule.Op.ValueString(),
-				Value: rule.Value.ValueString(),
-			})
+			tr := cloudflare.ZarazTriggerRule{
+				Id:     rule.Id.ValueString(),
+				Match:  rule.Match.ValueString(),
+				Op:     rule.Op.ValueString(),
+				Value:  rule.Value.ValueString(),
+				Action: cloudflare.ZarazRuleType(rule.Action.ValueString()),
+			}
+			if !reflect.ValueOf(rule.Settings).IsNil() {
+				tr.Settings = cloudflare.ZarazRuleSettings{
+					Type:        rule.Settings.Type.ValueString(),
+					Selector:    rule.Settings.Selector.ValueString(),
+					WaitForTags: int(rule.Settings.WaitForTags.ValueInt64()),
+					Interval:    int(rule.Settings.Interval.ValueInt64()),
+					Limit:       int(rule.Settings.Limit.ValueInt64()),
+					Validate:    rule.Settings.Validate.ValueBoolPointer(),
+					Variable:    rule.Settings.Variable.ValueString(),
+					Match:       rule.Settings.Match.ValueString(),
+					Positions:   rule.Settings.Positions.ValueString(),
+					Op:          rule.Settings.Op.ValueString(),
+					Value:       rule.Settings.Value.ValueString(),
+				}
+
+			}
+
+			zarazTrigger.LoadRules = append(zarazTrigger.LoadRules, tr)
 		}
 	}
 
 	if !reflect.ValueOf(ztr.ExcludeRules).IsNil() {
 		zarazTrigger.ExcludeRules = make([]cloudflare.ZarazTriggerRule, 0)
 		for _, rule := range ztr.ExcludeRules {
-			zarazTrigger.ExcludeRules = append(zarazTrigger.ExcludeRules, cloudflare.ZarazTriggerRule{
-				Id: rule.Id.ValueString(),
-			})
+			tr := cloudflare.ZarazTriggerRule{
+				Id:     rule.Id.ValueString(),
+				Match:  rule.Match.ValueString(),
+				Op:     rule.Op.ValueString(),
+				Value:  rule.Value.ValueString(),
+				Action: cloudflare.ZarazRuleType(rule.Action.ValueString()),
+			}
+			if !reflect.ValueOf(rule.Settings).IsNil() {
+				tr.Settings = cloudflare.ZarazRuleSettings{
+					Type:        rule.Settings.Type.ValueString(),
+					Selector:    rule.Settings.Selector.ValueString(),
+					WaitForTags: int(rule.Settings.WaitForTags.ValueInt64()),
+					Interval:    int(rule.Settings.Interval.ValueInt64()),
+					Limit:       int(rule.Settings.Limit.ValueInt64()),
+					Validate:    rule.Settings.Validate.ValueBoolPointer(),
+					Variable:    rule.Settings.Variable.ValueString(),
+					Match:       rule.Settings.Match.ValueString(),
+					Positions:   rule.Settings.Positions.ValueString(),
+					Op:          rule.Settings.Op.ValueString(),
+					Value:       rule.Settings.Value.ValueString(),
+				}
+
+			}
+
+			zarazTrigger.ExcludeRules = append(zarazTrigger.ExcludeRules, tr)
 		}
 	}
 

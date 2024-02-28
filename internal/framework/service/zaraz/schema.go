@@ -3,9 +3,7 @@ package zaraz
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -108,18 +106,27 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 					"tools": schema.MapNestedAttribute{
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
-								"mode": schema.ObjectAttribute{
-									AttributeTypes: map[string]attr.Type{
-										"light":  types.BoolType,
-										"cloud":  types.BoolType,
-										"sample": types.BoolType,
-										"segment": types.MapType{
-											ElemType: types.NumberType,
+								"mode": schema.SingleNestedAttribute{
+									Attributes: map[string]schema.Attribute{
+										"light": schema.BoolAttribute{
+											Optional: true,
 										},
-										"trigger": types.ListType{
-											ElemType: types.StringType,
+										"cloud": schema.BoolAttribute{
+											Optional: true,
 										},
-										"ignore_spa": types.BoolType,
+										"sample": schema.BoolAttribute{
+											Optional: true,
+										},
+										"segment": schema.MapAttribute{
+											ElementType: types.Float64Type,
+											Optional:    true,
+										},
+										"trigger": schema.StringAttribute{
+											Optional: true,
+										},
+										"ignore_spa": schema.BoolAttribute{
+											Optional: true,
+										},
 									},
 									Optional: true,
 								},
@@ -147,28 +154,6 @@ func (r *ZarazConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 									// TODO QQ how do we set the type to any ???
 								},
 								"actions": schema.MapNestedAttribute{
-									NestedObject: schema.NestedAttributeObject{
-										Attributes: map[string]schema.Attribute{
-											"blocking_triggers": schema.ListAttribute{
-												ElementType: types.StringType,
-												Required:    true,
-											},
-											"firing_triggers": schema.ListAttribute{
-												ElementType: types.StringType,
-												Required:    true,
-											},
-											"data": schema.MapAttribute{
-												ElementType: types.StringType,
-												Required:    true,
-											},
-											"action_type": schema.StringAttribute{
-												Required: true,
-											},
-										},
-									},
-									Optional: true,
-								},
-								"neo_events": schema.ListNestedAttribute{
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"blocking_triggers": schema.ListAttribute{
@@ -282,23 +267,43 @@ func triggerRuleSchema() schema.ListNestedAttribute {
 				"action": schema.StringAttribute{
 					Optional: true,
 				},
-				"settings": schema.MapAttribute{
-					ElementType: types.StringType,
-					Optional:    true,
-					Validators: []validator.Map{mapvalidator.KeysAre(
-						stringvalidator.OneOf(
-							"type",
-							"selector",
-							"wait_for_tags",
-							"interval",
-							"limit",
-							"validate",
-							"positions",
-							"variable",
-							"match",
-						),
-					),
+				"settings": schema.SingleNestedAttribute{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Optional: true,
+						},
+						"selector": schema.StringAttribute{
+							Optional: true,
+						},
+						"wait_for_tags": schema.Int64Attribute{
+							Optional: true,
+						},
+						"interval": schema.Int64Attribute{
+							Optional: true,
+						},
+						"limit": schema.Int64Attribute{
+							Optional: true,
+						},
+						"validate": schema.BoolAttribute{
+							Optional: true,
+						},
+						"variable": schema.StringAttribute{
+							Optional: true,
+						},
+						"match": schema.StringAttribute{
+							Optional: true,
+						},
+						"positions": schema.StringAttribute{
+							Optional: true,
+						},
+						"op": schema.StringAttribute{
+							Optional: true,
+						},
+						"value": schema.StringAttribute{
+							Optional: true,
+						},
 					},
+					Optional: true,
 				},
 			},
 		},
