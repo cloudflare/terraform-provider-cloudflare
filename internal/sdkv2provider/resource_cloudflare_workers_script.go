@@ -54,8 +54,12 @@ func getScriptData(d *schema.ResourceData, client *cloudflare.API) (ScriptData, 
 
 type ScriptBindings map[string]cloudflare.WorkerBinding
 
-func getWorkerScriptBindings(ctx context.Context, accountId, scriptName string, client *cloudflare.API) (ScriptBindings, error) {
-	resp, err := client.ListWorkerBindings(ctx, cloudflare.AccountIdentifier(accountId), cloudflare.ListWorkerBindingsParams{ScriptName: scriptName})
+func getWorkerScriptBindings(ctx context.Context, accountId, scriptName string, dispatchNamespace *string, client *cloudflare.API) (ScriptBindings, error) {
+	resp, err := client.ListWorkerBindings(
+		ctx,
+		cloudflare.AccountIdentifier(accountId),
+		cloudflare.ListWorkerBindingsParams{ScriptName: scriptName, DispatchNamespace: dispatchNamespace},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("cannot list script bindings: %w", err)
 	}
@@ -158,6 +162,14 @@ func getCompatibilityFlags(d *schema.ResourceData) []string {
 	return compatibilityFlags
 }
 
+func getTags(d *schema.ResourceData) []string {
+	tags := make([]string, 0)
+	for _, item := range d.Get("tags").(*schema.Set).List() {
+		tags = append(tags, item.(string))
+	}
+	return tags
+}
+
 func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
@@ -167,8 +179,10 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(err)
 	}
 
+	dispatchNamespace := d.Get("dispatch_namespace").(string)
+
 	// make sure that the worker does not already exist
-	r, _ := client.GetWorker(ctx, cloudflare.AccountIdentifier(accountID), scriptData.Params.ScriptName)
+	r, _ := client.GetWorkerWithDispatchNamespace(ctx, cloudflare.AccountIdentifier(accountID), scriptData.Params.ScriptName, dispatchNamespace)
 	if r.WorkerScript.Script != "" {
 		return diag.FromErr(fmt.Errorf("script already exists"))
 	}
@@ -188,15 +202,19 @@ func resourceCloudflareWorkerScriptCreate(ctx context.Context, d *schema.Resourc
 
 	placement := getPlacement(d)
 
+	tags := getTags(d)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
-		ScriptName:         scriptData.Params.ScriptName,
-		Script:             scriptBody,
-		CompatibilityDate:  d.Get("compatibility_date").(string),
-		CompatibilityFlags: getCompatibilityFlags(d),
-		Module:             d.Get("module").(bool),
-		Bindings:           bindings,
-		Logpush:            &logpush,
-		Placement:          &placement,
+		ScriptName:            scriptData.Params.ScriptName,
+		Script:                scriptBody,
+		CompatibilityDate:     d.Get("compatibility_date").(string),
+		CompatibilityFlags:    getCompatibilityFlags(d),
+		Module:                d.Get("module").(bool),
+		Bindings:              bindings,
+		Logpush:               &logpush,
+		Placement:             &placement,
+		DispatchNamespaceName: &dispatchNamespace,
+		Tags:                  tags,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error creating worker script"))
@@ -216,7 +234,9 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(err)
 	}
 
-	r, err := client.GetWorker(ctx, cloudflare.AccountIdentifier(accountID), scriptData.Params.ScriptName)
+	dispatchNamespace := d.Get("dispatch_namespace").(string)
+
+	r, err := client.GetWorkerWithDispatchNamespace(ctx, cloudflare.AccountIdentifier(accountID), scriptData.Params.ScriptName, dispatchNamespace)
 	if err != nil {
 		// If the resource is deleted, we should set the ID to "" and not
 		// return an error according to the terraform spec
@@ -234,7 +254,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 
 	parseWorkerBindings(d, existingBindings)
 
-	bindings, err := getWorkerScriptBindings(ctx, accountID, d.Get("name").(string), client)
+	bindings, err := getWorkerScriptBindings(ctx, accountID, d.Get("name").(string), &dispatchNamespace, client)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -380,15 +400,20 @@ func resourceCloudflareWorkerScriptUpdate(ctx context.Context, d *schema.Resourc
 
 	placement := getPlacement(d)
 
+	dispatchNamespace := d.Get("dispatch_namespace").(string)
+	tags := getTags(d)
+
 	_, err = client.UploadWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.CreateWorkerParams{
-		ScriptName:         scriptData.Params.ScriptName,
-		Script:             scriptBody,
-		CompatibilityDate:  d.Get("compatibility_date").(string),
-		CompatibilityFlags: getCompatibilityFlags(d),
-		Module:             d.Get("module").(bool),
-		Bindings:           bindings,
-		Logpush:            &logpush,
-		Placement:          &placement,
+		ScriptName:            scriptData.Params.ScriptName,
+		Script:                scriptBody,
+		CompatibilityDate:     d.Get("compatibility_date").(string),
+		CompatibilityFlags:    getCompatibilityFlags(d),
+		Module:                d.Get("module").(bool),
+		Bindings:              bindings,
+		Logpush:               &logpush,
+		Placement:             &placement,
+		DispatchNamespaceName: &dispatchNamespace,
+		Tags:                  tags,
 	})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error updating worker script"))
