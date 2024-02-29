@@ -59,6 +59,8 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 		Enabled:             req.Enabled,
 		ExcludeOfficeIps:    req.ExcludeOfficeIps,
 		Description:         req.Description,
+		LANAllowMinutes:     req.LANAllowMinutes,
+		LANAllowSubnetSize:  req.LANAllowSubnetSize,
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy %q: %w", accountID, err))
@@ -69,14 +71,6 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 	}
 	d.SetId(fmt.Sprintf("%s/%s", accountID, *policy.PolicyID))
 
-	// We only want to set a LANAllow* field if it has a non-nil value.
-	// This is to ensure backwards compatibility if the Opt-In Split Tunnel feature is not used.
-	if req.LANAllowMinutes != nil {
-		policy.LANAllowMinutes = req.LANAllowMinutes
-	}
-	if req.LANAllowSubnetSize != nil {
-		policy.LANAllowSubnetSize = req.LANAllowSubnetSize
-	}
 	return resourceCloudflareDeviceSettingsPolicyRead(ctx, d, meta)
 }
 

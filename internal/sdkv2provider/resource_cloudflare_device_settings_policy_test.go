@@ -36,6 +36,31 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareDeviceSettingsPolicyDestroy,
 		Steps: []resource.TestStep{
+			// The default device settings policy config is expected to run first, most likely by the API.
+			// Putting any tests before it may result in errors if match or precedence fields are set as the default
+			// profile settings policy doesn't allow them.
+			{
+				Config: testAccCloudflareDefaultDeviceSettingsPolicy(defaultRnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(defaultName, "id", accountID),
+					resource.TestCheckResourceAttr(defaultName, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(defaultName, "allow_mode_switch", "true"),
+					resource.TestCheckResourceAttr(defaultName, "allow_updates", "true"),
+					resource.TestCheckResourceAttr(defaultName, "allowed_to_leave", "true"),
+					resource.TestCheckResourceAttr(defaultName, "auto_connect", "0"),
+					resource.TestCheckResourceAttr(defaultName, "captive_portal", "5"),
+					resource.TestCheckResourceAttr(defaultName, "default", "true"),
+					resource.TestCheckResourceAttr(defaultName, "disable_auto_fallback", "true"),
+					resource.TestCheckResourceAttr(defaultName, "enabled", "true"),
+					resource.TestCheckResourceAttr(defaultName, "name", defaultRnd),
+					resource.TestCheckResourceAttr(defaultName, "description", defaultRnd),
+					resource.TestCheckResourceAttr(defaultName, "service_mode_v2_mode", "warp"),
+					resource.TestCheckResourceAttr(defaultName, "service_mode_v2_port", "0"),
+					resource.TestCheckResourceAttr(defaultName, "support_url", "https://cloudflare.com"),
+					resource.TestCheckResourceAttr(defaultName, "switch_locked", "true"),
+					resource.TestCheckResourceAttr(defaultName, "exclude_office_ips", "true"),
+				),
+			},
 			{
 				Config: testAccCloudflareDeviceSettingsPolicy(rnd, accountID, precedence),
 				Check: resource.ComposeTestCheckFunc(
@@ -57,12 +82,10 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "switch_locked", "true"),
 					resource.TestCheckResourceAttr(name, "exclude_office_ips", "true"),
-					resource.TestCheckResourceAttr(name, "lan_allow_minutes", "30"),
-					resource.TestCheckResourceAttr(name, "lan_allow_subnet_size", "24"),
 				),
 			},
 			{
-				Config: testAccCloudflareDefaultDeviceSettingsPolicy(rnd, accountID),
+				Config: testAccCloudflareDeviceSettingsPolicyWithLANAllow(rnd, accountID, precedence),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "allow_mode_switch", "true"),
@@ -82,28 +105,8 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "switch_locked", "true"),
 					resource.TestCheckResourceAttr(name, "exclude_office_ips", "true"),
-				),
-			},
-			{
-				Config: testAccCloudflareDefaultDeviceSettingsPolicy(defaultRnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(defaultName, "id", accountID),
-					resource.TestCheckResourceAttr(defaultName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(defaultName, "allow_mode_switch", "true"),
-					resource.TestCheckResourceAttr(defaultName, "allow_updates", "true"),
-					resource.TestCheckResourceAttr(defaultName, "allowed_to_leave", "true"),
-					resource.TestCheckResourceAttr(defaultName, "auto_connect", "0"),
-					resource.TestCheckResourceAttr(defaultName, "captive_portal", "5"),
-					resource.TestCheckResourceAttr(defaultName, "default", "true"),
-					resource.TestCheckResourceAttr(defaultName, "disable_auto_fallback", "true"),
-					resource.TestCheckResourceAttr(defaultName, "enabled", "true"),
-					resource.TestCheckResourceAttr(defaultName, "name", defaultRnd),
-					resource.TestCheckResourceAttr(defaultName, "description", defaultRnd),
-					resource.TestCheckResourceAttr(defaultName, "service_mode_v2_mode", "warp"),
-					resource.TestCheckResourceAttr(defaultName, "service_mode_v2_port", "0"),
-					resource.TestCheckResourceAttr(defaultName, "support_url", "https://cloudflare.com"),
-					resource.TestCheckResourceAttr(defaultName, "switch_locked", "true"),
-					resource.TestCheckResourceAttr(defaultName, "exclude_office_ips", "true"),
+					resource.TestCheckResourceAttr(name, "lan_allow_minutes", "10"),
+					resource.TestCheckResourceAttr(name, "lan_allow_subnet_size", "24"),
 				),
 			},
 			{
@@ -132,9 +135,30 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips		  = true
-	lan_allow_minutes 		  = 30
-	lan_allow_subnet_size     = 24
+}
+`, rnd, accountID, precedence, rnd)
+}
 
+func testAccCloudflareDeviceSettingsPolicyWithLANAllow(rnd, accountID string, precedence uint64) string {
+	return fmt.Sprintf(`
+resource "cloudflare_device_settings_policy" "%[1]s" {
+	account_id                = "%[2]s"
+	allow_mode_switch         = true
+	allow_updates             = true
+	allowed_to_leave          = true
+	auto_connect              = 0
+	captive_portal            = 5
+	disable_auto_fallback     = true
+	enabled                   = true
+	match                     = "identity.email == \"foo@example.com\""
+	name                      = "%[1]s"
+	description			      = "%[4]s"
+	precedence                = %[3]d
+	support_url               = "https://cloudflare.com"
+	switch_locked             = true
+	exclude_office_ips		  = true
+	lan_allow_minutes         = 10
+	lan_allow_subnet_size     = 24
 }
 `, rnd, accountID, precedence, rnd)
 }
@@ -178,8 +202,6 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	switch_locked             = true
 	match                     = "identity.email == \"foo@example.com\""
 	exclude_office_ips		  = true
-	lan_allow_minutes 		  = 121
-	lan_allow_subnet_size     = 7
 }
 `, rnd, accountID, rnd)
 }
