@@ -222,6 +222,12 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if versionOperator, ok := d.GetOk("input.0.version_operator"); ok {
 			input.VersionOperator = versionOperator.(string)
 		}
+		if state, ok := d.GetOk("input.0.state"); ok {
+			input.State = state.(string)
+		}
+		if last_seen, ok := d.GetOk("input.0.last_seen"); ok {
+			input.LastSeen = last_seen.(string)
+		}
 		if countOperator, ok := d.GetOk("input.0.count_operator"); ok {
 			input.CountOperator = countOperator.(string)
 		}

@@ -175,6 +175,17 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						ValidateFunc: validation.StringInSlice([]string{">", ">=", "<", "<=", "=="}, true),
 						Description:  fmt.Sprintf("The version comparison operator for crowdstrike. %s", renderAvailableDocumentationValuesStringSlice([]string{">", ">=", "<", "<=", "=="})),
 					},
+					"last_seen": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The UTC date and time that the host was last seen from Crowdstrike.",
+					},
+					"state": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"online", "offline", "unknown"}, true),
+						Description:  fmt.Sprintf("The host’s current online status from Crowdstrike. %s", renderAvailableDocumentationValuesStringSlice([]string{"online", "offline", "unknown"})),
+					},
 					"count_operator": {
 						Type:         schema.TypeString,
 						Optional:     true,
