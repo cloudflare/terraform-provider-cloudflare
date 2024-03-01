@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: Fix issue with sending allow_authenticate_via_warp on updates when it is not provided
+```
