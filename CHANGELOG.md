@@ -1,5 +1,28 @@
 ## 4.26.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_access_application: Fix issue with sending allow_authenticate_via_warp on updates when it is not provided ([#3140](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3140))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.1 to 1.27.2 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.2 to 1.27.3 ([#3138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3138))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.3 to 1.27.4 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.1 to 1.17.2 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.2 to 1.17.3 ([#3138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3138))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.3 to 1.17.4 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.50.2 to 1.50.3 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.50.3 to 1.51.0 ([#3138](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3138))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.0 to 1.51.1 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.0 to 1.25.1 ([#3136](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3136))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.1 to 1.25.2 ([#3141](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3141))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.88.0 to 0.89.0 ([#3148](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3148))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.21.0 to 0.22.0 ([#3139](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3139))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.14.0 to 0.15.0 ([#3149](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3149))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.32.0 to 2.33.0 ([#3142](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3142))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.32.0 to 2.33.0 ([#3147](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3147))
+
 ## 4.25.0 (February 21st, 2024)
 
 BREAKING CHANGES:

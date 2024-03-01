@@ -235,7 +235,10 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
-		AllowAuthenticateViaWarp: cloudflare.BoolPtr(d.Get("allow_authenticate_via_warp").(bool)),
+	}
+
+	if _, ok := d.GetOk("allow_authenticate_via_warp"); ok {
+		updatedAccessApplication.AllowAuthenticateViaWarp = cloudflare.BoolPtr(d.Get("allow_authenticate_via_warp").(bool))
 	}
 
 	if appType != "saas" {
