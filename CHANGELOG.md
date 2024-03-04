@@ -1,5 +1,9 @@
 ## 4.26.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `cloudflare_dlp_datasets` ([#3135](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3135))
+
 BUG FIXES:
 
 * resource/cloudflare_access_application: Fix issue with sending allow_authenticate_via_warp on updates when it is not provided ([#3140](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3140))
