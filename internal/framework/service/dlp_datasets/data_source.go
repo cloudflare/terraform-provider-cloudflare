@@ -51,6 +51,10 @@ func (d *CloudflareDlpDatasetsDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
+	if len(accountDatasets) < 1 {
+		return
+	}
+
 	var datasets []*DlpDatasetModel
 	for _, dataset := range accountDatasets {
 		datasets = append(datasets, &DlpDatasetModel{
