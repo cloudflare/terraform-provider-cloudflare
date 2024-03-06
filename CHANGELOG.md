@@ -1,4 +1,6 @@
-## 4.26.0 (Unreleased)
+## 4.27.0 (Unreleased)
+
+## 4.26.0 (March 6th, 2024)
 
 FEATURES:
 
