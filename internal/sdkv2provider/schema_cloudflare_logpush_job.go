@@ -128,5 +128,72 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.IntBetween(30, 300),
 			Description:  fmt.Sprint("The maximum interval in seconds for log batches. Value must be between 30 and 300."),
 		},
+		"output_options": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"cve20214428": {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"batch_prefix": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"batch_suffix": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"field_delimiter": {
+						Type:     schema.TypeString,
+						Optional: true,
+						Default:  ",",
+					},
+					"field_names": {
+						Type: schema.TypeList,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Optional: true,
+					},
+					"output_type": {
+						Type:     schema.TypeString,
+						Optional: true,
+						Default:  "ndjson",
+					},
+					"record_delimiter": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"record_prefix": {
+						Type:     schema.TypeString,
+						Optional: true,
+						Default:  "{",
+					},
+					"record_suffix": {
+						Type:     schema.TypeString,
+						Optional: true,
+						Default:  "}",
+					},
+					"record_template": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					"sample_rate": {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  1.0,
+					},
+					"timestamp_format": {
+						Type:     schema.TypeString,
+						Optional: true,
+						Default:  "unixnano",
+					},
+				},
+			},
+		},
 	}
 }
