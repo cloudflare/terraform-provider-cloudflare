@@ -36,6 +36,7 @@ DEPENDENCIES:
 * provider: bump github.com/hashicorp/terraform-plugin-mux from 0.14.0 to 0.15.0 ([#3149](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3149))
 * provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.32.0 to 2.33.0 ([#3142](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3142))
 * provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.32.0 to 2.33.0 ([#3147](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3147))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.6.0 to 1.7.0 ([#3162](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3162))
 * provider: bump github.com/stretchr/testify from 1.8.4 to 1.9.0 ([#3157](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3157))
 * provider: bump golang.org/x/net from 0.21.0 to 0.22.0 ([#3160](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3160))
 
