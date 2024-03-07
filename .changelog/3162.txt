@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_logpush_job: Add `output_options` parameter 
+```
