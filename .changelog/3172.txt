@@ -1,0 +1,12 @@
+```release-note:dependency
+provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.2 to 1.25.3
+```
+```release-note:dependency
+provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.6 to 1.27.7
+```
+```release-note:dependency
+provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.6 to 1.17.7
+```
+```release-note:dependency
+provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.3 to 1.51.4
+```
