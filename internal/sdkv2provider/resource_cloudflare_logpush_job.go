@@ -130,7 +130,7 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-// converts the output_options state to the Cloudflare API struct representation
+// converts the output_options state to the Cloudflare API struct representation.
 func toAPIOutputOptions(outputOptionsState interface{}) (*cloudflare.LogpushOutputOptions, error) {
 	var jobOutputOptions cloudflare.LogpushOutputOptions
 
