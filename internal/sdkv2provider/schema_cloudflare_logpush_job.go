@@ -10,6 +10,28 @@ import (
 )
 
 func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
+	kindAllowedValues := []string{"edge", "instant-logs", ""}
+	datasetAllowedValues := []string{
+		"access_requests",
+		"casb_findings",
+		"firewall_events",
+		"http_requests",
+		"spectrum_events",
+		"nel_reports",
+		"audit_logs",
+		"gateway_dns",
+		"gateway_http",
+		"gateway_network",
+		"dns_logs",
+		"network_analytics_logs",
+		"workers_trace_events",
+		"device_posture_results",
+		"zero_trust_network_sessions",
+		"magic_ids_detections",
+	}
+	frequencyAllowedValues := []string{"high", "low"}
+	outputTypeAllowedValues := []string{"ndjson", "csv"}
+	timestampFormatAllowedValues := []string{"unixnano", "unix", "rfc3339"}
 	return map[string]*schema.Schema{
 		consts.AccountIDSchemaKey: {
 			Description:  consts.AccountIDSchemaDescription,
@@ -31,8 +53,8 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"kind": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"edge", "instant-logs", ""}, false),
-			Description:  fmt.Sprintf("The kind of logpush job to create. %s", renderAvailableDocumentationValuesStringSlice([]string{"edge", "instant-logs", `""`})),
+			ValidateFunc: validation.StringInSlice(kindAllowedValues, false),
+			Description:  fmt.Sprintf("The kind of logpush job to create. %s", renderAvailableDocumentationValuesStringSlice(kindAllowedValues)),
 		},
 		"name": {
 			Type:         schema.TypeString,
@@ -41,46 +63,12 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Description:  "The name of the logpush job to create.",
 		},
 		"dataset": {
-			Type:     schema.TypeString,
-			Required: true,
-			ValidateFunc: validation.StringInSlice([]string{
-				"access_requests",
-				"casb_findings",
-				"firewall_events",
-				"http_requests",
-				"spectrum_events",
-				"nel_reports",
-				"audit_logs",
-				"gateway_dns",
-				"gateway_http",
-				"gateway_network",
-				"dns_logs",
-				"network_analytics_logs",
-				"workers_trace_events",
-				"device_posture_results",
-				"zero_trust_network_sessions",
-				"magic_ids_detections",
-			}, false),
+			Type:         schema.TypeString,
+			Required:     true,
+			ValidateFunc: validation.StringInSlice(datasetAllowedValues, false),
 			Description: fmt.Sprintf(
 				"The kind of the dataset to use with the logpush job. %s",
-				renderAvailableDocumentationValuesStringSlice([]string{
-					"access_requests",
-					"casb_findings",
-					"firewall_events",
-					"http_requests",
-					"spectrum_events",
-					"nel_reports",
-					"audit_logs",
-					"gateway_dns",
-					"gateway_http",
-					"gateway_network",
-					"dns_logs",
-					"network_analytics_logs",
-					"workers_trace_events",
-					"device_posture_results",
-					"zero_trust_network_sessions",
-					"magic_ids_detections",
-				}),
+				renderAvailableDocumentationValuesStringSlice(datasetAllowedValues),
 			),
 		},
 		"logpull_options": {
@@ -107,8 +95,8 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "high",
-			ValidateFunc: validation.StringInSlice([]string{"high", "low"}, false),
-			Description:  fmt.Sprintf("A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. %s", renderAvailableDocumentationValuesStringSlice([]string{"high", "low"})),
+			ValidateFunc: validation.StringInSlice(frequencyAllowedValues, false),
+			Description:  fmt.Sprintf("A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. %s", renderAvailableDocumentationValuesStringSlice(frequencyAllowedValues)),
 		},
 		"max_upload_bytes": {
 			Type:         schema.TypeInt,
@@ -168,8 +156,8 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 						Type:         schema.TypeString,
 						Optional:     true,
 						Default:      "ndjson",
-						ValidateFunc: validation.StringInSlice([]string{"ndjson", "csv"}, false),
-						Description:  fmt.Sprintf("Specifies the output type. %s", renderAvailableDocumentationValuesStringSlice([]string{"ndjson", "csv"})),
+						ValidateFunc: validation.StringInSlice(outputTypeAllowedValues, false),
+						Description:  fmt.Sprintf("Specifies the output type. %s", renderAvailableDocumentationValuesStringSlice(outputTypeAllowedValues)),
 					},
 					"record_delimiter": {
 						Type:        schema.TypeString,
@@ -204,8 +192,8 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 						Type:         schema.TypeString,
 						Optional:     true,
 						Default:      "unixnano",
-						ValidateFunc: validation.StringInSlice([]string{"unixnano", "unix", "rfc3339"}, false),
-						Description:  fmt.Sprintf("Specifies the format for timestamps. %s", renderAvailableDocumentationValuesStringSlice([]string{"unixnano", "unix", "rfc3339"})),
+						ValidateFunc: validation.StringInSlice(timestampFormatAllowedValues, false),
+						Description:  fmt.Sprintf("Specifies the format for timestamps. %s", renderAvailableDocumentationValuesStringSlice(timestampFormatAllowedValues)),
 					},
 				},
 			},
