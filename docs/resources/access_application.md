@@ -52,6 +52,7 @@ resource "cloudflare_access_application" "staging_app" {
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
+- `allow_authenticate_via_warp` (Boolean) When set to true, users can authenticate to this application using their WARP session. When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.
 - `allowed_idps` (Set of String) The identity providers selected for the application.
 - `app_launcher_logo_url` (String) The logo URL of the app launcher.
 - `app_launcher_visible` (Boolean) Option to show/hide applications in App Launcher. Defaults to `true`.
@@ -124,21 +125,25 @@ Optional:
 <a id="nestedblock--saas_app"></a>
 ### Nested Schema for `saas_app`
 
-Required:
-
-- `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
-- `sp_entity_id` (String) A globally unique name for an identity or service provider.
-
 Optional:
 
+- `app_launcher_url` (String) The URL where this applications tile redirects users.
+- `auth_type` (String)
+- `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
 - `custom_attribute` (Block List) Custom attribute mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_attribute))
 - `default_relay_state` (String) The relay state used if not provided by the identity provider.
-- `name_id_format` (String) The format of the name identifier sent to the SaaS application. Defaults to `email`.
+- `grant_types` (Set of String) The OIDC flows supported by this application.
+- `group_filter_regex` (String) A regex to filter Cloudflare groups returned in ID token and userinfo endpoint.
+- `name_id_format` (String) The format of the name identifier sent to the SaaS application.
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
- 
+- `redirect_uris` (Set of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens.
+- `scopes` (Set of String) Define the user information shared with access.
+- `sp_entity_id` (String) A globally unique name for an identity or service provider.
 
 Read-Only:
 
+- `client_id` (String) The application client id.
+- `client_secret` (String, Sensitive) The application client secret, only returned on initial apply.
 - `idp_entity_id` (String) The unique identifier for the SaaS application.
 - `public_key` (String) The public certificate that will be used to verify identities.
 - `sso_endpoint` (String) The endpoint where the SaaS application will send login requests.
