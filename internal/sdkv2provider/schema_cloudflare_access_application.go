@@ -173,6 +173,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Computed:    true,
 						Description: "The application client secret, only returned on initial apply",
+						Sensitive:   true,
 					},
 					"redirect_uris": {
 						Type:     schema.TypeSet,
@@ -675,7 +676,6 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 	}
 	if app.AuthType == "oidc" {
 		m := map[string]interface{}{
-			// client secret not handled here as it is only returned on create
 			"auth_type":          app.AuthType,
 			"client_id":          app.ClientID,
 			"redirect_uris":      app.RedirectURIs,
@@ -684,6 +684,10 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 			"public_key":         app.PublicKey,
 			"group_filter_regex": app.GroupFilterRegex,
 			"app_launcher_url":   app.AppLauncherURL,
+		}
+		// client secret is only returned on create, if it is present in the state, preserve it
+		if client_secret, ok := d.GetOk("saas_app.0.client_secret"); ok {
+			m["client_secret"] = client_secret.(string)
 		}
 		return []interface{}{m}
 	} else {
