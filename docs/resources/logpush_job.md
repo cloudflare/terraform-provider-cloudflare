@@ -138,18 +138,18 @@ resource "cloudflare_logpush_job" "example_job" {
 
 Optional:
 
-- `batch_prefix` (String)
-- `batch_suffix` (String)
-- `cve20214428` (Boolean) Defaults to `false`.
-- `field_delimiter` (String) Defaults to `,`.
-- `field_names` (List of String)
-- `output_type` (String) Defaults to `ndjson`.
-- `record_delimiter` (String)
-- `record_prefix` (String) Defaults to `{`.
-- `record_suffix` (String) Defaults to `}`.
-- `record_template` (String)
-- `sample_rate` (Number) Defaults to `1`.
-- `timestamp_format` (String) Defaults to `unixnano`.
+- `batch_prefix` (String) String to be prepended before each batch.
+- `batch_suffix` (String) String to be appended after each batch.
+- `cve20214428` (Boolean) Mitigation for CVE-2021-44228. If set to true, will cause all occurrences of ${ in the generated files to be replaced with x{. Defaults to `false`.
+- `field_delimiter` (String) String to join fields. This field be ignored when record_template is set. Defaults to `,`.
+- `field_names` (List of String) List of field names to be included in the Logpush output.
+- `output_type` (String) Specifies the output type. Available values: `ndjson`, `csv`. Defaults to `ndjson`.
+- `record_delimiter` (String) String to be inserted in-between the records as separator.
+- `record_prefix` (String) String to be prepended before each record. Defaults to `{`.
+- `record_suffix` (String) String to be appended after each record. Defaults to `}`.
+- `record_template` (String) String to use as template for each record instead of the default comma-separated list.
+- `sample_rate` (Number) Specifies the sampling rate. Defaults to `1`.
+- `timestamp_format` (String) Specifies the format for timestamps. Available values: `unixnano`, `unix`, `rfc3339`. Defaults to `unixnano`.
 
 ## Import
 
