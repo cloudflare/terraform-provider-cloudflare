@@ -117,9 +117,10 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Description:  fmt.Sprint("The maximum interval in seconds for log batches. Value must be between 30 and 300."),
 		},
 		"output_options": {
-			Type:     schema.TypeList,
-			MaxItems: 1,
-			Optional: true,
+			Type:        schema.TypeList,
+			MaxItems:    1,
+			Optional:    true,
+			Description: "Structured replacement for logpull_options. When including this field, the logpull_option field will be ignored",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"cve20214428": {
