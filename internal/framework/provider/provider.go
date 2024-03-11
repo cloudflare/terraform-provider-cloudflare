@@ -11,6 +11,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
@@ -338,6 +339,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		r2_bucket.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
+		access_mutual_tls_hostname_settings.NewResource,
 	}
 }
 
