@@ -30,6 +30,8 @@ const (
 	planIDPartnerPro        = "partners_pro"
 	planIDPartnerBusiness   = "partners_business"
 	planIDPartnerEnterprise = "partners_enterprise"
+
+	planIDMspBiz = "msp_biz"
 )
 
 type subscriptionData struct {
@@ -86,6 +88,11 @@ var ratePlans = map[string]subscriptionData{
 		Name:        "PARTNERS_ENT",
 		ID:          planIDPartnerEnterprise,
 		Description: "Enterprise Website",
+	},
+	planIDMspBiz: {
+		Name:        "MSP_BIZ",
+		ID:          planIDMspBiz,
+		Description: "MSP Website",
 	},
 }
 
