@@ -1,11 +1,11 @@
-# Advanced certificate manager for DigiCert
+# Advanced certificate manager for Google
 resource "cloudflare_certificate_pack" "example" {
   zone_id               = "0da42c8d2132a9ddaf714f9e7c920711"
   type                  = "advanced"
   hosts                 = ["example.com", "sub.example.com"]
   validation_method     = "txt"
   validity_days         = 30
-  certificate_authority = "digicert"
+  certificate_authority = "google"
   cloudflare_branding   = false
 }
 
