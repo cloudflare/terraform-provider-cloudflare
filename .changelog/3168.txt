@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: Add Sensitive to oidc client_secret and preserve client_secret across apply
+```
