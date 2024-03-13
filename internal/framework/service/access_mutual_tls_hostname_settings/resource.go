@@ -193,7 +193,7 @@ func (r *AccessMutualTLSHostnameSettingsResource) Delete(ctx context.Context, re
 func (r *AccessMutualTLSHostnameSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	attributes := strings.Split(req.ID, "/")
 
-	invalidIDMessage := "invalid ID (\"%s\") specified, should be in format \"account_id/<account_id>\" or \"zone_id/<zone_id>\""
+	invalidIDMessage := "invalid ID (\"%s\") specified, should be in format \"account/<account_id>\" or \"zone/<zone_id>\""
 	if len(attributes) != 2 {
 		resp.Diagnostics.AddError("error importing Access Mutual TLS Hostname Settings", fmt.Sprintf(invalidIDMessage, req.ID))
 		return
@@ -201,14 +201,18 @@ func (r *AccessMutualTLSHostnameSettingsResource) ImportState(ctx context.Contex
 
 	identifierType, identifierID := attributes[0], attributes[1]
 
-	if !(identifierType == "zone_id" || identifierType == "account_id") {
+	if !(identifierType == "zone" || identifierType == "account") {
 		resp.Diagnostics.AddError("invalid id specified", fmt.Sprintf(invalidIDMessage, req.ID))
 		return
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Importing Cloudflare Access Mutual TLS Hostname Settings: for %s %s", identifierType, identifierID))
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(identifierType), identifierID)...)
+	schemaIdentifierName := "account_id"
+	if identifierType == "zone" {
+		schemaIdentifierName = "zone_id"
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(schemaIdentifierName), identifierID)...)
 }
 
 func buildAccessMutualTLSHostnameSettingsModel(settings []cloudflare.AccessMutualTLSHostnameSettings, zoneID, accountID basetypes.StringValue) *AccessMutualTLSHostnameSettingsModel {

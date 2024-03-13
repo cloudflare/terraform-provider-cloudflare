@@ -14,7 +14,7 @@ import (
 
 func (r *AccessMutualTLSHostnameSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "",
+		Description: "Provides a Cloudflare Access Mutual TLS Certificate Settings resource.",
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				Description: consts.AccountIDSchemaDescription,
