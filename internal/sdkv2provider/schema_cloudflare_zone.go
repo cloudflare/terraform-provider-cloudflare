@@ -56,6 +56,7 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 				planIDPartnerPro,
 				planIDPartnerBusiness,
 				planIDPartnerEnterprise,
+				planIDMspBiz,
 			}, false),
 			Description: fmt.Sprintf("The name of the commercial plan to apply to the zone. %s", renderAvailableDocumentationValuesStringSlice([]string{
 				planIDFree,
@@ -68,6 +69,7 @@ func resourceCloudflareZoneSchema() map[string]*schema.Schema {
 				planIDPartnerPro,
 				planIDPartnerBusiness,
 				planIDPartnerEnterprise,
+				planIDMspBiz,
 			})),
 		},
 		"meta": {
