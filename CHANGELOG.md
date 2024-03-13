@@ -1,5 +1,20 @@
 ## 4.27.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_logpush_job: Add `output_options` parameter ([#3171](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3171))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: Add Sensitive to oidc client_secret and preserve client_secret across apply ([#3168](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3168))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.6 to 1.27.7 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.6 to 1.17.7 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.3 to 1.51.4 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.2 to 1.25.3 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+
 ## 4.26.0 (March 6th, 2024)
 
 FEATURES:

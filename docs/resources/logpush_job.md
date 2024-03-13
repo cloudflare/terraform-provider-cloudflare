@@ -125,12 +125,31 @@ resource "cloudflare_logpush_job" "example_job" {
 - `max_upload_interval_seconds` (Number) The maximum interval in seconds for log batches. Value must be between 30 and 300.
 - `max_upload_records` (Number) The maximum number of log lines per batch. Value must be between 1000 and 1,000,000.
 - `name` (String) The name of the logpush job to create.
+- `output_options` (Block List, Max: 1) Structured replacement for logpull_options. When including this field, the logpull_option field will be ignored. (see [below for nested schema](#nestedblock--output_options))
 - `ownership_challenge` (String) Ownership challenge token to prove destination ownership, required when destination is Amazon S3, Google Cloud Storage, Microsoft Azure or Sumo Logic. See [Developer documentation](https://developers.cloudflare.com/logs/logpush/logpush-configuration-api/understanding-logpush-api/#usage).
 - `zone_id` (String) The zone identifier to target for the resource. Must provide only one of `account_id`, `zone_id`.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--output_options"></a>
+### Nested Schema for `output_options`
+
+Optional:
+
+- `batch_prefix` (String) String to be prepended before each batch.
+- `batch_suffix` (String) String to be appended after each batch.
+- `cve20214428` (Boolean) Mitigation for CVE-2021-44228. If set to true, will cause all occurrences of ${ in the generated files to be replaced with x{. Defaults to `false`.
+- `field_delimiter` (String) String to join fields. This field be ignored when record_template is set. Defaults to `,`.
+- `field_names` (List of String) List of field names to be included in the Logpush output.
+- `output_type` (String) Specifies the output type. Available values: `ndjson`, `csv`. Defaults to `ndjson`.
+- `record_delimiter` (String) String to be inserted in-between the records as separator.
+- `record_prefix` (String) String to be prepended before each record. Defaults to `{`.
+- `record_suffix` (String) String to be appended after each record. Defaults to `}`.
+- `record_template` (String) String to use as template for each record instead of the default comma-separated list.
+- `sample_rate` (Number) Specifies the sampling rate. Defaults to `1`.
+- `timestamp_format` (String) Specifies the format for timestamps. Available values: `unixnano`, `unix`, `rfc3339`. Defaults to `unixnano`.
 
 ## Import
 
