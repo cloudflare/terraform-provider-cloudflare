@@ -22,7 +22,7 @@ func init() {
 
 			client, clientErr := acctest.SharedClient()
 			if clientErr != nil {
-				return fmt.Errorf("Failed to create Cloudflare client: %s", clientErr)
+				return fmt.Errorf("Failed to create Cloudflare client: %w", clientErr)
 			}
 
 			deletedSettings := cloudflare.UpdateAccessMutualTLSHostnameSettingsParams{
@@ -32,13 +32,13 @@ func init() {
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cloudflare.AccountIdentifier(accountID), deletedSettings)
 			if err != nil {
-				return fmt.Errorf("Failed to fetch Cloudflare Access Mutual TLS hostname settings: %s", err)
+				return fmt.Errorf("Failed to fetch Cloudflare Access Mutual TLS hostname settings: %w", err)
 			}
 
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 			_, err = client.UpdateAccessMutualTLSHostnameSettings(ctx, cloudflare.ZoneIdentifier(zoneID), deletedSettings)
 			if err != nil {
-				return fmt.Errorf("Failed to delete Cloudflare Access Mutual TLS hostname settings: %s", err)
+				return fmt.Errorf("Failed to delete Cloudflare Access Mutual TLS hostname settings: %w", err)
 			}
 
 			return nil
@@ -46,7 +46,7 @@ func init() {
 	})
 }
 
-func TestAccCloudflareAccessMutualTLSHostnameSettings(t *testing.T) {
+func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -83,7 +83,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings(t *testing.T) {
 func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.State) error {
 	client, err := acctest.SharedClient()
 	if err != nil {
-		return fmt.Errorf("Failed to create Cloudflare client: %s", err)
+		return fmt.Errorf("Failed to create Cloudflare client: %w", err)
 	}
 
 	for _, rs := range s.RootModule().Resources {
