@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Resource:** `cloudflare_access_mutual_tls_hostname_settings` ([#3173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3173))
+* **New Resource:** `cloudflare_hyperdrive_config` ([#3111](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3111))
 
 ENHANCEMENTS:
 
@@ -17,8 +18,11 @@ DEPENDENCIES:
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.6 to 1.27.7 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
 * provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.6 to 1.17.7 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.3 to 1.51.4 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.51.4 to 1.52.0 ([#3182](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3182))
 * provider: bump `github.com/aws/aws-sdk-go-v2` from 1.25.2 to 1.25.3 ([#3172](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3172))
 * provider: bump github.com/cloudflare/cloudflare-go from 0.89.0 to 0.90.0 ([#3178](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3178))
+* provider: bump google.golang.org/protobuf from 1.31.0 to 1.33.0 in /tools ([#3180](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3180))
+* provider: bump google.golang.org/protobuf from 1.32.0 to 1.33.0 ([#3181](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3181))
 
 ## 4.26.0 (March 6th, 2024)
 
