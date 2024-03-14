@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Resource:** `cloudflare_access_mutual_tls_hostname_settings` ([#3173](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3173))
+* **New Resource:** `cloudflare_hyperdrive_config` ([#3111](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3111))
 
 ENHANCEMENTS:
 
