@@ -92,7 +92,7 @@ var ratePlans = map[string]subscriptionData{
 	planIDMspBiz: {
 		Name:        "MSP_BIZ",
 		ID:          planIDMspBiz,
-		Description: "MSP Website",
+		Description: "Business Website",
 	},
 }
 
