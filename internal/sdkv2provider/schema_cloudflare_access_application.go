@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -292,6 +290,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.",
 					},
+					"saml_attribute_transform_jsonata": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.",
+					},
 				},
 			},
 		},
@@ -572,6 +575,7 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 			SaasConfig.NameIDFormat = d.Get("saas_app.0.name_id_format").(string)
 			SaasConfig.DefaultRelayState = d.Get("saas_app.0.default_relay_state").(string)
 			SaasConfig.NameIDTransformJsonata = d.Get("saas_app.0.name_id_transform_jsonata").(string)
+			SaasConfig.SamlAttributeTransformJsonata = d.Get("saas_app.0.saml_attribute_transform_jsonata").(string)
 
 			customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
 			for _, customAttributes := range customAttributes {
@@ -692,14 +696,15 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 		return []interface{}{m}
 	} else {
 		m := map[string]interface{}{
-			"sp_entity_id":              app.SPEntityID,
-			"consumer_service_url":      app.ConsumerServiceUrl,
-			"name_id_format":            app.NameIDFormat,
-			"idp_entity_id":             app.IDPEntityID,
-			"public_key":                app.PublicKey,
-			"sso_endpoint":              app.SSOEndpoint,
-			"default_relay_state":       app.DefaultRelayState,
-			"name_id_transform_jsonata": app.NameIDTransformJsonata,
+			"sp_entity_id":                     app.SPEntityID,
+			"consumer_service_url":             app.ConsumerServiceUrl,
+			"name_id_format":                   app.NameIDFormat,
+			"idp_entity_id":                    app.IDPEntityID,
+			"public_key":                       app.PublicKey,
+			"sso_endpoint":                     app.SSOEndpoint,
+			"default_relay_state":              app.DefaultRelayState,
+			"name_id_transform_jsonata":        app.NameIDTransformJsonata,
+			"saml_attribute_transform_jsonata": app.SamlAttributeTransformJsonata,
 		}
 
 		var customAttributes []interface{}
