@@ -48,6 +48,8 @@ func init() {
 }
 
 func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
+	acctest.TestAccSkipForDefaultAccount(t, "Requires real Postgres instance to be available.")
+
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_hyperdrive_config." + rnd
@@ -103,6 +105,8 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
+	acctest.TestAccSkipForDefaultAccount(t, "Requires real Postgres instance to be available.")
+
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_hyperdrive_config." + rnd
@@ -167,7 +171,7 @@ func testHyperdriveConfigConfig(
 			}
 			caching = {
 				disabled               = %[10]s
-			}		  
+			}
 		}`,
 		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User, fmt.Sprintf("%t", *caching.Disabled),
 	)
