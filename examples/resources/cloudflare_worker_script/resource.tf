@@ -45,3 +45,11 @@ resource "cloudflare_worker_script" "my_script" {
     dataset = "dataset1"
   }
 }
+
+resource "cloudflare_worker_script" "wfp_user_worker" {
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "customer-worker-1"
+  content    = file("script.js")
+  dispatch_namespace = "my-namespace"
+  tags = ["free"]
+}
