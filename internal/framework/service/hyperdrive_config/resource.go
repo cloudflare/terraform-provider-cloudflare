@@ -81,6 +81,7 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 		})
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating hyperdrive config", err.Error())
+		return
 	}
 
 	var diags diag.Diagnostics
@@ -103,6 +104,7 @@ func (r *HyperdriveConfigResource) Read(ctx context.Context, req resource.ReadRe
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading hyperdrive config", err.Error())
+		return
 	}
 
 	var diags diag.Diagnostics
@@ -142,6 +144,7 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating hyperdrive config", err.Error())
+		return
 	}
 
 	var diags diag.Diagnostics
