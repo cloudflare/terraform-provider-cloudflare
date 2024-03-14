@@ -71,6 +71,38 @@ func dlpEntryToSchema(entry cloudflare.DLPEntry) map[string]interface{} {
 	return entrySchema
 }
 
+func dlpContextAwarenessSkipToAPI(skipSchema map[string]interface{}) cloudflare.DLPContextAwarenessSkip {
+	files := skipSchema["files"].(bool)
+	skip := cloudflare.DLPContextAwarenessSkip{
+		Files: &files,
+	}
+	return skip
+}
+
+func dlpContextAwarenessToAPI(contextSchema map[string]interface{}) cloudflare.DLPContextAwareness {
+	enabled := contextSchema["enabled"].(bool)
+	skip_items := contextSchema["skip"].([]interface{})
+	skip_item := skip_items[0].(map[string]interface{})
+	context := cloudflare.DLPContextAwareness{
+		Enabled: &enabled,
+		Skip:    dlpContextAwarenessSkipToAPI(skip_item),
+	}
+	return context
+}
+
+func dlpContextAwarenessSkipToSchema(skip cloudflare.DLPContextAwarenessSkip) map[string]interface{} {
+	skipSchema := make(map[string]interface{})
+	skipSchema["files"] = skip.Files
+	return skipSchema
+}
+
+func dlpContextAwarenessToSchema(context cloudflare.DLPContextAwareness) map[string]interface{} {
+	contextSchema := make(map[string]interface{})
+	contextSchema["enabled"] = *context.Enabled
+	contextSchema["skip"] = []interface{}{dlpContextAwarenessSkipToSchema(context.Skip)}
+	return contextSchema
+}
+
 func dlpEntryToAPI(entryType string, entryMap map[string]interface{}) cloudflare.DLPEntry {
 	apiEntry := cloudflare.DLPEntry{
 		Name: entryMap["name"].(string),
@@ -109,6 +141,9 @@ func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceDat
 		d.Set("description", dlpProfile.Description)
 	}
 	d.Set("allowed_match_count", dlpProfile.AllowedMatchCount)
+	if dlpProfile.ContextAwareness != nil {
+		d.Set("context_awareness", []interface{}{dlpContextAwarenessToSchema(*dlpProfile.ContextAwareness)})
+	}
 	entries := make([]interface{}, 0, len(dlpProfile.Entries))
 	for _, entry := range dlpProfile.Entries {
 		entries = append(entries, dlpEntryToSchema(entry))
@@ -127,6 +162,11 @@ func resourceCloudflareDLPProfileCreate(ctx context.Context, d *schema.ResourceD
 		Type:              d.Get("type").(string),
 		Description:       d.Get("description").(string),
 		AllowedMatchCount: d.Get("allowed_match_count").(int),
+	}
+
+	if contextAwarenessSchema, ok := d.GetOk("context_awareness.0"); ok {
+		contextAwareness := dlpContextAwarenessToAPI(contextAwarenessSchema.(map[string]interface{}))
+		newDLPProfile.ContextAwareness = &contextAwareness
 	}
 
 	if newDLPProfile.Type == DLPProfileTypePredefined {
@@ -164,6 +204,10 @@ func resourceCloudflareDLPProfileUpdate(ctx context.Context, d *schema.ResourceD
 		AllowedMatchCount: d.Get("allowed_match_count").(int),
 	}
 	updatedDLPProfile.Description, _ = d.Get("description").(string)
+	if contextAwarenessSchema, ok := d.GetOk("context_awareness.0"); ok {
+		contextAwareness := dlpContextAwarenessToAPI(contextAwarenessSchema.(map[string]interface{}))
+		updatedDLPProfile.ContextAwareness = &contextAwareness
+	}
 	if entries, ok := d.GetOk("entry"); ok {
 		for _, entry := range entries.(*schema.Set).List() {
 			updatedDLPProfile.Entries = append(updatedDLPProfile.Entries, dlpEntryToAPI(updatedDLPProfile.Type, entry.(map[string]interface{})))

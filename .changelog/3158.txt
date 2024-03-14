@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_dlp_profile: Added support for `context_awareness` field to profiles
+```
