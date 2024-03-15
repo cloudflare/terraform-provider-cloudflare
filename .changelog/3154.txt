@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_worker_script: Add `dispatch_namespace` to support uploading to a Workers for Platforms namespace
+```
+
+```release-note:enhancement
+resource/cloudflare_worker_script: Add `tags` to support tagging Workers for Platforms Workers
+```

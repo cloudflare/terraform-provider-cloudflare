@@ -308,7 +308,7 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 		}
 
 		name := strings.Replace(n, "cloudflare_worker_script.", "", -1)
-		foundBindings, err := getWorkerScriptBindings(context.Background(), accountID, name, client)
+		foundBindings, err := getWorkerScriptBindings(context.Background(), accountID, name, nil, client)
 		if err != nil {
 			return fmt.Errorf("cannot list script bindings: %w", err)
 		}
