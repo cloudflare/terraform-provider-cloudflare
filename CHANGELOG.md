@@ -7,6 +7,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_dlp_profile: Added support for `context_awareness` field to profiles ([#3158](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3158))
 * resource/cloudflare_logpush_job: Add `output_options` parameter ([#3171](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3171))
 
 BUG FIXES:
