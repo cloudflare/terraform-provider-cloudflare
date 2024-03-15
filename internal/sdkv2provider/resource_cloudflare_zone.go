@@ -185,9 +185,8 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 	var plan string
 	if zone.Status == "pending" && zone.PlanPending.LegacyID != "" {
 		plan = zone.PlanPending.LegacyID
-	} 
-	// Check if the plan is MSP_BIZ as it's legacy id is not equal to it's name in subscription
-	else if zone.Plan.ID == "1ac039f6c29b691475c3d74fe588d1ae" {
+	} else if zone.Plan.ID == "1ac039f6c29b691475c3d74fe588d1ae" {
+		// Check if the plan is MSP_BIZ as it's legacy id is not equal to it's name in subscription
 		plan = "msp_biz"
 	} else {
 		plan = zone.Plan.LegacyID
@@ -237,8 +236,8 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 	// from `zone.PlanPending` instead to account for paid plans.
 	if zone.Status == "pending" && zone.PlanPending.Name != "" {
 		d.Set("plan", zone.PlanPending.LegacyID)
-	} // Check if the plan is MSP_BIZ as it's legacy id is not equal to it's name in subscription
-	else if zone.Plan.ID == "1ac039f6c29b691475c3d74fe588d1ae" {
+	} else if zone.Plan.ID == "1ac039f6c29b691475c3d74fe588d1ae" {
+		// Check if the plan is MSP_BIZ as it's legacy id is not equal to it's name in subscription
 		d.Set("plan", "msp_biz")
 	}
 
