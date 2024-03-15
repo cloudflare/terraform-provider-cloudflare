@@ -91,33 +91,39 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 		filter = string(b)
 	}
 
-	outputOptions := make(map[string]interface{})
-	if job.OutputOptions != nil {
-		data, err := json.Marshal(&job.OutputOptions)
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed to extract output options: %w", err))
-		}
-		err = json.Unmarshal(data, &outputOptions)
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed to extract output options: %w", err))
-		}
-		// mapping from the API to the Schema:
-		// "cve20214428" -> "CVE-2021-44228"
-		// terraform does not allow the key to be upper case or contain dashes
-		if job.OutputOptions.CVE202144228 != nil {
-			delete(outputOptions, "CVE-2021-44228")
-			outputOptions["cve20214428"] = job.OutputOptions.CVE202144228
-		}
-	}
-
 	d.Set("name", job.Name)
 	d.Set("kind", job.Kind)
 	d.Set("enabled", job.Enabled)
 	d.Set("logpull_options", job.LogpullOptions)
-	err = d.Set("output_options", []map[string]interface{}{outputOptions})
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set output_options: %w", err))
+
+	// Only set the `output_options` should it be defined by the user or the API.
+	_, outputOptionsOK := d.GetOk("output_options")
+	if outputOptionsOK || job.OutputOptions != nil {
+		outputOptions := make(map[string]interface{})
+
+		if job.OutputOptions != nil {
+			data, err := json.Marshal(&job.OutputOptions)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed to extract output options: %w", err))
+			}
+			err = json.Unmarshal(data, &outputOptions)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed to extract output options: %w", err))
+			}
+			// mapping from the API to the Schema:
+			// "cve20214428" -> "CVE-2021-44228"
+			// terraform does not allow the key to be upper case or contain dashes
+			if job.OutputOptions.CVE202144228 != nil {
+				delete(outputOptions, "CVE-2021-44228")
+				outputOptions["cve20214428"] = job.OutputOptions.CVE202144228
+			}
+		}
+
+		if err := d.Set("output_options", []map[string]interface{}{outputOptions}); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set output_options: %w", err))
+		}
 	}
+
 	d.Set("dataset", job.Dataset)
 	d.Set("destination_conf", job.DestinationConf)
 	d.Set("ownership_challenge", d.Get("ownership_challenge"))
