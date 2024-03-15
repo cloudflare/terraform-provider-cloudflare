@@ -207,6 +207,18 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Optional: true,
 			Elem:     placementResource,
 		},
+		"dispatch_namespace": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Name of the Workers for Platforms dispatch namespace.",
+		},
+		"tags": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Computed: true,
+		},
+		// TODO: dispatch_namespace binding
 		"plain_text_binding": {
 			Type:     schema.TypeSet,
 			Optional: true,

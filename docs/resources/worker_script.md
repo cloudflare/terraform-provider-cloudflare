@@ -75,6 +75,7 @@ resource "cloudflare_worker_script" "my_script" {
 - `compatibility_date` (String) The date to use for the compatibility flag.
 - `compatibility_flags` (Set of String) Compatibility flags used for Worker Scripts.
 - `d1_database_binding` (Block Set) (see [below for nested schema](#nestedblock--d1_database_binding))
+- `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `logpush` (Boolean) Enabling allows Worker events to be sent to a defined Logpush destination.
 - `module` (Boolean) Whether to upload Worker as a module.
@@ -84,6 +85,7 @@ resource "cloudflare_worker_script" "my_script" {
 - `r2_bucket_binding` (Block Set) (see [below for nested schema](#nestedblock--r2_bucket_binding))
 - `secret_text_binding` (Block Set) (see [below for nested schema](#nestedblock--secret_text_binding))
 - `service_binding` (Block Set) (see [below for nested schema](#nestedblock--service_binding))
+- `tags` (Set of String)
 - `webassembly_binding` (Block Set) (see [below for nested schema](#nestedblock--webassembly_binding))
 
 ### Read-Only
