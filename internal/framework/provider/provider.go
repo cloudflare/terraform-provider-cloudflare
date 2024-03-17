@@ -24,6 +24,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -342,6 +343,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		rulesets.NewResource,
 		turnstile.NewResource,
 		access_mutual_tls_hostname_settings.NewResource,
+		workers_for_platforms.NewResource,
 	}
 }
 
