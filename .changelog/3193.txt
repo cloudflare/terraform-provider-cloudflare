@@ -1,0 +1,3 @@
+```release:new-resource
+cloudflare_workers_for_platforms_namespace
+```
