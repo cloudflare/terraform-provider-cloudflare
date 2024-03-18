@@ -127,7 +127,6 @@ func (r *WorkersForPlatformsResource) ImportState(ctx context.Context, req resou
 	resp.Diagnostics.Append(resp.State.SetAttribute(
 		ctx, path.Root("account_id"), idparts[0],
 	)...)
-	// TODO: Figure out if I can set name here, ID is a UUID and isn't one we really display/use user-facing wise
 	resp.Diagnostics.Append(resp.State.SetAttribute(
 		ctx, path.Root("id"), idparts[1],
 	)...)
