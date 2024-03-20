@@ -25,6 +25,10 @@ data "cloudflare_tunnel" "example" {
 - `account_id` (String) The account identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 - `name` (String) Name of the tunnel. **Modifying this attribute will force creation of a new resource.**
 
+### Optional
+
+- `is_deleted` (Boolean) If true, only include deleted tunnels. If false, exclude deleted tunnels. If empty, all tunnels will be included. **Modifying this attribute will force creation of a new resource.**
+
 ### Read-Only
 
 - `id` (String) ID of the tunnel.
