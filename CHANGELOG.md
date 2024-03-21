@@ -1,4 +1,12 @@
-## 4.27.0 (Unreleased)
+## 4.28.0 (Unreleased)
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.8 to 1.27.9 ([#3207](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3207))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.8 to 1.17.9 ([#3207](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3207))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.90.0 to 0.91.0 ([#3208](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3208))
+
+## 4.27.0 (March 20th, 2024)
 
 FEATURES:
 
