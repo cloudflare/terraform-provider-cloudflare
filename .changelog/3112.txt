@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_ipsec_tunnel: Adds IPsec tunnel health_check_direction & health_check_rate parameters
+```
