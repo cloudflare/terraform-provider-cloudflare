@@ -65,14 +65,14 @@ func resourceCloudflareIPsecTunnelSchema() map[string]*schema.Schema {
 			Optional:     true,
 			Computed:     true,
 			ValidateFunc: validation.StringInSlice([]string{"unidirectional", "bidirectional"}, false),
-			Description:  fmt.Sprintf("Specifies the direction for the health check (`unidirectional` or `bidirectional`). %s Default: `unidirectional`.", renderAvailableDocumentationValuesStringSlice([]string{"unidirectional", "bidirectional"})),
+			Description:  fmt.Sprintf("Specifies the direction for the health check. %s Default: `unidirectional`.", renderAvailableDocumentationValuesStringSlice([]string{"unidirectional", "bidirectional"})),
 		},
 		"health_check_rate": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Computed:     true,
 			ValidateFunc: validation.StringInSlice([]string{"low", "mid", "high"}, false),
-			Description:  fmt.Sprintf("Specifies the ICMP rate for the health check (`low`, `mid` or `high`). %s Default: `mid`.", renderAvailableDocumentationValuesStringSlice([]string{"low", "mid", "high"})),
+			Description:  fmt.Sprintf("Specifies the ICMP rate for the health check. %s Default: `mid`.", renderAvailableDocumentationValuesStringSlice([]string{"low", "mid", "high"})),
 		},
 		"psk": {
 			Type:        schema.TypeString,
