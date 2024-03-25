@@ -1,5 +1,9 @@
 ## 4.28.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_ipsec_tunnel: Adds IPsec tunnel health_check_direction & health_check_rate parameters ([#3112](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3112))
+
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.8 to 1.27.9 ([#3207](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3207))
