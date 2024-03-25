@@ -68,7 +68,7 @@ Read-Only:
 
 Optional:
 
-- `ciphers` (Set of String) List of SSL/TLS ciphers to associate with this certificate.
+- `ciphers` (List of String) List of SSL/TLS ciphers to associate with this certificate, ordered by priority.
 - `early_hints` (String) Whether early hints should be supported. Available values: `on`, `off`.
 - `http2` (String) Whether HTTP2 should be supported. Available values: `on`, `off`.
 - `min_tls_version` (String) Lowest version of TLS this certificate should support. Available values: `1.0`, `1.1`, `1.2`, `1.3`.

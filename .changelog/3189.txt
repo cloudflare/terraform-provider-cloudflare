@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_custom_hostname: update ciphers to be an ordered TypeList instead of a TypeSet
+```

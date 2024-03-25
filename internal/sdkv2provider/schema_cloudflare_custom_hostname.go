@@ -122,12 +122,12 @@ func resourceCloudflareCustomHostnameSchema() map[string]*schema.Schema {
 									Description:  fmt.Sprintf("Lowest version of TLS this certificate should support. %s", renderAvailableDocumentationValuesStringSlice([]string{"1.0", "1.1", "1.2", "1.3"})),
 								},
 								"ciphers": {
-									Type:     schema.TypeSet,
+									Type:     schema.TypeList,
 									Optional: true,
 									Elem: &schema.Schema{
 										Type: schema.TypeString,
 									},
-									Description: "List of SSL/TLS ciphers to associate with this certificate.",
+									Description: "List of SSL/TLS ciphers to associate with this certificate, ordered by priority.",
 								},
 								"early_hints": {
 									Type:         schema.TypeString,
