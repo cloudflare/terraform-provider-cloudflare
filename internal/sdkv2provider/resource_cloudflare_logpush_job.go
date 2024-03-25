@@ -95,6 +95,35 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	d.Set("kind", job.Kind)
 	d.Set("enabled", job.Enabled)
 	d.Set("logpull_options", job.LogpullOptions)
+
+	// Only set the `output_options` should it be defined by the user or the API.
+	_, outputOptionsOK := d.GetOk("output_options")
+	if outputOptionsOK || job.OutputOptions != nil {
+		outputOptions := make(map[string]interface{})
+
+		if job.OutputOptions != nil {
+			data, err := json.Marshal(&job.OutputOptions)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed to extract output options: %w", err))
+			}
+			err = json.Unmarshal(data, &outputOptions)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed to extract output options: %w", err))
+			}
+			// mapping from the API to the Schema:
+			// "cve20214428" -> "CVE-2021-44228"
+			// terraform does not allow the key to be upper case or contain dashes
+			if job.OutputOptions.CVE202144228 != nil {
+				delete(outputOptions, "CVE-2021-44228")
+				outputOptions["cve20214428"] = job.OutputOptions.CVE202144228
+			}
+		}
+
+		if err := d.Set("output_options", []map[string]interface{}{outputOptions}); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set output_options: %w", err))
+		}
+	}
+
 	d.Set("dataset", job.Dataset)
 	d.Set("destination_conf", job.DestinationConf)
 	d.Set("ownership_challenge", d.Get("ownership_challenge"))
@@ -105,6 +134,36 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	d.Set("max_upload_interval_seconds", job.MaxUploadIntervalSeconds)
 
 	return nil
+}
+
+// converts the output_options state to the Cloudflare API struct representation.
+func toAPIOutputOptions(outputOptionsState interface{}) (*cloudflare.LogpushOutputOptions, error) {
+	var jobOutputOptions cloudflare.LogpushOutputOptions
+
+	outputOptionsList, ok := outputOptionsState.([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("failed to convert to []interface{}")
+	}
+	if len(outputOptionsList) < 1 {
+		return nil, fmt.Errorf("failed to extract logpush output options")
+	}
+	outputOptions := outputOptionsList[0].(map[string]interface{})
+	data, err := json.Marshal(outputOptions)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract logpush output options")
+	}
+	err = json.Unmarshal(data, &jobOutputOptions)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract logpush output options")
+	}
+	// mapping from the API to the Schema:
+	// "cve20214428" -> "CVE-2021-44228"
+	// terraform does not allow the key to be upper case or contain dashes
+	cve20214428, ok := outputOptions["cve20214428"].(bool)
+	if ok {
+		jobOutputOptions.CVE202144228 = &cve20214428
+	}
+	return &jobOutputOptions, nil
 }
 
 func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -134,6 +193,14 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
 		MaxUploadRecords:         d.Get("max_upload_records").(int),
 		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
+	}
+
+	outputOptions, ok := d.GetOk("output_options")
+	if ok {
+		job.OutputOptions, err = toAPIOutputOptions(outputOptions)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	filter := d.Get("filter")
@@ -199,6 +266,14 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
 		MaxUploadRecords:         d.Get("max_upload_records").(int),
 		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
+	}
+
+	outputOptions, ok := d.GetOk("output_options")
+	if ok {
+		job.OutputOptions, err = toAPIOutputOptions(outputOptions)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	filter := d.Get("filter")

@@ -135,7 +135,7 @@ func (r *ListItemResource) Delete(ctx context.Context, req resource.DeleteReques
 
 func (r *ListItemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	idparts := strings.Split(req.ID, "/")
-	if len(idparts) != 2 {
+	if len(idparts) != 3 {
 		resp.Diagnostics.AddError("error importing list item ", "invalid ID specified. Please specify the ID as \"accountID/listID/itemID\"")
 		return
 	}

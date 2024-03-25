@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_logpush_job: only set the value in state when it is defined
+```

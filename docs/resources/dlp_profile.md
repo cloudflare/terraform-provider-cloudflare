@@ -90,6 +90,7 @@ resource "cloudflare_dlp_profile" "example_custom" {
 
 ### Optional
 
+- `context_awareness` (Block List, Max: 1) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedblock--context_awareness))
 - `description` (String) Brief summary of the profile and its intended use.
 
 ### Read-Only
@@ -119,6 +120,23 @@ Required:
 Optional:
 
 - `validation` (String) The validation algorithm to apply with this pattern.
+
+
+
+<a id="nestedblock--context_awareness"></a>
+### Nested Schema for `context_awareness`
+
+Required:
+
+- `enabled` (Boolean) Scan the context of predefined entries to only return matches surrounded by keywords.
+- `skip` (Block List, Min: 1, Max: 1) Content types to exclude from context analysis and return all matches. (see [below for nested schema](#nestedblock--context_awareness--skip))
+
+<a id="nestedblock--context_awareness--skip"></a>
+### Nested Schema for `context_awareness.skip`
+
+Required:
+
+- `files` (Boolean) Return all matches, regardless of context analysis result, if the data is a file.
 
 ## Import
 

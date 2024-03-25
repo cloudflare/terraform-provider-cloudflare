@@ -1,5 +1,10 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Terraform Registry documentation problem
+    url: https://github.com/cloudflare/terraform-provider-cloudflare/blob/master/contributing/registry-documentation.md
+    about: |
+      If you are looking to report an issue with the Terraform Registry documentation, please review the contributing 
+      link and propose a change. There rarely needs to be design discussion about these and they are great first contributions!
   - name: Cloudflare Support
     url: https://dash.cloudflare.com/redirect?account=support
     about: Get in contact with Support regarding account or zone issues not related to Terraform

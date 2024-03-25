@@ -11,16 +11,20 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -333,10 +337,13 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		d1.NewResource,
 		email_routing_address.NewResource,
 		email_routing_rule.NewResource,
+		hyperdrive_config.NewResource,
 		list_item.NewResource,
 		r2_bucket.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
+		access_mutual_tls_hostname_settings.NewResource,
+		workers_for_platforms.NewResource,
 	}
 }
 
@@ -345,6 +352,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_token_permissions_groups.NewDataSource,
 		origin_ca_certificate.NewDataSource,
 		user.NewDataSource,
+		dlp_datasets.NewDataSource,
 	}
 }
 
