@@ -77,7 +77,7 @@ Optional:
 - `infected` (Boolean) True if SentinelOne device is infected.
 - `is_active` (Boolean) True if SentinelOne device is active.
 - `issue_count` (String) The number of issues for kolide.
-- `last_seen` (String) The UTC date and time that the host was last seen from Crowdstrike.
+- `last_seen` (String) The duration of time that the host was last seen from Crowdstrike. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`.
 - `network_status` (String) The network status from SentinelOne. Available values: `connected`, `disconnected`, `disconnecting`, `connecting`.
 - `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.

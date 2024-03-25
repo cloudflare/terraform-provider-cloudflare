@@ -178,7 +178,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 					"last_seen": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The UTC date and time that the host was last seen from Crowdstrike.",
+						Description: "The duration of time that the host was last seen from Crowdstrike. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`.",
 					},
 					"state": {
 						Type:         schema.TypeString,
