@@ -63,7 +63,7 @@ resource "cloudflare_access_policy" "test_policy" {
 ### Required
 
 - `application_id` (String) The ID of the application the policy is associated with.
-- `decision` (String) Defines the action Access will take if the policy matches the user. Available values: `allow`, `deny`, `non_identity`, `bypass`.
+- `decision` (String) Defines the action Access will take if the policy matches the user. Available values: `allow`, `deny`, `bypass`, `non_identity`. ('non-identity' maps to 'Service Auth' in the console)
 - `include` (Block List, Min: 1) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--include))
 - `name` (String) Friendly name of the Access Policy.
 - `precedence` (Number) The unique precedence for policies on a single application.
