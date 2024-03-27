@@ -23,14 +23,14 @@ you've confirmed the certificate is available.
 ## Example Usage
 
 ```terraform
-# Advanced certificate manager for DigiCert
+# Advanced certificate manager for Google
 resource "cloudflare_certificate_pack" "example" {
   zone_id               = "0da42c8d2132a9ddaf714f9e7c920711"
   type                  = "advanced"
   hosts                 = ["example.com", "sub.example.com"]
   validation_method     = "txt"
   validity_days         = 30
-  certificate_authority = "digicert"
+  certificate_authority = "Google"
   cloudflare_branding   = false
 }
 
@@ -51,7 +51,7 @@ resource "cloudflare_certificate_pack" "example" {
 
 ### Required
 
-- `certificate_authority` (String) Which certificate authority to issue the certificate pack. Available values: `digicert`, `lets_encrypt`, `google`. **Modifying this attribute will force creation of a new resource.**
+- `certificate_authority` (String) Which certificate authority to issue the certificate pack. Available values: `lets_encrypt`, `google`. **Modifying this attribute will force creation of a new resource.**
 - `hosts` (Set of String) List of hostnames to provision the certificate pack for. The zone name must be included as a host. Note: If using Let's Encrypt, you cannot use individual subdomains and only a wildcard for subdomain is available. **Modifying this attribute will force creation of a new resource.**
 - `type` (String) Certificate pack configuration type. Available values: `advanced`. **Modifying this attribute will force creation of a new resource.**
 - `validation_method` (String) Which validation method to use in order to prove domain ownership. Available values: `txt`, `http`, `email`. **Modifying this attribute will force creation of a new resource.**
