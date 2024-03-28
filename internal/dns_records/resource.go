@@ -9,9 +9,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/cloudflare-go/dns"
-	"github.com/cloudflare/cloudflare-go/option"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/dns"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-terraform/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
