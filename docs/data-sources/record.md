@@ -34,7 +34,6 @@ data "cloudflare_record" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `locked` (Boolean) Locked status of the found DNS record.
 - `proxiable` (Boolean) Proxiable status of the found DNS record.
 - `proxied` (Boolean) Proxied status of the found DNS record.
 - `ttl` (Number) TTL of the found DNS record.

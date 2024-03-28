@@ -67,11 +67,6 @@ func dataSourceCloudflareRecord() *schema.Resource {
 				Computed:    true,
 				Description: "Proxiable status of the found DNS record.",
 			},
-			"locked": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: "Locked status of the found DNS record.",
-			},
 			"zone_name": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -125,7 +120,6 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("proxied", record.Proxied)
 	d.Set("ttl", record.TTL)
 	d.Set("proxiable", record.Proxiable)
-	d.Set("locked", record.Locked)
 	d.Set("zone_name", record.ZoneName)
 
 	if record.Priority != nil {
