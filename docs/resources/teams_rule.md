@@ -73,6 +73,11 @@ Optional:
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
 - `payload_log` (Block List, Max: 1) Configure DLP Payload Logging settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--payload_log))
 - `untrusted_cert` (Block List, Max: 1) Configure untrusted certificate settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--untrusted_cert))
+<!-- semgrep ignored because we have to mention quad one, even if it is a real ip -->
+<!-- nosemgrep -->
+- `resolve_dns_through_cloudflare` (Boolean) Enable sending queries that match the resolver policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when `dns_resolvers` are specified.
+- `dns_resolvers` (Block List, Max: 1) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when `resolve_dns_through_cloudflare` is set. DNS queries will route to the address closest to their origin. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers))
+
 
 <a id="nestedblock--rule_settings--audit_ssh"></a>
 ### Nested Schema for `rule_settings.audit_ssh`
@@ -149,6 +154,22 @@ Required:
 Optional:
 
 - `action` (String) Action to be taken when the SSL certificate of upstream is invalid. Available values: `pass_through`, `block`, `error`.
+
+<a id="nestedblock--rule_settings--dns_resolvers"></a>
+### Nested Schema for `rule_settings.dns_resolvers`
+
+Optional:
+
+- `ipv4` (List of Object) IPv4 Resolver Addresses (see [below for nested schema](#nestedobjatt--rule_settings--dns_resolvers--dns_resolver_settings))
+
+- `ipv6` (List of Object) IPv6 Resolver Addresses (see [below for nested schema](#nestedobjatt--rule_settings--dns_resolvers--dns_resolver_settings))
+
+<a id="#nestedobjatt--rule_settings--dns_resolvers--dns_resolver_settings"></a>
+### Nested Schema for `rule_settings.dns_resolvers.dns_resolver_settings`
+- `ip` (String) The IPv4 or IPv6 address of the upstream resolver
+- `port` (Number) A port number to use for the upstream resolver. Defaults to 53 if omitted.
+- `vnet_id` (String) Optionally specify a virtual network for this resolver. Uses default virtual network id if omitted.
+- `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when vnet_id is set.
 
 ## Import
 

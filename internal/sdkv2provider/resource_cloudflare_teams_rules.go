@@ -214,7 +214,9 @@ func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.Teams
 		settings.AllowChildBypass == nil &&
 		settings.BypassParentRule == nil &&
 		settings.AuditSSH == nil &&
-		settings.NotificationSettings == nil {
+		settings.NotificationSettings == nil &&
+		settings.ResolveDnsThroughCloudflare == nil &&
+		settings.DnsResolverSettings == nil {
 		return nil
 	}
 
@@ -232,6 +234,8 @@ func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.Teams
 		"untrusted_cert":                     flattenTeamsUntrustedCertSettings(settings.UntrustedCertSettings),
 		"payload_log":                        flattenTeamsDlpPayloadLogSettings(settings.PayloadLog),
 		"notification_settings":              flattenTeamsNotificationSettings(settings.NotificationSettings),
+		"resolve_dns_through_cloudflare":     settings.ResolveDnsThroughCloudflare,
+		"dns_resolvers":                      flattenTeamsDnsResolverSettings(settings.DnsResolverSettings),
 	}
 
 	if settings.IPCategories {
@@ -278,7 +282,9 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 	egressSettings := inflateTeamsEgressSettings(settingsMap["egress"].([]interface{}))
 	payloadLog := inflateTeamsDlpPayloadLogSettings(settingsMap["payload_log"].([]interface{}))
 	untrustedCertSettings := inflateTeamsUntrustedCertSettings(settingsMap["untrusted_cert"].([]interface{}))
-	notificationSettings := inflateTeamsNotificationSettings(settingsMap["notification_settings"].([]interface{}))
+	notificationSettings := inflateTeamsNotificationSettings(settingsMap["notification_settings"])
+	resolveDnsThroughCloudflare := settingsMap["resolve_dns_through_cloudflare"].(bool)
+	dnsResolverSettings := inflateTeamsDnsResolverSettings(settingsMap["dns_resolvers"].([]interface{}))
 
 	return &cloudflare.TeamsRuleSettings{
 		BlockPageEnabled:                enabled,
@@ -294,6 +300,8 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 		PayloadLog:                      payloadLog,
 		UntrustedCertSettings:           untrustedCertSettings,
 		NotificationSettings:            notificationSettings,
+		ResolveDnsThroughCloudflare:     &resolveDnsThroughCloudflare,
+		DnsResolverSettings:             dnsResolverSettings,
 	}
 }
 
@@ -484,6 +492,96 @@ func flattenTeamsUntrustedCertSettings(settings *cloudflare.UntrustedCertSetting
 	return []interface{}{map[string]interface{}{
 		"action": settings.Action,
 	}}
+}
+
+func flattenTeamsDnsResolverSettings(settings *cloudflare.TeamsDnsResolverSettings) []interface{} {
+	if settings == nil {
+		return nil
+	}
+	ret := map[string]interface{}{}
+	if len(settings.V4Resolvers) != 0 {
+		ret["ipv4"] = flattenTeamsDnsResolverAddressesV4(settings.V4Resolvers)
+	}
+	if len(settings.V6Resolvers) != 0 {
+		ret["ipv6"] = flattenTeamsDnsResolverAddressesV6(settings.V6Resolvers)
+	}
+	return []interface{}{ret}
+}
+
+func inflateTeamsDnsResolverSettings(settings interface{}) *cloudflare.TeamsDnsResolverSettings {
+	settingsList := settings.([]interface{})
+	if len(settingsList) != 1 {
+		return nil
+	}
+	settingsMap := settingsList[0].(map[string]interface{})
+	ipv4 := inflateTeamsDnsResolverAddressesV4(settingsMap["ipv4"].([]interface{}))
+	ipv6 := inflateTeamsDnsResolverAddressesV6(settingsMap["ipv6"].([]interface{}))
+	return &cloudflare.TeamsDnsResolverSettings{
+		V4Resolvers: ipv4,
+		V6Resolvers: ipv6,
+	}
+}
+
+func flattenTeamsDnsResolverAddressesV4(settings []cloudflare.TeamsDnsResolverAddressV4) []interface{} {
+	ret := []interface{}{}
+	for _, addr := range settings {
+		part := map[string]interface{}{
+			"ip":                            addr.IP,
+			"port":                          addr.Port,
+			"route_through_private_network": addr.RouteThroughPrivateNetwork,
+			"vnet_id":                       addr.VnetID,
+		}
+		ret = append(ret, part)
+	}
+	return ret
+}
+
+func inflateTeamsDnsResolverAddressesV4(settings []interface{}) []cloudflare.TeamsDnsResolverAddressV4 {
+	ret := []cloudflare.TeamsDnsResolverAddressV4{}
+	for _, raw := range settings {
+		part := raw.(map[string]interface{})
+		newAddr := cloudflare.TeamsDnsResolverAddressV4{
+			TeamsDnsResolverAddress: cloudflare.TeamsDnsResolverAddress{
+				IP:                         part["ip"].(string),
+				Port:                       cloudflare.IntPtr(part["port"].(int)),
+				VnetID:                     part["vnet_id"].(string),
+				RouteThroughPrivateNetwork: cloudflare.BoolPtr(part["route_through_private_network"].(bool)),
+			},
+		}
+		ret = append(ret, newAddr)
+	}
+	return ret
+}
+
+func flattenTeamsDnsResolverAddressesV6(settings []cloudflare.TeamsDnsResolverAddressV6) []interface{} {
+	ret := []interface{}{}
+	for _, addr := range settings {
+		part := map[string]interface{}{
+			"ip":                            addr.IP,
+			"port":                          addr.Port,
+			"route_through_private_network": addr.RouteThroughPrivateNetwork,
+			"vnet_id":                       addr.VnetID,
+		}
+		ret = append(ret, part)
+	}
+	return ret
+}
+
+func inflateTeamsDnsResolverAddressesV6(settings []interface{}) []cloudflare.TeamsDnsResolverAddressV6 {
+	ret := []cloudflare.TeamsDnsResolverAddressV6{}
+	for _, raw := range settings {
+		part := raw.(map[string]interface{})
+		newAddr := cloudflare.TeamsDnsResolverAddressV6{
+			TeamsDnsResolverAddress: cloudflare.TeamsDnsResolverAddress{
+				IP:                         part["ip"].(string),
+				Port:                       cloudflare.IntPtr(part["port"].(int)),
+				VnetID:                     part["vnet_id"].(string),
+				RouteThroughPrivateNetwork: cloudflare.BoolPtr(part["route_through_private_network"].(bool)),
+			},
+		}
+		ret = append(ret, newAddr)
+	}
+	return ret
 }
 
 func inflateTeamsDlpPayloadLogSettings(settings interface{}) *cloudflare.TeamsDlpPayloadLogSettings {
