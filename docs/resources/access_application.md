@@ -137,6 +137,7 @@ Optional:
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application.
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
 - `redirect_uris` (Set of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens.
+- `saml_attribute_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.
 - `scopes` (Set of String) Define the user information shared with access.
 - `sp_entity_id` (String) A globally unique name for an identity or service provider.
 
