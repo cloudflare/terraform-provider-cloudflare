@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-terraform/internal/dns_records"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -89,9 +88,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 }
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		dns_records.NewResource,
-	}
+	return []func() resource.Resource{}
 }
 
 func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
