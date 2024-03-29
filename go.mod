@@ -1,6 +1,6 @@
 module github.com/cloudflare/cloudflare-terraform
 
-go 1.20
+go 1.19
 
 require (
 	github.com/cloudflare/cloudflare-go/v2 v2.0.0-beta.13
