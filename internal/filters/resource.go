@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/filters"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-terraform/internal/apijson"
+	"github.com/cloudflare/cloudflare-terraform/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -74,7 +75,7 @@ func (r *FiltersResource) Create(ctx context.Context, req resource.CreateRequest
 		filters.FilterNewParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(loggingMiddleware(ctx)),
+		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -82,12 +83,8 @@ func (r *FiltersResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	bytes, _ := io.ReadAll(res.Body)
-	tflog.Warn(ctx, fmt.Sprintf("BYTES %s", string(bytes)))
 	apijson.Unmarshal(bytes, &env)
 	data = &env.Result
-
-	tflog.Warn(ctx, fmt.Sprintf("ENV %#v", env))
-	tflog.Warn(ctx, fmt.Sprintf("DATA %#v", data))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -107,7 +104,7 @@ func (r *FiltersResource) Read(ctx context.Context, req resource.ReadRequest, re
 		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
 		option.WithResponseBodyInto(&env),
-		option.WithMiddleware(loggingMiddleware(ctx)),
+		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	data = &env.Result
 
@@ -142,7 +139,7 @@ func (r *FiltersResource) Update(ctx context.Context, req resource.UpdateRequest
 		filters.FilterUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(loggingMiddleware(ctx)),
+		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -150,12 +147,8 @@ func (r *FiltersResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	bytes, _ := io.ReadAll(res.Body)
-	tflog.Warn(ctx, fmt.Sprintf("BYTES %s", string(bytes)))
 	apijson.Unmarshal(bytes, &env)
 	data = &env.Result
-
-	tflog.Warn(ctx, fmt.Sprintf("ENV %#v", env))
-	tflog.Warn(ctx, fmt.Sprintf("DATA %#v", data))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -173,7 +166,7 @@ func (r *FiltersResource) Delete(ctx context.Context, req resource.DeleteRequest
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
-		option.WithMiddleware(loggingMiddleware(ctx)),
+		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 
 	if err != nil {
@@ -182,69 +175,4 @@ func (r *FiltersResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func loggingMiddleware(ctx context.Context) option.Middleware {
-	return func(req *http.Request, next option.MiddlewareNext) (*http.Response, error) {
-		logRequest(ctx, req)
-
-		resp, err := next(req)
-
-		logResponse(ctx, resp)
-
-		return resp, err
-	}
-}
-
-func logRequest(ctx context.Context, req *http.Request) error {
-	// Log headers
-	tflog.Warn(ctx, "Headers:")
-	for name, values := range req.Header {
-		for _, value := range values {
-			tflog.Warn(ctx, fmt.Sprintf("%s: %s\n", name, value))
-		}
-	}
-
-	if req.Body != nil {
-		// Read the body without mutating the original response
-		bodyBytes, err := io.ReadAll(req.Body)
-		if err != nil {
-			return err
-		}
-
-		// Restore the original body to the response so it can be read again
-		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-
-		// Log the body
-		tflog.Warn(ctx, fmt.Sprintf("Body: %s\n", string(bodyBytes)))
-	}
-
-	return nil
-}
-
-func logResponse(ctx context.Context, resp *http.Response) error {
-	// Log the status code
-	tflog.Warn(ctx, fmt.Sprintf("Status: %s\n", resp.Status))
-
-	// Log headers
-	tflog.Warn(ctx, "Headers:")
-	for name, values := range resp.Header {
-		for _, value := range values {
-			tflog.Warn(ctx, fmt.Sprintf("%s: %s\n", name, value))
-		}
-	}
-
-	// Read the body without mutating the original response
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	// Restore the original body to the response so it can be read again
-	resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-
-	// Log the body
-	tflog.Warn(ctx, fmt.Sprintf("Body: %s\n", string(bodyBytes)))
-
-	return nil
 }
