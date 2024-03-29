@@ -7,6 +7,24 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-terraform/internal/dns_records"
+	"github.com/cloudflare/cloudflare-terraform/internal/email_routing_rules"
+	"github.com/cloudflare/cloudflare-terraform/internal/filters"
+	"github.com/cloudflare/cloudflare-terraform/internal/firewall_rules"
+	"github.com/cloudflare/cloudflare-terraform/internal/hyperdrive_configs"
+	"github.com/cloudflare/cloudflare-terraform/internal/logpush_jobs"
+	"github.com/cloudflare/cloudflare-terraform/internal/magic_transit_gre_tunnels"
+	"github.com/cloudflare/cloudflare-terraform/internal/magic_transit_ipsec_tunnels"
+	"github.com/cloudflare/cloudflare-terraform/internal/pagerules"
+	"github.com/cloudflare/cloudflare-terraform/internal/rate_limits"
+	"github.com/cloudflare/cloudflare-terraform/internal/rules_lists"
+	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms"
+	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms_events"
+	"github.com/cloudflare/cloudflare-terraform/internal/workers_routes"
+	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_custom_pages"
+	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_tags"
+	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_devices_dex_tests"
+	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_identity_providers"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -88,7 +106,26 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 }
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+	return []func() resource.Resource{
+		dns_records.NewResource,
+		email_routing_rules.NewResource,
+		filters.NewResource,
+		firewall_rules.NewResource,
+		logpush_jobs.NewResource,
+		pagerules.NewResource,
+		rate_limits.NewResource,
+		waiting_rooms.NewResource,
+		waiting_rooms_events.NewResource,
+		workers_routes.NewResource,
+		magic_transit_gre_tunnels.NewResource,
+		magic_transit_ipsec_tunnels.NewResource,
+		rules_lists.NewResource,
+		zero_trust_devices_dex_tests.NewResource,
+		zero_trust_identity_providers.NewResource,
+		zero_trust_access_custom_pages.NewResource,
+		zero_trust_access_tags.NewResource,
+		hyperdrive_configs.NewResource,
+	}
 }
 
 func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
