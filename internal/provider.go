@@ -21,6 +21,8 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms"
 	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms_events"
 	"github.com/cloudflare/cloudflare-terraform/internal/workers_routes"
+	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_applications"
+	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_certificates"
 	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_custom_pages"
 	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_tags"
 	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_devices_dex_tests"
@@ -122,6 +124,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		rules_lists.NewResource,
 		zero_trust_devices_dex_tests.NewResource,
 		zero_trust_identity_providers.NewResource,
+		zero_trust_access_applications.NewResource,
+		zero_trust_access_certificates.NewResource,
 		zero_trust_access_custom_pages.NewResource,
 		zero_trust_access_tags.NewResource,
 		hyperdrive_configs.NewResource,
