@@ -1,5 +1,12 @@
 ## 4.29.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.9 to 1.27.10 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.9 to 1.17.10 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.53.0 to 1.53.1 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.26.0 to 1.26.1 ([#3222](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3222))
+
 ## 4.28.0 (March 28th, 2024)
 
 ENHANCEMENTS:
