@@ -51,31 +51,32 @@ func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testCloudflareTunnelMatchIsDeletedStep1(rnd),
+				Config: testCloudflareTunnelMatchIsDeleted_Default(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_default", "status", "inactive"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_default", "is_deleted", "false"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_not_deleted", "status", "inactive"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_not_deleted", "is_deleted", "false"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "is_deleted", "false"),
 				),
 			},
 			{
-				Config:  testCloudflareTunnelMatchIsDeletedStep1(rnd),
+				Config:  testCloudflareTunnelMatchIsDeleted_Default(rnd),
 				Destroy: true,
 			},
 			{
-				Config: testCloudflareTunnelMatchIsDeletedStep2(rnd),
+				Config: testCloudflareTunnelMatchIsDeleted_DeletedTunnels(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_default", "status", "inactive"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_default", "is_deleted", "true"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_deleted", "status", "inactive"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_deleted", "is_deleted", "true"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "is_deleted", "true"),
 				),
 			},
 			{
-				Config: testCloudflareTunnelMatchIsDeletedStep3(rnd),
+				Config:  testCloudflareTunnelMatchIsDeleted_DeletedTunnels(rnd),
+				Destroy: true,
+			},
+			{
+				Config: testCloudflareTunnelMatchIsDeleted_ActiveTunnels(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd+"_not_deleted", "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "is_deleted", "true"),
 				),
 				ExpectError: regexp.MustCompile(`Error: No tunnels with name: ` + rnd),
 			},
@@ -83,7 +84,7 @@ func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
 	})
 }
 
-func testCloudflareTunnelMatchIsDeletedStep1(name string) string {
+func testCloudflareTunnelMatchIsDeleted_Default(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return fmt.Sprintf(`
 resource "cloudflare_tunnel" "%[2]s" {
@@ -92,13 +93,7 @@ resource "cloudflare_tunnel" "%[2]s" {
 	secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
 }
 
-data "cloudflare_tunnel" "%[2]s_default" {
-	account_id = cloudflare_tunnel.%[2]s.account_id
-	name       = cloudflare_tunnel.%[2]s.name
-	depends_on = [cloudflare_tunnel.%[2]s]
-}
-
-data "cloudflare_tunnel" "%[2]s_not_deleted" {
+data "cloudflare_tunnel" "%[2]s" {
 	account_id = "%[1]s"
 	name       = "%[2]s"
 	is_deleted = false
@@ -107,15 +102,10 @@ data "cloudflare_tunnel" "%[2]s_not_deleted" {
 `, accountID, name)
 }
 
-func testCloudflareTunnelMatchIsDeletedStep2(name string) string {
+func testCloudflareTunnelMatchIsDeleted_DeletedTunnels(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return fmt.Sprintf(`
-data "cloudflare_tunnel" "%[2]s_default" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-}
-
-data "cloudflare_tunnel" "%[2]s_deleted" {
+data "cloudflare_tunnel" "%[2]s" {
 	account_id = "%[1]s"
 	name       = "%[2]s"
 	is_deleted = true
@@ -123,10 +113,10 @@ data "cloudflare_tunnel" "%[2]s_deleted" {
 `, accountID, name)
 }
 
-func testCloudflareTunnelMatchIsDeletedStep3(name string) string {
+func testCloudflareTunnelMatchIsDeleted_ActiveTunnels(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return fmt.Sprintf(`
-data "cloudflare_tunnel" "%[2]s_not_deleted" {
+data "cloudflare_tunnel" "%[2]s" {
 	account_id = "%[1]s"
 	name       = "%[2]s"
 	is_deleted = false
