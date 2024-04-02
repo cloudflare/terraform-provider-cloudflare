@@ -28,6 +28,12 @@ func dataSourceCloudflareTunnel() *schema.Resource {
 				Description: "Name of the tunnel.",
 				ForceNew:    true,
 			},
+			"is_deleted": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "If true, only include deleted tunnels. If false, exclude deleted tunnels. If empty, all tunnels will be included.",
+				ForceNew:    true,
+			},
 			"id": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -59,7 +65,13 @@ func dataSourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData,
 	accID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	name := d.Get("name").(string)
-	tunnels, _, err := client.ListTunnels(ctx, cloudflare.AccountIdentifier(accID), cloudflare.TunnelListParams{Name: name})
+	params := cloudflare.TunnelListParams{Name: name}
+
+	if v, ok := d.GetOkExists("is_deleted"); ok {
+		params.IsDeleted = cloudflare.BoolPtr(v.(bool))
+	}
+
+	tunnels, _, err := client.ListTunnels(ctx, cloudflare.AccountIdentifier(accID), params)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed to fetch Tunnel: %w", err))
 	}
@@ -71,6 +83,7 @@ func dataSourceCloudflareTunnelRead(ctx context.Context, d *schema.ResourceData,
 
 	d.SetId(tunnel.ID)
 	d.Set("status", tunnel.Status)
+	d.Set("is_deleted", tunnel.DeletedAt != nil)
 	d.Set("id", tunnel.ID)
 	d.Set("tunnel_type", tunnel.TunnelType)
 	d.Set("remote_config", tunnel.RemoteConfig)
