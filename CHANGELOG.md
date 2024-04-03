@@ -7,6 +7,7 @@ BREAKING CHANGES:
 ENHANCEMENTS:
 
 * datasource/cloudflare_tunnel: Add the option to filter deleted tunnels ([#3201](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3201))
+* resource/cloudflare_teams_rule: Add support for resolver policies ([#3198](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3198))
 
 DEPENDENCIES:
 
