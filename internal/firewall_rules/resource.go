@@ -102,8 +102,9 @@ func (r *FirewallRulesResource) Read(ctx context.Context, req resource.ReadReque
 	_, err := r.client.Firewall.Rules.Get(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		data.ID.ValueString(),
-		firewall.RuleGetParams{},
+		firewall.RuleGetParams{
+			PathID: cloudflare.F(data.ID.ValueString()),
+		},
 		option.WithResponseBodyInto(&env),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -13,6 +13,7 @@ type FirewallRulesResultEnvelope struct {
 type FirewallRulesModel struct {
 	ZoneIdentifier types.String              `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String              `tfsdk:"id" path:"id"`
+	PathID         types.String              `tfsdk:"path_id" path:"path_id"`
 	Action         types.String              `tfsdk:"action" json:"action"`
 	Filter         *FirewallRulesFilterModel `tfsdk:"filter" json:"filter"`
 	Paused         types.Bool                `tfsdk:"paused" json:"paused"`

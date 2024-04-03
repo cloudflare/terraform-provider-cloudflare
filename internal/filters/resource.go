@@ -166,6 +166,7 @@ func (r *FiltersResource) Delete(ctx context.Context, req resource.DeleteRequest
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
+		filters.FilterDeleteParams{},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 

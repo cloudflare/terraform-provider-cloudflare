@@ -23,6 +23,10 @@ func (r FirewallRulesResource) Schema(ctx context.Context, req resource.SchemaRe
 				Description: "The unique identifier of the firewall rule.",
 				Optional:    true,
 			},
+			"path_id": schema.StringAttribute{
+				Description: "The unique identifier of the firewall rule.",
+				Required:    true,
+			},
 			"action": schema.StringAttribute{
 				Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
 				Required:    true,
