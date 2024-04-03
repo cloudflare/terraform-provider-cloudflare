@@ -204,7 +204,7 @@ var teamsRuleSettings = map[string]*schema.Schema{
 	"resolve_dns_through_cloudflare": {
 		Type:        schema.TypeBool,
 		Optional:    true,
-		Description: "Configure whether resolver policy targets Cloudflare DNS.",
+		Description: "Enable sending queries that match the resolver policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when `dns_resolvers` are specified.",
 	},
 	"dns_resolvers": {
 		Type:     schema.TypeList,
@@ -339,7 +339,7 @@ var teamsDnsResolverSettings = map[string]*schema.Schema{
 		Elem: &schema.Resource{
 			Schema: teamsDnsResolverAddress,
 		},
-		Description: "IPv4 resolvers",
+		Description: "IPv4 resolvers.",
 	},
 	"ipv6": {
 		Type:     schema.TypeList,
@@ -347,7 +347,7 @@ var teamsDnsResolverSettings = map[string]*schema.Schema{
 		Elem: &schema.Resource{
 			Schema: teamsDnsResolverAddress,
 		},
-		Description: "IPv6 resolvers",
+		Description: "IPv6 resolvers.",
 	},
 }
 
@@ -355,22 +355,22 @@ var teamsDnsResolverAddress = map[string]*schema.Schema{
 	"ip": {
 		Type:        schema.TypeString,
 		Required:    true,
-		Description: "Resolver IP address.",
+		Description: "The IPv4 or IPv6 address of the upstream resolver.",
 	},
 	"port": {
 		Type:        schema.TypeInt,
 		Optional:    true,
 		Default:     53,
-		Description: "Resolver port.",
+		Description: "A port number to use for the upstream resolver.",
 	},
 	"vnet_id": {
 		Type:        schema.TypeString,
 		Optional:    true,
-		Description: "Virtual Network ID.",
+		Description: "specify a virtual network for this resolver. Uses default virtual network id if omitted.",
 	},
 	"route_through_private_network": {
 		Type:        schema.TypeBool,
 		Optional:    true,
-		Description: "Whether to use a private network.",
+		Description: "Whether to connect to this resolver over a private network. Must be set when `vnet_id` is set.",
 	},
 }

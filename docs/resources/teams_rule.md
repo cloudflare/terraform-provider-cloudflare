@@ -73,7 +73,7 @@ Optional:
 - `override_host` (String) The host to override matching DNS queries with.
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
 - `payload_log` (Block List, Max: 1) Configure DLP Payload Logging settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--payload_log))
-- `resolve_dns_through_cloudflare` (Boolean) Configure whether resolver policy targets Cloudflare DNS.
+- `resolve_dns_through_cloudflare` (Boolean) Enable sending queries that match the resolver policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when `dns_resolvers` are specified.
 - `untrusted_cert` (Block List, Max: 1) Configure untrusted certificate settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--untrusted_cert))
 
 <a id="nestedblock--rule_settings--audit_ssh"></a>
@@ -118,13 +118,13 @@ Optional:
 
 Required:
 
-- `ip` (String) Resolver IP address.
+- `ip` (String) The IPv4 or IPv6 address of the upstream resolver.
 
 Optional:
 
-- `port` (Number) Resolver port. Defaults to `53`.
-- `route_through_private_network` (Boolean) Whether to use a private network.
-- `vnet_id` (String) Virtual Network ID.
+- `port` (Number) A port number to use for the upstream resolver. Defaults to `53`.
+- `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when `vnet_id` is set.
+- `vnet_id` (String) specify a virtual network for this resolver. Uses default virtual network id if omitted.
 
 
 <a id="nestedblock--rule_settings--dns_resolvers--ipv6"></a>
@@ -132,13 +132,13 @@ Optional:
 
 Required:
 
-- `ip` (String) Resolver IP address.
+- `ip` (String) The IPv4 or IPv6 address of the upstream resolver.
 
 Optional:
 
-- `port` (Number) Resolver port. Defaults to `53`.
-- `route_through_private_network` (Boolean) Whether to use a private network.
-- `vnet_id` (String) Virtual Network ID.
+- `port` (Number) A port number to use for the upstream resolver. Defaults to `53`.
+- `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when `vnet_id` is set.
+- `vnet_id` (String) specify a virtual network for this resolver. Uses default virtual network id if omitted.
 
 
 
