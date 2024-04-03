@@ -1,4 +1,6 @@
-## 4.29.0 (Unreleased)
+## 4.30.0 (Unreleased)
+
+## 4.29.0 (April 3rd, 2024)
 
 BREAKING CHANGES:
 
