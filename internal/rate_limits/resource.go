@@ -166,6 +166,7 @@ func (r *RateLimitsResource) Delete(ctx context.Context, req resource.DeleteRequ
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
+		rate_limits.RateLimitDeleteParams{},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 
