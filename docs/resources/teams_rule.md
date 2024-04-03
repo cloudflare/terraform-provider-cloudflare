@@ -64,6 +64,7 @@ Optional:
 - `block_page_reason` (String) The displayed reason for a user being blocked.
 - `bypass_parent_rule` (Boolean) Allow child MSP accounts to bypass their parent's rule.
 - `check_session` (Block List, Max: 1) Configure how session check behaves. (see [below for nested schema](#nestedblock--rule_settings--check_session))
+- `dns_resolvers` (Block List, Max: 1) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers))
 - `egress` (Block List, Max: 1) Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs. (see [below for nested schema](#nestedblock--rule_settings--egress))
 - `insecure_disable_dnssec_validation` (Boolean) Disable DNSSEC validation (must be Allow rule).
 - `ip_categories` (Boolean) Turns on IP category based filter on dns if the rule contains dns category checks.
@@ -72,6 +73,7 @@ Optional:
 - `override_host` (String) The host to override matching DNS queries with.
 - `override_ips` (List of String) The IPs to override matching DNS queries with.
 - `payload_log` (Block List, Max: 1) Configure DLP Payload Logging settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--payload_log))
+- `resolve_dns_through_cloudflare` (Boolean) Enable sending queries that match the resolver policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when `dns_resolvers` are specified.
 - `untrusted_cert` (Block List, Max: 1) Configure untrusted certificate settings for this rule. (see [below for nested schema](#nestedblock--rule_settings--untrusted_cert))
 
 <a id="nestedblock--rule_settings--audit_ssh"></a>
@@ -101,6 +103,43 @@ Required:
 
 - `duration` (String) Configure how fresh the session needs to be to be considered valid.
 - `enforce` (Boolean) Enable session enforcement for this rule.
+
+
+<a id="nestedblock--rule_settings--dns_resolvers"></a>
+### Nested Schema for `rule_settings.dns_resolvers`
+
+Optional:
+
+- `ipv4` (Block List) IPv4 resolvers. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers--ipv4))
+- `ipv6` (Block List) IPv6 resolvers. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers--ipv6))
+
+<a id="nestedblock--rule_settings--dns_resolvers--ipv4"></a>
+### Nested Schema for `rule_settings.dns_resolvers.ipv4`
+
+Required:
+
+- `ip` (String) The IPv4 or IPv6 address of the upstream resolver.
+
+Optional:
+
+- `port` (Number) A port number to use for the upstream resolver. Defaults to `53`.
+- `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when `vnet_id` is set.
+- `vnet_id` (String) specify a virtual network for this resolver. Uses default virtual network id if omitted.
+
+
+<a id="nestedblock--rule_settings--dns_resolvers--ipv6"></a>
+### Nested Schema for `rule_settings.dns_resolvers.ipv6`
+
+Required:
+
+- `ip` (String) The IPv4 or IPv6 address of the upstream resolver.
+
+Optional:
+
+- `port` (Number) A port number to use for the upstream resolver. Defaults to `53`.
+- `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when `vnet_id` is set.
+- `vnet_id` (String) specify a virtual network for this resolver. Uses default virtual network id if omitted.
+
 
 
 <a id="nestedblock--rule_settings--egress"></a>
