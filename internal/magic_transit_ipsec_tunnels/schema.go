@@ -35,7 +35,7 @@ func (r MagicTransitIPSECTunnelsResource) Schema(ctx context.Context, req resour
 				Required:    true,
 			},
 			"customer_endpoint": schema.StringAttribute{
-				Description: "The IP address assigned to the customer side of the IPsec tunnel.",
+				Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
@@ -113,7 +113,7 @@ func (r MagicTransitIPSECTunnelsResource) Schema(ctx context.Context, req resour
 							Computed:    true,
 						},
 						"customer_endpoint": schema.StringAttribute{
-							Description: "The IP address assigned to the customer side of the IPsec tunnel.",
+							Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
 							Optional:    true,
 						},
 						"description": schema.StringAttribute{
