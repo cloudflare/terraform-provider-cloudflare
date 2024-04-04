@@ -71,7 +71,7 @@ func (r *DNSRecordsResource) Create(ctx context.Context, req resource.CreateRequ
 	env := DNSRecordsResultEnvelope{*data}
 	_, err = r.client.DNS.Records.New(
 		ctx,
-		dns.RecordNewParamsDNSRecordsARecord{
+		dns.RecordNewParamsARecord{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -138,7 +138,7 @@ func (r *DNSRecordsResource) Update(ctx context.Context, req resource.UpdateRequ
 	_, err = r.client.DNS.Records.Update(
 		ctx,
 		data.DNSRecordID.ValueString(),
-		dns.RecordUpdateParamsDNSRecordsARecord{
+		dns.RecordUpdateParamsARecord{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
