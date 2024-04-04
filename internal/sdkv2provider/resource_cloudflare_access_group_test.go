@@ -3,13 +3,11 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -19,53 +17,6 @@ func init() {
 		Name: "cloudflare_access_group",
 		F:    testSweepCloudflareAccessApplications,
 	})
-}
-
-func testSweepCloudflareAccessGroups(r string) error {
-	ctx := context.Background()
-
-	client, clientErr := sharedClient()
-	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
-	}
-
-	// Zone level Access Groups
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	zoneAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessGroupsParams{})
-	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Groups: %s", err))
-	}
-
-	if len(zoneAccessGroups) == 0 {
-		log.Print("[DEBUG] No Cloudflare zone level Access Groups to sweep")
-		return nil
-	}
-
-	for _, accessGroup := range zoneAccessGroups {
-		if err := client.DeleteAccessGroup(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessGroup.ID); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Group %s", accessGroup.ID))
-		}
-	}
-
-	// Account level Access Groups
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	accountAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessGroupsParams{})
-	if err != nil {
-		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Groups: %s", err))
-	}
-
-	if len(accountAccessGroups) == 0 {
-		log.Print("[DEBUG] No Cloudflare account level Access Groups to sweep")
-		return nil
-	}
-
-	for _, accessGroup := range accountAccessGroups {
-		if err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(accountID), accessGroup.ID); err != nil {
-			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Group %s", accessGroup.ID))
-		}
-	}
-
-	return nil
 }
 
 var (
@@ -257,6 +208,9 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.0", email),
 					resource.TestCheckResourceAttr(name, "require.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.0", "common"),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.1", "name"),
+					resource.TestCheckNoResourceAttr(name, "include.0.common_name.0"),
 				),
 			},
 		},
@@ -389,6 +343,39 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.T) {
+	var before, after cloudflare.AccessGroup
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigBasicWithCommonName(rnd, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &before),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigBasicWithCommonNames(rnd, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
+					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.0", "common"),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.1", "name"),
+					resource.TestCheckNoResourceAttr(name, "include.0.common_name.0"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessGroupConfigBasic(resourceName string, email string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
@@ -483,6 +470,7 @@ resource "cloudflare_access_group" "%[1]s" {
   include {
     email = ["%[3]s"]
 	email_domain = ["example.com"]
+	common_names = ["common", "name"]
   }
 
   require {
@@ -550,6 +538,30 @@ resource "cloudflare_access_group" "%[2]s" {
     }
   }
 }`, accountID, rnd, authCtxID, authCtxACID)
+}
+
+func testAccCloudflareAccessGroupConfigBasicWithCommonName(resourceName string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_group" "%[1]s" {
+  %[2]s_id = "%[3]s"
+  name     = "%[1]s"
+
+  include {
+    common_name = "common"
+  }
+}`, resourceName, identifier.Type, identifier.Identifier)
+}
+
+func testAccCloudflareAccessGroupConfigBasicWithCommonNames(resourceName string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_group" "%[1]s" {
+  %[2]s_id = "%[3]s"
+  name     = "%[1]s"
+
+  include {
+    common_names = ["common", "name"]
+  }
+}`, resourceName, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {

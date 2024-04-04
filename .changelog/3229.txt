@@ -1,0 +1,6 @@
+```release-note:enhancement
+resource/cloudflare_access_policy: added support for common_names rule list type to allow for more than one common_name rule in a policy block
+```
+```release-note:enhancement
+resource/cloudflare_access_group: added support for common_names rule list type to allow for more than one common_name rule in a policy block
+```
