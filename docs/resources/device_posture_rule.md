@@ -39,7 +39,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `client_certificate`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `sentinelone`, `kolide`, `tanium_s2s`, `intune`, `sentinelone_s2s`.
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `client_certificate`, `client_certificate_v2`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `sentinelone`, `kolide`, `tanium_s2s`, `intune`, `sentinelone_s2s`.
 
 ### Optional
 
@@ -62,6 +62,7 @@ Optional:
 - `active_threats` (Number) The number of active threats from SentinelOne.
 - `certificate_id` (String) The UUID of a Cloudflare managed certificate.
 - `check_disks` (Set of String) Specific volume(s) to check for encryption.
+- `check_private_key` (Boolean) Confirm the certificate was not imported from another device.
 - `cn` (String) The common name for a certificate.
 - `compliance_status` (String) The workspace one device compliance status. Available values: `compliant`, `noncompliant`.
 - `connection_id` (String) The workspace one connection id.
@@ -70,11 +71,13 @@ Optional:
 - `eid_last_seen` (String) The datetime a device last seen in RFC 3339 format from Tanium.
 - `enabled` (Boolean) True if the firewall must be enabled.
 - `exists` (Boolean) Checks if the file should exist.
+- `extended_key_usage` (Set of String) List of values indicating purposes for which the certificate public key can be used. Available values: `clientAuth`, `emailProtection`.
 - `id` (String) The Teams List id. Required for `serial_number` and `unique_client_id` rule types.
 - `infected` (Boolean) True if SentinelOne device is infected.
 - `is_active` (Boolean) True if SentinelOne device is active.
 - `issue_count` (String) The number of issues for kolide.
 - `last_seen` (String) The duration of time that the host was last seen from Crowdstrike. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`.
+- `locations` (Block List) List of locations to check for client certificate posture check. (see [below for nested schema](#nestedblock--certificate_locations))
 - `network_status` (String) The network status from SentinelOne. Available values: `connected`, `disconnected`, `disconnecting`, `connecting`.
 - `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
@@ -100,6 +103,15 @@ Optional:
 Optional:
 
 - `platform` (String) The platform of the device. Available values: `windows`, `mac`, `linux`, `android`, `ios`, `chromeos`.
+
+
+<a id="nestedblock--certificate_locations"></a>
+### Nested Schema for `locations`
+
+Optional:
+
+- `paths` (Set of String) List of paths to check for client certificate.
+- `trust_stores` (Set of String) List of trust stores to check for client certificate. Available values: `system`, `user`.
 
 ## Import
 

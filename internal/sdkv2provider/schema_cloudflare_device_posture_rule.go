@@ -9,7 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 )
 
-var devicePostureRuleTypes = []string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "client_certificate", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune", "sentinelone_s2s"}
+var devicePostureRuleTypes = []string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "client_certificate", "client_certificate_v2", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune", "sentinelone_s2s"}
 
 func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
@@ -245,6 +245,43 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Type:        schema.TypeInt,
 						Optional:    true,
 						Description: "The total score from Tanium.",
+					},
+					"check_private_key": {
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Confirm the certificate was not imported from another device.",
+					},
+					"extended_key_usage": {
+						Type: schema.TypeSet,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+						Description: fmt.Sprintf("List of values indicating purposes for which the certificate public key can be used. %s", renderAvailableDocumentationValuesStringSlice([]string{"clientAuth", "emailProtection"})),
+					},
+					"locations": {
+						Type: schema.TypeMap,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"paths": {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+									Description: "List of paths to check for client certificate rule.",
+								},
+								"trust_stores": {
+									Type:     schema.TypeString,
+									Optional: true,
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+									Description: fmt.Sprintf("List of trust stores to check for client certificate rule. %s", renderAvailableDocumentationValuesStringSlice([]string{"system", "user"})),
+								},
+							},
+						},
+						Optional:    true,
+						Description: "List of locations to check for client certificate.",
 					},
 				},
 			},

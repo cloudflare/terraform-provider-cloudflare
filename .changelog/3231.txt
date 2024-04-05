@@ -1,0 +1,4 @@
+
+```release-note:enhancement
+resource/cloudflare_device_posture_rule: add ability to create client_certificate_v2 posture rule
+```
