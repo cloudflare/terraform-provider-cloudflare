@@ -9,13 +9,10 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-terraform/internal/dns_records"
 	"github.com/cloudflare/cloudflare-terraform/internal/email_routing_rules"
-	"github.com/cloudflare/cloudflare-terraform/internal/filters"
-	"github.com/cloudflare/cloudflare-terraform/internal/firewall_rules"
 	"github.com/cloudflare/cloudflare-terraform/internal/logpush_jobs"
 	"github.com/cloudflare/cloudflare-terraform/internal/magic_transit_gre_tunnels"
 	"github.com/cloudflare/cloudflare-terraform/internal/magic_transit_ipsec_tunnels"
 	"github.com/cloudflare/cloudflare-terraform/internal/pagerules"
-	"github.com/cloudflare/cloudflare-terraform/internal/rate_limits"
 	"github.com/cloudflare/cloudflare-terraform/internal/rules_lists"
 	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms"
 	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms_events"
@@ -110,11 +107,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 	return []func() resource.Resource{
 		dns_records.NewResource,
 		email_routing_rules.NewResource,
-		filters.NewResource,
-		firewall_rules.NewResource,
 		logpush_jobs.NewResource,
 		pagerules.NewResource,
-		rate_limits.NewResource,
 		waiting_rooms.NewResource,
 		waiting_rooms_events.NewResource,
 		workers_routes.NewResource,
