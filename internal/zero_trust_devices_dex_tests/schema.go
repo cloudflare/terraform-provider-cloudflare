@@ -53,6 +53,29 @@ func (r ZeroTrustDevicesDEXTestsResource) Schema(ctx context.Context, req resour
 				Description: "Additional details about the test.",
 				Optional:    true,
 			},
+			"target_policies": schema.ListNestedAttribute{
+				Description: "Device settings profiles targeted by this test",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The id of the device settings profile",
+							Optional:    true,
+						},
+						"default": schema.BoolAttribute{
+							Description: "Whether the profile is the account default",
+							Optional:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "The name of the device settings profile",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"targeted": schema.BoolAttribute{
+				Optional: true,
+			},
 		},
 	}
 }
