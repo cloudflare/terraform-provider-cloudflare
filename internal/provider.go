@@ -19,6 +19,7 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/rules_lists"
 	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms"
 	"github.com/cloudflare/cloudflare-terraform/internal/waiting_rooms_events"
+	"github.com/cloudflare/cloudflare-terraform/internal/workers_routes"
 	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_applications"
 	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_certificates"
 	"github.com/cloudflare/cloudflare-terraform/internal/zero_trust_access_custom_pages"
@@ -116,6 +117,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		rate_limits.NewResource,
 		waiting_rooms.NewResource,
 		waiting_rooms_events.NewResource,
+		workers_routes.NewResource,
 		magic_transit_gre_tunnels.NewResource,
 		magic_transit_ipsec_tunnels.NewResource,
 		rules_lists.NewResource,
