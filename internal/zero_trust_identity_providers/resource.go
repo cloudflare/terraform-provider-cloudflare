@@ -71,7 +71,7 @@ func (r *ZeroTrustIdentityProvidersResource) Create(ctx context.Context, req res
 	env := ZeroTrustIdentityProvidersResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.IdentityProviders.New(
 		ctx,
-		zero_trust.IdentityProviderNewParamsAzureAd{
+		zero_trust.IdentityProviderNewParamsAzureAD{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -140,7 +140,7 @@ func (r *ZeroTrustIdentityProvidersResource) Update(ctx context.Context, req res
 	_, err = r.client.ZeroTrust.IdentityProviders.Update(
 		ctx,
 		data.UUID.ValueString(),
-		zero_trust.IdentityProviderUpdateParamsAzureAd{
+		zero_trust.IdentityProviderUpdateParamsAzureAD{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
