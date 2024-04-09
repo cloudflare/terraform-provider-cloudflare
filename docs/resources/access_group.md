@@ -90,6 +90,7 @@ Optional:
 - `azure` (Block List) (see [below for nested schema](#nestedblock--include--azure))
 - `certificate` (Boolean)
 - `common_name` (String)
+- `common_names` (List of String) Overflow field if you need to have multiple common_name rules in a single policy.  Use in place of the singular common_name field.
 - `device_posture` (List of String)
 - `email` (List of String)
 - `email_domain` (List of String)
@@ -184,6 +185,7 @@ Optional:
 - `azure` (Block List) (see [below for nested schema](#nestedblock--exclude--azure))
 - `certificate` (Boolean)
 - `common_name` (String)
+- `common_names` (List of String) Overflow field if you need to have multiple common_name rules in a single policy.  Use in place of the singular common_name field.
 - `device_posture` (List of String)
 - `email` (List of String)
 - `email_domain` (List of String)
@@ -278,6 +280,7 @@ Optional:
 - `azure` (Block List) (see [below for nested schema](#nestedblock--require--azure))
 - `certificate` (Boolean)
 - `common_name` (String)
+- `common_names` (List of String) Overflow field if you need to have multiple common_name rules in a single policy.  Use in place of the singular common_name field.
 - `device_posture` (List of String)
 - `email` (List of String)
 - `email_domain` (List of String)
