@@ -3,11 +3,13 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -15,8 +17,55 @@ import (
 func init() {
 	resource.AddTestSweepers("cloudflare_access_group", &resource.Sweeper{
 		Name: "cloudflare_access_group",
-		F:    testSweepCloudflareAccessApplications,
+		F:    testSweepCloudflareAccessGroups,
 	})
+}
+
+func testSweepCloudflareAccessGroups(r string) error {
+	ctx := context.Background()
+
+	client, clientErr := sharedClient()
+	if clientErr != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
+	}
+
+	// Zone level Access Groups
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	zoneAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListAccessGroupsParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch zone level Access Groups: %s", err))
+	}
+
+	if len(zoneAccessGroups) == 0 {
+		log.Print("[DEBUG] No Cloudflare zone level Access Groups to sweep")
+		return nil
+	}
+
+	for _, accessGroup := range zoneAccessGroups {
+		if err := client.DeleteAccessGroup(context.Background(), cloudflare.ZoneIdentifier(zoneID), accessGroup.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete zone level Access Group %s", accessGroup.ID))
+		}
+	}
+
+	// Account level Access Groups
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountAccessGroups, _, err := client.ListAccessGroups(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.ListAccessGroupsParams{})
+	if err != nil {
+		tflog.Error(ctx, fmt.Sprintf("Failed to fetch account level Access Groups: %s", err))
+	}
+
+	if len(accountAccessGroups) == 0 {
+		log.Print("[DEBUG] No Cloudflare account level Access Groups to sweep")
+		return nil
+	}
+
+	for _, accessGroup := range accountAccessGroups {
+		if err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(accountID), accessGroup.ID); err != nil {
+			tflog.Error(ctx, fmt.Sprintf("Failed to delete account level Access Group %s", accessGroup.ID))
+		}
+	}
+
+	return nil
 }
 
 var (
