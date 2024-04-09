@@ -372,6 +372,11 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					group = append(group, cloudflare.AccessGroupDevicePosture{DevicePosture: struct {
 						ID string `json:"integration_uid"`
 					}{ID: value.(string)}})
+
+				case "common_names":
+					group = append(group, cloudflare.AccessGroupCertificateCommonName{CommonName: struct {
+						CommonName string `json:"common_name"`
+					}{CommonName: value.(string)}})
 				}
 			}
 		}
@@ -417,6 +422,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	authCtxID := ""
 	authCtxIDPID := ""
 	authCtxACID := ""
+	commonNames := []string{}
 
 	for _, group := range accessGroup {
 		for groupKey, groupValue := range group.(map[string]interface{}) {
@@ -448,8 +454,17 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 					serviceTokens = append(serviceTokens, serviceToken.(string))
 				}
 			case "common_name":
-				for _, name := range groupValue.(map[string]interface{}) {
-					commonName = name.(string)
+				// if this isn't empty then we know we have multiple common name rules and need to move them to common_names
+				if commonName != "" {
+					commonNames = []string{commonName}
+					commonName = ""
+					for _, name := range groupValue.(map[string]interface{}) {
+						commonNames = append(commonNames, name.(string))
+					}
+				} else {
+					for _, name := range groupValue.(map[string]interface{}) {
+						commonName = name.(string)
+					}
 				}
 			case "auth_method":
 				for _, method := range groupValue.(map[string]interface{}) {
@@ -639,6 +654,10 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 
 	if len(devicePostureRuleIDs) > 0 {
 		groupMap["device_posture"] = devicePostureRuleIDs
+	}
+
+	if len(commonNames) > 0 {
+		groupMap["common_names"] = commonNames
 	}
 
 	data = append(data, groupMap)
