@@ -64,7 +64,7 @@ type ZeroTrustAccessApplicationsSaasAppModel struct {
 	NameIDFormat                  types.String                                             `tfsdk:"name_id_format" json:"name_id_format"`
 	NameIDTransformJsonata        types.String                                             `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata"`
 	PublicKey                     types.String                                             `tfsdk:"public_key" json:"public_key"`
-	SamlAttributeTransformJsonata types.String                                             `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata"`
+	SAMLAttributeTransformJsonata types.String                                             `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata"`
 	SpEntityID                    types.String                                             `tfsdk:"sp_entity_id" json:"sp_entity_id"`
 	SSOEndpoint                   types.String                                             `tfsdk:"sso_endpoint" json:"sso_endpoint"`
 	UpdatedAt                     types.String                                             `tfsdk:"updated_at" json:"updated_at,computed"`
