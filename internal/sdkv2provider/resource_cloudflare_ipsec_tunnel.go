@@ -103,6 +103,7 @@ func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("health_check_direction", tunnel.HealthCheck.Direction)
 	d.Set("health_check_rate", tunnel.HealthCheck.Rate)
 	d.Set("allow_null_cipher", tunnel.AllowNullCipher)
+	d.Set("replay_protection", tunnel.ReplayProtection)
 
 	// Set Remote Identities
 	d.Set("hex_id", tunnel.RemoteIdentities.HexID)
@@ -176,6 +177,11 @@ func IPsecTunnelFromResource(d *schema.ResourceData) cloudflare.MagicTransitIPse
 	allowNullCipher, allowNullCipherOk := d.GetOk("allow_null_cipher")
 	if allowNullCipherOk {
 		tunnel.AllowNullCipher = allowNullCipher.(bool)
+	}
+
+	replayProtection, replayProtectionOk := d.GetOk("replay_protection")
+	if replayProtectionOk {
+		tunnel.ReplayProtection = replayProtection.(bool)
 	}
 
 	healthcheck := IPsecTunnelHealthcheckFromResource(d)
