@@ -1,3 +1,0 @@
-```release-note:new-data-source
-Add support for logpush page_shield_events
-```
