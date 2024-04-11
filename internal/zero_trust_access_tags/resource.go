@@ -72,7 +72,7 @@ func (r *ZeroTrustAccessTagsResource) Create(ctx context.Context, req resource.C
 	_, err = r.client.ZeroTrust.Access.Tags.New(
 		ctx,
 		data.Identifier.ValueString(),
-		zero_trust.AccessTagNewParams{},
+		zero_trust.TagNewParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -136,7 +136,7 @@ func (r *ZeroTrustAccessTagsResource) Update(ctx context.Context, req resource.U
 		ctx,
 		data.Identifier.ValueString(),
 		data.TagName.ValueString(),
-		zero_trust.AccessTagUpdateParams{},
+		zero_trust.TagUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

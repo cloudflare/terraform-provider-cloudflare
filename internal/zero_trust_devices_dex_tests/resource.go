@@ -71,7 +71,7 @@ func (r *ZeroTrustDevicesDEXTestsResource) Create(ctx context.Context, req resou
 	env := ZeroTrustDevicesDEXTestsResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Devices.DEXTests.New(
 		ctx,
-		zero_trust.DeviceDEXTestNewParams{
+		zero_trust.DEXTestNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -103,7 +103,7 @@ func (r *ZeroTrustDevicesDEXTestsResource) Read(ctx context.Context, req resourc
 	_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
 		ctx,
 		data.DEXTestID.ValueString(),
-		zero_trust.DeviceDEXTestGetParams{
+		zero_trust.DEXTestGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&env),
@@ -138,7 +138,7 @@ func (r *ZeroTrustDevicesDEXTestsResource) Update(ctx context.Context, req resou
 	_, err = r.client.ZeroTrust.Devices.DEXTests.Update(
 		ctx,
 		data.DEXTestID.ValueString(),
-		zero_trust.DeviceDEXTestUpdateParams{
+		zero_trust.DEXTestUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -169,7 +169,7 @@ func (r *ZeroTrustDevicesDEXTestsResource) Delete(ctx context.Context, req resou
 	_, err := r.client.ZeroTrust.Devices.DEXTests.Delete(
 		ctx,
 		data.DEXTestID.ValueString(),
-		zero_trust.DeviceDEXTestDeleteParams{
+		zero_trust.DEXTestDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),

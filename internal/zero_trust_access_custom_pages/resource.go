@@ -72,7 +72,7 @@ func (r *ZeroTrustAccessCustomPagesResource) Create(ctx context.Context, req res
 	_, err = r.client.ZeroTrust.Access.CustomPages.New(
 		ctx,
 		data.Identifier.ValueString(),
-		zero_trust.AccessCustomPageNewParams{},
+		zero_trust.CustomPageNewParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -136,7 +136,7 @@ func (r *ZeroTrustAccessCustomPagesResource) Update(ctx context.Context, req res
 		ctx,
 		data.Identifier.ValueString(),
 		data.UUID.ValueString(),
-		zero_trust.AccessCustomPageUpdateParams{},
+		zero_trust.CustomPageUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
