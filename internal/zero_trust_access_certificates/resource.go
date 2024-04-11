@@ -71,7 +71,7 @@ func (r *ZeroTrustAccessCertificatesResource) Create(ctx context.Context, req re
 	env := ZeroTrustAccessCertificatesResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Certificates.New(
 		ctx,
-		zero_trust.CertificateNewParams{
+		zero_trust.AccessCertificateNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -104,7 +104,7 @@ func (r *ZeroTrustAccessCertificatesResource) Read(ctx context.Context, req reso
 	_, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.UUID.ValueString(),
-		zero_trust.CertificateGetParams{
+		zero_trust.AccessCertificateGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -140,7 +140,7 @@ func (r *ZeroTrustAccessCertificatesResource) Update(ctx context.Context, req re
 	_, err = r.client.ZeroTrust.Access.Certificates.Update(
 		ctx,
 		data.UUID.ValueString(),
-		zero_trust.CertificateUpdateParams{
+		zero_trust.AccessCertificateUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -172,7 +172,7 @@ func (r *ZeroTrustAccessCertificatesResource) Delete(ctx context.Context, req re
 	_, err := r.client.ZeroTrust.Access.Certificates.Delete(
 		ctx,
 		data.UUID.ValueString(),
-		zero_trust.CertificateDeleteParams{
+		zero_trust.AccessCertificateDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
