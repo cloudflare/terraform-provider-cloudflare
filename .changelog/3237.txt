@@ -1,0 +1,3 @@
+```release-note:enhancement
+cloudflare/resource_logpush_job: Add support for `page_shield_events`
+```
