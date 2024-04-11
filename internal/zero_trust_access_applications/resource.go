@@ -71,7 +71,7 @@ func (r *ZeroTrustAccessApplicationsResource) Create(ctx context.Context, req re
 	env := ZeroTrustAccessApplicationsResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Applications.New(
 		ctx,
-		zero_trust.ApplicationNewParamsSelfHostedApplication{
+		zero_trust.AccessApplicationNewParamsSelfHostedApplication{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -104,7 +104,7 @@ func (r *ZeroTrustAccessApplicationsResource) Read(ctx context.Context, req reso
 	_, err := r.client.ZeroTrust.Access.Applications.Get(
 		ctx,
 		data.AppID.ValueString(),
-		zero_trust.ApplicationGetParams{
+		zero_trust.AccessApplicationGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -140,7 +140,7 @@ func (r *ZeroTrustAccessApplicationsResource) Update(ctx context.Context, req re
 	_, err = r.client.ZeroTrust.Access.Applications.Update(
 		ctx,
 		data.AppID.ValueString(),
-		zero_trust.ApplicationUpdateParamsSelfHostedApplication{
+		zero_trust.AccessApplicationUpdateParamsSelfHostedApplication{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -172,7 +172,7 @@ func (r *ZeroTrustAccessApplicationsResource) Delete(ctx context.Context, req re
 	_, err := r.client.ZeroTrust.Access.Applications.Delete(
 		ctx,
 		data.AppID.ValueString(),
-		zero_trust.ApplicationDeleteParams{
+		zero_trust.AccessApplicationDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
