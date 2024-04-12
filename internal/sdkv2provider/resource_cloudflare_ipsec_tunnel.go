@@ -181,7 +181,7 @@ func IPsecTunnelFromResource(d *schema.ResourceData) cloudflare.MagicTransitIPse
 
 	replayProtection, replayProtectionOk := d.GetOk("replay_protection")
 	if replayProtectionOk {
-		tunnel.ReplayProtection = replayProtection.(bool)
+		tunnel.ReplayProtection = replayProtection.(*bool)
 	}
 
 	healthcheck := IPsecTunnelHealthcheckFromResource(d)
