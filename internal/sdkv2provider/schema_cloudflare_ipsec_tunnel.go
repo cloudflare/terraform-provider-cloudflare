@@ -91,7 +91,7 @@ func resourceCloudflareIPsecTunnelSchema() map[string]*schema.Schema {
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Default:     false,
-			Description: "Specifies if this tunnel may use a null cipher (ENCR_NULL) in Phase 2.",
+			Description: "Specifies if replay protection is enabled.",
 		},
 		"hex_id": {
 			Type:        schema.TypeString,
