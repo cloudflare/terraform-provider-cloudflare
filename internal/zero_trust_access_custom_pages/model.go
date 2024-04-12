@@ -18,6 +18,6 @@ type ZeroTrustAccessCustomPagesModel struct {
 	Type       types.String `tfsdk:"type" json:"type"`
 	AppCount   types.Int64  `tfsdk:"app_count" json:"app_count"`
 	CreatedAt  types.String `tfsdk:"created_at" json:"created_at,computed"`
-	Uid        types.String `tfsdk:"uid" json:"uid,computed"`
+	UID        types.String `tfsdk:"uid" json:"uid,computed"`
 	UpdatedAt  types.String `tfsdk:"updated_at" json:"updated_at,computed"`
 }
