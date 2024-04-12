@@ -103,7 +103,7 @@ func resourceCloudflareIPsecTunnelRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("health_check_direction", tunnel.HealthCheck.Direction)
 	d.Set("health_check_rate", tunnel.HealthCheck.Rate)
 	d.Set("allow_null_cipher", tunnel.AllowNullCipher)
-	d.Set("replay_protection", tunnel.ReplayProtection)
+	d.Set("replay_protection", &tunnel.ReplayProtection)
 
 	// Set Remote Identities
 	d.Set("hex_id", tunnel.RemoteIdentities.HexID)
@@ -179,9 +179,9 @@ func IPsecTunnelFromResource(d *schema.ResourceData) cloudflare.MagicTransitIPse
 		tunnel.AllowNullCipher = allowNullCipher.(bool)
 	}
 
-	replayProtection, replayProtectionOk := d.GetOk("replay_protection")
-	if replayProtectionOk {
-		tunnel.ReplayProtection = replayProtection.(*bool)
+	replayProtection := IPsecTunnelReplayProtectionFromResource(d)
+	if replayProtection != nil {
+		tunnel.ReplayProtection = replayProtection
 	}
 
 	healthcheck := IPsecTunnelHealthcheckFromResource(d)
@@ -190,6 +190,18 @@ func IPsecTunnelFromResource(d *schema.ResourceData) cloudflare.MagicTransitIPse
 	}
 
 	return tunnel
+}
+
+func IPsecTunnelReplayProtectionFromResource(d *schema.ResourceData) *bool {
+	replayProtection, replayProtectionOk := d.GetOk("replay_protection")
+	if replayProtectionOk {
+		replayProtectionAsBool := replayProtection.(bool)
+
+		// Need to indirect the bool value for MagicTransitIPsecTunnel struct
+		return &replayProtectionAsBool
+	}
+
+	return nil
 }
 
 func IPsecTunnelHealthcheckFromResource(d *schema.ResourceData) *cloudflare.MagicTransitTunnelHealthcheck {
