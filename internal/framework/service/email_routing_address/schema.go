@@ -15,7 +15,7 @@ func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.S
 		MarkdownDescription: heredoc.Doc(`
 			The [Email Routing Address](https://developers.cloudflare.com/email-routing/setup/email-routing-addresses/#destination-addresses) resource allows you to manage Cloudflare Email Routing Destination Addresses.
 	`),
-
+		Version: 1,
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				MarkdownDescription: consts.AccountIDSchemaDescription,
