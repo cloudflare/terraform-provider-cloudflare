@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/email_routing_rules"
 	"github.com/cloudflare/cloudflare-terraform/internal/filters"
 	"github.com/cloudflare/cloudflare-terraform/internal/firewall_rules"
+	"github.com/cloudflare/cloudflare-terraform/internal/hyperdrive_configs"
 	"github.com/cloudflare/cloudflare-terraform/internal/logpush_jobs"
 	"github.com/cloudflare/cloudflare-terraform/internal/magic_transit_gre_tunnels"
 	"github.com/cloudflare/cloudflare-terraform/internal/magic_transit_ipsec_tunnels"
@@ -125,6 +126,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_certificates.NewResource,
 		zero_trust_access_custom_pages.NewResource,
 		zero_trust_access_tags.NewResource,
+		hyperdrive_configs.NewResource,
 	}
 }
 
