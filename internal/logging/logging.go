@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2/option"
 
@@ -25,11 +26,13 @@ func Middleware(ctx context.Context) option.Middleware {
 }
 
 func LogRequest(ctx context.Context, req *http.Request) error {
+	lines := []string{"\n== Request ==", fmt.Sprintf("url: %s %s", req.Method, req.URL.Path)}
+
 	// Log headers
-	tflog.Warn(ctx, "Headers:")
+	lines = append(lines, "== Headers ==")
 	for name, values := range req.Header {
 		for _, value := range values {
-			tflog.Warn(ctx, fmt.Sprintf("%s: %s\n", name, value))
+			lines = append(lines, fmt.Sprintf("- %s: %s", name, value))
 		}
 	}
 
@@ -44,21 +47,23 @@ func LogRequest(ctx context.Context, req *http.Request) error {
 		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		// Log the body
-		tflog.Warn(ctx, fmt.Sprintf("Body: %s\n", string(bodyBytes)))
+		lines = append(lines, fmt.Sprintf("\n== Body ==\n%s\n", string(bodyBytes)))
 	}
+
+	tflog.Warn(ctx, strings.Join(lines, "\n"))
 
 	return nil
 }
 
 func LogResponse(ctx context.Context, resp *http.Response) error {
 	// Log the status code
-	tflog.Warn(ctx, fmt.Sprintf("Status: %s\n", resp.Status))
+	lines := []string{"\n== Response ==", fmt.Sprintf("status: %s", resp.Status)}
 
 	// Log headers
-	tflog.Warn(ctx, "Headers:")
+	lines = append(lines, "== Headers ==")
 	for name, values := range resp.Header {
 		for _, value := range values {
-			tflog.Warn(ctx, fmt.Sprintf("%s: %s\n", name, value))
+			lines = append(lines, fmt.Sprintf("- %s: %s", name, value))
 		}
 	}
 
@@ -71,8 +76,10 @@ func LogResponse(ctx context.Context, resp *http.Response) error {
 	// Restore the original body to the response so it can be read again
 	resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
+	lines = append(lines, fmt.Sprintf("\n== Body ==\n%s\n", string(bodyBytes)))
+
 	// Log the body
-	tflog.Warn(ctx, fmt.Sprintf("Body: %s\n", string(bodyBytes)))
+	tflog.Warn(ctx, strings.Join(lines, "\n"))
 
 	return nil
 }

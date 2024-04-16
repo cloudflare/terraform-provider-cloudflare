@@ -200,7 +200,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfValue.IsNull() {
 				return []byte("null"), nil
 			} else if tfValue.IsUnknown() {
-				return nil, fmt.Errorf("cannot serialize unknown value")
+				return nil, nil
 			} else {
 				return []byte(fmt.Sprintf("\"%s\"", tfValue.ValueString())), nil
 			}
@@ -213,7 +213,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfValue.IsNull() {
 				return []byte("null"), nil
 			} else if tfValue.IsUnknown() {
-				return nil, fmt.Errorf("cannot serialize unknown value")
+				return nil, nil
 			} else {
 				return []byte(fmt.Sprint(tfValue.ValueInt64())), nil
 			}
@@ -226,7 +226,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfValue.IsNull() {
 				return []byte("null"), nil
 			} else if tfValue.IsUnknown() {
-				return nil, fmt.Errorf("cannot serialize unknown value")
+				return nil, nil
 			} else {
 				return []byte(fmt.Sprint(tfValue.ValueBigFloat().Float64())), nil
 			}
@@ -239,7 +239,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfValue.IsNull() {
 				return []byte("null"), nil
 			} else if tfValue.IsUnknown() {
-				return nil, fmt.Errorf("cannot serialize unknown value")
+				return nil, nil
 			} else {
 				return []byte(fmt.Sprint(tfValue.ValueFloat64())), nil
 			}
@@ -252,7 +252,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfValue.IsNull() {
 				return []byte("null"), nil
 			} else if tfValue.IsUnknown() {
-				return nil, fmt.Errorf("cannot serialize unknown value")
+				return nil, nil
 			} else {
 				return []byte(fmt.Sprint(tfValue.ValueBool())), nil
 			}
