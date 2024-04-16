@@ -29,6 +29,7 @@ type ZeroTrustAccessApplicationsModel struct {
 	HTTPOnlyCookieAttribute  types.Bool                                   `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute"`
 	LogoURL                  types.String                                 `tfsdk:"logo_url" json:"logo_url"`
 	Name                     types.String                                 `tfsdk:"name" json:"name"`
+	OptionsPreflightBypass   types.Bool                                   `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass"`
 	PathCookieAttribute      types.Bool                                   `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute"`
 	SameSiteCookieAttribute  types.String                                 `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute"`
 	SelfHostedDomains        types.String                                 `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
