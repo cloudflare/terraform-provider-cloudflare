@@ -14,10 +14,11 @@ import (
 func P[T any](v T) *T { return &v }
 
 type TfsdkStructs struct {
-	BoolValue   types.Bool           `tfsdk:"bool_value" json:"bool_value"`
-	StringValue types.String         `tfsdk:"string_value" json:"string_value"`
-	Data        *EmbeddedTfsdkStruct `tfsdk:"data" json:"data"`
-	FloatValue  types.Float64        `tfsdk:"float_value" json:"float_value"`
+	BoolValue     types.Bool           `tfsdk:"bool_value" json:"bool_value"`
+	StringValue   types.String         `tfsdk:"string_value" json:"string_value"`
+	Data          *EmbeddedTfsdkStruct `tfsdk:"data" json:"data"`
+	FloatValue    types.Float64        `tfsdk:"float_value" json:"float_value"`
+	OptionalArray *[]types.String      `tfsdk:"optional_array" json:"optional_array"`
 }
 
 type EmbeddedTfsdkStruct struct {
@@ -169,7 +170,7 @@ type DNSRecordsResultEnvelope struct {
 }
 
 type DNSRecordsModel struct {
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID  types.String `tfsdk:"zone_id" json:"zone_id"`
 	Content types.String `tfsdk:"content" json:"content"`
 	ID      types.String `tfsdk:"id" json:"id,computed"`
 }
@@ -373,15 +374,6 @@ var tests = map[string]struct {
 		},
 	},
 
-	"tfsdk_struct": {
-		`{"result":{"id":"7887590e1967befa70f48ffe9f61ce80","zone_id":"88281d6015751d6172e7313b0c665b5e","zone_name":"stlapi.com","name":"test_text_node_5.stlapi.com","type":"URI","content":"http://example.com/example.html\t20","priority":10,"proxiable":false,"proxied":false,"ttl":1,"locked":false,"data":{"content":"http://example.com/example.html","weight":20},"meta":{"auto_added":false,"managed_by_apps":false,"managed_by_argo_tunnel":false},"comment":"this is a test DNS record from terraform","tags":[],"created_on":"2024-03-14T18:30:43.769177Z","modified_on":"2024-03-14T18:30:43.769177Z"},"success":true,"errors":[],"messages":[]}`,
-		DNSRecordsResultEnvelope{DNSRecordsModel{
-			ZoneID:  types.StringValue("88281d6015751d6172e7313b0c665b5e"),
-			Content: types.StringValue("http://example.com/example.html\t20"),
-			ID:      types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
-		}},
-	},
-
 	"tfsdk_null_string": {"null", types.StringNull()},
 	"tfsdk_null_int":    {"null", types.Int64Null()},
 	"tfsdk_null_float":  {"null", types.Float64Null()},
@@ -396,23 +388,72 @@ var tests = map[string]struct {
 	"tfsdk_int_boolean_coerce": {"true", types.BoolValue(true)},
 	"tfsdk_float_1.54":         {"1.54", types.Float64Value(1.54)},
 	"tfsdk_float_1.89":         {"1.89", types.Float64Value(1.89)},
+	"tfsdk_array_ptr":          {"[\"hi\", null]", &[]types.String{types.StringValue("hi"), types.StringNull()}},
 
 	"embedded_tfsdk_struct": {
-		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"string_value":"string_value"}`,
+		`{"bool_value":true,"optional_array":["hi", "there"],"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"string_value":"string_value"}`,
 		TfsdkStructs{
-			BoolValue:   types.BoolValue(true),
-			StringValue: types.StringValue("string_value"),
-			FloatValue:  types.Float64Value(3.14),
+			BoolValue:     types.BoolValue(true),
+			StringValue:   types.StringValue("string_value"),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
 			Data: &EmbeddedTfsdkStruct{
 				EmbeddedString: types.StringValue("embedded_string_value"),
 				EmbeddedInt:    types.Int64Value(17),
 			},
 		},
 	},
+
+	"embedded_tfsdk_struct_nil": {
+		`{}`,
+		TfsdkStructs{
+			BoolValue:   types.BoolNull(),
+			StringValue: types.StringNull(),
+			FloatValue:  types.Float64Null(),
+		},
+	},
+}
+
+var decode_only_tests = map[string]struct {
+	buf string
+	val interface{}
+}{
+	"tfsdk_struct_decode": {
+		`{"result":{"id":"7887590e1967befa70f48ffe9f61ce80","zone_id":"88281d6015751d6172e7313b0c665b5e","zone_name":"stlapi.com","name":"test_text_node_5.stlapi.com","type":"URI","content":"http://example.com/example.html\t20","priority":10,"proxiable":false,"proxied":false,"ttl":1,"locked":false,"data":{"content":"http://example.com/example.html","weight":20},"meta":{"auto_added":false,"managed_by_apps":false,"managed_by_argo_tunnel":false},"comment":"this is a test DNS record from terraform","tags":[],"created_on":"2024-03-14T18:30:43.769177Z","modified_on":"2024-03-14T18:30:43.769177Z"},"success":true,"errors":[],"messages":[]}`,
+		DNSRecordsResultEnvelope{DNSRecordsModel{
+			ZoneID:  types.StringValue("88281d6015751d6172e7313b0c665b5e"),
+			Content: types.StringValue("http://example.com/example.html\t20"),
+			ID:      types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
+		}},
+	},
+}
+
+var encode_only_tests = map[string]struct {
+	buf string
+	val interface{}
+}{
+	"tfsdk_struct_encode": {
+		`{"result":{"content":"http://example.com/example.html` + "\t" + `20","zone_id":"88281d6015751d6172e7313b0c665b5e"}}`,
+		DNSRecordsResultEnvelope{DNSRecordsModel{
+			ZoneID:  types.StringValue("88281d6015751d6172e7313b0c665b5e"),
+			Content: types.StringValue("http://example.com/example.html\t20"),
+			ID:      types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
+		}},
+	},
+}
+
+func merge[T interface{}](test_array ...map[string]T) map[string]T {
+	out := make(map[string]T)
+	for _, tests := range test_array {
+		for name, t := range tests {
+			out[name] = t
+		}
+	}
+	return out
 }
 
 func TestDecode(t *testing.T) {
-	for name, test := range tests {
+	for name, test := range merge(tests, decode_only_tests) {
 		t.Run(name, func(t *testing.T) {
 			result := reflect.New(reflect.TypeOf(test.val))
 			if err := Unmarshal([]byte(test.buf), result.Interface()); err != nil {
@@ -426,7 +467,7 @@ func TestDecode(t *testing.T) {
 }
 
 func TestEncode(t *testing.T) {
-	for name, test := range tests {
+	for name, test := range merge(tests, encode_only_tests) {
 		if strings.HasSuffix(name, "_coerce") {
 			continue
 		}
@@ -436,7 +477,7 @@ func TestEncode(t *testing.T) {
 				t.Fatalf("serialization of %v failed with error %v", test.val, err)
 			}
 			if string(raw) != test.buf {
-				t.Fatalf("expected %+#v to serialize to %s but got %s", test.val, test.buf, string(raw))
+				t.Fatalf("expected %+#v to serialize to \n%s\n but got \n%s\n", test.val, test.buf, string(raw))
 			}
 		})
 	}
