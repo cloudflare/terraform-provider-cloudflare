@@ -123,10 +123,6 @@ func (r ZeroTrustAccessApplicationsResource) Schema(ctx context.Context, req res
 				Description: "The name of the application.",
 				Optional:    true,
 			},
-			"options_preflight_bypass": schema.BoolAttribute{
-				Description: "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
-				Optional:    true,
-			},
 			"path_cookie_attribute": schema.BoolAttribute{
 				Description: "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
 				Optional:    true,
