@@ -181,6 +181,31 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigEmailList(rnd, cloudflare.ZoneIdentifier(zoneID)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "require.0.email_list.0", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
+					resource.TestCheckResourceAttr(name, "require.0.email_list.1", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
@@ -609,6 +634,18 @@ resource "cloudflare_access_group" "%[1]s" {
 
   include {
     common_names = ["common", "name"]
+  }
+}`, resourceName, identifier.Type, identifier.Identifier)
+}
+
+func testAccCloudflareAccessGroupConfigEmailList(resourceName string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_group" "%[1]s" {
+  %[2]s_id = "%[3]s"
+  name     = "%[1]s"
+
+  require {
+		email_list = ["e3a0f205-c525-4e48-a293-ba5d1f00e638", "5d54cd30-ce52-46e4-9a46-a47887e1a167"]
   }
 }`, resourceName, identifier.Type, identifier.Identifier)
 }
