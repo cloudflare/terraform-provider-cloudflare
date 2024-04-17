@@ -128,7 +128,8 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 	config := buildHyperdriveConfigFromModel(data, caching)
 
 	updatedConfig, err := r.client.UpdateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateHyperdriveConfigParams{
-		Name: config.Name,
+		Name:         config.Name,
+		HyperdriveID: config.ID,
 		Origin: cloudflare.HyperdriveConfigOrigin{
 			Database: config.Origin.Database,
 			Password: config.Origin.Password,
@@ -180,6 +181,7 @@ func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource
 
 func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel, caching *HyperdriveConfigCachingModel) cloudflare.HyperdriveConfig {
 	built := cloudflare.HyperdriveConfig{
+		ID:   config.ID.ValueString(),
 		Name: config.Name.ValueString(),
 		Origin: cloudflare.HyperdriveConfigOrigin{
 			Database: config.Origin.Database.ValueString(),
