@@ -5,6 +5,7 @@ ENHANCEMENTS:
 * cloudflare/resource_logpush_job: Add support for `page_shield_events` ([#3237](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3237))
 * resource/cloudflare_access_group: added support for common_names rule list type to allow for more than one common_name rule in a policy block ([#3229](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3229))
 * resource/cloudflare_access_policy: added support for common_names rule list type to allow for more than one common_name rule in a policy block ([#3229](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3229))
+* resource/cloudflare_ipsec_tunnel: added support for replay_protection ([#3249](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3249))
 
 BUG FIXES:
 
