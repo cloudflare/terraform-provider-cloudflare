@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_email_routing_address: Make sure schema is correctly upgraded.
+```
