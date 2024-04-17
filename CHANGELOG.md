@@ -1,4 +1,6 @@
-## 4.30.0 (Unreleased)
+## 4.31.0 (Unreleased)
+
+## 4.30.0 (April 17th, 2024)
 
 ENHANCEMENTS:
 
