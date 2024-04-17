@@ -41,9 +41,9 @@ type CloudflareProvider struct {
 // CloudflareProviderModel describes the provider data model.
 type CloudflareProviderModel struct {
 	BaseURL        types.String `tfsdk:"base_url" json:"base_url"`
+	APIToken       types.String `tfsdk:"api_token" json:"api_token"`
 	APIKey         types.String `tfsdk:"api_key" json:"api_key"`
 	APIEmail       types.String `tfsdk:"api_email" json:"api_email"`
-	APIToken       types.String `tfsdk:"api_token" json:"api_token"`
 	UserServiceKey types.String `tfsdk:"user_service_key" json:"user_service_key"`
 }
 
@@ -59,13 +59,13 @@ func (p CloudflareProvider) Schema(ctx context.Context, req provider.SchemaReque
 				Description: "Set the base url that the provider connects to. This can be used for testing in other environments.",
 				Optional:    true,
 			},
+			"api_token": schema.StringAttribute{
+				Optional: true,
+			},
 			"api_key": schema.StringAttribute{
 				Optional: true,
 			},
 			"api_email": schema.StringAttribute{
-				Optional: true,
-			},
-			"api_token": schema.StringAttribute{
 				Optional: true,
 			},
 			"user_service_key": schema.StringAttribute{
@@ -88,14 +88,14 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	if !data.BaseURL.IsNull() {
 		opts = append(opts, option.WithBaseURL(data.BaseURL.ValueString()))
 	}
+	if !data.APIToken.IsNull() {
+		opts = append(opts, option.WithAPIToken(data.APIToken.ValueString()))
+	}
 	if !data.APIKey.IsNull() {
 		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
 	}
 	if !data.APIEmail.IsNull() {
 		opts = append(opts, option.WithAPIEmail(data.APIEmail.ValueString()))
-	}
-	if !data.APIToken.IsNull() {
-		opts = append(opts, option.WithAPIToken(data.APIToken.ValueString()))
 	}
 	if !data.UserServiceKey.IsNull() {
 		opts = append(opts, option.WithUserServiceKey(data.UserServiceKey.ValueString()))
