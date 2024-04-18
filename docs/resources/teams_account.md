@@ -90,6 +90,7 @@ resource "cloudflare_teams_account" "example" {
 - `block_page` (Block List, Max: 1) Configuration for a custom block page. (see [below for nested schema](#nestedblock--block_page))
 - `body_scanning` (Block List, Max: 1) Configuration for body scanning. (see [below for nested schema](#nestedblock--body_scanning))
 - `extended_email_matching` (Block List, Max: 1) Configuration for extended e-mail matching. (see [below for nested schema](#nestedblock--extended_email_matching))
+- `custom_certificate` (Block List, Max: 1) Configuration for custom certificate / BYO-PKI. (see [below for nested schema](#nestedblock--custom_certificate))
 - `fips` (Block List, Max: 1) Configure compliance with Federal Information Processing Standards. (see [below for nested schema](#nestedblock--fips))
 - `logging` (Block List, Max: 1) (see [below for nested schema](#nestedblock--logging))
 - `non_identity_browser_isolation_enabled` (Boolean) Enable non-identity onramp for Browser Isolation. Defaults to `false`.
@@ -157,6 +158,21 @@ Required:
 Required:
 
 - `enabled` (Boolean) Whether e-mails should be matched on all variants of user emails (with + or . modifiers) in Firewall policies.
+
+<a id="nestedblock--custom_certificate"></a>
+### Nested Schema for `custom_certificate`
+
+Required:
+
+- `enabled` (Boolean) Whether a custom certificate should be used for TLS interception.
+
+Optional:
+
+- `id` (String) UUID of custom certificate 
+
+Read-Only:
+- `binding_status` (String) Certificate status (internal)
+- `updated_at` (String)
 
 
 <a id="nestedblock--fips"></a>

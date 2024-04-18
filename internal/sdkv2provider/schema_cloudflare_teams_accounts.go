@@ -122,6 +122,15 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 				Schema: extendedEmailMatchingSchema,
 			},
 		},
+		"custom_certificate": {
+			Type:        schema.TypeList,
+			MaxItems:    1,
+			Optional:    true,
+			Description: "Configuration for custom certificates / BYO-PKI.",
+			Elem: &schema.Resource{
+				Schema: customCertificateSchema,
+			},
+		},
 	}
 }
 
@@ -314,3 +323,17 @@ var extendedEmailMatchingSchema = map[string]*schema.Schema{
 		Description: "Whether e-mails should be matched on all variants of user emails (with + or . modifiers) in Firewall policies.",
 	},
 }
+
+var customCertificateSchema = map[string]*schema.Schema{
+	"enabled": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether TLS encryption should use a custom certificate.",
+	},
+	"id": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "ID of custom certificate.",
+	},
+}
+
