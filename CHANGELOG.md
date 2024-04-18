@@ -1,5 +1,9 @@
 ## 4.31.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_dlp_profile: Added support for `ocr_enabled` field to profiles ([#3224](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3224))
+
 ## 4.30.0 (April 17th, 2024)
 
 ENHANCEMENTS:
