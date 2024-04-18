@@ -87,6 +87,7 @@ resource "cloudflare_dlp_profile" "example_custom" {
 - `entry` (Block Set, Min: 1) List of entries to apply to the profile. (see [below for nested schema](#nestedblock--entry))
 - `name` (String) Name of the profile. **Modifying this attribute will force creation of a new resource.**
 - `type` (String) The type of the profile. Available values: `custom`, `predefined`. **Modifying this attribute will force creation of a new resource.**
+- `ocr_enabled` (Boolean) If true, scan images via OCR to determine if any text present matches filters.
 
 ### Optional
 
