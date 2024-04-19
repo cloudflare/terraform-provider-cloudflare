@@ -4,6 +4,10 @@ ENHANCEMENTS:
 
 * resource/cloudflare_dlp_profile: Added support for `ocr_enabled` field to profiles ([#3224](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3224))
 
+DEPENDENCIES:
+
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.21.0 to 0.22.2 ([#3254](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3254))
+
 ## 4.30.0 (April 17th, 2024)
 
 ENHANCEMENTS:
