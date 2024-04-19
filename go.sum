@@ -134,6 +134,8 @@ github.com/hashicorp/terraform-plugin-log v0.9.0 h1:i7hOA+vdAItN1/7UrfBqBwvYPQ9T
 github.com/hashicorp/terraform-plugin-log v0.9.0/go.mod h1:rKL8egZQ/eXSyDqzLUuwUYLVdlYeamldAHSxjUFADow=
 github.com/hashicorp/terraform-plugin-mux v0.14.0 h1:+UeiTaYy8zPAk1pktNRp3288pIih8gxiRJ6O0e7fS0U=
 github.com/hashicorp/terraform-plugin-mux v0.14.0/go.mod h1:UzkNhewtpuqSnBvo1ZXSagAxu+hQ+Ir3F5Mpm86dWn0=
+github.com/hashicorp/terraform-plugin-mux v0.15.0 h1:+/+lDx0WUsIOpkAmdwBIoFU8UP9o2eZASoOnLsWbKME=
+github.com/hashicorp/terraform-plugin-mux v0.15.0/go.mod h1:9ezplb1Dyq394zQ+ldB0nvy/qbNAz3mMoHHseMTMaKo=
 github.com/hashicorp/terraform-plugin-sdk/v2 v2.32.0 h1:7xdO9aOXVmhvMxNAq8UloyyqW0EEzyAY37llSTHJgjo=
 github.com/hashicorp/terraform-plugin-sdk/v2 v2.32.0/go.mod h1:LxQzs7AQl/5JE1IGFd6LX8E4A0InRJ/7s245gOmsejA=
 github.com/hashicorp/terraform-plugin-sdk/v2 v2.33.0 h1:qHprzXy/As0rxedphECBEQAh3R4yp6pKksKHcqZx5G8=
