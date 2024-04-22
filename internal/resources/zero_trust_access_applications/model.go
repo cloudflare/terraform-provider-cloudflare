@@ -68,6 +68,7 @@ type ZeroTrustAccessApplicationsSaasAppModel struct {
 	AppLauncherURL                types.String                                             `tfsdk:"app_launcher_url" json:"app_launcher_url"`
 	ClientID                      types.String                                             `tfsdk:"client_id" json:"client_id"`
 	ClientSecret                  types.String                                             `tfsdk:"client_secret" json:"client_secret"`
+	CustomClaims                  *ZeroTrustAccessApplicationsSaasAppCustomClaimsModel     `tfsdk:"custom_claims" json:"custom_claims"`
 	GrantTypes                    types.String                                             `tfsdk:"grant_types" json:"grant_types"`
 	GroupFilterRegex              types.String                                             `tfsdk:"group_filter_regex" json:"group_filter_regex"`
 	RedirectURIs                  types.String                                             `tfsdk:"redirect_uris" json:"redirect_uris"`
@@ -75,11 +76,26 @@ type ZeroTrustAccessApplicationsSaasAppModel struct {
 }
 
 type ZeroTrustAccessApplicationsSaasAppCustomAttributesModel struct {
-	Name       types.String                                                   `tfsdk:"name" json:"name"`
-	NameFormat types.String                                                   `tfsdk:"name_format" json:"name_format"`
-	Source     *ZeroTrustAccessApplicationsSaasAppCustomAttributesSourceModel `tfsdk:"source" json:"source"`
+	FriendlyName types.String                                                   `tfsdk:"friendly_name" json:"friendly_name"`
+	Name         types.String                                                   `tfsdk:"name" json:"name"`
+	NameFormat   types.String                                                   `tfsdk:"name_format" json:"name_format"`
+	Required     types.Bool                                                     `tfsdk:"required" json:"required"`
+	Source       *ZeroTrustAccessApplicationsSaasAppCustomAttributesSourceModel `tfsdk:"source" json:"source"`
 }
 
 type ZeroTrustAccessApplicationsSaasAppCustomAttributesSourceModel struct {
+	Name      types.String            `tfsdk:"name" json:"name"`
+	NameByIDP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp"`
+}
+
+type ZeroTrustAccessApplicationsSaasAppCustomClaimsModel struct {
+	Name      types.String                                               `tfsdk:"name" json:"name"`
+	NameByIDP map[string]types.String                                    `tfsdk:"name_by_idp" json:"name_by_idp"`
+	Required  types.Bool                                                 `tfsdk:"required" json:"required"`
+	Scope     types.String                                               `tfsdk:"scope" json:"scope"`
+	Source    *ZeroTrustAccessApplicationsSaasAppCustomClaimsSourceModel `tfsdk:"source" json:"source"`
+}
+
+type ZeroTrustAccessApplicationsSaasAppCustomClaimsSourceModel struct {
 	Name types.String `tfsdk:"name" json:"name"`
 }
