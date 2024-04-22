@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r ZeroTrustAccessApplicationsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -191,6 +192,10 @@ func (r ZeroTrustAccessApplicationsResource) Schema(ctx context.Context, req res
 					"custom_attributes": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
+							"friendly_name": schema.StringAttribute{
+								Description: "The SAML FriendlyName of the attribute.",
+								Optional:    true,
+							},
 							"name": schema.StringAttribute{
 								Description: "The name of the attribute.",
 								Optional:    true,
@@ -202,12 +207,21 @@ func (r ZeroTrustAccessApplicationsResource) Schema(ctx context.Context, req res
 									stringvalidator.OneOfCaseInsensitive("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"),
 								},
 							},
+							"required": schema.BoolAttribute{
+								Description: "If the attribute is required when building a SAML assertion.",
+								Optional:    true,
+							},
 							"source": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
 										Description: "The name of the IdP attribute.",
 										Optional:    true,
+									},
+									"name_by_idp": schema.MapAttribute{
+										Description: "A mapping from IdP ID to attribute name.",
+										Optional:    true,
+										ElementType: types.StringType,
 									},
 								},
 							},
@@ -262,6 +276,40 @@ func (r ZeroTrustAccessApplicationsResource) Schema(ctx context.Context, req res
 					"client_secret": schema.StringAttribute{
 						Description: "The application client secret, only returned on POST request.",
 						Optional:    true,
+					},
+					"custom_claims": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"name": schema.StringAttribute{
+								Description: "The name of the claim.",
+								Optional:    true,
+							},
+							"name_by_idp": schema.MapAttribute{
+								Description: "A mapping from IdP ID to claim name.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"required": schema.BoolAttribute{
+								Description: "If the claim is required when building an OIDC token.",
+								Optional:    true,
+							},
+							"scope": schema.StringAttribute{
+								Description: "The scope of the claim.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("groups", "profile", "email", "openid"),
+								},
+							},
+							"source": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"name": schema.StringAttribute{
+										Description: "The name of the IdP claim.",
+										Optional:    true,
+									},
+								},
+							},
+						},
 					},
 					"grant_types": schema.StringAttribute{
 						Description: "The OIDC flows supported by this application",
