@@ -340,7 +340,9 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				ContentType:             flatteners.String(ruleResponse.ActionParameters.ContentType),
 				DisableApps:             flatteners.Bool(ruleResponse.ActionParameters.DisableApps),
 				DisableRailgun:          flatteners.Bool(ruleResponse.ActionParameters.DisableRailgun),
+				DisableRum:              flatteners.Bool(ruleResponse.ActionParameters.DisableRum),
 				DisableZaraz:            flatteners.Bool(ruleResponse.ActionParameters.DisableZaraz),
+				Fonts:                   flatteners.Bool(ruleResponse.ActionParameters.Fonts),
 				EmailObfuscation:        flatteners.Bool(ruleResponse.ActionParameters.EmailObfuscation),
 				HostHeader:              flatteners.String(ruleResponse.ActionParameters.HostHeader),
 				HotlinkProtection:       flatteners.Bool(ruleResponse.ActionParameters.HotLinkProtection),
@@ -880,8 +882,16 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 			rr.ActionParameters.DisableRailgun = cfv1.BoolPtr(ap.DisableRailgun.ValueBool())
 		}
 
+		if !ap.DisableRum.IsNull() {
+			rr.ActionParameters.DisableRum = cloudflare.BoolPtr(ap.DisableRum.ValueBool())
+		}
+
 		if !ap.DisableZaraz.IsNull() {
 			rr.ActionParameters.DisableZaraz = cfv1.BoolPtr(ap.DisableZaraz.ValueBool())
+		}
+
+		if !ap.Fonts.IsNull() {
+			rr.ActionParameters.Fonts = cloudflare.BoolPtr(ap.Fonts.ValueBool())
 		}
 
 		if !ap.EmailObfuscation.IsNull() {
