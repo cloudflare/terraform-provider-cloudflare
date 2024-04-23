@@ -75,6 +75,36 @@ func resourceCloudflareManagedHeadersUpdate(ctx context.Context, d *schema.Resou
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error building managed headers from resource: %w", err))
 	}
+
+	managedHeadersPresentInResource := map[string]bool{}
+	for _, header := range mh.ManagedRequestHeaders {
+		managedHeadersPresentInResource[header.ID] = true
+	}
+	for _, header := range mh.ManagedResponseHeaders {
+		managedHeadersPresentInResource[header.ID] = true
+	}
+
+	headers, err := client.ListZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListManagedHeadersParams{
+		Status: "enabled",
+	})
+
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("error reading managed headers: %w", err))
+	}
+
+	for _, header := range headers.ManagedRequestHeaders {
+		if !managedHeadersPresentInResource[header.ID] {
+			header.Enabled = false
+			mh.ManagedRequestHeaders = append(mh.ManagedRequestHeaders, header)
+		}
+	}
+	for _, header := range headers.ManagedResponseHeaders {
+		if !managedHeadersPresentInResource[header.ID] {
+			header.Enabled = false
+			mh.ManagedResponseHeaders = append(mh.ManagedResponseHeaders, header)
+		}
+	}
+
 	if _, err := client.UpdateZoneManagedHeaders(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.UpdateManagedHeadersParams{
 		ManagedHeaders: mh,
 	}); err != nil {
