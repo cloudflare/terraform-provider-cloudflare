@@ -3,13 +3,14 @@ package list_item_test
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"os"
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -19,7 +20,7 @@ func TestAccCloudflareListItem_Basic(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -44,7 +45,7 @@ func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -77,7 +78,7 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var listItem cloudflare.ListItem
+	var listItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -127,7 +128,7 @@ func TestAccCloudflareListItem_ASN(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -152,7 +153,7 @@ func TestAccCloudflareListItem_Hostname(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -179,7 +180,7 @@ func TestAccCloudflareListItem_Redirect(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -225,7 +226,7 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
     account_id = "%[4]s"
 	list_id    = cloudflare_list.%[2]s.id
 	ip         = "192.0.2.1"
-  } 
+  }
 `, ID, name, comment, accountID)
 }
 
@@ -267,7 +268,7 @@ func testAccCheckCloudflareIPListItemMultipleEntries(ID, name, comment, accountI
   } `, ID, name, comment, accountID)
 }
 
-func testAccCheckCloudflareListItemExists(n string, name string, listItem *cloudflare.ListItem) resource.TestCheckFunc {
+func testAccCheckCloudflareListItemExists(n string, name string, listItem *cfv1.ListItem) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 		listRS := s.RootModule().Resources["cloudflare_list."+name]
@@ -281,11 +282,11 @@ func testAccCheckCloudflareListItemExists(n string, name string, listItem *cloud
 			return fmt.Errorf("no List ID is set")
 		}
 
-		client, err := acctest.SharedClient()
+		client, err := acctest.SharedV1Client()
 		if err != nil {
 			return fmt.Errorf("error establishing client: %w", err)
 		}
-		foundList, err := client.GetListItem(context.Background(), cloudflare.AccountIdentifier(accountID), listRS.Primary.ID, rs.Primary.ID)
+		foundList, err := client.GetListItem(context.Background(), cfv1.AccountIdentifier(accountID), listRS.Primary.ID, rs.Primary.ID)
 		if err != nil {
 			return err
 		}

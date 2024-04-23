@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,7 +22,7 @@ func NewResource() resource.Resource {
 
 // DatabaseResource defines the resource implementation.
 type DatabaseResource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *DatabaseResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -33,12 +34,12 @@ func (r *DatabaseResource) Configure(ctx context.Context, req resource.Configure
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -56,8 +57,8 @@ func (r *DatabaseResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	database, err := r.client.CreateD1Database(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
-		cloudflare.CreateD1DatabaseParams{
+	database, err := r.client.V1.CreateD1Database(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()),
+		cfv1.CreateD1DatabaseParams{
 			Name: data.Name.ValueString(),
 		},
 	)
@@ -80,7 +81,7 @@ func (r *DatabaseResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	database, err := r.client.GetD1Database(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	database, err := r.client.V1.GetD1Database(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("failed reading D1 database", err.Error())
 		return
@@ -112,7 +113,7 @@ func (r *DatabaseResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	err := r.client.DeleteD1Database(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	err := r.client.V1.DeleteD1Database(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("failed to delete D1 database", err.Error())

@@ -2,8 +2,9 @@ package d1
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"regexp"
+
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"

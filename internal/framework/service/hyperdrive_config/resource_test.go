@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -21,7 +21,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_hyperdrive_config", &resource.Sweeper{
 		Name: "cloudflare_hyperdrive_config",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			ctx := context.Background()
@@ -30,13 +30,13 @@ func init() {
 				tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", err))
 			}
 
-			resp, err := client.ListHyperdriveConfigs(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListHyperdriveConfigParams{})
+			resp, err := client.ListHyperdriveConfigs(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListHyperdriveConfigParams{})
 			if err != nil {
 				return err
 			}
 
 			for _, q := range resp {
-				err := client.DeleteHyperdriveConfig(ctx, cloudflare.AccountIdentifier(accountID), q.ID)
+				err := client.DeleteHyperdriveConfig(ctx, cfv1.AccountIdentifier(accountID), q.ID)
 				if err != nil {
 					return err
 				}
@@ -54,7 +54,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_hyperdrive_config." + rnd
 
-	var origin = cloudflare.HyperdriveConfigOrigin{
+	var origin = cfv1.HyperdriveConfigOrigin{
 		Database: "database",
 		Host:     "host.example.com",
 		Port:     5432,
@@ -64,7 +64,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 
 	var disabled = true
 
-	var caching = cloudflare.HyperdriveConfigCaching{
+	var caching = cfv1.HyperdriveConfigCaching{
 		Disabled: &disabled,
 	}
 
@@ -111,7 +111,7 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_hyperdrive_config." + rnd
 
-	var origin = cloudflare.HyperdriveConfigOrigin{
+	var origin = cfv1.HyperdriveConfigOrigin{
 		Database: "database",
 		Host:     "host.example.com",
 		Port:     5432,
@@ -155,7 +155,7 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 }
 
 func testHyperdriveConfigConfig(
-	rnd, accountId, name string, password string, origin cloudflare.HyperdriveConfigOrigin, caching cloudflare.HyperdriveConfigCaching,
+	rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, caching cfv1.HyperdriveConfigCaching,
 ) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_hyperdrive_config" "%[1]s" {
@@ -178,7 +178,7 @@ func testHyperdriveConfigConfig(
 }
 
 func testHyperdriveConfigConfigMinimum(
-	rnd, accountId, name string, password string, origin cloudflare.HyperdriveConfigOrigin,
+	rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin,
 ) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_hyperdrive_config" "%[1]s" {
