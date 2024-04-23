@@ -17,7 +17,7 @@ type ZeroTrustAccessApplicationsModel struct {
 	Domain                   types.String                                 `tfsdk:"domain" json:"domain"`
 	Type                     types.String                                 `tfsdk:"type" json:"type"`
 	AllowAuthenticateViaWARP types.Bool                                   `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp"`
-	AllowedIDPs              types.String                                 `tfsdk:"allowed_idps" json:"allowed_idps"`
+	AllowedIdps              types.String                                 `tfsdk:"allowed_idps" json:"allowed_idps"`
 	AppLauncherVisible       types.Bool                                   `tfsdk:"app_launcher_visible" json:"app_launcher_visible"`
 	AutoRedirectToIdentity   types.Bool                                   `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
 	CorsHeaders              *ZeroTrustAccessApplicationsCorsHeadersModel `tfsdk:"cors_headers" json:"cors_headers"`
@@ -57,7 +57,7 @@ type ZeroTrustAccessApplicationsSaasAppModel struct {
 	CreatedAt                     types.String                                             `tfsdk:"created_at" json:"created_at,computed"`
 	CustomAttributes              *ZeroTrustAccessApplicationsSaasAppCustomAttributesModel `tfsdk:"custom_attributes" json:"custom_attributes"`
 	DefaultRelayState             types.String                                             `tfsdk:"default_relay_state" json:"default_relay_state"`
-	IDPEntityID                   types.String                                             `tfsdk:"idp_entity_id" json:"idp_entity_id"`
+	IdPEntityID                   types.String                                             `tfsdk:"idp_entity_id" json:"idp_entity_id"`
 	NameIDFormat                  types.String                                             `tfsdk:"name_id_format" json:"name_id_format"`
 	NameIDTransformJsonata        types.String                                             `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata"`
 	PublicKey                     types.String                                             `tfsdk:"public_key" json:"public_key"`
@@ -85,12 +85,12 @@ type ZeroTrustAccessApplicationsSaasAppCustomAttributesModel struct {
 
 type ZeroTrustAccessApplicationsSaasAppCustomAttributesSourceModel struct {
 	Name      types.String            `tfsdk:"name" json:"name"`
-	NameByIDP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp"`
+	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp"`
 }
 
 type ZeroTrustAccessApplicationsSaasAppCustomClaimsModel struct {
 	Name      types.String                                               `tfsdk:"name" json:"name"`
-	NameByIDP map[string]types.String                                    `tfsdk:"name_by_idp" json:"name_by_idp"`
+	NameByIdP map[string]types.String                                    `tfsdk:"name_by_idp" json:"name_by_idp"`
 	Required  types.Bool                                                 `tfsdk:"required" json:"required"`
 	Scope     types.String                                               `tfsdk:"scope" json:"scope"`
 	Source    *ZeroTrustAccessApplicationsSaasAppCustomClaimsSourceModel `tfsdk:"source" json:"source"`
