@@ -20,6 +20,7 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_certificates"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_devices_posture_integrations"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_identity_providers"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_tunnels"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zones"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -125,6 +126,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_identity_providers.NewResource,
 		zero_trust_access_applications.NewResource,
 		zero_trust_access_certificates.NewResource,
+		zero_trust_tunnels.NewResource,
 	}
 }
 
