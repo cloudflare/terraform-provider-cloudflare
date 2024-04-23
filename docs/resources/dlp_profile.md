@@ -18,7 +18,7 @@ They are referenced in Zero Trust Gateway rules.
 ```terraform
 # Predefined profile must be imported, cannot be created
 resource "cloudflare_dlp_profile" "creds" {
-  account_id          = "0da42c8d2132a9ddaf714f9e7c920711"
+  account_id          = "f037e56e89293a057740de681ac9abbe"
   name                = "Credentials and Secrets"
   type                = "predefined"
   allowed_match_count = 3
@@ -52,7 +52,7 @@ resource "cloudflare_dlp_profile" "creds" {
 
 # Custom profile
 resource "cloudflare_dlp_profile" "example_custom" {
-  account_id          = "0da42c8d2132a9ddaf714f9e7c920711"
+  account_id          = "f037e56e89293a057740de681ac9abbe"
   name                = "Example Custom Profile"
   description         = "A profile with example entries"
   type                = "custom"
@@ -62,7 +62,7 @@ resource "cloudflare_dlp_profile" "example_custom" {
     name    = "Matches visa credit cards"
     enabled = true
     pattern {
-      regex      = "4\d{3}([-\\. ])?\d{4}([-\\. ])?\d{4}([-\\. ])?\d{4}"
+      regex      = "4\\d{3}([-\\. ])?\\d{4}([-\\. ])?\\d{4}([-\\. ])?\\d{4}"
       validation = "luhn"
     }
   }
@@ -87,12 +87,12 @@ resource "cloudflare_dlp_profile" "example_custom" {
 - `entry` (Block Set, Min: 1) List of entries to apply to the profile. (see [below for nested schema](#nestedblock--entry))
 - `name` (String) Name of the profile. **Modifying this attribute will force creation of a new resource.**
 - `type` (String) The type of the profile. Available values: `custom`, `predefined`. **Modifying this attribute will force creation of a new resource.**
-- `ocr_enabled` (Boolean) If true, scan images via OCR to determine if any text present matches filters.
 
 ### Optional
 
 - `context_awareness` (Block List, Max: 1) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedblock--context_awareness))
 - `description` (String) Brief summary of the profile and its intended use.
+- `ocr_enabled` (Boolean) If true, scan images via OCR to determine if any text present matches filters.
 
 ### Read-Only
 
