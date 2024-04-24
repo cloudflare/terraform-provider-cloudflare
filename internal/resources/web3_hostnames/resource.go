@@ -176,7 +176,6 @@ func (r *Web3HostnamesResource) Delete(ctx context.Context, req resource.DeleteR
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
-		web3.HostnameDeleteParams{},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
