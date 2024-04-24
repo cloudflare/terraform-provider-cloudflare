@@ -107,6 +107,35 @@ func TestAccCloudflareDLPProfile_CustomWithAllowedMatchCount(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareDLPProfile_CustomWithOCREnabled(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_dlp_profile.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDLPProfileConfigCustomWithOCREnabled(accountID, rnd, "custom profile", true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "description", "custom profile"),
+					resource.TestCheckResourceAttr(name, "allowed_match_count", "0"),
+					resource.TestCheckResourceAttr(name, "ocr_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "type", "custom"),
+					resource.TestCheckResourceAttr(name, "entry.0.name", fmt.Sprintf("%s_entry1", rnd)),
+					resource.TestCheckResourceAttr(name, "entry.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "entry.0.pattern.0.regex", "^4[0-9]"),
+					resource.TestCheckResourceAttr(name, "entry.0.pattern.0.validation", "luhn"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareDLPProfile_ContextAwareness(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_dlp_profile.%s", rnd)
@@ -211,6 +240,27 @@ resource "cloudflare_dlp_profile" "%[1]s" {
   }
 }
 `, rnd, description, accountID, allowedMatchCount)
+}
+
+func testAccCloudflareDLPProfileConfigCustomWithOCREnabled(accountID, rnd, description string, ocrEnabled bool) string {
+	return fmt.Sprintf(`
+resource "cloudflare_dlp_profile" "%[1]s" {
+  account_id                = "%[3]s"
+  name                      = "%[1]s"
+  description               = "%[2]s"
+  allowed_match_count       = 0
+  ocr_enabled               = "%[4]t"
+  type                      = "custom"
+  entry {
+	name = "%[1]s_entry1"
+	enabled = true
+	pattern {
+		regex = "^4[0-9]"
+		validation = "luhn"
+	}
+  }
+}
+`, rnd, description, accountID, ocrEnabled)
 }
 
 func testAccCloudflareDLPProfileConfigWithContextAwareness(accountID, rnd, description string, contextAwareness cloudflare.DLPContextAwareness) string {

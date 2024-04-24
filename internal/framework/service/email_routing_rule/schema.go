@@ -3,6 +3,7 @@ package email_routing_rule
 import (
 	"context"
 	"fmt"
+
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"

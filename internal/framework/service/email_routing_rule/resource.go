@@ -3,12 +3,14 @@ package email_routing_rule
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,7 +26,7 @@ func NewResource() resource.Resource {
 
 // EmailRoutingRuleResource defines the resource implementation.
 type EmailRoutingRuleResource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *EmailRoutingRuleResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -36,12 +38,12 @@ func (r *EmailRoutingRuleResource) Configure(ctx context.Context, req resource.C
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -61,8 +63,8 @@ func (r *EmailRoutingRuleResource) Create(ctx context.Context, req resource.Crea
 
 	matcherModels, actionModels := buildMatchersAndActions(ctx, data)
 
-	routingRule, err := r.client.CreateEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(data.ZoneID.ValueString()),
-		cloudflare.CreateEmailRoutingRuleParameters{
+	routingRule, err := r.client.V1.CreateEmailRoutingRule(ctx, cfv1.ZoneIdentifier(data.ZoneID.ValueString()),
+		cfv1.CreateEmailRoutingRuleParameters{
 			Name:     data.Name.ValueString(),
 			Priority: int(data.Priority.ValueInt64()),
 			Enabled:  data.Enabled.ValueBoolPointer(),
@@ -87,7 +89,7 @@ func (r *EmailRoutingRuleResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	routingRule, err := r.client.GetEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(data.ZoneID.ValueString()), data.Tag.ValueString())
+	routingRule, err := r.client.V1.GetEmailRoutingRule(ctx, cfv1.ZoneIdentifier(data.ZoneID.ValueString()), data.Tag.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("failed reading email routing rule", err.Error())
 		return
@@ -107,8 +109,8 @@ func (r *EmailRoutingRuleResource) Update(ctx context.Context, req resource.Upda
 
 	matcherModels, actionModels := buildMatchersAndActions(ctx, data)
 
-	routingRule, err := r.client.UpdateEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(data.ZoneID.ValueString()),
-		cloudflare.UpdateEmailRoutingRuleParameters{
+	routingRule, err := r.client.V1.UpdateEmailRoutingRule(ctx, cfv1.ZoneIdentifier(data.ZoneID.ValueString()),
+		cfv1.UpdateEmailRoutingRuleParameters{
 			RuleID:   data.Tag.ValueString(),
 			Name:     data.Name.ValueString(),
 			Priority: int(data.Priority.ValueInt64()),
@@ -135,7 +137,7 @@ func (r *EmailRoutingRuleResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	_, err := r.client.DeleteEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(data.ZoneID.ValueString()), data.Tag.ValueString())
+	_, err := r.client.V1.DeleteEmailRoutingRule(ctx, cfv1.ZoneIdentifier(data.ZoneID.ValueString()), data.Tag.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("failed to email routing rule", err.Error())
@@ -143,12 +145,12 @@ func (r *EmailRoutingRuleResource) Delete(ctx context.Context, req resource.Dele
 	}
 }
 
-func buildMatchersAndActions(ctx context.Context, data *EmailRoutingRuleModel) ([]cloudflare.EmailRoutingRuleMatcher, []cloudflare.EmailRoutingRuleAction) {
-	var matcherModels []cloudflare.EmailRoutingRuleMatcher
-	var actionModels []cloudflare.EmailRoutingRuleAction
+func buildMatchersAndActions(ctx context.Context, data *EmailRoutingRuleModel) ([]cfv1.EmailRoutingRuleMatcher, []cfv1.EmailRoutingRuleAction) {
+	var matcherModels []cfv1.EmailRoutingRuleMatcher
+	var actionModels []cfv1.EmailRoutingRuleAction
 
 	for _, matcher := range data.Matcher {
-		matcherModels = append(matcherModels, cloudflare.EmailRoutingRuleMatcher{
+		matcherModels = append(matcherModels, cfv1.EmailRoutingRuleMatcher{
 			Type:  matcher.Type.ValueString(),
 			Field: matcher.Field.ValueString(),
 			Value: matcher.Value.ValueString(),
@@ -156,7 +158,7 @@ func buildMatchersAndActions(ctx context.Context, data *EmailRoutingRuleModel) (
 	}
 
 	for _, action := range data.Action {
-		actionModels = append(actionModels, cloudflare.EmailRoutingRuleAction{
+		actionModels = append(actionModels, cfv1.EmailRoutingRuleAction{
 			Type:  action.Type.ValueString(),
 			Value: expanders.StringSet(ctx, action.Value),
 		})
@@ -165,7 +167,7 @@ func buildMatchersAndActions(ctx context.Context, data *EmailRoutingRuleModel) (
 	return matcherModels, actionModels
 }
 
-func buildRoutingRuleModel(zoneID string, routingRule cloudflare.EmailRoutingRule) *EmailRoutingRuleModel {
+func buildRoutingRuleModel(zoneID string, routingRule cfv1.EmailRoutingRule) *EmailRoutingRuleModel {
 	var matcherModels []*EmailRoutingRuleMatcherModel
 	var actionModels []*EmailRoutingRuleActionModel
 
@@ -194,7 +196,7 @@ func buildRoutingRuleModel(zoneID string, routingRule cloudflare.EmailRoutingRul
 		Tag:      types.StringValue(routingRule.Tag),
 		Name:     types.StringValue(routingRule.Name),
 		Priority: types.Int64Value(int64(routingRule.Priority)),
-		Enabled:  types.BoolValue(cloudflare.Bool(routingRule.Enabled)),
+		Enabled:  types.BoolValue(cfv1.Bool(routingRule.Enabled)),
 		Matcher:  matcherModels,
 		Action:   actionModels,
 	}
