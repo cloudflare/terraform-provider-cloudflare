@@ -18,6 +18,7 @@ resource "cloudflare_teams_location" "example" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "office"
   client_default = true
+  ecs_support    = false
 
   networks {
     network = "203.0.113.1/32"
@@ -39,6 +40,7 @@ resource "cloudflare_teams_location" "example" {
 ### Optional
 
 - `client_default` (Boolean) Indicator that this is the default location.
+- `ecs_support` (Boolean) Indicator that this location needs to resolve EDNS queries.
 - `networks` (Block Set) The networks CIDRs that comprise the location. (see [below for nested schema](#nestedblock--networks))
 
 ### Read-Only
