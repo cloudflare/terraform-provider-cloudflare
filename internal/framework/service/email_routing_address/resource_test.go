@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -19,7 +19,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_address", &resource.Sweeper{
 		Name: "cloudflare_email_routing_address",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
@@ -27,13 +27,13 @@ func init() {
 			}
 
 			ctx := context.Background()
-			emails, _, err := client.ListEmailRoutingDestinationAddresses(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListEmailRoutingAddressParameters{})
+			emails, _, err := client.ListEmailRoutingDestinationAddresses(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListEmailRoutingAddressParameters{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch email routing destination addresses: %w", err)
 			}
 
 			for _, email := range emails {
-				_, err := client.DeleteEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(accountID), email.Tag)
+				_, err := client.DeleteEmailRoutingDestinationAddress(ctx, cfv1.AccountIdentifier(accountID), email.Tag)
 				if err != nil {
 					return fmt.Errorf("failed to delete email routing destination address %q: %w", email.Email, err)
 				}

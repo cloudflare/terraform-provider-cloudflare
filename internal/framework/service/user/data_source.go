@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,7 +16,7 @@ func NewDataSource() datasource.DataSource {
 }
 
 type CloudflareUserDataSource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *CloudflareUserDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -28,12 +28,12 @@ func (r *CloudflareUserDataSource) Configure(ctx context.Context, req datasource
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -49,7 +49,7 @@ func (r *CloudflareUserDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	user, err := r.client.UserDetails(ctx)
+	user, err := r.client.V1.UserDetails(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("unable to retrieve user details", err.Error())
 		return
