@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/accounts_members"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/addressing_address_maps"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/custom_hostnames"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/dns_records"
@@ -112,6 +113,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		accounts_members.NewResource,
 		zones.NewResource,
 		custom_hostnames.NewResource,
 		dns_records.NewResource,
