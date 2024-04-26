@@ -174,7 +174,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 			FIPS:                  fipsConfig,
 			BodyScanning:          bodyScanningConfig,
 			ExtendedEmailMatching: extendedEmailMatchingConfig,
-			CustomCertificate: customCertificateConfig,
+			CustomCertificate:     customCertificateConfig,
 		},
 	}
 
