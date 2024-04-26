@@ -87,7 +87,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 		Name:          d.Get("name").(string),
 		Networks:      networks,
 		ClientDefault: d.Get("client_default").(bool),
-		ECSSupport: cloudflare.BoolPtr(d.Get("ecs_support").(bool)),
+		ECSSupport:    cloudflare.BoolPtr(d.Get("ecs_support").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams Location from struct: %+v", newTeamLocation))
@@ -111,7 +111,7 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 		ID:            d.Id(),
 		Name:          d.Get("name").(string),
 		ClientDefault: d.Get("client_default").(bool),
-		ECSSupport: cloudflare.BoolPtr(d.Get("ecs_support").(bool)),
+		ECSSupport:    cloudflare.BoolPtr(d.Get("ecs_support").(bool)),
 		Networks:      networks,
 	}
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Location from struct: %+v", updatedTeamsLocation))
