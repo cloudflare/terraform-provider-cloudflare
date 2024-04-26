@@ -13,7 +13,9 @@ body:
     label: Confirmation
     description: Please make sure to have followed the following checks.
     options:
-      - label: My issue isn't already found on the issue tracker.
+      - label: This is a bug with an existing resource and is not a feature request or enhancement. Feature requests should be submitted with Cloudflare Support or your account team. 
+        required: true
+      - label: I have searched the issue tracker and my issue isn't already found.
         required: true
       - label: I have replicated my issue using the latest version of the provider and it is still present.
         required: true
