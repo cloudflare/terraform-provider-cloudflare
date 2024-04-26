@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_worker_script: fix namespaced script delete trying to delete from account rather than the namespace
+```

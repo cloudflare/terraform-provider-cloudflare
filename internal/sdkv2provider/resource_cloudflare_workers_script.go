@@ -433,8 +433,11 @@ func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
+	dispatchNamespace := d.Get("dispatch_namespace").(string)
+
 	err = client.DeleteWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.DeleteWorkerParams{
-		ScriptName: scriptData.Params.ScriptName,
+		ScriptName:        scriptData.Params.ScriptName,
+		DispatchNamespace: &dispatchNamespace,
 	})
 	if err != nil {
 		// If the resource is already deleted, we should return without an error
