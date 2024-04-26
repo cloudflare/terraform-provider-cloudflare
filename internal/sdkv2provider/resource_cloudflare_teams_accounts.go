@@ -508,10 +508,10 @@ func inflateExtendedEmailMatchingConfig(config interface{}) *cloudflare.TeamsExt
 
 func flattenCustomCertificateConfig(config *cloudflare.TeamsCustomCertificate) []interface{} {
 	return []interface{}{map[string]interface{}{
-		"enabled": *config.Enabled,
-		"id": config.ID,
+		"enabled":        *config.Enabled,
+		"id":             config.ID,
 		"binding_status": config.BindingStatus,
-		"updated_at": config.UpdatedAt,
+		"updated_at":     config.UpdatedAt,
 	}}
 }
 
@@ -524,6 +524,6 @@ func inflateCustomCertificateConfig(config interface{}) *cloudflare.TeamsCustomC
 	configMap := list[0].(map[string]interface{})
 	return &cloudflare.TeamsCustomCertificate{
 		Enabled: cloudflare.BoolPtr(configMap["enabled"].(bool)),
-		ID: configMap["id"].(string),
+		ID:      configMap["id"].(string),
 	}
 }
