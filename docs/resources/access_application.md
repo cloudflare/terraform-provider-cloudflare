@@ -71,6 +71,7 @@ resource "cloudflare_access_application" "staging_app" {
 - `landing_page_design` (Block List, Max: 1) The landing page design of the app launcher. (see [below for nested schema](#nestedblock--landing_page_design))
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
 - `name` (String) Friendly name of the Access Application.
+- `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set. Defaults to `false`.
 - `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
 - `self_hosted_domains` (Set of String) List of domains that access will secure. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`.

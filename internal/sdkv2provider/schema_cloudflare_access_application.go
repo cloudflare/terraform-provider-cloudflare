@@ -458,6 +458,12 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "When set to true, users can authenticate to this application using their WARP session. When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 		},
+		"options_preflight_bypass": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
+		},
 	}
 }
 
