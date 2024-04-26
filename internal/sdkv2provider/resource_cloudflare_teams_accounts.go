@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -508,10 +509,9 @@ func inflateExtendedEmailMatchingConfig(config interface{}) *cloudflare.TeamsExt
 
 func flattenCustomCertificateConfig(config *cloudflare.TeamsCustomCertificate) []interface{} {
 	return []interface{}{map[string]interface{}{
-		"enabled":        *config.Enabled,
-		"id":             config.ID,
-		"binding_status": config.BindingStatus,
-		"updated_at":     config.UpdatedAt,
+		"enabled":    *config.Enabled,
+		"id":         config.ID,
+		"updated_at": config.UpdatedAt.Format(time.RFC3339Nano),
 	}}
 }
 
