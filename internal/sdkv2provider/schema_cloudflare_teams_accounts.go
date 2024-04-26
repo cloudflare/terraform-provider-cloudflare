@@ -336,4 +336,3 @@ var customCertificateSchema = map[string]*schema.Schema{
 		Description: "ID of custom certificate.",
 	},
 }
-
