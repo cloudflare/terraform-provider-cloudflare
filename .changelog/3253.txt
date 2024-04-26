@@ -1,3 +1,3 @@
 ```release-note:enhancement
-enhancement/gateway: add custom certificate setting to teams account resource
+resource/cloudflare_teams_account: add `custom_certificate` setting support
 ```
