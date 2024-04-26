@@ -153,13 +153,13 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client, err := acctest.SharedClient()
+		client, err := acctest.SharedV1Client()
 		if err != nil {
 			return fmt.Errorf("error establishing client: %w", err)
 		}
 		r, _ := client.GetWorkerWithDispatchNamespace(
 			context.Background(),
-			cloudflare.AccountIdentifier(accountID),
+			cfv1.AccountIdentifier(accountID),
 			rs.Primary.Attributes["name"],
 			rs.Primary.Attributes["dispatch_namespace"],
 		)
