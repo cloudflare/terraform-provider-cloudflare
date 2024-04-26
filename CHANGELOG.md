@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: added support for options_preflight_bypass ([#3267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3267))
 * resource/cloudflare_dlp_profile: Added support for `ocr_enabled` field to profiles ([#3224](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3224))
 * resource/cloudflare_notification_policy: add 'target_ip' atrribute to 'filter' nested block ([#3263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3263))
 
