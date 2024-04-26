@@ -142,5 +142,10 @@ func resourceCloudflareDLPProfileSchema() map[string]*schema.Schema {
 				Schema: resourceCloudflareDLPContextAwarenessSchema(),
 			},
 		},
+		"ocr_enabled": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "If true, scan images via OCR to determine if any text present matches filters.",
+		},
 	}
 }

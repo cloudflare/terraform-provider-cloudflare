@@ -4,12 +4,13 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
+	"sort"
+	"strings"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"sort"
-	"strings"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -21,7 +22,7 @@ func NewDataSource() datasource.DataSource {
 
 // APITokenPermissionsGroupDataSource defines the data source implementation.
 type APITokenPermissionsGroupDataSource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *APITokenPermissionsGroupDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -33,12 +34,12 @@ func (r *APITokenPermissionsGroupDataSource) Configure(ctx context.Context, req 
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -56,7 +57,7 @@ func (r *APITokenPermissionsGroupDataSource) Read(ctx context.Context, req datas
 		return
 	}
 
-	permissions, err := r.client.ListAPITokensPermissionGroups(ctx)
+	permissions, err := r.client.V1.ListAPITokensPermissionGroups(ctx)
 
 	if err != nil {
 		resp.Diagnostics.AddError(

@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -21,7 +21,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_workers_for_platforms_namespace", &resource.Sweeper{
 		Name: "cloudflare_workers_for_platforms_namespace",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
@@ -29,13 +29,13 @@ func init() {
 			}
 
 			ctx := context.Background()
-			resp, err := client.ListWorkersForPlatformsDispatchNamespaces(ctx, cloudflare.AccountIdentifier(accountID))
+			resp, err := client.ListWorkersForPlatformsDispatchNamespaces(ctx, cfv1.AccountIdentifier(accountID))
 			if err != nil {
 				return err
 			}
 
 			for _, namespace := range resp.Result {
-				err := client.DeleteWorkersForPlatformsDispatchNamespace(ctx, cloudflare.AccountIdentifier(accountID), namespace.NamespaceName)
+				err := client.DeleteWorkersForPlatformsDispatchNamespace(ctx, cfv1.AccountIdentifier(accountID), namespace.NamespaceName)
 				if err != nil {
 					return err
 				}

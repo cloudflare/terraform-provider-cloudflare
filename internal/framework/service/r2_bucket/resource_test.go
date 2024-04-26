@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -25,7 +25,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_r2_bucket", &resource.Sweeper{
 		Name: "cloudflare_r2_bucket",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
@@ -44,7 +44,7 @@ func init() {
 			}
 
 			ctx := context.Background()
-			buckets, err := client.ListR2Buckets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListR2BucketsParams{})
+			buckets, err := client.ListR2Buckets(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListR2BucketsParams{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch R2 buckets: %w", err)
 			}
@@ -89,7 +89,7 @@ func init() {
 					}
 				}
 
-				err = client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(accountID), bucket.Name)
+				err = client.DeleteR2Bucket(ctx, cfv1.AccountIdentifier(accountID), bucket.Name)
 				if err != nil {
 					return fmt.Errorf("failed to delete R2 bucket %q: %w", bucket.Name, err)
 				}

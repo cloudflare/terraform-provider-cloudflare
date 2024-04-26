@@ -9,8 +9,11 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	cfv2 "github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
@@ -172,6 +175,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		basePath          string
 	)
 
+	cfv2Options := make([]option.RequestOption, 0)
+
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -188,7 +193,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	} else {
 		basePath = utils.GetDefaultFromEnv(consts.APIBasePathEnvVarKey, consts.APIBasePathDefault)
 	}
-	baseURL := cloudflare.BaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath))
+	baseURL := cfv1.BaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath))
+	cfv2Options = append(cfv2Options, option.WithBaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath)))
 
 	if !data.RPS.IsNull() {
 		rps = int64(data.RPS.ValueInt64())
@@ -196,7 +202,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		i, _ := strconv.ParseInt(utils.GetDefaultFromEnv(consts.RPSEnvVarKey, consts.RPSDefault), 10, 64)
 		rps = i
 	}
-	limitOpt := cloudflare.UsingRateLimit(float64(rps))
+	limitOpt := cfv1.UsingRateLimit(float64(rps))
 
 	if !data.Retries.IsNull() {
 		retries = int64(data.Retries.ValueInt64())
@@ -243,25 +249,25 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	retryOpt := cloudflare.UsingRetryPolicy(int(retries), int(minBackOff), int(maxBackOff))
-	options := []cloudflare.Option{limitOpt, retryOpt, baseURL}
-
-	options = append(options, cloudflare.Debug(logging.IsDebugOrHigher()))
+	retryOpt := cfv1.UsingRetryPolicy(int(retries), int(minBackOff), int(maxBackOff))
+	cfv1Options := []cfv1.Option{limitOpt, retryOpt, baseURL}
+	cfv1Options = append(cfv1Options, cfv1.Debug(logging.IsDebugOrHigher()))
 
 	pluginVersion := utils.FindGoModuleVersion("github.com/hashicorp/terraform-plugin-framework")
 	userAgentParams := utils.UserAgentBuilderParams{
 		ProviderVersion: &p.version,
-		PluginType:      cloudflare.StringPtr("terraform-plugin-framework"),
+		PluginType:      cfv1.StringPtr("terraform-plugin-framework"),
 		PluginVersion:   pluginVersion,
 	}
 	if !data.UserAgentOperatorSuffix.IsNull() {
-		userAgentParams.OperatorSuffix = cloudflare.StringPtr(data.UserAgentOperatorSuffix.String())
+		userAgentParams.OperatorSuffix = cfv1.StringPtr(data.UserAgentOperatorSuffix.String())
 	} else {
-		userAgentParams.TerraformVersion = cloudflare.StringPtr(req.TerraformVersion)
+		userAgentParams.TerraformVersion = cfv1.StringPtr(req.TerraformVersion)
 	}
-	options = append(options, cloudflare.UserAgent(userAgentParams.String()))
+	cfv1Options = append(cfv1Options, cfv1.UserAgent(userAgentParams.String()))
+	cfv2Options = append(cfv2Options, option.WithHeader("user-agent", userAgentParams.String()))
 
-	config := Config{Options: options}
+	v1Config := Config{Options: cfv1Options}
 
 	if !data.APIToken.IsNull() {
 		apiToken = data.APIToken.ValueString()
@@ -270,7 +276,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	}
 
 	if apiToken != "" {
-		config.APIToken = apiToken
+		v1Config.APIToken = apiToken
+		cfv2Options = append(cfv2Options, option.WithAPIToken(apiToken))
 	}
 
 	if !data.APIKey.IsNull() {
@@ -280,7 +287,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	}
 
 	if apiKey != "" {
-		config.APIKey = apiKey
+		v1Config.APIKey = apiKey
+		cfv2Options = append(cfv2Options, option.WithAPIKey(apiKey))
 
 		if !data.Email.IsNull() {
 			email = data.Email.ValueString()
@@ -296,7 +304,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		}
 
 		if email != "" {
-			config.Email = email
+			v1Config.Email = email
+			cfv2Options = append(cfv2Options, option.WithAPIEmail(email))
 		}
 	}
 
@@ -307,7 +316,8 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	}
 
 	if apiUserServiceKey != "" {
-		config.APIUserServiceKey = apiUserServiceKey
+		v1Config.APIUserServiceKey = apiUserServiceKey
+		cfv2Options = append(cfv2Options, option.WithUserServiceKey(apiUserServiceKey))
 	}
 
 	if apiKey == "" && apiToken == "" && apiUserServiceKey == "" {
@@ -318,14 +328,21 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	config.Options = options
-	client, err := config.Client(ctx)
+	v1Config.Options = cfv1Options
+	v1Client, err := v1Config.Client(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"failed to initialize a new client",
+			"failed to initialize a new v1 client",
 			err.Error(),
 		)
 		return
+	}
+
+	v2Client := cfv2.NewClient(cfv2Options...)
+
+	client := &muxclient.Client{
+		V1: v1Client,
+		V2: v2Client,
 	}
 
 	resp.DataSourceData = client

@@ -1,0 +1,3 @@
+```release-note:internal
+provider: introduce a muxed client to support using cloudflare-go/v0 and cloudflare-go/v2 together
+```

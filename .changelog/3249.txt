@@ -1,0 +1,4 @@
+
+```release-note:enhancement
+resource/cloudflare_ipsec_tunnel: added support for replay_protection
+```

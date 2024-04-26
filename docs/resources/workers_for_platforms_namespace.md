@@ -8,7 +8,7 @@ description: |-
 
 # cloudflare_workers_for_platforms_namespace (Resource)
 
-The [Workers for Platforms](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/) resource allows you 
+The [Workers for Platforms](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/) resource allows you
 to manage Cloudflare Workers for Platforms namespaces.
 
 ## Example Usage

@@ -3,10 +3,9 @@ package rulesets
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/modifiers/defaults"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -18,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -80,24 +80,24 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"kind": schema.StringAttribute{
 				Required: true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetKindValues()...),
+					stringvalidator.OneOfCaseInsensitive(cfv1.RulesetKindValues()...),
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
-				MarkdownDescription: fmt.Sprintf("Type of Ruleset to create. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetKindValues())),
+				MarkdownDescription: fmt.Sprintf("Type of Ruleset to create. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetKindValues())),
 			},
 			"phase": schema.StringAttribute{
 				Required: true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetPhaseValues()...),
+					stringvalidator.OneOfCaseInsensitive(cfv1.RulesetPhaseValues()...),
 					sbfmDeprecationWarningValidator{},
 				},
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 					stringplanmodifier.UseStateForUnknown(),
 				},
-				MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
+				MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetPhaseValues())),
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -139,9 +139,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 							MarkdownDescription: "Criteria for an HTTP request to trigger the ruleset rule action. Uses the Firewall Rules expression language based on Wireshark display filters. Refer to the [Firewall Rules language](https://developers.cloudflare.com/firewall/cf-firewall-language) documentation for all available fields, operators, and functions.",
 						},
 						"action": schema.StringAttribute{
-							MarkdownDescription: fmt.Sprintf("Action to perform in the ruleset rule. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetRuleActionValues())),
+							MarkdownDescription: fmt.Sprintf("Action to perform in the ruleset rule. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetRuleActionValues())),
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetRuleActionValues()...),
+								stringvalidator.OneOfCaseInsensitive(cfv1.RulesetRuleActionValues()...),
 							},
 							Optional: true,
 						},
@@ -232,7 +232,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 									"phases": schema.SetAttribute{
 										ElementType:         types.StringType,
 										Optional:            true,
-										MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetPhaseValues())),
+										MarkdownDescription: fmt.Sprintf("Point in the request/response lifecycle where the ruleset will be created. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetPhaseValues())),
 									},
 									"polish": schema.StringAttribute{
 										Optional:            true,
@@ -241,7 +241,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 									"products": schema.SetAttribute{
 										ElementType:         types.StringType,
 										Optional:            true,
-										MarkdownDescription: fmt.Sprintf("Products to target with the actions. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetActionParameterProductValues())),
+										MarkdownDescription: fmt.Sprintf("Products to target with the actions. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetActionParameterProductValues())),
 									},
 									"read_timeout": schema.Int64Attribute{
 										Optional:            true,
@@ -402,7 +402,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 												},
 												"operation": schema.StringAttribute{
 													Optional:            true,
-													MarkdownDescription: fmt.Sprintf("Action to perform on the HTTP request header. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetRuleActionParametersHTTPHeaderOperationValues())),
+													MarkdownDescription: fmt.Sprintf("Action to perform on the HTTP request header. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetRuleActionParametersHTTPHeaderOperationValues())),
 												},
 											},
 										},
@@ -782,7 +782,7 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 												},
 												"action": schema.StringAttribute{
 													Optional:            true,
-													MarkdownDescription: fmt.Sprintf("Action to perform in the rule-level override. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetRuleActionValues())),
+													MarkdownDescription: fmt.Sprintf("Action to perform in the rule-level override. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetRuleActionValues())),
 												},
 												"sensitivity_level": schema.StringAttribute{
 													Optional:            true,
@@ -803,9 +803,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 															},
 															"action": schema.StringAttribute{
 																Optional:            true,
-																MarkdownDescription: fmt.Sprintf("Action to perform in the tag-level override. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetRuleActionValues())),
+																MarkdownDescription: fmt.Sprintf("Action to perform in the tag-level override. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetRuleActionValues())),
 																Validators: []validator.String{
-																	stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetRuleActionValues()...),
+																	stringvalidator.OneOfCaseInsensitive(cfv1.RulesetRuleActionValues()...),
 																},
 															},
 															"enabled": schema.BoolAttribute{
@@ -825,9 +825,9 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 															},
 															"action": schema.StringAttribute{
 																Optional:            true,
-																MarkdownDescription: fmt.Sprintf("Action to perform in the rule-level override. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cloudflare.RulesetRuleActionValues())),
+																MarkdownDescription: fmt.Sprintf("Action to perform in the rule-level override. %s.", utils.RenderAvailableDocumentationValuesStringSlice(cfv1.RulesetRuleActionValues())),
 																Validators: []validator.String{
-																	stringvalidator.OneOfCaseInsensitive(cloudflare.RulesetRuleActionValues()...),
+																	stringvalidator.OneOfCaseInsensitive(cfv1.RulesetRuleActionValues()...),
 																},
 															},
 															"enabled": schema.BoolAttribute{
