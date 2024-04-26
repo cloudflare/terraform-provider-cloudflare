@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -20,23 +20,23 @@ func init() {
 		F: func(region string) error {
 			ctx := context.Background()
 
-			client, clientErr := acctest.SharedClient()
+			client, clientErr := acctest.SharedV1Client()
 			if clientErr != nil {
 				return fmt.Errorf("Failed to create Cloudflare client: %w", clientErr)
 			}
 
-			deletedSettings := cloudflare.UpdateAccessMutualTLSHostnameSettingsParams{
-				Settings: []cloudflare.AccessMutualTLSHostnameSettings{},
+			deletedSettings := cfv1.UpdateAccessMutualTLSHostnameSettingsParams{
+				Settings: []cfv1.AccessMutualTLSHostnameSettings{},
 			}
 
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-			_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cloudflare.AccountIdentifier(accountID), deletedSettings)
+			_, err := client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.AccountIdentifier(accountID), deletedSettings)
 			if err != nil {
 				return fmt.Errorf("Failed to fetch Cloudflare Access Mutual TLS hostname settings: %w", err)
 			}
 
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-			_, err = client.UpdateAccessMutualTLSHostnameSettings(ctx, cloudflare.ZoneIdentifier(zoneID), deletedSettings)
+			_, err = client.UpdateAccessMutualTLSHostnameSettings(ctx, cfv1.ZoneIdentifier(zoneID), deletedSettings)
 			if err != nil {
 				return fmt.Errorf("Failed to delete Cloudflare Access Mutual TLS hostname settings: %w", err)
 			}
@@ -68,7 +68,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccessMutualTLSHostnameSettingsConfig(rnd, cloudflare.AccountIdentifier(accountID), domain),
+				Config: testAccessMutualTLSHostnameSettingsConfig(rnd, cfv1.AccountIdentifier(accountID), domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "settings.0.hostname", domain),
@@ -81,7 +81,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.State) error {
-	client, err := acctest.SharedClient()
+	client, err := acctest.SharedV1Client()
 	if err != nil {
 		return fmt.Errorf("Failed to create Cloudflare client: %w", err)
 	}
@@ -92,14 +92,14 @@ func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.S
 		}
 
 		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
-			settings, _ := client.GetAccessMutualTLSHostnameSettings(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]))
+			settings, _ := client.GetAccessMutualTLSHostnameSettings(context.Background(), cfv1.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]))
 			if len(settings) != 0 {
 				return fmt.Errorf("AccessMutualTLSHostnameSettings still exists")
 			}
 		}
 
 		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
-			settings, _ := client.GetAccessMutualTLSHostnameSettings(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]))
+			settings, _ := client.GetAccessMutualTLSHostnameSettings(context.Background(), cfv1.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]))
 			if len(settings) != 0 {
 				return fmt.Errorf("AccessMutualTLSHostnameSettings still exists")
 			}
@@ -109,7 +109,7 @@ func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.S
 	return nil
 }
 
-func testAccessMutualTLSHostnameSettingsConfig(rnd string, identifier *cloudflare.ResourceContainer, domain string) string {
+func testAccessMutualTLSHostnameSettingsConfig(rnd string, identifier *cfv1.ResourceContainer, domain string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_mutual_tls_hostname_settings" "%[1]s" {
 	%[2]s_id             = "%[3]s"

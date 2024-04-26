@@ -131,6 +131,7 @@ Optional:
 - `slo` (Set of String) A numerical limit. Example: `99.9`.
 - `status` (Set of String) Status to alert on.
 - `target_hostname` (Set of String) Target host to alert on for dos.
+- `target_ip` (Set of String) Target ip to alert on for dos in CIDR notation.
 - `target_zone_name` (Set of String) Target domain to alert on.
 - `tunnel_id` (Set of String) Tunnel IDs to alert on.
 - `where` (Set of String) Filter for alert.

@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,7 +17,7 @@ func NewDataSource() datasource.DataSource {
 }
 
 type CloudflareDlpDatasetsDataSource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (d *CloudflareDlpDatasetsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -28,11 +29,11 @@ func (d *CloudflareDlpDatasetsDataSource) Configure(ctx context.Context, req dat
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
 	}
@@ -45,7 +46,7 @@ func (d *CloudflareDlpDatasetsDataSource) Read(ctx context.Context, req datasour
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
-	accountDatasets, err := d.client.ListDLPDatasets(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.ListDLPDatasetsParams{})
+	accountDatasets, err := d.client.V1.ListDLPDatasets(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), cfv1.ListDLPDatasetsParams{})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch DLP Datasets: %w", err.Error())
 		return
