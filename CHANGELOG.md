@@ -20,6 +20,7 @@ INTERNAL:
 DEPENDENCIES:
 
 * provider: bump github.com/cloudflare/cloudflare-go from 0.93.0 to 0.94.0 ([#3265](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3265))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.0.0 to 2.1.0 ([#3274](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3274))
 * provider: bump github.com/hashicorp/terraform-plugin-framework from 1.5.0 to 1.8.0 ([#3255](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3255))
 * provider: bump github.com/hashicorp/terraform-plugin-go from 0.21.0 to 0.22.2 ([#3254](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3254))
 * provider: bump golang.org/x/net from 0.19.0 to 0.23.0 in /tools ([#3258](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3258))
