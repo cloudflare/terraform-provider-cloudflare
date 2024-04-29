@@ -17,7 +17,6 @@ import (
 )
 
 func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
-	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_keyless_certificate.%s", rnd)
