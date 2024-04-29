@@ -117,6 +117,7 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			MaxItems:    1,
 			Optional:    true,
+			Computed:    true,
 			Description: "Configuration for extended e-mail matching.",
 			Elem: &schema.Resource{
 				Schema: extendedEmailMatchingSchema,
