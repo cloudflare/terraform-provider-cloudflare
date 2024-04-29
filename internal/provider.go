@@ -7,6 +7,15 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/account_member"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/dns_record"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/email_routing_rule"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/logpush_job"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room_event"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_application"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_certificate"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_identity_provider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -96,7 +105,17 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 }
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+	return []func() resource.Resource{
+		account_member.NewResource,
+		dns_record.NewResource,
+		email_routing_rule.NewResource,
+		logpush_job.NewResource,
+		waiting_room.NewResource,
+		waiting_room_event.NewResource,
+		zero_trust_identity_provider.NewResource,
+		zero_trust_access_application.NewResource,
+		zero_trust_access_certificate.NewResource,
+	}
 }
 
 func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
