@@ -333,10 +333,11 @@ var customCertificateSchema = map[string]*schema.Schema{
 	"id": {
 		Type:        schema.TypeString,
 		Optional:    true,
+		Computed:    true,
 		Description: "ID of custom certificate.",
 	},
 	"updated_at": {
-		Type:        schema.TypeString,
-		Computed:    true,
+		Type:     schema.TypeString,
+		Computed: true,
 	},
 }
