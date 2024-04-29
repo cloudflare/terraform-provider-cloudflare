@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/cloudflare-go"
@@ -101,6 +102,12 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
+	if configuration.Settings.CustomCertificate != nil {
+		if err := d.Set("custom_certificate", flattenCustomCertificateConfig(configuration.Settings.CustomCertificate)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account custom certificate config: %w", err))
+		}
+	}
+
 	logSettings, err := client.TeamsAccountLoggingConfiguration(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err))
@@ -156,6 +163,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	fipsConfig := inflateFIPSConfig(d.Get("fips"))
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
 	extendedEmailMatchingConfig := inflateExtendedEmailMatchingConfig(d.Get("extended_email_matching"))
+	customCertificateConfig := inflateCustomCertificateConfig(d.Get("custom_certificate"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
 	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
 	payloadLogSettings := inflatePayloadLogSettings(d.Get("payload_log"))
@@ -167,6 +175,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 			FIPS:                  fipsConfig,
 			BodyScanning:          bodyScanningConfig,
 			ExtendedEmailMatching: extendedEmailMatchingConfig,
+			CustomCertificate:     customCertificateConfig,
 		},
 	}
 
@@ -495,5 +504,26 @@ func inflateExtendedEmailMatchingConfig(config interface{}) *cloudflare.TeamsExt
 	configMap := list[0].(map[string]interface{})
 	return &cloudflare.TeamsExtendedEmailMatching{
 		Enabled: cloudflare.BoolPtr(configMap["enabled"].(bool)),
+	}
+}
+
+func flattenCustomCertificateConfig(config *cloudflare.TeamsCustomCertificate) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"enabled":    *config.Enabled,
+		"id":         config.ID,
+		"updated_at": config.UpdatedAt.Format(time.RFC3339Nano),
+	}}
+}
+
+func inflateCustomCertificateConfig(config interface{}) *cloudflare.TeamsCustomCertificate {
+	list := config.([]interface{})
+	if len(list) != 1 {
+		return nil
+	}
+
+	configMap := list[0].(map[string]interface{})
+	return &cloudflare.TeamsCustomCertificate{
+		Enabled: cloudflare.BoolPtr(configMap["enabled"].(bool)),
+		ID:      configMap["id"].(string),
 	}
 }

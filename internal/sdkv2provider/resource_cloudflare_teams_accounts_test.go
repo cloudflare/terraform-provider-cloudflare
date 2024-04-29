@@ -30,6 +30,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "custom_certificate.0.enabled", "false"),
 					resource.TestCheckResourceAttr(name, "tls_decrypt_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "protocol_detection_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "activity_log_enabled", "true"),
@@ -134,6 +135,9 @@ resource "cloudflare_teams_account" "%[1]s" {
   }
   extended_email_matching {
 	enabled = true
+  }
+  custom_certificate {
+	enabled = false
   }
 }
 `, rnd, accountID)
