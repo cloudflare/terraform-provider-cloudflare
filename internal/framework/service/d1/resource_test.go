@@ -65,7 +65,7 @@ func TestAccCloudflareD1Database_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttr(resourceName, "version", "beta"),
+					resource.TestCheckResourceAttr(resourceName, "version", "production"),
 				),
 			},
 			{

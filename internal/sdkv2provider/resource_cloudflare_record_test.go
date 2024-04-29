@@ -83,7 +83,7 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("tf-acctest-basic.%s", zoneName)),
 					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
 					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
-					resource.TestCheckResourceAttr(resourceName, "metadata.%", "4"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.%", "3"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.auto_added", "false"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
