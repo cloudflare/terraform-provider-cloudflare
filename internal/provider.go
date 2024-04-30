@@ -8,13 +8,32 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/account_member"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/alerting_destination_webhook"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/alerting_policy"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/cloudforce_one_request"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/cloudforce_one_request_priority"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/dns_record"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/email_routing_rule"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/firewall_lockdown"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/firewall_waf_override"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/intel_indicator_feed"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/logpush_job"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_network_monitoring_rule"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_transit_site"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/page_shield_policy"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_acl"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_peer"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_tsig"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/spectrum_app"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room_event"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/web3_hostname_ipfs_universal_path_content_list_entry"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_application"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_bookmark"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_certificate"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_device_posture"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_gateway_list"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_gateway_location"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_identity_provider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -109,12 +128,31 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		account_member.NewResource,
 		dns_record.NewResource,
 		email_routing_rule.NewResource,
+		firewall_lockdown.NewResource,
+		firewall_waf_override.NewResource,
 		logpush_job.NewResource,
+		secondary_dns_acl.NewResource,
+		secondary_dns_peer.NewResource,
+		secondary_dns_tsig.NewResource,
 		waiting_room.NewResource,
 		waiting_room_event.NewResource,
+		web3_hostname_ipfs_universal_path_content_list_entry.NewResource,
+		page_shield_policy.NewResource,
+		spectrum_app.NewResource,
+		intel_indicator_feed.NewResource,
+		magic_transit_site.NewResource,
+		magic_network_monitoring_rule.NewResource,
+		alerting_destination_webhook.NewResource,
+		alerting_policy.NewResource,
+		zero_trust_device_posture.NewResource,
 		zero_trust_identity_provider.NewResource,
 		zero_trust_access_application.NewResource,
 		zero_trust_access_certificate.NewResource,
+		zero_trust_access_bookmark.NewResource,
+		zero_trust_gateway_list.NewResource,
+		zero_trust_gateway_location.NewResource,
+		cloudforce_one_request.NewResource,
+		cloudforce_one_request_priority.NewResource,
 	}
 }
 
