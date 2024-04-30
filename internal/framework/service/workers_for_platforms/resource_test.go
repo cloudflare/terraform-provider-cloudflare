@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestMain(m *testing.M) {
@@ -97,6 +98,7 @@ func TestAccCloudflareWorkersForPlatforms_UploadUserWorker(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, scriptContent, "2024-01-01", []string{"free"}),
@@ -141,4 +143,31 @@ func testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, m
 
 		depends_on = [cloudflare_workers_for_platforms_namespace.%[1]s]
 	  }`, rnd, accountID, moduleContent, compatibilityDate, tags)
+}
+
+func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "cloudflare_worker_script" {
+			continue
+		}
+
+		client, err := acctest.SharedV1Client()
+		if err != nil {
+			return fmt.Errorf("error establishing client: %w", err)
+		}
+		r, _ := client.GetWorkerWithDispatchNamespace(
+			context.Background(),
+			cfv1.AccountIdentifier(accountID),
+			rs.Primary.Attributes["name"],
+			rs.Primary.Attributes["dispatch_namespace"],
+		)
+
+		if r.Script != "" {
+			return fmt.Errorf("namespaced worker script with id %s still exists", rs.Primary.ID)
+		}
+	}
+
+	return nil
 }

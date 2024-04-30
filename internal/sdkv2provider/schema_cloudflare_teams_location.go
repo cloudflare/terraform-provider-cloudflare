@@ -40,6 +40,11 @@ func resourceCloudflareTeamsLocationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Description: "Indicator that this is the default location.",
 		},
+		"ecs_support": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Indicator that this location needs to resolve EDNS queries.",
+		},
 		"policy_ids": {
 			Type:     schema.TypeList,
 			Elem:     &schema.Schema{Type: schema.TypeString},

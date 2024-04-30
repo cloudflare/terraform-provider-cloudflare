@@ -89,6 +89,7 @@ resource "cloudflare_teams_account" "example" {
 - `antivirus` (Block List, Max: 1) Configuration block for antivirus traffic scanning. (see [below for nested schema](#nestedblock--antivirus))
 - `block_page` (Block List, Max: 1) Configuration for a custom block page. (see [below for nested schema](#nestedblock--block_page))
 - `body_scanning` (Block List, Max: 1) Configuration for body scanning. (see [below for nested schema](#nestedblock--body_scanning))
+- `custom_certificate` (Block List, Max: 1) Configuration for custom certificates / BYO-PKI. (see [below for nested schema](#nestedblock--custom_certificate))
 - `extended_email_matching` (Block List, Max: 1) Configuration for extended e-mail matching. (see [below for nested schema](#nestedblock--extended_email_matching))
 - `fips` (Block List, Max: 1) Configure compliance with Federal Information Processing Standards. (see [below for nested schema](#nestedblock--fips))
 - `logging` (Block List, Max: 1) (see [below for nested schema](#nestedblock--logging))
@@ -149,6 +150,18 @@ Optional:
 Required:
 
 - `inspection_mode` (String) Body scanning inspection mode. Available values: `deep`, `shallow`.
+
+
+<a id="nestedblock--custom_certificate"></a>
+### Nested Schema for `custom_certificate`
+
+Required:
+
+- `enabled` (Boolean) Whether TLS encryption should use a custom certificate.
+
+Optional:
+
+- `id` (String) ID of custom certificate.
 
 
 <a id="nestedblock--extended_email_matching"></a>

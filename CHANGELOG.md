@@ -2,11 +2,17 @@
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: added support for options_preflight_bypass ([#3267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3267))
 * resource/cloudflare_dlp_profile: Added support for `ocr_enabled` field to profiles ([#3224](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3224))
+* resource/cloudflare_notification_policy: add 'target_ip' atrribute to 'filter' nested block ([#3263](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3263))
+* resource/cloudflare_teams_account: add `custom_certificate` setting support ([#3253](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3253))
+* resource/cloudflare_teams_location: added `ecs_support` field ([#3264](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3264))
 
 BUG FIXES:
 
 * resource/cloudflare_hyperdrive_config: Fix 'HyperdriveID' not included in Update call ([#3251](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3251))
+* resource/cloudflare_managed_headers: disable header if it is deleted from terraform state ([#3260](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3260))
+* resource/cloudflare_worker_script: fix namespaced script delete trying to delete from account rather than the namespace ([#3238](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3238))
 
 INTERNAL:
 
@@ -14,9 +20,12 @@ INTERNAL:
 
 DEPENDENCIES:
 
+* provider: bump github.com/cloudflare/cloudflare-go from 0.93.0 to 0.94.0 ([#3265](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3265))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.0.0 to 2.1.0 ([#3274](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3274))
 * provider: bump github.com/hashicorp/terraform-plugin-framework from 1.5.0 to 1.8.0 ([#3255](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3255))
 * provider: bump github.com/hashicorp/terraform-plugin-go from 0.21.0 to 0.22.2 ([#3254](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3254))
 * provider: bump golang.org/x/net from 0.19.0 to 0.23.0 in /tools ([#3258](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3258))
+* provider: bump golangci/golangci-lint-action from 4 to 5 ([#3271](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3271))
 
 ## 4.30.0 (April 17th, 2024)
 

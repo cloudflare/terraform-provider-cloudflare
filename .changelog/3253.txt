@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_teams_account: add `custom_certificate` setting support
+```

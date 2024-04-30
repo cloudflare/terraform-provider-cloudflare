@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_managed_headers: disable header if it is deleted from terraform state
+```
