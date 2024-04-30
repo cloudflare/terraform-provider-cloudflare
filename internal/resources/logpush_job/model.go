@@ -11,17 +11,21 @@ type LogpushJobResultEnvelope struct {
 }
 
 type LogpushJobModel struct {
-	ID                 types.Int64                   `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                  `tfsdk:"account_id" path:"account_id"`
-	ZoneID             types.String                  `tfsdk:"zone_id" path:"zone_id"`
-	DestinationConf    types.String                  `tfsdk:"destination_conf" json:"destination_conf"`
-	Dataset            types.String                  `tfsdk:"dataset" json:"dataset"`
-	Enabled            types.Bool                    `tfsdk:"enabled" json:"enabled"`
-	Frequency          types.String                  `tfsdk:"frequency" json:"frequency"`
-	LogpullOptions     types.String                  `tfsdk:"logpull_options" json:"logpull_options"`
-	Name               types.String                  `tfsdk:"name" json:"name"`
-	OutputOptions      *LogpushJobOutputOptionsModel `tfsdk:"output_options" json:"output_options"`
-	OwnershipChallenge types.String                  `tfsdk:"ownership_challenge" json:"ownership_challenge"`
+	ID                       types.Int64                   `tfsdk:"id" json:"id,computed"`
+	AccountID                types.String                  `tfsdk:"account_id" path:"account_id"`
+	ZoneID                   types.String                  `tfsdk:"zone_id" path:"zone_id"`
+	DestinationConf          types.String                  `tfsdk:"destination_conf" json:"destination_conf"`
+	Dataset                  types.String                  `tfsdk:"dataset" json:"dataset"`
+	Enabled                  types.Bool                    `tfsdk:"enabled" json:"enabled"`
+	Frequency                types.String                  `tfsdk:"frequency" json:"frequency"`
+	Kind                     types.String                  `tfsdk:"kind" json:"kind"`
+	LogpullOptions           types.String                  `tfsdk:"logpull_options" json:"logpull_options"`
+	MaxUploadBytes           types.Int64                   `tfsdk:"max_upload_bytes" json:"max_upload_bytes"`
+	MaxUploadIntervalSeconds types.Int64                   `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds"`
+	MaxUploadRecords         types.Int64                   `tfsdk:"max_upload_records" json:"max_upload_records"`
+	Name                     types.String                  `tfsdk:"name" json:"name"`
+	OutputOptions            *LogpushJobOutputOptionsModel `tfsdk:"output_options" json:"output_options"`
+	OwnershipChallenge       types.String                  `tfsdk:"ownership_challenge" json:"ownership_challenge"`
 }
 
 type LogpushJobOutputOptionsModel struct {
