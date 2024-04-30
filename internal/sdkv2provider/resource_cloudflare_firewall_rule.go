@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/MakeNowJust/heredoc/v2"
 	"strings"
 
-	"github.com/MakeNowJust/heredoc/v2"
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -35,7 +35,7 @@ func resourceCloudflareFirewallRule() *schema.Resource {
 		`),
 		DeprecationMessage: heredoc.Doc(fmt.Sprintf(`
 			%s resource is in a deprecation phase that will
-			last for one year (May 1st, 2024). During this time period, this
+			last for 14 months (July 1st, 2024). During this time period, this
 			resource is still fully supported but you are strongly advised
 			to move to the %s resource. For more information, see
 			https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users.

@@ -13,8 +13,8 @@ Filter expressions that can be referenced across multiple features,
 e.g. Firewall Rules. See [what is a filter](https://developers.cloudflare.com/firewall/api/cf-filters/what-is-a-filter/)
 for more details and available fields and operators.
 
-~> `cloudflare_filter` is in a deprecation phase that will last for one
-  year (May 1st, 2024). During this time period, this resource is still fully
+~> `cloudflare_filter` is in a deprecation phase that will last for 14 months
+  (July 1st, 2024). During this time period, this resource is still fully
   supported but you are strongly advised to move to the
   `cloudflare_ruleset` resource. Full details can be found in the
   [developer documentation](https://developers.cloudflare.com/waf/reference/migration-guides/firewall-rules-to-custom-rules/#relevant-changes-for-terraform-users).
