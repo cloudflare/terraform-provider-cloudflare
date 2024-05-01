@@ -34,7 +34,7 @@ resource "cloudflare_turnstile_widget" "example" {
 ### Optional
 
 - `bot_fight_mode` (Boolean) If bot_fight_mode is set to true, Cloudflare issues computationally expensive challenges in response to malicious bots (Enterprise only).
-- `id` (String) The identifier of this resource. This is the site key value.
+- `sitekey` (String) The identifier of this resource. This is the site key value.
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (Enterprise only).
 - `region` (String) Region where this widget can be used.
 

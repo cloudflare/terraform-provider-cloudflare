@@ -92,7 +92,7 @@ func (r *TurnstileWidgetResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	widget, err := r.client.V1.GetTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	widget, err := r.client.V1.GetTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.SiteKey.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading challenge widget", err.Error())
@@ -148,7 +148,7 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	err := r.client.V1.DeleteTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	err := r.client.V1.DeleteTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.SiteKey.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Error deleting challenge widget", err.Error())
 	}
@@ -160,12 +160,12 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("Error importing challenge widget", "Invalid ID specified. Please specify the ID as \"accounts_id/sitekey\"")
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("account_id"), idParts[0])...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("sitekey"), idParts[1])...)
 }
 
 func buildChallengeWidgetFromModel(ctx context.Context, widget *TurnstileWidgetModel) cfv1.TurnstileWidget {
 	built := cfv1.TurnstileWidget{
-		SiteKey:      widget.ID.ValueString(),
+		SiteKey:      widget.SiteKey.ValueString(),
 		Name:         widget.Name.ValueString(),
 		BotFightMode: widget.BotFightMode.ValueBool(),
 		Mode:         widget.Mode.ValueString(),
@@ -180,7 +180,7 @@ func buildChallengeWidgetFromModel(ctx context.Context, widget *TurnstileWidgetM
 func buildChallengeModelFromWidget(accountID types.String, widget cfv1.TurnstileWidget) *TurnstileWidgetModel {
 	built := TurnstileWidgetModel{
 		AccountID:    accountID,
-		ID:           flatteners.String(widget.SiteKey),
+		SiteKey:      flatteners.String(widget.SiteKey),
 		Secret:       flatteners.String(widget.Secret),
 		BotFightMode: types.BoolValue(widget.BotFightMode),
 		Name:         flatteners.String(widget.Name),

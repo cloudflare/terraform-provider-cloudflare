@@ -4,7 +4,7 @@ import "github.com/hashicorp/terraform-plugin-framework/types"
 
 type TurnstileWidgetModel struct {
 	AccountID    types.String `tfsdk:"account_id"`
-	ID           types.String `tfsdk:"id"`
+	SiteKey      types.String `tfsdk:"sitekey"`
 	Domains      types.Set    `tfsdk:"domains"`
 	Name         types.String `tfsdk:"name"`
 	Secret       types.String `tfsdk:"secret"`

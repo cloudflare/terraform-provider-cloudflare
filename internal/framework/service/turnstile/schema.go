@@ -25,7 +25,7 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 `),
 
 		Attributes: map[string]schema.Attribute{
-			consts.IDSchemaKey: schema.StringAttribute{
+			"sitekey": schema.StringAttribute{
 				Computed:            true,
 				Optional:            true,
 				MarkdownDescription: consts.IDSchemaDescription + " This is the site key value.",
