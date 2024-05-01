@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package zero_trust_identity_provider
+package access_certificate
 
 import (
 	"context"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &ZeroTrustIdentityProviderResource{}
+var _ resource.Resource = &AccessCertificateResource{}
 
 func NewResource() resource.Resource {
-	return &ZeroTrustIdentityProviderResource{}
+	return &AccessCertificateResource{}
 }
 
-// ZeroTrustIdentityProviderResource defines the resource implementation.
-type ZeroTrustIdentityProviderResource struct {
+// AccessCertificateResource defines the resource implementation.
+type AccessCertificateResource struct {
 	client *cloudflare.Client
 }
 
-func (r *ZeroTrustIdentityProviderResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_zero_trust_identity_provider"
+func (r *AccessCertificateResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_access_certificate"
 }
 
-func (r *ZeroTrustIdentityProviderResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AccessCertificateResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *ZeroTrustIdentityProviderResource) Configure(ctx context.Context, req r
 	r.client = client
 }
 
-func (r *ZeroTrustIdentityProviderResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *ZeroTrustIdentityProviderModel
+func (r *AccessCertificateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *AccessCertificateModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,10 +66,10 @@ func (r *ZeroTrustIdentityProviderResource) Create(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustIdentityProviderResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.IdentityProviders.New(
+	env := AccessCertificateResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Certificates.New(
 		ctx,
-		zero_trust.IdentityProviderNewParams{
+		zero_trust.AccessCertificateNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -92,8 +92,8 @@ func (r *ZeroTrustIdentityProviderResource) Create(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustIdentityProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ZeroTrustIdentityProviderModel
+func (r *AccessCertificateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *AccessCertificateModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -102,11 +102,11 @@ func (r *ZeroTrustIdentityProviderResource) Read(ctx context.Context, req resour
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustIdentityProviderResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.IdentityProviders.Get(
+	env := AccessCertificateResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.IdentityProviderGetParams{
+		zero_trust.AccessCertificateGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -128,8 +128,8 @@ func (r *ZeroTrustIdentityProviderResource) Read(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustIdentityProviderResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *ZeroTrustIdentityProviderModel
+func (r *AccessCertificateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *AccessCertificateModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -143,11 +143,11 @@ func (r *ZeroTrustIdentityProviderResource) Update(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustIdentityProviderResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.IdentityProviders.Update(
+	env := AccessCertificateResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Certificates.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.IdentityProviderUpdateParams{
+		zero_trust.AccessCertificateUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -170,8 +170,8 @@ func (r *ZeroTrustIdentityProviderResource) Update(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustIdentityProviderResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *ZeroTrustIdentityProviderModel
+func (r *AccessCertificateResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *AccessCertificateModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -179,10 +179,10 @@ func (r *ZeroTrustIdentityProviderResource) Delete(ctx context.Context, req reso
 		return
 	}
 
-	_, err := r.client.ZeroTrust.IdentityProviders.Delete(
+	_, err := r.client.ZeroTrust.Access.Certificates.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.IdentityProviderDeleteParams{
+		zero_trust.AccessCertificateDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},

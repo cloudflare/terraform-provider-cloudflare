@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package dns_record
+package access_application
 
 import (
 	"context"
@@ -9,30 +9,31 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-go/v2/shared"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/cloudflare-terraform/internal/apijson"
 	"github.com/cloudflare/cloudflare-terraform/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &DNSRecordResource{}
+var _ resource.Resource = &AccessApplicationResource{}
 
 func NewResource() resource.Resource {
-	return &DNSRecordResource{}
+	return &AccessApplicationResource{}
 }
 
-// DNSRecordResource defines the resource implementation.
-type DNSRecordResource struct {
+// AccessApplicationResource defines the resource implementation.
+type AccessApplicationResource struct {
 	client *cloudflare.Client
 }
 
-func (r *DNSRecordResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_dns_record"
+func (r *AccessApplicationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_access_application"
 }
 
-func (r *DNSRecordResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AccessApplicationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +52,8 @@ func (r *DNSRecordResource) Configure(ctx context.Context, req resource.Configur
 	r.client = client
 }
 
-func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *DNSRecordModel
+func (r *AccessApplicationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *AccessApplicationModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,11 +67,12 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	res := new(http.Response)
-	env := DNSRecordResultEnvelope{*data}
-	_, err = r.client.DNS.Records.New(
+	env := AccessApplicationResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Applications.New(
 		ctx,
-		dns.RecordNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		zero_trust.AccessApplicationNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -91,8 +93,8 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *DNSRecordModel
+func (r *AccessApplicationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *AccessApplicationModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -101,12 +103,13 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	res := new(http.Response)
-	env := DNSRecordResultEnvelope{*data}
-	_, err := r.client.DNS.Records.Get(
+	env := AccessApplicationResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Access.Applications.Get(
 		ctx,
-		data.ID.ValueString(),
-		dns.RecordGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		shared.UnionString(data.ID.ValueString()),
+		zero_trust.AccessApplicationGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -126,8 +129,8 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *DNSRecordModel
+func (r *AccessApplicationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *AccessApplicationModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -141,12 +144,13 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	res := new(http.Response)
-	env := DNSRecordResultEnvelope{*data}
-	_, err = r.client.DNS.Records.Update(
+	env := AccessApplicationResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Applications.Update(
 		ctx,
-		data.ID.ValueString(),
-		dns.RecordUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		shared.UnionString(data.ID.ValueString()),
+		zero_trust.AccessApplicationUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -167,8 +171,8 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSRecordResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *DNSRecordModel
+func (r *AccessApplicationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *AccessApplicationModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -176,11 +180,12 @@ func (r *DNSRecordResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	_, err := r.client.DNS.Records.Delete(
+	_, err := r.client.ZeroTrust.Access.Applications.Delete(
 		ctx,
-		data.ID.ValueString(),
-		dns.RecordDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		shared.UnionString(data.ID.ValueString()),
+		zero_trust.AccessApplicationDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

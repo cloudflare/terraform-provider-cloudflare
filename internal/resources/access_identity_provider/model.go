@@ -1,26 +1,26 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package zero_trust_identity_provider
+package access_identity_provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ZeroTrustIdentityProviderResultEnvelope struct {
-	Result ZeroTrustIdentityProviderModel `json:"result,computed"`
+type AccessIdentityProviderResultEnvelope struct {
+	Result AccessIdentityProviderModel `json:"result,computed"`
 }
 
-type ZeroTrustIdentityProviderModel struct {
-	ID         types.String                              `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                              `tfsdk:"account_id" path:"account_id"`
-	ZoneID     types.String                              `tfsdk:"zone_id" path:"zone_id"`
-	Config     *ZeroTrustIdentityProviderConfigModel     `tfsdk:"config" json:"config"`
-	Name       types.String                              `tfsdk:"name" json:"name"`
-	Type       types.String                              `tfsdk:"type" json:"type"`
-	ScimConfig *ZeroTrustIdentityProviderScimConfigModel `tfsdk:"scim_config" json:"scim_config"`
+type AccessIdentityProviderModel struct {
+	ID         types.String                           `tfsdk:"id" json:"id,computed"`
+	AccountID  types.String                           `tfsdk:"account_id" path:"account_id"`
+	ZoneID     types.String                           `tfsdk:"zone_id" path:"zone_id"`
+	Config     *AccessIdentityProviderConfigModel     `tfsdk:"config" json:"config"`
+	Name       types.String                           `tfsdk:"name" json:"name"`
+	Type       types.String                           `tfsdk:"type" json:"type"`
+	ScimConfig *AccessIdentityProviderScimConfigModel `tfsdk:"scim_config" json:"scim_config"`
 }
 
-type ZeroTrustIdentityProviderConfigModel struct {
+type AccessIdentityProviderConfigModel struct {
 	Claims                   *[]types.String `tfsdk:"claims" json:"claims"`
 	ClientID                 types.String    `tfsdk:"client_id" json:"client_id"`
 	ClientSecret             types.String    `tfsdk:"client_secret" json:"client_secret"`
@@ -31,7 +31,7 @@ type ZeroTrustIdentityProviderConfigModel struct {
 	SupportGroups            types.Bool      `tfsdk:"support_groups" json:"support_groups"`
 }
 
-type ZeroTrustIdentityProviderScimConfigModel struct {
+type AccessIdentityProviderScimConfigModel struct {
 	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled"`
 	GroupMemberDeprovision types.Bool   `tfsdk:"group_member_deprovision" json:"group_member_deprovision"`
 	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision"`

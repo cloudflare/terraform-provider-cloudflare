@@ -7,12 +7,14 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_application"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_certificate"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_identity_provider"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/account_member"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/alerting_destination_webhook"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/alerting_policy"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/cloudforce_one_request"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/cloudforce_one_request_priority"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/dns_record"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/email_routing_rule"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/firewall_lockdown"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/firewall_waf_override"
@@ -21,6 +23,7 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_network_monitoring_rule"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_transit_site"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/page_shield_policy"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/record"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_acl"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_peer"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_tsig"
@@ -28,13 +31,10 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room_event"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/web3_hostname_ipfs_universal_path_content_list_entry"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_application"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_bookmark"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_certificate"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_device_posture"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_gateway_list"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_gateway_location"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_identity_provider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -126,7 +126,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		account_member.NewResource,
-		dns_record.NewResource,
+		record.NewResource,
 		email_routing_rule.NewResource,
 		firewall_lockdown.NewResource,
 		firewall_waf_override.NewResource,
@@ -145,9 +145,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		alerting_destination_webhook.NewResource,
 		alerting_policy.NewResource,
 		zero_trust_device_posture.NewResource,
-		zero_trust_identity_provider.NewResource,
-		zero_trust_access_application.NewResource,
-		zero_trust_access_certificate.NewResource,
+		access_identity_provider.NewResource,
+		access_application.NewResource,
+		access_certificate.NewResource,
 		zero_trust_access_bookmark.NewResource,
 		zero_trust_gateway_list.NewResource,
 		zero_trust_gateway_location.NewResource,
