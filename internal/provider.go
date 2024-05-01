@@ -22,8 +22,10 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/logpush_job"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_network_monitoring_rule"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_transit_site"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_transit_site_acl"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/page_shield_policy"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/record"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/ruleset"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_acl"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_peer"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_tsig"
@@ -138,9 +140,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		waiting_room_event.NewResource,
 		web3_hostname_ipfs_universal_path_content_list_entry.NewResource,
 		page_shield_policy.NewResource,
+		ruleset.NewResource,
 		spectrum_app.NewResource,
 		intel_indicator_feed.NewResource,
 		magic_transit_site.NewResource,
+		magic_transit_site_acl.NewResource,
 		magic_network_monitoring_rule.NewResource,
 		alerting_destination_webhook.NewResource,
 		alerting_policy.NewResource,
