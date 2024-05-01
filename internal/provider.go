@@ -30,6 +30,8 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_peer"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_tsig"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/spectrum_app"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/tunnel"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/tunnel_configuration"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room_event"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/web3_hostname_ipfs_universal_path_content_list_entry"
@@ -153,6 +155,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		access_application.NewResource,
 		access_certificate.NewResource,
 		zero_trust_access_bookmark.NewResource,
+		tunnel.NewResource,
+		tunnel_configuration.NewResource,
 		zero_trust_gateway_list.NewResource,
 		zero_trust_gateway_location.NewResource,
 		cloudforce_one_request.NewResource,
