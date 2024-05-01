@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package zero_trust_access_application
+package record
 
 import (
 	"context"
@@ -9,31 +9,30 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/shared"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/cloudflare-terraform/internal/apijson"
 	"github.com/cloudflare/cloudflare-terraform/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &ZeroTrustAccessApplicationResource{}
+var _ resource.Resource = &RecordResource{}
 
 func NewResource() resource.Resource {
-	return &ZeroTrustAccessApplicationResource{}
+	return &RecordResource{}
 }
 
-// ZeroTrustAccessApplicationResource defines the resource implementation.
-type ZeroTrustAccessApplicationResource struct {
+// RecordResource defines the resource implementation.
+type RecordResource struct {
 	client *cloudflare.Client
 }
 
-func (r *ZeroTrustAccessApplicationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_zero_trust_access_application"
+func (r *RecordResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_record"
 }
 
-func (r *ZeroTrustAccessApplicationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *RecordResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -52,8 +51,8 @@ func (r *ZeroTrustAccessApplicationResource) Configure(ctx context.Context, req 
 	r.client = client
 }
 
-func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *ZeroTrustAccessApplicationModel
+func (r *RecordResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -67,12 +66,11 @@ func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req res
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.Applications.New(
+	env := RecordResultEnvelope{*data}
+	_, err = r.client.DNS.Records.New(
 		ctx,
-		zero_trust.AccessApplicationNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
+		dns.RecordNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -93,8 +91,8 @@ func (r *ZeroTrustAccessApplicationResource) Create(ctx context.Context, req res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessApplicationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ZeroTrustAccessApplicationModel
+func (r *RecordResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -103,13 +101,12 @@ func (r *ZeroTrustAccessApplicationResource) Read(ctx context.Context, req resou
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Access.Applications.Get(
+	env := RecordResultEnvelope{*data}
+	_, err := r.client.DNS.Records.Get(
 		ctx,
-		shared.UnionString(data.ID.ValueString()),
-		zero_trust.AccessApplicationGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
+		data.ID.ValueString(),
+		dns.RecordGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -129,8 +126,8 @@ func (r *ZeroTrustAccessApplicationResource) Read(ctx context.Context, req resou
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *ZeroTrustAccessApplicationModel
+func (r *RecordResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -144,13 +141,12 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustAccessApplicationResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.Applications.Update(
+	env := RecordResultEnvelope{*data}
+	_, err = r.client.DNS.Records.Update(
 		ctx,
-		shared.UnionString(data.ID.ValueString()),
-		zero_trust.AccessApplicationUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
+		data.ID.ValueString(),
+		dns.RecordUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -171,8 +167,8 @@ func (r *ZeroTrustAccessApplicationResource) Update(ctx context.Context, req res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustAccessApplicationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *ZeroTrustAccessApplicationModel
+func (r *RecordResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -180,12 +176,11 @@ func (r *ZeroTrustAccessApplicationResource) Delete(ctx context.Context, req res
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Access.Applications.Delete(
+	_, err := r.client.DNS.Records.Delete(
 		ctx,
-		shared.UnionString(data.ID.ValueString()),
-		zero_trust.AccessApplicationDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
+		data.ID.ValueString(),
+		dns.RecordDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
