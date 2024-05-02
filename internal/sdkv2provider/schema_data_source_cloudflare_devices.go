@@ -87,6 +87,11 @@ func resoureceCloudflareDevicesSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "The operating system version.",
 					},
+					"os_version_extra": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "Extra version value following the operating system version.",
+					},
 					"revoked_at": {
 						Type:        schema.TypeString,
 						Optional:    true,

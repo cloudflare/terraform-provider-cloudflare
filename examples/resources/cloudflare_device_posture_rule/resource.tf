@@ -16,5 +16,6 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
     operator           = "<"
     os_distro_name     = "ubuntu"
     os_distro_revision = "1.0.0"
+    os_version_extra   = "(a)"
   }
 }
