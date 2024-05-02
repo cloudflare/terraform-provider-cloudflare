@@ -63,5 +63,4 @@ type RecordDataModel struct {
 	Proto         types.String  `tfsdk:"proto" json:"proto"`
 	Weight        types.Float64 `tfsdk:"weight" json:"weight"`
 	Fingerprint   types.String  `tfsdk:"fingerprint" json:"fingerprint"`
-	Content       types.String  `tfsdk:"content" json:"content"`
 }
