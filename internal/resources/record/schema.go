@@ -234,10 +234,6 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 						Description: "fingerprint.",
 						Optional:    true,
 					},
-					"content": schema.StringAttribute{
-						Description: "The record content.",
-						Optional:    true,
-					},
 				},
 			},
 			"priority": schema.Float64Attribute{
