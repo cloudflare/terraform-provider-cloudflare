@@ -73,10 +73,6 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
-					"service": {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
 					"certificate": {
 						Type:     schema.TypeString,
 						Optional: true,
@@ -103,14 +99,6 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 					},
 
 					// SRV record properties
-					"proto": {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-					"name": {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
 					"priority": {
 						Type:     schema.TypeInt,
 						Optional: true,
@@ -195,6 +183,10 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 					},
 
 					// NAPTR record properties
+					"service": {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 					"order": {
 						Type:     schema.TypeInt,
 						Optional: true,
