@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_turnstile: Fix error handling corrupting state
+```
