@@ -185,6 +185,9 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
+	rnd2 := generateRandomResourceName()
+	emailListName := fmt.Sprintf("cloudflare_teams_list.%s", rnd2)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -193,13 +196,16 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareAccessGroupConfigEmailList(rnd, cloudflare.ZoneIdentifier(zoneID)),
+				Config: testAccCloudflareAccessGroupConfigEmailList(rnd, rnd2, cloudflare.AccountIdentifier(accountID)),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareAccessGroupExists(name, cloudflare.ZoneIdentifier(zoneID), &accessGroup),
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "require.0.email_list.0", "e3a0f205-c525-4e48-a293-ba5d1f00e638"),
-					resource.TestCheckResourceAttr(name, "require.0.email_list.1", "5d54cd30-ce52-46e4-9a46-a47887e1a167"),
+					resource.TestCheckResourceAttrSet(name, "include.0.email_list.0"),
+
+					// Check that the email list is destroyed
+					resource.TestCheckResourceAttr(emailListName, "name", rnd2),
+					resource.TestCheckResourceAttr(emailListName, "type", "EMAIL"),
+					resource.TestCheckResourceAttr(emailListName, "items.0", "test@example.com"),
 				),
 			},
 		},
@@ -638,16 +644,23 @@ resource "cloudflare_access_group" "%[1]s" {
 }`, resourceName, identifier.Type, identifier.Identifier)
 }
 
-func testAccCloudflareAccessGroupConfigEmailList(resourceName string, identifier *cloudflare.ResourceContainer) string {
+func testAccCloudflareAccessGroupConfigEmailList(resourceName string, emailListName string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[2]s" {
+  %[3]s_id    = "%[4]s"
+	name        = "%[2]s"
+	type        = "EMAIL"
+	description = "Email list test for %[1]s"
+	items       = [ "test@example.com" ]
+}
 resource "cloudflare_access_group" "%[1]s" {
-  %[2]s_id = "%[3]s"
+  %[3]s_id = "%[4]s"
   name     = "%[1]s"
 
-  require {
-		email_list = ["e3a0f205-c525-4e48-a293-ba5d1f00e638", "5d54cd30-ce52-46e4-9a46-a47887e1a167"]
+  include {
+		email_list = [cloudflare_teams_list.%[2]s.id]
   }
-}`, resourceName, identifier.Type, identifier.Identifier)
+}`, resourceName, emailListName, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {
